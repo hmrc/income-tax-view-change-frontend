@@ -39,7 +39,7 @@
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
-    chargeSummaryHasDunningLocksOrLpiWithDunnigBlock: ChargeSummaryHasDunningLocksOrLpiWithDunnigBlock,
+    chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
@@ -74,7 +74,7 @@
 @hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
 
 @hasPaymentBreakdown = @{
-    documentDetail.hasLpiWithDunningBlock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
+    documentDetail.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
 }
 
 @taxYearFrom = @{(documentDetail.taxYear - 1)}
@@ -164,8 +164,8 @@
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
     useFallbackBackLink = true, gatewayPage = gatewayPage) {
 
-    @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunnigBlock(documentDetail, dueDate, latePaymentInterestCharge, appConfig)
+    @if(hasDunningLocks || documentDetail.hasLpiWithDunningLock) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(documentDetail, dueDate, latePaymentInterestCharge, appConfig)
     }
 
     <h1 class="govuk-heading-xl">

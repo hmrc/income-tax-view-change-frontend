@@ -41,7 +41,7 @@
 @(currentDate: LocalDate,
     creditCharges: List[DocumentDetail],
     whatYouOweChargesList: WhatYouOweChargesList,
-    hasLpiWithDunningBlock: Boolean,
+    hasLpiWithDunningLock: Boolean,
     currentTaxYear: Int,
     backUrl: String,
     utr: Option[String],
@@ -184,7 +184,7 @@
 }
 
 @dunningLockParagraph = {
-    @if(dunningLock || hasLpiWithDunningBlock) {
+    @if(dunningLock || hasLpiWithDunningLock) {
         <div id="payment-under-review-info">
         @p(){
             @getMessage("dunningLock.text", "")
@@ -284,8 +284,8 @@
             @if(documentDetailWithDueDate.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
             }
-            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){
-                <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @getMessage("paymentUnderReview") </div>
+            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningLock){
+                <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>

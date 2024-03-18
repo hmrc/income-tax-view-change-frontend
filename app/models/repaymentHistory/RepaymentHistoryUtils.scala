@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
 
-object RepaymentHistoryUtils {
+object  RepaymentHistoryUtils {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
