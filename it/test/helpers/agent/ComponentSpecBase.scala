@@ -551,6 +551,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCeaseFPCannotGoBack(): WSResponse = get("/income-sources/cease/cease-foreign-property-cannot-go-back", clientDetailsWithConfirmation)
 
     def getManageYourBusinesses(additionalCookies: Map[String, String]): WSResponse = get("/manage-your-businesses", additionalCookies)
+
+    def getViewAllCeasedBusinesses(): WSResponse = get("/manage-your-businesses/ceased-businesses", clientDetailsWithConfirmation)
+
   }
 
   def unauthorisedTest(uri: String): Unit = {

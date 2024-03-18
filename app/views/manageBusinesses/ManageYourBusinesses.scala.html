@@ -86,10 +86,7 @@
 }
 
 @viewAllCeasedBusinessesControllerURL = @{
-    if(isAgent)
-        controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.showAgent().url
-    else
-        controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show().url
+    controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent).url
 }
 
 @addUKPropertyStartDateURL = @{

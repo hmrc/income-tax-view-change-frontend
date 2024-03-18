@@ -97,7 +97,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   class TestSetup(creditCharges: List[DocumentDetail] = List(),
                   charges: WhatYouOweChargesList,
                   currentTaxYear: Int = fixedDate.getYear,
-                  hasLpiWithDunningBlock: Boolean = false,
+                  hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   whatYouOweCreditAmountEnabled: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
@@ -118,7 +118,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val html: HtmlFormat.Appendable = whatYouOweView(
       dateService.getCurrentDate,
-      creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
+      creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
       Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
@@ -142,7 +142,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        MFADebitsEnabled: Boolean = false,
                        whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
-                       hasLpiWithDunningBlock: Boolean = false) {
+                       hasLpiWithDunningLock: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       nino = "AA111111A",
@@ -167,7 +167,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       currentDateIs,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
-      hasLpiWithDunningBlock = hasLpiWithDunningBlock,
+      hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
       backUrl = "testBackURL",
       utr = Some("1234567890"),
@@ -203,7 +203,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestAmount = latePaymentInterest
   )
 
-  def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+  def financialDetailsOverdueWithLpiDunningLock(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
@@ -211,10 +211,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
     latePaymentInterestAmount = latePaymentInterest,
-    lpiWithDunningBlock = lpiWithDunningBlock
+    lpiWithDunningLock = lpiWithDunningLock
   )
 
-  def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+  def financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
@@ -222,7 +222,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
     latePaymentInterestAmount = latePaymentInterest,
-    lpiWithDunningBlock = lpiWithDunningBlock
+    lpiWithDunningLock = lpiWithDunningLock
   )
 
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
@@ -238,17 +238,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningBlock(latePaymentInterest: Option[BigDecimal],
-                                               lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueLPIDunningLock(latePaymentInterest: Option[BigDecimal],
+                                               lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates(),
+    chargesList = financialDetailsOverdueWithLpiDunningLock(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningBlockZero(latePaymentInterest: Option[BigDecimal],
-                                                   lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueLPIDunningLockZero(latePaymentInterest: Option[BigDecimal],
+                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates(),
+    chargesList = financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -690,7 +690,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56), Some(1000))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(1000))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -707,7 +707,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", latePaymentCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
-            pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
+            pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
 
@@ -719,7 +719,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56), Some(0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLockZero(Some(34.56), Some(0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate

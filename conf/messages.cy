@@ -1725,3 +1725,6 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+# businesses that have ceased
+manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben

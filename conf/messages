@@ -1740,3 +1740,6 @@ manageBusinesses.type-of-property.h2                                     = What 
 manageBusinesses.type-of-property.uk                                     = UK property business
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
+
+# businesses that have ceased
+manageBusinesses.ceased.heading                                          = Businesses that have ceased

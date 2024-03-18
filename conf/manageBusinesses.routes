@@ -9,8 +9,8 @@ GET          /manage-your-businesses/add-property/property-type                 
 GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = true)
 POST         /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = false)
 POST         /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = true)
-GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show()
-GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.showAgent()
+GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = true)
 
 ##################################################################    Cease    ###########################################################################
 GET          /manage-your-businesses/cease-sole-trader/confirm-cease                   controllers.manageBusinesses.cease.CeaseConfirmSoleTraderController.show(id: Option[String])
@@ -309,19 +309,19 @@ GET          /agents/manage-your-businesses/manage-uk-property/your-details     
 GET          /manage-your-businesses/manage-foreign-property/your-details              controllers.manageBusinesses.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty, id: Option[String] = None)
 GET          /agents/manage-your-businesses/manage-foreign-property/your-details       controllers.manageBusinesses.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty, id: Option[String] = None)
 
-GET          /manage-your-businesses/manage/business-will-report                        controllers.manageBusinesses.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String)
-GET          /agents/manage-your-businesses/manage/business-will-report                 controllers.manageBusinesses.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String)
-GET          /manage-your-businesses/manage/uk-property-will-report                     controllers.manageBusinesses.manage.ManageObligationsController.showUKProperty(changeTo: String, taxYear: String)
-GET          /agents/manage-your-businesses/manage/uk-property-will-report              controllers.manageBusinesses.manage.ManageObligationsController.showAgentUKProperty(changeTo: String, taxYear: String)
-GET          /manage-your-businesses/manage/foreign-property-will-report                controllers.manageBusinesses.manage.ManageObligationsController.showForeignProperty(changeTo: String, taxYear: String)
-GET          /agents/manage-your-businesses/manage/foreign-property-will-report         controllers.manageBusinesses.manage.ManageObligationsController.showAgentForeignProperty(changeTo: String, taxYear: String)
+GET          /manage-your-businesses/manage/business-will-report                        controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment, changeTo: String, taxYear: String)
+GET          /agents/manage-your-businesses/manage/business-will-report                 controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment, changeTo: String, taxYear: String)
+GET          /manage-your-businesses/manage/uk-property-will-report                     controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty, changeTo: String, taxYear: String)
+GET          /agents/manage-your-businesses/manage/uk-property-will-report              controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty, changeTo: String, taxYear: String)
+GET          /manage-your-businesses/manage/foreign-property-will-report                controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty, changeTo: String, taxYear: String)
+GET          /agents/manage-your-businesses/manage/foreign-property-will-report         controllers.manageBusinesses.manage.ManageObligationsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty, changeTo: String, taxYear: String)
 
-POST          /manage-your-businesses/manage/business-will-report                       controllers.manageBusinesses.manage.ManageObligationsController.submit()
-POST          /agents/manage-your-businesses/manage/business-will-report                controllers.manageBusinesses.manage.ManageObligationsController.agentSubmit()
-POST          /manage-your-businesses/manage/uk-property-will-report                    controllers.manageBusinesses.manage.ManageObligationsController.submit()
-POST          /agents/manage-your-businesses/manage/uk-property-will-report             controllers.manageBusinesses.manage.ManageObligationsController.agentSubmit()
-POST          /manage-your-businesses/manage/foreign-property-will-report               controllers.manageBusinesses.manage.ManageObligationsController.submit()
-POST          /agents/manage-your-businesses/manage/foreign-property-will-report        controllers.manageBusinesses.manage.ManageObligationsController.agentSubmit()
+POST          /manage-your-businesses/manage/business-will-report                       controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = false)
+POST          /agents/manage-your-businesses/manage/business-will-report                controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = true)
+POST          /manage-your-businesses/manage/uk-property-will-report                    controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = false)
+POST          /agents/manage-your-businesses/manage/uk-property-will-report             controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = true)
+POST          /manage-your-businesses/manage/foreign-property-will-report               controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = false)
+POST          /agents/manage-your-businesses/manage/foreign-property-will-report        controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = true)
 
 # Income Sources - Reporting Method
 GET          /manage-your-businesses/add/business-reporting-method                controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)

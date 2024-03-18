@@ -17,7 +17,7 @@
 @import enums.GatewayPage.{WhatYouOwePage, NoMatch, GatewayPage}
 
 @this()
-@(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit messages: Messages)
+    @(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit messages: Messages)
 
 @getFallbackLinkText = @{
     gatewayPageOpt match {

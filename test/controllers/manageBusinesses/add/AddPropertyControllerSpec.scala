@@ -16,8 +16,8 @@
 
 package controllers.manageBusinesses.add
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
@@ -25,9 +25,9 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testUtils.TestSupport
@@ -91,7 +91,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("manageBusinesses.type-of-property.heading"))
           val backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
-          document.getElementById("back").attr("href") shouldBe backUrl
+          document.getElementById("back-fallback").attr("href") shouldBe backUrl
           status(result) shouldBe OK
         }
       }

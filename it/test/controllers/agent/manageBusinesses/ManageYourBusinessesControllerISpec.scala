@@ -59,7 +59,7 @@ class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
           elementTextByID("business-date-1")(foreignPropertyStartDate),
           elementTextByID("property-h2")(propertyBusinessesHeading),
           elementTextByID("uk-date")(ukPropertyStartDate),
-          elementAttributeBySelector("#back", "href")(s"/report-quarterly/income-and-expenses/view/agents/client-income-tax"),
+          elementAttributeBySelector("#back-fallback", "href")(s"/report-quarterly/income-and-expenses/view/agents/client-income-tax"),
         )
       }
 

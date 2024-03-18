@@ -296,7 +296,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
       val document: Document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
+      document.getElementById("back-fallback").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
       status(result) shouldBe OK
     }
 
@@ -317,7 +317,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
       val document: Document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true).url
+      document.getElementById("back-fallback").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true).url
       status(result) shouldBe OK
     }
 

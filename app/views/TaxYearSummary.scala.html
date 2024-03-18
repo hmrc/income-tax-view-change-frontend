@@ -219,7 +219,7 @@
                             }
                         </div>
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
-                        @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
+                        @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
                     </th>
                     @if(documentDetailWithDueDate.isLatePaymentInterest) {
                         @documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.map { latePaymentInterestAmount =>
