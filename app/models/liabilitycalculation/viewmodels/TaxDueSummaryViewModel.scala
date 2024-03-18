@@ -17,7 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel.getTaxDue
+import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
 import play.api.Logger
 

@@ -28,7 +28,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
@@ -46,7 +46,7 @@ import java.time.LocalDate
 
 class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 11, 29)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 11, 29)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -352,8 +352,11 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )
         )
 
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations, codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -404,7 +407,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$poa1 $underReview"),
-            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(fixedDate.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(fixedDate.toLongDateShort),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(updateTabDue(getCurrentTaxYearEnd.toLongDate)),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -422,8 +425,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )
         )
 
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser,
+          messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations,
+            codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -680,8 +688,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations, messagesAPI,
-          Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            auditDD,
+            allObligations, codingOutEnabled = true, showForecastData = true)))
+
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
