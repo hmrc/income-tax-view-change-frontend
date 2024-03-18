@@ -37,7 +37,7 @@ case class DocumentDetail(taxYear: Int,
                           interestFromDate: Option[LocalDate] = None,
                           interestEndDate: Option[LocalDate] = None,
                           latePaymentInterestAmount: Option[BigDecimal] = None,
-                          lpiWithDunningBlock: Option[BigDecimal] = None,
+                          lpiWithDunningLock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
@@ -64,8 +64,8 @@ case class DocumentDetail(taxYear: Int,
   def outstandingAmountZero: Boolean =
     outstandingAmount.getOrElse[BigDecimal](0) == 0
 
-  def hasLpiWithDunningBlock: Boolean =
-    lpiWithDunningBlock.isDefined && lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0
+  def hasLpiWithDunningLock: Boolean =
+    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
@@ -208,7 +208,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
-  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate())
+  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 
 object DocumentDetail {
@@ -227,7 +227,7 @@ object DocumentDetail {
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
       (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
-      (__ \ "lpiWithDunningBlock").readNullable[BigDecimal] and
+      (__ \ "lpiWithDunningLock").readNullable[BigDecimal] and
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and

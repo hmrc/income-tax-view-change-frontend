@@ -121,7 +121,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         latencyDetails match {
           case Some(latencyDetails: LatencyDetails) =>
             val quarterIndicator = "Q"
-            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
             val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
             val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
             val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
@@ -138,8 +138,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
-          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
+          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
+          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
         } yield {
           Some(List(isTY1Crystallised.get, isTY2Crystallised.get))
         }

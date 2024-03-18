@@ -319,7 +319,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         ),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
-        dateService.getCurrentTaxYearEnd(),
+        dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
 
@@ -340,7 +340,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         Seq.empty,
         Seq.empty,
         Seq.empty,
-        dateService.getCurrentTaxYearEnd(),
+        dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
@@ -361,7 +361,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         Seq.empty,
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq.empty,
-        dateService.getCurrentTaxYearEnd(),
+        dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
     }

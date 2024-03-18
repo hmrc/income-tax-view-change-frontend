@@ -66,6 +66,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -74,7 +75,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       None,
       None,
       Some(getCurrentTaxYearEnd),

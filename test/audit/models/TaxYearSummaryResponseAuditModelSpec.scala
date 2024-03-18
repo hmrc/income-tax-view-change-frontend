@@ -93,11 +93,11 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
+    val currentDate: LocalDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
@@ -111,7 +111,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
           obligationType = "EOPS",
-          dateReceived = Some(LocalDate.now),
+          dateReceived = Some(fixedDate),
           periodKey = "EOPS"
         )
       )
@@ -121,7 +121,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val business = List(BusinessDetailsModel(
     "testId",
     incomeSource = Some(testIncomeSource),
-    Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+    Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
     Some("Test Trading Name"),
     None,
     Some(getCurrentTaxYearEnd),
@@ -196,7 +196,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
-      "dateSubmitted" -> LocalDate.now.toString,
+      "dateSubmitted" -> fixedDate.toString,
       "updateType" -> updateTypeEops
     ))
   )
@@ -241,7 +241,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
-      "dateSubmitted" -> LocalDate.now.toString,
+      "dateSubmitted" -> fixedDate.toString,
       "updateType" -> updateTypeEops
     ))
   )

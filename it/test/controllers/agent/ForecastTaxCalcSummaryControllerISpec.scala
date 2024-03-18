@@ -90,6 +90,7 @@ object ForecastTaxSummaryAgentControllerTestConstants {
 
 class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
     mtdbsa = testMtditid,
@@ -97,7 +98,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
@@ -108,7 +109,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),

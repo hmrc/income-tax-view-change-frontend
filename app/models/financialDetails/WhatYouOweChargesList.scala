@@ -38,9 +38,9 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
-  def hasLpiWithDunningBlock: Boolean =
-    if (overdueChargeList.exists(_.documentDetail.lpiWithDunningBlock.isDefined)
-      && overdueChargeList.exists(_.documentDetail.lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0)) true
+  def hasLpiWithDunningLock: Boolean =
+    if (overdueChargeList.exists(_.documentDetail.lpiWithDunningLock.isDefined)
+      && overdueChargeList.exists(_.documentDetail.lpiWithDunningLock.getOrElse[BigDecimal](0) > 0)) true
     else false
 
 

@@ -87,13 +87,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   implicit val dateService: DateService = new DateService {
 
-    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
+    override def getCurrentDate: LocalDate = fixedDate
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = fixedDate.getYear + 1
+    override def getCurrentTaxYearEnd: Int = fixedDate.getYear + 1
 
-    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2023, 4, 6)
+    override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2023, 4, 6)
 
-    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  LocalDate.of(2024, 4, 5)
   }

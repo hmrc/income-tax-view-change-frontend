@@ -113,8 +113,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          incomeTaxChargedOnTransitionProfits = Some(700.00),
-          totalTaxableTransitionProfit = Some(3000.00)
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
@@ -184,8 +183,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          totalTaxableTransitionProfit = Some(3000.00),
-          incomeTaxChargedOnTransitionProfits = Some(700.00)
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -194,6 +192,25 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
               totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
 
         TaxDueSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxDueSummaryViewModel
+      }
+    }
+  }
+
+  "TransitionProfitRow" when {
+    "incomeTaxCharged and totalTaxableProfit are available" should {
+      "return TransitionProfitRow" in {
+        TransitionProfitRow(Some(BigDecimal(300.00)), Some(BigDecimal(300.00))).get shouldBe TransitionProfitRow(300.00, 300.00)
+      }
+    }
+    "only one field is available" should {
+      "return None" in {
+        TransitionProfitRow(None, Some(BigDecimal(300.00))) shouldBe None
+        TransitionProfitRow(Some(BigDecimal(300.00)), None) shouldBe None
+      }
+    }
+    "all fields are missing" should {
+      "return None" in {
+        TransitionProfitRow(None, None) shouldBe None
       }
     }
   }

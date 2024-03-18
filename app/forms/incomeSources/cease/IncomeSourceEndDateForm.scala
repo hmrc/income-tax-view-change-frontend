@@ -43,7 +43,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
   val dateMustNotBeBefore6April2015 = "incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate"
 
   def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-    val currentDate: LocalDate = dateService.getCurrentDate()
+    val currentDate: LocalDate = dateService.getCurrentDate
     val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateConstraints: List[Constraint[LocalDate]] = {
 

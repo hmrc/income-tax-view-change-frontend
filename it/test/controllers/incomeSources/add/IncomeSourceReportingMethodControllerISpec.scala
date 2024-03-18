@@ -99,7 +99,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   }
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
@@ -232,7 +232,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
         elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2023-2024")
       )
     } else {
-      val currentTaxYear = dateService.getCurrentTaxYearEnd()
+      val currentTaxYear = dateService.getCurrentTaxYearEnd
       val taxYear1: Int = currentTaxYear
       val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
       result should have(
@@ -252,7 +252,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     And("Mongo storage is successfully set")
     sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
-    val currentTaxYear = dateService.getCurrentTaxYearEnd()
+    val currentTaxYear = dateService.getCurrentTaxYearEnd
     val taxYear1: Int = currentTaxYear
     val taxYear2: Int = currentTaxYear + 1
     val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"

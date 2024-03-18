@@ -30,6 +30,7 @@ import java.time.LocalDate
 class PaymentControllerISpec extends ComponentSpecBase {
 
   val url: String = "/pay-api/mtd-income-tax/sa/journey/start"
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
 
 
   val submissionJson: JsValue = Json.parse(
@@ -59,7 +60,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
             businesses = List(BusinessDetailsModel(
               "testId",
               incomeSource = Some(testIncomeSource),
-              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
               None,
               None,
               Some(getCurrentTaxYearEnd),
@@ -95,7 +96,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
             businesses = List(BusinessDetailsModel(
               "testId",
               incomeSource = Some(testIncomeSource),
-              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
               None,
               None,
               Some(getCurrentTaxYearEnd),

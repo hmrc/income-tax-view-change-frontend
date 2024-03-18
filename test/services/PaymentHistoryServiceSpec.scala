@@ -39,14 +39,14 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
   }
 
   val getCurrentTaxEndYear: Int = {
-    val currentDate = LocalDate.now
+    val currentDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
 
   val paymentFull: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-    dueDate = Some(LocalDate.now), documentDate = LocalDate.now, Some("DOCID01")))
+    dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01")))
 
   val oldUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,

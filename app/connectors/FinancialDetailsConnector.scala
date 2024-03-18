@@ -116,10 +116,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Json Validation Error: $invalid")
               FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
             },
-            valid =>{
-              Logger("application").debug(s"[FinancialDetailsConnector][getFinancialDetails] - Valid: $valid, Status: ${response.status}, json: ${response.json}")
-              valid
-            }
+            valid => valid
           )
         case status =>
           if (status >= 500) {

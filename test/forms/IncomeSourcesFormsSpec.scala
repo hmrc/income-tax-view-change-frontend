@@ -35,13 +35,13 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
 
   val testDateService = new DateServiceInterface {
 
-    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = currentDate
+    override def getCurrentDate: LocalDate = currentDate
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = currentDate.getYear
+    override def getCurrentTaxYearEnd: Int = currentDate.getYear
 
-    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = currentDate
+    override def getCurrentTaxYearStart: LocalDate = currentDate
 
-    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate):LocalDate = {
       val startDateYear = startDate.getYear

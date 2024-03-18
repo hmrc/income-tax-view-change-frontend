@@ -57,6 +57,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     None, Some("1234567890"), None, Some(Agent), Some("1")
   )(FakeRequest())
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
+
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -65,7 +67,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
@@ -76,7 +78,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),

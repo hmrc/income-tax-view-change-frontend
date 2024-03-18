@@ -22,9 +22,9 @@ sealed trait OutstandingChargesResponseModel
 
 
 case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeModel]) extends OutstandingChargesResponseModel {
-  def bcdChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "BCD")
+  def bcdChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.isBalancingChargeDebit)
 
-  def aciChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "ACI")
+  def aciChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.isAccruingInterest)
 
   def getAciChargeWithTieBreaker: Option[OutstandingChargeModel] = {
     if (bcdChargeType.isDefined

@@ -71,7 +71,7 @@ class AddIncomeSourceStartDateFormSpec extends AnyWordSpec with Matchers with Te
     }
     "bind with a valid future date" in {
       val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
-      val futureDate = dateService.getCurrentDate().plusDays(6)
+      val futureDate = dateService.getCurrentDate.plusDays(6)
       val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
 
@@ -82,7 +82,7 @@ class AddIncomeSourceStartDateFormSpec extends AnyWordSpec with Matchers with Te
     }
     "bind with a invalid future date, date greater then current date plus 6 days " in {
       val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
-      val futureDate = dateService.getCurrentDate().plusDays(7)
+      val futureDate = dateService.getCurrentDate.plusDays(7)
       val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
       completedForm.data.get("income-source-start-date.day") shouldBe Some(s"${futureDate.getDayOfMonth}")

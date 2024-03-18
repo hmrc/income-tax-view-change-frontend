@@ -249,7 +249,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url
+              .ManageObligationsController.show(isAgent = false, UkProperty, testChangeToAnnual, testTaxYear).url
           )
       }
       "the Agent's UK property reporting method is updated to annual" in {
@@ -259,7 +259,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showAgentUKProperty(testChangeToAnnual, testTaxYear).url
+              .ManageObligationsController.show(isAgent = true, UkProperty, testChangeToAnnual, testTaxYear).url
           )
       }
     }
@@ -272,7 +272,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url
+              .ManageObligationsController.show(isAgent = false, ForeignProperty, testChangeToQuarterly, testTaxYear).url
           )
       }
       "the Agent's Foreign property reporting method is updated to quarterly" in {
@@ -282,7 +282,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showAgentForeignProperty(testChangeToQuarterly, testTaxYear).url
+              .ManageObligationsController.show(isAgent = true, ForeignProperty, testChangeToQuarterly, testTaxYear).url
           )
       }
     }
@@ -295,7 +295,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url
+              .ManageObligationsController.show(isAgent = false, SelfEmployment, testChangeToAnnual, testTaxYear).url
           )
       }
       "the Agent's Foreign property reporting method is updated to annual" in {
@@ -305,7 +305,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url
+              .ManageObligationsController.show(isAgent = true, ForeignProperty, testChangeToAnnual, testTaxYear).url
           )
       }
     }

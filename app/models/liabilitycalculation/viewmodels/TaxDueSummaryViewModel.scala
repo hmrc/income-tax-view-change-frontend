@@ -19,6 +19,7 @@ package models.liabilitycalculation.viewmodels
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel.getTaxDue
 import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
+import play.api.Logger
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
@@ -56,14 +57,14 @@ case class TaxDueSummaryViewModel(
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                                   incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None,
-                                   totalTaxableTransitionProfit: Option[BigDecimal] = None
+                                   transitionProfitRow: Option[TransitionProfitRow] = None
                                  ) {
 
   def getRateHeaderKey: String = {
-    taxRegime.contains("Scotland") match {
-      case true => ".scotland"
-      case false => ".uk"
+    if (taxRegime.contains("Scotland")) {
+      ".scotland"
+    } else {
+      ".uk"
     }
   }
 
@@ -125,10 +126,30 @@ object TaxDueSummaryViewModel {
         totalAnnuityPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalAnnuityPaymentsTaxCharged),
         totalRoyaltyPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalRoyaltyPaymentsTaxCharged),
         giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers),
-        totalTaxableTransitionProfit = calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit),
-        incomeTaxChargedOnTransitionProfits = calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits)
+        transitionProfitRow = TransitionProfitRow(
+          calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits),
+          calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit))
       )
       case None => TaxDueSummaryViewModel()
     }
   }
 }
+
+object TransitionProfitRow {
+  def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[BigDecimal]): Option[TransitionProfitRow] = {
+
+    (incomeTaxCharged, totalTaxableProfit) match {
+      case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))
+      case (None, Some(_)) =>
+        Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing incomeTaxChargedOnTransitionProfits")
+        None
+      case (Some(_), None) =>
+        Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing totalTaxableTransitionProfit")
+        None
+      case _ => None
+    }
+  }
+}
+
+case class TransitionProfitRow(incomeTaxCharged: BigDecimal, totalTaxableProfit: BigDecimal)
+

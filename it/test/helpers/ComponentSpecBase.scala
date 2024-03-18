@@ -64,13 +64,13 @@ class TestHeaderExtractor extends HeaderExtractor {
 @Singleton
 class TestDateService extends DateServiceInterface {
 
-  override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+  override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-  override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean = false): Boolean = true
+  override def isBeforeLastDayOfTaxYear: Boolean = true
 
-  override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = 2023
+  override def getCurrentTaxYearEnd: Int = 2023
 
-  override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2022, 4, 6)
+  override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
 
   override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
@@ -103,9 +103,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {
-    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
+    override def getCurrentTaxYearEnd: Int = 2023
   }
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
@@ -894,6 +894,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-foreign-property-cannot-go-back")
 
     def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
+
+    def getViewAllCeasedBusinesses: WSResponse = get("/manage-your-businesses/ceased-businesses")
   }
 
   def unauthorisedTest(uri: String): Unit = {

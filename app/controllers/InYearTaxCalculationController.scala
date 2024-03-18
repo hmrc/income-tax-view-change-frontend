@@ -92,7 +92,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
 
   def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = false,
         currentDate,
@@ -103,7 +103,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
 
   def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = true,
         currentDate,

@@ -166,7 +166,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
 
       "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(
-        financialDetailsModel(lpiWithDunningBlock = None)) {
+        financialDetailsModel(lpiWithDunningLock = None)) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
         val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -178,7 +178,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
 
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
-        financialDetailsModel(lpiWithDunningBlock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
+        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
         val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
@@ -367,7 +367,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
 
       "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(
-        financialDetailsModel(lpiWithDunningBlock = None), isAgent = true) {
+        financialDetailsModel(lpiWithDunningLock = None), isAgent = true) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
@@ -379,7 +379,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
 
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
-        financialDetailsModel(lpiWithDunningBlock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
+        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
 
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 

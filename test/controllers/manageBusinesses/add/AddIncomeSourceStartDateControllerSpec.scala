@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
   val testStartDate: LocalDate = LocalDate.of(2022, 1, 1)
 
-  val currentDate = dateService.getCurrentDate()
+  val currentDate = dateService.getCurrentDate
 
   val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
     .longDate(currentDate.plusWeeks(1).plusDays(1))
@@ -91,8 +91,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
     case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
     case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
     case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    case (false, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-    case (_, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
+    case (false, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
+    case (_, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
     case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
     case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
     case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)

@@ -46,6 +46,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
     None, Some("1234567890"), None, Some(Agent), Some("1")
   )(FakeRequest())
+  lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 
@@ -56,7 +57,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
@@ -67,7 +68,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),
