@@ -12,9 +12,6 @@
 
 # Add all the application routes to the prod.routes file
 
-## Test only assets using this route
-GET         /report-quarterly/income-and-expenses/view/test-only/assets/*filePath                     testOnly.controllers.TestOnlyAssetsController.at(filePath: String)
-
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.show
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.submit
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-client/nino/:nino/utr/:utr      testOnly.controllers.StubClientDetailsController.submitWithParams(nino: String, utr: String)
