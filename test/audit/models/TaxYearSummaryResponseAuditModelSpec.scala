@@ -21,8 +21,8 @@ import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
@@ -44,9 +44,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
   val updateTypeEops: String = messages("updateTab.updateType.eops")
 
-  def taxYearSummaryViewModel(forecastIncome: Option[Int] = None,
-                              forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                              forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+  def calculationSummary(forecastIncome: Option[Int] = None,
+                         forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                         forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = false,
@@ -59,9 +59,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
-  def taxYearSummaryViewModelUnattendedCalc(forecastIncome: Option[Int] = None,
-                                            forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+  def unattendedCalcSummary(forecastIncome: Option[Int] = None,
+                            forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = true,
@@ -218,7 +218,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "taxableIncome" -> None,
       "taxDue" -> None,
       "totalAllowancesAndDeductions" -> None
-  ),
+    ),
     "calculation" -> Json.obj(
       "income" -> 199505,
       "allowancesAndDeductions" -> 500,
@@ -265,14 +265,14 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      payments = payments(paymentHasADunningLock),
-      updates = updates,
       messagesApi = messagesApi,
-      taxYearSummaryViewModel = Some(taxYearSummaryViewModel(
-        forecastIncome = forecastIncome,
-        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-        forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ),
+      taxYearSummaryViewModel = TaxYearSummaryViewModel(
+        calculationSummary = Some(calculationSummary(
+          forecastIncome = forecastIncome,
+          forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+          forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
+        ), charges = payments(paymentHasADunningLock),
+        obligations = updates, codingOutEnabled = true),
       messages
     )
 
@@ -294,14 +294,13 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      payments = payments(paymentHasADunningLock),
-      updates = updates,
       messagesApi = messagesApi,
-      taxYearSummaryViewModel = Some(taxYearSummaryViewModelUnattendedCalc(
+      taxYearSummaryViewModel = TaxYearSummaryViewModel(Some(unattendedCalcSummary(
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ),
+      ), charges = payments(paymentHasADunningLock),
+        obligations = updates, showForecastData = true, codingOutEnabled = true)
     )
 
   def errorAuditResponseJson(auditResponse: JsObject, messages: Option[Messages]): JsObject = {
