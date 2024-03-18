@@ -68,7 +68,7 @@
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
-    <script src="/report-quarterly/income-and-expenses/view/assets/javascripts/optOutCustomData.js"></script>
+    <script src="@testOnly.controllers.routes.TestOnlyAssetsController.at("optOutCustomData.js")"></script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
