@@ -44,7 +44,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001"),
     paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -8000.0, lotItem = "000001")
   )
-  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request", None))
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
