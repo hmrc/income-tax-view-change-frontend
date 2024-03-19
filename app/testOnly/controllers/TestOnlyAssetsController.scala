@@ -16,43 +16,32 @@
 
 package testOnly.controllers
 
-import com.google.inject.AbstractModule
-
-import java.io.{File, InputStream}
-import javax.inject.{Inject, Provider}
-import java.nio.file.{Files, Path}
-import scala.concurrent.ExecutionContext
-import controllers.{AssetEncoding, AssetsBuilder, AssetsConfiguration, AssetsMetadata, DefaultAssetsMetadata}
+import controllers.{AssetEncoding, AssetsBuilder, DefaultAssetsMetadata}
 import play.api.Environment
-import play.api.http.{DefaultFileMimeTypesProvider, FileMimeTypes, FileMimeTypesConfiguration, HttpErrorHandler}
-import uk.gov.hmrc.hmrcfrontend.controllers.Assets
+import play.api.http.HttpErrorHandler
 
 import javax.inject.Inject
-import scala.collection.Seq
 
-class Assets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsMetadata, env: Environment) extends AssetsBuilder(errorHandler, meta, env)
+case class AssetsConfiguration(
+                                path: String = "/testOnlyPublic",
+                                urlPrefix: String = "/assets",
+                                defaultCharSet: String = "utf-8",
+                                enableCaching: Boolean = true,
+                                enableCacheControl: Boolean = false,
+                                configuredCacheControl: Map[String, Option[String]] = Map.empty,
+                                defaultCacheControl: String = "public, max-age=3600",
+                                aggressiveCacheControl: String = "public, max-age=31536000, immutable",
+                                digestAlgorithm: String = "md5",
+                                checkForMinified: Boolean = true,
+                                textContentTypes: Set[String] = Set("application/json", "application/javascript"),
+                                encodings: Seq[AssetEncoding] = Seq(
+                                  AssetEncoding.Brotli,
+                                  AssetEncoding.Gzip,
+                                  AssetEncoding.Xz,
+                                  AssetEncoding.Bzip2
+                                )
+                              )
 
-
-
-val x: AssetsConfiguration = AssetsConfiguration(
-                                         path = "/public",
-                                         urlPrefix: String = "/assets",
-                                         defaultCharSet: String = "utf-8",
-                                         enableCaching: Boolean = true,
-                                         enableCacheControl: Boolean = false,
-                                         configuredCacheControl: Map[String, Option[String]] = Map.empty,
-                                         defaultCacheControl: String = "public, max-age=3600",
-                                         aggressiveCacheControl: String = "public, max-age=31536000, immutable",
-                                         digestAlgorithm: String = "md5",
-                                         checkForMinified: Boolean = true,
-                                         textContentTypes: Set[String] = Set("application/json", "application/javascript"),
-                                         encodings: Seq[AssetEncoding] = Seq(
-                                           AssetEncoding.Brotli,
-                                           AssetEncoding.Gzip,
-                                           AssetEncoding.Xz,
-                                           AssetEncoding.Bzip2
-                                         )
-                                       )
-
-
+val a = AssetsConfiguration
+class TestOnlyAssetsController @Inject()(errorHandler: HttpErrorHandler, a: AssetsConfiguration, meta: DefaultAssetsMetadata, env: Environment) extends AssetsBuilder(errorHandler, meta, env)
 
