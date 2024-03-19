@@ -28,6 +28,8 @@ import scala.util.Try
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
 
+  val a = config.get()
+
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
