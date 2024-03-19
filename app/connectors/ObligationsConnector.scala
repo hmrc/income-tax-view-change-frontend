@@ -21,7 +21,7 @@ import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ObligationsConnector @Inject()(val http: HttpClient,
                                      val auditingService: AuditingService,
                                      val appConfig: FrontendAppConfig
-                                    )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                    )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getReportDeadlinesUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
@@ -47,8 +47,6 @@ class ObligationsConnector @Inject()(val http: HttpClient,
   def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
   }
-
-  private val logger: Logger = Logger(this.getClass)
 
   def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
