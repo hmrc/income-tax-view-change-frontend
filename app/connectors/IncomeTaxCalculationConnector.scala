@@ -35,6 +35,8 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
+  private val logger: Logger = Logger(this.getClass)
+
   def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
@@ -44,7 +46,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
-              Logger("application").error(
+              logger.error(
                 s"[IncomeTaxCalculationConnector][getCalculationResponse] - Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
@@ -52,9 +54,9 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status},body: ${response.body}")
+            logger.error(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status},body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }
@@ -70,7 +72,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
-              Logger("application").error(
+              logger.error(
                 s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
@@ -78,10 +80,10 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(
+            logger.error(
               s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status},body: ${response.body}")
           } else {
-            Logger("application").warn(
+            logger.warn(
               s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)

@@ -44,6 +44,8 @@ class CalculationListConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
   }
 
+  private val logger: Logger = Logger(this.getClass)
+
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
@@ -56,7 +58,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error("[IncomeTaxViewChangeConnector][getLegacyCalculationList] - " +
+              logger.error("[IncomeTaxViewChangeConnector][getLegacyCalculationList] - " +
                 s"Json validation error parsing legacy calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
             },
@@ -64,9 +66,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
       }
@@ -85,7 +87,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error("[IncomeTaxViewChangeConnector][getCalculationList] - " +
+              logger.error("[IncomeTaxViewChangeConnector][getCalculationList] - " +
                 s"Json validation error parsing calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
             },
@@ -93,9 +95,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
       }
