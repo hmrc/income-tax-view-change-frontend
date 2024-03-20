@@ -23,7 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
-import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
+import models.homePage.{HomeControllerViewModel, PaymentCreditAndRefundHistoryTileViewModel}
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -60,9 +60,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html =
-    homeView(
-      origin = origin,
+                  (implicit user: MtdItUser[_]): Html = {
+    homeView(origin = origin,
       utr = user.saUtr,
       isAgent = isAgent,
       currentTaxYear = currentTaxYear,
@@ -78,7 +77,29 @@ class HomeController @Inject()(val homeView: views.html.Home,
       incomeSourcesNewJourneyEnabled = isEnabled(IncomeSourcesNewJourney),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
+//      HomeControllerViewModel(
+//        origin,
+//        user.saUtr,
+//        isAgent,
+//        currentTaxYear,
+//        dunningLockExists,
+//        nextPaymentDueDate,
+//        overDuePaymentsCount,
+//        displayCeaseAnIncome,
+//        isEnabled(IncomeSources),
+//        nextUpdatesTileViewModel,
+//        isEnabled(CreditsRefundsRepay),
+//        isEnabled(PaymentHistoryRefunds),
+//        user.incomeSources.yearOfMigration.isDefined,
+//        isEnabled(IncomeSourcesNewJourney),
+//        isEnabled(ITSASubmissionIntegration),
+//        paymentCreditAndRefundHistoryTileViewModel
+//    )
     )
+  }
+
+//  def viewModel: HomeControllerViewModel = HomeControllerViewModel(
+//  )
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
