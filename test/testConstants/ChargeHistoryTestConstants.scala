@@ -87,7 +87,8 @@ object ChargeHistoryTestConstants {
         "documentDescription" -> "Balancing Charge",
         "totalAmount" -> 123456789012345.67,
         "reversalDate" -> "2020-02-24",
-        "reversalReason" -> "amended return"
+        "reversalReason" -> "amended return",
+        "poaAdjustmentReason" -> "005"
       )))
 
   val testInvalidChargeHistoryDetailsModelJson: JsValue = Json.obj(
