@@ -94,10 +94,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", None)
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("003"))
 
   paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request", None)
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("004"))
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
     chargeHistoryModel2)
