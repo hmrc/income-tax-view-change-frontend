@@ -1446,24 +1446,16 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Check your answers
-cease-check-answers.heading                                   = Sole trader
+cease-check-answers.caption                                   = Sole trader
 cease-check-answers.cease-date                                = Date business stopped
 cease-check-answers.business-name                             = Business name
 cease-check-answers.trade                                     = Business trade
 cease-check-answers.address                                   = Address
-cease-check-answers.change                                    = Change
 cease-check-answers.unknown                                   = Unknown
+cease-check-answers.change                                    = Change
 
-
-cease-check-answers-uk.title                                  = Check your answers
-cease-check-answers-uk.heading                                = UK property
-cease-check-answers-uk.cease-date                             = Date business stopped
-cease-check-answers-uk.change                                 = Change
-
-cease-check-answers-fp.title                                  = Check your answers
-cease-check-answers-fp.heading                                = Foreign property
-cease-check-answers-fp.cease-date                             = Date business stopped
-cease-check-answers-fp.change                                 = Change
+cease-check-answers-uk.caption                                = UK property
+cease-check-answers-fp.caption                                = Foreign property
 
 # check business details
 check-details.title                                     = Check your answers
