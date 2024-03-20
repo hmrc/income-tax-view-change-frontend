@@ -18,7 +18,7 @@ package testOnly.controllers
 
 import play.api.Logger
 import play.api.mvc._
-import testOnly.utils.FileUtil.getUsersFromContent
+import testOnly.utils.FileUtil.getFileFromPath
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext
 class TestOnlyAssetsController @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def at(filePath: String): Action[AnyContent] = Action {
-    getUsersFromContent(s"/data/$filePath") match {
+    getFileFromPath(s"/data/$filePath") match {
       case Right(content) =>
         Logger("application").info(s"[TestOnlyAssetsController] - can read content")
         Ok(content).as("text/javascript")

@@ -37,7 +37,7 @@ object FileUtil {
     }.toEither
   }
 
-  def getUsersFromContent(path: String): Either[Throwable, String] = {
+  def getFileFromPath(path: String): Either[Throwable, String] = {
     Try {
       val resource = Play.getClass.getResourceAsStream(path)
       scala.io.Source.fromInputStream(resource).mkString("")
