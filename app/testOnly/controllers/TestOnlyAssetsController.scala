@@ -26,12 +26,10 @@ import scala.concurrent.ExecutionContext
 class TestOnlyAssetsController @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def at(filePath: String): Action[AnyContent] = Action {
-    //val file = new File(s"publicTestOnly/$filePath")
     getUsersFromContent(s"/data/$filePath") match {
       case Right(content) =>
         Logger("application").info(s"[TestOnlyAssetsController] - can read content")
-
-        Ok(content)
+        Ok(content).as("text/javascript")
       case Left(ex) =>
         Logger("application").error(s"[TestOnlyAssetsController] - ${filePath} - ${ex}")
         NotFound
