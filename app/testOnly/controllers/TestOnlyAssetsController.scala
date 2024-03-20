@@ -16,19 +16,25 @@
 
 package testOnly.controllers
 
-import java.io.File
-import javax.inject.Inject
+import play.api.Logger
 import play.api.mvc._
+import testOnly.utils.FileUtil.getUsersFromContent
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class TestOnlyAssetsController @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def at(filePath: String): Action[AnyContent] = Action {
-    val file = new File(s"publicTestOnly/$filePath")
-    if (file.exists())
-      Ok.sendFile(content = file, inline = true)
-    else
-      NotFound
+    //val file = new File(s"publicTestOnly/$filePath")
+    getUsersFromContent(s"/data/$filePath") match {
+      case Right(content) =>
+        Logger("application").info(s"[TestOnlyAssetsController] - can read content")
+
+        Ok(content)
+      case Left(ex) =>
+        Logger("application").error(s"[TestOnlyAssetsController] - ${filePath} - ${ex}")
+        NotFound
+    }
   }
 }

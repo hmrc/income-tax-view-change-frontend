@@ -37,6 +37,13 @@ object FileUtil {
     }.toEither
   }
 
+  def getUsersFromContent(path: String): Either[Throwable, String] = {
+    Try {
+      val resource = Play.getClass.getResourceAsStream(path)
+      scala.io.Source.fromInputStream(resource).mkString("")
+    }.toEither
+  }
+
   def getUserCredentials(nino: String, userRepository: UserRepository)(implicit executor: ExecutionContext): Future[UserCredentials] = {
     userRepository.findUser(nino).map {
       case record: UserRecord =>
