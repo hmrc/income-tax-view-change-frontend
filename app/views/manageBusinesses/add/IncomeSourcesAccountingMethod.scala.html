@@ -15,15 +15,11 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
-@import enums.IncomeSourceJourney.SelfEmployment
-@import enums.IncomeSourceJourney.IncomeSourceType
-@import enums.IncomeSourceJourney.ForeignProperty
-@import enums.IncomeSourceJourney.UkProperty
+@import views.html.layouts.unifiedLayout
 
 @this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,

@@ -21,7 +21,7 @@
 @import views.html.components.dateInput
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
-@import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
@@ -37,11 +37,21 @@
 }
 }
 
+@incomeSourceTypeCaption = @{
+    messages(s"incomeSources.cease.${incomeSourceType.messagesSuffix}")
+}
+
+@captionId = @{
+    s"${incomeSourceType.endDateMessagePrefix}-caption"
+}
+
 @mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = incomeSourceEndDateForm
     )
+
+    <span class="govuk-caption-l" id="@captionId">@incomeSourceTypeCaption</span>
 
     @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
