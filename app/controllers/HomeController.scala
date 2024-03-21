@@ -23,7 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
-import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
+import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -57,28 +57,25 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                   paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
-                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html =
-    homeView(
-      origin = origin,
+  private def view(nextUpdatesTileViewModel: NextUpdatesTileViewModel, nextPaymentsTileViewModel: NextPaymentsTileViewModel, returnsTileViewModel: ReturnsTileViewModel,
+                   paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, yourBusinessesTileViewModel: YourBusinessesTileViewModel,
+                   dunningLockExists: Boolean, isAgent: Boolean, origin: Option[String] = None)
+                  (implicit user: MtdItUser[_]): Html = {
+    val homeViewModel = HomePageViewModel(
       utr = user.saUtr,
-      isAgent = isAgent,
-      currentTaxYear = currentTaxYear,
-      dunningLockExists = dunningLockExists,
-      nextPaymentDueDate = nextPaymentDueDate,
-      overDuePaymentsCount = overDuePaymentsCount,
-      displayCeaseAnIncome = displayCeaseAnIncome,
-      incomeSourcesEnabled = isEnabled(IncomeSources),
+      nextPaymentsTileViewModel = nextPaymentsTileViewModel,
+      returnsTileViewModel = returnsTileViewModel,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-      paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
-      isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-      incomeSourcesNewJourneyEnabled = isEnabled(IncomeSourcesNewJourney),
-      ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+      yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+      dunningLockExists = dunningLockExists,
+      origin = origin
     )
+    homeView(
+      homeViewModel,
+      isAgent = isAgent
+    )
+  }
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -120,15 +117,21 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
 
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
+        isEnabled(IncomeSourcesNewJourney))
+
+      val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentsDueMerged, Some(overDuePaymentsCount))
+
+      val returnsTileViewModel = ReturnsTileViewModel(dateService.getCurrentTaxYearEnd, isEnabled(ITSASubmissionIntegration))
+
       Ok(view(
         isAgent = isAgent,
         dunningLockExists = dunningLockExists,
-        nextPaymentDueDate = paymentsDueMerged,
-        currentTaxYear = dateService.getCurrentTaxYearEnd,
-        overDuePaymentsCount = Some(overDuePaymentsCount),
         nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-        displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome,
-        paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
+        paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+        yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+        nextPaymentsTileViewModel = nextPaymentsTileViewModel,
+        returnsTileViewModel = returnsTileViewModel
       ))
     }
 
