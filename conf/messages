@@ -1369,8 +1369,6 @@ incomeSources.add.FP.AccountingMethod.radio-2-hint            = You record on th
 incomeSources.add.FP.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
-incomeSources.add.FP.AccountingMethod.no-selection            = Enter the accounting method you use for your foreign property business
-
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.caption               = UK property business you entered
@@ -1433,7 +1431,8 @@ incomeSources.add.SE.AccountingMethod.radio-2-hint            = You record on th
 incomeSources.add.SE.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
-incomeSources.add.SE.AccountingMethod.no-selection            = Enter the accounting method you use for your sole trader business
+
+incomeSources.add.AccountingMethod.no-selection               = Select if you use cash or standard accounting
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
 incomeSources.ceaseBusiness.checkDetails.caption                    = Sole trader business
@@ -1600,7 +1599,6 @@ incomeSources.add.UK.AccountingMethod.radio-2-hint            = You record on th
 incomeSources.add.UK.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
 incomeSources.add.UK.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.UK.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
-incomeSources.add.UK.AccountingMethod.no-selection            = Enter the accounting method you use for your UK property business
 
 # Income source reporting method
 incomeSources.add.incomeSourceReportingMethod.heading                   =   Choose a reporting method
