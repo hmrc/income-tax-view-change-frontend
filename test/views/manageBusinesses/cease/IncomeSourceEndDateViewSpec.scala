@@ -87,15 +87,15 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
   "BusinessEndDateView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
-      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages(s"$ceasePrefix.${SelfEmployment.prefix}")
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
-      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages(s"$ceasePrefix.${ForeignProperty.prefix}")
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
-      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages(s"$ceasePrefix.${UkProperty.prefix}")
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
     "render the hint" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
@@ -126,15 +126,15 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
   "BusinessEndDateView - Agent" should {
     "render the heading - Self employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
-      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages(s"$ceasePrefix.${SelfEmployment.prefix}")
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
     }
     "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
-      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages(s"$ceasePrefix.${ForeignProperty.prefix}")
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
     }
     "render the heading - Uk Property " in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
-      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages(s"$ceasePrefix.${UkProperty.prefix}")
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
     "render the hint" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
