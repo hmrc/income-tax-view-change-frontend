@@ -19,7 +19,7 @@ package views
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType, PaymentType, Repayment, SetOffCharge, SetOffChargeInterest}
+import models.financialDetails._
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
@@ -83,41 +83,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   }
 
-  val allEntryTypes = List(
-    (2020, List(
-      PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-24", creditType = CutOverCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-23", creditType = BalancingChargeCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-22", creditType = SetOffCharge, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-21", creditType = SetOffChargeInterest, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-20", creditType = PaymentType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-12-19", creditType = Repayment, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
-    (2021, List(
-      PaymentHistoryEntry(date = "2019-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2018-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
-    (2022, List(
-      PaymentHistoryEntry(date = "2019-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2019-09-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
-  )
+
 
   val paymentEntriesMFA = List(
     (2020, List(
       PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
       PaymentHistoryEntry(date = "2020-04-13", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-04-13", creditType = SetOffCharge, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
     (2021, List(
       PaymentHistoryEntry(date = "2019-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
@@ -168,19 +140,35 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "the user has payment history for a single Year" should {
 
-//          s"display correct content" in new PaymentHistorySetup(paymentEntriesMFA) {
-//            val sectionContent: Element = layoutContent.selectHead(s"#accordion-default-content-1")
-//            val tbody = sectionContent.selectHead("table > tbody")
-//            payments.zipWithIndex.foreach {
-//              case (payment, index) =>
-//                val row = tbody.selectNth("tr", index + 1)
-//                row.selectNth("td", 1).text shouldBe payment.date.toLongDate
-//                row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
-//                  s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
-//                row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
-//                row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
-//            }
-//        }
+
+          val entry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+          linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
+
+          s"display correct content" in new PaymentHistorySetup(List(
+            (2020, List(
+              entry,
+              entry.copy(date = "2020-12-24", creditType = CutOverCreditType)(dateServiceInterface),
+              entry.copy(date = "2020-12-23", creditType = BalancingChargeCreditType)(dateServiceInterface),
+              entry.copy(date = "2020-12-22", creditType = SetOffCharge)(dateServiceInterface),
+              entry.copy(date = "2020-12-21", creditType = SetOffChargeInterest)(dateServiceInterface),
+              entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
+              entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
+
+            def getContent(row: Int): String = {
+              val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+              val tbody = sectionContent.selectHead("table > tbody")
+              val rowHtml = tbody.selectNth("tr", row + 1)
+              rowHtml.selectNth("td", 2).select("a.govuk-link").first().ownText()
+            }
+
+            getContent(0) shouldBe "Credit from HMRC adjustment"
+            getContent(1) shouldBe "Credit from an earlier tax year"
+            getContent(2) shouldBe "Credit from overpaid tax"
+            getContent(3) shouldBe "Credit from a set-off charge"
+            getContent(4) shouldBe "Credit interest from a set-off charge"
+            getContent(5) shouldBe "Payment you made to HMRC"
+            getContent(6) shouldBe "Refund issued"
+        }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
           new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, true)) {
