@@ -57,26 +57,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def view(nextUpdatesTileViewModel: NextUpdatesTileViewModel, nextPaymentsTileViewModel: NextPaymentsTileViewModel, returnsTileViewModel: ReturnsTileViewModel,
-                   paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, yourBusinessesTileViewModel: YourBusinessesTileViewModel,
-                   dunningLockExists: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
-    val homeViewModel = HomePageViewModel(
-      utr = user.saUtr,
-      nextPaymentsTileViewModel = nextPaymentsTileViewModel,
-      returnsTileViewModel = returnsTileViewModel,
-      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-      yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-      dunningLockExists = dunningLockExists,
-      origin = origin
-    )
-    homeView(
-      homeViewModel,
-      isAgent = isAgent
-    )
-  }
-
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(isAgent = false, origin)
@@ -90,24 +70,24 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent)
-      case Left(ex)                                   => handleErrorGettingDueDates(ex, isAgent)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
+      case Left(ex) => handleErrorGettingDueDates(ex, isAgent)
     } recover {
       case ex =>
         Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
 
-  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean)
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean, origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
-      unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-      paymentsDue                = getDueDates(unpaidCharges)
-      dunningLockExists          = hasDunningLock(unpaidCharges)
-      outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
-      outstandingChargeDueDates  = getRelevantDates(outstandingChargesModel)
-      overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      paymentsDue = getDueDates(unpaidCharges)
+      dunningLockExists = hasDunningLock(unpaidCharges)
+      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
+      outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
+      overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
@@ -124,14 +104,19 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(dateService.getCurrentTaxYearEnd, isEnabled(ITSASubmissionIntegration))
 
-      Ok(view(
-        isAgent = isAgent,
-        dunningLockExists = dunningLockExists,
+      val homeViewModel = HomePageViewModel(
+        utr = user.saUtr,
+        nextPaymentsTileViewModel = nextPaymentsTileViewModel,
+        returnsTileViewModel = returnsTileViewModel,
         nextUpdatesTileViewModel = nextUpdatesTileViewModel,
         paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
         yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-        nextPaymentsTileViewModel = nextPaymentsTileViewModel,
-        returnsTileViewModel = returnsTileViewModel
+        dunningLockExists = dunningLockExists,
+        origin = origin
+      )
+      Ok(homeView(
+        homeViewModel,
+        isAgent = isAgent
       ))
     }
 
@@ -152,7 +137,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     ) map {
       case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
         outstandingCharges.filter(_.isBalancingChargeDebit)
-                          .filter(_.relevantDueDate.isDefined)
+          .filter(_.relevantDueDate.isDefined)
       case _ => Nil
     }
 
@@ -179,6 +164,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def handleErrorGettingDueDates(ex: Throwable, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-    Future.successful { errorHandler(isAgent).showInternalServerError() }
+    Future.successful {
+      errorHandler(isAgent).showInternalServerError()
+    }
   }
 }
