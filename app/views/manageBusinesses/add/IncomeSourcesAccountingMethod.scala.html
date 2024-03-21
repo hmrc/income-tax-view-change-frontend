@@ -22,6 +22,8 @@
 @import views.html.helpers.injected.ErrorSummary
 @import enums.IncomeSourceJourney.SelfEmployment
 @import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.ForeignProperty
+@import enums.IncomeSourceJourney.UkProperty
 
 @this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -61,6 +63,18 @@
     }
 }
 
+    @incomeSourceTypeCaption = @{
+        incomeSourcesType match {
+            case SelfEmployment => messages("incomeSources.add.sole-trader")
+            case UkProperty => messages("incomeSources.add.uk-property")
+            case ForeignProperty => messages("incomeSources.add.foreign-property")
+        }
+    }
+
+    @captionId = @{
+       s"$prefix-caption"
+    }
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -72,6 +86,8 @@
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
         @errorSummary(form)
+
+        <span class="govuk-caption-l" id="@captionId">@incomeSourceTypeCaption</span>
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
