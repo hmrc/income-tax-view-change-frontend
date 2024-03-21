@@ -15,7 +15,7 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
 @import views.html.helpers.injected.ErrorSummary
@@ -33,9 +33,9 @@
     inputRadios: input_radios,
     detailsDropdown: detailsDropdown)
 
-@(cashOrAccrualsFlag: Option[String] = None, incomeSourcesType: IncomeSourceType, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(cashOrAccrualsFlag: Option[String] = None, incomeSourceType: IncomeSourceType, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@prefix = @{"incomeSources.add." + incomeSourcesType.key + ".AccountingMethod"}
+@prefix = @{"incomeSources.add." + incomeSourceType.key + ".AccountingMethod"}
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
@@ -52,7 +52,7 @@
 }
 
 @hintContent = {
-    @if(incomeSourcesType == SelfEmployment) {
+    @if(incomeSourceType == SelfEmployment) {
         <br><div>@getMessage("hint")</div></br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>
     } else {
         <br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>
@@ -60,11 +60,7 @@
 }
 
     @incomeSourceTypeCaption = @{
-        incomeSourcesType match {
-            case SelfEmployment => messages("incomeSources.add.sole-trader")
-            case UkProperty => messages("incomeSources.add.uk-property")
-            case ForeignProperty => messages("incomeSources.add.foreign-property")
-        }
+       messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}")
     }
 
     @captionId = @{
