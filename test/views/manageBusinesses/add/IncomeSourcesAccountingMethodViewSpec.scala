@@ -37,6 +37,8 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   val prefixUKProperty: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"
   val prefixForeignProperty: String = "incomeSources.add." + ForeignProperty.key + ".AccountingMethod"
 
+  val errorMessageKey: String = "incomeSources.add.AccountingMethod.no-selection"
+
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
@@ -106,10 +108,10 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl
     }
     "render the input error for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
-      document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"$prefix.no-selection")
+      document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " xxxx" +
+        messages(s"$errorMessageKey")
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"$prefix.no-selection")
+      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"$errorMessageKey")
     }
   }
 
