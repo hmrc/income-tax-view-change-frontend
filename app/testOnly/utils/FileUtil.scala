@@ -24,19 +24,6 @@ import scala.util.Try
 
 object FileUtil {
 
-  def getUsersFromFile(path: String): Either[Throwable, List[UserRecord]] = {
-    Try {
-      val resource = Play.getClass.getResourceAsStream(path)
-      val lines = scala.io.Source.fromInputStream(resource).mkString("").split("\n").toList
-      lines.flatMap(line => {
-        Try {
-          val recs = line.split('$')
-          UserRecord(recs(0), recs(1), recs(2), recs(3))
-        }.toOption
-      })
-    }.toEither
-  }
-
   def getFileFromPath(path: String): Either[Throwable, String] = {
     Try {
       val resource = Play.getClass.getResourceAsStream(path)
