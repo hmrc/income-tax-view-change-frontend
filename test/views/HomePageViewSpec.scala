@@ -19,7 +19,7 @@ package views
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, TimeMachineAddYear}
-import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
+import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -114,25 +114,28 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled)
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = currentTaxYear, ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentDueDate, overDuePaymentsCount)
+
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
+
+    val homePageViewModel = HomePageViewModel(
+      utr = utr,
+      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+      returnsTileViewModel = returnsTileViewModel,
+      nextPaymentsTileViewModel = nextPaymentsTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+      yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+      dunningLockExists = dunningLockExists
+    )
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
-      nextPaymentDueDate = paymentDueDate,
-      overDuePaymentsCount = overDuePaymentsCount,
-      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-      utr = utr,
-      ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      dunningLockExists = dunningLockExists,
-      displayCeaseAnIncome = displayCeaseAnIncome,
-      incomeSourcesEnabled = incomeSourcesEnabled,
-      incomeSourcesNewJourneyEnabled = incomeSourcesNewJourneyEnabled,
-      currentTaxYear = currentTaxYear,
-      isAgent = isAgent,
-      creditAndRefundEnabled = creditAndRefundEnabled,
-      paymentHistoryEnabled = paymentHistoryEnabled,
-      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
+      homePageViewModel,
+      isAgent
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
