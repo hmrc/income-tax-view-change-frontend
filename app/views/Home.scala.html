@@ -286,16 +286,16 @@ viewModel: HomePageViewModel,
     @home_tile("returns-tile", messages("home.tax-years.heading")) {
         @p(classes = "govuk-!-margin-bottom-4") {
             @link(
-                link = getReturnHref(viewModel.returnsTileViewModel.currentTaxYear),
-                messageKey = messages(s"home${if(isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear}")
+                link = getReturnHref(viewModel.returnsTileViewModel.currentTaxYear.endYear),
+                messageKey = messages(s"home${if(isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
 
             )
         }
         @p(classes = "govuk-!-margin-bottom-4") {
             @if(viewModel.returnsTileViewModel.ITSASubmissionIntegrationEnabled) {
                 @link(
-                    link = appConfig.submissionFrontendTaxYearsPage(viewModel.returnsTileViewModel.currentTaxYear),
-                    messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear}")
+                    link = appConfig.submissionFrontendTaxYearsPage(viewModel.returnsTileViewModel.currentTaxYear.endYear),
+                    messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
 
                 )
             }

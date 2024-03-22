@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, TimeMachineAddYear}
 import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -114,7 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
-    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = currentTaxYear, ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear), ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentDueDate, overDuePaymentsCount)
 

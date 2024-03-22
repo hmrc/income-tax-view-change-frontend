@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
+import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -92,8 +93,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
 
-      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
-
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
@@ -102,7 +101,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentsDueMerged, Some(overDuePaymentsCount))
 
-      val returnsTileViewModel = ReturnsTileViewModel(dateService.getCurrentTaxYearEnd, isEnabled(ITSASubmissionIntegration))
+      val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
       val homeViewModel = HomePageViewModel(
         utr = user.saUtr,
@@ -114,6 +113,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         dunningLockExists = dunningLockExists,
         origin = origin
       )
+      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
       Ok(homeView(
         homeViewModel,
         isAgent = isAgent

@@ -16,6 +16,7 @@
 
 package models.homePage
 
+import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.NextUpdatesTileViewModel
 
 import java.time.LocalDate
@@ -31,7 +32,7 @@ case class HomePageViewModel(utr: Option[String],
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int])
 
-case class ReturnsTileViewModel(currentTaxYear: Int, ITSASubmissionIntegrationEnabled: Boolean)
+case class ReturnsTileViewModel(currentTaxYear: TaxYear, ITSASubmissionIntegrationEnabled: Boolean)
 
 case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSourcesEnabled: Boolean,
                                        incomeSourcesNewJourneyEnabled: Boolean)

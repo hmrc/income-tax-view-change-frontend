@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
 import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -109,7 +109,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
-    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = currentTaxYear, ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear), ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount)
 
