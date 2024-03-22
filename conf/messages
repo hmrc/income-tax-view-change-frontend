@@ -1353,6 +1353,10 @@ incomeSources.cease.endDate.selfEmployment.beforeEarliestDate      = The date yo
 incomeSources.cease.endDate.ukProperty.beforeEarliestDate          = The date your UK property business stopped cannot be earlier than the 6th of April 2015
 incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = The date your foreign property business stopped cannot be earlier than the 6th of April 2015
 
+incomeSources.cease.endDate.selfEmployment.hint-1                  = The date your sole trader business stopped cannot be earlier than the 6th of April 2015
+incomeSources.cease.endDate.ukProperty.hint-1                      = The date your UK property business stopped cannot be earlier than the 6th of April 2015
+incomeSources.cease.endDate.foreignProperty.hint-1                 = The date your foreign property business stopped cannot be earlier than the 6th of April 2015
+
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.

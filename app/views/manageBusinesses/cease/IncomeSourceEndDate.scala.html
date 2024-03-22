@@ -32,9 +32,14 @@
 }
 
 @getHintContent = {
-@p(classes = "govuk-hint") {
-    @messages("dateForm.hint")
-}
+    @p(classes = "govuk-hint") {
+        @messages("dateForm.hint")
+    }
+    @if(!(incomeSourceType == SelfEmployment)){
+        @p(classes = "govuk-hint") {
+            @getMessage("hint-1")
+        }
+    }
 }
 
 @incomeSourceTypeCaption = @{
