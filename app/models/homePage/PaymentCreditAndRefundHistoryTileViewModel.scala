@@ -20,7 +20,8 @@ import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseM
 import play.api.i18n.Messages
 
 case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
-                                                      creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
+                                                      creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean,
+                                                      isUserMigrated: Boolean = false) {
   val availableCredit: Option[BigDecimal] =
     if (creditsRefundsRepayEnabled) {
       Some(unpaidCharges.collectFirst {
