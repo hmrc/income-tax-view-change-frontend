@@ -155,7 +155,7 @@
                     key = Key(Text(getMessage("trade"))),
                     value = Value(Text(
                         if(viewModel.tradingName){
-                            viewModel.tradingName.get
+                            viewModel.trade.getOrElse("Wrong")
                         } else {
                             messages("incomeSources.generic.unknown")
                         }
@@ -183,13 +183,13 @@
         @govukSummaryList(SummaryList(
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(SummaryListRow(
-                key = Key(Text(getMessage("cease-date"))),
+            key = Key(Text(messages("cease-check-answers.cease-date"))),
                 value = Value(Text(viewModel.businessEndDate.toLongDate)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = getPropertyChangeHref,
                         classes = "govuk-link govuk-body",
-                        content = HtmlContent(getMessage("change")),
+                        content = HtmlContent(messages("cease-check-answers.change")),
                         attributes = Map("id" -> "change")
                     ))
                 ))
