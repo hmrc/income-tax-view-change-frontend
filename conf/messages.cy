@@ -1351,6 +1351,18 @@ incomeSources.cease.FP.property.checkboxError                           = Mae’
 incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
+incomeSources.cease.endDate.selfEmployment.future                  = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod heddiw neu yn y gorffennol
+incomeSources.cease.endDate.ukProperty.future                      = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod heddiw neu yn y gorffennol
+incomeSources.cease.endDate.foreignProperty.future                 = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod heddiw neu yn y gorffennol
+
+incomeSources.cease.endDate.selfEmployment.beforeStartDate         = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod ar neu ar ôl y dyddiad dechrau masnachu
+incomeSources.cease.endDate.ukProperty.beforeStartDate             = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod ar neu ar ôl y dyddiad y dechreuodd fasnachu
+incomeSources.cease.endDate.foreignProperty.beforeStartDate        = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod ar neu ar ôl y dyddiad y dechreuodd fasnachu
+
+incomeSources.cease.endDate.selfEmployment.beforeEarliestDate      = Ni all y dyddiad y daeth eich busnes unig fasnachwr i ben fod yn gynharach na’r 6ed o Ebrill 2015
+incomeSources.cease.endDate.ukProperty.beforeEarliestDate          = Ni all y dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn gynharach na’r 6ed o Ebrill 2015
+incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = Ni all y dyddiad y daeth eich busnes eiddo tramor i ben fod yn gynharach na’r 6ed o Ebrill 2015
+
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.

@@ -1341,6 +1341,18 @@ incomeSources.cease.FP.property.checkboxError                      = You must de
 incomeSources.cease.endDate.foreignProperty.heading                      = Date your foreign property business stopped
 incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date
 
+incomeSources.cease.endDate.selfEmployment.future                  = The date your sole trader business stopped must be today or in the past
+incomeSources.cease.endDate.ukProperty.future                      = The date your UK property business stopped must be today or in the past
+incomeSources.cease.endDate.foreignProperty.future                 = The date your foreign property business stopped must be today or in the past
+
+incomeSources.cease.endDate.selfEmployment.beforeStartDate         = The date your sole trader business stopped must be on or after the date it started trading
+incomeSources.cease.endDate.ukProperty.beforeStartDate             = The date your UK property business stopped must be on or after the date it started trading
+incomeSources.cease.endDate.foreignProperty.beforeStartDate        = The date your foreign property business stopped must be on or after the date it started trading
+
+incomeSources.cease.endDate.selfEmployment.beforeEarliestDate      = The date your sole trader business stopped cannot be earlier than the 6th of April 2015
+incomeSources.cease.endDate.ukProperty.beforeEarliestDate          = The date your UK property business stopped cannot be earlier than the 6th of April 2015
+incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = The date your foreign property business stopped cannot be earlier than the 6th of April 2015
+
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
