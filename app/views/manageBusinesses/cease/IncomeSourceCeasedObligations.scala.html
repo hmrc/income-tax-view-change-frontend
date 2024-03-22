@@ -66,10 +66,6 @@
     }
 }
 
-@getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-    s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
-}
-
 @getPageTitle = @{
     val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getMessage("heading1.base")
     title.trim
@@ -98,101 +94,5 @@
                 @getMessage("heading2.text")
             </label>
         </h2>
-
-        @if(sources.quarterlyObligationsDates.nonEmpty) {
-            <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
-
-                @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                    @govukTable(Table(
-                        rows = quarterlyPeriods.map { quarterlyPeriod =>
-                            Seq(
-                                TableRow(
-                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
-                                ),
-                                TableRow(
-                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
-                                )
-                            )
-                        },
-                        head = Some(Seq(
-                            HeadCell(
-                                content = Text(getQuarterlyTableHeading(quarterlyPeriods))
-                            ),
-                            HeadCell(
-                                content = Text(getMessage("table.heading-2"))
-                            )
-                        )),
-                        caption = None,
-                        firstCellIsHeader = false
-                    ))
-                }
-            </div>
-        }
-
-        @if(sources.eopsObligationsDates.nonEmpty) {
-            <div class="box-simple" id="eops">
-                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-                <p class="govuk-body"> @getMessage("eops-p1") </p>
-
-                @govukTable(Table(
-                    rows = sources.eopsObligationsDates.map { eopsDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${eopsDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${eopsDate.inboundCorrespondenceTo.toLongDate}")
-                            ),
-                            TableRow(
-                                content = Text(eopsDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading-1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading-2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-        }
-
-        <div class="box-simple" id="finalDeclaration">
-            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
-
-            @govukTable(Table(
-                rows = sources.finalDeclarationDates.map { finalDecDate =>
-                    Seq(
-                        TableRow(
-                            content = Text(s"${finalDecDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.toLongDate}")
-                        ),
-                        TableRow(
-                            content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
-                        )
-                    )
-                },
-                head = Some(Seq(
-                    HeadCell(
-                        content = Text(getMessage("table.heading-1"))
-                    ),
-                    HeadCell(
-                        content = Text(getMessage("table.heading-2"))
-                    )
-                )),
-                caption = None,
-                firstCellIsHeader = false
-            ))
-        </div>
-
-        <div class="govuk-!-margin-top-4"> </div>
-
-        @continueButton(
-            Some(getMessage("income-sources-button"))
-        )
     }
 }
