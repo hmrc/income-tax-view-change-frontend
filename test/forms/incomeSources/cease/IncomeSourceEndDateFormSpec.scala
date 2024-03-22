@@ -24,7 +24,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testMtditid2, testNino, testSelfEmploymentId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, ukPlusForeignPropertyWithSoleTraderIncomeSource}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, businessIncome4, ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, ukPlusForeignPropertyWithSoleTraderIncomeSource}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -58,6 +58,18 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     incomeSources = businessIncome2
   )(fakeRequestNoSession)
 
+  val testUser3: MtdItUser[_] = MtdItUser(
+    mtditid = testMtditid2,
+    nino = testNino,
+    userName = None,
+    btaNavPartial = None,
+    saUtr = None,
+    credId = Some("12345-credId"),
+    userType = Some(Individual),
+    arn = None,
+    incomeSources = ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate
+  )(fakeRequestNoSession)
+
   def setupTestId(incomeSourceType: IncomeSourceType): Option[String] = {
     if (incomeSourceType == SelfEmployment) {
       Some(testSelfEmploymentId)
@@ -75,7 +87,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
   }
 
   def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(setupTestUser(incomeSourceType))
+    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(testUser)
     val futureYear = dateService.getCurrentTaxYearEnd + 1
     val formData = Map("income-source-end-date.day" -> "20", "income-source-end-date.month" -> "12", "income-source-end-date.year" -> s"$futureYear")
     val completedForm = form.bind(formData)
@@ -87,7 +99,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
   }
 
   def setupBindBeforeStartDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(setupTestUser(incomeSourceType))
+    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(testUser)
     val formData = Map("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8", "income-source-end-date.year" -> "2016")
     val completedForm = form.bind(formData)
 
@@ -95,19 +107,6 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     completedForm.data.get("income-source-end-date.month") shouldBe Some("8")
     completedForm.data.get("income-source-end-date.year") shouldBe Some("2016")
     completedForm.errors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"), List()))
-  }
-
-  def setupBindBeforeEarliestDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(setupTestUser(incomeSourceType))
-    val formData = Map("income-source-end-date.day" -> "14", "income-source-end-date.month" -> "10", "income-source-end-date.year" -> "2012")
-    val completedForm = form.bind(formData)
-
-    completedForm.data.get("income-source-end-date.day") shouldBe Some("14")
-    completedForm.data.get("income-source-end-date.month") shouldBe Some("10")
-    completedForm.data.get("income-source-end-date.year") shouldBe Some("2012")
-    completedForm.errors shouldBe List(
-      FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"), List())
-    )
   }
 
   "IncomeSourceEndDate form" should {
@@ -170,13 +169,28 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       setupBindBeforeStartDateTest(ForeignProperty)
     }
     "give the correct error when binding with a date both before business start date and the 6th of April 2015 - Self Employment" in {
-      setupBindBeforeEarliestDateTest(SelfEmployment)
+      val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(SelfEmployment, setupTestId(SelfEmployment))(testUser2)
+      val formData = Map("income-source-end-date.day" -> "14", "income-source-end-date.month" -> "10", "income-source-end-date.year" -> "2012")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("income-source-end-date.day") shouldBe Some("14")
+      completedForm.data.get("income-source-end-date.month") shouldBe Some("10")
+      completedForm.data.get("income-source-end-date.year") shouldBe Some("2012")
+      completedForm.errors shouldBe List(
+        FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.beforeEarliestDate"), List())
+      )
     }
-    "give the correct error when binding with a date both before business start date and the 6th of April 2015 - UK Property" in {
-      setupBindBeforeEarliestDateTest(UkProperty)
-    }
-    "give the correct error when binding with a date both before business start date and the 6th of April 2015 - Foreign Property" in {
-      setupBindBeforeEarliestDateTest(ForeignProperty)
+    "give the correct error when binding with a date before the 6th of April 2015 - Self Employment" in {
+      val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(SelfEmployment, setupTestId(SelfEmployment))(testUser2)
+      val formData = Map("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "08", "income-source-end-date.year" -> "2014")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("income-source-end-date.day") shouldBe Some("27")
+      completedForm.data.get("income-source-end-date.month") shouldBe Some("08")
+      completedForm.data.get("income-source-end-date.year") shouldBe Some("2014")
+      completedForm.errors shouldBe List(
+        FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.beforeEarliestDate"), List())
+      )
     }
     "bind with a date missing day field" in {
       val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(SelfEmployment, Some(testSelfEmploymentId))(testUser)
