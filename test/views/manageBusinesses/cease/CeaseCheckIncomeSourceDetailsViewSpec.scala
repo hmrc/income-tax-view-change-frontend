@@ -26,7 +26,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
 import testUtils.TestSupport
 import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
 
@@ -35,13 +35,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetails = app.injector.instanceOf[CeaseCheckIncomeSourceDetails]
 
   val viewModelSE: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testBizAddress), testEndDate, SelfEmployment)
+    mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testIncomeSource), Some(testBizAddress), testEndDate, SelfEmployment)
 
   val viewModelUK: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, UkProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, UkProperty)
 
   val viewModelFP: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, ForeignProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, ForeignProperty)
 
   val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
   val testCeaseDateLong: String = "1 January 2023"
@@ -101,8 +101,11 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("cease-check-answers.business-name")
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe testTradeName
 
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("cease-check-answers.address")
-      document.getElementsByClass("govuk-summary-list__value").eq(2).first().text() shouldBe businessAddressAsString
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("cease-check-answers.trade")
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe testIncomeSource
+
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe messages("cease-check-answers.address")
+      document.getElementsByClass("govuk-summary-list__value").eq(3).first().text() shouldBe businessAddressAsString
     }
 
     "render the summary list for UK" in new Setup(false, UkProperty) {
@@ -145,8 +148,11 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("cease-check-answers.business-name")
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe testTradeName
 
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("cease-check-answers.address")
-      document.getElementsByClass("govuk-summary-list__value").eq(2).first().text() shouldBe businessAddressAsString
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("cease-check-answers.trade")
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe testIncomeSource
+
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe messages("cease-check-answers.address")
+      document.getElementsByClass("govuk-summary-list__value").eq(3).first().text() shouldBe businessAddressAsString
     }
 
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {

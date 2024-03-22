@@ -106,6 +106,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
+    trade = Some(testIncomeSource),
     address = Some(address),
     businessEndDate = LocalDate.of(2022, 1, 1),
     SelfEmployment
@@ -114,6 +115,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
     UkProperty
@@ -122,6 +124,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
     ForeignProperty
