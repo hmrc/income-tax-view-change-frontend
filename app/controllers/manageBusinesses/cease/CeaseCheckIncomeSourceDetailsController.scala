@@ -65,7 +65,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
-    val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
+    val messagesPrefix = incomeSourceType.ceaseCheckAnswersPrefix
     val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
     val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 

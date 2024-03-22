@@ -27,6 +27,7 @@ sealed trait IncomeSourceType {
   val endDateMessagePrefix: String
   val reportingMethodChangeErrorPrefix: String
   val ceaseCheckDetailsPrefix: String
+  val ceaseCheckAnswersPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
@@ -37,6 +38,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
+  override val ceaseCheckAnswersPrefix: String = "cease-check-answers"
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -47,7 +49,7 @@ case object UkProperty extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
-
+  override val ceaseCheckAnswersPrefix: String = "cease-check-answers-uk"
 }
 
 case object ForeignProperty extends IncomeSourceType {
@@ -58,6 +60,7 @@ case object ForeignProperty extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
+  override val ceaseCheckAnswersPrefix: String = "cease-check-answers-fp"
 }
 
 object IncomeSourceType {
