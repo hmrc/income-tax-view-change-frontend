@@ -40,6 +40,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
   val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
@@ -148,7 +149,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(LocalDate.of(2018, 1, 1)),
@@ -159,7 +160,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(LocalDate.of(2018, 1, 1)),

@@ -45,6 +45,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "charge-summary"
   val auditType: String = "ChargeSummary"
+  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
 
   val docDetail: DocumentDetail = DocumentDetail(
     taxYear = taxYear,
@@ -93,10 +94,10 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("003"))
 
   paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("004"))
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
     chargeHistoryModel2)
@@ -107,19 +108,19 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     financialDetail(originalAmount = 9876.54, chargeType = CGT))
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutAccepted: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutAccepted,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutRejected: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutRejected,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(

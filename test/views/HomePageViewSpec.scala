@@ -43,7 +43,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val currentTaxYear: Int = {
-    val currentDate = LocalDate.now
+    val currentDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
@@ -101,7 +101,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val multipleOverduePayments = s"${messages("home.updates.overdue.payments", "3")}"
   val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
-  val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+  val currentDate = dateService.getCurrentDate
   private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate)
   private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate)
   private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),

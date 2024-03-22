@@ -70,13 +70,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
        |""".stripMargin)
 
   val testDateService: DateServiceInterface = new DateServiceInterface {
-    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2022
+    override def getCurrentTaxYearEnd: Int = 2022
 
-    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear: Boolean = false
 
-    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2022, 4, 6)
+    override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
       val startDateYear = startDate.getYear

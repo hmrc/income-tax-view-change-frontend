@@ -17,11 +17,14 @@
 package controllers
 
 import audit.AuditingService
+import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import config.ItvcErrorHandler
+import config.featureswitch.FeatureSwitching
+import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockNextUpdates
 import models.nextUpdates._
@@ -35,7 +38,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testIndividualAuthSuccessWithSaUtrResponse}
+import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.{NextUpdates, NoNextUpdates}
 
@@ -43,8 +47,10 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
-  with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
-  with MockIncomeSourceDetailsService {
+  with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockIncomeSourceDetailsService
+  with MockIncomeSourceDetailsPredicate
+  with MockAuditingService
+  with TestSupport {
 
   val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
 
@@ -53,7 +59,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       app.injector.instanceOf[NoNextUpdates],
       app.injector.instanceOf[NextUpdates],
       mockIncomeSourceDetailsService,
-      app.injector.instanceOf[AuditingService],
+      mockAuditingService,
       mockNextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
       appConfig,
@@ -69,12 +75,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   object TestNextUpdatesController extends NextUpdatesController(
     app.injector.instanceOf[NoNextUpdates],
     app.injector.instanceOf[NextUpdates],
-    app.injector.instanceOf[services.IncomeSourceDetailsService],
-    app.injector.instanceOf[AuditingService],
+    mockIncomeSourceDetailsService,
+    mockAuditingService,
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],
     appConfig,
-    app.injector.instanceOf[FrontendAuthorisedFunctions],
+    mockAuthService,
     testAuthenticator
   )(
     app.injector.instanceOf[MessagesControllerComponents],
@@ -82,18 +88,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     ec
   )
 
-  val NextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
-
-  val date: LocalDate = LocalDate.now
-
   val obligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(date, date, date, "Quarterly", Some(date), "#001"))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(date, date, date, "EOPS", Some(date), "EOPS")))
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001"))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS")))
   ))
 
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(date, date, date, "Quarterly", Some(date), "#001"))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(date, date, date, "EOPS", Some(date), "EOPS")))
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001"))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS")))
   )).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)})
   private def getQuarterType(string: String) = {
@@ -101,31 +103,40 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   }
 
   def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(NextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
   def mockNoObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(NextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
+  }
+
+  def mockViewModel: OngoingStubbing[NextUpdatesViewModel] = {
+    when(mockNextUpdatesService.getNextUpdatesViewModel(any())(any()))
+      .thenReturn(nextUpdatesViewModel)
   }
 
   /* INDIVIDUAL **/
   "The NextUpdatesController.getNextUpdates function" when {
 
-    "the Next Updates feature switch is disabled" should {
+    disableAllSwitches()
 
-      lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-      lazy val document = Jsoup.parse(contentAsString(result))
+    "the Next Updates feature switch is disabled" should {
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
         "successfully retrieves a set of Business NextUpdates and Previous Obligations from the NextUpdates service" should {
 
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBusinessIncomeSource()
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          mockObligations
+          mockViewModel
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(contentAsString(result))
+
           "return Status OK (200)" in {
-            mockSingleBusinessIncomeSource()
-            mockSingleBusinessIncomeSourceWithDeadlines()
-            mockObligations
             status(result) shouldBe Status.OK
           }
 
@@ -141,13 +152,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "successfully retrieves a set of Property NextUpdates and Previous from the NextUpdates service" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockPropertyIncomeSource()
+          mockPropertyIncomeSourceWithDeadlines()
+          mockObligations
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
-            mockPropertyIncomeSource()
-            mockPropertyIncomeSourceWithDeadlines()
-            mockObligations
             status(result) shouldBe Status.OK
           }
 
@@ -163,13 +175,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "successfully retrieves a set of both Business & Property NextUpdates and Previous Obligations from the NextUpdates service" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockBothIncomeSourcesBusinessAligned()
+          mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+          mockObligations
+          val result = TestNextUpdatesController.getNextUpdates(origin = Some("PTA"))(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
-            mockBothIncomeSourcesBusinessAligned()
-            mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-            mockObligations
             status(result) shouldBe Status.OK
           }
 
@@ -185,10 +198,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "successfully retrieves a set of only Business NextUpdates and no Previous Obligations from the NextUpdates service" should {
 
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBusinessIncomeSource()
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          mockNoObligations
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
+
           "return Status OK (200)" in {
-            mockSingleBusinessIncomeSource()
-            mockSingleBusinessIncomeSourceWithDeadlines()
-            mockNoObligations
             status(result) shouldBe Status.OK
           }
 
@@ -204,13 +221,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "successfully retrieves a set of only Property NextUpdates and no Previous from the NextUpdates service" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockPropertyIncomeSource()
+          mockPropertyIncomeSourceWithDeadlines()
+          mockNoObligations
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
-            mockPropertyIncomeSource()
-            mockPropertyIncomeSourceWithDeadlines()
-            mockNoObligations
             status(result) shouldBe Status.OK
           }
 
@@ -226,13 +244,15 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "successfully retrieves a set of only both Business & Property NextUpdates and no Previous Obligations from the NextUpdates service" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockViewModel
+          mockBothIncomeSourcesBusinessAligned()
+          mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+          mockNoObligations
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
-            mockBothIncomeSourcesBusinessAligned()
-            mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-            mockNoObligations
             status(result) shouldBe Status.OK
           }
 
@@ -248,11 +268,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "receives an Error from the NextUpdates Service" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBusinessIncomeSource()
+          mockErrorIncomeSourceWithDeadlines()
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
 
           "return Status ISE (500)" in {
-            mockSingleBusinessIncomeSource()
-            mockErrorIncomeSourceWithDeadlines()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
 
@@ -264,11 +285,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "doesn't have any Income Source" should {
 
-          lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockNoIncomeSources()
+          val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
-            mockNoIncomeSources()
             status(result) shouldBe Status.OK
           }
 
@@ -304,16 +326,17 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
     "the Next Updates feature switch disabled: other cases" should {
 
-      lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+      mockSingleBusinessIncomeSourceError()
+      mockSingleBusinessIncomeSourceWithDeadlines()
+      mockObligations
+      val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
         "failed to retrieve a set of Business NextUpdates" should {
 
           "return Status ERROR (500)" in {
-            mockSingleBusinessIncomeSourceError()
-            mockSingleBusinessIncomeSourceWithDeadlines()
-            mockObligations
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
@@ -361,6 +384,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()
+        mockViewModel
         mockObligations
         mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
 

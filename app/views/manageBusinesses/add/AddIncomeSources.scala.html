@@ -173,8 +173,9 @@
         @hr()
     }
 
-    @if(sources.ceasedBusinesses.nonEmpty) @{
-        ceasedBusinesses(sources.ceasedBusinesses)
+    @if(sources.ceasedBusinesses.nonEmpty) {
+        @h2(msg = getMessage("ceasedBusinesses.heading"),optId = Some("ceased-businesses-heading"))
+        @ceasedBusinesses(sources.ceasedBusinesses)
     }
 
     <br>

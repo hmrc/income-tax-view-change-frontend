@@ -37,6 +37,8 @@ import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
+
   "Navigating to /report-quarterly/income-and-expenses/view/agents/credit-and-refunds" should {
 
     val testTaxYear: Int = getCurrentTaxYearEnd.getYear
@@ -55,7 +57,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a successful Financial Details response with credits and refunds")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYear.toString, fixedDate.plusYears(1).toString))
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(clientDetailsWithConfirmation)
 
@@ -116,7 +118,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, fixedDate.plusYears(1).toString))
 
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(clientDetailsWithConfirmation)
@@ -147,7 +149,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             businesses = List(BusinessDetailsModel(
               "testId",
               incomeSource = Some(testIncomeSource),
-              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
               None,
               None,
               Some(getCurrentTaxYearEnd),
@@ -161,7 +163,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
           testValidFinancialDetailsModelJson(
-            -2000, -2000, testTaxYear.toString, LocalDate.now().toString))
+            -2000, -2000, testTaxYear.toString, fixedDate.toString))
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 

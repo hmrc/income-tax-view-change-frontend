@@ -62,7 +62,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       ),
@@ -80,7 +80,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       )
@@ -171,7 +171,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       ),
@@ -189,7 +189,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       )
@@ -274,7 +274,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       ),
@@ -290,7 +290,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
-        "lpiWithDunningBlock" -> 100,
+        "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       )
@@ -455,7 +455,7 @@ object FinancialDetailsTestConstants {
                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
                           interestOutstandingAmount: Option[BigDecimal] = Some(80),
                           transactionId: String = id1040000123,
-                          lpiWithDunningBlock: Option[BigDecimal] = Some(100),
+                          lpiWithDunningLock: Option[BigDecimal] = Some(100),
                           effectiveDateOfPayment: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear,
@@ -471,7 +471,7 @@ object FinancialDetailsTestConstants {
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 6, 15)),
       latePaymentInterestAmount = latePaymentInterestAmount,
-      lpiWithDunningBlock = lpiWithDunningBlock,
+      lpiWithDunningLock = lpiWithDunningLock,
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot,
       effectiveDateOfPayment = effectiveDateOfPayment
@@ -563,14 +563,14 @@ object FinancialDetailsTestConstants {
                              taxYear: Int = 2018,
                              outstandingAmount: Option[BigDecimal] = Some(1400.0),
                              dunningLock: Option[String] = None,
-                             lpiWithDunningBlock: Option[BigDecimal] = Some(100),
+                             lpiWithDunningLock: Option[BigDecimal] = Some(100),
                              dueDateValue: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                              latePaymentInterestAmount: Option[BigDecimal] = Some(100)
                            ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None,
-        paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock, latePaymentInterestAmount = latePaymentInterestAmount)),
+        paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock, latePaymentInterestAmount = latePaymentInterestAmount)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue)
       )
     )
@@ -584,11 +584,11 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
+  def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningLock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock),
-        documentDetailModel(9999, outstandingAmount = outstandingAmount.map(amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"), lpiWithDunningBlock = lpiWithDunningBlock)),
+      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock),
+        documentDetailModel(9999, outstandingAmount = outstandingAmount.map(amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"), lpiWithDunningLock = lpiWithDunningLock)),
       financialDetails = List(financialDetail(taxYear, additionalSubItems = Seq(SubItem(clearingDate = Some(LocalDate.parse("2018-09-08")), amount = Some(500.0), paymentAmount = Some(500.0),
         paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem")))))
     )
@@ -750,7 +750,7 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear = 2018, transactionId = "id1040000123", documentDescription = Some("TRM New Charge"),
           documentText = Some("documentText"), outstandingAmount = Some(1400.00), originalAmount = Some(1400.00),
           documentDate = LocalDate.of(2018, 3, 29), latePaymentInterestAmount = Some(100),
-          interestOutstandingAmount = Some(80), lpiWithDunningBlock = Some(100),
+          interestOutstandingAmount = Some(80), lpiWithDunningLock = Some(100),
           effectiveDateOfPayment = Some(LocalDate.parse("2019-05-15")),
           documentDueDate = Some(LocalDate.parse("2019-05-15"))
         )),
@@ -789,13 +789,13 @@ object FinancialDetailsTestConstants {
                                                   taxYear: String,
                                                   interestRate: List[Option[BigDecimal]],
                                                   latePaymentInterestAmount: Option[BigDecimal],
-                                                  lpiWithDunningBlock: Option[BigDecimal]
+                                                  lpiWithDunningLock: Option[BigDecimal]
                                                  ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -811,13 +811,13 @@ object FinancialDetailsTestConstants {
                                                       taxYear: String,
                                                       interestRate: List[Option[BigDecimal]],
                                                       latePaymentInterestAmount: Option[BigDecimal],
-                                                      lpiWithDunningBlock: Option[BigDecimal]
+                                                      lpiWithDunningLock: Option[BigDecimal]
                                                      ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),

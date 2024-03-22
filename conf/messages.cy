@@ -1737,10 +1737,11 @@ manageBusinesses.type-of-property.uk                                     = Busne
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
-
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
 credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
 credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
 credit.description.setOffCharge                                         = Credyd o dâl sydd wedi’i osod yn erbyn treth
 credit.description.setOffChargeInterest                                 = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth
 
+# businesses that have ceased
+manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben

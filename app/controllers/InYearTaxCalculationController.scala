@@ -19,18 +19,17 @@ package controllers
 import audit.AuditingService
 import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, DateServiceInterface, IncomeSourceDetailsService}
+import services.{CalculationService, DateServiceInterface}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
@@ -66,7 +65,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
 
-        val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calculationResponse)
+        val taxCalc: CalculationSummary = CalculationSummary(calculationResponse)
 
         val auditModel = ViewInYearTaxEstimateAuditModel(
           user.nino,
@@ -92,7 +91,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
 
   def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = false,
         currentDate,
@@ -103,7 +102,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
 
   def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = true,
         currentDate,

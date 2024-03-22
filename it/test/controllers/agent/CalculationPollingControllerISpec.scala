@@ -35,6 +35,7 @@ import java.time.LocalDate
 class CalculationPollingControllerISpec extends ComponentSpecBase {
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
 
   val urlFinalCalcFalse: String = s"http://localhost:$port" + controllers.routes.CalculationPollingController
     .calculationPollerAgent(taxYear, isFinalCalc = false).url
@@ -65,7 +66,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       Some(LocalDate.of(2018,1,1)),
       Some(b2TradingStart),
@@ -77,7 +78,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         Some(LocalDate.of(2018,1,1)),
         propertyIncomeType,
         propertyTradingStartDate,

@@ -38,13 +38,13 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel])(implicit isTimeMachineEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
-    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
     val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
 
     (overdueDates, nextDueDates) match {
@@ -71,25 +71,15 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val sequence = Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
+    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
-        Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - TaxYear: ${taxYear}")
+        Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Getting financial details for TaxYear: ${taxYear}")
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel =>
-            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Financial Details Model: $financialDetails, TaxYear: ${taxYear}")
-            Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
-            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Financial Details Model Error: $error, TaxYear: ${taxYear}")
-            Some((taxYear, error))
-          case other =>
-            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Response: $other, TaxYear: ${taxYear}")
-            None
+          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
+          case _ => None
         }
-    }
-    )
-    Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Response sequence: $sequence")
-
-    sequence.map(_.flatten)
+    }).map(_.flatten)
   }
 
   def getAllCreditFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
@@ -125,7 +115,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel,isCodingOutEnabled: Boolean): List[DocumentDetail] = {
+  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel, isCodingOutEnabled: Boolean): List[DocumentDetail] = {
     financialDetailsModel.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail

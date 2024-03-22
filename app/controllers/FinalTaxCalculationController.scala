@@ -25,7 +25,7 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import models.finalTaxCalculation.TaxReturnRequestModel
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -66,7 +66,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(TaxYearSummaryViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
+        val calculationSummary: CalculationSummary = CalculationSummary(calculationResponse)
+        Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
@@ -119,7 +120,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                          (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcResponse)
+        val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
         user.saUtr match {
           case Some(saUtr) =>
             val submissionOverview = TaxReturnRequestModel(
@@ -151,7 +152,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                     (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcResponse)
+        val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
         (fullNameOptional, user.saUtr) match {
           case (Some(fullName), Some(saUtr)) =>
             val submissionOverview = TaxReturnRequestModel(

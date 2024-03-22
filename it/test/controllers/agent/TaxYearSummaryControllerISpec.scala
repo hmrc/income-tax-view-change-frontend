@@ -28,7 +28,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
@@ -46,6 +46,7 @@ import java.time.LocalDate
 
 class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 11, 29)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -54,7 +55,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
@@ -65,7 +66,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),
@@ -101,7 +102,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Payment on Account 1"),
         transactionId = Some("testTransactionId"),
-        items = Some(Seq(SubItem(Some(LocalDate.now))))
+        items = Some(Seq(SubItem(Some(fixedDate))))
       )
     )
   )
@@ -119,8 +120,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
         latePaymentInterestAmount = Some(100.00),
-        effectiveDateOfPayment = Some(LocalDate.now()),
-        documentDueDate = Some(LocalDate.now())
+        effectiveDateOfPayment = Some(fixedDate),
+        documentDueDate = Some(fixedDate)
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -132,21 +133,21 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         outstandingAmount = Some(500.00),
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-        effectiveDateOfPayment = Some(LocalDate.now().plusDays(2)),
-        documentDueDate = Some(LocalDate.now().plusDays(2))
+        effectiveDateOfPayment = Some(fixedDate.plusDays(2)),
+        documentDueDate = Some(fixedDate.plusDays(2))
       )),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId"),
         mainType = Some("SA Payment on Account 1"),
-        items = Some(Seq(SubItem(Some(LocalDate.now), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
+        items = Some(Seq(SubItem(Some(fixedDate), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId2"),
         mainType = Some("SA Payment on Account 2"),
-        items = Some(Seq(SubItem(Some(LocalDate.now), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
+        items = Some(Seq(SubItem(Some(fixedDate), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
       )
     )
   )
@@ -351,8 +352,11 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )
         )
 
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations, codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -403,7 +407,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$poa1 $underReview"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(fixedDate.toLongDateShort),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(updateTabDue(getCurrentTaxYearEnd.toLongDate)),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -421,8 +425,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )
         )
 
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser,
+          messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations,
+            codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -679,8 +688,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations, messagesAPI,
-          Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            auditDD,
+            allObligations, codingOutEnabled = true, showForecastData = true)))
+
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }

@@ -16,13 +16,12 @@
 
 package views
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
-import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
@@ -45,23 +44,24 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   import TaxYearSummaryMessages._
   import implicitDateFormatter._
 
-  def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
-    timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
-    income = 1,
-    deductions = 2.02,
-    totalTaxableIncome = 3,
-    taxDue = 4.04,
-    crystallised = crystallised,
-    unattendedCalc = unattendedCalc,
-    forecastIncome = Some(12500),
-    forecastIncomeTaxAndNics = Some(5000.99),
-    forecastAllowancesAndDeductions = Some(4200.00),
-    forecastTotalTaxableIncome = Some(8300),
-    periodFrom = Some(LocalDate.of(testYear - 1, 1, 1)),
-    periodTo = Some(LocalDate.of(testYear, 1, 1))
-  )
+  def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): CalculationSummary =
+    CalculationSummary(
+      timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
+      income = 1,
+      deductions = 2.02,
+      totalTaxableIncome = 3,
+      taxDue = 4.04,
+      crystallised = crystallised,
+      unattendedCalc = unattendedCalc,
+      forecastIncome = Some(12500),
+      forecastIncomeTaxAndNics = Some(5000.99),
+      forecastAllowancesAndDeductions = Some(4200.00),
+      forecastTotalTaxableIncome = Some(8300),
+      periodFrom = Some(LocalDate.of(testYear - 1, 1, 1)),
+      periodTo = Some(LocalDate.of(testYear, 1, 1))
+    )
 
-  val date: String = dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate
+  val date: String = dateService.getCurrentDate.toLongDate
 
   val modelWithMultipleErrorMessages = modelComplete(Some(false)).copy(messages = Some(Messages(errors = Some(List(
     Message("C15014", date),
@@ -214,64 +214,60 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
+
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, codingOutEnabled = false), "testBackURL", isAgent)
 
   def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, "testBackUrl", isAgent, codingOutEnabled = false
-  )
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false), "testBackUrl", isAgent)
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def rejectedByNpsPartWayView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled), "testBackURL", isAgent)
 
   def forecastCalcView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
-    showForecastData = true)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, showForecastData = true), "testBackURL", isAgent)
 
   def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
-    showForecastData = true)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, showForecastData = true), "testBackURL", isAgent)
 
   def noForecastDataView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
-    showForecastData = false)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled), "testBackURL", isAgent)
 
   def forecastWithNoCalcData(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled, showForecastData = true)
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, showForecastData = true), "testBackURL", isAgent)
 
   def mfaDebitsView(codingOutEnabled: Boolean, isAgent: Boolean): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(true))), MFADebitsDocumentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
-    showForecastData = false)
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), MFADebitsDocumentDetailsWithDueDates, testObligationsModel, codingOutEnabled), "testBackURL", isAgent)
 
   def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, "testBackURL", isAgent, false)
+    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelWithErrorMessages), testChargesList, testObligationsModel, "testBackURL", isAgent, false)
+    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -486,8 +482,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         calculationContent.child(0).text shouldBe messageHeader
         calculationContent.child(2).text shouldBe messageAction
 
-        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
-        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate.toLongDate)
         errorMessageList.child(2).text shouldBe messages("tax-year-summary.message.C15015")
         errorMessageList.child(3).text shouldBe messages("tax-year-summary.message.C15016")
         errorMessageList.child(4).text shouldBe messages("tax-year-summary.message.C15102")
@@ -516,12 +512,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         errorMessageList.child(27).text shouldBe messages("tax-year-summary.message.C55502")
         errorMessageList.child(28).text shouldBe messages("tax-year-summary.message.C55503")
         errorMessageList.child(29).text shouldBe messages("tax-year-summary.message.C55508")
-        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
-        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate.toLongDate)
         errorMessageList.child(32).text shouldBe messages("tax-year-summary.message.C55009")
         errorMessageList.child(33).text shouldBe messages("tax-year-summary.message.C55010")
-        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
-        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate.toLongDate)
         errorMessageList.child(36).text shouldBe messages("tax-year-summary.message.C55009")
         errorMessageList.child(37).text shouldBe messages("tax-year-summary.message.C55511")
         errorMessageList.child(38).text shouldBe messages("tax-year-summary.message.C55519")
@@ -784,22 +780,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
       }
 
-      "throw exception when Original Amount is missing as Agent" in {
-        val expectedException = intercept[MissingFieldException] {
-          new Setup(estimateView(testWithMissingOriginalAmountChargesList, isAgent = true))
-        }
-
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
-      }
-
-      "throw exception when Original Amount is missing as Individual" in {
-        val expectedException = intercept[MissingFieldException] {
-          new Setup(estimateView(testWithMissingOriginalAmountChargesList))
-        }
-
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
-      }
-
       "display empty updates table when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
         document.getElementById("updates").text() shouldBe ""
       }
@@ -959,22 +939,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
           testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
       }
 
-    }
-  }
-
-  "The TaxYearSummary view when missing mandatory fields" should {
-    "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException] {
-        taxYearSummaryView(
-          taxYear = testYear,
-          modelOpt = Some(modelComplete(Some(false))),
-          charges = testWithMissingOriginalAmountChargesList,
-          obligations = testObligationsModel,
-          backUrl = "testBackURL",
-          isAgent = false,
-          codingOutEnabled = false)
-      }
-      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
     }
   }
 }

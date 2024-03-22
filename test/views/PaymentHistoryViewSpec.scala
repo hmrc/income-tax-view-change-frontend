@@ -40,13 +40,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   implicit val dateServiceInterface: DateServiceInterface = new DateServiceInterface {
 
-    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
+    override def getCurrentDate: LocalDate = fixedDate
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = fixedDate.getYear + 1
+    override def getCurrentTaxYearEnd: Int = fixedDate.getYear + 1
 
-    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2023, 4, 6)
+    override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2023, 4, 6)
 
-    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  {
       val startDateYear = startDate.getYear

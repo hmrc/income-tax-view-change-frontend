@@ -32,13 +32,12 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, isA}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -297,7 +296,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
       val document: Document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
+      document.getElementById("back-fallback").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
       status(result) shouldBe OK
     }
 
@@ -318,7 +317,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
       val document: Document = Jsoup.parse(contentAsString(result))
 
-      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true).url
+      document.getElementById("back-fallback").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true).url
       status(result) shouldBe OK
     }
 

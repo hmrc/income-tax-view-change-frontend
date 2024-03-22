@@ -25,7 +25,7 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks._
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -565,8 +565,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessfulExpected))))
+          )(FakeRequest()),
+          messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
+            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations, codingOutEnabled = true, showForecastData = true)))
       }
 
 
@@ -782,7 +784,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), emptyPaymentsList, allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          )(FakeRequest()),
+          messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            emptyPaymentsList,
+            allObligations,
+            codingOutEnabled = true, showForecastData = true
+          )))
       }
 
       "financial details service returns an error" in {
@@ -1106,8 +1115,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), auditDD,
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          )(FakeRequest()),
+          messagesAPI, TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            auditDD, allObligations,
+            codingOutEnabled = true,
+            showForecastData = true)))
+
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
