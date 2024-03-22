@@ -287,7 +287,7 @@ viewModel: HomePageViewModel,
         @p(classes = "govuk-!-margin-bottom-4") {
             @link(
                 link = getReturnHref(viewModel.returnsTileViewModel.currentTaxYear.endYear),
-                messageKey = messages(s"home${if(isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
+                messageKey = messages(s"home${if(isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
 
             )
         }
@@ -295,7 +295,7 @@ viewModel: HomePageViewModel,
             @if(viewModel.returnsTileViewModel.iTSASubmissionIntegrationEnabled) {
                 @link(
                     link = appConfig.submissionFrontendTaxYearsPage(viewModel.returnsTileViewModel.currentTaxYear.endYear),
-                    messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear - 1}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
+                    messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
 
                 )
             }
