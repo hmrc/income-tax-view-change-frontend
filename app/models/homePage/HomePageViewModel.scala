@@ -32,7 +32,7 @@ case class HomePageViewModel(utr: Option[String],
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int])
 
-case class ReturnsTileViewModel(currentTaxYear: TaxYear, ITSASubmissionIntegrationEnabled: Boolean)
+case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
 
 case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSourcesEnabled: Boolean,
                                        incomeSourcesNewJourneyEnabled: Boolean)
