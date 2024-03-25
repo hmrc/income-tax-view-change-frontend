@@ -87,7 +87,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         formData =>
           feedbackConnector.submit(formData).flatMap {
             case Right(_) =>
-              Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
+              Future.successful(Redirect(routes.FeedbackController.thankYou))
             case Left(status) =>
               Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: ${status}")
