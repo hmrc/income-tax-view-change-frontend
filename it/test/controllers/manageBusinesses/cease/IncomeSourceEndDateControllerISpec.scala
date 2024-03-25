@@ -58,7 +58,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   def hintText(incomeSourceType: IncomeSourceType): String = {
     if (!(incomeSourceType == SelfEmployment)) {
-      messagesAPI(s"incomeSources.add." + ForeignProperty.key + ".AccountingMethod.hint-1") + " " + messagesAPI("dateForm.hint")
+      messagesAPI(s"${incomeSourceType.endDateMessagePrefix}.hint-1") + " " + messagesAPI("dateForm.hint")
     }
     else {
       messagesAPI("dateForm.hint")
