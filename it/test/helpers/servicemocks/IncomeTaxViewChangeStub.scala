@@ -69,6 +69,9 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid), noOfCalls)
   }
 
+  def stubPostFeedback(status: Int): Unit =
+    WiremockHelper.stubPost(s"http://localhost:9250/contact/beta-feedback/submit?service=ITVC", status, "")
+
   // Stub CreateBusinessDetails
   def stubCreateBusinessDetailsResponse(mtditid: String)(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
     WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", status, Json.toJson(response).toString)
