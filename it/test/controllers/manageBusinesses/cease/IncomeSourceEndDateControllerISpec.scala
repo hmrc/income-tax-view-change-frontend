@@ -422,7 +422,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
+          elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
           elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
           elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
           elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),

@@ -1370,6 +1370,9 @@ incomeSources.cease.endDate.selfEmployment.beforeEarliestDate      = Ni all y dy
 incomeSources.cease.endDate.ukProperty.beforeEarliestDate          = Ni all y dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn gynharach na’r 6ed o Ebrill 2015
 incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = Ni all y dyddiad y daeth eich busnes eiddo tramor i ben fod yn gynharach na’r 6ed o Ebrill 2015
 
+incomeSources.cease.endDate.ukProperty.hint-1                      = Dyma’r dyddiad diwethaf i chi gael incwm rhent neu wedi gwneud cost yn ymwneud â’ch busnes eiddo yn y DU.
+incomeSources.cease.endDate.foreignProperty.hint-1                 = Dyma’r dyddiad y gwnaethoch gael incwm rhent ddiwethaf neu wedi gwneud cost sy’n gysylltiedig â’ch busnes eiddo tramor.
+
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
