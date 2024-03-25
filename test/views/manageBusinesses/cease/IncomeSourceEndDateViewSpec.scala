@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.twirl.api.Html
 import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
@@ -36,6 +37,12 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
   val incomeSourceEndDateForm: IncomeSourceEndDateForm = app.injector.instanceOf[IncomeSourceEndDateForm]
+
+  val prefixSoleTrader: String = SelfEmployment.endDateMessagePrefix
+  val prefixUKProperty: String = UkProperty.endDateMessagePrefix
+  val prefixForeignProperty: String = ForeignProperty.endDateMessagePrefix
+
+  val ceasePrefix: String = "incomeSources.cease"
 
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -54,7 +61,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     val mockDateService: DateService = app.injector.instanceOf[DateService]
     val testPostActionCall: Call = Call("GET", "/test/path")
     val testBackUrl: String = "/test/back/path"
-    val view = incomeSourceType match {
+    val view: Html = incomeSourceType match {
       case SelfEmployment =>
         val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
         IncomeSourceEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
@@ -63,17 +70,16 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
         IncomeSourceEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
     }
 
-    val viewError = incomeSourceType match {
+    val viewError: Html = incomeSourceType match {
       case SelfEmployment =>
         val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
         val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
         IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
-        val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
-        IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None)
+        val errorForm = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
+        IncomeSourceEndDateView(incomeSourceType, errorForm, testPostActionCall, isAgent, testBackUrl)
     }
-
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewError)) else Jsoup.parse(contentAsString(view))
   }
@@ -81,15 +87,24 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
   "BusinessEndDateView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
-    "render the hint" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
+    "render the hint - Self Employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+    }
+    "render the hint - Uk Property" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1") + " " + messages("dateForm.hint")
+    }
+    "render the hint - Foreign Property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1") + " " + messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -117,15 +132,24 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
   "BusinessEndDateView - Agent" should {
     "render the heading - Self employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
     }
     "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
     }
     "render the heading - Uk Property " in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
-    "render the hint" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
+    "render the hint - Self Employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+    }
+    "render the hint - Uk Property" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1") + " " + messages("dateForm.hint")
+    }
+    "render the hint - Foreign Property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1") + " " + messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"

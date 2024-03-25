@@ -15,6 +15,9 @@ base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-this-change                                         = Cadarnhau’r newid hwn
 
+## Accessibility ##
+accessibility.this-section-is                                   = Teitl yr adran hon yw
+
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
 back.paymentHistory = Yn ôl i Hanes taliadau
@@ -1223,7 +1226,14 @@ incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasna
 incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
 
-## cease income sources
+#######################################################################################################################
+## Income Sources - Cease ##
+#######################################################################################################################
+
+incomeSources.cease.sole-trader               = Unig fasnachwr
+incomeSources.cease.uk-property               = Eiddo yn y DU
+incomeSources.cease.foreign-property          = Eiddo tramor
+
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
 cease-income-sources.table-head.business-name = Enw’r busnes
@@ -1351,6 +1361,21 @@ incomeSources.cease.FP.property.checkboxError                           = Mae’
 incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
+incomeSources.cease.endDate.selfEmployment.future                  = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod heddiw neu yn y gorffennol
+incomeSources.cease.endDate.ukProperty.future                      = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod heddiw neu yn y gorffennol
+incomeSources.cease.endDate.foreignProperty.future                 = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod heddiw neu yn y gorffennol
+
+incomeSources.cease.endDate.selfEmployment.beforeStartDate         = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod ar neu ar ôl y dyddiad dechrau masnachu
+incomeSources.cease.endDate.ukProperty.beforeStartDate             = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod ar neu ar ôl y dyddiad y dechreuodd fasnachu
+incomeSources.cease.endDate.foreignProperty.beforeStartDate        = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod ar neu ar ôl y dyddiad y dechreuodd fasnachu
+
+incomeSources.cease.endDate.selfEmployment.beforeEarliestDate      = Ni all y dyddiad y daeth eich busnes unig fasnachwr i ben fod yn gynharach na’r 6ed o Ebrill 2015
+incomeSources.cease.endDate.ukProperty.beforeEarliestDate          = Ni all y dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn gynharach na’r 6ed o Ebrill 2015
+incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = Ni all y dyddiad y daeth eich busnes eiddo tramor i ben fod yn gynharach na’r 6ed o Ebrill 2015
+
+incomeSources.cease.endDate.ukProperty.hint-1                      = Dyma’r dyddiad diwethaf i chi gael incwm rhent neu wedi gwneud cost yn ymwneud â’ch busnes eiddo yn y DU.
+incomeSources.cease.endDate.foreignProperty.hint-1                 = Dyma’r dyddiad y gwnaethoch gael incwm rhent ddiwethaf neu wedi gwneud cost sy’n gysylltiedig â’ch busnes eiddo tramor.
+
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
@@ -1380,7 +1405,6 @@ incomeSources.add.FP.AccountingMethod.radio-2-hint            = Rydych yn cofnod
 incomeSources.add.FP.AccountingMethod.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i’ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
-incomeSources.add.FP.AccountingMethod.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo tramor
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
 incomeSources.ceaseUKProperty.checkDetails.caption               = Y busnes eiddo yn y DU a nodwyd gennych
@@ -1411,7 +1435,8 @@ incomeSources.add.SE.AccountingMethod.radio-2-hint            = Rydych yn cofnod
 incomeSources.add.SE.AccountingMethod.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i’ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
-incomeSources.add.SE.AccountingMethod.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr
+
+incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu ar sail arian parod neu gyfrifyddu safonol
 
 # add Business start date check
 add-business-start-date-check.heading                = A yw’r dyddiad hwn yn gywir?
@@ -1574,7 +1599,6 @@ incomeSources.add.UK.AccountingMethod.radio-2-hint            = Rydych yn cofnod
 incomeSources.add.UK.AccountingMethod.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i’ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
 incomeSources.add.UK.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.UK.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
-incomeSources.add.UK.AccountingMethod.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU
 
 # Income source reporting method
 incomeSources.add.incomeSourceReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
