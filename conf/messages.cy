@@ -1260,7 +1260,6 @@ add-business-name.form.error.invalidName                          = Ni all enw�
 
 ## Add business trade page
 add-trade.heading                               = Beth yw masnach eich busnes?
-add-trade.title                                 = Unig fasnachwr
 add-trade.trade-info-1                          = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
 add-trade.trade-info-2                          = Er enghraifft: plymio, gwaith trydanol, ymgynghori, gwaith ffotograffiaeth, hyfforddiant personol, trin gwallt.
 add-trade.form.error.empty                      = Nodwch fasnach eich busnes

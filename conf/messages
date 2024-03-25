@@ -1222,7 +1222,6 @@ view-income-sources.unknown-field            = Unknown
 
 ## Add business trade page
 add-trade.heading                               = What is the trade of your business?
-add-trade.title                                 = Sole trader
 add-trade.trade-info-1                          = The trade of your business is the goods or services that your business provides.
 add-trade.trade-info-2                          = For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work.
 add-trade.form.error.empty                      = Enter the trade of your business
