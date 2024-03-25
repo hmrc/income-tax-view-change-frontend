@@ -16,12 +16,13 @@
 
 package connectors
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import forms.FeedbackForm
 import play.api.Logger
+import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.mvc.Request
+import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
@@ -29,29 +30,37 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FeedbackConnector @Inject()(val http: HttpClient,
-                                  val appConfig: FrontendAppConfig,
+                                  val config: FrontendAppConfig,
                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
-                                 )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                 )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames {
 
-  private val feedbackServiceSubmitUrl: String = ""
+  private val feedbackServiceSubmitUrl: String =
+    s"${
+      config.contactFrontendBaseUrl
+    }/contact/beta-feedback/submit?" +
+      s"service=${
+        urlEncode(config.contactFormServiceIdentifier)
+      }"
 
-  implicit val readForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
-    def read(method: String, url: String, response: HttpResponse) = response
-  }
+  implicit val readForm: HttpReads[HttpResponse] = (method: String, url: String, response: HttpResponse) => response
 
   private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
     val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
     itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
-  def submit(formData: FeedbackForm)(
-    implicit request: Request[_]): Future[Either[Int, Unit]] = {
-    val ref: String = "" // request.headers.get(REFERER).getOrElse("N/A")
+  def submit(formData: FeedbackForm)
+            (implicit request: Request[_]): Future[Either[Int, Unit]] = {
+    val ref: String = request.headers.get(REFERER).getOrElse("N/A")
+
+    println(s"DATA: ${feedbackServiceSubmitUrl}")
     http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
       formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
       resp =>
         resp.status match {
-          case OK => Right(())
+          case OK =>
+            Logger("application").info(s"OK....")
+            Right(())
           case status =>
             Logger("application").error(s"Unexpected status code from feedback form: $status")
             Left(status)

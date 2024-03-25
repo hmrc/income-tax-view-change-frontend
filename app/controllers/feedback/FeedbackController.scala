@@ -27,12 +27,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 import utils.AuthenticatorPredicate
 import views.html.feedback.{Feedback, FeedbackThankYou}
 
-import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +45,6 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val feedbackView: Feedback,
                                    val feedbackThankYouView: FeedbackThankYou,
                                    val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
-                                   val httpClient: HttpClient,
                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                    mcc: MessagesControllerComponents,
                                    val itvcErrorHandler: ItvcErrorHandler,
@@ -108,24 +105,19 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         FeedbackForm.form.bindFromRequest().fold(
           hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
             postAction = routes.FeedbackController.submitAgent))),
-          formData => {
-            httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-              formData.toFormMap(request.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
-              resp =>
-                resp.status match {
-                  case OK => Redirect(routes.FeedbackController.thankYouAgent)
-                  case status =>
-                    Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
-                    agentItvcErrorHandler.showInternalServerError()
-                }
-            }
-          }.recover {
+          formData =>
+            feedbackConnector.submit(formData).flatMap {
+              case Right(_) =>
+                Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
+              case Left(status) =>
+                Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+                throw new Error(s"Failed to on post request: ${status}")
+            }).recover {
             case ex: Exception =>
               Logger("application")
                 .error(s"Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
               itvcErrorHandler.showInternalServerError()
           }
-        )
   }
 
   def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -142,23 +134,4 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         Future.successful(Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER))
   }
 
-  private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
-
-  private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
-    val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
-    itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
-  }
-
-  lazy val feedbackServiceSubmitUrl: String =
-    s"${
-      config.contactFrontendBaseUrl
-    }/contact/beta-feedback/submit?" +
-      s"service=${
-        urlEncode(config.contactFormServiceIdentifier)
-      }"
-
-  // The default HTTPReads will wrap the response in an exception and make the body inaccessible
-  implicit val readForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
-    def read(method: String, url: String, response: HttpResponse) = response
-  }
 }
