@@ -79,7 +79,7 @@
 
         @errorSummary(form)
 
-        <span class="govuk-caption-l" id="@captionId">@incomeSourceTypeCaption</span>
+        <h2 class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</h2>
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

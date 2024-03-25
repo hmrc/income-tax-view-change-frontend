@@ -15,6 +15,9 @@ base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-this-change                                         = Cadarnhau’r newid hwn
 
+## Accessibility ##
+accessibility.this-section-is                                   = Teitl yr adran hon yw
+
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
 back.paymentHistory = Yn ôl i Hanes taliadau

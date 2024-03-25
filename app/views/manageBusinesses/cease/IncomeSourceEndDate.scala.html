@@ -56,7 +56,7 @@
         form = incomeSourceEndDateForm
     )
 
-    <span class="govuk-caption-l" id="@captionId">@incomeSourceTypeCaption</span>
+    <h2 class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</h2>
 
     @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
