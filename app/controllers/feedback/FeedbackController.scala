@@ -81,13 +81,16 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
+      println("AAAAAAA")
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
           postAction = routes.FeedbackController.submit))),
         formData => {
+          println("BBBBBBBBBB" + feedbackServiceSubmitUrl)
           httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
             formData.toFormMap(request.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
             resp =>
+              println("CCCCCCC" + resp.status)
               resp.status match {
                 case OK => Redirect(routes.FeedbackController.thankYou)
                 case status =>

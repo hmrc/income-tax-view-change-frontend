@@ -683,6 +683,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
       "X-Session-ID" -> testSessionId)
 
+    def getFeedbackPage: WSResponse = getWithHeaders("/feedback",
+      "X-Session-ID" -> testSessionId)
+
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"manage-your-businesses/add-sole-trader/business-name", additionalCookies)(Map.empty)
     }
