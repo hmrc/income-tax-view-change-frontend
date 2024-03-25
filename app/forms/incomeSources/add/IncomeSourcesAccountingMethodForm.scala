@@ -25,7 +25,7 @@ object IncomeSourcesAccountingMethodForm {
   def apply(incomeSourceType: IncomeSourceType): Form[Option[String]] = {
 
     val response: String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"
-    val radioEmptyError: String = "incomeSources.add.AccountingMethod.no-selection"
+    val radioEmptyError: String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod.no-selection"
     val validRadioOptions = Set("cash", "traditional")
 
     Form(
