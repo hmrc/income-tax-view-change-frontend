@@ -17,6 +17,7 @@
 package controllers.feedback
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.FeedbackConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
@@ -51,7 +52,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                   val auth: AuthenticatorPredicate
+                                   val auth: AuthenticatorPredicate,
+                                   val feedbackConnector : FeedbackConnector
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
@@ -85,26 +87,19 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
           postAction = routes.FeedbackController.submit))),
-        formData => {
-          println("BBBBBBBBBB" + feedbackServiceSubmitUrl)
-          httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-            formData.toFormMap(request.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
-            resp =>
-              println("CCCCCCC" + resp.status)
-              resp.status match {
-                case OK => Redirect(routes.FeedbackController.thankYou)
-                case status =>
-                  Logger("application").error(s"Unexpected status code from feedback form: $status")
-                  itvcErrorHandler.showInternalServerError()
-              }
-          }
-        }.recover {
+        formData =>
+          feedbackConnector.submit(formData).flatMap {
+            case Right(_) =>
+              Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
+            case Left(status) =>
+              Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+              throw new Error(s"Failed to on post request: ${status}")
+          }).recover {
           case ex: Exception =>
             Logger("application")
               .error(s"Unexpected error code from feedback form: - ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
         }
-      )
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {

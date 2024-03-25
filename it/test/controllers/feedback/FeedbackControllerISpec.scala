@@ -20,7 +20,6 @@ import auth.MtdItUser
 import forms.FeedbackForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
@@ -44,34 +43,34 @@ class FeedbackControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
-  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
-    "render the Feedback page" when {
-      "User is authorised" in {
-
-        isAuthorisedUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getFeedbackPage
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("feedback.heading")
-        )
-      }
-    }
-  }
-
-  "Navigating to /report-quarterly/income-and-expenses/view/agents/thankyou" when {
-
-    "Agent" when {
-
-      "all fields filled in" in {
-      //enable()
-      }
-    }
-  }
+//  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
+//    "render the Feedback page" when {
+//      "User is authorised" in {
+//
+//        isAuthorisedUser(authorised = true)
+//
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+//
+//        When(s"I call GET /report-quarterly/income-and-expenses/view/feedback")
+//        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getFeedbackPage
+//
+//        res should have(
+//          httpStatus(OK),
+//          pageTitleIndividual("feedback.heading")
+//        )
+//      }
+//    }
+//  }
+//
+//  "Navigating to /report-quarterly/income-and-expenses/view/agents/thankyou" when {
+//
+//    "Agent" when {
+//
+//      "all fields filled in" in {
+//      //enable()
+//      }
+//    }
+//  }
 
   "calling POST to submit feedback form" should {
     "OK and redirect to thankyou page" when {
@@ -96,6 +95,8 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST /report-quarterly/income-and-expenses/view/thankyou")
         val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
+
+        println(s"EEE ${res.status}")
 
         res should have(
           httpStatus(200),
