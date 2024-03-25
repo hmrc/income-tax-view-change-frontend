@@ -26,7 +26,7 @@ import views.html.manageBusinesses.add.AddBusinessTrade
 class AddBusinessTradeViewSpec extends ViewSpec {
 
   object AddBusinessTradeMessages {
-    val title: String = messages("add-trade.title")
+    val title: String = messages("incomeSources.add.sole-trader")
     val heading: String = messages("add-trade.heading")
     val p1: String = messages("add-trade.trade-info-1")
     val p2: String = messages("add-trade.trade-info-2")
