@@ -107,6 +107,7 @@
         @if(period){.} }
 }
 
+@manageYourBusinessRef = @{ controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url}
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
@@ -132,6 +133,6 @@
         </div>
 
         <p>@link(link = "", messageKey = "business-ceased.obligation.view-updates.text")</p>
-        <p>@link(link = "", messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
+        <p>@link(id = Some("view-all-business-link"), link = manageYourBusinessRef, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
 
 }

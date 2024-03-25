@@ -88,8 +88,8 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validCallWithNoQuarterlyData: Html = view(sources = viewModelAnnualObligation, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
   val validAgentCallWithData: Html = view(sources = viewModelWithAllData, isAgent = true, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
 
-  val ceaseIncomeSourceShowURL = controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
-  val ceaseIncomeSourceShowAgentURL = controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
+  val manageYourBusinessShowURL = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
+  val manageYourBusinessShowAgentURL = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url
 
   "Income Source Ceased Obligations - Individual" should {
     "Display the correct banner message and heading" when {
@@ -170,6 +170,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022 ."
       }
     }
+    "show view all your business link" in new Setup(validCallWithData) {
+      val link: Element = document.getElementById("view-all-business-link")
+      link.hasCorrectLink("View all your businesses", manageYourBusinessShowURL)
+    }
   }
 
   "Income Source Ceased Obligations - Agent" should {
@@ -234,6 +238,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
         subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
       }
+    }
+    "show view all your business link" in new Setup(validAgentCallWithData) {
+      val link: Element = document.getElementById("view-all-business-link")
+      link.hasCorrectLink("View all your businesses", manageYourBusinessShowAgentURL)
     }
   }
 
