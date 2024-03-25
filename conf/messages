@@ -1556,6 +1556,19 @@ business-ceased.obligation.heading1.uk-property.part2               = UK propert
 business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
 business-ceased.obligation.heading1.base                            = has ceased
 business-ceased.obligation.heading2.text                            = What you must do
+business-ceased.obligation.next-update.text                         = Your next upcoming update
+business-ceased.obligation.next-update.next-quarterly.text          = Your next quarterly update for tax year {0} to {1} is due by
+business-ceased.obligation.next-update.final-declaration.text       = Your final declaration for tax year {0} to {1} is due by
+business-ceased.obligation.view-all-business-link.text              = View all your businesses
+business-ceased.obligation.view-updates.text                        = View your upcoming updates
+business-ceased.obligation.view-updates-overdue.text                = View your overdue and upcoming updates
+business-ceased.obligation.capital-gain-tax.text                    = Capital gain tax
+business-ceased.obligation.capital-gain-tax.info1.text              = If you've sold property, you may need to pay Capital Gains Tax.
+business-ceased.obligation.capital-gain-tax.info2.text              = Check what you need to pay Capital Gains Tax on (opens in a new tab)
+business-ceased.obligation.inset.multiple.text                      = You have {0} overdue updates. You must submit these updates with all required income and expenses through your record keeping software.
+business-ceased.obligation.inset.single.text                        = You have 1 overdue update. You must submit this update with all required income and expenses through your record keeping software.
+
+
 
 business-ceased.obligation.quarterly-heading                        = Send quarterly updates
 business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:

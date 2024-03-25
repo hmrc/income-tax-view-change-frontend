@@ -46,7 +46,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     val prevYearsHeading: String = "Previous tax years"
     val prevYearsText: String = "You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than"
     val buttonText: String = "Your income sources"
+    val yourNextUpComingUpdatesHeading = "Your next upcoming update"
   }
+
 
   val testId: String = "XAIS00000000005"
 
@@ -67,6 +69,8 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
+  val viewModelAnnualObligation: ObligationsViewModel = viewModelWithAllData.copy(quarterlyObligationsDates = Seq.empty)
+
   val validUKPropertyBusinessCall: Html = view(sources = viewModel, isAgent = false, incomeSourceType = UkProperty, businessName = None)
   val validUKPropertyBusinessAgentCall: Html = view(sources = viewModel, isAgent = true, incomeSourceType = UkProperty, businessName = None)
 
@@ -81,6 +85,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     view(sources = viewModel, isAgent = true, incomeSourceType = SelfEmployment, businessName = None)
 
   val validCallWithData: Html = view(sources = viewModelWithAllData, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
+  val validCallWithNoQuarterlyData: Html = view(sources = viewModelAnnualObligation, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
   val validAgentCallWithData: Html = view(sources = viewModelWithAllData, isAgent = true, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
 
   val ceaseIncomeSourceShowURL = controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
@@ -152,10 +157,18 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
     }
+    "show next upcoming update" when {
+      "quarterly updates are present" in new Setup(validCallWithData) {
+        val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
 
-    s"has GET form action to $ceaseIncomeSourceShowURL" in new Setup(validCallWithData) {
-      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
-      document.getElementsByTag("form").get(0).attr("action") shouldBe ceaseIncomeSourceShowURL
+        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
+        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your next quarterly update for tax year 2022 to 2023 is due by 5 May 2022"
+        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022"
+      }
+      "quarterly updates are not present then only show final declaration" in new Setup(validCallWithNoQuarterlyData) {
+        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
+        document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022 ."
+      }
     }
   }
 
@@ -222,12 +235,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
       }
     }
-
-
-    s"has GET form action to $ceaseIncomeSourceShowAgentURL" in new Setup(validAgentCallWithData) {
-      document.getElementsByTag("form").get(0).attr("action") shouldBe ceaseIncomeSourceShowAgentURL
-      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
-    }
   }
+
 
 }

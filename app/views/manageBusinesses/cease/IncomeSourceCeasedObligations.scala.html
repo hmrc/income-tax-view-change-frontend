@@ -21,7 +21,7 @@
 @import views.html.components._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 
 @this(
@@ -34,7 +34,7 @@
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukInsetText: GovukInsetText
 )
 
 @(
@@ -58,25 +58,16 @@
     }
 }
 
-@getCeaseIncomeSourceCall = @{
-    if(isAgent) {
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
-    } else {
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
-    }
-}
+
 
 @getPageTitle = @{
     val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getMessage("heading1.base")
     title.trim
 }
 
-@mainTemplate(pageTitle = getPageTitle,
-    isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = getCeaseIncomeSourceCall) {
 
+@confirmationPanel = {
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
                 @getMessage("heading1.se.part1")
@@ -88,11 +79,59 @@
                 @getMessage("heading1.base")
             </div>
         </div>
+}
 
+@whatYouMustDoHeading = {
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
                 @getMessage("heading2.text")
             </label>
         </h2>
+}
+
+@getNextFirstQuarterlyUpdate = {
+    @sources.quarterlyObligationsDates.headOption.flatMap(_.headOption).map{ date =>
+        @getMessage("next-update.next-quarterly.text",
+            date.inboundCorrespondenceFrom.getYear.toString ,
+            (date.inboundCorrespondenceFrom.getYear + 1).toString)
+        <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
     }
+}
+
+@getNextFinalDeclarationUpdate(period:Boolean = false) = {
+    @sources.finalDeclarationDates.headOption.map{ date =>
+        @getMessage("next-update.final-declaration.text",
+            date.inboundCorrespondenceFrom.getYear.toString ,
+            (date.inboundCorrespondenceFrom.getYear + 1).toString)
+        <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
+        @if(period){.} }
+}
+
+
+@mainTemplate(pageTitle = getPageTitle,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+        @confirmationPanel
+        @whatYouMustDoHeading
+
+        <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
+            <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--m govuk-!-margin-top-4">
+                    @getMessage("next-update.text")
+                </label>
+            </h3>
+            @if(sources.quarterlyObligationsDates.nonEmpty){
+                <ul id="quarterly-and-final-update-list" class="govuk-list govuk-list--bullet">
+                    <li>@getNextFirstQuarterlyUpdate</li>
+                    <li>@getNextFinalDeclarationUpdate()</li>
+                </ul>
+            } else if(sources.finalDeclarationDates.nonEmpty){
+                <p id="final-declaration-update" class="govuk-body">@getNextFinalDeclarationUpdate(period = true)</p>
+            }
+        </div>
+
+        <p>@link(link = "", messageKey = "business-ceased.obligation.view-updates.text")</p>
+        <p>@link(link = "", messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
+
 }
