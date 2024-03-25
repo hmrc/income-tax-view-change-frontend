@@ -60,9 +60,6 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
 
-  def allEops(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "EOPS")
-
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
 
@@ -100,7 +97,6 @@ object ObligationsModel {
 
 case class NextUpdatesModel(identification: String, obligations: List[NextUpdateModel]) {
   val currentQuarterlyDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "Quarterly").sortBy(_.start.toEpochDay)
-  val currentEOPsDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "EOPS").sortBy(_.start.toEpochDay)
   val currentCrystDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "Crystallised").sortBy(_.start.toEpochDay)
 }
 

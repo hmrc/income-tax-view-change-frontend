@@ -41,7 +41,6 @@
 @getObligationTypeText(obligation: String) = @{
     obligation match {
         case "Quarterly" => messages("nextUpdates.quarterly")
-        case "EOPS" => messages("nextUpdates.eops")
         case _ => messages("nextUpdates.crystallised")
     }
 }
