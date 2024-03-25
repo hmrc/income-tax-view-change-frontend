@@ -38,8 +38,11 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
   val dateMustNotBeMissingDayAndYearField = "dateForm.error.dayAndYear.required"
   val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
   val dateMustNotBeInvalid = "error.invalid"
+
   def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
+
   def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"
+
   def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
 
   def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {

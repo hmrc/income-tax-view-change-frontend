@@ -16,7 +16,7 @@
 
 package enums.IncomeSourceJourney
 
-import play.api.libs.json.{JsObject, JsString, Json, Writes}
+import play.api.libs.json.{JsString, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {

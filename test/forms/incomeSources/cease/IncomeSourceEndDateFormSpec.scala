@@ -24,7 +24,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testMtditid2, testNino, testSelfEmploymentId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, businessIncome4, ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, ukPlusForeignPropertyWithSoleTraderIncomeSource}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, ukPlusForeignPropertyWithSoleTraderIncomeSource}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
