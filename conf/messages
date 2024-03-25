@@ -625,7 +625,6 @@ forecast_taxCalc.noForecast.text                                = You will be ab
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
-obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Credits Summary Page ##
@@ -771,7 +770,6 @@ nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
 nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
-nextUpdates.eops            									   = End of period statement
 nextUpdates.crystallised            							   = Final declaration
 nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
@@ -1085,7 +1083,6 @@ updateTab.obligationType.property                               = Property incom
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
 updateTab.updateType.quarterly                                  = Quarterly update
-updateTab.updateType.eops                                       = End of period statement
 updateTab.updateType.crystallised                               = Final declaration
 
 ## Final Tax Overview (Individual/Common Content)
@@ -1511,8 +1508,6 @@ business-added.sole-trader.base                         = has been added to your
 
 business-added.quarterly-heading                        = Send quarterly updates
 business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-business-added.eops-heading                             = Send end of period statements
-business-added.eops-p1                                  = You must submit end of period statements using your software by the deadline.
 business-added.final-declaration-heading                = Submit final declarations and pay your tax
 business-added.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
 business-added.table.heading-1                          = Tax year
@@ -1559,8 +1554,6 @@ business-ceased.obligation.heading2.text                            = What you m
 
 business-ceased.obligation.quarterly-heading                        = Send quarterly updates
 business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-business-ceased.obligation.eops-heading                             = Send end of period statements
-business-ceased.obligation.eops-p1                                  = You must submit end of period statements using your software by the deadline.
 business-ceased.obligation.final-declaration-heading                = Submit final declarations and pay your tax
 business-ceased.obligation.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
 business-ceased.obligation.table.heading-1                          = Tax year
