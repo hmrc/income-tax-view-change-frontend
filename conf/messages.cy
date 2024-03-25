@@ -1223,7 +1223,14 @@ incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasna
 incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
 
-## cease income sources
+#######################################################################################################################
+## Income Sources - Cease ##
+#######################################################################################################################
+
+incomeSources.cease.sole-trader               = Unig fasnachwr
+incomeSources.cease.uk-property               = Eiddo yn y DU
+incomeSources.cease.foreign-property          = Eiddo tramor
+
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
 cease-income-sources.table-head.business-name = Enw’r busnes
