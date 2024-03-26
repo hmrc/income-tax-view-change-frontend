@@ -73,7 +73,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url
   val formActionUK = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty).url
   val businessStopDateLabelUK = messagesAPI("cease-check-answers.cease-date")
-  val pageTitleMsgKeyUK = messagesAPI("cease-check-answers-uk.title")
+  val pageTitleMsgKeyUK = messagesAPI("cease-check-answers.title")
   val redirectUriUK = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
   val requestUK: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
@@ -83,7 +83,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url
   val formActionFP = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty).url
-  val pageTitleMsgKeyFP = messagesAPI("cease-check-answers-fp.title")
+  val pageTitleMsgKeyFP = messagesAPI("cease-check-answers.title")
   val redirectUriFP = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
   val requestFP: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
@@ -215,7 +215,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKeyUK),
-          elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers-uk.cease-date")),
+          elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers.cease-date")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionUK)
@@ -267,7 +267,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKeyUK),
-          elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers-fp.cease-date")),
+          elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("cease-check-answers.cease-date")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionFP)

@@ -1437,7 +1437,7 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Gwirio’ch atebion
-cease-check-answers.heading                                   = Unig fasnachwr
+cease-check-answers.caption                                   = Unig fasnachwr
 cease-check-answers.cease-date                                = Dyddiad y gwnaeth y busnes stopio
 cease-check-answers.business-name                             = Enw’r busnes
 cease-check-answers.trade                                     = Masnach y busnes
@@ -1445,15 +1445,9 @@ cease-check-answers.address                                   = Cyfeiriad
 cease-check-answers.change                                    = Newid
 cease-check-answers.unknown                                   = Anhysbys
 
-cease-check-answers-uk.title                                  = Gwirio’ch atebion
-cease-check-answers-uk.heading                                = Eiddo yn y DU
-cease-check-answers-uk.cease-date                             = Dyddiad y gwnaeth y busnes stopio
-cease-check-answers-uk.change                                 = Newid
+cease-check-answers-uk.caption                                = Eiddo yn y DU
+cease-check-answers-fp.caption                                = Eiddo tramor
 
-cease-check-answers-fp.title                                  = Gwirio’ch atebion
-cease-check-answers-fp.heading                                = Eiddo tramor
-cease-check-answers-fp.cease-date                             = Dyddiad y gwnaeth y busnes stopio
-cease-check-answers-fp.change                                 = Newid
 
 # check business details
 check-details.title                                     = Gwirio’ch atebion

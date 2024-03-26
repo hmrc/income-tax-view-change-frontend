@@ -74,17 +74,17 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 
   "CeaseCheckIncomeSourceDetailsView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages(s"cease-check-answers.heading"))
+      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages(s"cease-check-answers.caption"))
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.heading"))
+      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-fp.caption"))
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers.heading"))
+      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.caption"))
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
     }
 
@@ -109,7 +109,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     "render the summary list for UK" in new Setup(false, UkProperty) {
-      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("cease-check-answers-uk.cease-date")
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("cease-check-answers.cease-date")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe testCeaseDateLong
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe messages("cease-check-answers.change")
+    }
+
+    "render the summary list for FP" in new Setup(false, ForeignProperty) {
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("cease-check-answers.cease-date")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe testCeaseDateLong
       document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe messages("cease-check-answers.change")
     }
@@ -125,13 +131,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
 
     }
-    "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.heading"))
+    "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
+      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-fp.caption"))
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
 
     }
-    "render the heading - Uk Property " in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers.heading"))
+    "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
+      document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.caption"))
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
     }
 
@@ -155,8 +161,20 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(3).first().text() shouldBe businessAddressAsString
     }
 
+    "render the summary list for UK" in new Setup(true, UkProperty) {
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("cease-check-answers.cease-date")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe testCeaseDateLong
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe messages("cease-check-answers.change")
+    }
+
+    "render the summary list for FP" in new Setup(true, ForeignProperty) {
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("cease-check-answers.cease-date")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe testCeaseDateLong
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe messages("cease-check-answers.change")
+    }
+
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.select("#main-content .govuk-button").text() shouldBe messages("incomeSources.ceaseBusiness.checkDetails.confirm")
+      document.select("#main-content .govuk-button").text() shouldBe messages("base.confirm-and-continue")
     }
   }
 
