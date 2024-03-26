@@ -37,6 +37,8 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   val prefixUKProperty: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"
   val prefixForeignProperty: String = "incomeSources.add." + ForeignProperty.key + ".AccountingMethod"
 
+  val errorMessageKey: String = "incomeSources.add.AccountingMethod.no-selection"
+
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
@@ -75,7 +77,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     lazy val viewWithInputErrors: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
       cashOrAccrualsFlag = Some(""),
       incomeSourceType,
-      form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
+      form = form.withError(s"$incomeSourcePrefix", s"$errorMessageKey"),
       postAction = postAction,
       isAgent = isAgent,
       backUrl = backUrl
@@ -87,8 +89,9 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   def incomeSourcesAccountingMethodTest(prefix: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     "render the heading for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
       document.getElementsByClass("govuk-fieldset__legend").text() shouldBe messages(s"$prefix.heading")
+      document.getElementById(s"$prefix-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}")
     }
-    "render the dropdown for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
+    "render the dropdown for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
       document.getElementsByClass("govuk-details__summary").text() shouldBe messages(s"$prefix.example")
       document.getElementsByClass("govuk-body").eq(0).text() shouldBe messages(s"$prefix.drop-down-text")
     }
@@ -106,9 +109,9 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     }
     "render the input error for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
       document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"$prefix.no-selection")
+        messages(s"$errorMessageKey")
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"$prefix.no-selection")
+      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"$errorMessageKey")
     }
   }
 

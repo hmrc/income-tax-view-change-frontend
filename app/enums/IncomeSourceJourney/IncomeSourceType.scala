@@ -16,7 +16,7 @@
 
 package enums.IncomeSourceJourney
 
-import play.api.libs.json.{JsObject, JsString, Json, Writes}
+import play.api.libs.json.{JsString, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
@@ -28,6 +28,8 @@ sealed trait IncomeSourceType {
   val reportingMethodChangeErrorPrefix: String
   val ceaseCheckDetailsPrefix: String
   val ceaseCheckAnswersPrefix: String
+  val messagesSuffix: String
+  val messagesCamel: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
@@ -39,6 +41,8 @@ case object SelfEmployment extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers"
+  override val messagesSuffix: String = "sole-trader"
+  override val messagesCamel: String = "selfEmployment"
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -50,6 +54,8 @@ case object UkProperty extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-uk"
+  override val messagesSuffix: String = "uk-property"
+  override val messagesCamel: String = "ukProperty"
 }
 
 case object ForeignProperty extends IncomeSourceType {
@@ -61,6 +67,8 @@ case object ForeignProperty extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-fp"
+  override val messagesSuffix: String = "foreign-property"
+  override val messagesCamel: String = "foreignProperty"
 }
 
 object IncomeSourceType {

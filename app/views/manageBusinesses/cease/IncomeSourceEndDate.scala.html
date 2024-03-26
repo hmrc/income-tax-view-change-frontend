@@ -14,14 +14,11 @@
  * limitations under the License.
  *@
 
+@import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components.{dateInput, p}
+@import views.html.helpers.injected.{ContinueButton, ErrorSummary}
 @import views.html.layouts.unifiedLayout
-@import views.html.components.p
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.components.dateInput
-@import views.html.helpers.injected.ContinueButton
-@import views.html.helpers.injected.ErrorSummary
-@import enums.IncomeSourceJourney.IncomeSourceType
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
@@ -32,9 +29,22 @@
 }
 
 @getHintContent = {
+@if(!(incomeSourceType == SelfEmployment)) {
+    @p(classes = "govuk-hint") {
+        @getMessage("hint-1")
+    }
+}
 @p(classes = "govuk-hint") {
     @messages("dateForm.hint")
 }
+}
+
+@incomeSourceTypeCaption = @{
+    messages(s"incomeSources.cease.${incomeSourceType.messagesSuffix}")
+}
+
+@captionId = @{
+    s"${incomeSourceType.endDateMessagePrefix}-caption"
 }
 
 @mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
@@ -42,6 +52,8 @@
     @errorSummary(
         form = incomeSourceEndDateForm
     )
+
+    <h2 class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</h2>
 
     @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
