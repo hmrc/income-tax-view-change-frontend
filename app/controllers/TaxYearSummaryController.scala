@@ -28,7 +28,7 @@ import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
@@ -70,10 +70,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar
 
-  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]): Boolean = {
-    val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
-    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined
-    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
+  private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
+    val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
+    val forecastDataPresent = calculationSummary.flatMap(_.forecastIncome).isDefined
+    isEnabled(ForecastCalculation) && calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
@@ -88,41 +88,52 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
-        val taxYearSummaryViewModel: TaxYearSummaryViewModel =
-          TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messagesApi, isAgent)(Lang("GB"),
-            messagesApi.preferred(lang)))
+
+        val calculationSummary = Some(CalculationSummary(
+          formatErrorMessages(
+            liabilityCalc,
+            messagesApi,
+            isAgent)(Lang("GB"), messagesApi.preferred(lang))))
+
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+          calculationSummary,
+          documentDetailsWithDueDates,
+          obligations,
+          codingOutEnabled = codingOutEnabled,
+          showForecastData = showForecast(calculationSummary)
+        )
+
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, messagesApi, Some(taxYearSummaryViewModel), liabilityCalc.messages))
+          mtdItUser, messagesApi, taxYearSummaryViewModel, liabilityCalc.messages))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,
-          modelOpt = Some(taxYearSummaryViewModel),
-          charges = documentDetailsWithDueDates,
-          obligations = obligations,
-          codingOutEnabled = codingOutEnabled,
+          viewModel = taxYearSummaryViewModel,
           backUrl = backUrl,
-          showForecastData = showForecast(Some(taxYearSummaryViewModel)),
           origin = origin,
           isAgent = isAgent
         ))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
+        val viewModel = TaxYearSummaryViewModel(
+          None,
+          documentDetailsWithDueDates,
+          obligations,
+          codingOutEnabled,
+          isEnabled(ForecastCalculation))
+
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, messagesApi))
+          mtdItUser, messagesApi, viewModel))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,
-          modelOpt = None,
-          charges = documentDetailsWithDueDates,
-          obligations = obligations,
-          codingOutEnabled = codingOutEnabled,
+          viewModel = viewModel,
           backUrl = backUrl,
-          showForecastData = isEnabled(ForecastCalculation),
           origin = origin,
           isAgent = isAgent
         ))

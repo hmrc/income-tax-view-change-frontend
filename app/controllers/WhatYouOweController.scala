@@ -65,7 +65,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
             Ok(whatYouOwe(
               currentDate = dateService.getCurrentDate,
               creditCharges,
-              whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+              whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
               currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,

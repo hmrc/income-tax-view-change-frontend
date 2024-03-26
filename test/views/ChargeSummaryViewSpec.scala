@@ -167,8 +167,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
-  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return")
-  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
+  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI),
@@ -269,7 +269,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("h1").text() shouldBe balancingChargeHeading(2018)
       }
 
-      "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningBlock = None), codingOutEnabled = true) {
+      "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningLock = None), codingOutEnabled = true) {
         document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
       }
 
@@ -278,7 +278,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), codingOutEnabled = true) {
         document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
         document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
@@ -296,13 +296,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
       }
 
-      "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+      "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
+      "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
       }
 
@@ -311,7 +311,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
         document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
@@ -331,7 +331,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "not display a notification banner when there are no dunning locks in payment breakdown" in new TestSetup(
-        documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
+        documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown) {
 
         document.doesNotHave(Selectors.id("dunningLocksBanner"))
       }
@@ -379,7 +379,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
       }
 
-      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningBlock = None), dueDate = None) {
+      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningLock = None), dueDate = None) {
         verifySummaryListRowNumeric(1, dueDate, "N/A")
       }
 
@@ -415,7 +415,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,700.00")
       }
 
-      "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
+      "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
       }
 
@@ -473,28 +473,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
-      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
-      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
+      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe "what you owe"
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
-      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
+      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#main-content p a").text() shouldBe "what you owe"
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
@@ -508,7 +508,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
-        documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
+        documentDetailModel(lpiWithDunningLock = None, outstandingAmount = Some(0))) {
         document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
@@ -789,28 +789,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
-      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
+      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
+      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
+      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }
 
-      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
+      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }

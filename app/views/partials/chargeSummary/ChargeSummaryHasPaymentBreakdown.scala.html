@@ -53,7 +53,7 @@
                     @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
                     </span>
                 }
-                @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
+                @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningLock) {
                     @p(){
                         <span>@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</span>
                         <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>

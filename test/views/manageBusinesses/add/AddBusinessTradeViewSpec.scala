@@ -26,7 +26,7 @@ import views.html.manageBusinesses.add.AddBusinessTrade
 class AddBusinessTradeViewSpec extends ViewSpec {
 
   object AddBusinessTradeMessages {
-    val title: String = messages("add-trade.title")
+    val title: String = messages("incomeSources.add.sole-trader")
     val heading: String = messages("add-trade.heading")
     val p1: String = messages("add-trade.trade-info-1")
     val p2: String = messages("add-trade.trade-info-2")
@@ -61,7 +61,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
   "The add business trade page" when {
     "There are no errors to display" should {
       "Display the correct heading" in new Setup(pageWithoutError) {
-        layoutContent hasPageHeading (AddBusinessTradeMessages.title + " " + AddBusinessTradeMessages.heading)
+        layoutContent hasPageHeading AddBusinessTradeMessages.heading
       }
       "have a form with the correct attributes" in new Setup(pageWithoutError) {
         layoutContent.hasFormWith(testCall.method, testCall.url)
@@ -71,7 +71,8 @@ class AddBusinessTradeViewSpec extends ViewSpec {
         val label: Element = form.selectHead("label")
         val input: Element = form.selectHead("input")
 
-        label.text shouldBe (AddBusinessTradeMessages.title + " " + AddBusinessTradeMessages.heading)
+        layoutContent.getElementById("caption").text() shouldBe AddBusinessTradeMessages.title
+        label.text shouldBe AddBusinessTradeMessages.heading
         label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe BusinessTradeForm.businessTrade
         input.attr("name") shouldBe BusinessTradeForm.businessTrade

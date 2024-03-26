@@ -51,9 +51,6 @@
     businesses.sortWith((a, b) => a.cessationDate.isAfter(b.cessationDate))
 }
 
-@h2(msg = getMessage("heading"),
-    optId = Some("ceased-businesses-heading"))
-
 @govukTable(Table(
     head = Some(List(
         HeadCell(

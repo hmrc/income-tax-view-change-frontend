@@ -27,7 +27,8 @@ case class ChargeHistoryModel(taxYear: String,
                               documentDescription: String,
                               totalAmount: BigDecimal,
                               reversalDate: LocalDate,
-                              reversalReason: String) {
+                              reversalReason: String,
+                              poaAdjustmentReason: Option[String]) {
 
   val reasonCode: String = reversalReason match {
     case "amended return" => "amend"
