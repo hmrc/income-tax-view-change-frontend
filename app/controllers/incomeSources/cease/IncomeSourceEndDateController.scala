@@ -17,7 +17,7 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -144,8 +144,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
               val dateStartedOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
               val form = dateStartedOpt match {
                 case Some(date) =>
-                  incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).fill(DateFormElement(date))
-                case None => incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value))
+                  incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(DateFormElement(date))
+                case None => incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
               }
               Future.successful(Ok(
                 incomeSourceEndDate(
@@ -258,7 +258,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           case (SelfEmployment, None) =>
             Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
           case _ =>
-            incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
+            incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
               hasErrors => {
                 Future.successful(BadRequest(incomeSourceEndDate(
                   incomeSourceEndDateForm = hasErrors,
