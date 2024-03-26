@@ -12,14 +12,6 @@ POST         /agents/manage-your-businesses/add-property/property-type          
 GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = false)
 GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = true)
 
-##################################################################    Cease    ###########################################################################
-GET          /manage-your-businesses/cease-sole-trader/confirm-cease                   controllers.manageBusinesses.cease.CeaseConfirmSoleTraderController.show(id: Option[String])
-GET          /agents/manage-your-businesses/cease-sole-trader/confirm-cease            controllers.manageBusinesses.cease.CeaseConfirmSoleTraderController.showAgent(id: Option[String])
-GET          /manage-your-businesses/cease-uk-property/confirm-cease                   controllers.manageBusinesses.cease.CeaseConfirmUKPropertyController.show()
-GET          /agents/manage-your-businesses/cease-uk-property/confirm-cease            controllers.manageBusinesses.cease.CeaseConfirmUKPropertyController.showAgent()
-GET          /manage-your-businesses/cease-foreign-property/confirm-cease              controllers.manageBusinesses.cease.CeaseConfirmForeignPropertyController.show()
-GET          /agents/manage-your-businesses/cease-foreign-property/confirm-cease       controllers.manageBusinesses.cease.CeaseConfirmForeignPropertyController.showAgent()
-
 ##################################################################    Add    ###########################################################################
 
 GET          /manage-your-businesses/add/new-income-sources                       controllers.manageBusinesses.add.AddIncomeSourceController.show()
