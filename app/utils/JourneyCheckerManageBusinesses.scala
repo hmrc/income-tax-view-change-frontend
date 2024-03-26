@@ -72,8 +72,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private def journeyRestartUrl(isAgent: Boolean): MtdItUser[_] => Future[Result] =
-    user => {
+  private def journeyRestartUrl(isAgent: Boolean): Future[Result] = {
       Future.successful {
         Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent))
       }
@@ -101,12 +100,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
               codeBlock(data)
             }
           }
-          else journeyRestartUrl(isAgent(user))(user)
+          else journeyRestartUrl(isAgent(user))
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
             s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-          journeyRestartUrl(isAgent(user))(user)
+          journeyRestartUrl(isAgent(user))
       }
     }
   }

@@ -63,8 +63,8 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          sessionService.deleteSession(Manage).flatMap { _ =>
-            sessionService.deleteSession(Add).flatMap { _ =>
+          sessionService.deleteSession(Add).flatMap { _ =>
+            sessionService.deleteSession(Manage).flatMap { _ =>
               sessionService.deleteSession(Cease).map { _ =>
                 Ok(manageYourBusinesses(
                   sources = viewModel,
