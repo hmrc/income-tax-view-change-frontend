@@ -18,6 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.SelfEmployment
 import org.mockito.Mockito.{mock, when}
+import play.api.mvc.Call
 import services.DateService
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.UnitSpec
@@ -26,41 +27,68 @@ import java.time.LocalDate
 
 class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
-  val day = LocalDate.of(2022, 1, 1)
-  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
-  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
-
+  val day: LocalDate = LocalDate.of(2022, 1, 1)
+  val eopsDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDatesSeq: Seq[DatesModel] = Seq(finalDeclarationDates, finalDeclarationDates, finalDeclarationDates, finalDeclarationDates)
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
     Seq(eopsDates),
-    Seq(finalDeclarationDates),
+    finalDeclarationDatesSeq,
     2023,
     showPrevTaxYears = true
   )
 
-  val mockDateService = mock(classOf[DateService])
-  val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
-  val viewUpcomingUpdatesLink = controllers.routes.NextUpdatesController.getNextUpdates()
+  val mockDateService: DateService = mock(classOf[DateService])
+  val viewAllBusinessLink: Call = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
+  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.getNextUpdates()
 
   "IncomeSourceCeasedObligationsViewModel apply" when {
     "provided with Obligation view model" should {
       "return IncomeSourceCeasedObligationsViewModel" in {
         val currentDate = day.plusYears(3)
-        val numberOfOverdueObligationCount = (quarterlyObligationDatesFull.flatten ++ Seq(finalDeclarationDates))
+        val numberOfOverdueObligationCount = (quarterlyObligationDatesFull.flatten ++ finalDeclarationDatesSeq)
           .count(_.inboundCorrespondenceDue isBefore currentDate)
         when(mockDateService.getCurrentDate).thenReturn(currentDate)
 
         val expected = IncomeSourceCeasedObligationsViewModel(
           incomeSourceType = SelfEmployment,
           firstQuarterlyUpdate = quarterlyObligationDatesFull.flatten.headOption,
-          finalDeclarationUpdate = Seq(finalDeclarationDates),
+          finalDeclarationUpdate = finalDeclarationDatesSeq.take(1),
           numberOfOverdueObligationCount = numberOfOverdueObligationCount,
           viewAllBusinessLink = viewAllBusinessLink,
           viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
-          businessName = None)
+          businessName = None, isAgent = false)
 
 
         val actual = IncomeSourceCeasedObligationsViewModel(obligationsViewModel = viewModelWithAllData,
+          incomeSourceType = SelfEmployment,
+          businessName = None, isAgent = false
+        )(mockDateService)
+
+
+        actual shouldBe expected
+      }
+    }
+
+    "provided with no Quarterly Obligation view model" should {
+      "return IncomeSourceCeasedObligationsViewModel with two final declaration dates" in {
+        val currentDate = day.plusYears(3)
+        val numberOfOverdueObligationCount = finalDeclarationDatesSeq.count(_.inboundCorrespondenceDue isBefore currentDate)
+        when(mockDateService.getCurrentDate).thenReturn(currentDate)
+
+        val expected = IncomeSourceCeasedObligationsViewModel(
+          incomeSourceType = SelfEmployment,
+          firstQuarterlyUpdate = None,
+          finalDeclarationUpdate = finalDeclarationDatesSeq.take(2),
+          numberOfOverdueObligationCount = numberOfOverdueObligationCount,
+          viewAllBusinessLink = viewAllBusinessLink,
+          viewUpcomingUpdatesLink = viewUpcomingUpdatesLink,
+          businessName = None, isAgent = false)
+
+
+        val actual = IncomeSourceCeasedObligationsViewModel(
+          obligationsViewModel = viewModelWithAllData.copy(quarterlyObligationsDates = Seq.empty),
           incomeSourceType = SelfEmployment,
           businessName = None, isAgent = false
         )(mockDateService)

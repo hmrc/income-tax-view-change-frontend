@@ -26,7 +26,8 @@ case class IncomeSourceCeasedObligationsViewModel(incomeSourceType: IncomeSource
                                                   numberOfOverdueObligationCount: Int,
                                                   viewAllBusinessLink: Call,
                                                   viewUpcomingUpdatesLink: Call,
-                                                  businessName: Option[String]) {
+                                                  businessName: Option[String],
+                                                  isAgent: Boolean) {
 
 }
 
@@ -41,11 +42,15 @@ object IncomeSourceCeasedObligationsViewModel {
     val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
     val viewUpcomingUpdatesLink = controllers.routes.NextUpdatesController.getNextUpdates()
 
+    val viewFinalDeclarationDates = if (obligationsViewModel.quarterlyObligationsDates.flatten.isEmpty)
+      obligationsViewModel.finalDeclarationDates.take(2)
+    else obligationsViewModel.finalDeclarationDates.take(1)
+
     IncomeSourceCeasedObligationsViewModel(incomeSourceType = incomeSourceType,
       firstQuarterlyUpdate = obligationsViewModel.quarterlyObligationsDates.flatten.headOption,
-      finalDeclarationUpdate = obligationsViewModel.finalDeclarationDates,
+      finalDeclarationUpdate = viewFinalDeclarationDates,
       numberOfOverdueObligationCount = numberOfOverdueObligationCount,
       viewAllBusinessLink = viewAllBusinessLink,
-      viewUpcomingUpdatesLink = viewUpcomingUpdatesLink, businessName = businessName)
+      viewUpcomingUpdatesLink = viewUpcomingUpdatesLink, businessName = businessName, isAgent)
   }
 }
