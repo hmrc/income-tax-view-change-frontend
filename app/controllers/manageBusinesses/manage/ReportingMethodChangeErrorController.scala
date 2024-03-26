@@ -31,13 +31,12 @@ import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
-import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.ReportingMethodChangeError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authorisedFunctions: AuthorisedFunctions,
+class ReportingMethodChangeErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
@@ -90,7 +89,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     )
   }
 
-  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
+  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     (incomeSourceType match {

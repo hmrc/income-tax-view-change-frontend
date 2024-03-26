@@ -37,13 +37,12 @@ import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import views.html.manageBusinesses.manage.ConfirmReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                       val authorisedFunctions: AuthorisedFunctions,
+class ConfirmReportingMethodSharedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val sessionService: SessionService,

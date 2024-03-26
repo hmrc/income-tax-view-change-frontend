@@ -36,7 +36,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
-import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import views.html.manageBusinesses.manage.ConfirmReportingMethod
 
 import scala.concurrent.Future
 
@@ -52,7 +52,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   object TestConfirmReportingMethodSharedController
     extends ConfirmReportingMethodSharedController(
-      manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
       authorisedFunctions = mockAuthService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],

@@ -28,7 +28,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
-import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.ReportingMethodChangeError
 
 import scala.concurrent.Future
 
@@ -40,8 +40,7 @@ class ReportingMethodChangeErrorControllerSpec
   val mockSessionService: SessionService = mock(classOf[SessionService])
 
   object TestReportingMethodChangeErrorController
-    extends ReportingMethodChangeErrorController(
-      manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
+    extends ReportingMethodChangeErrorController(,
       authorisedFunctions = mockAuthService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       sessionService = mockSessionService,

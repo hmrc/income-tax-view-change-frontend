@@ -22,8 +22,6 @@ GET          /agents/manage-your-businesses/cease-foreign-property/confirm-cease
 
 ##################################################################    Add    ###########################################################################
 
-GET          /manage-your-businesses/add/new-income-sources                       controllers.manageBusinesses.add.AddIncomeSourceController.show()
-GET          /agents/manage-your-businesses/add/new-income-sources                controllers.manageBusinesses.add.AddIncomeSourceController.showAgent()
 GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show()
 GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent()
 POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit()
@@ -204,8 +202,6 @@ GET          /manage-your-businesses/manage/manage-business-cannot-go-back      
 GET          /agents/manage-your-businesses/manage/manage-business-cannot-go-back                          controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
 
 # Income Sources - Cease
-GET          /manage-your-businesses/cease/cease-an-income-source                 controllers.manageBusinesses.cease.CeaseIncomeSourceController.show()
-GET          /agents/manage-your-businesses/cease/cease-an-income-source          controllers.manageBusinesses.cease.CeaseIncomeSourceController.showAgent()
 
 GET          /manage-your-businesses/cease/business-end-date                      controllers.manageBusinesses.cease.IncomeSourceEndDateController.show(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/cease/business-end-date               controllers.manageBusinesses.cease.IncomeSourceEndDateController.showAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
@@ -279,8 +275,6 @@ GET         /manage-your-businesses/cease/cease-foreign-property-cannot-go-back 
 GET         /agents/manage-your-businesses/cease/cease-foreign-property-cannot-go-back              controllers.manageBusinesses.cease.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 # Income Sources - Manage
-GET          /manage-your-businesses/manage/view-and-manage-income-sources                         controllers.manageBusinesses.manage.ManageIncomeSourceController.show(isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/manage/view-and-manage-income-sources                  controllers.manageBusinesses.manage.ManageIncomeSourceController.show(isAgent: Boolean = true)
 
 GET          /manage-your-businesses/manage/confirm-you-want-to-report                             controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController.show(taxYear: String, changeTo: String, isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/manage/confirm-you-want-to-report                      controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController.show(taxYear: String, changeTo: String, isAgent: Boolean = true,  incomeSourceType: IncomeSourceType = SelfEmployment)
