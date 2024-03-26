@@ -37,12 +37,7 @@
         govukInsetText: GovukInsetText
 )
 
-@(
-        sources: ObligationsViewModel,
-        businessName: Option[String] = None,
-        isAgent: Boolean,
-        incomeSourceType: IncomeSourceType
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -58,14 +53,10 @@
     }
 }
 
-
-
 @getPageTitle = @{
-    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getMessage("heading1.base")
+    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType) + " " + getMessage("heading1.base")
     title.trim
 }
-
-
 
 @confirmationPanel = {
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
@@ -73,7 +64,7 @@
                 @getMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
-                @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
+                @getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType)
             </h1>
             <div class="govuk-panel__body">
                 @getMessage("heading1.base")
@@ -90,27 +81,29 @@
 }
 
 @getNextFirstQuarterlyUpdate = {
-    @sources.quarterlyObligationsDates.headOption.flatMap(_.headOption).map{ date =>
-        @getMessage("next-update.next-quarterly.text",
-            date.inboundCorrespondenceFrom.getYear.toString ,
-            (date.inboundCorrespondenceFrom.getYear + 1).toString)
-        <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
+    @source.firstQuarterlyUpdate.map{ date =>
+        <li>
+            @getMessage("next-update.next-quarterly.text",
+                date.inboundCorrespondenceFrom.getYear.toString ,
+                (date.inboundCorrespondenceFrom.getYear + 1).toString)
+            <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
+        </li>
     }
 }
 
-@getNextFinalDeclarationUpdate(period:Boolean = false) = {
-    @sources.finalDeclarationDates.headOption.map{ date =>
+@getNextFinalDeclarationUpdate(listFormat: Boolean = false) = {
+    @source.finalDeclarationUpdate.map{ date =>
+     @if(listFormat) { <li> }
         @getMessage("next-update.final-declaration.text",
             date.inboundCorrespondenceFrom.getYear.toString ,
             (date.inboundCorrespondenceFrom.getYear + 1).toString)
         <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
-        @if(period){.} }
+       @if(listFormat) { </li> } @if(!listFormat ){.} }
 }
 
-@manageYourBusinessRef = @{ controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url}
 
 @mainTemplate(pageTitle = getPageTitle,
-    isAgent = isAgent,
+    isAgent = source.isAgent,
     btaNavPartial = user.btaNavPartial) {
 
         @confirmationPanel
@@ -122,17 +115,17 @@
                     @getMessage("next-update.text")
                 </label>
             </h3>
-            @if(sources.quarterlyObligationsDates.nonEmpty){
+            @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
+                <p id="final-declaration-update" class="govuk-body">@getNextFinalDeclarationUpdate()</p>
+            } else {
                 <ul id="quarterly-and-final-update-list" class="govuk-list govuk-list--bullet">
-                    <li>@getNextFirstQuarterlyUpdate</li>
-                    <li>@getNextFinalDeclarationUpdate()</li>
+                    @getNextFirstQuarterlyUpdate
+                    @getNextFinalDeclarationUpdate(listFormat = true)
                 </ul>
-            } else if(sources.finalDeclarationDates.nonEmpty){
-                <p id="final-declaration-update" class="govuk-body">@getNextFinalDeclarationUpdate(period = true)</p>
             }
         </div>
 
-        <p>@link(link = "", messageKey = "business-ceased.obligation.view-updates.text")</p>
-        <p>@link(id = Some("view-all-business-link"), link = manageYourBusinessRef, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
+        <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = "business-ceased.obligation.view-updates.text")</p>
+        <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
 
 }

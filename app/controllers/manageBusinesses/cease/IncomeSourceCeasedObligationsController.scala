@@ -25,6 +25,7 @@ import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -91,12 +92,11 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
         case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
           val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
-          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
-            Ok(obligationsView(
-              sources = viewModel,
-              businessName = businessName,
-              isAgent = isAgent,
-              incomeSourceType = incomeSourceType))
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { obligationsViewModel =>
+
+            val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
+              obligationsViewModel, incomeSourceType, businessName, isAgent)
+            Ok(obligationsView(incomeSourceCeasedObligationsViewModel))
           }
         case incomeSourceD@(Right(None), _) =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")

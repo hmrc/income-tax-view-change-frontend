@@ -17,7 +17,7 @@
 package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
@@ -59,37 +59,60 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
 
   val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
-  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallised")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
     Seq(eopsDates),
-    Seq(finalDeclarationDates),
+    Seq(finalDeclarationDates, finalDeclarationDates2),
     2023,
     showPrevTaxYears = true
   )
 
   val viewModelAnnualObligation: ObligationsViewModel = viewModelWithAllData.copy(quarterlyObligationsDates = Seq.empty)
 
-  val validUKPropertyBusinessCall: Html = view(sources = viewModel, isAgent = false, incomeSourceType = UkProperty, businessName = None)
-  val validUKPropertyBusinessAgentCall: Html = view(sources = viewModel, isAgent = true, incomeSourceType = UkProperty, businessName = None)
+  val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel = viewModelWithAllData,
+    isAgent = false,
+    incomeSourceType = SelfEmployment,
+    businessName = None)
 
-  val validForeignPropertyBusinessCall: Html = view(sources = viewModel, isAgent = false, incomeSourceType = ForeignProperty, businessName = None)
-  val validForeignPropertyBusinessAgentCall: Html = view(sources = viewModel, isAgent = true, incomeSourceType = ForeignProperty, businessName = None)
+  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty))
+  val validUKPropertyBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, incomeSourceType = UkProperty))
 
-  val validSoleTreaderBusinessCall: Html = view(sources = viewModel, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(sources = viewModel, isAgent = true, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
+  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty))
+  val validForeignPropertyBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, incomeSourceType = ForeignProperty))
 
-  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(sources = viewModel, isAgent = false, incomeSourceType = SelfEmployment, businessName = None)
-  val validSoleTreaderBusinessWithNoBusinessNameAgentCall: Html =
-    view(sources = viewModel, isAgent = true, incomeSourceType = SelfEmployment, businessName = None)
+  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
+  val validSoleTreaderBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, businessName = Some("Test Name")))
 
-  val validCallWithData: Html = view(sources = viewModelWithAllData, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
-  val validCallWithNoQuarterlyData: Html = view(sources = viewModelAnnualObligation, isAgent = false, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
-  val validAgentCallWithData: Html = view(sources = viewModelWithAllData, isAgent = true, incomeSourceType = SelfEmployment, businessName = Some("Test Name"))
+  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel)
+  val validSoleTreaderBusinessWithNoBusinessNameAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true))
 
-  val manageYourBusinessShowURL = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
-  val manageYourBusinessShowAgentURL = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url
+  val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
+  val validCallWithNoQuarterlyDataOnlyOneFinalUpdate: Html = view(
+    IncomeSourceCeasedObligationsViewModel(
+      obligationsViewModel = viewModelAnnualObligation.copy(finalDeclarationDates = Seq(finalDeclarationDates)),
+      isAgent = false,
+      incomeSourceType = SelfEmployment,
+      businessName = Some("Test Name")))
+
+  val validCallWithNoQuarterlyDataMultipleFinalUpdates: Html = view(
+    IncomeSourceCeasedObligationsViewModel(
+      obligationsViewModel = viewModelAnnualObligation,
+      isAgent = false,
+      incomeSourceType = SelfEmployment,
+      businessName = Some("Test Name")))
+
+  val validAgentCallWithData: Html = view(
+    IncomeSourceCeasedObligationsViewModel(
+      obligationsViewModel = viewModelAnnualObligation,
+      isAgent = true,
+      incomeSourceType = SelfEmployment,
+      businessName = Some("Test Name")))
+
+  val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
+  val manageYourBusinessShowAgentURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url
 
   "Income Source Ceased Obligations - Individual" should {
     "Display the correct banner message and heading" when {
@@ -165,9 +188,15 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your next quarterly update for tax year 2022 to 2023 is due by 5 May 2022"
         quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022"
       }
-      "quarterly updates are not present then only show final declaration" in new Setup(validCallWithNoQuarterlyData) {
+      "quarterly updates are not present then only show final declaration" in new Setup(validCallWithNoQuarterlyDataOnlyOneFinalUpdate) {
         document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
         document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022 ."
+      }
+      "quarterly updates are not present then only show two final declaration if present" in new Setup(validCallWithNoQuarterlyDataMultipleFinalUpdates) {
+        val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
+        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
+        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022"
+        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 3 January 2023"
       }
     }
     "show view all your business link" in new Setup(validCallWithData) {
