@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.JourneyType.Manage
+import enums.JourneyType.{Add, Cease, Manage}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -62,14 +62,29 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
-        case Right(viewModel) =>
+        case Right(viewModel) => {
           sessionService.deleteSession(Manage).map { _ =>
             Ok(manageYourBusinesses(
               sources = viewModel,
               isAgent = isAgent,
               backUrl = backUrl
             ))
-          } recover {
+          }
+          sessionService.deleteSession(Add).map { _ =>
+            Ok(manageYourBusinesses(
+              sources = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          }
+          sessionService.deleteSession(Cease).map { _ =>
+            Ok(manageYourBusinesses(
+              sources = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          }
+        }.recover {
             case ex: Exception =>
               Logger("application").error(
                 s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
