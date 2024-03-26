@@ -23,48 +23,79 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.hmrcfrontend.views.config.HmrcPageHeadingLegend
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Fieldset
+@import uk.gov.hmrc.hmrcfrontend.views.config.HmrcSectionCaption
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 
 
 @this(
-    mainTemplate: unifiedLayout,
-    continueButton: ContinueButton,
-    formWithCSRF: FormWithCSRF,
-    errorSummary: ErrorSummary,
-    govukCheckboxes: GovukCheckboxes,
+        mainTemplate: unifiedLayout,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
+        govukCheckboxes: GovukCheckboxes,
 )
 
-@(declarePropertyCeasedForm: Form[DeclarePropertyCeasedForm], incomeSourceType: IncomeSourceType, postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(
+        form: Form[DeclarePropertyCeasedForm],
+        incomeSourceType: IncomeSourceType,
+        soleTraderBusinessName: Option[String],
+        postAction: Call,
+        isAgent: Boolean = false,
+        backUrl: String,
+        origin: Option[String] = None
+)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.heading") }
+@messagesPrefix = @{ s"incomeSources.cease.${incomeSourceType.key}" }
 
-@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.checkboxLabel") }
+@getMessage(key: String, args: String*) = @{
+    messages(s"$messagesPrefix.$key", args: _*)
+}
 
-@mainTemplate(pageTitle = title, form = Some(declarePropertyCeasedForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
+@title = @{ getMessage("heading") }
 
+@formName = @{ DeclarePropertyCeasedForm.declaration }
 
-    @errorSummary(
-        form = declarePropertyCeasedForm
-    )
+@mainTemplate(
+    pageTitle = title,
+    form = Some(form),
+    isAgent = isAgent,
+    backUrl = Some(backUrl),
+    btaNavPartial = user.btaNavPartial
+) {
+
+    @errorSummary(form)
 
     @formWithCSRF(action = postAction, Symbol("id") -> "declare-property-ceased-form") {
 
-        @checkboxes(
-            govukCheckboxes = govukCheckboxes,
-            form = declarePropertyCeasedForm,
-            name = DeclarePropertyCeasedForm.declaration,
-            legendContent = title,
-            classes = "govuk-fieldset__legend--l",
+        @govukCheckboxes(Checkboxes(
+            fieldset =  Some(Fieldset(
+                legend = Some(HmrcPageHeadingLegend(
+                    content = Text(Messages(title)),
+                    classes = "govuk-fieldset__legend--l",
+                    caption = HmrcSectionCaption(Text(getMessage("caption")))
+                ))
+            )),
+            name = formName,
             items = Seq(
                 CheckboxItem(
-                    content = Text(checkBoxLabel),
+                    content = Text(getMessage("checkboxLabel")),
                     value = "true"
                 )
-            )
-        )
+            ),
+            hint = Some(Hint(
+                classes = "govuk-inset-text",
+                content = Text(getMessage("hint", soleTraderBusinessName.getOrElse("Unknown")))
+            )),
+            errorMessage = form.errors.asTextErrorMessageForField(formName)
+        ).withFormField(form(formName)))
 
         <div class="govuk-!-padding-top-5">
             @continueButton()
