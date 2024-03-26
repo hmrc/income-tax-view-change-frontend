@@ -1314,6 +1314,7 @@ dateForm.error.dayAndYear.required                                  = The date m
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
 dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
 dateForm.error.future                                               = You cannot provide a cessation date that is beyond the current day or a date in the future
+dateForm.error.invalid                                              = The date must be a real date
 dateFrom.error.beforeStartDate                                      = The cessation date cannot be earlier than the start date for the business
 dateForm.check.heading                                              = Is this date correct?
 
