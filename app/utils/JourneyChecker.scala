@@ -17,6 +17,7 @@
 package utils
 
 import auth.MtdItUser
+import config.featureswitch.IncomeSourcesNewJourney
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
@@ -75,12 +76,13 @@ trait JourneyChecker extends IncomeSourcesUtils {
   private lazy val journeyRestartUrl: (JourneyType) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType) => user => {
       Future.successful {
-        (journeyType.operation, isAgent(user)) match {
-          case (Add, false) => Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.show())
-          case (Add, true) => Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent())
-          case (Manage, _) => Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent(user)))
-          case (Cease, false) => Redirect(controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show())
-          case (Cease, true) => Redirect(controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent())
+        (journeyType.operation, isAgent(user), isEnabled(IncomeSourcesNewJourney)) match {
+          case (Add, false, false) => Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.show())
+          case (Add, true, false) => Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent())
+          case (Manage, _, false) => Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent(user)))
+          case (Cease, false, false) => Redirect(controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show())
+          case (Cease, true, false) => Redirect(controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent())
+          case (_, _, true) => Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent(user)))
         }
       }
     }
