@@ -25,7 +25,7 @@ object DeclarePropertyCeasedForm {
   val ceaseCsrfToken: String = "csrfToken"
 
   def form(incomeSourceType: IncomeSourceType): Form[DeclarePropertyCeasedForm] = {
-    val declarationUnselectedError: String = s"incomeSources.cease.${incomeSourceType.key}.property.checkboxError"
+    val declarationUnselectedError: String = s"incomeSources.cease.${incomeSourceType.key}.checkboxError"
 
     Form[DeclarePropertyCeasedForm](
       mapping(
