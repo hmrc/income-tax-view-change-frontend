@@ -17,6 +17,7 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
+import config.featureswitch.IncomeSourcesNewJourney
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import org.scalatest.matchers.should.Matchers
@@ -149,6 +150,17 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       completedForm.data.get("income-source-end-date.month") shouldBe Some("yo")
       completedForm.data.get("income-source-end-date.year") shouldBe Some("supp")
       completedForm.errors shouldBe List(FormError("income-source-end-date", List("incomeSources.cease.endDate.ukProperty.error.invalid"), List()))
+    }
+    "bind with an invalid date field with new journey FS enabled" in {
+      enable(IncomeSourcesNewJourney)
+      val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(UkProperty, Some(testSelfEmploymentId))(testUser)
+      val formData = Map("income-source-end-date.day" -> "yo", "income-source-end-date.month" -> "yo", "income-source-end-date.year" -> "supp")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("income-source-end-date.day") shouldBe Some("yo")
+      completedForm.data.get("income-source-end-date.month") shouldBe Some("yo")
+      completedForm.data.get("income-source-end-date.year") shouldBe Some("supp")
+      completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.invalid"), List()))
     }
     "bind with a future date - Self Employment" in {
       setupBindFutureDateTest(SelfEmployment)

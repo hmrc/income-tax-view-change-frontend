@@ -1331,6 +1331,7 @@ dateForm.error.dayAndYear.required                                  = Mae’n rh
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 dateForm.error.future                                               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+dateForm.error.invalid                                              = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 dateFrom.error.beforeStartDate                                      = TNi all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
 
