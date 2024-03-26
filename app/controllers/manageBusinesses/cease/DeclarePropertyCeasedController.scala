@@ -74,7 +74,6 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
             postAction = {
               if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id, incomeSourceType)
               else         routes.DeclarePropertyCeasedController.submit(id, incomeSourceType)
-
             }
           )))
       }
