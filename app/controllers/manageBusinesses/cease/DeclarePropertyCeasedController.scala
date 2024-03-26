@@ -49,7 +49,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
                                                )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  def handleRequest(id: Option[IncomeSourceId], isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
@@ -72,8 +72,8 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
             isAgent = isAgent,
             backUrl = backUrl,
             postAction = {
-              if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id.map(_.toHash.hash), incomeSourceType)
-              else         routes.DeclarePropertyCeasedController.submit(id.map(_.toHash.hash), incomeSourceType)
+              if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id.map(mkIncomeSourceId).map(_.toHash.hash), incomeSourceType)
+              else         routes.DeclarePropertyCeasedController.submit(id.map(mkIncomeSourceId).map(_.toHash.hash), incomeSourceType)
 
             }
           )))
@@ -88,9 +88,8 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
-        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
         handleRequest(
-          id = incomeSourceIdMaybe,
+          id = id,
           isAgent = false,
           incomeSourceType = incomeSourceType
         )
@@ -98,9 +97,8 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
       handleRequest(
-        id = incomeSourceIdMaybe,
+        id = id,
         isAgent = true,
         incomeSourceType = incomeSourceType
       )
@@ -124,7 +122,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
           BadRequest(view(
             form = hasErrors,
             incomeSourceType = incomeSourceType,
-            soleTraderBusinessName = getBusinessName(user, id.map(mkIncomeSourceId)),
+            soleTraderBusinessName = getBusinessName(user, id),
             postAction = postAction,
             backUrl = backAction.url,
             isAgent = isAgent
@@ -146,8 +144,10 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
       errorHandler.showInternalServerError()
   }
 
-  private def getBusinessName(user: MtdItUser[_], id: Option[IncomeSourceId]): Option[String] = {
-    user.incomeSources.businesses.find(x => id.contains(mkIncomeSourceId(x.incomeSourceId))).flatMap(_.tradingName)
+  private def getBusinessName(user: MtdItUser[_], id: Option[String]): Option[String] = {
+    user.incomeSources.businesses
+      .find(x => id.contains(mkIncomeSourceId(x.incomeSourceId).toHash.hash))
+      .flatMap(_.tradingName)
   }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
@@ -158,6 +158,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleSubmitRequest(id = id, isAgent = true, incomeSourceType = incomeSourceType)
+      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      handleSubmitRequest(id = incomeSourceIdMaybe.map(_.toHash.hash), isAgent = true, incomeSourceType = incomeSourceType)
   }
 }
