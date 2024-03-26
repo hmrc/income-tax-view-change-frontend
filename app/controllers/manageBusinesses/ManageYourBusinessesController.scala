@@ -62,29 +62,18 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
-        case Right(viewModel) => {
-          sessionService.deleteSession(Manage).map { _ =>
-            Ok(manageYourBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          }
-          sessionService.deleteSession(Add).map { _ =>
-            Ok(manageYourBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          }
-          sessionService.deleteSession(Cease).map { _ =>
-            Ok(manageYourBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          }
-        }.recover {
+        case Right(viewModel) =>
+          sessionService.deleteSession(Manage).flatMap { _ =>
+            sessionService.deleteSession(Add).flatMap { _ =>
+              sessionService.deleteSession(Cease).map { _ =>
+                Ok(manageYourBusinesses(
+                  sources = viewModel,
+                  isAgent = isAgent,
+                  backUrl = backUrl
+                ))
+              }
+            }
+          } recover {
             case ex: Exception =>
               Logger("application").error(
                 s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
