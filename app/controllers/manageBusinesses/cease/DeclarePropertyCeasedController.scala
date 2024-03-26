@@ -72,8 +72,8 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
             isAgent = isAgent,
             backUrl = backUrl,
             postAction = {
-              if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id.map(mkIncomeSourceId).map(_.toHash.hash), incomeSourceType)
-              else         routes.DeclarePropertyCeasedController.submit(id.map(mkIncomeSourceId).map(_.toHash.hash), incomeSourceType)
+              if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id, incomeSourceType)
+              else         routes.DeclarePropertyCeasedController.submit(id, incomeSourceType)
 
             }
           )))
@@ -152,13 +152,11 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(id = incomeSourceIdMaybe.map(_.toHash.hash), isAgent = false, incomeSourceType = incomeSourceType)
+      handleSubmitRequest(id = id, isAgent = false, incomeSourceType = incomeSourceType)
   }
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(id = incomeSourceIdMaybe.map(_.toHash.hash), isAgent = true, incomeSourceType = incomeSourceType)
+      handleSubmitRequest(id = id, isAgent = true, incomeSourceType = incomeSourceType)
   }
 }
