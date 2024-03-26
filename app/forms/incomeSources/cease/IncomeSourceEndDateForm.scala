@@ -17,6 +17,8 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import forms.validation.CustomConstraints
@@ -28,7 +30,7 @@ import services.DateService
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends CustomConstraints {
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching{
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
@@ -37,7 +39,13 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
   val dateMustNotBeMissingDayAndMonthField = "dateForm.error.dayAndMonth.required"
   val dateMustNotBeMissingDayAndYearField = "dateForm.error.dayAndYear.required"
   val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
-  val dateMustNotBeInvalid = "dateForm.error.invalid"
+  val dateInvalid = "error.invalid"
+
+  private def dateMustNotBeInvalid(incomeSourceType: IncomeSourceType) = {
+    val messagePrefix = incomeSourceType.endDateMessagePrefix
+    if (isEnabled(IncomeSourcesNewJourney)) "dateForm.error.invalid" else
+      s"$messagePrefix.$dateInvalid"
+  }
 
   def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
 
@@ -77,7 +85,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
         "year" -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
-          validDate(dateMustNotBeInvalid)
+          validDate(dateMustNotBeInvalid(incomeSourceType))
         )).transform[LocalDate](
         {
           case (day, month, year) =>
