@@ -39,9 +39,9 @@
 
 @(declarePropertyCeasedForm: Form[DeclarePropertyCeasedForm], incomeSourceType: IncomeSourceType, postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.heading") }
+@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.heading") }
 
-@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.checkboxLabel") }
+@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel") }
 
 @mainTemplate(pageTitle = title, form = Some(declarePropertyCeasedForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 

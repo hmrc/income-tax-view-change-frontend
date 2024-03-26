@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.cease
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -35,10 +35,15 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val showUKPropertyEndDateControllerUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
-  val showDeclareUKPropertyCeasedControllerUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
-  val showForeignPropertyEndDateControllerUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
-  val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
+  val testId = Some("test-id")
+
+  val showUKPropertyEndDateUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
+  val showDeclareUKPropertyCeasedUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(None, UkProperty).url
+  val showForeignPropertyEndDateUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
+  val showDeclareForeignPropertyCeasedUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(None, ForeignProperty).url
+  val showSelfEmploymentEndDateUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(testId, SelfEmployment).url
+  val showDeclareSelfEmploymentCeasedUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(testId, SelfEmployment).url
+
   val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxError")
   val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxLabel")
   val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxError")
@@ -54,13 +59,13 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Cease))
   }
 
-  s"calling GET ${showDeclareUKPropertyCeasedControllerUrl}" should {
+  s"calling GET ${showDeclareUKPropertyCeasedUrl}" should {
     "render the Cease UK Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        When(s"I call GET ${showDeclareUKPropertyCeasedControllerUrl}")
+        When(s"I call GET ${showDeclareUKPropertyCeasedUrl}")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getCeaseUKProperty
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -74,7 +79,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(UkProperty).url}" should {
+  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(None, UkProperty).url}" should {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
@@ -86,7 +91,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(showUKPropertyEndDateControllerUrl)
+          redirectURI(showUKPropertyEndDateUrl)
         )
 
         sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
@@ -107,13 +112,13 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling GET $showDeclareForeignPropertyCeasedControllerUrl" should {
+  s"calling GET $showDeclareForeignPropertyCeasedUrl" should {
     "render the Cease Foreign Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        When(s"I call GET $showDeclareForeignPropertyCeasedControllerUrl")
+        When(s"I call GET $showDeclareForeignPropertyCeasedUrl")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getCeaseForeignProperty
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -127,7 +132,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(ForeignProperty).url}" should {
+  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(None, ForeignProperty).url}" should {
     "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
@@ -139,7 +144,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(showForeignPropertyEndDateControllerUrl)
+          redirectURI(showForeignPropertyEndDateUrl)
         )
 
         sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))

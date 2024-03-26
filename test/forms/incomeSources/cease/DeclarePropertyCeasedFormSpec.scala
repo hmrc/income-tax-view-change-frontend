@@ -40,7 +40,7 @@ class DeclarePropertyCeasedFormSpec extends AnyWordSpec with Matchers {
     }
     "bind with an invalid declaration" in {
       form(UkProperty, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
-        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.UK.property.checkboxError")))
+        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.UK.checkboxError")))
     }
   }
 
@@ -51,7 +51,7 @@ class DeclarePropertyCeasedFormSpec extends AnyWordSpec with Matchers {
     }
     "bind with an invalid declaration" in {
       form(ForeignProperty, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
-        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.FP.property.checkboxError")))
+        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.FP.checkboxError")))
     }
   }
 }

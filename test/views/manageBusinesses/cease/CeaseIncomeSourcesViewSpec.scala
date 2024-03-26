@@ -81,13 +81,13 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
 
     def getCeaseUkPropertyURL: String = {
-      if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
-      else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
+      if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(None, UkProperty).url
+      else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(None, UkProperty).url
     }
 
     def getCeaseForeignPropertyURL: String = {
-      if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
-      else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
+      if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(None, ForeignProperty).url
+      else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(None, ForeignProperty).url
     }
 
 

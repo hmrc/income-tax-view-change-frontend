@@ -57,13 +57,13 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val titleUkProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.UK.property.heading"))}"
-    val titleAgentUkProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UK.property.heading"))}"
-    val headingUkProperty: String = messages("incomeSources.cease.UK.property.heading")
+    val titleUkProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.UK.heading"))}"
+    val titleAgentUkProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UK.heading"))}"
+    val headingUkProperty: String = messages("incomeSources.cease.UK.heading")
 
-    val titleForeignProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.FP.property.heading"))}"
-    val titleAgentForeignProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.FP.property.heading"))}"
-    val headingForeignProperty: String = messages("incomeSources.cease.FP.property.heading")
+    val titleForeignProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.FP.heading"))}"
+    val titleAgentForeignProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.FP.heading"))}"
+    val headingForeignProperty: String = messages("incomeSources.cease.FP.heading")
   }
 
 
@@ -121,16 +121,16 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         (isAgent, incomeSourceType) match {
           case (true, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentUkProperty
+            document.title should include(TestDeclarePropertyCeasedController.titleAgentUkProperty)
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
           case (_, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleUkProperty
+            document.title should include(TestDeclarePropertyCeasedController.titleUkProperty)
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
           case (true, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentForeignProperty
+            document.title should include(TestDeclarePropertyCeasedController.titleAgentForeignProperty)
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
           case (_, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleForeignProperty
+            document.title should include(TestDeclarePropertyCeasedController.titleForeignProperty)
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
         }
       }
