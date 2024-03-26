@@ -627,11 +627,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
-    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-declare")
+    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-confirm-cease")
 
     def getCeaseIncomeSourcesIndividual: WSResponse = get("/manage-your-businesses/cease/cease-an-income-source")
 
-    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-declare")(
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
         declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
@@ -641,9 +641,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/uk-property-end-date")
 
-    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-declare")
+    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-confirm-cease")
 
-    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-declare")(
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
         declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )

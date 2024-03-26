@@ -39,12 +39,12 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
   val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
   val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
-  val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxError")
-  val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxLabel")
-  val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxError")
-  val checkboxLabelMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxLabel")
-  val pageTitleMsgKeyFP = "incomeSources.cease.FP.property.heading"
-  val pageTitleMsgKeyUK = "incomeSources.cease.UK.property.heading"
+  val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxError")
+  val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxLabel")
+  val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxError")
+  val checkboxLabelMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxLabel")
+  val pageTitleMsgKeyFP = "incomeSources.cease.FP.heading"
+  val pageTitleMsgKeyUK = "incomeSources.cease.UK.heading"
   val buttonLabel: String = messagesAPI("base.continue")
 
   val stringTrue: String = "true"
