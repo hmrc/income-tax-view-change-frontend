@@ -116,7 +116,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -153,7 +153,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseBusinessDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseBusinessAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestSE).toString()))
 
@@ -179,7 +179,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseUKPropertyDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseUKPropertyAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -207,7 +207,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseUKPropertyDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseUKPropertyAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestUK).toString()))
 
@@ -232,7 +232,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseForeignPropertyDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseForeignPropertyAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -260,7 +260,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseForeignPropertyDetails(clientDetailsWithConfirmation)
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseForeignPropertyAnswers(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestFP).toString()))
 

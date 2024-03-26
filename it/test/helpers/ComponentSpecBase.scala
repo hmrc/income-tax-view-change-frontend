@@ -785,11 +785,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseUKPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-details")
+    def getCheckCeaseUKPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-answers")
 
-    def postCheckCeaseUKPropertyDetails: WSResponse =
-      post("/manage-your-businesses/cease/uk-property-check-details")(Map.empty)
+    def postCheckCeaseUKPropertyAnswers: WSResponse =
+      post("/manage-your-businesses/cease/uk-property-check-answers")(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/manage-your-businesses/manage/view-and-manage-income-sources")
 
@@ -833,11 +833,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseForeignPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-details")
+    def getCheckCeaseForeignPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-answers")
 
-    def postCheckCeaseForeignPropertyDetails: WSResponse =
-      post(s"/manage-your-businesses/cease/foreign-property-check-details/")(Map.empty)
+    def postCheckCeaseForeignPropertyAnswers: WSResponse =
+      post(s"/manage-your-businesses/cease/foreign-property-check-answers/")(Map.empty)
 
 
     def postAddBusinessReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -855,11 +855,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
-    def getCheckCeaseBusinessDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-details")
+    def getCheckCeaseBusinessAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-answers")
 
-    def postCheckCeaseBusinessDetails: WSResponse =
-      post("/manage-your-businesses/cease/business-check-details")(Map.empty)
+    def postCheckCeaseBusinessAnswers: WSResponse =
+      post("/manage-your-businesses/cease/business-check-answers")(Map.empty)
 
     def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
 

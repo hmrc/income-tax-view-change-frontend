@@ -112,7 +112,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
 
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseBusinessDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseBusinessAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -147,7 +147,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
 
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseBusinessDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseBusinessAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -183,7 +183,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseBusinessDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseBusinessAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestSE).toString()))
 
@@ -208,7 +208,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET ${showCheckCeaseUKPropertyDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseUKPropertyDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseUKPropertyAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
 
 
@@ -236,7 +236,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseUKPropertyDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseUKPropertyAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestUK).toString()))
 
@@ -261,7 +261,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET ${showCheckCeaseForeignPropertyDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseForeignPropertyDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.getCheckCeaseForeignPropertyAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
@@ -288,7 +288,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseForeignPropertyDetails
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.postCheckCeaseForeignPropertyAnswers
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestFP).toString()))
 
