@@ -33,7 +33,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-
+@import enums.IncomeSourceJourney.SelfEmployment
 
 @this(
         mainTemplate: unifiedLayout,
@@ -97,8 +97,9 @@
                 classes = "govuk-inset-text govuk-!-margin-top-3",
                 content = Text(
                     soleTraderBusinessName match {
-                        case Some(businessName) => getMessage("hint", businessName)
-                        case None               => getMessage("hint.noBusinessName")
+                        case _ if incomeSourceType != SelfEmployment => getMessage("hint")
+                        case Some(businessName)                      => getMessage("hint", businessName)
+                        case None                                    => getMessage("hint.noBusinessName")
                     }
                 )
             )),
