@@ -23,5 +23,4 @@ case class CheckYourAnswersViewModel(incomeSourceId: IncomeSourceId,
                                      reportingMethod: String,
                                      taxYearStart: String,
                                      taxYearEnd: String,
-                                     incomeSourceType: IncomeSourceType,
-                                    )
+                                     incomeSourceType: IncomeSourceType)
