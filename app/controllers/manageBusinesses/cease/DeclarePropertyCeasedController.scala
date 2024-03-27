@@ -144,9 +144,9 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
     else         routes.IncomeSourceEndDateController.show(id, incomeSourceType)
 
   private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
-    if (mtdItUser.userType contains Agent) itvcErrorHandlerAgent
+    if (mtdItUser.userType.contains(Agent)) itvcErrorHandlerAgent
     else itvcErrorHandler
-  } showInternalServerError()
+  }.showInternalServerError()
 
   private def getBusinessName(user: MtdItUser[_], id: Option[String]): Option[String] = {
     user.incomeSources.businesses
