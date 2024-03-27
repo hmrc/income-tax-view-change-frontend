@@ -18,6 +18,7 @@ package controllers.agent.manageBusinesses.manage
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.JourneyType.Manage
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
@@ -25,7 +26,7 @@ import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
@@ -37,9 +38,9 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
   val quarterly = "quarterly"
   val taxYear = "2023-2024"
 
-  val manageSEObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, SelfEmployment, annual, taxYear).url
-  val manageUKObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, UkProperty, annual, taxYear).url
-  val manageFPObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, ForeignProperty, annual, taxYear).url
+  val manageSEObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, SelfEmployment).url
+  val manageUKObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, UkProperty).url
+  val manageFPObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = true, ForeignProperty).url
 
   val manageConfirmShowUrl: String = controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, annual, incomeSourceType = UkProperty, isAgent = true).url
 
@@ -62,6 +63,11 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Manage))
+  }
+
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
@@ -69,7 +75,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -132,6 +138,9 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $manageUKObligationsShowUrl")
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024), Some(true))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -165,6 +174,9 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
 
         When(s"I call GET $manageFPObligationsShowUrl")
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-FP",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(quarterly), Some(2024), Some(true))))))
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)

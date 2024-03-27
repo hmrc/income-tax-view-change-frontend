@@ -1728,3 +1728,14 @@ manageBusinesses.type-of-property.error                                  = Dewis
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben
+
+# manage business check your answers
+manageBusinesses.check-answers.SE.heading                                = Unig fasnachwr
+manageBusinesses.check-answers.UKPROPERTY.heading                        = Eiddo yn y DU
+manageBusinesses.check-answers.FOREIGNPROPERTY.heading                   = Eiddo tramor
+manageBusinesses.check-answers.text                                      = Gwirio’ch atebion
+manageBusinesses.check-answers.reporting-frequency                       = Amlder cyflwyno {0} i {1}
+manageBusinesses.check-answers.reporting.quarterly                       = Bob chwarter
+manageBusinesses.check-answers.reporting.annually                        = Bob blwyddyn
+manageBusinesses.check-answers.confirm                                   = Cadarnhau ac yn eich blaen
+manageBusinesses.check-answers.change                                    = Newid

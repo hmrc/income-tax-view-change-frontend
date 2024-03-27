@@ -1743,3 +1743,14 @@ manageBusinesses.type-of-property.error                                  = Selec
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Businesses that have ceased
+
+# manage business check your answers
+manageBusinesses.check-answers.SE.heading                                = Sole trader
+manageBusinesses.check-answers.UKPROPERTY.heading                        = UK property
+manageBusinesses.check-answers.FOREIGNPROPERTY.heading                   = Foreign property
+manageBusinesses.check-answers.text                                      = Check your answers
+manageBusinesses.check-answers.reporting-frequency                       = Reporting frequency {0} to {1}
+manageBusinesses.check-answers.reporting.quarterly                       = Quarterly
+manageBusinesses.check-answers.reporting.annually                        = Annually
+manageBusinesses.check-answers.confirm                                   = Confirm and continue
+manageBusinesses.check-answers.change                                    = Change

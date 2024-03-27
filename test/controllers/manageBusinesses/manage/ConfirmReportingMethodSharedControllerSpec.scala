@@ -25,9 +25,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
@@ -186,29 +184,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
 
-      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Individual" in {
-
-        val result = runSubmitTest(isAgent = false, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
-
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .ReportingMethodChangeErrorController.show(isAgent = false, UkProperty).url
-          )
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Agent" in {
-
-        val result = runSubmitTest(isAgent = true, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
-
-        redirectLocation(result) shouldBe
-          Some(
-            controllers.manageBusinesses.manage.routes
-              .ReportingMethodChangeErrorController.show(isAgent = true, UkProperty).url
-          )
-        status(result) shouldBe Status.SEE_OTHER
-      }
     }
 
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -249,7 +224,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = false, UkProperty, testChangeToAnnual, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = false, UkProperty).url
           )
       }
       "the Agent's UK property reporting method is updated to annual" in {
@@ -259,7 +234,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = true, UkProperty, testChangeToAnnual, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = true, UkProperty).url
           )
       }
     }
@@ -272,7 +247,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = false, ForeignProperty, testChangeToQuarterly, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = false, ForeignProperty).url
           )
       }
       "the Agent's Foreign property reporting method is updated to quarterly" in {
@@ -282,7 +257,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = true, ForeignProperty, testChangeToQuarterly, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = true, ForeignProperty).url
           )
       }
     }
@@ -295,7 +270,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = false, SelfEmployment, testChangeToAnnual, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = false, SelfEmployment).url
           )
       }
       "the Agent's Foreign property reporting method is updated to annual" in {
@@ -305,7 +280,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         redirectLocation(result) shouldBe
           Some(
             controllers.manageBusinesses.manage.routes
-              .ManageObligationsController.show(isAgent = true, ForeignProperty, testChangeToAnnual, testTaxYear).url
+              .CheckYourAnswersController.show(isAgent = true, ForeignProperty).url
           )
       }
     }
@@ -358,18 +333,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     setupMockCreateSession(true)
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
     setupMockSetMongoData(true)
-
-    when(
-      TestConfirmReportingMethodSharedController
-        .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-      .thenReturn(
-        Future(
-          if (withUpdateIncomeSourceResponseError)
-            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")
-          else
-            UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
-        )
-      )
 
     TestConfirmReportingMethodSharedController
       .submit(taxYear, changeTo, isAgent, incomeSourceType)(

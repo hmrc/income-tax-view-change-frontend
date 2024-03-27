@@ -17,13 +17,13 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.mkFromQueryString
+import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
@@ -88,19 +88,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
         val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
 
-            hashCompareResult match {
-              case Left(exception: Exception) => Future.failed(exception)
-              case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-              case Right(incomeSourceId: IncomeSourceId) =>
-                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                  case Right(_) => handleRequest(
-                    sources = user.incomeSources,
-                    isAgent = isAgent,
-                    backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
-                    incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
-                    incomeSourceType = SelfEmployment
-                  )
-                  case Left(exception) => Future.failed(exception)
+        hashCompareResult match {
+          case Left(exception: Exception) => Future.failed(exception)
+          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+          case Right(incomeSourceId: IncomeSourceId) =>
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(_) => handleRequest(
+                sources = user.incomeSources,
+                isAgent = isAgent,
+                backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+                incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
+                incomeSourceType = SelfEmployment
+              )
+              case Left(exception) => Future.failed(exception)
             }.recover {
               case ex =>
                 Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
@@ -312,5 +312,32 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           }
       }
     }
+  }
+
+  def showChange(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
+        incomeSourceType match {
+          case SelfEmployment => incomeSourceIdOpt match {
+            case Some(realId) => handleSoleTrader(realId.hash, isAgent)
+            case None => Logger("application")
+              .error(s"[ManageIncomeSourceDetailsController][show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              Future.successful(if (isAgent) {
+                itvcErrorHandlerAgent.showInternalServerError()
+              } else {
+                itvcErrorHandler.showInternalServerError()
+              })
+          }
+          case _ => handleRequest(
+            sources = user.incomeSources,
+            isAgent = isAgent,
+            incomeSourceIdHashMaybe = None,
+            backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url,
+            incomeSourceType = incomeSourceType
+          )
+        }
+      }
   }
 }
