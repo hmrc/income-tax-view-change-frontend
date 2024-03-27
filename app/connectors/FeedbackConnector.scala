@@ -67,21 +67,4 @@ class FeedbackConnector @Inject()(val http: HttpClient,
         }
     }
   }
-
-  def submitAgent(formData: FeedbackForm)
-            (implicit request: Request[_]): Future[Either[Int, Unit]] = {
-    val ref: String = request.headers.get(REFERER).getOrElse("N/A")
-
-    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-      formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
-      resp =>
-        resp.status match {
-          case OK => Logger("application").info(s"OK....")
-            Right(())
-          case status =>
-            Logger("application").error(s"Unexpected status code from feedback form: $status")
-            Left(status)
-        }
-    }
-  }
 }

@@ -105,7 +105,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
             postAction = routes.FeedbackController.submitAgent))),
           formData =>
-            feedbackConnector.submitAgent(formData).flatMap {
+            feedbackConnector.submit(formData).flatMap {
               case Right(_) =>
                 Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
               case Left(status) =>

@@ -124,7 +124,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "test")))
 
-        when(mockFeedbackConnector.submitAgent(any())(any())).thenReturn(Future.successful(Right(())))
+        when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
 
         when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
         lazy val result = TestFeedbackController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
