@@ -1336,6 +1336,7 @@ incomeSources.cease.SE.heading                            = Confirm you want to 
 incomeSources.cease.SE.caption                            = Sole trader
 incomeSources.cease.SE.checkboxLabel                      = I confirm I want to cease this business
 incomeSources.cease.SE.hint                               = Only cease {0} if you no longer receive any income or have any expenses related to this business.
+incomeSources.cease.SE.hint.noBusinessName                = Only cease your sole trader business if you no longer receive any income or have any expenses related to this business.
 incomeSources.cease.SE.checkboxError                      = Select that you confirm you no longer get any income from this business
 
 incomeSources.cease.UK.heading                            = Cease UK property business

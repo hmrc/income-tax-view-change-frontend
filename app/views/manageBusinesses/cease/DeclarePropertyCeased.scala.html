@@ -95,7 +95,12 @@
             ),
             hint = Some(Hint(
                 classes = "govuk-inset-text govuk-!-margin-top-3",
-                content = Text(getMessage("hint", soleTraderBusinessName.getOrElse("Unknown")))
+                content = Text(
+                    soleTraderBusinessName match {
+                        case Some(businessName) => getMessage("hint", businessName)
+                        case None               => getMessage("hint.noBusinessName")
+                    }
+                )
             )),
             errorMessage = form.errors.asTextErrorMessageForField(formName)
         ).withFormField(form(formName)))

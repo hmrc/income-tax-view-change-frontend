@@ -1349,22 +1349,23 @@ incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate             
 incomeSources.cease.endDate.ukProperty.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
 incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
-incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod �?ch busnes hunangyflogedig i ben
+incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod â’ch busnes hunangyflogedig i ben
 incomeSources.cease.SE.caption                            = Unig fasnachwr
-incomeSources.cease.SE.checkboxLabel                      = Rwyf yn cadarnhau fy mod am ddod �?r busnes hwn i ben
-incomeSources.cease.SE.hint                               = Ond dod � {0} i ben os nad ydych bellach yn cael unrhyw incwm neu os oes gennych unrhyw gostau sy?n gysylltiedig �?r busnes hwn.
-incomeSources.cease.SE.checkboxError                      = Dewiswch eich bod yn cadarnhau nad ydych bellach yn cael unrhyw incwm o?r busnes hwn
+incomeSources.cease.SE.checkboxLabel                      = Rwyf yn cadarnhau fy mod am ddod â’r busnes hwn i ben
+incomeSources.cease.SE.hint                               = Ond dod â {0} i ben os nad ydych bellach yn cael unrhyw incwm neu os oes gennych unrhyw gostau sy’n gysylltiedig â’r busnes hwn.
+incomeSources.cease.SE.hint.noBusinessName                = Ond dod â’ch busnes unig fasnachwr i ben os nad ydych bellach yn cael unrhyw incwm neu os oes gennych unrhyw gostau sy’n gysylltiedig â’r busnes hwn.
+incomeSources.cease.SE.checkboxError                      = Dewiswch eich bod yn cadarnhau nad ydych bellach yn cael unrhyw incwm o’r busnes hwn
 
-incomeSources.cease.UK.heading                            = Dod � busnes eiddo yn y DU i ben
+incomeSources.cease.UK.heading                            = Dod â busnes eiddo yn y DU i ben
 incomeSources.cease.UK.caption                            = Eiddo yn y DU
-incomeSources.cease.UK.checkboxLabel                      = Rwy?n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU
-incomeSources.cease.UK.hint                               = Dim ond os nad ydych yn cael incwm o unrhyw eiddo yn y DU y byddwch yn dod �?ch busnes eiddo yn y DU i ben mwyach
+incomeSources.cease.UK.checkboxLabel                      = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU
+incomeSources.cease.UK.hint                               = Dim ond os nad ydych yn cael incwm o unrhyw eiddo yn y DU y byddwch yn dod â’ch busnes eiddo yn y DU i ben mwyach
 incomeSources.cease.UK.checkboxError                      = Dewiswch eich bod yn datgan nad ydych bellach yn cael incwm o unrhyw eiddo yn y DU
 
-incomeSources.cease.FP.heading                            = Dod � busnes eiddo tramor i ben
+incomeSources.cease.FP.heading                            = Dod â busnes eiddo tramor i ben
 incomeSources.cease.FP.caption                            = Eiddo tramor
-incomeSources.cease.FP.checkboxLabel                      = Rwy?n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor
-incomeSources.cease.FP.hint                               = Dim ond os nad ydych yn cael incwm o unrhyw eiddo tramor y byddwch yn dod �?ch busnes eiddo tramor i ben.
+incomeSources.cease.FP.checkboxLabel                      = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor
+incomeSources.cease.FP.hint                               = Dim ond os nad ydych yn cael incwm o unrhyw eiddo tramor y byddwch yn dod â’ch busnes eiddo tramor i ben.
 incomeSources.cease.FP.checkboxError                      = Dewiswch eich bod yn datgan nad ydych bellach yn cael unrhyw incwm o eiddo tramor
 
 incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
