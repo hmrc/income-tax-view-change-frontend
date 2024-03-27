@@ -74,9 +74,8 @@ class FeedbackControllerISpec extends ComponentSpecBase {
             "feedback-name" -> Seq("Albert Einstein"),
             "feedback-email" -> Seq("alberteinstein@gmail.com"),
             "feedback-comments" -> Seq("MCXSIMMKZC"),
-            "csrfToken" -> Seq(""),
+            "csrfToken" -> Seq("mdkdmskd"),
             "referrer" -> Seq("MCXSIMMKZC")
-
           )
         }
 
