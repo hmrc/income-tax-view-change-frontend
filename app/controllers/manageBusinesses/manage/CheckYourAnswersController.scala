@@ -78,13 +78,13 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
     withIncomeSourcesFS {
       Future.successful(
         (taxYearStringOpt, chnageToStringOpt, maybeIncomeSourceId) match {
-          case (Some(taxYearStringOpt), Some(chnageToStringOpt), Some(id)) => {
+          case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) => {
             val taxYearStartYear = taxYearStringOpt - 1
             val taxYearEndYear = taxYearStringOpt
             Ok(checkYourAnswers(
               isAgent,
               backUrl,
-              CheckYourAnswersViewModel(id, chnageToStringOpt, taxYearStartYear.toString, taxYearEndYear.toString, incomeSourceType),
+              CheckYourAnswersViewModel(id, changeToStringOpt, taxYearStartYear.toString, taxYearEndYear.toString, incomeSourceType),
               incomeSourceType.journeyType
             )
             )
@@ -158,7 +158,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
 
     updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
-        logAndShowError(isAgent, "[handleValidForm]: Failed to update reporting method")
+        logAndShowError(isAgent, "Failed to update reporting method")
         auditingService
           .extendedAudit(
             IncomeSourceReportingMethodAuditModel(
@@ -179,7 +179,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                 Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYearEnd), Some(true))))
             }
             sessionService.setMongoData(newUIJourneySessionData)
-            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
+            Logger("application").debug("[CheckYourAnswersController] Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
                 IncomeSourceReportingMethodAuditModel(
@@ -196,7 +196,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
     }
   } recover {
     case ex: Exception =>
-      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
+      logAndShowError(isAgent, s"Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getSuccessCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
