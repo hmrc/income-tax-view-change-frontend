@@ -121,14 +121,14 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
       "return an SEE_OTHER (303)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockBothIncomeSources()
-        println("AAAAAAA")
+
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "test")))
+
         when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
-        println("BBBBBBB")
+
         when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
-        println("CCCCCC")
         lazy val result = TestFeedbackController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
-        println("DDDDDDDD" + status(result))
+
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
       }

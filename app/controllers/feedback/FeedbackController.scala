@@ -80,7 +80,6 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
-      println("AAAAAAA")
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
           postAction = routes.FeedbackController.submit))),
@@ -106,7 +105,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
             postAction = routes.FeedbackController.submitAgent))),
           formData =>
-            feedbackConnector.submit(formData).flatMap {
+            feedbackConnector.submitAgent(formData).flatMap {
               case Right(_) =>
                 Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
               case Left(status) =>

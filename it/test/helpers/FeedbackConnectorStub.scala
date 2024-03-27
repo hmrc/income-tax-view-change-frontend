@@ -20,6 +20,9 @@ package helpers
 object FeedbackConnectorStub {
 
   def stubPostFeedback(status: Int): Unit =
-    WiremockHelper.stubPost(s"/contact/beta-feedback/submit?service=ITVC", status, "")
+    WiremockHelper.stubPost("/contact/beta-feedback/submit?service=ITVC", status, "")
+
+  def stubPostThankyou(status: Int): Unit =
+    WiremockHelper.stubPost("/report-quarterly/income-and-expenses/view/feedback", status, "")
 
 }

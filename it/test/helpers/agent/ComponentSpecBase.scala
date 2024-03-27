@@ -185,6 +185,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+      println("AAAAAAAAAAA")
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri).withMethod("POST")
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
@@ -353,6 +354,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         uri = "/manage-your-businesses/add-uk-property/change-business-start-date-check", additionalCookies
       )
     }
+
+    def getFeedbackPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = get("/feedback", additionalCookies)
+
+    def getThankyouPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = get("/thankyou", additionalCookies)
 
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(

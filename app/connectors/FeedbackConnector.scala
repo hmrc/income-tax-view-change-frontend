@@ -22,6 +22,7 @@ import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.mvc.Request
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
@@ -53,10 +54,10 @@ class FeedbackConnector @Inject()(val http: HttpClient,
             (implicit request: Request[_]): Future[Either[Int, Unit]] = {
     val ref: String = request.headers.get(REFERER).getOrElse("N/A")
 
-    println(s"DATA: ${feedbackServiceSubmitUrl}")
     http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
       formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
       resp =>
+        println("HEHEHEHE" + resp.status)
         resp.status match {
           case OK =>
             Logger("application").info(s"OK....")
@@ -68,4 +69,23 @@ class FeedbackConnector @Inject()(val http: HttpClient,
     }
   }
 
+  def submitAgent(formData: FeedbackForm)
+            (implicit request: Request[_]): Future[Either[Int, Unit]] = {
+    val ref: String = request.headers.get(REFERER).getOrElse("N/A")
+
+    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
+      formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
+      resp =>
+        println("PFFFFF" + resp.status)
+        resp.status match {
+          case OK => Logger("application").info(s"OK....")
+            println("GGGGGGGGG")
+            Right(())
+          case status =>
+            println("SSSSSSSS" + resp.status)
+            Logger("application").error(s"Unexpected status code from feedback form: $status")
+            Left(status)
+        }
+    }
+  }
 }

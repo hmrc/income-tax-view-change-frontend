@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.feedback
+package controllers.agent
 
 import auth.MtdItUser
+import controllers.agent.utils.SessionKeys
 import forms.FeedbackForm
+import helpers.FeedbackConnectorStub
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, FeedbackConnectorStub}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
@@ -32,6 +34,15 @@ class FeedbackControllerISpec extends ComponentSpecBase {
     Some("Good"), "Albert Einstein", "testuser@gmail.com", "test", "d5f739ae-8615-478d-a393-7fa4b31090e9"
   )
 
+  val clientDetailsWithConfirmation: Map[String, String] = Map(
+    SessionKeys.clientFirstName -> "Test",
+    SessionKeys.clientLastName -> "User",
+    SessionKeys.clientUTR -> "1234567890",
+    SessionKeys.clientNino -> testNino,
+    SessionKeys.clientMTDID -> testMtditid,
+    SessionKeys.confirmedClient -> "true"
+  )
+
   val testRefererRoute: String = "/test/referer/route"
 
   val testUser: MtdItUser[_] = MtdItUser(
@@ -39,20 +50,20 @@ class FeedbackControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
-  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
+  "calling GET /report-quarterly/income-and-expenses/view/agents/feedback" should {
     "render the Feedback page" when {
-      "User is authorised" in {
+      "Agent is authorised" in {
 
-        isAuthorisedUser(authorised = true)
+        stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getFeedbackPage
+        When(s"I call GET /report-quarterly/income-and-expenses/view/agents/feedback")
+        val res: WSResponse = IncomeTaxViewChangeFrontend.getFeedbackPage(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(200),
-          pageTitleIndividual("feedback.heading")
+          pageTitleAgent("feedback.heading")
         )
       }
     }
@@ -60,13 +71,11 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
   "calling POST to submit feedback form" should {
     "return OK and redirect to thankyou page" when {
-      "user is authorised and all fields filled in" in {
+      "agent is authorised and all fields filled in" in {
 
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
         FeedbackConnectorStub.stubPostFeedback(200)
-
 
         val formData: Map[String, Seq[String]] = {
           Map(
@@ -76,16 +85,15 @@ class FeedbackControllerISpec extends ComponentSpecBase {
             "feedback-comments" -> Seq("MCXSIMMKZC"),
             "csrfToken" -> Seq(""),
             "referrer" -> Seq("MCXSIMMKZC")
-
           )
         }
 
-        When(s"I call POST /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
-
+        When(s"I call POST /report-quarterly/income-and-expenses/view/agents/feedback")
+        val res: WSResponse = IncomeTaxViewChangeFrontend.post("/feedback", clientDetailsWithConfirmation)(formData)
+        println("MMMMMMMM" + res.status)
         res should have(
           httpStatus(303),
-          redirectURI(controllers.feedback.routes.FeedbackController.thankYou.url)
+          redirectURI(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
         )
 
       }
@@ -96,52 +104,49 @@ class FeedbackControllerISpec extends ComponentSpecBase {
     "return an error" when {
       "missing data" in {
 
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
         FeedbackConnectorStub.stubPostFeedback(200)
 
         When("Full name is missing")
         val formData: Map[String, Seq[String]] = {
           Map(
-                "feedback-rating" -> Seq("Test Business"),
-                "feedback-email" -> Seq("alberteinstein@gmail.com"),
-                "feedback-comments" -> Seq("MCXSIMMKZC"),
-                "csrfToken" -> Seq(""),
-                "referrer" -> Seq("MCXSIMMKZC")
+            "feedback-rating" -> Seq("Test Business"),
+            "feedback-email" -> Seq("alberteinstein@gmail.com"),
+            "feedback-comments" -> Seq("MCXSIMMKZC"),
+            "csrfToken" -> Seq(""),
+            "referrer" -> Seq("MCXSIMMKZC")
           )
         }
 
-        When(s"I call POST /report-quarterly/income-and-expenses/view/feedback")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
+        When(s"I call POST /report-quarterly/income-and-expenses/view/agents/feedback")
+        val res: WSResponse = IncomeTaxViewChangeFrontend.post("/feedback", clientDetailsWithConfirmation)(formData)
 
         res should have(
           httpStatus(400),
-          pageTitleIndividual("feedback.heading", isInvalidInput = true)
+          pageTitleAgent("feedback.heading", isInvalidInput = true)
         )
       }
     }
   }
 
-  "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
-    "render the Thankyou page" when {
+  "calling GET /report-quarterly/income-and-expenses/view/agents/feedback" should {
+    "render the Thankyou page for agents" when {
       "form was completed" in {
 
-        isAuthorisedUser(authorised = true)
-        stubUserDetails()
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostThankyou(200)
+        FeedbackConnectorStub.stubPostFeedback(200)
 
-        When(s"I call POST /report-quarterly/income-and-expenses/view/thankyou")
-        val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getThankyouPage
+        When(s"I call POST /report-quarterly/income-and-expenses/view/agents/thankyou")
+        val res: WSResponse = IncomeTaxViewChangeFrontend.getThankyouPage(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(200),
-          pageTitleIndividual("feedback.thankYou")
+          pageTitleAgent("feedback.thankYou")
         )
       }
     }
   }
 
 }
-
