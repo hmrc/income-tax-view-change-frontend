@@ -18,18 +18,18 @@ package controllers.manageBusinesses.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
-import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.cease.DeclarePropertyCeased
@@ -49,71 +49,61 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
                                                )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
+  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = false) {
+      implicit user =>
+        handleRequest(id, isAgent = false, incomeSourceType)
+  }
+
+  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleRequest(id, isAgent = true, incomeSourceType)
+  }
+
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = false) {
+      implicit request =>
+        handleSubmitRequest(id, isAgent = false, incomeSourceType)
+  }
+
+  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleSubmitRequest(id, isAgent = true, incomeSourceType)
+  }
+
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
-      val backUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
-
-      val maybeBusinessName = getBusinessName(user, id)
-
-      (incomeSourceType, id, maybeBusinessName) match {
+      (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"[DeclarePropertyCeasedController][handleRequest]: IncomeSourceId not found for IncomeSourceType: SelfEmployment")
-          Future.successful(
-            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
-          )
+          Logger("application").error("[DeclarePropertyCeasedController][handleRequest]: IncomeSourceId not found for SelfEmployment")
+          Future.successful { showInternalServerError }
         case (_, _, maybeBusinessName) =>
-          Future.successful(Ok(view(
-            form = DeclarePropertyCeasedForm.form(incomeSourceType),
-            incomeSourceType = incomeSourceType,
-            soleTraderBusinessName = maybeBusinessName,
-            isAgent = isAgent,
-            backUrl = backUrl,
-            postAction = {
-              if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id, incomeSourceType)
-              else         routes.DeclarePropertyCeasedController.submit(id, incomeSourceType)
-            }
-          )))
+          Future.successful(
+            Ok(
+              view(
+                form = DeclarePropertyCeasedForm.form(incomeSourceType),
+                incomeSourceType = incomeSourceType,
+                soleTraderBusinessName = maybeBusinessName,
+                isAgent = isAgent,
+                backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+                postAction = postAction(id, isAgent, incomeSourceType)
+              )
+            )
+          )
       }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"[DeclarePropertyCeasedController][handleRequest] Error getting declare property ceased page: ${ex.getMessage} - ${ex.getCause}")
-        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        errorHandler.showInternalServerError()
+        Logger("application")
+          .error(s"[DeclarePropertyCeasedController][handleRequest] Error getting declare property ceased page: ${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError()
     }
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-      implicit user =>
-        handleRequest(
-          id = id,
-          isAgent = false,
-          incomeSourceType = incomeSourceType
-        )
-    }
-
-  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        id = id,
-        isAgent = true,
-        incomeSourceType = incomeSourceType
-      )
-  }
-
-  def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val (postAction, backAction, redirectAction) = {
-      if (isAgent)
-        (routes.DeclarePropertyCeasedController.submitAgent(id, incomeSourceType),
-          routes.CeaseIncomeSourceController.showAgent(),
-          routes.IncomeSourceEndDateController.showAgent(id, incomeSourceType))
-      else
-        (routes.DeclarePropertyCeasedController.submit(id, incomeSourceType),
-          routes.CeaseIncomeSourceController.show(),
-          routes.IncomeSourceEndDateController.show(id, incomeSourceType))
-    }
+  def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
+                         (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     DeclarePropertyCeasedForm.form(incomeSourceType).bindFromRequest().fold(
       hasErrors =>
@@ -122,40 +112,45 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
             form = hasErrors,
             incomeSourceType = incomeSourceType,
             soleTraderBusinessName = getBusinessName(user, id),
-            postAction = postAction,
-            backUrl = backAction.url,
+            postAction = postAction(id, isAgent, incomeSourceType),
+            backUrl = backCall(isAgent).url,
             isAgent = isAgent
           ))
         },
       _ => {
-        val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-            case Right(_) => Future.successful(result)
+            case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, incomeSourceType)))
             case Left(exception) => Future.failed(exception)
           }
       }
     )
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[DeclarePropertyCeasedController][handleSubmitRequest]: - ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+      Logger("application").error(s"[DeclarePropertyCeasedController][handleSubmitRequest]: - ${ex.getMessage} - ${ex.getCause}")
+      showInternalServerError()
   }
+
+  private val postAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
+    if (isAgent) routes.DeclarePropertyCeasedController.submitAgent(id, incomeSourceType)
+    else         routes.DeclarePropertyCeasedController.submit(id, incomeSourceType)
+
+  private val backCall: Boolean => Call = isAgent =>
+    if (isAgent) routes.CeaseIncomeSourceController.showAgent()
+    else         routes.CeaseIncomeSourceController.show()
+
+  private val redirectAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
+    if (isAgent) routes.IncomeSourceEndDateController.showAgent(id, incomeSourceType)
+    else         routes.IncomeSourceEndDateController.show(id, incomeSourceType)
+
+  private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
+    if (mtdItUser.userType contains Agent) itvcErrorHandlerAgent
+    else itvcErrorHandler
+  } showInternalServerError()
 
   private def getBusinessName(user: MtdItUser[_], id: Option[String]): Option[String] = {
     user.incomeSources.businesses
       .find(x => id.contains(mkIncomeSourceId(x.incomeSourceId).toHash.hash))
       .flatMap(_.tradingName)
-  }
-
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
-      handleSubmitRequest(id = id, isAgent = false, incomeSourceType = incomeSourceType)
-  }
-
-  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(id = id, isAgent = true, incomeSourceType = incomeSourceType)
   }
 }
