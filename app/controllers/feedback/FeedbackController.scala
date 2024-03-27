@@ -88,7 +88,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
             case Right(_) =>
               Future.successful(Redirect(routes.FeedbackController.thankYou))
             case Left(status) =>
-              Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+              Logger("application").error(s"Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: ${status}")
           }).recover {
           case ex: Exception =>
@@ -114,7 +114,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
             }).recover {
             case ex: Exception =>
               Logger("application")
-                .error(s"Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
+                .error(s"[Agent] Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
               itvcErrorHandler.showInternalServerError()
           }
   }
