@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FeedbackConnector @Inject()(val http: HttpClient,
                                   val config: FrontendAppConfig,
-                                  val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
+                                  val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
                                  )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames {
 
   private val feedbackServiceSubmitUrl: String =
