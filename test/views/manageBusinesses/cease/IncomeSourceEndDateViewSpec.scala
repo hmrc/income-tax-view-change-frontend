@@ -63,20 +63,20 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     val testBackUrl: String = "/test/back/path"
     val view: Html = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), true)
         IncomeSourceEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None, true)
         IncomeSourceEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
     }
 
     val viewError: Html = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), true)
         val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
         IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None, true)
         val errorForm = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
         IncomeSourceEndDateView(incomeSourceType, errorForm, testPostActionCall, isAgent, testBackUrl)
     }
