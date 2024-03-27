@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
@@ -63,10 +63,11 @@ class ObligationsConnector @Inject()(val http: HttpClient,
               NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
             },
             valid => {
-              valid.obligations.foreach { data =>
+              val validWithoutEops = ObligationsModel(valid.obligations.map(model => NextUpdatesModel(model.identification, model.obligations.filter(_.obligationType != "EOPS"))))
+              validWithoutEops.obligations.foreach { data =>
                 auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
               }
-              valid
+              validWithoutEops
             }
           )
         case NOT_FOUND | FORBIDDEN =>
