@@ -149,8 +149,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               entry,
               entry.copy(date = "2020-12-24", creditType = CutOverCreditType)(dateServiceInterface),
               entry.copy(date = "2020-12-23", creditType = BalancingChargeCreditType)(dateServiceInterface),
-              entry.copy(date = "2020-12-22", creditType = SetOffCharge)(dateServiceInterface),
-              entry.copy(date = "2020-12-21", creditType = SetOffChargeInterest)(dateServiceInterface),
+              entry.copy(date = "2020-12-21", creditType = RepaymentInterest)(dateServiceInterface),
               entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
               entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
@@ -164,10 +163,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             getContent(0) shouldBe "Credit from HMRC adjustment"
             getContent(1) shouldBe "Credit from an earlier tax year"
             getContent(2) shouldBe "Credit from overpaid tax"
-            getContent(3) shouldBe "Credit from a set-off charge"
-            getContent(4) shouldBe "Credit interest from a set-off charge"
-            getContent(5) shouldBe "Payment you made to HMRC"
-            getContent(6) shouldBe "Refund issued"
+            getContent(3) shouldBe "Credit from repayment interest"
+            getContent(4) shouldBe "Payment you made to HMRC"
+            getContent(5) shouldBe "Refund issued"
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in

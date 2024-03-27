@@ -1029,8 +1029,7 @@ paymentHistory.payment                                          = Payment you ma
 paymentHistory.cutOver                                          = Credit from an earlier tax year
 paymentHistory.mfa                                              = Credit from HMRC adjustment
 paymentHistory.balancingCharge                                  = Credit from overpaid tax
-paymentHistory.setOffCharge                                     = Credit from a set-off charge
-paymentHistory.setOffChargeInterest                             = Credit interest from a set-off charge
+paymentHistory.repaymentInterest                                = Credit from repayment interest
 
 paymentHistory.taxYear                                          = {0} to {1} tax year
 
@@ -1165,11 +1164,8 @@ credit-and-refund.row.cutOver-2                                   = credit from 
 credit-and-refund.row.balancingCharge-1                           =
 credit-and-refund.row.balancingCharge-2                           = credit from overpaid tax -
 
-credit-and-refund.row.setOffCharge-1                              =
-credit-and-refund.row.setOffCharge-2                              = credit from a set-off charge -
-
-credit-and-refund.row.setOffChargeInterest-1                      =
-credit-and-refund.row.setOffChargeInterest-2                      = credit interest from a set-off charge -
+credit-and-refund.row.repaymentInterest-1                      =
+credit-and-refund.row.repaymentInterest-2                      = credit from repayment interest -
 
 
 
@@ -1768,8 +1764,7 @@ manageBusinesses.type-of-property.error                                  = Selec
 credit.description.balancingCharge                                    = Credit from overpaid tax
 credit.description.cutOver                                            = Credit from an earlier tax year
 credit.description.mfa                                                = Credit from HMRC adjustment
-credit.description.setOffCharge                                       = Credit from a set-off charge
-credit.description.setOffChargeInterest                               = Credit interest from a set-off charge
+credit.description.repaymentInterest                                  = Credit from repayment interest
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Businesses that have ceased

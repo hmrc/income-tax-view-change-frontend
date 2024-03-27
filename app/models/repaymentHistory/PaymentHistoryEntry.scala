@@ -16,7 +16,7 @@
 
 package models.repaymentHistory
 
-import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, SetOffCharge, SetOffChargeInterest}
+import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, RepaymentInterest}
 import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 
@@ -35,7 +35,7 @@ case class PaymentHistoryEntry(date: LocalDate,
   }
 
   def isCredit: Boolean = creditType match {
-    case BalancingChargeCreditType | CutOverCreditType | MfaCreditType | SetOffCharge | SetOffChargeInterest => true
+    case BalancingChargeCreditType | CutOverCreditType | MfaCreditType | RepaymentInterest => true
     case _ => false
   }
 }

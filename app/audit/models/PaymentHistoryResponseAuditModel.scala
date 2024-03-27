@@ -42,8 +42,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
       case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(getPayment(payment, "Credit from HMRC adjustment"))
       case Some(CutOverCreditType)         if hasCredit && CutOverCreditsEnabled  => Some(getPayment(payment, "Credit from an earlier tax year"))
       case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
-      case Some(SetOffCharge)              if hasCredit                           => Some(getPayment(payment, "Set off charge"))
-      case Some(SetOffChargeInterest)      if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
+      case Some(RepaymentInterest)      if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
       case Some(PaymentType)               if !hasCredit && hasLot                => Some(getPayment(payment, "Payment Made to HMRC"))
       case _ => None
     }

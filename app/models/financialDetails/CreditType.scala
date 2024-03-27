@@ -32,12 +32,8 @@ case object BalancingChargeCreditType extends CreditType {
   override val key = "balancingCharge"
 }
 
-case object SetOffCharge extends CreditType {
-  override val key = "setOffCharge"
-}
-
-case object SetOffChargeInterest extends CreditType {
-  override val key = "setOffChargeInterest"
+case object RepaymentInterest extends CreditType {
+  override val key = "repaymentInterest"
 }
 
 case object PaymentType extends CreditType {
@@ -53,8 +49,7 @@ object CreditType {
   // values come from EPID #1138
   private val cutOver = "6110"
   private val balancingCharge = "4905"
-  private val setOffCharge = "0060"
-  private val setOffChargeInterest = "6020"
+  private val repaymentInterest = "6020"
   private val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
@@ -66,10 +61,8 @@ object CreditType {
         Some(CutOverCreditType)
       case CreditType.balancingCharge =>
         Some(BalancingChargeCreditType)
-      case CreditType.setOffCharge =>
-        Some(SetOffCharge)
-      case CreditType.setOffChargeInterest =>
-        Some(SetOffChargeInterest)
+      case CreditType.repaymentInterest =>
+        Some(RepaymentInterest)
       case x if mfaCredit.contains(x) =>
         Some(MfaCreditType)
       case x if payment.contains(x) =>

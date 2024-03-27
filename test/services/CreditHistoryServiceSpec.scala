@@ -80,7 +80,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
           val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, true, true)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(
-              creditDetailModelasSetOff, creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
+              creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
       }

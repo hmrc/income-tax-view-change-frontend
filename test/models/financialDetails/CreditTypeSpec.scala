@@ -45,15 +45,9 @@ class CreditTypeSpec extends UnitSpec {
       }
     }
 
-    "be SetOffCharge " when {
-      "mainTransaction is 0060" in {
-        CreditType("0060") shouldBe Some(SetOffCharge)
-      }
-    }
-
-    "be SetOffChargeInterest" when {
+    "be RepaymentInterest" when {
       "mainTransaction is 6020" in {
-        CreditType("6020") shouldBe Some(SetOffChargeInterest)
+        CreditType("6020") shouldBe Some(RepaymentInterest)
       }
     }
 

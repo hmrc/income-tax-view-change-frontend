@@ -67,13 +67,8 @@ trait CreditHistoryDataHelper {
     outstandingAmount = Some(120.00), originalAmount = Some(-150.00),
     documentDate = LocalDate.of(taxYear, 3, 29))
 
-  val documentDetailsWhichIsSetOffCredit = DocumentDetail(taxYear = 2022,
-    transactionId = "testTransactionId4",
-    documentDescription = Some(""), documentText = None,
-    outstandingAmount = Some(0.00), originalAmount = Some(-200.00),
-    documentDate = LocalDate.of(taxYear, 3, 29))
 
-  val documentDetailsWhichIsSetOffInterestCredit = DocumentDetail(taxYear = 2022,
+  val documentDetailsWhichIsRepaymentInterestCredit = DocumentDetail(taxYear = 2022,
     transactionId = "testTransactionId5",
     documentDescription = Some("SA Repayment Supplement Credit"), documentText = None,
     outstandingAmount = Some(-250.00), originalAmount = Some(-250.00),
@@ -106,17 +101,11 @@ trait CreditHistoryDataHelper {
   val taxYearFinancialDetailsAllCredits = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(
-      documentDetailsWhichIsSetOffCredit,
-      documentDetailsWhichIsSetOffInterestCredit
+      documentDetailsWhichIsRepaymentInterestCredit
     ),
     financialDetails = List(
-      FinancialDetail(taxYear = "2022",
-        mainType = Some(""), mainTransaction = Some("0060"), transactionId = Some(documentDetailsWhichIsSetOffCredit.transactionId),
-        transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-400)), outstandingAmount = None,
-        clearedAmount = None, chargeType = None, accruedInterest = None,
-        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot4"), paymentLotItem = Some("paymentLotItem4"))))),
-      FinancialDetail(taxYear = "2022",
-        mainType = Some("SA Repayment Supplement Credit"), mainTransaction = Some("6020"), transactionId = Some(documentDetailsWhichIsSetOffInterestCredit.transactionId),
+     FinancialDetail(taxYear = "2022",
+        mainType = Some("SA Repayment Supplement Credit"), mainTransaction = Some("6020"), transactionId = Some(documentDetailsWhichIsRepaymentInterestCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-500)), outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
         items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot5"), paymentLotItem = Some("paymentLotItem5")))))
@@ -171,17 +160,11 @@ trait CreditHistoryDataHelper {
     balanceDetails = Some(expectedBalancedDetails)
   )
 
-  val creditDetailModelasSetOff = CreditDetailModel(
-    date = LocalDate.parse("2022-03-29"),
-    documentDetail = documentDetailsWhichIsSetOffCredit,
-    SetOffCharge,
-    balanceDetails = Some(expectedBalancedDetails)
-  )
 
   val creditDetailModelasSetInterest = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    documentDetail = documentDetailsWhichIsSetOffInterestCredit,
-    SetOffChargeInterest,
+    documentDetail = documentDetailsWhichIsRepaymentInterestCredit,
+    RepaymentInterest,
     balanceDetails = Some(expectedBalancedDetails)
   )
 

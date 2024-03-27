@@ -42,13 +42,9 @@
     link: link,
     govukInsetText : GovukInsetText
 )
-@(viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
+@(viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails],
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
-
-@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
-@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
 
 @creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
         <li>
@@ -60,12 +56,13 @@
         </li>
 }
 
-@maybeCreditChargesHead = @{
-    viewModel.creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
-}
 
 @maybeBalancesDetails = @{
-balance.getOrElse(throw MissingFieldException("Balance"))
+    balance.getOrElse(throw MissingFieldException("Balance"))
+}
+
+@creditViewRows = @{
+    viewModel.creditViewRows()
 }
 
 @maybeAvailableCredit = @{
@@ -108,31 +105,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             </span>
         </summary>
         <div class="govuk-details__text">
-            @creditAndRefundType match {
-                case Some(UnallocatedCreditFromOnePayment) => {
-                    <h2 class="govuk-heading-s">
-                        <span class="govuk-body" id="unallocated-payment">
-                            <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.payment")
-                            @((maybeCreditChargesHead match {
-                                case (documentDetailWithDueDate, _) => documentDetailWithDueDate.dueDate
-                            }).getOrElse(throw MissingFieldException("Due Date")).toLongDate)
-                        </span>
-                    </h2>
-                }
-                case Some(UnallocatedCreditFromSingleCreditItem) => {
-                    <h2 class="govuk-heading-s">
-                        <span class="govuk-body" id="unallocated-single-credit">
-                            <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.credit-from-adjustment-prt-1")
-                            @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
-                        </span>
-                    </h2>
-                }
-                case None => {
-                    @getListOfCreditsAndRefunds
-                }
-            }
+            @getListOfCreditsAndRefunds
         </div>
     </details>
 }
@@ -182,37 +155,58 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     .flatten.sorted(Ordering.BigDecimal.reverse)
 }
 
-@getListOfCreditsAndRefunds = {
-    <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- viewModel.creditViewRows().zipWithIndex) {
-            <li>
-                <p class="govuk-heading-s">
-                    @credit match {
-                        case CreditViewRow(amount, creditType, taxYear) => {
-                            <span class="govuk-body">
-                                @messages(s"credit-and-refund.row.${creditType.key}-1")
-                            </span>
-                            @amount.toCurrencyString
-                            <span class="govuk-body">
-                                @messages(s"credit-and-refund.row.${creditType.key}-2")
-                                @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
-                            </span>
-                        }
-                        case PaymentCreditRow(amount, creditType, date) => {
-                            @amount.toCurrencyString
-                            <span class="govuk-body">@messages("credit-and-refund.payment")
-                                @date.toLongDate
-                            </span>
-                        }
-                    }
-                </p>
-            </li>
+@getContent(credit: CreditRow) = {
+    <span class="govuk-body">
+        @credit match {
+            case CreditViewRow(amount, creditType, taxYear) => {
+                @messages(s"credit-and-refund.row.${creditType.key}-1")
+                <strong class="govuk-body govuk-!-font-weight-bold">@amount.toCurrencyString</strong>
+                @messages(s"credit-and-refund.row.${creditType.key}-2")
+                @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
+            }
+            case PaymentCreditRow(amount, creditType, date) => {
+                <strong class="govuk-body govuk-!-font-weight-bold">@amount.toCurrencyString</strong>
+                @messages("credit-and-refund.payment")
+                @date.toLongDate
+            }
         }
+    </span>
+}
 
-        @for(amount <- getRefundsInProgress){
-            @creditAndRefundRefundProgressHtml(amount)
+@getListOfCreditsAndRefunds = {
+
+    @if(creditViewRows.size == 1) {
+        @for(credit <- creditViewRows) {
+            @credit match {
+                case CreditViewRow(_,_,_) => {
+                    <span class="govuk-body" id="unallocated-single-credit">
+                        @getContent(credit)
+                    </span>
+                }
+                case PaymentCreditRow(_,_,_) => {
+                    <span class="govuk-body" id="unallocated-payment">
+                        @getContent(credit)
+                    </span>
+                }
+            }
         }
-    </ul>
+    } else {
+        <ul class="govuk-list govuk-list--bullet" id="credits-list">
+            @for(credit <- creditViewRows) {
+                <li>
+                    <p class="govuk-heading-s">
+                        @getContent(credit)
+                    </p>
+                </li>
+            }
+            @for(amount <- getRefundsInProgress){
+                @creditAndRefundRefundProgressHtml(amount)
+            }
+
+        </ul>
+    }
+
+
 }
 
 

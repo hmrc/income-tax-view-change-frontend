@@ -49,6 +49,7 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
+      case (Some(RepaymentInterest), _) => "Credit from repayment interest"
       case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if isPayment =>
         Logger("application").error("[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
