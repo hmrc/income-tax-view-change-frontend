@@ -90,7 +90,6 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST /report-quarterly/income-and-expenses/view/agents/feedback")
         val res: WSResponse = IncomeTaxViewChangeFrontend.post("/feedback", clientDetailsWithConfirmation)(formData)
-        println("MMMMMMMM" + res.status)
         res should have(
           httpStatus(303),
           redirectURI(controllers.feedback.routes.FeedbackController.thankYouAgent.url)

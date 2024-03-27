@@ -185,7 +185,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
-      println("AAAAAAAAAAA")
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri).withMethod("POST")
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),

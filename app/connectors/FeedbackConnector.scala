@@ -57,7 +57,6 @@ class FeedbackConnector @Inject()(val http: HttpClient,
     http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
       formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
       resp =>
-        println("HEHEHEHE" + resp.status)
         resp.status match {
           case OK =>
             Logger("application").info(s"OK....")
@@ -76,13 +75,10 @@ class FeedbackConnector @Inject()(val http: HttpClient,
     http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
       formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
       resp =>
-        println("PFFFFF" + resp.status)
         resp.status match {
           case OK => Logger("application").info(s"OK....")
-            println("GGGGGGGGG")
             Right(())
           case status =>
-            println("SSSSSSSS" + resp.status)
             Logger("application").error(s"Unexpected status code from feedback form: $status")
             Left(status)
         }
