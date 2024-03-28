@@ -1754,9 +1754,9 @@ manageBusinesses.type-of-property.error                                  = Dewis
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben
 
 # manage business check your answers
-manageBusinesses.check-answers.SE.heading                                = Unig fasnachwr
-manageBusinesses.check-answers.UK.heading                        = Eiddo yn y DU
-manageBusinesses.check-answers.FP.heading                   = Eiddo tramor
+manageBusinesses.check-answers.SelfEmployment.heading                    = Unig fasnachwr
+manageBusinesses.check-answers.UkProperty.heading                        = Eiddo yn y DU
+manageBusinesses.check-answers.ForeignProperty.heading                   = Eiddo tramor
 manageBusinesses.check-answers.text                                      = Gwirio’ch atebion
 manageBusinesses.check-answers.reporting-frequency                       = Amlder cyflwyno {0} i {1}
 manageBusinesses.check-answers.reporting.quarterly                       = Bob chwarter
