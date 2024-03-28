@@ -107,16 +107,14 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
 
     withIncomeSourcesFS {
       withSessionData(JourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-        withIncomeSourcesFS {
-          sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
-            case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
-              val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
-              val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-              val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
+        sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
+          case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
+            val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
+            val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+            val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(startYear = taxYear - 1, endYear = taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
-            case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
-          }
+            handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(startYear = taxYear - 1, endYear = taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+          case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
         }
       }
     }
