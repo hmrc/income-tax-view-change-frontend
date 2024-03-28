@@ -268,6 +268,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCeaseUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)
 
+    def getCeaseSelfEmployment(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession(s"/agents/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed", additionalCookies)
+
     def postCeaseUKProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
       post(uri = "/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -283,6 +286,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseForeignProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
       post(uri = "/manage-your-businesses/cease/foreign-property-confirm-cease", additionalCookies)(
+        answer.fold(Map.empty[String, Seq[String]])(
+          declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+
+    def postCeaseSelfEmployment(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      post(uri = s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
           declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )

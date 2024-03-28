@@ -72,7 +72,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        When(s"I call GET ${showDeclareUKPropertyCeasedUrl}")
+        When(s"I call GET $showDeclareUKPropertyCeasedUrl")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getCeaseUKProperty
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -85,7 +85,6 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
       }
     }
   }
-
   s"calling POST $submitDeclareUKPropertyCeasedUrl" should {
     s"redirect to $showUKPropertyEndDateUrl" when {
       "form is filled correctly" in {
