@@ -1331,6 +1331,7 @@ dateForm.error.dayAndYear.required                                  = Mae’n rh
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 dateForm.error.future                                               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+dateForm.error.invalid                                              = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 dateFrom.error.beforeStartDate                                      = TNi all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
 
@@ -1468,6 +1469,20 @@ incomeSources.ceaseForeignProperty.checkDetails.caption               = Y busnes
 incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
 incomeSources.ceaseForeignProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
 incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
+
+
+## Cease - Check Answers ##
+cease-check-answers.title                                     = Gwirio’ch atebion
+cease-check-answers.caption                                   = Unig fasnachwr
+cease-check-answers.cease-date                                = Dyddiad y gwnaeth y busnes stopio
+cease-check-answers.business-name                             = Enw’r busnes
+cease-check-answers.trade                                     = Masnach y busnes
+cease-check-answers.address                                   = Cyfeiriad
+cease-check-answers.change                                    = Newid
+cease-check-answers.unknown                                   = Anhysbys
+
+cease-check-answers-uk.caption                                = Eiddo yn y DU
+cease-check-answers-fp.caption                                = Eiddo tramor
 
 
 # check business details

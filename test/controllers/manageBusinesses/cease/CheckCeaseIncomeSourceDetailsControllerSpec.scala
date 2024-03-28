@@ -56,7 +56,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
 
   val validCeaseDate: String = LocalDate.of(2022, 10, 10).toString
 
-  val checkDetailsHeading: String = messages("incomeSources.ceaseBusiness.checkDetails.heading")
+  val checkDetailsHeading: String = messages("cease-check-answers.title")
 
   object TestCeaseCheckIncomeSourceDetailsController extends CeaseCheckIncomeSourceDetailsController(
     mockAuthService,

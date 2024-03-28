@@ -17,6 +17,8 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import forms.validation.CustomConstraints
@@ -28,7 +30,7 @@ import services.DateService
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends CustomConstraints {
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching{
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
@@ -37,7 +39,13 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
   val dateMustNotBeMissingDayAndMonthField = "dateForm.error.dayAndMonth.required"
   val dateMustNotBeMissingDayAndYearField = "dateForm.error.dayAndYear.required"
   val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
-  val dateMustNotBeInvalid = "error.invalid"
+  val dateInvalid = "error.invalid"
+
+  private def dateMustNotBeInvalid(incomeSourceType: IncomeSourceType, newIncomeSourceJourney: Boolean) = {
+    val messagePrefix = incomeSourceType.endDateMessagePrefix
+    if (newIncomeSourceJourney) "dateForm.error.invalid" else
+      s"$messagePrefix.$dateInvalid"
+  }
 
   def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
 
@@ -45,20 +53,19 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
 
   def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate
-    val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateConstraints: List[Constraint[LocalDate]] = {
 
       val minimumDateConstraints = incomeSourceType match {
         case UkProperty =>
-          val businessStartDate = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate)
+          val ukStartDate = user.incomeSources.properties.filter(_.isUkProperty).filter(!_.isCeased).flatMap(_.tradingStartDate)
             .headOption.getOrElse(LocalDate.MIN)
-          List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate(UkProperty)))
+          List(minDate(ukStartDate, dateMustBeAfterBusinessStartDate(UkProperty)))
         case ForeignProperty =>
-          val businessStartDate = user.incomeSources.properties.filter(_.isForeignProperty).flatMap(_.tradingStartDate)
+          val foreignStartDate = user.incomeSources.properties.filter(_.isForeignProperty).filter(!_.isCeased).flatMap(_.tradingStartDate)
             .headOption.getOrElse(LocalDate.MIN)
-          List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate(ForeignProperty)))
+          List(minDate(foreignStartDate, dateMustBeAfterBusinessStartDate(ForeignProperty)))
         case SelfEmployment =>
           val errorMessage: String = "missing income source ID"
           val incomeSourceId = id.getOrElse(throw new Exception(errorMessage))
@@ -78,7 +85,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
         "year" -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
-          validDate(s"$messagePrefix.$dateMustNotBeInvalid")
+          validDate(dateMustNotBeInvalid(incomeSourceType, newIncomeSourceJourney))
         )).transform[LocalDate](
         {
           case (day, month, year) =>

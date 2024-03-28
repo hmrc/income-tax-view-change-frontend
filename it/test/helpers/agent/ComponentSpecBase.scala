@@ -117,7 +117,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.citizen-details.port" -> mockPort,
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
-    "auditing.enabled" -> "true"
+    "auditing.enabled" -> "true",
+    "microservice.services.contact-frontend.host" -> mockHost,
+    "microservice.services.contact-frontend.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -364,6 +366,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
+    def getFeedbackPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = get("/feedback", additionalCookies)
+
+    def getThankyouPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = get("/thankyou", additionalCookies)
+
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
         uri = s"/manage-your-businesses/add-sole-trader/business-start-date-check",
@@ -450,18 +456,18 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-check-details", additionalCookies)
+    def getCheckCeaseUKPropertyAnswers(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-check-answers", additionalCookies)
 
-    def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
-      post("/manage-your-businesses/cease/uk-property-check-details", additionalCookies)(Map.empty)
+    def postCheckCeaseUKPropertyAnswers(additionalCookies: Map[String, String]): WSResponse =
+      post("/manage-your-businesses/cease/uk-property-check-answers", additionalCookies)(Map.empty)
 
 
-    def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/foreign-property-check-details", session)
+    def getCheckCeaseForeignPropertyAnswers(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/foreign-property-check-answers", session)
 
-    def postCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
-      post(s"/manage-your-businesses/cease/foreign-property-check-details", session)(Map.empty)
+    def postCheckCeaseForeignPropertyAnswers(session: Map[String, String]): WSResponse =
+      post(s"/manage-your-businesses/cease/foreign-property-check-answers", session)(Map.empty)
 
     def getManageIncomeSource(additionalCookies: Map[String, String]): WSResponse = get("/income-sources/manage/view-and-manage-income-sources", additionalCookies)
 
@@ -520,11 +526,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/business-check-details", additionalCookies)
+    def getCheckCeaseBusinessAnswers(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/business-check-answers", additionalCookies)
 
-    def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
-      post("/manage-your-businesses/cease/business-check-details", additionalCookies)(Map.empty)
+    def postCheckCeaseBusinessAnswers(additionalCookies: Map[String, String]): WSResponse =
+      post("/manage-your-businesses/cease/business-check-answers", additionalCookies)(Map.empty)
 
     def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
 
