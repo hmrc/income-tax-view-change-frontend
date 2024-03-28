@@ -24,11 +24,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod, TaxYear}
+import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.ManageIncomeSourceData
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.mvc._
@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             Ok(checkYourAnswers(
               isAgent,
               backUrl,
-              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(taxYearStringOpt), incomeSourceType),
+              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(taxYearStringOpt - 1, taxYearStringOpt), incomeSourceType),
               incomeSourceType
             )
             )
@@ -114,7 +114,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
               val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
               val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(taxYear - 1, taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
             case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
           }
         }
