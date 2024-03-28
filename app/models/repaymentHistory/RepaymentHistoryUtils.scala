@@ -98,7 +98,7 @@ object  RepaymentHistoryUtils {
       case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(mfaCreditEntry(payment, isAgent))
       case Some(CutOverCreditType)         if hasCredit && CutOverCreditsEnabled  => Some(creditEntry(payment, isAgent))
       case Some(BalancingChargeCreditType) if hasCredit                           => Some(creditEntry(payment, isAgent))
-      case Some(RepaymentInterest)      if hasCredit                           => Some(creditEntry(payment, isAgent))
+      case Some(RepaymentInterest)         if hasCredit                           => Some(creditEntry(payment, isAgent))
       case Some(PaymentType)               if !hasCredit && hasLot                => Some(paymentToHMRCEntry(payment, isAgent))
       case _ => None
     }

@@ -198,11 +198,11 @@ isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean
                     </span>
                 }
                 case PaymentCreditRow(amount, creditType, date) => {
-                @amount.toCurrencyString
-                <span class="govuk-body">@messages("credit-and-refund.payment")
-                                @date.toLongDate
-                            </span>
-                }
+                    @amount.toCurrencyString
+                    <span class="govuk-body">@messages("credit-and-refund.payment")
+                                    @date.toLongDate
+                                </span>
+                    }
                 }
             </p>
         </li>
