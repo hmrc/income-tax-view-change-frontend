@@ -132,7 +132,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
 
     val updateIncomeSourceResFuture = updateIncomeSource(taxYear.endYear, incomeSourceIdMaybe, reportingMethod)
 
-    val resultFuture = updateIncomeSourceResFuture flatMap {
+    updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
         handleUpdateError(errorCall, isAgent, reportingMethod, taxYear, incomeSourceBusinessName, incomeSourceType)
       case _: UpdateIncomeSourceResponseModel =>
@@ -141,9 +141,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             handleSuccessfulUpdate(errorCall, successCall, isAgent, reportingMethod, taxYear, incomeSourceId, incomeSourceBusinessName, incomeSourceType)
           case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }
-    }
-
-    resultFuture.recover {
+    } recover {
       case ex: Exception =>
         logAndShowError(isAgent, s"Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
         Redirect(errorCall)
