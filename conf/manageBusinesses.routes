@@ -216,10 +216,10 @@ GET          /agents/manage-your-businesses/cease/change-business-end-date      
 POST         /manage-your-businesses/cease/change-business-end-date               controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChange(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /agents/manage-your-businesses/cease/change-business-end-date        controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /manage-your-businesses/cease/business-check-details                 controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /agents/manage-your-businesses/cease/business-check-details          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /manage-your-businesses/cease/business-check-details                 controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /agents/manage-your-businesses/cease/business-check-details          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /manage-your-businesses/cease/business-check-answers                 controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/manage-your-businesses/cease/business-check-answers          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /manage-your-businesses/cease/business-check-answers                 controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/manage-your-businesses/cease/business-check-answers          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
 GET          /manage-your-businesses/cease/uk-property-declare                    controllers.manageBusinesses.cease.DeclarePropertyCeasedController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/manage-your-businesses/cease/uk-property-declare             controllers.manageBusinesses.cease.DeclarePropertyCeasedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
@@ -234,10 +234,10 @@ GET          /agents/manage-your-businesses/cease/change-uk-property-end-date   
 POST         /manage-your-businesses/cease/change-uk-property-end-date            controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
 POST         /agents/manage-your-businesses/cease/change-uk-property-end-date     controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
 
-GET          /manage-your-businesses/cease/uk-property-check-details              controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = UkProperty)
-GET          /agents/manage-your-businesses/cease/uk-property-check-details       controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
-POST         /manage-your-businesses/cease/uk-property-check-details              controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
-POST         /agents/manage-your-businesses/cease/uk-property-check-details       controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /manage-your-businesses/cease/uk-property-check-answers              controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/manage-your-businesses/cease/uk-property-check-answers       controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /manage-your-businesses/cease/uk-property-check-answers              controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/manage-your-businesses/cease/uk-property-check-answers       controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
 
 GET          /manage-your-businesses/cease/foreign-property-declare               controllers.manageBusinesses.cease.DeclarePropertyCeasedController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/manage-your-businesses/cease/foreign-property-declare        controllers.manageBusinesses.cease.DeclarePropertyCeasedController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
@@ -252,10 +252,10 @@ GET          /agents/manage-your-businesses/cease/change-foreign-property-end-da
 POST         /manage-your-businesses/cease/change-foreign-property-end-date            controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/manage-your-businesses/cease/change-foreign-property-end-date     controllers.manageBusinesses.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = ForeignProperty)
 
-GET          /manage-your-businesses/cease/foreign-property-check-details         controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /agents/manage-your-businesses/cease/foreign-property-check-details  controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /manage-your-businesses/cease/foreign-property-check-details          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /agents/manage-your-businesses/cease/foreign-property-check-details   controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /manage-your-businesses/cease/foreign-property-check-answers         controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/manage-your-businesses/cease/foreign-property-check-answers  controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /manage-your-businesses/cease/foreign-property-check-answers          controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /agents/manage-your-businesses/cease/foreign-property-check-answers   controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 GET          /manage-your-businesses/cease/cease-business-success                                  controllers.manageBusinesses.cease.IncomeSourceCeasedObligationsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/cease/cease-business-success                           controllers.manageBusinesses.cease.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
