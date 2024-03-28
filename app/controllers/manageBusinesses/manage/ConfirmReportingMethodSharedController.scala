@@ -87,46 +87,44 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
-    Future.successful(
-      (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
-        case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-          user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
-            case Some(latencyDetails) =>
-              if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
-                val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
-                val journeyType = JourneyType(Manage, incomeSourceType)
-                sessionService.getMongo(journeyType.toString).flatMap {
-                  case Right(Some(sessionData)) =>
-                    val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
-                    val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear))
-                    val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+    (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
+      case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+        user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
+          case Some(latencyDetails) =>
+            if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
+              val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
+              val journeyType = JourneyType(Manage, incomeSourceType)
+              sessionService.getMongo(journeyType.toString).flatMap {
+                case Right(Some(sessionData)) =>
+                  val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
+                  val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear))
+                  val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
-                    sessionService.setMongoData(uiJourneySessionData)
-                  case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
-                }
+                  sessionService.setMongoData(uiJourneySessionData)
+                case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
+              }
 
-                Ok(
-                  confirmReportingMethod(
-                    isAgent = isAgent,
-                    backUrl = backCall.url,
-                    newReportingMethod = reportingMethod,
-                    form = ConfirmReportingMethodForm(changeTo),
-                    taxYearEndYear = taxYearModel.endYear.toString,
-                    taxYearStartYear = taxYearModel.startYear.toString,
-                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-                  ))
-              }
-              else {
-                logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-              }
-            case None => logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details")
-          }
-        case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-        case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
-        case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
-      }
-    )
+              Future.successful(Ok(
+                confirmReportingMethod(
+                  isAgent = isAgent,
+                  backUrl = backCall.url,
+                  newReportingMethod = reportingMethod,
+                  form = ConfirmReportingMethodForm(changeTo),
+                  taxYearEndYear = taxYearModel.endYear.toString,
+                  taxYearStartYear = taxYearModel.startYear.toString,
+                  postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+                  isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
+                ))
+              )
+            }
+            else {
+              Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear"))
+            }
+          case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
+        }
+      case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
+    }
+
   }
 
 

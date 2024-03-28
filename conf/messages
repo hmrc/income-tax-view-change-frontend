@@ -1768,8 +1768,8 @@ manageBusinesses.ceased.heading                                          = Busin
 
 # manage business check your answers
 manageBusinesses.check-answers.SE.heading                                = Sole trader
-manageBusinesses.check-answers.UKPROPERTY.heading                        = UK property
-manageBusinesses.check-answers.FOREIGNPROPERTY.heading                   = Foreign property
+manageBusinesses.check-answers.UK.heading                        = UK property
+manageBusinesses.check-answers.FP.heading                   = Foreign property
 manageBusinesses.check-answers.text                                      = Check your answers
 manageBusinesses.check-answers.reporting-frequency                       = Reporting frequency {0} to {1}
 manageBusinesses.check-answers.reporting.quarterly                       = Quarterly

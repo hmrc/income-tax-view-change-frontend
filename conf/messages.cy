@@ -1755,8 +1755,8 @@ manageBusinesses.ceased.heading                                          = Busne
 
 # manage business check your answers
 manageBusinesses.check-answers.SE.heading                                = Unig fasnachwr
-manageBusinesses.check-answers.UKPROPERTY.heading                        = Eiddo yn y DU
-manageBusinesses.check-answers.FOREIGNPROPERTY.heading                   = Eiddo tramor
+manageBusinesses.check-answers.UK.heading                        = Eiddo yn y DU
+manageBusinesses.check-answers.FP.heading                   = Eiddo tramor
 manageBusinesses.check-answers.text                                      = Gwirio’ch atebion
 manageBusinesses.check-answers.reporting-frequency                       = Amlder cyflwyno {0} i {1}
 manageBusinesses.check-answers.reporting.quarterly                       = Bob chwarter

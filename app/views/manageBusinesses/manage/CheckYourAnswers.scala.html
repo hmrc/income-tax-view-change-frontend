@@ -37,7 +37,7 @@
     isAgent: Boolean,
     backUrl: String,
     viewModel: CheckYourAnswersViewModel,
-    journeyType: String
+    incomeSourceType: IncomeSourceType
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
@@ -46,21 +46,19 @@
 @import implicitDateFormatter.longDate
 
 @getChangeHref = @{
-  val url = journeyType match {
-    case "SE" => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
-    case "UKPROPERTY" => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
-    case "FOREIGNPROPERTY" => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
-    case _ => ""
+  val url = incomeSourceType match {
+    case SelfEmployment => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
+    case UkProperty => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
+    case _ => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
   }
   url
 }
 
 @getSubmitHref = @{
-    val url = journeyType match {
-        case "SE" => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, SelfEmployment)
-        case "UKPROPERTY" => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, UkProperty)
-        case "FOREIGNPROPERTY" => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, ForeignProperty)
-        case _ => throw new IllegalArgumentException(s"Invalid journeyType: $journeyType")
+    val url = incomeSourceType match {
+        case SelfEmployment => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, SelfEmployment)
+        case UkProperty => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, UkProperty)
+        case _ => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, ForeignProperty)
 }
     url
 }
@@ -76,7 +74,7 @@
     @hmrcPageHeading(PageHeading(
     text = getMessage("text"),
     headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage(s"$journeyType.heading")),
+    section = Some(getMessage(s"$incomeSourceType.heading")),
     captionClasses = Some("govuk-caption-l")
     ))
 
