@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package enums
+package models.incomeSourceDetails.viewmodels
 
-sealed trait ReportingMethod {
-  val name: String
-}
+import enums.IncomeSourceJourney.IncomeSourceType
+import models.core.IncomeSourceId
+import models.incomeSourceDetails.TaxYear
 
-case object AnnualReportingMethod extends ReportingMethod {
-  override val name: String = "annual"
-}
-
-case object QuarterlyReportingMethod extends ReportingMethod {
-  override val name: String = "quarterly"
-}
-
-object ReportingMethod {
-  def apply(method: String): ReportingMethod = method.toLowerCase match {
-    case "annual" => AnnualReportingMethod
-    case "quarterly" => QuarterlyReportingMethod
-  }
-}
+case class CheckYourAnswersViewModel(incomeSourceId: IncomeSourceId,
+                                     reportingMethod: String,
+                                     taxYear: TaxYear,
+                                     incomeSourceType: IncomeSourceType)

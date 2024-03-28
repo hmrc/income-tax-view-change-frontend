@@ -17,25 +17,22 @@
 package controllers.manageBusinesses.manage
 
 import audit.AuditingService
-import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import exceptions.MissingSessionKey
+import enums.ReportingMethod
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
@@ -86,44 +83,70 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                 changeTo: String,
                                 isAgent: Boolean,
                                 incomeSourceType: IncomeSourceType,
-                                soleTraderBusinessId: Option[IncomeSourceId])
-                               (implicit user: MtdItUser[_]): Future[Result] = {
+                                soleTraderBusinessId: Option[IncomeSourceId]
+                               )(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
+    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(_.value))
 
-    Future.successful(
-      (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
-        case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
-              case Some(latencyDetails) =>
-                if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
-          val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
+    (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
+      case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+        validateTaxYearAndReportingMethod(taxYearModel, ReportingMethod(reportingMethod), id, isAgent, changeTo, incomeSourceType)
+      case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
+    }
+  }
 
+  private def validateTaxYearAndReportingMethod(taxYearModel: TaxYear,
+                                                reportingMethod: ReportingMethod,
+                                                id: IncomeSourceId,
+                                                isAgent: Boolean,
+                                                changeTo: String,
+                                                incomeSourceType: IncomeSourceType
+                                               )(implicit user: MtdItUser[_]): Future[Result] = {
+    user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
+      case Some(latencyDetails) =>
+        if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
+          handleValidTaxYearAndReportingMethod(taxYearModel, reportingMethod, id, isAgent, changeTo, incomeSourceType)
+        } else {
+          Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYearModel"))
+        }
+      case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
+    }
+  }
+
+  private def handleValidTaxYearAndReportingMethod(taxYearModel: TaxYear,
+                                                   reportingMethod: ReportingMethod,
+                                                   id: IncomeSourceId,
+                                                   isAgent: Boolean,
+                                                   changeTo: String,
+                                                   incomeSourceType: IncomeSourceType
+                                                  )(implicit user: MtdItUser[_]): Future[Result] = {
+    val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, Some(id), incomeSourceType)
+    val journeyType = JourneyType(Manage, incomeSourceType)
+
+    sessionService.getMongo(journeyType.toString).flatMap {
+      case Right(Some(sessionData)) =>
+        val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
+        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+        sessionService.setMongoData(uiJourneySessionData).map { _ =>
           Ok(
             confirmReportingMethod(
               isAgent = isAgent,
               backUrl = backCall.url,
-              newReportingMethod = reportingMethod,
+              newReportingMethod = reportingMethod.name,
               form = ConfirmReportingMethodForm(changeTo),
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
-              postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+              postAction = getPostAction(taxYearModel.toString, changeTo, isAgent, incomeSourceType),
               isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-            ))
-                }
-                else {
-                  logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-                }
-              case None => logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details")
-          }
-        case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-        case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
-        case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
-      }
-    )
+            )
+          )
+        }
+      case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
+    }
   }
-
-
+  
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
@@ -133,9 +156,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                                   incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
-    val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
-    val errorCall = getErrorCall(incomeSourceType, isAgent)
 
     withIncomeSourcesFS {
       (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
@@ -157,86 +178,12 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                 )
               )
             },
-            _ => handleValidForm(errorCall, isAgent, successCall, taxYearModel, incomeSourceId, reportingMethod, incomeSourceBusinessName, incomeSourceType)
+            _ => Future.successful(Redirect(successCall))
           )
         case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
     }
-  }
-
-  private def formatReportingMethod(reportingMethod: String): String = {
-    reportingMethod match {
-      case "annual" => "Annually"
-      case "quarterly" => "Quarterly"
-    }
-  }
-
-  private def handleValidForm(errorCall: Call,
-                              isAgent: Boolean,
-                              successCall: Call,
-                              taxYear: TaxYear,
-                              incomeSourceIdMaybe: Option[IncomeSourceId],
-                              reportingMethod: String,
-                              incomeSourceBusinessName: Option[String],
-                              incomeSourceType: IncomeSourceType
-                             )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    val updateIncomeSourceResFuture = for {
-      updateIncomeSourceRes <- incomeSourceIdMaybe match {
-        case Some(incomeSourceId) => updateIncomeSourceService.updateTaxYearSpecific(
-          nino = user.nino,
-          incomeSourceId = incomeSourceId.value,
-          taxYearSpecific = TaxYearSpecific(taxYear.endYear.toString, reportingMethod match {
-            case "annual" => true
-            case "quarterly" => false
-          })
-        )
-        case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
-      }
-    } yield updateIncomeSourceRes
-
-    updateIncomeSourceResFuture flatMap {
-      case _: UpdateIncomeSourceResponseError =>
-        logAndShowError(isAgent, "[handleValidForm]: Failed to update reporting method")
-        auditingService
-          .extendedAudit(
-            IncomeSourceReportingMethodAuditModel(
-              isSuccessful = false,
-              journeyType = incomeSourceType.journeyType,
-              operationType = "MANAGE",
-              reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-              taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
-              businessName = incomeSourceBusinessName.getOrElse("Unknown")
-            )
-          )
-        Future.successful(Redirect(errorCall))
-      case _: UpdateIncomeSourceResponseModel =>
-        withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
-          uiJourneySessionData =>
-            val newUIJourneySessionData = {
-              uiJourneySessionData.copy(manageIncomeSourceData =
-                Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYear.endYear), Some(true))))
-            }
-            sessionService.setMongoData(newUIJourneySessionData)
-            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
-            auditingService
-              .extendedAudit(
-                IncomeSourceReportingMethodAuditModel(
-                  isSuccessful = true,
-                  journeyType = incomeSourceType.journeyType,
-                  operationType = "MANAGE",
-                  reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-                  taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
-                  businessName = incomeSourceBusinessName.getOrElse("Unknown")
-                )
-              )
-            Future.successful(Redirect(successCall))
-        }
-    }
-  } recover {
-    case ex: Exception =>
-      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getReportingMethod(reportingMethod: String): Option[String] = {
@@ -251,7 +198,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val successCall = routes.ManageObligationsController.show(isAgent, incomeSourceType, changeTo, taxYear)
+    val successCall = routes.CheckYourAnswersController.show(isAgent, incomeSourceType)
 
     val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
     val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)
@@ -264,8 +211,4 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
       .submit(taxYear, changeTo, isAgent, incomeSourceType)
   }
 
-  private def getErrorCall(incomeSourceType: IncomeSourceType, isAgent: Boolean): Call = {
-    routes.ReportingMethodChangeErrorController
-      .show(isAgent, incomeSourceType)
-  }
 }
