@@ -119,7 +119,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
       def testViewReturnsOKWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
-        mockBothIncomeSources()
+        mockBothPropertyBothBusiness()
 
         setupMockCreateSession(true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
