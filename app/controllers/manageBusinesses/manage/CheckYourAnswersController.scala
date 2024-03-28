@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             Ok(checkYourAnswers(
               isAgent,
               backUrl,
-              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(taxYearStringOpt - 1, taxYearStringOpt), incomeSourceType),
+              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(startYear = taxYearStringOpt - 1, endYear = taxYearStringOpt), incomeSourceType),
               incomeSourceType
             )
             )
@@ -114,7 +114,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
               val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
               val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(taxYear - 1, taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(startYear = taxYear - 1, endYear = taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
             case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
           }
         }
