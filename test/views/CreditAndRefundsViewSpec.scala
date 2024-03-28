@@ -31,6 +31,8 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testTaxYearTo
 import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentAndFinancialDetailWithCreditType, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
 import testUtils.{TestSupport, ViewSpec}
+import utils.CreditAndRefundUtils.UnallocatedCreditType
+import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
 import views.html.CreditAndRefunds
 
 import java.time.LocalDate
@@ -61,6 +63,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   class TestSetup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
+              creditAndRefundType: Option[UnallocatedCreditType] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString",
               isMFACreditsAndDebitsEnabled: Boolean = false,
@@ -75,6 +78,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       creditAndRefundView(
         CreditAndRefundViewModel(creditCharges),
         balance,
+        creditAndRefundType,
         isAgent = isAgent,
         backUrl,
         isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled,
@@ -203,7 +207,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               firstPendingAmountRequested = None,
               secondPendingAmountRequested = None
             )
-          )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromOnePayment)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -231,7 +236,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(12.00)
             )
-          )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -259,12 +265,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(12.00)
             )
-          )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          layoutContent.selectById("unallocated-single-credit").text() shouldBe "£500.00 credit from an earlier tax year - " + testTaxYearTo
+          layoutContent.selectById("unallocated-single-credit").text() shouldBe "£500.00 credit from HMRC adjustment - " + testTaxYearTo
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -288,12 +295,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(12.00)
             )
-          )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          layoutContent.selectById("unallocated-single-credit").text() shouldBe "£500.00 credit from overpaid tax - " + testTaxYearTo
+          layoutContent.selectById("unallocated-single-credit").text() shouldBe "£500.00 credit from HMRC adjustment - " + testTaxYearTo
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
           document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
@@ -423,7 +431,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             "Credyd o £200.00 o ordaliad treth - blwyddyn dreth 2021 i 2022"
           // TODO: Update welsh language
           document.select("ul#credits-list li:nth-child(3)").text() shouldBe
-            "£400.00 credit from repayment interest - blwyddyn dreth 2019 i 2020"
+            "Credyd o £400.00 o log ar ad-daliadau - blwyddyn dreth 2019 i 2020"
           document.select("ul#credits-list li:nth-child(4)").text() shouldBe
             "Credyd o £500.00 o ganlyniad i addasiad gan CThEF - blwyddyn dreth 2018 i 2019"
         }
