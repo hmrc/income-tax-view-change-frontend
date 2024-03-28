@@ -23,10 +23,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import enums.ReportingMethod
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
@@ -85,43 +86,64 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                 soleTraderBusinessId: Option[IncomeSourceId]
                                )(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
+    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(_.value))
 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
       case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-        user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
-          case Some(latencyDetails) =>
-            if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
-              val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
-              val journeyType = JourneyType(Manage, incomeSourceType)
-              sessionService.getMongo(journeyType.toString).flatMap {
-                case Right(Some(sessionData)) =>
-                  val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
-                  val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear))
-                  val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-
-                  sessionService.setMongoData(uiJourneySessionData).map { _ =>
-                    Ok(
-                      confirmReportingMethod(
-                        isAgent = isAgent,
-                        backUrl = backCall.url,
-                        newReportingMethod = reportingMethod,
-                        form = ConfirmReportingMethodForm(changeTo),
-                        taxYearEndYear = taxYearModel.endYear.toString,
-                        taxYearStartYear = taxYearModel.startYear.toString,
-                        postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                        isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-                      )
-                    )
-                  }
-                case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
-              }
-            } else {
-              Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear"))
-            }
-          case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
-        }
+        validateTaxYearAndReportingMethod(taxYearModel, ReportingMethod(reportingMethod), id, isAgent, changeTo, incomeSourceType)
       case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
+    }
+  }
+
+  private def validateTaxYearAndReportingMethod(taxYearModel: TaxYear,
+                                                reportingMethod: ReportingMethod,
+                                                id: IncomeSourceId,
+                                                isAgent: Boolean,
+                                                changeTo: String,
+                                                incomeSourceType: IncomeSourceType
+                                               )(implicit user: MtdItUser[_]): Future[Result] = {
+    user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
+      case Some(latencyDetails) =>
+        if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
+          handleValidTaxYearAndReportingMethod(taxYearModel, reportingMethod, id, isAgent, changeTo, incomeSourceType)
+        } else {
+          Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYearModel"))
+        }
+      case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
+    }
+  }
+
+  private def handleValidTaxYearAndReportingMethod(taxYearModel: TaxYear,
+                                                   reportingMethod: ReportingMethod,
+                                                   id: IncomeSourceId,
+                                                   isAgent: Boolean,
+                                                   changeTo: String,
+                                                   incomeSourceType: IncomeSourceType
+                                                  )(implicit user: MtdItUser[_]): Future[Result] = {
+    val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, Some(id), incomeSourceType)
+    val journeyType = JourneyType(Manage, incomeSourceType)
+
+    sessionService.getMongo(journeyType.toString).flatMap {
+      case Right(Some(sessionData)) =>
+        val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
+        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+        sessionService.setMongoData(uiJourneySessionData).map { _ =>
+          Ok(
+            confirmReportingMethod(
+              isAgent = isAgent,
+              backUrl = backCall.url,
+              newReportingMethod = reportingMethod.name,
+              form = ConfirmReportingMethodForm(changeTo),
+              taxYearEndYear = taxYearModel.endYear.toString,
+              taxYearStartYear = taxYearModel.startYear.toString,
+              postAction = getPostAction(taxYearModel.toString, changeTo, isAgent, incomeSourceType),
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
+            )
+          )
+        }
+      case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
     }
   }
   
