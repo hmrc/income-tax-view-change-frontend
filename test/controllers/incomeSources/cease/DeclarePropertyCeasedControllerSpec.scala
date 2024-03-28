@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -78,8 +78,8 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
   def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, formBody: Option[Map[String, String]] = None): Future[Result] = {
     val formData = formBody.getOrElse(Map(
-      DeclarePropertyCeasedForm.declaration -> "true",
-      DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
+      DeclareIncomeSourceCeasedForm.declaration -> "true",
+      DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
     ))
 
     (isAgent, incomeSourceType) match {
@@ -270,7 +270,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
-        verifySetMongoKey(CeaseIncomeSourceData.ceasePropertyDeclare, "true", journeyType)
+        verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
       }
 
       "UK Property cease declaration is completed - Individual" in {
@@ -323,7 +323,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         enable(IncomeSources)
         mockPropertyIncomeSource()
         setupMockSetSessionKeyMongo(Right(true))
-        val invalidForm = Map(DeclarePropertyCeasedForm.declaration -> "invalid")
+        val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
         lazy val result = submitCall(isAgent, incomeSourceType, Some(invalidForm))
 
         status(result) shouldBe Status.BAD_REQUEST

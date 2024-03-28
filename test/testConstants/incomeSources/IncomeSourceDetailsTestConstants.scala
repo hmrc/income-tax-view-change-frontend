@@ -191,7 +191,7 @@ object IncomeSourceDetailsTestConstants {
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
             incomeSourceId = if(journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
             endDate = Some(LocalDate.of(2022, 10, 10)),
-            ceasePropertyDeclare = Some("true"),
+            ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None
           ))
         )

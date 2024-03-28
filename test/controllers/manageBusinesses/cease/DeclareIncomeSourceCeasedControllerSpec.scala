@@ -20,7 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -37,19 +37,19 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.manageBusinesses.cease.DeclarePropertyCeased
+import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
 
 import scala.concurrent.Future
 
-class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
+class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
   MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val mockDeclarePropertyCeased: DeclarePropertyCeased = app.injector.instanceOf[DeclarePropertyCeased]
+  val mockDeclarePropertyCeased: DeclareIncomeSourceCeased = app.injector.instanceOf[DeclareIncomeSourceCeased]
 
-  object TestDeclarePropertyCeasedController extends DeclarePropertyCeasedController(
+  object TestDeclareIncomeSourceCeasedController$ extends DeclareIncomeSourceCeasedController(
     mockAuthService,
-    app.injector.instanceOf[DeclarePropertyCeased],
+    app.injector.instanceOf[DeclareIncomeSourceCeased],
     sessionService = mockSessionService,
     testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -68,27 +68,27 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
   def showCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.showAgent(None, UkProperty)(fakeRequestConfirmedClient())
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.show(None, UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
-      case (true, _) => TestDeclarePropertyCeasedController.showAgent(None, ForeignProperty)(fakeRequestConfirmedClient())
-      case (_, _) => TestDeclarePropertyCeasedController.show(None, ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, UkProperty) => TestDeclareIncomeSourceCeasedController$.showAgent(None, UkProperty)(fakeRequestConfirmedClient())
+      case (_, UkProperty) => TestDeclareIncomeSourceCeasedController$.show(None, UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, _) => TestDeclareIncomeSourceCeasedController$.showAgent(None, ForeignProperty)(fakeRequestConfirmedClient())
+      case (_, _) => TestDeclareIncomeSourceCeasedController$.show(None, ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
     }
   }
 
   def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, formBody: Option[Map[String, String]] = None): Future[Result] = {
     val formData = formBody.getOrElse(Map(
-      DeclarePropertyCeasedForm.declaration -> "true",
-      DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
+      DeclareIncomeSourceCeasedForm.declaration -> "true",
+      DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
     ))
 
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(None, UkProperty)(fakePostRequestConfirmedClient()
+      case (true, UkProperty) => TestDeclareIncomeSourceCeasedController$.submitAgent(None, UkProperty)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(None, UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
+      case (_, UkProperty) => TestDeclareIncomeSourceCeasedController$.submit(None, UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(None, ForeignProperty)(fakePostRequestConfirmedClient()
+      case (true, _) => TestDeclareIncomeSourceCeasedController$.submitAgent(None, ForeignProperty)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, _) => TestDeclarePropertyCeasedController.submit(None, ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
+      case (_, _) => TestDeclareIncomeSourceCeasedController$.submit(None, ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
     }
   }
@@ -104,7 +104,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     argumentJourneyType.getValue.toString shouldBe journeyType.toString
   }
 
-  "DeclarePropertyCeasedController.show / DeclarePropertyCeasedController.showAgent" should {
+  "DeclareIncomeSourceCeasedController.show / DeclareIncomeSourceCeasedController.showAgent" should {
     "return 200 OK" when {
       def testViewReturnsOKWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
@@ -120,17 +120,17 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         (isAgent, incomeSourceType) match {
           case (true, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentUkProperty
-            document.select("legend:nth-child(1)").text should include(TestDeclarePropertyCeasedController.headingUkProperty)
+            document.title shouldBe TestDeclareIncomeSourceCeasedController$.titleAgentUkProperty
+            document.select("legend:nth-child(1)").text should include(TestDeclareIncomeSourceCeasedController$.headingUkProperty)
           case (_, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleUkProperty
-            document.select("legend:nth-child(1)").text should include(TestDeclarePropertyCeasedController.headingUkProperty)
+            document.title shouldBe TestDeclareIncomeSourceCeasedController$.titleUkProperty
+            document.select("legend:nth-child(1)").text should include(TestDeclareIncomeSourceCeasedController$.headingUkProperty)
           case (true, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentForeignProperty
-            document.select("legend:nth-child(1)").text should include(TestDeclarePropertyCeasedController.headingForeignProperty)
+            document.title shouldBe TestDeclareIncomeSourceCeasedController$.titleAgentForeignProperty
+            document.select("legend:nth-child(1)").text should include(TestDeclareIncomeSourceCeasedController$.headingForeignProperty)
           case (_, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleForeignProperty
-            document.select("legend:nth-child(1)").text should include(TestDeclarePropertyCeasedController.headingForeignProperty)
+            document.title shouldBe TestDeclareIncomeSourceCeasedController$.titleForeignProperty
+            document.select("legend:nth-child(1)").text should include(TestDeclareIncomeSourceCeasedController$.headingForeignProperty)
         }
       }
 
@@ -214,9 +214,9 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
-          TestDeclarePropertyCeasedController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
+          TestDeclareIncomeSourceCeasedController$.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
-          TestDeclarePropertyCeasedController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
+          TestDeclareIncomeSourceCeasedController$.show(None, incomeSourceType)(fakeRequestWithActiveSession)
         }
 
         val expectedRedirectUrl = if (isAgent) {
@@ -251,7 +251,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
   }
 
-  "DeclarePropertyCeasedController.submit / DeclarePropertyCeasedController.submitAgent" should {
+  "DeclareIncomeSourceCeasedController.submit / DeclareIncomeSourceCeasedController.submitAgent" should {
     "return 200 OK" when {
       def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         setupMockAuthorisationSuccess(isAgent)
@@ -269,7 +269,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
-        verifySetMongoKey(CeaseIncomeSourceData.ceasePropertyDeclare, "true", journeyType)
+        verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
       }
 
       "UK Property cease declaration is completed - Individual" in {
@@ -322,7 +322,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         enable(IncomeSources)
         mockPropertyIncomeSource()
         setupMockSetSessionKeyMongo(Right(true))
-        val invalidForm = Map(DeclarePropertyCeasedForm.declaration -> "invalid")
+        val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
         lazy val result = submitCall(isAgent, incomeSourceType, Some(invalidForm))
 
         status(result) shouldBe Status.BAD_REQUEST

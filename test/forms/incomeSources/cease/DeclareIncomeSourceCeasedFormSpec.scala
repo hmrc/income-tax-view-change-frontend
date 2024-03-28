@@ -23,15 +23,15 @@ import play.api.data.{Form, FormError}
 
 import scala.language.postfixOps
 
-class DeclarePropertyCeasedFormSpec extends AnyWordSpec with Matchers {
+class DeclareIncomeSourceCeasedFormSpec extends AnyWordSpec with Matchers {
 
-  def testDeclarePropertyCeasedForm(declaration: Option[String], csrfToken: String): DeclarePropertyCeasedForm = DeclarePropertyCeasedForm(declaration, csrfToken)
+  def testDeclarePropertyCeasedForm(declaration: Option[String], csrfToken: String): DeclareIncomeSourceCeasedForm = DeclareIncomeSourceCeasedForm(declaration, csrfToken)
 
-  def form(incomeSourceType: IncomeSourceType, optValue: Option[DeclarePropertyCeasedForm]): Form[DeclarePropertyCeasedForm] = DeclarePropertyCeasedForm.form(incomeSourceType).bind(
+  def form(incomeSourceType: IncomeSourceType, optValue: Option[DeclareIncomeSourceCeasedForm]): Form[DeclareIncomeSourceCeasedForm] = DeclareIncomeSourceCeasedForm.form(incomeSourceType).bind(
     optValue.fold[Map[String, String]](Map.empty)(
       value => Map(
-        DeclarePropertyCeasedForm.declaration -> value.declaration.getOrElse("invalid"),
-        DeclarePropertyCeasedForm.ceaseCsrfToken -> value.csrfToken)))
+        DeclareIncomeSourceCeasedForm.declaration -> value.declaration.getOrElse("invalid"),
+        DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> value.csrfToken)))
 
   "UK Property - declare property ceased form" should {
     "bind with a valid declaration" in {
@@ -40,7 +40,7 @@ class DeclarePropertyCeasedFormSpec extends AnyWordSpec with Matchers {
     }
     "bind with an invalid declaration" in {
       form(UkProperty, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
-        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.UK.checkboxError")))
+        Seq(FormError(DeclareIncomeSourceCeasedForm.declaration, Seq("incomeSources.cease.UK.checkboxError")))
     }
   }
 
@@ -51,7 +51,7 @@ class DeclarePropertyCeasedFormSpec extends AnyWordSpec with Matchers {
     }
     "bind with an invalid declaration" in {
       form(ForeignProperty, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
-        Seq(FormError(DeclarePropertyCeasedForm.declaration, Seq("incomeSources.cease.FP.checkboxError")))
+        Seq(FormError(DeclareIncomeSourceCeasedForm.declaration, Seq("incomeSources.cease.FP.checkboxError")))
     }
   }
 }

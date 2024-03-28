@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.incomeSources.cease.DeclarePropertyCeasedForm
+@import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 @import views.html.layouts.unifiedLayout
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
@@ -46,7 +46,7 @@
 )
 
 @(
-        form: Form[DeclarePropertyCeasedForm],
+        form: Form[DeclareIncomeSourceCeasedForm],
         incomeSourceType: IncomeSourceType,
         soleTraderBusinessName: Option[String],
         postAction: Call,
@@ -63,7 +63,7 @@
 
 @title = @{ getMessage("heading") }
 
-@formName = @{ DeclarePropertyCeasedForm.declaration }
+@formName = @{ DeclareIncomeSourceCeasedForm.declaration }
 
 @mainTemplate(
     pageTitle = title,
@@ -77,10 +77,10 @@
 
     <span class="govuk-caption-l"> @getMessage("caption") </span>
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "declare-property-ceased-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "declare-income-source-ceased-form") {
 
         @govukCheckboxes(Checkboxes(
-            fieldset =  Some(Fieldset(
+            fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(Messages(title)),
                     classes = "govuk-fieldset__legend--l"

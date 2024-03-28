@@ -20,27 +20,27 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.data.Form
 import play.api.data.Forms._
 
-object DeclarePropertyCeasedForm {
-  val declaration: String = "cease-property-declaration"
+object DeclareIncomeSourceCeasedForm {
+  val declaration: String = "cease-income-source-declaration"
   val ceaseCsrfToken: String = "csrfToken"
 
-  def form(incomeSourceType: IncomeSourceType): Form[DeclarePropertyCeasedForm] = {
+  def form(incomeSourceType: IncomeSourceType): Form[DeclareIncomeSourceCeasedForm] = {
     val declarationUnselectedError: String = s"incomeSources.cease.${incomeSourceType.key}.checkboxError"
 
-    Form[DeclarePropertyCeasedForm](
+    Form[DeclareIncomeSourceCeasedForm](
       mapping(
         declaration -> optional(text)
           .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("true") && declaration.get.trim.nonEmpty),
         ceaseCsrfToken -> text
-      )(DeclarePropertyCeasedForm.apply)(DeclarePropertyCeasedForm.unapply)
+      )(DeclareIncomeSourceCeasedForm.apply)(DeclareIncomeSourceCeasedForm.unapply)
     )
   }
 }
 
-case class DeclarePropertyCeasedForm(declaration: Option[String],
-                                     csrfToken: String) {
+case class DeclareIncomeSourceCeasedForm(declaration: Option[String],
+                                         csrfToken: String) {
   def toFormMap: Map[String, Seq[String]] =
-    Map(DeclarePropertyCeasedForm.declaration -> Seq(declaration.getOrElse("false")),
-      DeclarePropertyCeasedForm.ceaseCsrfToken -> Seq(csrfToken)
+    Map(DeclareIncomeSourceCeasedForm.declaration -> Seq(declaration.getOrElse("false")),
+      DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> Seq(csrfToken)
     )
 }

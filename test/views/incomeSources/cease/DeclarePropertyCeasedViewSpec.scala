@@ -17,7 +17,7 @@
 package views.incomeSources.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -37,7 +37,7 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
         controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show())
     }
     lazy val view: HtmlFormat.Appendable = declarePropertyCeasedView(
-      declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
+      declarePropertyCeasedForm = DeclareIncomeSourceCeasedForm.form(incomeSourceType),
       incomeSourceType = incomeSourceType,
       postAction = postAction,
       isAgent = isAgent,
@@ -45,9 +45,9 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
     )(individualUser, implicitly)
 
 
-    val formWithError = DeclarePropertyCeasedForm.form(incomeSourceType)
+    val formWithError = DeclareIncomeSourceCeasedForm.form(incomeSourceType)
       .withError(
-        DeclarePropertyCeasedForm.declaration,
+        DeclareIncomeSourceCeasedForm.declaration,
         messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError"))
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = declarePropertyCeasedView(
@@ -68,7 +68,7 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.UK.heading")
     }
     "render the checkbox" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById(DeclarePropertyCeasedForm.declaration).attr("type") shouldBe "checkbox"
+      document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
     }
     "render the checkbox label" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.checkboxLabel")
@@ -107,7 +107,7 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.FP.heading")
     }
     "render the checkbox" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById(DeclarePropertyCeasedForm.declaration).attr("type") shouldBe "checkbox"
+      document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
     }
     "render the checkbox label" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.checkboxLabel")
