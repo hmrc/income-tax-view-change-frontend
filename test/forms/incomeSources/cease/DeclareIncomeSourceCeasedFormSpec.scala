@@ -16,7 +16,7 @@
 
 package forms.incomeSources.cease
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
@@ -52,6 +52,17 @@ class DeclareIncomeSourceCeasedFormSpec extends AnyWordSpec with Matchers {
     "bind with an invalid declaration" in {
       form(ForeignProperty, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
         Seq(FormError(DeclareIncomeSourceCeasedForm.declaration, Seq("incomeSources.cease.FP.checkboxError")))
+    }
+  }
+
+  "SelfEmployment - declare business ceased form" should {
+    "bind with a valid declaration" in {
+      form(SelfEmployment, Some(testDeclarePropertyCeasedForm(Some("true"), "12345"))).value
+        .get.declaration shouldBe Some(testDeclarePropertyCeasedForm(Some("true"), "12345")).value.declaration
+    }
+    "bind with an invalid declaration" in {
+      form(SelfEmployment, Some(testDeclarePropertyCeasedForm(None, "12345"))).errors shouldBe
+        Seq(FormError(DeclareIncomeSourceCeasedForm.declaration, Seq("incomeSources.cease.SE.checkboxError")))
     }
   }
 }
