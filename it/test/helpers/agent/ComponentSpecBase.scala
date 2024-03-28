@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -268,12 +268,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/tax-years", additionalCookies)
 
     def getCeaseUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-declare", additionalCookies)
+      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)
+
+    def getCeaseSelfEmployment(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession(s"/agents/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed", additionalCookies)
 
     def postCeaseUKProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      post(uri = "/manage-your-businesses/cease/uk-property-declare", additionalCookies)(
+      post(uri = "/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
-          declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+          declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
 
@@ -281,12 +284,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-end-date", additionalCookies)
 
     def getCeaseForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/foreign-property-declare", additionalCookies)
+      getWithClientDetailsInSession("/agents/manage-your-businesses/cease/foreign-property-confirm-cease", additionalCookies)
 
     def postCeaseForeignProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      post(uri = "/manage-your-businesses/cease/foreign-property-declare", additionalCookies)(
+      post(uri = "/manage-your-businesses/cease/foreign-property-confirm-cease", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
-          declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+          declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+
+    def postCeaseSelfEmployment(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      post(uri = s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed", additionalCookies)(
+        answer.fold(Map.empty[String, Seq[String]])(
+          declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
 

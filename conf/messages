@@ -1330,16 +1330,27 @@ incomeSources.cease.endDate.selfEmployment.heading                              
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = The date your self-employed business stopped trading must be a real date
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
-incomeSources.cease.UK.property.heading                            = Cease UK property
-incomeSources.cease.UK.property.checkboxLabel                      = I declare that I no longer get an income from any property in the UK.
-incomeSources.cease.UK.property.checkboxError                      = You must declare that you no longer get an income from any property in the UK
-
 incomeSources.cease.endDate.ukProperty.heading                    = Date your UK property business stopped
 incomeSources.cease.endDate.ukProperty.error.invalid              = The date your UK property business stopped must be a real date
 
-incomeSources.cease.FP.property.heading                            = Cease foreign property
-incomeSources.cease.FP.property.checkboxLabel                      = I declare that I no longer get an income from any foreign property.
-incomeSources.cease.FP.property.checkboxError                      = You must declare that you no longer get an income from any foreign property
+incomeSources.cease.SE.heading                            = Confirm you want to cease your self-employed business
+incomeSources.cease.SE.caption                            = Sole trader
+incomeSources.cease.SE.checkboxLabel                      = I confirm I want to cease this business
+incomeSources.cease.SE.hint                               = Only cease {0} if you no longer receive any income or have any expenses related to this business.
+incomeSources.cease.SE.hint.noBusinessName                = Only cease your sole trader business if you no longer receive any income or have any expenses related to this business.
+incomeSources.cease.SE.checkboxError                      = Select that you confirm you no longer get any income from this business
+
+incomeSources.cease.UK.heading                            = Cease UK property business
+incomeSources.cease.UK.caption                            = UK property
+incomeSources.cease.UK.checkboxLabel                      = I declare that I no longer get an income from any UK properties
+incomeSources.cease.UK.hint                               = Only cease your UK property business if you no longer get income from any properties in the UK
+incomeSources.cease.UK.checkboxError                      = Select that you declare you no longer get any income from UK property
+
+incomeSources.cease.FP.heading                            = Cease foreign property business
+incomeSources.cease.FP.caption                            = Foreign property
+incomeSources.cease.FP.checkboxLabel                      = I declare that I no longer get an income from any foreign properties
+incomeSources.cease.FP.hint                               = Only cease your foreign property business if you no longer get income from any properties abroad.
+incomeSources.cease.FP.checkboxError                      = Select that you declare you no longer get any income from foreign property
 
 incomeSources.cease.endDate.foreignProperty.heading                      = Date your foreign property business stopped
 incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date

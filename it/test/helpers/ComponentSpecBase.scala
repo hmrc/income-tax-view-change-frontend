@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -289,7 +289,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -301,7 +301,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -629,13 +629,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
-    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-declare")
+    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-confirm-cease")
 
     def getCeaseIncomeSourcesIndividual: WSResponse = get("/manage-your-businesses/cease/cease-an-income-source")
 
-    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-declare")(
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+    def postCeaseSelfEmployment(answer: Option[String]): WSResponse = post(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -643,11 +649,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/uk-property-end-date")
 
-    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-declare")
+    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-confirm-cease")
 
-    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-declare")(
+    def getCeaseSelfEmplyoment: WSResponse = get(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")
+
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
