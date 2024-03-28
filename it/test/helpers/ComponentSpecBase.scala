@@ -143,7 +143,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
-    "encryption.isEnabled" -> "false"
+    "encryption.isEnabled" -> "false",
+    "microservice.services.contact-frontend.host" -> mockHost,
+    "microservice.services.contact-frontend.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -681,6 +683,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
+      "X-Session-ID" -> testSessionId)
+
+    def getFeedbackPage: WSResponse = getWithHeaders("/feedback",
+      "X-Session-ID" -> testSessionId)
+
+    def getThankyouPage: WSResponse = getWithHeaders("/thankyou",
       "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
