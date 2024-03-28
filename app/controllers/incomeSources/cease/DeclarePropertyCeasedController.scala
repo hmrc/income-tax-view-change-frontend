@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -58,7 +58,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
       Future.successful(Ok(view(
-        declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
+        declarePropertyCeasedForm = DeclareIncomeSourceCeasedForm.form(incomeSourceType),
         incomeSourceType = incomeSourceType,
         postAction = postAction,
         isAgent = isAgent,
@@ -102,7 +102,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
           routes.IncomeSourceEndDateController.show(None, incomeSourceType))
     }
 
-    DeclarePropertyCeasedForm.form(incomeSourceType).bindFromRequest().fold(
+    DeclareIncomeSourceCeasedForm.form(incomeSourceType).bindFromRequest().fold(
       hasErrors =>
         Future.successful {
           BadRequest(view(
@@ -115,7 +115,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         },
       _ => {
         val result = Redirect(redirectAction)
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
             case Right(_) => Future.successful(result)
             case Left(exception) => Future.failed(exception)

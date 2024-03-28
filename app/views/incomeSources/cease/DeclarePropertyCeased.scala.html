@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.incomeSources.cease.DeclarePropertyCeasedForm
+@import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 @import views.html.layouts.unifiedLayout
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
@@ -37,11 +37,11 @@
     govukCheckboxes: GovukCheckboxes,
 )
 
-@(declarePropertyCeasedForm: Form[DeclarePropertyCeasedForm], incomeSourceType: IncomeSourceType, postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(declarePropertyCeasedForm: Form[DeclareIncomeSourceCeasedForm], incomeSourceType: IncomeSourceType, postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.heading") }
+@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.heading") }
 
-@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.checkboxLabel") }
+@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel") }
 
 @mainTemplate(pageTitle = title, form = Some(declarePropertyCeasedForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
@@ -55,7 +55,7 @@
         @checkboxes(
             govukCheckboxes = govukCheckboxes,
             form = declarePropertyCeasedForm,
-            name = DeclarePropertyCeasedForm.declaration,
+            name = DeclareIncomeSourceCeasedForm.declaration,
             legendContent = title,
             classes = "govuk-fieldset__legend--l",
             items = Seq(
