@@ -896,6 +896,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
 
     def getViewAllCeasedBusinesses: WSResponse = get("/manage-your-businesses/ceased-businesses")
+
+    def getCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)
+    }
+
+    def postCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)(Map.empty)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

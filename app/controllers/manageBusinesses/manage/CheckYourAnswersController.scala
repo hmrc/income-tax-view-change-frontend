@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.manage
 
 import audit.AuditingService
-import audit.models.IncomeSourceReportingMethodAuditModel
+import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -161,7 +161,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
         logAndShowError(isAgent, "Failed to update reporting method")
         auditingService
           .extendedAudit(
-            IncomeSourceReportingMethodAuditModel(
+            ManageIncomeSourceCheckYourAnswersAuditModel(
               isSuccessful = false,
               journeyType = incomeSourceType.journeyType,
               operationType = "MANAGE",
@@ -182,7 +182,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             Logger("application").debug("[CheckYourAnswersController] Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
-                IncomeSourceReportingMethodAuditModel(
+                ManageIncomeSourceCheckYourAnswersAuditModel(
                   isSuccessful = true,
                   journeyType = incomeSourceType.journeyType,
                   operationType = "MANAGE",

@@ -554,6 +554,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getViewAllCeasedBusinesses(): WSResponse = get("/manage-your-businesses/ceased-businesses", clientDetailsWithConfirmation)
 
+    def getCheckYourAnswersUKProperty(): WSResponse = {
+      get(s"/manage-your-businesses/manage/uk-property-check-your-answers", clientDetailsWithConfirmation)
+    }
+
+    def getCheckYourAnswersForeignProperty(): WSResponse = {
+      get(s"/manage-your-businesses/manage/foreign-property-check-your-answers", clientDetailsWithConfirmation)
+    }
+
+    def getCheckYourAnswersSoleTrader(): WSResponse = {
+      get(s"/manage-your-businesses/manage/business-check-your-answers", clientDetailsWithConfirmation)
+    }
+
+    def postCheckYourAnswersUKProperty(): WSResponse = {
+      post(s"/manage-your-businesses/manage/uk-property-check-your-answers", clientDetailsWithConfirmation)(Map.empty)
+    }
+
+    def postCheckYourAnswersForeignProperty(): WSResponse = {
+      post(s"/manage-your-businesses/manage/foreign-property-check-your-answers", clientDetailsWithConfirmation)(Map.empty)
+    }
+
+    def postCheckYourAnswersSoleTrader(): WSResponse = {
+      post(s"/manage-your-businesses/manage/business-check-your-answers", clientDetailsWithConfirmation)(Map.empty)
+    }
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
