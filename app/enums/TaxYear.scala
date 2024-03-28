@@ -23,8 +23,8 @@ sealed trait TaxYear {
 
 object TaxYear {
   def apply(taxYear: Int): TaxYear = {
-    val startYearFormatted = taxYear
-    val endYearFormatted = taxYear + 1
+    val startYearFormatted = taxYear - 1
+    val endYearFormatted = taxYear
     new TaxYear {
       override val startYear: Int = startYearFormatted
       override val endYear: Int = endYearFormatted
