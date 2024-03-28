@@ -305,6 +305,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     if (emptyMongo) setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
     else setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
 
+    setupMockSetMongoData(true)
+
     TestConfirmReportingMethodSharedController
       .show(taxYear, changeTo, isAgent, incomeSourceType)(
         if (isAgent)

@@ -82,8 +82,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                 changeTo: String,
                                 isAgent: Boolean,
                                 incomeSourceType: IncomeSourceType,
-                                soleTraderBusinessId: Option[IncomeSourceId])
-                               (implicit user: MtdItUser[_]): Future[Result] = {
+                                soleTraderBusinessId: Option[IncomeSourceId]
+                               )(implicit user: MtdItUser[_]): Future[Result] = {
 
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
@@ -100,34 +100,31 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear))
                   val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
-                  sessionService.setMongoData(uiJourneySessionData)
+                  sessionService.setMongoData(uiJourneySessionData).map { _ =>
+                    Ok(
+                      confirmReportingMethod(
+                        isAgent = isAgent,
+                        backUrl = backCall.url,
+                        newReportingMethod = reportingMethod,
+                        form = ConfirmReportingMethodForm(changeTo),
+                        taxYearEndYear = taxYearModel.endYear.toString,
+                        taxYearStartYear = taxYearModel.startYear.toString,
+                        postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+                        isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
+                      )
+                    )
+                  }
                 case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
               }
-
-              Future.successful(Ok(
-                confirmReportingMethod(
-                  isAgent = isAgent,
-                  backUrl = backCall.url,
-                  newReportingMethod = reportingMethod,
-                  form = ConfirmReportingMethodForm(changeTo),
-                  taxYearEndYear = taxYearModel.endYear.toString,
-                  taxYearStartYear = taxYearModel.startYear.toString,
-                  postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                  isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-                ))
-              )
-            }
-            else {
+            } else {
               Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear"))
             }
           case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
         }
       case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
     }
-
   }
-
-
+  
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()

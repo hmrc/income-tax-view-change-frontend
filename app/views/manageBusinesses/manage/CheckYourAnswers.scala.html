@@ -82,7 +82,7 @@
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(
                 SummaryListRow(
-                    key = Key(Text(getMessage("reporting-frequency", viewModel.taxYearStart, viewModel.taxYearEnd))),
+                    key = Key(Text(getMessage("reporting-frequency", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString))),
                     value = Value(Text(getMessage((if(viewModel.reportingMethod == "quarterly") "reporting.quarterly" else "reporting.annually")))),
                     actions = Some(Actions(
                         items = Seq(ActionItem(

@@ -24,7 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
+import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod, TaxYear}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
@@ -80,12 +80,10 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
       Future.successful(
         (taxYearStringOpt, chnageToStringOpt, maybeIncomeSourceId) match {
           case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) => {
-            val taxYearStartYear = taxYearStringOpt - 1
-            val taxYearEndYear = taxYearStringOpt
             Ok(checkYourAnswers(
               isAgent,
               backUrl,
-              CheckYourAnswersViewModel(id, changeToStringOpt, taxYearStartYear.toString, taxYearEndYear.toString, incomeSourceType),
+              CheckYourAnswersViewModel(id, changeToStringOpt, TaxYear(taxYearStringOpt), incomeSourceType),
               incomeSourceType
             )
             )
@@ -112,13 +110,11 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
         withIncomeSourcesFS {
           sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
             case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
-              val taxYearStart = taxYear - 1
-              val taxYearEnd = taxYear
               val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
               val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
               val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-              handleSubmitRequest(errorCall, isAgent, successCall, taxYearStart, taxYearEnd, incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+              handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
             case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
           }
         }
@@ -129,62 +125,86 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
   private def handleSubmitRequest(errorCall: Call,
                                   isAgent: Boolean,
                                   successCall: Call,
-                                  taxYearStart: Int,
-                                  taxYearEnd: Int,
+                                  taxYear: TaxYear,
                                   incomeSourceIdMaybe: Option[IncomeSourceId],
                                   reportingMethod: ReportingMethod,
                                   incomeSourceBusinessName: Option[String],
                                   incomeSourceType: IncomeSourceType
                                  )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val updateIncomeSourceResFuture = updateIncomeSource(taxYearEnd, incomeSourceIdMaybe, reportingMethod)
+    val updateIncomeSourceResFuture = updateIncomeSource(taxYear.endYear, incomeSourceIdMaybe, reportingMethod)
 
-    updateIncomeSourceResFuture flatMap {
+    val resultFuture = updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
-        logAndShowError(isAgent, "Failed to update reporting method")
-        auditingService
-          .extendedAudit(
-            ManageIncomeSourceCheckYourAnswersAuditModel(
-              isSuccessful = false,
-              journeyType = incomeSourceType.journeyType,
-              operationType = "MANAGE",
-              reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-              taxYear = taxYearStart.toString + "-" + taxYearEnd.toString,
-              businessName = incomeSourceBusinessName.getOrElse("Unknown")
-            )
-          )
-        Future.successful(Redirect(errorCall))
+        handleUpdateError(errorCall, isAgent, reportingMethod, taxYear, incomeSourceBusinessName, incomeSourceType)
       case _: UpdateIncomeSourceResponseModel =>
-        (incomeSourceIdMaybe) match {
+        incomeSourceIdMaybe match {
           case Some(incomeSourceId) =>
-            withSessionData(JourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) {
-              uiJourneySessionData =>
-                val newUIJourneySessionData = {
-                  uiJourneySessionData.copy(manageIncomeSourceData =
-                    Some(ManageIncomeSourceData(Some(incomeSourceId.value), Some(reportingMethod.name), Some(taxYearEnd), Some(true))))
-                }
-                sessionService.setMongoData(newUIJourneySessionData)
-                Logger("application").debug("[CheckYourAnswersController] Updated tax year specific reporting method")
-                auditingService
-                  .extendedAudit(
-                    ManageIncomeSourceCheckYourAnswersAuditModel(
-                      isSuccessful = true,
-                      journeyType = incomeSourceType.journeyType,
-                      operationType = "MANAGE",
-                      reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-                      taxYear = taxYearStart.toString + "-" + taxYearEnd.toString,
-                      businessName = incomeSourceBusinessName.getOrElse("Unknown")
-                    )
-                  )
-                Future.successful(Redirect(successCall))
-            }
+            handleSuccessfulUpdate(errorCall, successCall, isAgent, reportingMethod, taxYear, incomeSourceId, incomeSourceBusinessName, incomeSourceType)
           case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }
     }
-  } recover {
-    case ex: Exception =>
-      logAndShowError(isAgent, s"Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
+
+    resultFuture.recover {
+      case ex: Exception =>
+        logAndShowError(isAgent, s"Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
+        Redirect(errorCall)
+    }
   }
+
+  private def handleUpdateError(errorCall: Call,
+                                isAgent: Boolean,
+                                reportingMethod: ReportingMethod,
+                                taxYear: TaxYear,
+                                incomeSourceBusinessName: Option[String],
+                                incomeSourceType: IncomeSourceType
+                               )(implicit user: MtdItUser[_]): Future[Result] = {
+    logAndShowError(isAgent, "Failed to update reporting method")
+    auditingService
+      .extendedAudit(
+        ManageIncomeSourceCheckYourAnswersAuditModel(
+          isSuccessful = false,
+          journeyType = incomeSourceType.journeyType,
+          operationType = "MANAGE",
+          reportingMethodChangeTo = formatReportingMethod(reportingMethod),
+          taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
+          businessName = incomeSourceBusinessName.getOrElse("Unknown")
+        )
+      )
+    Future.successful(Redirect(errorCall))
+  }
+
+  private def handleSuccessfulUpdate(errorCall: Call,
+                                     successCall: Call,
+                                     isAgent: Boolean,
+                                     reportingMethod: ReportingMethod,
+                                     taxYear: TaxYear,
+                                     incomeSourceId: IncomeSourceId,
+                                     incomeSourceBusinessName: Option[String],
+                                     incomeSourceType: IncomeSourceType
+                                    )(implicit user: MtdItUser[_]): Future[Result] = {
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { uiJourneySessionData =>
+      val newUIJourneySessionData = uiJourneySessionData.copy(manageIncomeSourceData =
+        Some(ManageIncomeSourceData(Some(incomeSourceId.value), Some(reportingMethod.name), Some(taxYear.endYear), Some(true))))
+
+      sessionService.setMongoData(newUIJourneySessionData).map { _ =>
+        Logger("application").debug("[CheckYourAnswersController] Updated tax year specific reporting method")
+        auditingService
+          .extendedAudit(
+            ManageIncomeSourceCheckYourAnswersAuditModel(
+              isSuccessful = true,
+              journeyType = incomeSourceType.journeyType,
+              operationType = "MANAGE",
+              reportingMethodChangeTo = formatReportingMethod(reportingMethod),
+              taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
+              businessName = incomeSourceBusinessName.getOrElse("Unknown")
+            )
+          )
+        Redirect(successCall)
+      }
+    }
+  }
+
 
   private def updateIncomeSource(taxYearEnd: Int, incomeSourceIdMaybe: Option[IncomeSourceId], reportingMethod: ReportingMethod)(implicit user: MtdItUser[_], hc: HeaderCarrier) = {
     val updateIncomeSourceResFuture = for {

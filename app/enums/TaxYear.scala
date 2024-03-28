@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.viewmodels
+package enums
 
-import enums.IncomeSourceJourney.IncomeSourceType
-import enums.TaxYear
-import models.core.IncomeSourceId
+sealed trait TaxYear {
+  val startYear: Int
+  val endYear: Int
+}
 
-case class CheckYourAnswersViewModel(incomeSourceId: IncomeSourceId,
-                                     reportingMethod: String,
-                                     taxYear: TaxYear,
-                                     incomeSourceType: IncomeSourceType)
+object TaxYear {
+  def apply(taxYear: Int): TaxYear = {
+    val startYearFormatted = taxYear
+    val endYearFormatted = taxYear + 1
+    new TaxYear {
+      override val startYear: Int = startYearFormatted
+      override val endYear: Int = endYearFormatted
+    }
+  }
+}
