@@ -131,36 +131,6 @@
             </div>
         }
 
-        @if(sources.eopsObligationsDates.nonEmpty) {
-            <div class="box-simple" id="eops">
-                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-                <p class="govuk-body"> @getMessage("eops-p1") </p>
-
-                @govukTable(Table(
-                    rows = sources.eopsObligationsDates.map { eopsDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${eopsDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${eopsDate.inboundCorrespondenceTo.toLongDate}")
-                            ),
-                            TableRow(
-                                content = Text(eopsDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading-1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading-2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-        }
-
         <div class="box-simple" id="finalDeclaration">
             <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
