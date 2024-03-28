@@ -1467,6 +1467,19 @@ incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Date bus
 incomeSources.ceaseForeignProperty.checkDetails.confirm               = Confirm and continue
 incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
+## Cease - Check Answers ##
+cease-check-answers.title                                     = Check your answers
+cease-check-answers.caption                                   = Sole trader
+cease-check-answers.cease-date                                = Date business stopped
+cease-check-answers.business-name                             = Business name
+cease-check-answers.trade                                     = Business trade
+cease-check-answers.address                                   = Address
+cease-check-answers.unknown                                   = Unknown
+cease-check-answers.change                                    = Change
+
+cease-check-answers-uk.caption                                = UK property
+cease-check-answers-fp.caption                                = Foreign property
+
 
 # check business details
 check-details.title                                     = Check your answers

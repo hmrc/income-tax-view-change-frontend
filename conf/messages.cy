@@ -1460,6 +1460,20 @@ incomeSources.ceaseForeignProperty.checkDetails.confirm               = Cadarnha
 incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 
 
+## Cease - Check Answers ##
+cease-check-answers.title                                     = Gwirio’ch atebion
+cease-check-answers.caption                                   = Unig fasnachwr
+cease-check-answers.cease-date                                = Dyddiad y gwnaeth y busnes stopio
+cease-check-answers.business-name                             = Enw’r busnes
+cease-check-answers.trade                                     = Masnach y busnes
+cease-check-answers.address                                   = Cyfeiriad
+cease-check-answers.change                                    = Newid
+cease-check-answers.unknown                                   = Anhysbys
+
+cease-check-answers-uk.caption                                = Eiddo yn y DU
+cease-check-answers-fp.caption                                = Eiddo tramor
+
+
 # check business details
 check-details.title                                     = Gwirio’ch atebion
 check-details.heading                                   = Unig fasnachwr
