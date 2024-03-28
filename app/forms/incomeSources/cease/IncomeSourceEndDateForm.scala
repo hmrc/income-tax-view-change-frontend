@@ -41,9 +41,9 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
   val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
   val dateInvalid = "error.invalid"
 
-  private def dateMustNotBeInvalid(incomeSourceType: IncomeSourceType) = {
+  private def dateMustNotBeInvalid(incomeSourceType: IncomeSourceType, newIncomeSourceJourney: Boolean) = {
     val messagePrefix = incomeSourceType.endDateMessagePrefix
-    if (isEnabled(IncomeSourcesNewJourney)) "dateForm.error.invalid" else
+    if (newIncomeSourceJourney) "dateForm.error.invalid" else
       s"$messagePrefix.$dateInvalid"
   }
 
@@ -53,7 +53,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
 
   def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate
     val dateConstraints: List[Constraint[LocalDate]] = {
 
@@ -85,7 +85,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
         "year" -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
-          validDate(dateMustNotBeInvalid(incomeSourceType))
+          validDate(dateMustNotBeInvalid(incomeSourceType, newIncomeSourceJourney))
         )).transform[LocalDate](
         {
           case (day, month, year) =>
