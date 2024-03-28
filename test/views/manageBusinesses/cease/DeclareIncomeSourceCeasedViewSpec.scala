@@ -16,10 +16,12 @@
 
 package views.manageBusinesses.cease
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm.declaration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
@@ -29,119 +31,82 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 
   val declarePropertyCeasedView: DeclareIncomeSourceCeased = app.injector.instanceOf[DeclareIncomeSourceCeased]
 
-  val testBusinessName: Option[String] = Some("Big Business")
+  val testBusinessName: String = "Big Business"
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false) {
-    val (postAction, backAction) = if (isAgent) {
-      (controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.submitAgent(None, incomeSourceType),
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent())
-    } else {
-      (controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.submit(None, incomeSourceType),
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show())
-    }
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false, businessName: Option[String] = None) {
+
+    val backUrl = {
+      if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
+      else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
+    }.url
+
     lazy val view: HtmlFormat.Appendable = declarePropertyCeasedView(
       form = DeclareIncomeSourceCeasedForm.form(incomeSourceType),
       incomeSourceType = incomeSourceType,
-      soleTraderBusinessName = testBusinessName,
-      postAction = postAction,
+      soleTraderBusinessName = businessName,
+      postAction = Call("", ""),
       isAgent = isAgent,
-      backUrl = backAction.url
+      backUrl = backUrl
     )(individualUser, implicitly)
-
-    val formWithError = DeclareIncomeSourceCeasedForm.form(incomeSourceType)
-      .withError(
-        DeclareIncomeSourceCeasedForm.declaration,
-        messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError"))
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = declarePropertyCeasedView(
-      form = formWithError,
+      form = DeclareIncomeSourceCeasedForm.form(incomeSourceType)
+        .withError(declaration, messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")),
       incomeSourceType = incomeSourceType,
-      soleTraderBusinessName = testBusinessName,
-      postAction = postAction,
+      soleTraderBusinessName = Some(testBusinessName),
+      postAction = Call("", ""),
       isAgent = isAgent,
-      backUrl = backAction.url
+      backUrl = backUrl
     )(individualUser, implicitly)
-
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
   }
 
+  for {
+    incomeSourceType <- Seq(SelfEmployment, UkProperty, ForeignProperty)
+    isAgent          <- Seq(true, false)
+  } yield {
+    s"Declare $incomeSourceType Ceased View - isAgent = $isAgent" should {
+      "render the legend" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe
+          messages(s"incomeSources.cease.${incomeSourceType.key}.heading")
+      }
+      "render the checkbox" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById(declaration).attr("type") shouldBe "checkbox"
+      }
+      "render the checkbox label" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe
+          messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
+      }
 
-  "Declare UK property Ceased View - Individual" should {
-    "render the legend" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.UK.heading")
-    }
-    "render the checkbox" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
-    }
-    "render the checkbox label" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.checkboxLabel")
-    }
-    "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
-    }
-    "render the continue button" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the error summary" in new Setup(isAgent = false, incomeSourceType = UkProperty, error = true) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.UK.checkboxError")
-    }
-  }
-  "Declare UK property Ceased View - Agent" should {
-    "render the legend" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.UK.heading")
-    }
-    "render the checkbox label" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.checkboxLabel")
-    }
-    "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
-    }
-    "render the error summary" in new Setup(isAgent = true, incomeSourceType = UkProperty, error = true) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.UK.checkboxError")
-    }
-  }
+      if (incomeSourceType equals SelfEmployment) {
+        "render the business-specific hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment, businessName = Some(testBusinessName)) {
+          document.getElementById(s"$declaration-hint").text() shouldBe messages("incomeSources.cease.SE.hint", testBusinessName)
+        }
+        "render the generic business hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment) {
+          document.getElementById(s"$declaration-hint").text() shouldBe messages("incomeSources.cease.SE.hint.noBusinessName")
+        }
+      } else {
+        "render the property hint" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+          document.getElementById(s"$declaration-hint").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.hint")
+        }
+      }
 
-  "Declare Foreign property Ceased View - Individual" should {
-    "render the legend" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.FP.heading")
-    }
-    "render the checkbox" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
-    }
-    "render the checkbox label" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.checkboxLabel")
-    }
-    "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
-    }
-    "render the continue button" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the error summary" in new Setup(isAgent = false, incomeSourceType = ForeignProperty, error = true) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.FP.checkboxError")
-    }
-  }
-  "Declare Foreign property Ceased View - Agent" should {
-    "render the legend" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.FP.heading")
-    }
-    "render the checkbox label" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.checkboxLabel")
-    }
-    "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
-    }
-    "render the error summary" in new Setup(isAgent = true, incomeSourceType = ForeignProperty, error = true) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.FP.checkboxError")
+      "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe(
+          if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
+          else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
+        )
+      }
+      "render the continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("continue-button").text() shouldBe messages("base.continue")
+      }
+      "render the error summary" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, error = true) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe
+          messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
+      }
     }
   }
 }
