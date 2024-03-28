@@ -123,7 +123,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   }
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlForeign" should {
     "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/manage-your-businesses/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/manage-your-businesses/add/foreign-property-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
     }
   }
   s"calling POST $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
@@ -186,12 +186,12 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("cash"))
-        runPostTest(foreignPropertyCheckDetailsShowUrl, "/manage-your-businesses/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("cash"))
+        runPostTest(foreignPropertyCheckDetailsShowUrl, "/manage-your-businesses/add/foreign-property-accounting-method", formData, ForeignProperty, Some("cash"))
       }
       s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("traditional"))
-          runPostTest(foreignPropertyCheckDetailsShowUrl, "/manage-your-businesses/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("accruals"))
+          runPostTest(foreignPropertyCheckDetailsShowUrl, "/manage-your-businesses/add/foreign-property-accounting-method", formData, ForeignProperty, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $foreignPropertyCheckDetailsShowUrl" when {
@@ -200,7 +200,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/foreign-property-business-accounting-method", clientDetailsWithConfirmation)(formData)
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/foreign-property-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(BAD_REQUEST),
