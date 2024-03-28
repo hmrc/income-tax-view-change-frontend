@@ -121,16 +121,16 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         (isAgent, incomeSourceType) match {
           case (true, UkProperty) =>
-            document.title should include(TestDeclarePropertyCeasedController.titleAgentUkProperty)
+            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentUkProperty
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
           case (_, UkProperty) =>
-            document.title should include(TestDeclarePropertyCeasedController.titleUkProperty)
+            document.title shouldBe TestDeclarePropertyCeasedController.titleUkProperty
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
           case (true, _) =>
-            document.title should include(TestDeclarePropertyCeasedController.titleAgentForeignProperty)
+            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentForeignProperty
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
           case (_, _) =>
-            document.title should include(TestDeclarePropertyCeasedController.titleForeignProperty)
+            document.title shouldBe TestDeclarePropertyCeasedController.titleForeignProperty
             document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
         }
       }

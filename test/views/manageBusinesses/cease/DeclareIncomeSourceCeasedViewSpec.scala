@@ -69,7 +69,7 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 
   "Declare UK property Ceased View - Individual" should {
     "render the legend" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() should include(messages("incomeSources.cease.UK.heading"))
+      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.UK.heading")
     }
     "render the checkbox" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
@@ -91,7 +91,7 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
   }
   "Declare UK property Ceased View - Agent" should {
     "render the legend" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() should include(messages("incomeSources.cease.UK.heading"))
+      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.UK.heading")
     }
     "render the checkbox label" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.checkboxLabel")
@@ -108,7 +108,7 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 
   "Declare Foreign property Ceased View - Individual" should {
     "render the legend" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() should include(messages("incomeSources.cease.FP.heading"))
+      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.FP.heading")
     }
     "render the checkbox" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementById(DeclareIncomeSourceCeasedForm.declaration).attr("type") shouldBe "checkbox"
@@ -130,7 +130,7 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
   }
   "Declare Foreign property Ceased View - Agent" should {
     "render the legend" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() should include(messages("incomeSources.cease.FP.heading"))
+      document.getElementsByClass("govuk-fieldset__legend govuk-fieldset__legend--l").first().text() shouldBe messages("incomeSources.cease.FP.heading")
     }
     "render the checkbox label" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.checkboxLabel")
