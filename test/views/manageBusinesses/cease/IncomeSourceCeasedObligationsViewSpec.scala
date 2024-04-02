@@ -56,7 +56,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day = LocalDate.of(2022, 1, 1)
-
+  val cessationDate: LocalDate = day.plusDays(1)
 
   val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
   val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
@@ -75,6 +75,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel = viewModelWithAllData,
     isAgent = false,
     incomeSourceType = SelfEmployment,
+    cessationDate = cessationDate,
     businessName = None)
 
   val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty))
@@ -95,6 +96,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       obligationsViewModel = viewModelAnnualObligation.copy(finalDeclarationDates = Seq(finalDeclarationDates)),
       isAgent = false,
       incomeSourceType = SelfEmployment,
+      cessationDate = cessationDate,
       businessName = Some("Test Name")))
 
   val validCallWithNoQuarterlyDataMultipleFinalUpdates: Html = view(
@@ -102,6 +104,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       obligationsViewModel = viewModelAnnualObligation,
       isAgent = false,
       incomeSourceType = SelfEmployment,
+      cessationDate = cessationDate,
       businessName = Some("Test Name")))
 
   val validAgentCallWithData: Html = view(
@@ -109,6 +112,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       obligationsViewModel = viewModelAnnualObligation,
       isAgent = true,
       incomeSourceType = SelfEmployment,
+      cessationDate = cessationDate,
       businessName = Some("Test Name")))
 
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url

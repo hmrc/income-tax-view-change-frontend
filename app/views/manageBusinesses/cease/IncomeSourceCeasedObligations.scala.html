@@ -101,6 +101,17 @@
        @if(listFormat) { </li> } @if(!listFormat ){.} }
 }
 
+@insetMessage(keys: (String, String)) = @{
+        val messagePartOne = keys._1
+        val messagePartTwo = keys._2
+        s"${messages(messagePartOne, source.numberOfOverdueObligationCount)} ${messages(messagePartTwo, source.currentTaxYear.startYear, source.currentTaxYear.endYear)}"
+}
+
+@getInsetWarning(keys: (String, String)) = {
+
+    @govukInsetText(InsetText(content = Text(insetMessage(keys)), id=Some("warning-inset-text")))
+}
+
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = source.isAgent,
@@ -108,6 +119,8 @@
 
         @confirmationPanel
         @whatYouMustDoHeading
+
+        @source.insetWarningMessageKey.map(getInsetWarning(_))
 
         <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
             <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
@@ -125,7 +138,7 @@
             }
         </div>
 
-        <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = "business-ceased.obligation.view-updates.text")</p>
+        <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
 
 }

@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
@@ -36,6 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,52 +58,69 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
       .flatMap(_.tradingName)
   }
 
+  private def getCeaseSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[UIJourneySessionData] = {
+    sessionService.getMongo(JourneyType(Cease, incomeSourceType).toString).flatMap {
+      case Right(Some(sessionData)) => Future.successful(sessionData)
+      case Left(exception) => Future.failed(exception)
+      case Right(None) => Future.failed(new Error("missing session data"))
+    }
+  }
+
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
+
       updateMongoCeased(incomeSourceType)
-      val incomeSourceDetails: Future[(Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
+      val sessionData = getCeaseSessionData(incomeSourceType)
+
+      val incomeSourceId: Future[String] = incomeSourceType match {
         case SelfEmployment =>
-          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+          sessionData.map(_.ceaseIncomeSourceData).flatMap {
+            case Some(ceaseSessionData) if ceaseSessionData.endDate.isDefined => Future.successful(ceaseSessionData.incomeSourceId.get)
+            case _ => Future.failed(new Error("IncomeSourceId not found for Self Employment"))
+          }
+
         case UkProperty =>
-          Future.successful(
-            (user.incomeSources.properties
-              .filter(_.isUkProperty)
-              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
-              case Some(incomeSourceId) =>
-                Right(Some(incomeSourceId))
-              case None =>
-                Left(new Error("IncomeSourceId not found for UK property"))
-            }, UkProperty)
-          )
+          user.incomeSources.properties.filter(_.isUkProperty)
+            .map(incomeSource => incomeSource.incomeSourceId).headOption match {
+            case Some(incomeSourceId) => Future.successful(incomeSourceId)
+            case None => Future.failed(new Error("IncomeSourceId not found for UK property"))
+          }
+
         case ForeignProperty =>
-          Future.successful(
-            (user.incomeSources.properties
-              .filter(_.isForeignProperty)
-              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
-              case Some(incomeSourceId) =>
-                Right(Some(incomeSourceId))
-              case None =>
-                Left(new Error("IncomeSourceId not found for Foreign Property"))
-            }, ForeignProperty)
-          )
+          user.incomeSources.properties.filter(_.isForeignProperty)
+            .map(incomeSource => incomeSource.incomeSourceId).headOption match {
+            case Some(incomeSourceId) => Future.successful(incomeSourceId)
+            case None => Future.failed(new Error("IncomeSourceId not found for Foreign Property"))
+          }
       }
 
-      incomeSourceDetails.flatMap {
-        case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
-          val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
-          val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
-          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { obligationsViewModel =>
+      val businessEndDate: Future[Option[LocalDate]] = sessionData.map(_.ceaseIncomeSourceData).flatMap {
+        case Some(ceaseSessionData) => Future.successful(ceaseSessionData.endDate)
+        case None => Future.failed(new Error("cease session data not found"))
+      }
 
-            val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
-              obligationsViewModel, incomeSourceType, businessName, isAgent)
+      for {
+        incomeSourceId <- incomeSourceId
+        endDateOpt <- businessEndDate
+        obligationsViewModel <- nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false)
+      } yield {
+        endDateOpt match {
+          case Some(endDate) =>
+            val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
+
+            val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel,
+              incomeSourceType,
+              businessName,
+              endDate,
+              isAgent)
+
             Ok(obligationsView(incomeSourceCeasedObligationsViewModel))
-          }
-        case incomeSourceD@(Right(None), _) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
-          Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
-        case (Left(exception), _) => Future.failed(exception)
+
+          case _ => throw new Error("missing business id or business end date in session")
+        }
       }
     }
+
   }.recover {
     case ex: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
