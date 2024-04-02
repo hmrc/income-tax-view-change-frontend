@@ -1019,10 +1019,11 @@ paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
-paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
-paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
+paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
-paymentHistory.balancingChargeCredit                            = Credyd o ordaliad treth
+paymentHistory.balancingCharge                                  = Credyd o ordaliad treth
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -1189,11 +1190,8 @@ credit-and-refund.row.cutOver-2                                   = o flwyddyn d
 credit-and-refund.row.balancingCharge-1                           = Credyd o
 credit-and-refund.row.balancingCharge-2                           = o ordaliad treth -
 
-credit-and-refund.row.setOffCharge-1                              = Credyd o
-credit-and-refund.row.setOffCharge-2                              = o dâl sydd wedi’i osod yn erbyn treth -
-
-credit-and-refund.row.setOffChargeInterest-1                      = Llog ar gredyd o
-credit-and-refund.row.setOffChargeInterest-2                      = o dâl sydd wedi’i osod yn erbyn treth -
+credit-and-refund.row.repaymentInterest-1                         = Credyd o
+credit-and-refund.row.repaymentInterest-2                         = o log ar ad-daliadau -
 
 
 #######################################################################################################################
@@ -1789,8 +1787,7 @@ manageBusinesses.type-of-property.error                                  = Dewis
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
 credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
 credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
-credit.description.setOffCharge                                         = Credyd o dâl sydd wedi’i osod yn erbyn treth
-credit.description.setOffChargeInterest                                 = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.repaymentInterest                                    = Credyd o log ar ad-daliadau
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben
