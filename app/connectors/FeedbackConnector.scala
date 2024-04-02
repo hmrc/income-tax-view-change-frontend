@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.mvc.Request
-import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
@@ -59,10 +58,11 @@ class FeedbackConnector @Inject()(val http: HttpClient,
       resp =>
         resp.status match {
           case OK =>
-            Logger("application").info(s"[IncomeTaxViewChangeConnector][submit] - RESPONSE status: ${resp.status}")
+            Logger("application").info(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Right(())
           case status =>
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][submit] - RESPONSE status: ${resp.status}")
+            println(status)
+            Logger("application").error(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Left(status)
         }
     }
