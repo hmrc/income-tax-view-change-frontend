@@ -30,12 +30,6 @@ case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: Lo
 
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
 
-
-//  private val balancingChargeCredit = "BCC"
-//  private val mfaCredit = "MFA"
-//  private val cutOverCredit = "CutOver"
-//  private val payment = "Payment"
-
   def creditViewRows()(implicit messages: Messages): List[CreditRow] = {
     val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
       val maybeCreditRow = for {
@@ -61,20 +55,6 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
 
   val sortedCreditCharges = sortCreditsByYear
 
-
-//  def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-//
-//    val creditType: Option[CreditType] = credit._2.getCreditType
-//    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-//
-//    (creditType, isPayment) match {
-//      case (Some(BalancingChargeCreditType), false) => balancingChargeCredit
-//      case (Some(MfaCreditType), false) => mfaCredit
-//      case (Some(CutOverCreditType), false) => cutOverCredit
-//      case (None, true) => payment
-//      case (_, _) => "Unknown credit"
-//    }
-//  }
 
 }
 
