@@ -16,75 +16,54 @@
 
 package connectors
 
-import config.FrontendAppConfig
 import forms.FeedbackForm
 import mocks.MockHttp
 import mocks.services.MockSessionService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import play.api.http.Status.OK
+import play.api.http.Status.BAD_REQUEST
+import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
-import testConstants.PaymentAllocationsTestConstants.testValidPaymentAllocationsModelJson
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import scala.concurrent.Future
 
 class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionService{
 
-  val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val successResponse = HttpResponse(status = Status.OK, json = testValidPaymentAllocationsModelJson, headers = Map.empty)
+  val formData: FeedbackForm = FeedbackForm(
+    Some("Random Rating"),
+    "Albert Einstein",
+    "alberteinstein@gmail.com",
+    "Comments",
+    ""
+  )
 
-  val mockAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
+  val feedbackFormData: JsValue = Json.obj(
+    "feedbackRating"-> "Random Rating",
+    "feedbackName"-> "Albert Einstein",
+    "feedbackEmail"-> "alberteinstein@gmail.com",
+    "feedbackComments"-> "Comments",
+    "feedbackCsrfToken" -> "9394",
+    "feedbackReferrer" -> "346446"
+  )
 
-  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter) {
-    override val config: FrontendAppConfig = mockAppConfig
-  }
+  val successResponse = HttpResponse(status = Status.OK, json = feedbackFormData, headers = Map.empty)
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "[FeedbackConnector][submit] - RESPONSE status: BAD_REQUEST")
+
+  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter)
 
   "FeedbackConnector" should {
     "return OK response" when {
       "when form is successful" in {
 
-        val formData: FeedbackForm = FeedbackForm(
-            Some("Test Business"),
-            "Albert Einstein",
-            "alberteinstein@gmail.com",
-            "MCXSIMMKZC",
-            ""
-          )
+        when(mockHttpGet.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(successResponse))
 
-//        val formDataToFormMap: Map[String, Seq[String]] = {
-//          Map(
-//            "feedback-rating" -> Seq("Test Business"),
-//            "feedback-name" -> Seq("Albert Einstein"),
-//            "feedback-email" -> Seq("alberteinstein@gmail.com"),
-//            "feedback-comments" -> Seq("MCXSIMMKZC"),
-//            "csrfToken" -> Seq(""),
-//            "referrer" -> Seq("MCXSIMMKZC")
-//          )
-//        }
-
-//        val testBody = Json.parse(
-//          """
-//            |{
-//            |"nino": "AA123456A",
-//            |"mtdbsa": "XIAT0000000000A",
-//            |"businesses":[],
-//            |"properties":[]
-//            |}
-//            """".stripMargin
-//
-//        )
-//
-
-//        val feedbackServiceSubmitUrl = s"${
-//          mockAppConfig.contactFrontendBaseUrl
-//        }/contact-frontend/contact/beta-feedback/submit?" +
-//          s"service=ITVC"
-
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "valid")))
-
-//        FeedbackConnectorStub.stubPostFeedback(OK)
+        when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
+          .thenReturn(HeaderCarrierForPartials(headerCarrier))
+        when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier)
+          .thenReturn(headerCarrier)
 
         val result = TestFeedbackConnector.submit(formData).futureValue
         result shouldBe Right(())
@@ -92,15 +71,20 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
     }
   }
 
-//    "FeedbackConnector" should {
-//      "return OK response" when {
-//        "when the status is B" in {
-//          disableAllSwitches()
-//          enable(IncomeSources)
-//
-//          val result = TestAddressLookupConnector.addressLookupInitializeUrl
-//          result shouldBe s"${baseUrl}/api/v2/init"
-//        }
-//      }
-//    }
+    "FeedbackConnector" should {
+      "return a BAD_REQUEST response" when {
+        "when form unsuccessfully completed" in {
+
+          when(mockHttpGet.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(badResponse))
+
+          when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
+            .thenReturn(HeaderCarrierForPartials(headerCarrier))
+          when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier)
+            .thenReturn(headerCarrier)
+
+          val result = TestFeedbackConnector.submit(formData).futureValue
+          result shouldBe Left(BAD_REQUEST)
+        }
+      }
+    }
 }

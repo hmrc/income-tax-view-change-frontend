@@ -52,16 +52,14 @@ class FeedbackConnector @Inject()(val http: HttpClient,
   def submit(formData: FeedbackForm)
             (implicit request: Request[_]): Future[Either[Int, Unit]] = {
     val ref: String = request.headers.get(REFERER).getOrElse("N/A")
-
-    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-      formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
+    val data = formData.toFormMap(ref)
+    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl, data)(readForm, partialsReadyHeaderCarrier, ec).map {
       resp =>
         resp.status match {
           case OK =>
             Logger("application").info(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Right(())
           case status =>
-            println(status)
             Logger("application").error(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Left(status)
         }
