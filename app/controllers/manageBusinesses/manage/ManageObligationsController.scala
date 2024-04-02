@@ -24,14 +24,13 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.ManageIncomeSourceData
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.manage.ManageObligations
 
 import javax.inject.Inject
@@ -48,38 +47,43 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils {
+  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      withIncomeSourcesFS {
-        incomeSourceType match {
-          case SelfEmployment =>
-            sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-              case Right(incomeSourceIdOption) =>
-                val incomeSourceId: Option[IncomeSourceId] = incomeSourceIdOption.map(id => IncomeSourceId(id))
-                handleRequest(
-                  incomeSourceType,
-                  isAgent,
-                  taxYear,
-                  changeTo,
-                  incomeSourceId
-                )
-              case Left(ex) =>
-                Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
-                Future.successful {
-                  errorHandler(isAgent).showInternalServerError()
-                }
-            }
-          case _ => handleRequest(
-            incomeSourceType,
-            isAgent,
-            taxYear,
-            changeTo,
-            None
-          )
+      withSessionData(JourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
+        val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
+          sessionData.manageIncomeSourceData.flatMap(_.reportingMethod),
+          sessionData.manageIncomeSourceData.flatMap(_.taxYear),
+          sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        )
+        withIncomeSourcesFS {
+          (incomeSourceType, taxYearOpt, reportingMethodOpt, incomeSourceIdStringOpt) match {
+            case (SelfEmployment, Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt) =>
+              val incomeSourceId: Option[IncomeSourceId] = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+              handleRequest(
+                incomeSourceType,
+                isAgent,
+                (s"${taxYear - 1}-$taxYear"),
+                reportingMethod,
+                incomeSourceId
+              )
+            case (_, Some(taxYear), Some(reportingMethod), _) =>
+              handleRequest(
+                incomeSourceType,
+                isAgent,
+                (s"${taxYear - 1}-$taxYear"),
+                reportingMethod,
+                None
+              )
+            case (_, _, _, _) =>
+              Logger("application").error(s"[ManageObligationsController][Missing session values]")
+              Future.successful {
+                errorHandler(isAgent).showInternalServerError()
+              }
+          }
         }
       }
   }

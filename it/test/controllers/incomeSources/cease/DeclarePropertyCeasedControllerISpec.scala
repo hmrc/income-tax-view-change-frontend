@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.CeaseIncomeSourceData.ceasePropertyDeclare
+import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -39,12 +39,12 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
   val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
   val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
-  val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxError")
-  val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxLabel")
-  val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxError")
-  val checkboxLabelMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxLabel")
-  val pageTitleMsgKeyFP = "incomeSources.cease.FP.property.heading"
-  val pageTitleMsgKeyUK = "incomeSources.cease.UK.property.heading"
+  val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxError")
+  val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.checkboxLabel")
+  val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxError")
+  val checkboxLabelMessageFP: String = messagesAPI("incomeSources.cease.FP.checkboxLabel")
+  val pageTitleMsgKeyFP = "incomeSources.cease.FP.heading"
+  val pageTitleMsgKeyUK = "incomeSources.cease.UK.heading"
   val buttonLabel: String = messagesAPI("base.continue")
 
   val stringTrue: String = "true"
@@ -89,7 +89,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showUKPropertyEndDateControllerUrl)
         )
 
-        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
       "form is filled incorrectly" in {
@@ -101,7 +101,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None)
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
+          elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
         )
       }
     }
@@ -142,7 +142,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
           redirectURI(showForeignPropertyEndDateControllerUrl)
         )
 
-        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+        sessionService.getMongoKey(ceaseIncomeSourceDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
 
       }
       "form is filled incorrectly" in {
@@ -155,7 +155,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
+          elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
         )
       }
     }

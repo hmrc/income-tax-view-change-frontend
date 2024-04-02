@@ -21,18 +21,18 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 case class CeaseIncomeSourceData(
-                                  incomeSourceId:       Option[String]    = None,
-                                  endDate:              Option[LocalDate] = None,
-                                  ceasePropertyDeclare: Option[String]    = None,
-                                  journeyIsComplete:    Option[Boolean]   = None
+                                  incomeSourceId:           Option[String]    = None,
+                                  endDate:                  Option[LocalDate] = None,
+                                  ceaseIncomeSourceDeclare: Option[String]    = None,
+                                  journeyIsComplete:        Option[Boolean]   = None
                                 )
 
 object CeaseIncomeSourceData {
 
-  val incomeSourceIdField:      String = "incomeSourceId"
-  val dateCeasedField:          String = "endDate"
-  val ceasePropertyDeclare:     String = "ceasePropertyDeclare"
-  val journeyIsCompleteField:   String = "journeyIsComplete"
+  val incomeSourceIdField:          String = "incomeSourceId"
+  val dateCeasedField:              String = "endDate"
+  val ceaseIncomeSourceDeclare:     String = "ceaseIncomeSourceDeclare"
+  val journeyIsCompleteField:       String = "journeyIsComplete"
 
   def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
 

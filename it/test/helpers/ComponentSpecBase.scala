@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -143,7 +143,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
-    "encryption.isEnabled" -> "false"
+    "encryption.isEnabled" -> "false",
+    "microservice.services.contact-frontend.host" -> mockHost,
+    "microservice.services.contact-frontend.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -287,7 +289,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -299,7 +301,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -627,13 +629,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
-    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-declare")
+    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-confirm-cease")
 
     def getCeaseIncomeSourcesIndividual: WSResponse = get("/manage-your-businesses/cease/cease-an-income-source")
 
-    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-declare")(
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+    def postCeaseSelfEmployment(answer: Option[String]): WSResponse = post(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -641,11 +649,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/uk-property-end-date")
 
-    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-declare")
+    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-confirm-cease")
 
-    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-declare")(
+    def getCeaseSelfEmplyoment: WSResponse = get(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")
+
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -681,6 +691,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
+      "X-Session-ID" -> testSessionId)
+
+    def getFeedbackPage: WSResponse = getWithHeaders("/feedback",
+      "X-Session-ID" -> testSessionId)
+
+    def getThankyouPage: WSResponse = getWithHeaders("/thankyou",
       "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -785,11 +801,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseUKPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-details")
+    def getCheckCeaseUKPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-answers")
 
-    def postCheckCeaseUKPropertyDetails: WSResponse =
-      post("/manage-your-businesses/cease/uk-property-check-details")(Map.empty)
+    def postCheckCeaseUKPropertyAnswers: WSResponse =
+      post("/manage-your-businesses/cease/uk-property-check-answers")(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/manage-your-businesses/manage/view-and-manage-income-sources")
 
@@ -833,11 +849,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseForeignPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-details")
+    def getCheckCeaseForeignPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-answers")
 
-    def postCheckCeaseForeignPropertyDetails: WSResponse =
-      post(s"/manage-your-businesses/cease/foreign-property-check-details/")(Map.empty)
+    def postCheckCeaseForeignPropertyAnswers: WSResponse =
+      post(s"/manage-your-businesses/cease/foreign-property-check-answers/")(Map.empty)
 
 
     def postAddBusinessReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -855,11 +871,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
-    def getCheckCeaseBusinessDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-details")
+    def getCheckCeaseBusinessAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-answers")
 
-    def postCheckCeaseBusinessDetails: WSResponse =
-      post("/manage-your-businesses/cease/business-check-details")(Map.empty)
+    def postCheckCeaseBusinessAnswers: WSResponse =
+      post("/manage-your-businesses/cease/business-check-answers")(Map.empty)
 
     def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
 
@@ -896,6 +912,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
 
     def getViewAllCeasedBusinesses: WSResponse = get("/manage-your-businesses/ceased-businesses")
+
+    def getCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)
+    }
+
+    def postCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)(Map.empty)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

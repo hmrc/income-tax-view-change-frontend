@@ -22,7 +22,7 @@ import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, Pro
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
+import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate
@@ -43,6 +43,7 @@ object PropertyDetailsTestConstants {
   val testCeaseDate = Some(LocalDate.of(2022, 1, 1))
   val testStartDate = LocalDate.of(2022, 1, 1)
   val testStartDate2 = LocalDate.of(2021, 1, 1)
+  val testStartDateBeforeEarliestStartDate = LocalDate.of(2013, 1, 1)
   val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
   val testIncomeType = "property-unspecified"
@@ -258,6 +259,17 @@ object PropertyDetailsTestConstants {
     cashOrAccruals = true
   )
 
+  val ukPropertyDetails3BeforeEarliest = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
+    cessation = None,
+    latencyDetails = None,
+    cashOrAccruals = true
+  )
+
   val ukPropertyWithLatencyDetails1 = PropertyDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(testPropertyAccountingPeriod),
@@ -289,6 +301,17 @@ object PropertyDetailsTestConstants {
     tradingStartDate = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
+    cashOrAccruals = true
+  )
+
+  val foreignPropertyDetailsBeforeEarliest = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
+    cessation = None,
+    latencyDetails = None,
     cashOrAccruals = true
   )
 

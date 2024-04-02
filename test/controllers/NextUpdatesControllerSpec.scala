@@ -393,6 +393,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some(HTML)
       }
+
       "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()

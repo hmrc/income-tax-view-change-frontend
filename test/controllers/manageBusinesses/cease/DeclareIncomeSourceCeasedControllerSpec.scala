@@ -20,7 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -37,58 +37,68 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.manageBusinesses.cease.DeclarePropertyCeased
+import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
 
 import scala.concurrent.Future
 
-class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
+class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
   MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val mockDeclarePropertyCeased: DeclarePropertyCeased = app.injector.instanceOf[DeclarePropertyCeased]
+  val mockDeclarePropertyCeased: DeclareIncomeSourceCeased = app.injector.instanceOf[DeclareIncomeSourceCeased]
 
-  object TestDeclarePropertyCeasedController extends DeclarePropertyCeasedController(
+  object TestDeclareIncomeSourceCeasedController extends DeclareIncomeSourceCeasedController(
     mockAuthService,
-    app.injector.instanceOf[DeclarePropertyCeased],
+    app.injector.instanceOf[DeclareIncomeSourceCeased],
     sessionService = mockSessionService,
     testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val titleUkProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.UK.property.heading"))}"
-    val titleAgentUkProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UK.property.heading"))}"
-    val headingUkProperty: String = messages("incomeSources.cease.UK.property.heading")
+    val titleUkProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.UK.heading"))}"
+    val titleAgentUkProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UK.heading"))}"
+    val headingUkProperty: String = messages("incomeSources.cease.UK.heading")
 
-    val titleForeignProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.FP.property.heading"))}"
-    val titleAgentForeignProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.FP.property.heading"))}"
-    val headingForeignProperty: String = messages("incomeSources.cease.FP.property.heading")
+    val titleForeignProperty: String = s"${messages("htmlTitle", messages("incomeSources.cease.FP.heading"))}"
+    val titleAgentForeignProperty: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.FP.heading"))}"
+    val headingForeignProperty: String = messages("incomeSources.cease.FP.heading")
+
+    val titleSelfEmployment: String = s"${messages("htmlTitle", messages("incomeSources.cease.SE.heading"))}"
+    val titleAgentSelfEmployment: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.SE.heading"))}"
+    val headingSelfEmployment: String = messages("incomeSources.cease.SE.heading")
   }
 
 
   def showCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
-      case (true, _) => TestDeclarePropertyCeasedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-      case (_, _) => TestDeclarePropertyCeasedController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, SelfEmployment) => TestDeclareIncomeSourceCeasedController.showAgent(Some("test-id"), SelfEmployment)(fakeRequestConfirmedClient())
+      case (_, SelfEmployment)    => TestDeclareIncomeSourceCeasedController.show(Some("test-id"), SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, UkProperty)     => TestDeclareIncomeSourceCeasedController.showAgent(None, UkProperty)(fakeRequestConfirmedClient())
+      case (_, UkProperty)        => TestDeclareIncomeSourceCeasedController.show(None, UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, _)              => TestDeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty)(fakeRequestConfirmedClient())
+      case (_, _)                 => TestDeclareIncomeSourceCeasedController.show(None, ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
     }
   }
 
   def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, formBody: Option[Map[String, String]] = None): Future[Result] = {
     val formData = formBody.getOrElse(Map(
-      DeclarePropertyCeasedForm.declaration -> "true",
-      DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
+      DeclareIncomeSourceCeasedForm.declaration -> "true",
+      DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> "12345"
     ))
 
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakePostRequestConfirmedClient()
+      case (true, SelfEmployment) => TestDeclareIncomeSourceCeasedController.submitAgent(None, SelfEmployment)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
+      case (_, SelfEmployment) => TestDeclareIncomeSourceCeasedController.submit(None, SelfEmployment)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakePostRequestConfirmedClient()
+      case (true, UkProperty) => TestDeclareIncomeSourceCeasedController.submitAgent(None, UkProperty)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, _) => TestDeclarePropertyCeasedController.submit(ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
+      case (_, UkProperty) => TestDeclareIncomeSourceCeasedController.submit(None, UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
+        .withFormUrlEncodedBody(formData.toSeq: _*))
+      case (true, _) => TestDeclareIncomeSourceCeasedController.submitAgent(None, ForeignProperty)(fakePostRequestConfirmedClient()
+        .withFormUrlEncodedBody(formData.toSeq: _*))
+      case (_, _) => TestDeclareIncomeSourceCeasedController.submit(None, ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
     }
   }
@@ -104,12 +114,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     argumentJourneyType.getValue.toString shouldBe journeyType.toString
   }
 
-  "DeclarePropertyCeasedController.show / DeclarePropertyCeasedController.showAgent" should {
+  "DeclareIncomeSourceCeasedController.show / DeclareIncomeSourceCeasedController.showAgent" should {
     "return 200 OK" when {
       def testViewReturnsOKWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
 
         setupMockCreateSession(true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
@@ -119,26 +129,38 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         status(result) shouldBe Status.OK
 
         (isAgent, incomeSourceType) match {
+          case (true, SelfEmployment) =>
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleAgentSelfEmployment
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingSelfEmployment
+          case (_, SelfEmployment) =>
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleSelfEmployment
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingSelfEmployment
           case (true, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentUkProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleAgentUkProperty
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingUkProperty
           case (_, UkProperty) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleUkProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingUkProperty
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleUkProperty
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingUkProperty
           case (true, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleAgentForeignProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleAgentForeignProperty
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingForeignProperty
           case (_, _) =>
-            document.title shouldBe TestDeclarePropertyCeasedController.titleForeignProperty
-            document.select("legend:nth-child(1)").text shouldBe TestDeclarePropertyCeasedController.headingForeignProperty
+            document.title shouldBe TestDeclareIncomeSourceCeasedController.titleForeignProperty
+            document.select("legend:nth-child(1)").text shouldBe TestDeclareIncomeSourceCeasedController.headingForeignProperty
         }
       }
 
+      "income source is Sole Trader Business and FS Enabled - Individual" in {
+        testViewReturnsOKWithCorrectContent(isAgent = false, SelfEmployment)
+      }
+      "income source is Sole Trader Business and FS Enabled - Agent" in {
+        testViewReturnsOKWithCorrectContent(isAgent = true, UkProperty)
+      }
       "income source is UK Property and FS Enabled - Individual" in {
         testViewReturnsOKWithCorrectContent(isAgent = false, UkProperty)
       }
       "income source is UK Property and FS Enabled - Agent" in {
-        testViewReturnsOKWithCorrectContent(isAgent = false, UkProperty)
+        testViewReturnsOKWithCorrectContent(isAgent = true, UkProperty)
       }
       "income source is Foreign Property and FS Enabled - Individual" in {
         testViewReturnsOKWithCorrectContent(isAgent = false, ForeignProperty)
@@ -154,7 +176,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAuthorisationSuccess(isAgent)
 
         disable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
 
         val result: Future[Result] = showCall(isAgent, incomeSourceType)
         status(result) shouldBe Status.SEE_OTHER
@@ -163,6 +185,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)
       }
 
+      "navigating to the Sole Trader Business declaration page with FS Disabled - Individual" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = false, SelfEmployment)
+      }
+      "navigating to the Sole Trader Business declaration page with FS Disabled - Agent" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = true, SelfEmployment)
+      }
       "navigating to the UK Property declaration page with FS Disabled - Individual" in {
         testFeatureSwitchRedirectsToHomePage(isAgent = false, UkProperty)
       }
@@ -190,6 +218,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)
       }
 
+      "unauthorised user navigates to Sole Trader Business declaration page - Individual" in {
+        testUnauthorisedUserRedirectsToSignIn(isAgent = false, SelfEmployment)
+      }
+      "unauthorised user navigates to Sole Trader Business declaration page - Agent" in {
+        testUnauthorisedUserRedirectsToSignIn(isAgent = true, SelfEmployment)
+      }
       "unauthorised user navigates to UK Property declaration page - Individual" in {
         testUnauthorisedUserRedirectsToSignIn(isAgent = false, UkProperty)
       }
@@ -214,9 +248,9 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
-          TestDeclarePropertyCeasedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+          TestDeclareIncomeSourceCeasedController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
-          TestDeclarePropertyCeasedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+          TestDeclareIncomeSourceCeasedController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
         }
 
         val expectedRedirectUrl = if (isAgent) {
@@ -251,12 +285,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
   }
 
-  "DeclarePropertyCeasedController.submit / DeclarePropertyCeasedController.submitAgent" should {
+  "DeclareIncomeSourceCeasedController.submit / DeclareIncomeSourceCeasedController.submitAgent" should {
     "return 200 OK" when {
       def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Right(true))
 
         val journeyType = JourneyType(Cease, incomeSourceType)
@@ -269,9 +303,15 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
-        verifySetMongoKey(CeaseIncomeSourceData.ceasePropertyDeclare, "true", journeyType)
+        verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
       }
 
+      "Sole Trader Business cease declaration is completed - Individual" in {
+        testSubmitReturnsOKAndSetsMongoData(isAgent = false, SelfEmployment)
+      }
+      "Sole Trader Business cease declaration is completed - Agent" in {
+        testSubmitReturnsOKAndSetsMongoData(isAgent = true, SelfEmployment)
+      }
       "UK Property cease declaration is completed - Individual" in {
         testSubmitReturnsOKAndSetsMongoData(isAgent = false, UkProperty)
       }
@@ -292,7 +332,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAuthorisationSuccess(isAgent)
 
         disable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
 
         lazy val result: Future[Result] = submitCall(isAgent, incomeSourceType)
         val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
@@ -301,6 +341,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)
       }
 
+      "POST call to the Sole Trader Business declaration page with FS Disabled - Individual" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = false, SelfEmployment)
+      }
+      "POST call to the Sole Trader Business declaration page with FS Disabled - Agent" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = true, SelfEmployment)
+      }
       "POST call to the UK Property declaration page with FS Disabled - Individual" in {
         testFeatureSwitchRedirectsToHomePage(isAgent = false, UkProperty)
       }
@@ -320,14 +366,20 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
       def testInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Right(true))
-        val invalidForm = Map(DeclarePropertyCeasedForm.declaration -> "invalid")
+        val invalidForm = Map(DeclareIncomeSourceCeasedForm.declaration -> "invalid")
         lazy val result = submitCall(isAgent, incomeSourceType, Some(invalidForm))
 
         status(result) shouldBe Status.BAD_REQUEST
       }
 
+      "Sole Trader Business cease declaration is not completed - Individual" in {
+        testInvalidForm(isAgent = false, SelfEmployment)
+      }
+      "Sole Trader Business cease declaration is not completed - Agent" in {
+        testInvalidForm(isAgent = true, SelfEmployment)
+      }
       "UK Property cease declaration is not completed - Individual" in {
         testInvalidForm(isAgent = false, UkProperty)
       }
@@ -347,7 +399,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
       def testMongoException(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
-        mockPropertyIncomeSource()
+        mockBothPropertyBothBusiness()
         setupMockSetSessionKeyMongo(Left(new Exception))
 
         lazy val result = submitCall(isAgent, incomeSourceType)
@@ -355,6 +407,12 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
+      "Exception received from Mongo while setting Sole Trader Business Declaration - Individual" in {
+        testMongoException(isAgent = false, SelfEmployment)
+      }
+      "Exception received from Mongo while setting Sole Trader Business Declaration - Agent" in {
+        testMongoException(isAgent = true, SelfEmployment)
+      }
       "Exception received from Mongo while setting UK Property Declaration - Individual" in {
         testMongoException(isAgent = false, UkProperty)
       }
