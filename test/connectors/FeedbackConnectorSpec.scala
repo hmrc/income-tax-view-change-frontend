@@ -20,26 +20,23 @@ import config.FrontendAppConfig
 import forms.FeedbackForm
 import mocks.MockHttp
 import mocks.services.MockSessionService
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import play.api.http.Status.OK
+import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.PaymentAllocationsTestConstants.testValidPaymentAllocationsModelJson
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import scala.concurrent.Future
 
 class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionService{
 
-  val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val successResponse = HttpResponse(status = Status.OK, json = testValidPaymentAllocationsModelJson, headers = Map.empty)
-
-  val mockAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
-
-  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter) {
-    override val config: FrontendAppConfig = mockAppConfig
-  }
+  val successResponse: HttpResponse = HttpResponse(status = Status.OK, json = testValidPaymentAllocationsModelJson, headers = Map.empty)
+  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter)
 
   "FeedbackConnector" should {
     "return OK response" when {
@@ -82,9 +79,30 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
 //        }/contact-frontend/contact/beta-feedback/submit?" +
 //          s"service=ITVC"
 
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "valid")))
-
+//        when(mockHttpClient.POSTForm[HttpResponse](
+//          any(), any())(any(), any(), any())
+//        ).thenReturn(Future.successful(HttpResponse(OK, "valid")))
 //        FeedbackConnectorStub.stubPostFeedback(OK)
+
+//        val testUrl = "http://localhost:9250/contact/beta-feedback/submit?service=ITVC"
+//        val testBody = Json.parse(
+//          """
+//            |{
+//            |  "nino": "AA123456A",
+//            |  "mtdbsa": "XIAT0000000000A",
+//            |  "businesses":[],
+//            |  "properties":[]
+//            |}
+//      """.stripMargin
+//        )
+        //setupMockHttpPost(testUrl, testBody)(successResponse)
+        when(mockHttpGet.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn( Future.successful(successResponse))
+
+        when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
+          .thenReturn( HeaderCarrierForPartials(headerCarrier) )
+        when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier)
+          .thenReturn( headerCarrier )
 
         val result = TestFeedbackConnector.submit(formData).futureValue
         result shouldBe Right(())

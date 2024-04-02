@@ -16,6 +16,7 @@
 
 package connectors
 
+import auth.HeaderExtractor
 import config.FrontendAppConfig
 import forms.FeedbackForm
 import play.api.Logger
@@ -24,6 +25,7 @@ import play.api.http.Status.OK
 import play.api.mvc.Request
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
 import javax.inject.Inject
@@ -46,22 +48,27 @@ class FeedbackConnector @Inject()(val http: HttpClient,
 
   private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
     val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
-    itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
+    println(s"Actual: $hc")
+    val x = itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
+    println(s"Actual2: $x")
+    x
   }
 
   def submit(formData: FeedbackForm)
             (implicit request: Request[_]): Future[Either[Int, Unit]] = {
     val ref: String = request.headers.get(REFERER).getOrElse("N/A")
 
-    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-      formData.toFormMap(ref))(readForm, partialsReadyHeaderCarrier, ec).map {
+    implicit val hc: HeaderCarrier = partialsReadyHeaderCarrier
+    val data = formData.toFormMap(ref)
+    println(s"Client: $hc ${http} $data")
+    http.POSTForm[HttpResponse](feedbackServiceSubmitUrl, data).map {
       resp =>
+        println("Boom...")
         resp.status match {
           case OK =>
             Logger("application").info(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Right(())
           case status =>
-            println(status)
             Logger("application").error(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
             Left(status)
         }
