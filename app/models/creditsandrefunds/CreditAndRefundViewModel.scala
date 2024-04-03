@@ -30,21 +30,19 @@ case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: Lo
 
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
 
-  def creditViewRows()(implicit messages: Messages): List[CreditRow] = {
-    val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
-      val maybeCreditRow = for {
-        creditType <- cc._2.getCreditType
-        amount <- cc._1.documentDetail.paymentOrChargeCredit
-      } yield {
-        creditType match {
-          case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = cc._1.dueDate.get)
-          case _ =>  CreditViewRow(amount = amount, creditType = creditType, taxYear = cc._2.taxYear)
-        }
+  val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
+    val (documentDetails, financialDetail) = cc
+    val maybeCreditRow = for {
+      creditType <- financialDetail.getCreditType
+      amount <- documentDetails.documentDetail.paymentOrChargeCredit
+    } yield {
+      creditType match {
+        case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = documentDetails.dueDate.get)
+        case _ => CreditViewRow(amount = amount, creditType = creditType, taxYear = financialDetail.taxYear)
       }
-      maybeCreditRow
-    })
-    sortedCreditRows.flatten.toList
-  }
+    }
+    maybeCreditRow
+  })
 
   def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     val sortedCredits = creditCharges.sortBy {
