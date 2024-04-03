@@ -179,19 +179,11 @@ trait CreditHistoryDataHelper {
     financialDetails = List(
       FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), transactionId = Some(documentDetailsWhichIsMfaCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
-//<<<<<<< HEAD
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
       FinancialDetail(taxYear = "2022", mainType = None, mainTransaction = None, transactionId = Some("testTransactionId8"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(5)))))),
       FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"), mainTransaction = Some("4905"), transactionId = Some(documentDetailsWhichIsBCCredit.transactionId),
-//=======
-//        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-//      FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId2"),
-//        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
-//        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(5)))))),
-//      FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"), transactionId = Some("testTransactionId3"),
-//>>>>>>> main
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
     )

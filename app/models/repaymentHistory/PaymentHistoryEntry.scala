@@ -34,8 +34,7 @@ case class PaymentHistoryEntry(date: LocalDate,
     TaxYear(endYear-1, endYear)
   }
 
-  def isCredit: Boolean = creditType match {
-    case BalancingChargeCreditType | CutOverCreditType | MfaCreditType | RepaymentInterest => true
-    case _ => false
-  }
+  private val creditTypes: Seq[CreditType] = Seq(BalancingChargeCreditType,  CutOverCreditType,  MfaCreditType, RepaymentInterest)
+
+  def isCredit: Boolean = creditTypes.contains(creditType)
 }

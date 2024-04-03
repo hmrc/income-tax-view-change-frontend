@@ -35,8 +35,7 @@ object CreditAndRefundUtils {
       def validCredit(detail: FinancialDetail): Boolean = detail.getCreditType match{
         case Some(MfaCreditType) => isMFACreditsAndDebitsEnabled
         case Some(CutOverCreditType) => isCutOverCreditEnabled
-        case Some(RepaymentInterest) => true
-        case Some(BalancingChargeCreditType) => true
+        case Some(RepaymentInterest) | Some(BalancingChargeCreditType) => true
         case _ => false
       }
       def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined

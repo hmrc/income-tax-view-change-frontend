@@ -429,7 +429,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             "Credyd o £100.00 o flwyddyn dreth gynharach - blwyddyn dreth 2022 i 2023"
           document.select("ul#credits-list li:nth-child(2)").text() shouldBe
             "Credyd o £200.00 o ordaliad treth - blwyddyn dreth 2021 i 2022"
-          // TODO: Update welsh language
           document.select("ul#credits-list li:nth-child(3)").text() shouldBe
             "Credyd o £400.00 o log ar ad-daliadau - blwyddyn dreth 2019 i 2020"
           document.select("ul#credits-list li:nth-child(4)").text() shouldBe
