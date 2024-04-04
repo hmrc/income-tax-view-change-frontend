@@ -63,9 +63,9 @@
 
 @changeBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true, isChange = true).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessName().url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = true).url
     }
 }
 

@@ -204,8 +204,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                          isChange: Boolean): String = {
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent = false, isChange = false)
+      case (_, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent = true, isChange = false)
       case (false, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = false)
       case (_, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = true)
       case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)

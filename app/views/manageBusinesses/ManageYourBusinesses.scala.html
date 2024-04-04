@@ -80,9 +80,9 @@
 
 @addBusinessNameURL = @{
     if(isAgent)
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent().url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true, isChange = false).url
     else
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show().url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = false).url
 }
 
 @viewAllCeasedBusinessesControllerURL = @{
