@@ -73,7 +73,7 @@
 }
 
 @whatYouMustDoHeading = {
-        <h2 class="govuk-label-wrapper">
+        <h2 id="heading-what-you-must-do" class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
                 @getMessage("heading2.text")
             </label>
@@ -109,7 +109,7 @@
 
 @getInsetWarning(keys: (String, String)) = {
 
-    @govukInsetText(InsetText(content = Text(insetMessage(keys)), id=Some("warning-inset-text")))
+    @govukInsetText(InsetText(content = HtmlContent(insetMessage(keys)), id=Some("warning-inset-text")))
 }
 
 
@@ -124,7 +124,7 @@
 
         <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
             <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--m govuk-!-margin-top-4">
+                <label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4 ">
                     @getMessage("next-update.text")
                 </label>
             </h3>
@@ -136,9 +136,11 @@
                     @getNextFinalDeclarationUpdate(listFormat = true)
                 </ul>
             }
+
+            <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         </div>
 
-        <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
-
+        <br>
+        <br>
 }

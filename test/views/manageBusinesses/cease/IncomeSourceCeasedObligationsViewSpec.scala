@@ -55,10 +55,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
-  val day = LocalDate.of(2022, 1, 1)
+  val day: LocalDate = fixedDate
   val cessationDate: LocalDate = day.plusDays(1)
 
-  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
+  val eopsDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
   val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallised")
 
@@ -79,17 +79,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     businessName = None)
 
   val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty))
-  val validUKPropertyBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, incomeSourceType = UkProperty))
-
   val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty))
-  val validForeignPropertyBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, incomeSourceType = ForeignProperty))
-
   val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
-  val validSoleTreaderBusinessAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true, businessName = Some("Test Name")))
-
   val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel)
-  val validSoleTreaderBusinessWithNoBusinessNameAgentCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(isAgent = true))
-
   val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")))
   val validCallWithNoQuarterlyDataOnlyOneFinalUpdate: Html = view(
     IncomeSourceCeasedObligationsViewModel(
@@ -98,7 +90,6 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       incomeSourceType = SelfEmployment,
       cessationDate = cessationDate,
       businessName = Some("Test Name")))
-
   val validCallWithNoQuarterlyDataMultipleFinalUpdates: Html = view(
     IncomeSourceCeasedObligationsViewModel(
       obligationsViewModel = viewModelAnnualObligation,
@@ -107,18 +98,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       cessationDate = cessationDate,
       businessName = Some("Test Name")))
 
-  val validAgentCallWithData: Html = view(
-    IncomeSourceCeasedObligationsViewModel(
-      obligationsViewModel = viewModelAnnualObligation,
-      isAgent = true,
-      incomeSourceType = SelfEmployment,
-      cessationDate = cessationDate,
-      businessName = Some("Test Name")))
-
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
-  val manageYourBusinessShowAgentURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url
+  val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.getNextUpdates().url
 
-  "Income Source Ceased Obligations - Individual" should {
+  "Income Source Ceased Obligations " should {
     "Display the correct banner message and heading" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -184,99 +167,45 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
     }
+    "show what you must do heading" in new Setup(validCallWithData) {
+      val heading: Element = document.getElementById("heading-what-you-must-do")
+      heading.text() shouldBe "What you must do"
+    }
+    "show warning messages" when {
+      "view model has inset warning messages" in new Setup(validCallWithData) {
+        document.getElementsByClass("govuk-inset-text").size() shouldBe 1
+        document.getElementById("warning-inset-text").text shouldBe "You have 7 overdue updates. You must submit these updates with all required income and expenses through your record keeping software."
+      }
+      "view model has no inset warning messages" in new Setup(validCallWithNoQuarterlyDataOnlyOneFinalUpdate) {
+        document.getElementsByClass("govuk-inset-text").size() shouldBe 0
+      }
+    }
     "show next upcoming update" when {
       "quarterly updates are present" in new Setup(validCallWithData) {
         val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
 
         document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
         quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your next quarterly update for tax year 2022 to 2023 is due by 5 May 2022"
-        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022"
+        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023"
       }
       "quarterly updates are not present then only show final declaration" in new Setup(validCallWithNoQuarterlyDataOnlyOneFinalUpdate) {
         document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
-        document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022 ."
+        document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023 ."
       }
       "quarterly updates are not present then only show two final declaration if present" in new Setup(validCallWithNoQuarterlyDataMultipleFinalUpdates) {
         val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
         document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
-        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your final declaration for tax year 2022 to 2023 is due by 3 January 2022"
-        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 3 January 2023"
+        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023"
+        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2024 to 2025 is due by 17 December 2024"
       }
+    }
+    "show view all update link" in new Setup(validCallWithData) {
+      val link: Element = document.getElementById("view-all-updates")
+      link.hasCorrectLink("View your overdue and upcoming updates", viewUpcomingUpdatesURL)
     }
     "show view all your business link" in new Setup(validCallWithData) {
       val link: Element = document.getElementById("view-all-business-link")
       link.hasCorrectLink("View all your businesses", manageYourBusinessShowURL)
     }
   }
-
-  "Income Source Ceased Obligations - Agent" should {
-    "Display the correct banner message and heading" when {
-      "Business type is UK Property Business" in new Setup(validUKPropertyBusinessAgentCall) {
-        val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1UKProperty
-
-
-        val subText: Option[Element] = layoutContent.select("div").eq(3)
-
-        subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1UKProperty + " " + IncomeSourceCeasedMessages.headingBase
-          case _ => fail("No 2nd h2 element found.")
-        }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
-      }
-      "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessAgentCall) {
-        val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1ForeignProperty
-
-
-        val subText: Option[Element] = layoutContent.select("div").eq(3)
-
-        subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1ForeignProperty + " " + IncomeSourceCeasedMessages.headingBase
-          case _ => fail("No 2nd h2 element found.")
-        }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
-      }
-      "Business type is Self Employment Business" in new Setup(validSoleTreaderBusinessAgentCall) {
-        val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmployment
-
-
-        val subText: Option[Element] = layoutContent.select("div").eq(3)
-
-        subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1SelfEmployment + " " + IncomeSourceCeasedMessages.headingBase
-          case _ => fail("No 2nd h2 element found.")
-        }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
-      }
-      "Business type is Self Employment Business and business name is empty" in new Setup(validSoleTreaderBusinessWithNoBusinessNameAgentCall) {
-        val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmploymentIfEmpty
-
-
-        val subText: Option[Element] = layoutContent.select("div").eq(3)
-
-        subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1SelfEmploymentIfEmpty + " " + IncomeSourceCeasedMessages.headingBase
-          case _ => fail("No 2nd h2 element found.")
-        }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
-      }
-    }
-    "show view all your business link" in new Setup(validAgentCallWithData) {
-      val link: Element = document.getElementById("view-all-business-link")
-      link.hasCorrectLink("View all your businesses", manageYourBusinessShowAgentURL)
-    }
-  }
-
-
 }
