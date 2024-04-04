@@ -207,5 +207,15 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       val link: Element = document.getElementById("view-all-business-link")
       link.hasCorrectLink("View all your businesses", manageYourBusinessShowURL)
     }
+
+    "show capital gain tax" in new Setup(validUKPropertyBusinessCall) {
+      val capitalGainBlock: Element = document.getElementById("capital-gain-block")
+      val capitalGainContent: Element = capitalGainBlock.getElementById("capital-gain-content")
+      val capitalGainMoreInfoLink: Element = capitalGainBlock.getElementById("capital-gain-more-info-link")
+
+      capitalGainBlock.getElementsByClass("govuk-label-wrapper").get(0).text() shouldBe "Capital gain tax"
+      capitalGainContent.text() shouldBe "If you’ve sold property, you may need to pay Capital Gains Tax."
+      capitalGainMoreInfoLink hasCorrectLink("Check what you need to pay Capital Gains Tax on (opens in new tab)", "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on")
+    }
   }
 }

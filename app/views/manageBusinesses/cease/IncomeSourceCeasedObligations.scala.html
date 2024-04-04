@@ -112,6 +112,20 @@
     @govukInsetText(InsetText(content = HtmlContent(insetMessage(keys)), id=Some("warning-inset-text")))
 }
 
+@showCapitalGainBlock = {
+  @if(source.incomeSourceType != SelfEmployment) {
+    <div id="capital-gain-block" class="govuk-!-margin-bottom-7">
+        <h3 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
+                @getMessage("capital-gain-tax.text")
+            </label>
+        </h3>
+        <p id="capital-gain-content" class="govuk-body">@getMessage("capital-gain-tax.info1.text")</p>
+        <p>@link(id = Some("capital-gain-more-info-link"), link = "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on", messageKey = "business-ceased.obligation.capital-gain-tax.info2.text", target = Some("_blank"))</p>
+    </div>
+  }
+}
+
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = source.isAgent,
@@ -139,6 +153,8 @@
 
             <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         </div>
+
+        @showCapitalGainBlock
 
         <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
         <br>
