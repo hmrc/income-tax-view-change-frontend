@@ -48,8 +48,7 @@
 }
 
 @addBusinessNameURL = @{
-    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true, isChange = false).url
-    else controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = false).url
+    controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = false).url
 }
 
 @addUKPropertyStartDateURL = @{

@@ -77,9 +77,9 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(
-        isAgent,
+        isAgent = isAgent,
         backUrl = getBackUrl(isAgent = false, isChange = false),
-        isChange
+        isChange = isChange
       )
   }
 
@@ -101,7 +101,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       handleSubmitRequest(isAgent, isChange)
   }
