@@ -80,12 +80,14 @@
         </h2>
 }
 
+@getNextUpdateDateMessage(key: String, startYear: Int) = {
+    @getMessage(key, startYear.toString, (startYear + 1).toString )
+}
+
 @getNextFirstQuarterlyUpdate = {
     @source.firstQuarterlyUpdate.map{ date =>
         <li>
-            @getMessage("next-update.next-quarterly.text",
-                date.inboundCorrespondenceFrom.getYear.toString ,
-                (date.inboundCorrespondenceFrom.getYear + 1).toString)
+            @getNextUpdateDateMessage("next-update.next-quarterly.text", date.inboundCorrespondenceFrom.getYear)
             <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
         </li>
     }
@@ -94,11 +96,9 @@
 @getNextFinalDeclarationUpdate(listFormat: Boolean = false) = {
     @source.finalDeclarationUpdate.map{ date =>
      @if(listFormat) { <li> }
-        @getMessage("next-update.final-declaration.text",
-            date.inboundCorrespondenceFrom.getYear.toString ,
-            (date.inboundCorrespondenceFrom.getYear + 1).toString)
+        @getNextUpdateDateMessage("next-update.final-declaration.text", date.inboundCorrespondenceFrom.getYear)
         <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
-       @if(listFormat) { </li> } @if(!listFormat ){.} }
+     @if(listFormat) { </li> } @if(!listFormat ){.} }
 }
 
 @insetMessage(keys: (String, String)) = @{
