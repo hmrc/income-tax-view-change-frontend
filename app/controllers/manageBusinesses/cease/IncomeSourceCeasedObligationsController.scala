@@ -60,7 +60,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      withSessionData(JourneyType(Cease, incomeSourceType), AfterSubmissionPage) { sessionData =>
+      withSessionData(JourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
 
         updateMongoCeased(incomeSourceType)
 
