@@ -58,13 +58,8 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessNameController.submit(false, false)
-      case (false, _) => routes.AddBusinessNameController.submit(false, true)
-      case (_, false) => routes.AddBusinessNameController.submit(true, false)
-      case (_, _) => routes.AddBusinessNameController.submit(true, true)
+    routes.AddBusinessNameController.submit(isAgent, isChange)
     }
-  }
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
     (isAgent, isChange) match {
