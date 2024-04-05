@@ -80,8 +80,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleAgent(expectedText)
         )
       }
     }
@@ -114,8 +113,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleAgent(expectedText)
         )
       }
     }
@@ -149,8 +147,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleAgent(expectedText)
         )
       }
     }

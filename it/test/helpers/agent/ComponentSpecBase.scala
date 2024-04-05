@@ -516,11 +516,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/manage-your-businesses/cease/business-check-details", additionalCookies)(Map.empty)
 
-    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-foreign-property/cease-success", session)
 
-    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-uk-property-success", session)
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-uk-property/cease-success", session)
 
-    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-business-success", session)
+    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-sole-trader/cease-success", session)
 
     def getAddChangeBusinessAddress: WSResponse =
       get("/income-sources/add/change-business-address-lookup")
