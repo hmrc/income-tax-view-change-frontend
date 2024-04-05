@@ -30,10 +30,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
-  val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show().url
-  val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit().url
-  val changeBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessName().url
-  val changeBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submitChange().url
+  val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = false).url
+  val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = false, isChange = false).url
+  val changeBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = true).url
+  val changeBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = false, isChange = true).url
   val addBusinessStartDateUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
   val checkBusinessDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   val addIncomeSourceUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url

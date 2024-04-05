@@ -62,19 +62,11 @@
 }
 
 @changeBusinessNameURL = @{
-    if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
-    } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessName().url
-    }
+    controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = true).url
 }
 
 @changeBusinessTradeURL = @{
-    if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = true).url
-    } else {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = true).url
-    }
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isAgent = isAgent, isChange = true).url
 }
 
 @changeBusinessAddressURL = @{
