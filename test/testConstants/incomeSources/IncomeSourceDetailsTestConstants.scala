@@ -59,6 +59,7 @@ object IncomeSourceDetailsTestConstants {
   val ukPropertyIncomeWithCeasedUkPropertyIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
   val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018), List(ukPropertyDetails, ceasedUKPropertyDetailsCessation2020))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
+  val ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness3), List(ukPropertyDetails3BeforeEarliest, foreignPropertyDetailsBeforeEarliest))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncomeNoTradingName = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingName), List(ukPropertyDetails))
@@ -106,6 +107,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
+    trade = Some(testIncomeSource),
     address = Some(address),
     businessEndDate = LocalDate.of(2022, 1, 1),
     SelfEmployment
@@ -114,6 +116,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
     UkProperty
@@ -122,6 +125,7 @@ object IncomeSourceDetailsTestConstants {
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
     ForeignProperty
@@ -190,7 +194,7 @@ object IncomeSourceDetailsTestConstants {
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
             incomeSourceId = if(journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
             endDate = Some(LocalDate.of(2022, 10, 10)),
-            ceasePropertyDeclare = Some("true"),
+            ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None
           ))
         )

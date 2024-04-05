@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.cease
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -56,7 +56,15 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val testSessionEndDateValue: String = "2022-08-27"
   val testSessionEndDateValueProperty: String = "2022-12-20"
 
-  val hintText: String = messagesAPI("dateForm.hint")
+  def hintText(incomeSourceType: IncomeSourceType): String = {
+    if (!(incomeSourceType == SelfEmployment)) {
+      messagesAPI(s"${incomeSourceType.endDateMessagePrefix}.hint-1") + " " + messagesAPI("dateForm.hint")
+    }
+    else {
+      messagesAPI("dateForm.hint")
+    }
+  }
+
   val continueButtonText: String = messagesAPI("base.continue")
   val testChangeDay: String = "10"
   val testChangeMonth: String = "10"
@@ -81,7 +89,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -97,7 +105,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
@@ -140,7 +148,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
 
         When(s"I call GET $dateBusinessShowChangeUrl")
@@ -149,7 +157,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
           elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
           elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
           elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
@@ -169,9 +177,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/cease/change-business-end-date?id=${testSelfEmploymentIdHashed}")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -219,7 +227,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(UkProperty)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -235,7 +243,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/cease/uk-property-end-date")(formData)
 
@@ -275,7 +283,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET $dateUKPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/cease/change-uk-property-end-date")
@@ -283,7 +291,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(UkProperty)),
           elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
           elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
           elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
@@ -302,7 +310,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/cease/change-uk-property-end-date")(formData)
 
@@ -349,7 +357,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -365,7 +373,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/cease/foreign-property-end-date")(formData)
 
@@ -406,7 +414,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET $dateForeignPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/cease/change-foreign-property-end-date")
@@ -414,7 +422,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
           elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
           elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
           elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
@@ -433,7 +441,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/cease/change-foreign-property-end-date")(formData)

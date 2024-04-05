@@ -156,6 +156,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       CheckCeaseIncomeSourceDetailsViewModel(
         mkIncomeSourceId(business.incomeSourceId),
         business.tradingName,
+        business.incomeSource,
         business.address,
         businessEndDate,
         incomeSourceType = SelfEmployment
@@ -174,6 +175,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         CheckCeaseIncomeSourceDetailsViewModel(
           mkIncomeSourceId(business.incomeSourceId),
           tradingName = None,
+          trade = None,
           address = None,
           businessEndDate,
           incomeSourceType = incomeSourceType
