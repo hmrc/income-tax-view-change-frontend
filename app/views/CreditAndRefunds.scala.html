@@ -28,6 +28,8 @@
 @import cats.instances.string._
 @import cats.syntax.eq._
 @import models.creditsandrefunds.CreditAndRefundViewModel
+@import models.creditsandrefunds.{CreditRow, CreditViewRow, PaymentCreditRow}
+
 
 @this(
 mainTemplate: unifiedLayout,
@@ -175,84 +177,6 @@ govukInsetText : GovukInsetText
     }
 }
 
-@getBalancingChargeCreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    <li>
-        <p class="govuk-heading-s">
-            <span class="govuk-body">
-                @messages("credit-and-refund.row.balancingCharge-1")
-            </span>
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body">
-                @messages("credit-and-refund.row.balancingCharge-2")
-                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
-            </span>
-        </p>
-    </li>
-}
-
-@getMFACreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(isMFACreditsAndDebitsEnabled) {
-        <li>
-            <p class="govuk-heading-s">
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.mfa-1")
-                </span>
-                @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.mfa-2")
-                    @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
-                </span>
-            </p>
-        </li>
-    }
-}
-
-@getCutOverCreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(credit._2.getCreditType == Some(CutOverCreditType) && isCutOverCreditsEnabled) {
-        <li>
-            <p class="govuk-heading-s">
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.cutOver-1")
-                </span>
-                @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.cutOver-2")
-                    @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
-                </span>
-            </p>
-        </li>
-    }
-}
-
-@getRepaymentInterestContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(credit._2.getCreditType == Some(RepaymentInterest)) {
-        <li>
-            <p class="govuk-heading-s">
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.repaymentInterest-1")
-                </span>
-                @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                <span class="govuk-body">
-                    @messages("credit-and-refund.row.repaymentInterest-2")
-                    @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
-                </span>
-            </p>
-        </li>
-    }
-}
-
-@getPaymentContent(credit: (DocumentDetailWithDueDate, FinancialDetail)) = {
-    <li>
-        <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body">@messages("credit-and-refund.payment")
-                @credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-            </span>
-        </p>
-    </li>
-}
-
-
 @getRefundsInProgress = @{
     Array(balance.get.firstPendingAmountRequested,balance.get.secondPendingAmountRequested)
     .flatten.sorted(Ordering.BigDecimal.reverse)
@@ -260,24 +184,36 @@ govukInsetText : GovukInsetText
 
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- viewModel.sortedCreditCharges.zipWithIndex) {
-            @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
-                @getBalancingChargeCreditContent(credit, index)
-            } else if(credit._2.getCreditType == Some(MfaCreditType)) {
-                @getMFACreditContent(credit, index)
-            } else if(credit._2.getCreditType == Some(CutOverCreditType)) {
-                @getCutOverCreditContent(credit, index)
-            } else if (credit._2.getCreditType == Some(RepaymentInterest)) {
-                @getRepaymentInterestContent(credit, index)
-            } else {
-                @getPaymentContent(credit)
-            }
+        @for((credit, index) <- viewModel.sortedCreditRows.flatten.zipWithIndex) {
+            <li>
+                <p class="govuk-heading-s">
+                    @credit match {
+                        case PaymentCreditRow(amount, creditType, date) => {
+                            @amount.toCurrencyString
+                            <span class="govuk-body">@messages("credit-and-refund.payment")
+                                @date.toLongDate
+                            </span>
+                        }
+                        case CreditViewRow(amount, creditType, taxYear) => {
+                            <span class="govuk-body">
+                                @messages(s"credit-and-refund.row.${creditType.key}-1")
+                            </span>
+                            @amount.toCurrencyString
+                            <span class="govuk-body">
+                                @messages(s"credit-and-refund.row.${creditType.key}-2")
+                                @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
+                            </span>
+                        }
+                    }
+                </p>
+            </li>
         }
         @for(amount <- getRefundsInProgress){
             @creditAndRefundRefundProgressHtml(amount)
         }
     </ul>
 }
+
 
 
 @mainTemplate(
