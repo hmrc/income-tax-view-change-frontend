@@ -98,7 +98,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getUkPropertyCeasedObligations(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -128,7 +128,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
 
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyCeasedObligations(Map.empty)
