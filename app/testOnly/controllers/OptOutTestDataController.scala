@@ -33,8 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutTestDataController @Inject()(
                                           val auth: AuthenticatorPredicate,
@@ -44,7 +43,8 @@ class OptOutTestDataController @Inject()(
                                           implicit val dateService: DateServiceInterface,
                                           implicit val mcc: MessagesControllerComponents,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit val executionContext: ExecutionContext
                                         )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
