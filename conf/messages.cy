@@ -1329,7 +1329,6 @@ dateForm.error.year.required                                        = Mae’n rh
 dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 dateForm.error.dayMonthAndYear.required.se                          = Nodwch y dyddiad y daeth eich busnes hunangyflogaeth i ben
 dateForm.error.dayMonthAndYear.required.uk                          = Nodwch y dyddiad y daeth eich busnes eiddo yn y DU i ben
 dateForm.error.dayMonthAndYear.required.fp                          = Nodwch y dyddiad y gwnaeth eich busnes eiddo tramor stopio
