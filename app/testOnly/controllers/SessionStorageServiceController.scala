@@ -50,7 +50,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
 
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
     hc.sessionId match {
-      case Some(sessionId: SessionId) => post(isAgent = false, sessionId) flatMap {
+      case Some(sessionId: SessionId) => post(isAgent = isAgent, sessionId) flatMap {
         case Left(ex) =>
           Logger("application").error(s"[SessionStorageServiceController][handleShow] " +
             s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
