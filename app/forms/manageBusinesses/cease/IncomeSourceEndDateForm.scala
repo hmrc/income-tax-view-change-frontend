@@ -32,7 +32,9 @@ import javax.inject.Inject
 
 class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching{
 
-  val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required.se"
+  val dateMustBeCompleteSE = "dateForm.error.dayMonthAndYear.required.se"
+  val dateMustBeCompleteUK = "dateForm.error.dayMonthAndYear.required.uk"
+  val dateMustBeCompleteFP = "dateForm.error.dayMonthAndYear.required.fp"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
   val dateMustNotBeMissingMonthField = "dateForm.error.month.required"
   val dateMustNotBeMissingYearField = "dateForm.error.year.required"
@@ -84,7 +86,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
         .verifying(firstError(
-          checkRequiredFields,
+          checkRequiredFields(incomeSourceType),
           validDate(dateMustNotBeInvalid(incomeSourceType, newIncomeSourceJourney))
         )).transform[LocalDate](
         {
@@ -96,9 +98,15 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
-  private def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields") {
+  private def dateMustBeCompleteKey(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
+    case  SelfEmployment => dateMustBeCompleteSE
+    case UkProperty => dateMustBeCompleteUK
+    case ForeignProperty => dateMustBeCompleteFP
+  }
+
+  private def checkRequiredFields(incomeSourceType: IncomeSourceType): Constraint[(String, String, String)] = Constraint("constraints.requiredFields") {
     case (day, month, year) if day.trim.isEmpty && month.trim.isEmpty && year.trim.isEmpty =>
-      Invalid(Seq(ValidationError(dateMustBeComplete)))
+      Invalid(Seq(ValidationError(dateMustBeCompleteKey(incomeSourceType))))
     case (day, month, year) if day.trim.isEmpty && month.trim.nonEmpty && year.trim.isEmpty =>
       Invalid(Seq(ValidationError(dateMustNotBeMissingDayAndYearField)))
     case (day, month, year) if day.trim.isEmpty && month.trim.isEmpty && year.trim.nonEmpty =>
