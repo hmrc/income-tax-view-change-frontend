@@ -40,13 +40,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitChangeAgent()
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = true, isChange = true)
         } else {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitChange()
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = false, isChange = true)
         }
       } else {
-        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent() else
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit()
+        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = true, isChange = false) else
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = false, isChange = false)
       }
     }
 

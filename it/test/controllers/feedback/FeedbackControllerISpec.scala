@@ -16,28 +16,14 @@
 
 package controllers.feedback
 
-import auth.MtdItUser
-import forms.FeedbackForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, FeedbackConnectorStub}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, paymentHistoryBusinessAndPropertyResponse}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class FeedbackControllerISpec extends ComponentSpecBase {
-
-  val testForm: FeedbackForm = FeedbackForm(
-    Some("Good"), "Albert Einstein", "testuser@gmail.com", "test", "d5f739ae-8615-478d-a393-7fa4b31090e9"
-  )
-
-  val testRefererRoute: String = "/test/referer/route"
-
-  val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-  )(FakeRequest())
 
   "calling GET /report-quarterly/income-and-expenses/view/feedback" should {
     "render the Feedback page" when {
@@ -45,13 +31,13 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         isAuthorisedUser(authorised = true)
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/feedback")
         val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getFeedbackPage
 
         res should have(
-          httpStatus(200),
+          httpStatus(OK),
           pageTitleIndividual("feedback.heading")
         )
       }
@@ -64,8 +50,8 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         isAuthorisedUser(authorised = true)
         stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostFeedback(200)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        FeedbackConnectorStub.stubPostFeedback(OK)
 
 
         val formData: Map[String, Seq[String]] = {
@@ -83,7 +69,7 @@ class FeedbackControllerISpec extends ComponentSpecBase {
         val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
 
         res should have(
-          httpStatus(303),
+          httpStatus(SEE_OTHER),
           redirectURI(controllers.feedback.routes.FeedbackController.thankYou.url)
         )
 
@@ -97,8 +83,8 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         isAuthorisedUser(authorised = true)
         stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostFeedback(200)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        FeedbackConnectorStub.stubPostFeedback(OK)
 
         When("Full name is missing")
         val formData: Map[String, Seq[String]] = {
@@ -115,7 +101,7 @@ class FeedbackControllerISpec extends ComponentSpecBase {
         val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.post("/feedback")(formData)
 
         res should have(
-          httpStatus(400),
+          httpStatus(BAD_REQUEST),
           pageTitleIndividual("feedback.heading", isInvalidInput = true)
         )
       }
@@ -128,14 +114,14 @@ class FeedbackControllerISpec extends ComponentSpecBase {
 
         isAuthorisedUser(authorised = true)
         stubUserDetails()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(200, noPropertyOrBusinessResponse)
-        FeedbackConnectorStub.stubPostThankyou(200)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        FeedbackConnectorStub.stubPostThankyou(OK)
 
         When(s"I call POST /report-quarterly/income-and-expenses/view/thankyou")
         val res: WSResponse = IncomeTaxViewChangeFrontendManageBusinesses.getThankyouPage
 
         res should have(
-          httpStatus(200),
+          httpStatus(OK),
           pageTitleIndividual("feedback.thankYou")
         )
       }
