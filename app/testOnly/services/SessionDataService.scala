@@ -40,16 +40,20 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
   def postSessionData(isAgent: Boolean, sessionId: SessionId)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
   : Future[Either[Throwable, String]] = {
-    val sessionDataModel = postSessionDataModel(isAgent, user, sessionId)
-    sessionDataConnector.postSessionData(sessionDataModel).map { response =>
-      response.status match {
-        case OK => Right(sessionDataModel.sessionID)
-        case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
-      }
+
+    user.saUtr match {
+      case Some(saUtr) =>
+        sessionDataConnector.postSessionData(postSessionDataModel(isAgent, user, sessionId, saUtr)).map { response =>
+          response.status match {
+            case OK => Right(sessionId.value)
+            case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
+          }
+        }
+      case None => Future.successful(Left(new Exception(s"User had no saUtr!")))
     }
   }
 
-  private def postSessionDataModel(isAgent: Boolean, user: MtdItUser[_], sessionId: SessionId): SessionDataModel = {
+  private def postSessionDataModel(isAgent: Boolean, user: MtdItUser[_], sessionId: SessionId, saUtr: String): SessionDataModel = {
 
     val affinityGroup = if (isAgent) "Agent" else "Individual"
 
@@ -57,7 +61,7 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
       sessionID = sessionId.value,
       mtditid = user.mtditid,
       nino = user.nino,
-      saUtr = user.saUtr,
+      saUtr = saUtr,
       clientFirstName = user.userName.flatMap(_.name),
       clientLastName = user.userName.flatMap(_.lastName),
       userType = affinityGroup
