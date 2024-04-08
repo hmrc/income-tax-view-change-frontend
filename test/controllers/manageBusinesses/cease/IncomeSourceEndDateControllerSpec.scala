@@ -20,7 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.IncomeSourceEndDateForm
+import forms.manageBusinesses.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId.mkIncomeSourceId
