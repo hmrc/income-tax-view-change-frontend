@@ -35,7 +35,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val auth: AuthenticatorPredicate,
-                                                val sessionDataService: SessionDataService,
+                                                val sessionDataService: SessionDataService
                                                ) extends ClientConfirmedController {
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

@@ -60,7 +60,7 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
       saUtr = user.saUtr,
       clientFirstName = user.userName.flatMap(_.name),
       clientLastName = user.userName.flatMap(_.lastName),
-      userType = affinityGroup,
+      userType = affinityGroup
     )
   }
 
