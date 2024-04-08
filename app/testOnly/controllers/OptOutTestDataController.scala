@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
@@ -35,7 +35,6 @@ import utils.AuthenticatorPredicate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 
 class OptOutTestDataController @Inject()(
                                           val auth: AuthenticatorPredicate,
@@ -65,7 +64,8 @@ class OptOutTestDataController @Inject()(
     } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
-      Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
+      Ok(
+        s"Crystallisation Status:     ${Json.toJson(seqResult._1)}\n" +
         s"ITSA Status CY-1:           ${Json.toJson(seqResult._2)}\n" +
         s"ITSA Status CY:             ${Json.toJson(seqResult._3)}\n" +
         s"ITSA Status CY+1:           ${Json.toJson(seqResult._4)}")
