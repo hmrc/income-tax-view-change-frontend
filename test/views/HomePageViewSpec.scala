@@ -18,8 +18,8 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, TimeMachineAddYear}
-import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -102,11 +102,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
   val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
   private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate)
+    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
 
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
@@ -114,7 +115,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
-    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentDueDate, overDuePaymentsCount)
 
@@ -221,11 +222,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
         link.map(_.text) shouldBe Some(messages("home.updates.view"))
       }
-
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
           getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
         }
+      }
+      "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
+        val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
+        link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
       }
     }
 
