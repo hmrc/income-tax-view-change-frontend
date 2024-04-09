@@ -111,6 +111,7 @@ home.overdue.date.update.count                                  = {0} YN HWYR DI
 home.overdue.date                                               = YN HWYR
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
+home.updates.view.opt-out                                       = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
 home.tax-years.heading                                          = Ffurflenni Treth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
@@ -140,8 +141,6 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
-## Opt-Out ##
-home.updates.view.opt-out                                       = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn
