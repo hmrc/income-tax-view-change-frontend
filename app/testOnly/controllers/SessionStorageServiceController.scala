@@ -55,27 +55,37 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
           Logger("application").error(s"[SessionStorageServiceController][handleShow] " +
             s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
           Future.successful(handleError(isAgent))
-        case Right(id: String) => sessionDataService.getSessionData(id) map {
-          case Left(ex) =>
-            Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
-              s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-            handleError(isAgent)
-          case Right(model: SessionDataModel) =>
-            Ok(
-                s"User model:          ${model.toString}\n" +
-                s"session id:          ${model.sessionID}\n" +
-                s"mtditid:             ${model.mtditid}\n" +
-                s"nino:                ${model.nino}\n" +
-                s"saUtr:               ${model.saUtr}\n" +
-                s"client first name:   ${model.clientFirstName}\n" +
-                s"client last name:    ${model.clientLastName}\n" +
-                s"user type:           ${model.userType}\n")
-        }
+        case Right(id: String) =>
+          handlePostSuccess(id, isAgent)
       }
       case None =>
         Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
           s" - HeaderCarrier contained no sessionId!")
         Future.successful(handleError(isAgent))
+    }
+  }.recover {
+    case ex: Throwable =>
+      Logger("application").error(s"[SessionStorageServiceController][handleShow] " +
+        s"${if (isAgent) "Agent" else "Individual"} - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      handleError(isAgent)
+  }
+
+  private def handlePostSuccess(id: String, isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    sessionDataService.getSessionData(id) map {
+      case Left(ex) =>
+        Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
+          s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
+        handleError(isAgent)
+      case Right(model: SessionDataModel) =>
+        Ok(
+          s"User model:          ${model.toString}\n" +
+            s"session id:          ${model.sessionID}\n" +
+            s"mtditid:             ${model.mtditid}\n" +
+            s"nino:                ${model.nino}\n" +
+            s"saUtr:               ${model.saUtr}\n" +
+            s"client first name:   ${model.clientFirstName}\n" +
+            s"client last name:    ${model.clientLastName}\n" +
+            s"user type:           ${model.userType}\n")
     }
   }
 
