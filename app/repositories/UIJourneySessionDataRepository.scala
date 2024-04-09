@@ -113,6 +113,15 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_.wasAcknowledged())
 
+  def deleteMany(dataList: Seq[UIJourneySessionData]): Future[Boolean] = {
+    dataList.map(data =>
+      collection
+        .deleteOne(dataFilter(data))
+        .toFuture()
+        .map(_.wasAcknowledged())
+    ).find(x => x == Future(false)).getOrElse(Future.successful(true))
+  }
+
   def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
       .deleteOne(sessionFilter(sessionId, operation))

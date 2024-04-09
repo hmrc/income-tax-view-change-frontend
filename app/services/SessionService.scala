@@ -130,4 +130,13 @@ class SessionService @Inject()(
     else
       uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
   }
+
+  def deleteIncomeSourcesSessionData(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val sessionId = hc.sessionId.get.value
+    val sessions = Seq(Add, Manage, Cease).map(op => UIJourneySessionData(sessionId, op.operationType))
+    if (config.encryptionIsEnabled)
+      sensitiveUIJourneySessionDataRepository.deleteMany(sessions)
+    else
+      uiJourneySessionDataRepository.deleteMany(sessions)
+  }
 }

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.JourneyType.Manage
+import enums.JourneyType.{Add, Cease, Manage}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -63,7 +63,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          sessionService.deleteSession(Manage).map { _ =>
+          sessionService.deleteIncomeSourcesSessionData.map { _ =>
             Ok(manageYourBusinesses(
               sources = viewModel,
               isAgent = isAgent,

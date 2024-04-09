@@ -66,6 +66,11 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
+  private def manyDataFilter(data: Seq[SensitiveUIJourneySessionData]): Bson = {
+    import Filters._
+    and(in("sessionId", data.map(_.sessionId)), in("journeyType", data.map(_.journeyType)))
+  }
+
   private def sessionFilter(sessionId: String, operation: Operation): Bson = {
     import Filters._
     and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
@@ -115,6 +120,12 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data.encrypted))
+      .toFuture()
+      .map(_.wasAcknowledged())
+
+  def deleteMany(data: Seq[UIJourneySessionData]): Future[Boolean] =
+    collection
+      .deleteMany(manyDataFilter(data.map(_.encrypted)))
       .toFuture()
       .map(_.wasAcknowledged())
 
