@@ -62,11 +62,6 @@ class UIJourneySessionDataRepository @Inject()(
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
-  private def manyDataFilter(data: Seq[UIJourneySessionData]): Bson = {
-    import Filters._
-    and(in("sessionId", data.map(_.sessionId)), in("journeyType", data.map(_.journeyType)))
-  }
-
   private def sessionFilter(sessionId: String, operation: Operation): Bson = {
     import Filters._
     and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
@@ -118,11 +113,14 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_.wasAcknowledged())
 
-  def deleteMany(data: Seq[UIJourneySessionData]): Future[Boolean] =
-    collection
-      .deleteMany(manyDataFilter(data))
-      .toFuture()
-      .map(_.wasAcknowledged())
+  def deleteMany(dataList: Seq[UIJourneySessionData]): Future[Boolean] = {
+    dataList.map(data =>
+      collection
+        .deleteOne(dataFilter(data))
+        .toFuture()
+        .map(_.wasAcknowledged())
+    ).find(x => x == Future(false)).getOrElse(Future.successful(true))
+  }
 
   def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
