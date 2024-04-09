@@ -32,10 +32,10 @@ import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
-  val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent().url
-  val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent().url
-  val changeBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
-  val changeBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submitChangeAgent().url
+  val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true,isChange = false).url
+  val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = true,isChange = false).url
+  val changeBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true,isChange = true).url
+  val changeBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isAgent = true,isChange = true).url
   val addBusinessStartDateUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val checkBusinessDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
   val addIncomeSourceUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url

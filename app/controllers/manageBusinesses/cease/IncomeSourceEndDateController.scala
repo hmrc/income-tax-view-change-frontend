@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.IncomeSourceEndDateForm
+import forms.manageBusinesses.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}

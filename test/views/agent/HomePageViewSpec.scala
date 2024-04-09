@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
-import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
+import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -82,11 +82,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
   val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
   private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1)), currentDate)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate)
+    LocalDate.of(2018, 2, 1)), currentDate, false)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   overduePaymentExists: Boolean = true,
@@ -109,7 +110,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
-    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount)
 
@@ -228,6 +229,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
             getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
           }
+        }
+        "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
+          val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
         }
       }
 

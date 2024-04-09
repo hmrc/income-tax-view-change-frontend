@@ -229,7 +229,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.isLegacy) {
       result should have(
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2023-2024")
+        elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2024-2025")
       )
     } else {
       val currentTaxYear = dateService.getCurrentTaxYearEnd
