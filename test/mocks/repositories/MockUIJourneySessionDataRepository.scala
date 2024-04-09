@@ -26,6 +26,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import testUtils.UnitSpec
+import uk.gov.hmrc.http.SessionId
 
 import scala.concurrent.Future
 
@@ -71,5 +72,9 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   def mockDeleteSession(): Unit = {
     when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+  }
+
+  def mockClearSession(sessionId: SessionId): Unit = {
+    when(mockUIJourneySessionDataRepository.clearSession(sessionId)).thenReturn(Future.successful(true))
   }
 }

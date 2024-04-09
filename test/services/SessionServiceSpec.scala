@@ -16,13 +16,10 @@
 
 package services
 
-import controllers.agent.utils
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -98,6 +95,19 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           mockDeleteSession()
           val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
           result shouldBe true
+        }
+      }
+
+      "clearSession method" should {
+        "return a future true value" in {
+          mockClearSession(headerCarrier.sessionId.get)
+          val result: Boolean = TestSessionService.clearSession(headerCarrier).futureValue
+          result shouldBe true
+        }
+
+        "return a future false value" in {
+          val result: Boolean = TestSessionService.clearSession(headerCarrier.copy(sessionId = None)).futureValue
+          result shouldBe false
         }
       }
     }

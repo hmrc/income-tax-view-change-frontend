@@ -118,7 +118,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthenticationPredicate
     mockBothIncomeSources()
 
     setupMockCreateSession(true)
-    setupMockDeleteSession(true)
+    setupMockClearSession(true)
 
     when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
       .thenReturn(

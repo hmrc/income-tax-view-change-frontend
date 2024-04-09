@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -28,7 +27,6 @@ import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.ManageYourBusinesses
-import views.html.manageBusinesses.manage.ManageIncomeSources
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,7 +61,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          sessionService.deleteSession(Manage).map { _ =>
+          sessionService.clearSession.map { _ =>
             Ok(manageYourBusinesses(
               sources = viewModel,
               isAgent = isAgent,

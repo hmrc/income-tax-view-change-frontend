@@ -104,7 +104,8 @@
 @insetMessage(keys: (String, String)) = @{
         val messagePartOne = keys._1
         val messagePartTwo = keys._2
-        s"${messages(messagePartOne, source.numberOfOverdueObligationCount)} ${messages(messagePartTwo, source.currentTaxYear.startYear, source.currentTaxYear.endYear)}"
+        s"${messages(messagePartOne, source.numberOfOverdueObligationCount)} " +
+        s"${messages(messagePartTwo, source.currentTaxYear.startYear.toString, source.currentTaxYear.endYear.toString)}"
 }
 
 @getInsetWarning(keys: (String, String)) = {
