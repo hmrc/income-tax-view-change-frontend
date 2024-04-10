@@ -75,7 +75,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       case Left(ex) =>
         Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-        handleError(isAgent)
+        InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataModel) =>
         Ok(
           s"User model:          ${model.toString}\n" +
