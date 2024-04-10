@@ -131,8 +131,10 @@ class SessionService @Inject()(
       uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
   }
 
-  def clearSession(implicit hc: HeaderCarrier): Future[Boolean] = {
-    hc.sessionId.map(id => uiJourneySessionDataRepository.clearSession(id))
-      .getOrElse(Future.successful(false))
+  def clearSession(sessionId: String)(implicit ec: ExecutionContext): Future[Unit] = {
+    uiJourneySessionDataRepository.clearSession(sessionId).flatMap {
+      case true => Future.successful(())
+      case false => Future.failed(new Exception("failed to clear session"))
+    }
   }
 }

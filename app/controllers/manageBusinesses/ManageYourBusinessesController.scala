@@ -38,10 +38,10 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
                                                val sessionService: SessionService,
                                                val auth: AuthenticatorPredicate)
                                               (implicit val ec: ExecutionContext,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                               implicit override val mcc: MessagesControllerComponents,
+                                               implicit val itvcErrorHandler: ItvcErrorHandler,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
@@ -49,7 +49,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
       sources = user.incomeSources,
       isAgent = isAgent,
       backUrl = {
-        if(isAgent) controllers.routes.HomeController.showAgent
+        if (isAgent) controllers.routes.HomeController.showAgent
         else controllers.routes.HomeController.show()
       }.url
     )
@@ -61,13 +61,15 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          sessionService.clearSession.map { _ =>
-            Ok(manageYourBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          } recover {
+          Future(hc.sessionId.get).flatMap { sessionId =>
+            sessionService.clearSession(sessionId.value).map { _ =>
+              Ok(manageYourBusinesses(
+                sources = viewModel,
+                isAgent = isAgent,
+                backUrl = backUrl
+              ))
+            }
+          }.recover {
             case ex: Exception =>
               Logger("application").error(
                 s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")

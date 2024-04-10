@@ -23,6 +23,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
@@ -99,15 +100,18 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       }
 
       "clearSession method" should {
-        "return a future true value" in {
-          mockClearSession(headerCarrier.sessionId.get)
-          val result: Boolean = TestSessionService.clearSession(headerCarrier).futureValue
-          result shouldBe true
+        "return a future unit value" in {
+          mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(true))
+          val result: Unit = TestSessionService.clearSession(headerCarrier.sessionId.get.value).futureValue
+          result shouldBe()
         }
+        "return a failed future value" in {
+          mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(false))
+          val result: Future[Unit] = TestSessionService.clearSession(headerCarrier.sessionId.get.value)
 
-        "return a future false value" in {
-          val result: Boolean = TestSessionService.clearSession(headerCarrier.copy(sessionId = None)).futureValue
-          result shouldBe false
+          whenReady(result.failed) { exception =>
+            exception.getMessage shouldBe "failed to clear session"
+          }
         }
       }
     }
