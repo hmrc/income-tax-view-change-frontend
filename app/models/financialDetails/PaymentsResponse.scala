@@ -49,7 +49,7 @@ case class Payment(reference: Option[String],
                    mainTransaction: Option[String] = None) {
 
 
-  val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType(_))
+  val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 
   def credit: Option[BigDecimal] = amount match {
     case None => None

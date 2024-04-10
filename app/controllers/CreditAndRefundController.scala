@@ -89,8 +89,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
         val viewModel = CreditAndRefundViewModel(credits)
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
-
-        Console.println(Console.GREEN + s"$creditAndRefundType" + Console.WHITE)
         auditClaimARefund(balance, credits)
 
         Ok(view(viewModel, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))

@@ -55,7 +55,7 @@ object CreditType {
     .toList
   private val payment = List("4920", "4930")
 
-  def apply(mainTransaction: String): Option[CreditType] = {
+  def fromCode(mainTransaction: String): Option[CreditType] = {
     mainTransaction match {
       case CreditType.cutOver =>
         Some(CutOverCreditType)

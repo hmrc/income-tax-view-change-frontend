@@ -89,7 +89,7 @@ case class FinancialDetail(taxYear: String,
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
-  def getCreditType: Option[CreditType] = mainTransaction.flatMap(CreditType(_))
+  def getCreditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 }
 
 

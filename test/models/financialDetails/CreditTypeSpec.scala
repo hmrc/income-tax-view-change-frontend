@@ -29,31 +29,31 @@ class CreditTypeSpec extends UnitSpec {
           .toList
 
         for (mainTransaction <- mfaCodes) {
-          CreditType(s"$mainTransaction") shouldBe Some(MfaCreditType)
+          CreditType.fromCode(s"$mainTransaction") shouldBe Some(MfaCreditType)
         }
       }
     }
     "be CutOver" when {
       "mainTransaction is 6110" in {
-        CreditType("6110") shouldBe Some(CutOverCreditType)
+        CreditType.fromCode("6110") shouldBe Some(CutOverCreditType)
       }
     }
 
     "be BalancingCharge" when {
       "mainTransaction is 4905" in {
-        CreditType("4905") shouldBe Some(BalancingChargeCreditType)
+        CreditType.fromCode("4905") shouldBe Some(BalancingChargeCreditType)
       }
     }
 
     "be RepaymentInterest" when {
       "mainTransaction is 6020" in {
-        CreditType("6020") shouldBe Some(RepaymentInterest)
+        CreditType.fromCode("6020") shouldBe Some(RepaymentInterest)
       }
     }
 
     "be None" when {
       "mainTransaction is any other" in {
-        CreditType("9999") shouldBe None
+        CreditType.fromCode("9999") shouldBe None
       }
     }
   }
