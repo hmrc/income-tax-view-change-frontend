@@ -40,6 +40,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val businessName = messages("incomeSources.manage.business-manage-details.business-name")
   val businessAddress = messages("incomeSources.manage.business-manage-details.business-address")
   val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
+  val typeOfTrade = messages("incomeSources.manage.business-manage-details.tradetype")
   val isTraditionalAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
   val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
   val quarterlyPeriodType = messages("incomeSources.manage.quarterly-period")
@@ -49,6 +50,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val change = messages("incomeSources.manage.business-manage-details.change")
   val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually = messages("incomeSources.manage.business-manage-details.annually")
+  val quarterlyGracePeriod = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
+  val annuallyGracePeriod = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
   val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
   val standard = messages("incomeSources.manage.quarterly-period.standard")
   val calendar = messages("incomeSources.manage.quarterly-period.calendar")
@@ -69,6 +72,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val cashBasisAccounting = "Cash basis accounting"
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
@@ -83,6 +87,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -97,6 +102,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -111,6 +117,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -125,6 +132,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -139,6 +147,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -268,10 +277,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
-      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe typeOfTrade
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe isTraditionalAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -281,10 +291,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe standard
-      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
+      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
@@ -299,12 +309,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe typeOfTrade
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe isTraditionalAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Cash basis accounting"
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Cash basis accounting"
     }
   }
   "ManageSelfEmployment - Agent" should {
@@ -320,10 +332,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
-      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe typeOfTrade
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe isTraditionalAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -333,10 +346,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe standard
-      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
+      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
@@ -371,8 +384,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
@@ -414,8 +427,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
@@ -458,8 +471,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
@@ -501,8 +514,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annuallyGracePeriod
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterlyGracePeriod
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary

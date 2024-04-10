@@ -1671,31 +1671,35 @@ incomeSources.manage.quarterly-period.standard                        =   Safono
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
 incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
-incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r ffynhonnell incwm hon yn adrodd o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwch newid hyn i adrodd o’r 1af o’r mis, yn ôl chwarterau calendr, yn eich meddalwedd sy’n cydweddu os yw’n gallu gwneud hynny.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
-incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am gyfnodau chwarterol
+incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
+incomeSources.manage.quarterly-period.content.graceperiod.info        =   Mae’r busnes o fewn cyfnod gras ar hyn o bryd. O Ebrill {0} ymlaen, pan mae’r cyfnod, bydd angen i chi cyflwyno adroddiadau’n chwarterol.
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
-incomeSources.manage.business-manage-details.sole-trader-section      =   Busnesau unig fasnachwr
+incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
-incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad y busnes
+incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad
 incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
-incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-incomeSources.manage.business-manage-details.reporting-method         =   Dull o adrodd am incwm ar gyfer {0}-{1}
+incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu
+incomeSources.manage.business-manage-details.reporting-method         =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
 incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter (cyfnod gras)
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob blwyddyn (cyfnod gras)
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
+incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 
-incomeSources.manage.uk-property-manage-details.uk-property-section              =   Busnes eiddo yn y DU
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu ar gyfer incwm o eiddo yn y DU
+incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
+incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 
-incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
+incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Eiddo tramor
+incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu
 
 incomeSources.cease.error.UK.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo yn y DU i ben. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.cease.error.FP.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo tramor i ben. Rhowch gynnig arall arni yn nes ymlaen.

@@ -142,7 +142,10 @@
                 content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
             ),
             value = Value(
-                content = Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
+                content = if(!viewModel.taxYearOneCrystallised.get)
+                                Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)+".graceperiod"))
+                         else
+                                Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
             ),
             actions = if(!viewModel.taxYearOneCrystallised.get) Some(Actions(
                 items = Seq(
@@ -160,7 +163,10 @@
                 content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
             ),
             value = Value(
-                content = HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
+                content = if(!viewModel.taxYearTwoCrystallised.get)
+                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)+".graceperiod"))
+                          else
+                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
             ),
             actions = if(!viewModel.taxYearTwoCrystallised.get) Some(Actions(
                 items = Seq(
@@ -223,6 +229,12 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
+    @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
+        <div class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
+            <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
+        </div>
+    }
+
     @govukSummaryList(SummaryList(
         rows = {
             if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
@@ -239,7 +251,23 @@
                         }
                     )
                 )
-            ),
+            )
+        ) ++
+    {
+        if (viewModel.incomeSourceType == SelfEmployment) {
+            Seq(
+                SummaryListRow(
+                    key = Key(
+                        content = Text(getMessage("tradetype"))
+                    ),
+                    value = Value(
+                        content = Text(extractOption(viewModel.incomeSource))
+                    )
+                )
+            )
+        } else Seq.empty
+    } ++
+    Seq(
             SummaryListRow(
                 key = Key(
                     content = Text(getAccountingMethodMessage)
