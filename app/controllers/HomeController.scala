@@ -23,14 +23,13 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
-import models.homePage.{HomePageViewModel, NextPaymentsTileViewModel, PaymentCreditAndRefundHistoryTileViewModel, ReturnsTileViewModel, YourBusinessesTileViewModel}
+import models.homePage._
 import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -91,7 +90,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOut))
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)

@@ -118,6 +118,7 @@ home.payments.no-payments-due                                   = No payments du
 home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View update deadlines
+home.updates.view.opt-out                                       = View deadlines and manage how you report
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
 home.paymentHistoryRefund.availableCredit                       = {0} is in your account
@@ -151,6 +152,7 @@ home.overdue.message.dunningLock.false                          = You have overd
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
+
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -1312,7 +1314,9 @@ dateForm.error.year.required                                        = The date m
 dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
-dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
+dateForm.error.dayMonthAndYear.required.se                          = Enter the date your self-employed business stopped
+dateForm.error.dayMonthAndYear.required.uk                          = Enter the date your UK property business stopped
+dateForm.error.dayMonthAndYear.required.fp                          = Enter the date your foreign property business stopped
 dateForm.error.future                                               = You cannot provide a cessation date that is beyond the current day or a date in the future
 dateForm.error.invalid                                              = The date must be a real date
 dateFrom.error.beforeStartDate                                      = The cessation date cannot be earlier than the start date for the business

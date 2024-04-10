@@ -26,7 +26,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   def getUrl(taxYearRange: String = "23-24"): String =
     s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=false&history=false"
 
-  def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2023-24"): StubMapping = {
+  def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2024-25"): StubMapping = {
     WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), OK,
       s"""|[
           |  {

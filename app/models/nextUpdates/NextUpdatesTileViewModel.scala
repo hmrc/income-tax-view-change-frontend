@@ -18,7 +18,7 @@ package models.nextUpdates
 
 import java.time.LocalDate
 
-case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: LocalDate) {
+case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: LocalDate, isOptOutEnabled: Boolean) {
   def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }

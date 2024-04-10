@@ -118,7 +118,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -257,7 +257,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -367,7 +367,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
