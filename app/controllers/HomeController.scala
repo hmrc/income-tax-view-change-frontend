@@ -55,8 +55,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(isAgent = false, origin)
@@ -71,12 +69,22 @@ class HomeController @Inject()(val homeView: views.html.Home,
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
-      case Left(ex) => handleErrorGettingDueDates(ex, isAgent)
+      case Left(ex) =>
+        Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Future.successful(handleErrorGettingDueDates(isAgent))
     } recover {
       case ex =>
         Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+        handleErrorGettingDueDates(isAgent)
     }
+
+  def createNextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int): Either[Throwable, NextPaymentsTileViewModel] = {
+    if (!(overDuePaymentsCount == 0) && nextPaymentDueDate.isEmpty) {
+      Left(new Exception("Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"))
+    } else {
+      Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount))
+    }
+  }
 
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean, origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] =
@@ -98,25 +106,28 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
         isEnabled(IncomeSourcesNewJourney))
 
-      val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount)
-
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
-      val homeViewModel = HomePageViewModel(
-        utr = user.saUtr,
-        nextPaymentsTileViewModel = nextPaymentsTileViewModel,
-        returnsTileViewModel = returnsTileViewModel,
-        nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-        paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-        yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-        dunningLockExists = dunningLockExists,
-        origin = origin
-      )
-      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
-      Ok(homeView(
-        homeViewModel,
-        isAgent = isAgent
-      ))
+      createNextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount) match {
+        case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
+          utr = user.saUtr,
+          nextPaymentsTileViewModel = viewModel,
+          returnsTileViewModel = returnsTileViewModel,
+          nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+          paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+          yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+          dunningLockExists = dunningLockExists,
+          origin = origin
+        )
+          auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
+          Ok(homeView(
+            homeViewModel,
+            isAgent = isAgent
+          ))
+        case Left(ex: Throwable) =>
+          Logger("application").error(s"[HomeController][buildHomePage]: Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
+          handleErrorGettingDueDates(isAgent)
+      }
     }
 
   private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
@@ -161,10 +172,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
       .flatten
 
-  private def handleErrorGettingDueDates(ex: Throwable, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-    Future.successful {
-      errorHandler(isAgent).showInternalServerError()
-    }
+  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    errorHandler.showInternalServerError()
   }
 }
