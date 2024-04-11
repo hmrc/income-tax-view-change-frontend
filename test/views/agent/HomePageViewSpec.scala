@@ -91,7 +91,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   overduePaymentExists: Boolean = true,
-                  overDuePaymentsCount: Option[Int] = None,
+                  overDuePaymentsCount: Int = 0,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
@@ -167,13 +167,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(messages("home.payments.heading"))
         }
         "has content of the next payment due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(1)) {
+          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January $year2019")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
           }
-          "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(2)) {
+          "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 2) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
           }
           "has no next payment" in new TestSetup(nextPaymentDueDate = None) {
@@ -195,12 +195,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = Some(1)) {
+      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = 1) {
         val overdueMessageWithoutDunningLock = "! Warning Your client has overdue payments. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock exists" in new TestSetup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
+      "display an overdue warning message when a payment is overdue and dunning lock exists" in new TestSetup(overDuePaymentsCount = 1, dunningLockExists = true) {
         val overdueMessageWithDunningLock = "! Warning Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
@@ -383,11 +383,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     "the home view with an empty next payment due date and one overDuePaymentsCount" should {
       "throw a MissingFieldException" in {
-        val expectedException: MissingFieldException = intercept[MissingFieldException] {
-          new TestSetup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = Some(1))
+        val expectedException: IllegalArgumentException = intercept[IllegalArgumentException] {
+          new TestSetup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = 1)
         }
 
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Next Payment Due Date"
+        expectedException.getMessage shouldBe "requirement failed: Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"
       }
     }
   }

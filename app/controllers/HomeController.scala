@@ -98,7 +98,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
         isEnabled(IncomeSourcesNewJourney))
 
-      val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentsDueMerged, Some(overDuePaymentsCount))
+      val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount)
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 

@@ -30,7 +30,11 @@ case class HomePageViewModel(utr: Option[String],
                             dunningLockExists: Boolean = false,
                             origin: Option[String] = None)
 
-case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int])
+case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int) {
+  if (!(overDuePaymentsCount == 0)) {
+    require(nextPaymentDueDate.isDefined, "Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty")
+  }
+}
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
 

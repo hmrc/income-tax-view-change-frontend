@@ -148,7 +148,7 @@ viewModel: HomePageViewModel,
                     @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
                 }
 
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount.getOrElse(0) > 0) {
+                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
                     <div id="overdue-warning" class="grid-row">
                         <div class="column-full">
                         @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
@@ -173,7 +173,7 @@ viewModel: HomePageViewModel,
                 }
 
            <div class="warning-wrapper govuk-!-padding-0">
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount.getOrElse(0) > 0) {
+                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
                     <div id="overdue-warning" class="flex-container govuk-!-padding-0">
                         <div class="column-full">
                             @govukWarningText(WarningText(
@@ -192,7 +192,7 @@ viewModel: HomePageViewModel,
 
 @paymentsTile = {
 	@home_tile("payments-tile", messages("home.payments.heading")) {
-		@{viewModel.nextPaymentsTileViewModel.overDuePaymentsCount.getOrElse(0) match {
+		@{viewModel.nextPaymentsTileViewModel.overDuePaymentsCount match {
 			case 0 => p()(paymentsTileContentPaymentsDue0)
 			case 1 => p()(paymentsTileContentPaymentsDue1)
 			case _ => p()(paymentsTileContentPaymentsDueMany)
@@ -207,15 +207,19 @@ viewModel: HomePageViewModel,
 	}
 }
 
-@paymentsTileContentPaymentsDue0 = { @viewModel.nextPaymentsTileViewModel.nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due")) }
+@paymentsTileContentPaymentsDue0 = { @getOrElseNextPaymentDueDate }
 
 @paymentsTileContentPaymentsDue1 = {
     <span class="govuk-tag govuk-tag--red"> @{messages("taxYears.overdue")} </span>
-    @{viewModel.nextPaymentsTileViewModel.nextPaymentDueDate.getOrElse(throw MissingFieldException("Next Payment Due Date")).toLongDate}
+@getOrElseNextPaymentDueDate
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount.getOrElse(throw MissingFieldException("Over Due Payments Count")))}</span>
+    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount)}</span>
+}
+
+@getOrElseNextPaymentDueDate = @{
+    viewModel.nextPaymentsTileViewModel.nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))
 }
 
 @updatesTile = {
