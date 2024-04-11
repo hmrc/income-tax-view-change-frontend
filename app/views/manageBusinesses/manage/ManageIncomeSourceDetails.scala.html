@@ -230,7 +230,7 @@
     ))
 
     @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
-        <div class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
+        <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>
     }

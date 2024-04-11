@@ -48,6 +48,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
   val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
   val change = messages("incomeSources.manage.business-manage-details.change")
+  val graceperiodinfo = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
   val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually = messages("incomeSources.manage.business-manage-details.annually")
   val quarterlyGracePeriod = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
@@ -286,6 +287,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
+
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
@@ -341,6 +344,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
+
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
@@ -378,6 +383,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
+
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -421,6 +428,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
+
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -466,6 +475,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
+
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
@@ -508,6 +519,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
+
+      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
