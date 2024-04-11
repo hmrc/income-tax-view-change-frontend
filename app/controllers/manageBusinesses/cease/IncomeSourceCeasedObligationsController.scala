@@ -20,11 +20,11 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, JourneyType}
-import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -35,6 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,49 +60,37 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      updateMongoCeased(incomeSourceType)
-      val incomeSourceDetails: Future[(Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
-        case SelfEmployment =>
-          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
-        case UkProperty =>
-          Future.successful(
-            (user.incomeSources.properties
-              .filter(_.isUkProperty)
-              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
-              case Some(incomeSourceId) =>
-                Right(Some(incomeSourceId))
-              case None =>
-                Left(new Error("IncomeSourceId not found for UK property"))
-            }, UkProperty)
-          )
-        case ForeignProperty =>
-          Future.successful(
-            (user.incomeSources.properties
-              .filter(_.isForeignProperty)
-              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
-              case Some(incomeSourceId) =>
-                Right(Some(incomeSourceId))
-              case None =>
-                Left(new Error("IncomeSourceId not found for Foreign Property"))
-            }, ForeignProperty)
-          )
-      }
+      withSessionData(JourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
 
-      incomeSourceDetails.flatMap {
-        case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
-          val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
-          val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
-          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
-            Ok(obligationsView(
-              sources = viewModel,
-              businessName = businessName,
-              isAgent = isAgent,
-              incomeSourceType = incomeSourceType))
-          }
-        case incomeSourceD@(Right(None), _) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
-          Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
-        case (Left(exception), _) => Future.failed(exception)
+        updateMongoCeased(incomeSourceType)
+
+        val incomeSourceId: Option[String] = incomeSourceType match {
+          case SelfEmployment => sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+          case UkProperty => user.incomeSources.properties.filter(_.isUkProperty)
+            .map(incomeSource => incomeSource.incomeSourceId).headOption
+          case ForeignProperty => user.incomeSources.properties.filter(_.isForeignProperty)
+            .map(incomeSource => incomeSource.incomeSourceId).headOption
+        }
+
+        val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
+
+        (incomeSourceId, businessEndDate) match {
+          case (Some(incomeSourceId), Some(endDate)) =>
+            val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
+            nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map {
+              obligationsViewModel =>
+                val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel,
+                  incomeSourceType,
+                  businessName,
+                  endDate,
+                  isAgent)(dateService)
+
+                Ok(obligationsView(incomeSourceCeasedObligationsViewModel))
+            }
+          case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
+          case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))
+          case _ => Future.failed(new Error(s"missing incomeSourceId and endDate for $incomeSourceType"))
+        }
       }
     }
   }.recover {
