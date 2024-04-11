@@ -110,6 +110,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -152,6 +153,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -189,6 +191,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -226,6 +229,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("2"),
@@ -254,6 +258,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(300.00)),
     chargeType = Some("Test"),
     mainType = Some("ITSA Misc Charge"),
+    mainTransaction = Some("4003"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("001"),
@@ -494,6 +499,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+			|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -552,6 +558,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -609,6 +616,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -636,6 +644,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -706,6 +715,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -732,6 +742,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 200.00,
 			|            "taxYear": "2019",

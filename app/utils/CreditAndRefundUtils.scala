@@ -16,8 +16,7 @@
 
 package utils
 
-import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{BalanceDetails, BalancingChargeCreditType, CutOverCreditType, DocumentDetailWithDueDate, FinancialDetail, MfaCreditType, RepaymentInterest}
 
 object CreditAndRefundUtils {
   sealed trait UnallocatedCreditType
@@ -36,7 +35,7 @@ object CreditAndRefundUtils {
       def validCredit(detail: FinancialDetail): Boolean = detail.getCreditType match{
         case Some(MfaCreditType) => isMFACreditsAndDebitsEnabled
         case Some(CutOverCreditType) => isCutOverCreditEnabled
-        case Some(BalancingChargeCreditType) => true
+        case Some(RepaymentInterest) | Some(BalancingChargeCreditType) => true
         case _ => false
       }
       def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined

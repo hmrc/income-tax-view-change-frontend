@@ -187,7 +187,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
           incomeSourceType match {
             case SelfEmployment =>
-              Console.println(Console.GREEN + result.body + Console.WHITE)
               result should have(
                 httpStatus(OK),
                 pageTitleIndividual("check-details.title"),

@@ -1020,11 +1020,11 @@ paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
-paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
-paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
-paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
+paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
-paymentHistory.balancingChargeCredit                            = Credyd o ordaliad treth
+paymentHistory.balancingCharge                                  = Credyd o ordaliad treth
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -1149,12 +1149,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF we
 credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
 credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
 
-
-credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
-credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
-
-credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
-
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
@@ -1184,7 +1178,22 @@ credit-and-refund.credit-from-earlier-tax-year                    = credyd o flw
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
 
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
-credit-and-refund.credit                                          = Credyd o
+
+credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
+credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
+
+credit-and-refund.row.mfa-1                                       = Credyd o
+credit-and-refund.row.mfa-2                                       = o ganlyniad i addasiad gan CThEF -
+
+credit-and-refund.row.cutOver-1                                   = Credyd o
+credit-and-refund.row.cutOver-2                                   = o flwyddyn dreth gynharach -
+
+credit-and-refund.row.balancingCharge-1                           = Credyd o
+credit-and-refund.row.balancingCharge-2                           = o ordaliad treth -
+
+credit-and-refund.row.repaymentInterest-1                         = Credyd o
+credit-and-refund.row.repaymentInterest-2                         = o log ar ad-daliadau -
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1793,6 +1802,11 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+credit.description.balancingCharge                                      = Credyd o ordaliad treth
+credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
+credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
+credit.description.repaymentInterest                                    = Credyd o log ar ad-daliadau
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben
