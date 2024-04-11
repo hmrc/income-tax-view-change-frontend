@@ -75,7 +75,7 @@ sbt clean coverage test it/test coverageOff coverageReport
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
-### To access Opt Out Custom Data testonly page to see current data, go to:
+### To access Opt Out Custom Data testOnly page to see current data, first log in as a whitelisted opt out user (e.g: OP000001A) and then go to:
 
 Local:
 Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
@@ -84,4 +84,14 @@ Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/te
 Staging:
 Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
 Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+
+### To access income-tax-session-data testOnly page to test the income-tax-session-data service, first log in as a user and then go to:
+
+Local:
+Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/session-storage
+Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
+
+Staging:
+Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/session-storage
+Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
 
