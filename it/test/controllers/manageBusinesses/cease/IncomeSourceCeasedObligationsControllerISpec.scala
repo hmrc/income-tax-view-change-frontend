@@ -77,8 +77,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }
@@ -98,6 +97,9 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getUkPropertyCeasedObligations(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -105,8 +107,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }
@@ -126,6 +127,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+
+
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyCeasedObligations(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -133,8 +138,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }

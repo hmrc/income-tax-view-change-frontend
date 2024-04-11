@@ -99,13 +99,17 @@ class ManageYourBusinessesControllerSpec extends MockAuthenticationPredicate
         val result = runTest(isAgent = true, errorResponse = true)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+      "session is None in header carrier" in {
+        val result = runTest(isAgent = true, errorResponse = true, missingSessionId = true)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
     }
   }
 
   def runTest(isAgent: Boolean,
               errorResponse: Boolean = false,
-              disableIncomeSources: Boolean = false
-             ): Future[Result] = {
+              disableIncomeSources: Boolean = false,
+              missingSessionId: Boolean = false): Future[Result] = {
 
     if (disableIncomeSources)
       disable(IncomeSources)
@@ -118,7 +122,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthenticationPredicate
     mockBothIncomeSources()
 
     setupMockCreateSession(true)
-    setupMockDeleteSession(true)
+    setupMockClearSession(true)
 
     when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
       .thenReturn(
@@ -135,12 +139,12 @@ class ManageYourBusinessesControllerSpec extends MockAuthenticationPredicate
           )
       )
 
-    TestManageYourBusinessesController.show(isAgent)(
-      if (isAgent)
-        fakeRequestConfirmedClient()
-      else
-        fakeRequestWithActiveSession
-    )
+    val request = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+
+    val headers = if (missingSessionId) request.headers.remove("X-Session-ID") else request.headers
+
+
+    TestManageYourBusinessesController.show(isAgent)(request.withHeaders(headers))
   }
 
   override def beforeEach(): Unit = {

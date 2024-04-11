@@ -1612,6 +1612,22 @@ business-ceased.obligation.heading1.uk-property.part2               = Eiddo yn y
 business-ceased.obligation.heading1.foreign-property.part2          = Eiddo tramor
 business-ceased.obligation.heading1.base                            = wedi dod i ben
 business-ceased.obligation.heading2.text                            = Yr hyn y mae’n rhaid i chi ei wneud
+business-ceased.obligation.next-update.text                         = Eich diweddariad nesaf sydd ar y gweill
+business-ceased.obligation.next-update.next-quarterly.text          = Y dyddiad cau ar gyfer cyflwyno’ch datganiad terfynol ar gyfer blwyddyn dreth {0} i {1} yw
+business-ceased.obligation.next-update.final-declaration.text       = Y dyddiad cau ar gyfer cyflwyno’ch datganiad terfynol ar gyfer blwyddyn dreth {0} i {1} yw
+business-ceased.obligation.view-all-business-link.text              = Bwrw golwg dros eich busnesau
+business-ceased.obligation.view-updates.text                        = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+business-ceased.obligation.view-updates-overdue.text                = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
+business-ceased.obligation.capital-gain-tax.text                    = Treth enillion cyfalaf
+business-ceased.obligation.capital-gain-tax.info1.text              = Os ydych wedi gwerthu eiddo, efallai y bydd yn rhaid i chi dalu Treth Enillion Cyfalaf.
+business-ceased.obligation.capital-gain-tax.info2.text              = Gwiriwch yr hyn sydd ei angen arnoch i dalu Treth Enillion Cyfalaf (yn agor tab newydd)
+business-ceased.obligation.inset.single.text                        = Mae gennych <br>1 diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.multiple.text                      = Mae gennych <br>{0} diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.quarterly.single.text              = Mae’n rhaid i chi gyflwyno’r diweddariad hwn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
+business-ceased.obligation.inset.quarterly.multiple.text            = Mae’n rhaid i chi gyflwyno’r diweddariadau hyn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
+business-ceased.obligation.inset.annually.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch.
+business-ceased.obligation.inset.previous-year.text                 = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn ${0} i ${1}.
+
 
 business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-ceased.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:

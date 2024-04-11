@@ -18,7 +18,7 @@ package services
 
 import config.FrontendAppConfig
 import enums.JourneyType._
-import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -129,5 +129,12 @@ class SessionService @Inject()(
       sensitiveUIJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
     else
       uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
+  }
+
+  def clearSession(sessionId: String)(implicit ec: ExecutionContext): Future[Unit] = {
+    uiJourneySessionDataRepository.clearSession(sessionId).flatMap {
+      case true => Future.successful(())
+      case false => Future.failed(new Exception("failed to clear session"))
+    }
   }
 }

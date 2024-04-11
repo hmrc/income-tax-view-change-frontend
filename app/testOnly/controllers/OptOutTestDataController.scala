@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
@@ -33,9 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutTestDataController @Inject()(
                                           val auth: AuthenticatorPredicate,
@@ -45,7 +43,8 @@ class OptOutTestDataController @Inject()(
                                           implicit val dateService: DateServiceInterface,
                                           implicit val mcc: MessagesControllerComponents,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit val executionContext: ExecutionContext
                                         )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
@@ -65,7 +64,8 @@ class OptOutTestDataController @Inject()(
     } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
-      Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
+      Ok(
+        s"Crystallisation Status:     ${Json.toJson(seqResult._1)}\n" +
         s"ITSA Status CY-1:           ${Json.toJson(seqResult._2)}\n" +
         s"ITSA Status CY:             ${Json.toJson(seqResult._3)}\n" +
         s"ITSA Status CY+1:           ${Json.toJson(seqResult._4)}")
