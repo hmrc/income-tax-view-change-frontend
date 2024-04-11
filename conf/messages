@@ -1826,7 +1826,6 @@ manageBusinesses.type-of-property.uk                                     = UK pr
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
 
-
 # credits
 
 credit.description.balancingCharge                                    = Credit from overpaid tax
