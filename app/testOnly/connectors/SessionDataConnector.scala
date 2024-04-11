@@ -16,16 +16,16 @@
 
 package testOnly.connectors
 
+import config.FrontendAppConfig
 import connectors.RawResponseReads
 import play.api.libs.json.{JsValue, Json}
-import testOnly.TestOnlyAppConfig
 import testOnly.models.SessionDataModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataConnector @Inject()(val appConfig: TestOnlyAppConfig,
+class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                      val http: HttpClient
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 

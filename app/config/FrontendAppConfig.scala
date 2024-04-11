@@ -153,6 +153,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Tax account router url
   lazy val taxAccountRouterUrl: String = servicesConfig.getString("tax-account-router.url")
 
+  // income-tax-session-data url
+  lazy val sessionDataUrl: String = servicesConfig.baseUrl("session-data")
+
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
