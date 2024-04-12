@@ -110,14 +110,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
 
 
-  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
+  class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(paymentDueDate, overDuePaymentsCount)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount)
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
@@ -241,27 +241,27 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
-      "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
+      "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = 0) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1)) {
+      "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = 1) {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
       }
 
-      "as an agent don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0), isAgent = true) {
+      "as an agent don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = 0, isAgent = true) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an dunning lock overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
+      "display an dunning lock overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = 1, dunningLockExists = true) {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageForDunningLocks)
       }
 
-      "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = Some(1)) {
+      "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = 1) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
       }
 
-      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = Some(3)) {
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = 3) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
       }
       "has a link to view payments" in new Setup {
