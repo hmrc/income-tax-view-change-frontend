@@ -1621,12 +1621,12 @@ business-ceased.obligation.view-updates-overdue.text                = Bwrw golwg
 business-ceased.obligation.capital-gain-tax.text                    = Treth enillion cyfalaf
 business-ceased.obligation.capital-gain-tax.info1.text              = Os ydych wedi gwerthu eiddo, efallai y bydd yn rhaid i chi dalu Treth Enillion Cyfalaf.
 business-ceased.obligation.capital-gain-tax.info2.text              = Gwiriwch yr hyn sydd ei angen arnoch i dalu Treth Enillion Cyfalaf (yn agor tab newydd)
-business-ceased.obligation.inset.single.text                        = Mae gennych <br>1 diweddariad sy’n hwyr</b>.
-business-ceased.obligation.inset.multiple.text                      = Mae gennych <br>{0} diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.single.text                        = Mae gennych <b>1 diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.multiple.text                      = Mae gennych <b>{0} diweddariad sy’n hwyr</b>.
 business-ceased.obligation.inset.quarterly.single.text              = Mae’n rhaid i chi gyflwyno’r diweddariad hwn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
 business-ceased.obligation.inset.quarterly.multiple.text            = Mae’n rhaid i chi gyflwyno’r diweddariadau hyn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
 business-ceased.obligation.inset.annually.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch.
-business-ceased.obligation.inset.previous-year.text                 = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn ${0} i ${1}.
+business-ceased.obligation.inset.previous-year.text                 = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {0} i {1}.
 
 
 business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
