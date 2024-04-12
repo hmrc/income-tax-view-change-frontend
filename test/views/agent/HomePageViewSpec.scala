@@ -380,16 +380,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
     }
-
-    "the home view with an empty next payment due date and one overDuePaymentsCount" should {
-      "throw a MissingFieldException" in {
-        val expectedException: Exception = intercept[Exception] {
-          new TestSetup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = 0)
-        }
-
-        expectedException.getMessage shouldBe "requirement failed: Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"
-      }
-    }
   }
 
 }
