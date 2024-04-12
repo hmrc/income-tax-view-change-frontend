@@ -195,6 +195,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     dunningLock = dunningLock,
     outstandingAmount = List(Some(50), Some(75)),
@@ -206,6 +207,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def financialDetailsOverdueWithLpiDunningLock(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString,
@@ -217,6 +219,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString,

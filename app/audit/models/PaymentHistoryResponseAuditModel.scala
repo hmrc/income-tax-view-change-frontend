@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.financialDetails.Payment
+import models.financialDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
@@ -32,27 +32,21 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", if (payment.isMFACredit) Some(payment.documentDate) else payment.dueDate) ++
+    ("paymentDate", if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate) else payment.dueDate) ++
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
-    val isCutOver = payment.isCutOverCredit
-    val isMFA = payment.isMFACredit
-    val isBCC = payment.isBalancingChargeCredit
-    val isPayment = payment.isPaymentToHMRC
-
-    (isCutOver, isMFA, isBCC, isPayment) match {
-      case (true, false, false, false) =>
-        if (CutOverCreditsEnabled) Some(getPayment(payment, "Credit from an earlier tax year")) else None
-      case (false, true, false, false) =>
-        if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
-      case (false, false, true, false) =>
-        Some(getPayment(payment, "Balancing charge credit"))
-      case (false, false, false, true) => Some(getPayment(payment, "Payment Made to HMRC"))
+    val hasCredit = payment.credit.isDefined
+    val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
+    payment.creditType match {
+      case Some(MfaCreditType)             if hasCredit && MFACreditsEnabled      => Some(getPayment(payment, "Credit from HMRC adjustment"))
+      case Some(CutOverCreditType)         if hasCredit && CutOverCreditsEnabled  => Some(getPayment(payment, "Credit from an earlier tax year"))
+      case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
+      case Some(RepaymentInterest)      if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
+      case Some(PaymentType)               if !hasCredit && hasLot                => Some(getPayment(payment, "Payment Made to HMRC"))
       case _ => None
     }
   }
-
 
   private val paymentHistory: Seq[JsObject] = payments.flatMap(paymentHistoryMapper)
 

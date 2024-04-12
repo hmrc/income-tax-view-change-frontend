@@ -877,11 +877,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postCheckCeaseBusinessAnswers: WSResponse =
       post("/manage-your-businesses/cease/business-check-answers")(Map.empty)
 
-    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-foreign-property/cease-success", session)
 
-    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-uk-property-success", session)
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-uk-property/cease-success", session)
 
-    def getBusinessCeasedObligations: WSResponse = get(uri = "/manage-your-businesses/cease/cease-business-success")
+    def getBusinessCeasedObligations: WSResponse = get(uri = "/manage-your-businesses/cease-sole-trader/cease-success")
 
     def getAddBusinessAddress: WSResponse =
       get("/manage-your-businesses/add-sole-trader/business-address")

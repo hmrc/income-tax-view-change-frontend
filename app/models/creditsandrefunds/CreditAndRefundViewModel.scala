@@ -16,18 +16,33 @@
 
 package models.creditsandrefunds
 
-import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails._
+import play.api.i18n.Messages
 
+import java.time.LocalDate
+
+sealed trait CreditRow {
+  val amount: BigDecimal
+  val creditType: CreditType
+}
+case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
+case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: LocalDate) extends CreditRow
 
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
 
-
-  private val balancingChargeCredit = "BCC"
-  private val mfaCredit = "MFA"
-  private val cutOverCredit = "CutOver"
-  private val payment = "Payment"
-
+  val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
+    val (documentDetails, financialDetail) = cc
+    val maybeCreditRow = for {
+      creditType <- financialDetail.getCreditType
+      amount <- documentDetails.documentDetail.paymentOrChargeCredit
+    } yield {
+      creditType match {
+        case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = documentDetails.dueDate.get)
+        case _ => CreditViewRow(amount = amount, creditType = creditType, taxYear = financialDetail.taxYear)
+      }
+    }
+    maybeCreditRow
+  })
 
   def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     val sortedCredits = creditCharges.sortBy {
@@ -38,20 +53,6 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
 
   val sortedCreditCharges = sortCreditsByYear
 
-
-  def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-
-    val creditType: Option[CreditType] = credit._2.getCreditType
-    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-
-    (creditType, isPayment) match {
-      case (Some(BalancingChargeCreditType), false) => balancingChargeCredit
-      case (Some(MfaCreditType), false) => mfaCredit
-      case (Some(CutOverCreditType), false) => cutOverCredit
-      case (None, true) => payment
-      case (_, _) => "Unknown credit"
-    }
-  }
 
 }
 

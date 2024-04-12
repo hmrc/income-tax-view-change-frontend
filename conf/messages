@@ -1028,13 +1028,17 @@ paymentHistory.info                                             = To view your c
 paymentHistory.info.2                                           = This will be a different Government Gateway ID and password to your Agent Services account.
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
-paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
-paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
-paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
-paymentHistory.taxYear                                          = {0} to {1} tax year
-paymentHistory.balancingChargeCredit                            = Credit from overpaid tax
-paymentsHistory.CardRef                                         = Payment made by debit card ref:
+
 paymentHistory.refund                                           = Refund issued
+paymentHistory.payment                                          = Payment you made to HMRC
+paymentHistory.cutOver                                          = Credit from an earlier tax year
+paymentHistory.mfa                                              = Credit from HMRC adjustment
+paymentHistory.balancingCharge                                  = Credit from overpaid tax
+paymentHistory.repaymentInterest                                = Credit from repayment interest
+
+paymentHistory.taxYear                                          = {0} to {1} tax year
+
+paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
@@ -1131,9 +1135,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has res
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
 credit-and-refund.upcoming-allocated-credit-3                     = for further information.
 
-credit-and-refund.refundProgress-prt-1                            =
-credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
-credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
@@ -1155,7 +1156,23 @@ credit-and-refund.credit-from-earlier-tax-year                    = credit from 
 credit-and-refund.credit-from-earlier-tax-year-2                  = credit from an earlier tax year
 
 credit-and-refund.payment                                         = from a payment you made to HMRC on
-credit-and-refund.credit                                          =
+
+credit-and-refund.refundProgress-prt-1                            =
+credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
+
+credit-and-refund.row.mfa-1                                       =
+credit-and-refund.row.mfa-2                                       = credit from HMRC adjustment -
+
+credit-and-refund.row.cutOver-1                                   =
+credit-and-refund.row.cutOver-2                                   = credit from an earlier tax year -
+
+credit-and-refund.row.balancingCharge-1                           =
+credit-and-refund.row.balancingCharge-2                           = credit from overpaid tax -
+
+credit-and-refund.row.repaymentInterest-1                      =
+credit-and-refund.row.repaymentInterest-2                      = credit from repayment interest -
+
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1607,6 +1624,24 @@ business-ceased.obligation.heading1.uk-property.part2               = UK propert
 business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
 business-ceased.obligation.heading1.base                            = has ceased
 business-ceased.obligation.heading2.text                            = What you must do
+business-ceased.obligation.next-update.text                         = Your next upcoming update
+business-ceased.obligation.next-update.next-quarterly.text          = Your next quarterly update for tax year {0} to {1} is due by
+business-ceased.obligation.next-update.final-declaration.text       = Your final declaration for tax year {0} to {1} is due by
+business-ceased.obligation.view-all-business-link.text              = View all your businesses
+business-ceased.obligation.view-updates.text                        = View your upcoming updates
+business-ceased.obligation.view-updates-overdue.text                = View your overdue and upcoming updates
+business-ceased.obligation.capital-gain-tax.text                    = Capital gain tax
+business-ceased.obligation.capital-gain-tax.info1.text              = If you’ve sold property, you may need to pay Capital Gains Tax.
+business-ceased.obligation.capital-gain-tax.info2.text              = Check what you need to pay Capital Gains Tax on
+business-ceased.obligation.inset.single.text                        = You have <b>1 overdue update</b>.
+business-ceased.obligation.inset.multiple.text                      = You have <b>{0} overdue updates</b>.
+business-ceased.obligation.inset.quarterly.single.text              = You must submit this update with all required income and expenses through your record keeping software.
+business-ceased.obligation.inset.quarterly.multiple.text            = You must submit these updates with all required income and expenses through your record keeping software.
+business-ceased.obligation.inset.annually.text                      = You must submit your final declarations and pay the tax you owe
+business-ceased.obligation.inset.previous-year.text                 = You must make sure that you have sent all the required income and expenses for the tax year earlier than {0} to {1}.
+
+
+
 
 business-ceased.obligation.quarterly-heading                        = Send quarterly updates
 business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1790,6 +1825,14 @@ manageBusinesses.type-of-property.h2                                     = What 
 manageBusinesses.type-of-property.uk                                     = UK property business
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
+
+
+# credits
+
+credit.description.balancingCharge                                    = Credit from overpaid tax
+credit.description.cutOver                                            = Credit from an earlier tax year
+credit.description.mfa                                                = Credit from HMRC adjustment
+credit.description.repaymentInterest                                  = Credit from repayment interest
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Businesses that have ceased
