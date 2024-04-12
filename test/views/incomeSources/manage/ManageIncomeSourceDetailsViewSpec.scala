@@ -69,6 +69,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val cashBasisAccounting = "Cash basis accounting"
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
@@ -83,6 +84,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -97,6 +99,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -111,6 +114,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -125,6 +129,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -139,6 +144,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,

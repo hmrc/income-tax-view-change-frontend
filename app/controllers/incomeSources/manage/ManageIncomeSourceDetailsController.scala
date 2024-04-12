@@ -17,10 +17,9 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -29,7 +28,7 @@ import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.Logger
-import play.api.mvc.{Action, _}
+import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -89,19 +88,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
         val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
 
-            hashCompareResult match {
-              case Left(exception: Exception) => Future.failed(exception)
-              case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-              case Right(incomeSourceId: IncomeSourceId) =>
-                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                  case Right(_) => handleRequest(
-                    sources = user.incomeSources,
-                    isAgent = isAgent,
-                    backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
-                    incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
-                    incomeSourceType = SelfEmployment
-                  )
-                  case Left(exception) => Future.failed(exception)
+        hashCompareResult match {
+          case Left(exception: Exception) => Future.failed(exception)
+          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+          case Right(incomeSourceId: IncomeSourceId) =>
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(_) => handleRequest(
+                sources = user.incomeSources,
+                isAgent = isAgent,
+                backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+                incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
+                incomeSourceType = SelfEmployment
+              )
+              case Left(exception) => Future.failed(exception)
             }.recover {
               case ex =>
                 Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
@@ -152,6 +151,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                           crystallisationTaxYear2: Option[Boolean]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = incomeSource.incomeSource,
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
@@ -169,6 +169,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                 crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = None,
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,

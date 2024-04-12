@@ -151,6 +151,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                           crystallisationTaxYear2: Option[Boolean]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = incomeSource.incomeSource,
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
@@ -168,6 +169,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                 crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = None,
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,

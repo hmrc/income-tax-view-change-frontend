@@ -140,6 +140,7 @@ object BaseIntegrationTestConstants {
 
   val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testDate),
     address = expectedAddress,
@@ -154,6 +155,7 @@ object BaseIntegrationTestConstants {
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,
@@ -168,6 +170,7 @@ object BaseIntegrationTestConstants {
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,

@@ -18,7 +18,6 @@ package controllers.incomeSources.manage
 
 import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import mocks.connectors.MockBusinessDetailsConnector
@@ -263,7 +262,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dd").text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
         document.getElementById("manage-details-table")
@@ -287,7 +286,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -310,7 +309,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -333,7 +332,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -341,7 +340,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
+          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
 
@@ -362,7 +361,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -386,7 +385,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
         document.getElementById("manage-details-table")
@@ -410,7 +409,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -433,7 +432,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -456,7 +455,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -464,7 +463,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
+          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
 
@@ -485,7 +484,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
