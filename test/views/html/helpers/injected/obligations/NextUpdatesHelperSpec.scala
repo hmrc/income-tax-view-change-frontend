@@ -19,7 +19,7 @@ package views.html.helpers.injected.obligations
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -41,16 +41,13 @@ class  NextUpdatesHelperSpec extends TestSupport {
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
   ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.obligation.obligationType), standardAndCalendar = false, date, obligations, Seq.empty)})
-  private def getQuarterType(string: String) = {
-    if (string == "Quarterly") QuarterlyObligation else EopsObligation
-  }
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
   ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)})
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {
 
@@ -85,7 +82,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
       val heading = section.select(".govuk-accordion__section-summary")
 
-      heading.text() shouldBe "End of year update"
+      heading.text() shouldBe messages("nextUpdates.quarterly")
 
       val table = section.select(".govuk-table")
 
@@ -93,7 +90,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       table.select(".govuk-table__head").text() shouldBe "Update type Income source"
 
-      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.eops")
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.crystallised")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 

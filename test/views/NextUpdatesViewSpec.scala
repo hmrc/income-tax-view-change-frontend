@@ -19,7 +19,7 @@ package views
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -56,11 +56,7 @@ class NextUpdatesViewSpec extends TestSupport {
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
   ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.obligation.obligationType), standardAndCalendar = false, date, obligations, Seq.empty)})
-
-  private def getQuarterType(string: String) = {
-    if (string.contains("Quarterly")) QuarterlyObligation else EopsObligation
-  }
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next Updates page" should {
 
@@ -122,7 +118,7 @@ class NextUpdatesViewSpec extends TestSupport {
 
       val table = section.select(".govuk-table")
 
-      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe "End of period statement"
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.crystallised")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
   }

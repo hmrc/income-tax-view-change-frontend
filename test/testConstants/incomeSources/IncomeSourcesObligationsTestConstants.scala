@@ -104,6 +104,7 @@ object IncomeSourcesObligationsTestConstants {
   val endDateTaxYear2023 = LocalDate.of(2024, 4, 5)
   val startDateTaxYear2024 = LocalDate.of(2024, 4, 6)
   val endDateTaxYear2024 = LocalDate.of(2025, 4, 5)
+
   val eopsDeadlineTaxYear2022 = LocalDate.of(2024, 1, 31)
   val eopsDeadlineTaxYear2023 = LocalDate.of(2025, 1, 31)
   val eopsDeadlineTaxYear2024 = LocalDate.of(2026, 1, 31)
@@ -144,10 +145,6 @@ object IncomeSourcesObligationsTestConstants {
 
   val viewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = quarterlyObligationDatesFull,
-    eopsObligationsDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false, obligationType = "Quarterly"),
-      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "EOPS", isFinalDec = false, obligationType = "Quarterly")
-    ),
     finalDeclarationDates = Seq(
       DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised"),
       DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
@@ -158,9 +155,6 @@ object IncomeSourcesObligationsTestConstants {
 
   val obligationsViewModelSimple: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = quarterlyObligationDatesSimple,
-    eopsObligationsDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false, obligationType = "EOPS")
-    ),
     finalDeclarationDates = Seq(
       DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised")
     ),

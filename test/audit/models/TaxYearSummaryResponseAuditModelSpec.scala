@@ -42,7 +42,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val auditType: String = "TaxYearOverviewResponse"
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
-  val updateTypeEops: String = messages("updateTab.updateType.eops")
+  val updateTypeQuarterly: String = messages("updateTab.updateType.quarterly")
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,
@@ -110,9 +110,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
+          obligationType = "Quarterly",
           dateReceived = Some(fixedDate),
-          periodKey = "EOPS"
+          periodKey = "Quarterly"
         )
       )
     )
@@ -197,7 +197,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
       "dateSubmitted" -> fixedDate.toString,
-      "updateType" -> updateTypeEops
+      "updateType" -> updateTypeQuarterly
     ))
   )
 
@@ -242,7 +242,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
       "dateSubmitted" -> fixedDate.toString,
-      "updateType" -> updateTypeEops
+      "updateType" -> updateTypeQuarterly
     ))
   )
 

@@ -238,14 +238,6 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         )
       }
 
-      "calling .allEops" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation)
-        )
-      }
-
       "calling .allCrystallised" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
           BaseTestConstants.testMtdItUser) shouldBe List(
