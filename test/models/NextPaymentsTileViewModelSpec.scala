@@ -22,7 +22,7 @@ import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class HomePageViewModelSpec extends UnitSpec with Matchers{
+class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
 
   val mockDate = Some(LocalDate.parse("2022-08-16"))
   val mockNextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(mockDate, 1)
