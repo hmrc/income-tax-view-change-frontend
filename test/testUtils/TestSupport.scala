@@ -45,7 +45,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import java.time.LocalDate
-import java.util.Properties
+import java.util.ResourceBundle
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -72,16 +72,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(languageUtils)
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
-  val messages_expected: Properties = loadPropertiesFile("/messages_expected")
-
-  private def loadPropertiesFile(classpathPropertiesFile: String): Properties = {
-    val classpathFile = if (classpathPropertiesFile.startsWith("/")) classpathPropertiesFile else s"/$classpathPropertiesFile"
-    import scala.io.Source.fromURL
-    val reader = fromURL(getClass.getResource(classpathFile)).bufferedReader()
-    val properties: Properties = new Properties()
-    properties.load(reader)
-    properties
-  }
+  val messages_expected: ResourceBundle = ResourceBundle.getBundle("messages_expected")
 
   def messagesApi: MessagesApi = inject[MessagesApi]
 
