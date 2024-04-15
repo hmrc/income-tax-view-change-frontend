@@ -35,7 +35,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
     }
 
     "overdue payment doesn't exist" should {
-      "throw an error" in {
+      "return an error" in {
         NextPaymentsTileViewModel(None, 1).verify.isLeft shouldBe true
       }
     }
