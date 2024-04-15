@@ -25,17 +25,17 @@ import java.time.LocalDate
 class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
 
   val mockDate = Some(LocalDate.parse("2022-08-16"))
-  val mockNextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(mockDate, 1)
+  val nextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(mockDate, 1)
 
   "The verify method" when {
     "overdue payment exists" should {
       "create the NextPaymentsTileViewModel" in {
-        NextPaymentsTileViewModel(mockDate, 1) shouldBe mockNextPaymentsTileViewModel
+        NextPaymentsTileViewModel(mockDate, 1).verify shouldBe Right(nextPaymentsTileViewModel)
       }
     }
 
     "overdue payment doesn't exist" should {
-      "throw an Exception" in {
+      "throw an error" in {
         NextPaymentsTileViewModel(None, 1).verify.isLeft shouldBe true
       }
     }
