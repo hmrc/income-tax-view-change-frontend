@@ -1459,7 +1459,7 @@ incomeSources.add.SE.AccountingMethod.drop-down-text          = Gwnaethoch greu 
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
 
-incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu ar sail arian parod neu gyfrifyddu safonol
+incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu arian parod neu gyfrifyddu traddodiadol
 
 # add Business start date check
 add-business-start-date-check.heading                = A yw’r dyddiad hwn yn gywir?

@@ -1482,7 +1482,7 @@ incomeSources.add.SE.AccountingMethod.drop-down-text          = You created an i
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 
-incomeSources.add.AccountingMethod.no-selection               = Select if you use cash or standard accounting
+incomeSources.add.AccountingMethod.no-selection               = Select if you use cash basis or traditional accounting
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
 incomeSources.ceaseBusiness.checkDetails.caption                    = Sole trader business
