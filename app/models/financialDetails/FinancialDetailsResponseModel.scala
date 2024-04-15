@@ -133,9 +133,21 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     )
   }
 
-  def findMatchingPaymentDocument(paymentLot: String, paymentLotItem: String): Option[DocumentDetail] = {
-    documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
+  def findMatchingPaymentDocument(clearingSAPDocument: Option[String]): Option[String] = {
+
+    def isPayment(subItem: SubItem): Boolean = subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined
+
+    def isPaymentWithMatchingSapDocumentCode(sapDoc: String)(subItem: Seq[SubItem]) : Boolean = {
+      subItem.exists(si => si.clearingSAPDocument.contains(sapDoc) && isPayment(si))
+    }
+
+    clearingSAPDocument.flatMap {
+      sapDoc => {
+        financialDetails.find(_.items.exists(isPaymentWithMatchingSapDocumentCode(sapDoc))).flatMap(_.transactionId)
+      }
+    }
   }
+
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
     FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,

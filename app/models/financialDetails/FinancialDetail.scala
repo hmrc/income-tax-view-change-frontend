@@ -16,11 +16,10 @@
 
 package models.financialDetails
 
-import config.featureswitch.TimeMachineAddYear
 import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
-import services.{ DateServiceInterface}
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -76,19 +75,25 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  def allocation(implicit dateService: DateServiceInterface): Option[PaymentsWithChargeType] = items
-    .map { subItems =>
-      subItems.collect {
-        case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
-          Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
-            method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-            dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
+  def allocation(implicit dateService: DateServiceInterface): Option[PaymentsWithChargeType] = {
+
+    // get charge
+
+    items
+      .map { subItems =>
+        subItems.collect {
+          case subItem if subItem.clearingReason.contains("Cleared by Payment") =>
+            Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
+              method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
+              dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId,
+              clearingSAPDocument = subItem.clearingSAPDocument)
+        }
       }
-    }
-    .collect {
-      case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
-    }
-    .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
+      .collect {
+        case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
+      }
+      .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
+  }
 
   def getCreditType: Option[CreditType] = {
     val validMFA = MfaCreditUtils.validMFACreditType(mainType)

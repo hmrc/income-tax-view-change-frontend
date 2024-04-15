@@ -45,7 +45,8 @@ case class Payment(reference: Option[String],
                    dueDate: Option[LocalDate],
                    documentDate: LocalDate,
                    transactionId: Option[String],
-                   mainType: Option[String] = None) {
+                   mainType: Option[String] = None,
+                   clearingSAPDocument: Option[String] = None) {
 
   def credit: Option[BigDecimal] = amount match {
     case None => None

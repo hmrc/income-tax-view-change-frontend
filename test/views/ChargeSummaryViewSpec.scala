@@ -16,7 +16,7 @@
 
 package views
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
 import exceptions.MissingFieldException
@@ -72,19 +72,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
-      document.select(Selectors.table).text() shouldBe
+      val x =
         s"""
            |Date Description Amount
            |${rows.mkString("\n")}
            |""".stripMargin.trim.linesIterator.mkString(" ")
+           println(s"Should be ${x}")
+      document.select(Selectors.table).text() shouldBe x
+
     }
 
   }
 
-  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
+
+  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String]): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
+        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None,
+        clearingSAPDocument=clearingSAPDocument)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   object Messages {
@@ -170,8 +175,19 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
 
+
+
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI),
+    financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
+      amount = Some(500.0),
+      dueDate = Some(LocalDate.parse("2018-09-08")),
+      clearingDate = Some(LocalDate.parse("2018-09-07")),
+      clearingReason = Some("Cleared by Payment"),
+      clearingSAPDocument=Some("123456789012"),
+      paymentAmount = Some(500.0),
+      paymentLot = None,
+      paymentLotItem = None)
+    )),
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB),
     financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI),
     financialDetail(originalAmount = 5678.9, chargeType = NIC4_WALES),
@@ -216,10 +232,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Clerical Interest Signal"))
   )
 
+  def clearingSubItem(clearingSAPDocument: String):SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
+
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
-    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
+    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
+      clearingSubItem("123456789012"),
+      clearingSubItem("223456789012"),
+      clearingSubItem("323456789012"),
+      clearingSubItem("423456789012"),
+      clearingSubItem("523456789012"),
+      clearingSubItem("623456789012"),
+      clearingSubItem("723456789012"),
+      clearingSubItem("823456789012"),
+      clearingSubItem("923456789012"),
+      clearingSubItem("023456789012")
+
+    ))))
   )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {
@@ -600,19 +630,21 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
         "allocations are enabled and present in the list" when {
 
+          // TODO: MISUV-7404 | Update this
+
           val paymentAllocations = List(
-            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012")),
+            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("223456789012")),
 
-            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", 2400.0),
-            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", 2500.0),
+            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", 2400.0, Some("323456789012")),
+            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", 2500.0, Some("423456789012")),
 
-            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0),
-            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", 3500.0),
-            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", 3600.0),
-            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", 3700.0),
-            paymentsForCharge(typeBalCharge, SL, "2019-12-14", 3800.0),
-            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0),
+            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0, Some("523456789012")),
+            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", 3500.0, Some("623456789012")),
+            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", 3600.0, Some("723456789012")),
+            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", 3700.0, Some("823456789012")),
+            paymentsForCharge(typeBalCharge, SL, "2019-12-14", 3800.0, Some("923456789012")),
+            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0, Some("023456789012")),
           )
 
           val expectedPaymentAllocationRows = List(
@@ -636,6 +668,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(documentDetailModel(),
             chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forEach(e => println(e.attr("href")))
+            println("=========")
+            println(controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url)
             document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
           }
 
@@ -644,7 +679,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
             verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
           }
         }
-
       }
 
       "hide payment allocations in history table" when {
@@ -709,8 +743,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "MFA Credits" when {
         val paymentAllocations = List(
-          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-          paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012")),
+          paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012")),
         )
 
         "Display an unpaid MFA Credit" in new TestSetup(
@@ -734,6 +768,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
             outstandingAmount = Some(0.00)), isMFADebit = true,
           paymentAllocationEnabled = true,
+
+          // TODO: MISUV-7404 | Update this
+
           paymentAllocations = paymentAllocations) {
           val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
           val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
@@ -823,9 +860,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
+      // TODO: MISUV-7404 | Update this
+
       "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(documentDetailModel(),
         chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
-          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0)), isAgent = true) {
+          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
@@ -833,9 +872,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
     }
     "MFA Credits" when {
+
+
+      // TODO: MISUV-7404 | Update this
+
       val paymentAllocations = List(
-        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012")),
+        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012")),
       )
 
       "Display an unpaid MFA Credit" in new TestSetup(
@@ -859,6 +902,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "Display a paid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
           outstandingAmount = Some(0.00)), isMFADebit = true, isAgent = true,
+        // TODO: MISUV-7404 | Update this
+
         paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")

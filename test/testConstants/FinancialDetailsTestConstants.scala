@@ -476,11 +476,12 @@ object FinancialDetailsTestConstants {
                       interestLock: Option[String] = None,
                       accruedInterest: Option[BigDecimal] = None,
                       additionalSubItems: Seq[SubItem] = Seq(),
-                      dueDateValue: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))
+                      dueDateValue: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                      transactionId: Option[String] = Some(id1040000123)
                      ): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
-    transactionId = Some(id1040000123),
+    transactionId = transactionId,
     transactionDate = Some(LocalDate.parse("2022-08-16")),
     `type` = Some("type"),
     originalAmount = Some(originalAmount),
@@ -573,28 +574,153 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningLock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
+  // TODO: MISUV-7407 UPDATE THIS
+  def chargesWithAllocatedPaymentModel(taxYear: Int = 2018,
+                                       outstandingAmount: Option[BigDecimal] = Some(1400.0),
+                                       lpiWithDunningLock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock),
-        documentDetailModel(9999, outstandingAmount = outstandingAmount.map(amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"), lpiWithDunningLock = lpiWithDunningLock)),
-      financialDetails = List(financialDetail(taxYear, additionalSubItems = Seq(SubItem(clearingDate = Some(LocalDate.parse("2018-09-08")), amount = Some(500.0), paymentAmount = Some(500.0),
-        paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem")))))
+      documentDetails = List(
+        // charge
+        documentDetailModel(
+          taxYear = taxYear,
+          outstandingAmount = outstandingAmount,
+          paymentLot = None,
+          paymentLotItem = None,
+          lpiWithDunningLock = lpiWithDunningLock,
+          transactionId = id1040000123
+        ),
+        // payment on account
+        documentDetailModel(taxYear = 9999,
+          outstandingAmount = outstandingAmount.map(amount => -amount),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          lpiWithDunningLock = lpiWithDunningLock,
+          transactionId = id1040000124)),
+      financialDetails = List(
+        // charge
+        financialDetail(
+          transactionId = Some(id1040000123),
+          taxYear = taxYear,
+          additionalSubItems = Seq(
+            SubItem(
+              amount = Some(500.0),
+              dueDate = Some(LocalDate.parse("2018-09-08")),
+              clearingDate = Some(LocalDate.parse("2018-09-07")),
+              clearingReason = Some("Cleared by Payment"),
+              clearingSAPDocument = Some("003530048269"),
+              paymentAmount = Some(500.0),
+              paymentLot = None,
+              paymentLotItem = None)
+          )),
+        // payment on account
+        financialDetail(
+          transactionId = Some(id1040000124),
+          taxYear = taxYear,
+          additionalSubItems = Seq(
+            SubItem(
+              amount = Some(500.0),
+              clearingDate = Some(LocalDate.parse("2018-09-08")),
+              clearingSAPDocument = Some("003530048269"),
+              paymentAmount = Some(500.0),
+              paymentLot = Some("paymentLot"),
+              paymentLotItem = Some("paymentLotItem"))
+          )))
     )
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(
-      DocumentDetail(2019, id1040000123, Some("TRM New Charge"), Some("documentText"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
-        Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
-      DocumentDetail(2020, id1040000124, Some("TRM New Charge"), Some("documentText"), Some(10.34), Some(10.34), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
-        Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
+      DocumentDetail(taxYear = 2019,
+        transactionId = id1040000123,
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("documentText"),
+        outstandingAmount = Some(10.33),
+        originalAmount = Some(10.33),
+        documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = Some(100),
+        interestRate = Some(100),
+        latePaymentInterestId = Some("latePaymentInterestId1"),
+        interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+        interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+        latePaymentInterestAmount = Some(100),
+        lpiWithDunningLock = Some(100),
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot")),
+      DocumentDetail(taxYear = 2020,
+        transactionId = id1040000124,
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("documentText"),
+        outstandingAmount = Some(10.34),
+        originalAmount = Some(10.34),
+        documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = Some(100),
+        interestRate = Some(100),
+        latePaymentInterestId = Some("latePaymentInterestId2"),
+        interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+        interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+        latePaymentInterestAmount = Some(100),
+        lpiWithDunningLock = Some(100),
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot"))
     ),
     financialDetails = List(
-      FinancialDetail("2019", Some("SA Balancing Charge"), Some(id1040000123), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.parse("2019-05-15")), Some("1"), Some(100),
-        Some("Stand over order"), Some("interestLock"), Some(LocalDate.parse("2020-08-16")), Some("clearingReason"), Some("outgoingPaymentMethod"), Some("paymentReference"), Some(100), Some("paymentMethod"), Some("paymentLot"), Some("paymentLotItem"), Some("paymentLot-paymentLotItem"))))),
-      FinancialDetail("2020", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.parse("2019-05-15")), Some("1"), Some(100),
-        None, None, Some(LocalDate.parse("2020-08-16")), Some("clearingReason"), Some("outgoingPaymentMethod"), Some("paymentReference"), Some(100), Some("paymentMethod"), Some("paymentLot"), Some("paymentLotItem"), Some("paymentLot-paymentLotItem")))))
+      FinancialDetail(
+        taxYear = "2019",
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some(id1040000123),
+        transactionDate = Some(LocalDate.parse("2020-08-16")),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        outstandingAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some(NIC4_WALES),
+        accruedInterest = Some(100),
+        items = Some(Seq(SubItem(
+          dueDate = Some(LocalDate.parse("2019-05-15")),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = Some("Stand over order"),
+          interestLock = Some("interestLock"),
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
+          clearingReason = Some("clearingReason"),
+          clearingSAPDocument = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem"))))),
+      FinancialDetail(
+        taxYear = "2020",
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some(id1040000124),
+        transactionDate = Some(LocalDate.parse("2020-08-16")),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        outstandingAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some(NIC4_WALES),
+        accruedInterest = Some(100),
+        items = Some(Seq(SubItem(
+          dueDate = Some(LocalDate.parse("2019-05-15")),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = None,
+          interestLock = None,
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
+          clearingReason = Some("clearingReason"),
+          clearingSAPDocument = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")))))
     )
   )
 

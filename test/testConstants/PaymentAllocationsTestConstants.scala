@@ -16,13 +16,14 @@
 
 package testConstants
 
-import java.time.LocalDate
+import enums.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
+import models.financialDetails._
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
-import enums.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
+import testConstants.BaseTestConstants._
+
+import java.time.LocalDate
 
 object PaymentAllocationsTestConstants {
 
@@ -588,12 +589,12 @@ object PaymentAllocationsTestConstants {
 			|                    "subItemId": "1",
 			|                    "amount": 100.00,
 			|                    "clearingDate": "2021-01-31",
+|                          "clearingReason": "Cleared by Payment",
+|                          "clearingSAPDocument": "012345678912",
 			|                    "dueDate": "2021-01-31",
 			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
 			|                    "paymentAmount": 2000.00,
-			|                    "paymentId": "paymentLot-paymentLotItem",
-			|                    "paymentLot": "paymentLot",
-			|                    "paymentLotItem": "paymentLotItem",
+
 			|                    "paymentMethod": "paymentMethod",
 			|                    "paymentReference": "paymentReference"
 			|                },
@@ -603,8 +604,7 @@ object PaymentAllocationsTestConstants {
 			|                    "dueDate": "2021-01-31",
 			|                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
 			|                    "paymentAmount": 3000.00,
-			|                    "paymentId": "paymentLot2-paymentLotItem2",
-			|                    "paymentLot": "paymentLot2",
+			|
 			|                    "paymentMethod": "paymentMethod2"
 			|                }
 			|            ],
@@ -628,6 +628,7 @@ object PaymentAllocationsTestConstants {
 			|                    "dueDate": "2021-01-31",
 			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
 			|                    "paymentAmount": 2000.00,
+      |                    "clearingSAPDocument": "012345678912",
 			|                    "paymentId": "paymentLot-paymentLotItem",
 			|                    "paymentLot": "paymentLot",
 			|                    "paymentLotItem": "paymentLotItem",

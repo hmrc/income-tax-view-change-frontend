@@ -39,6 +39,8 @@ import testUtils.TestSupport
 
 import scala.concurrent.Future
 
+
+//TODO: MISUV-7407 - Flesh out these tests
 class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
   with ImplicitDateFormatter
@@ -204,9 +206,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+        val doc = JsoupParse(result).toHtmlDocument
+        doc.select("h1").text() shouldBe successHeading
+        doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+        doc.select("main h3").text() shouldBe paymentHistoryHeading
+
+        val allocationLink = doc.select("#payment-history-table").select("tr").get(1).select("a").attr("href")
+        allocationLink shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${id1040000124}"
       }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(
