@@ -33,7 +33,6 @@ object IncomeSourcesObligationsIntegrationTestConstants {
 
   val testObligationsViewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = testQuarterlyObligationDates,
-    eopsObligationsDates = Seq(datesModel),
     finalDeclarationDates = Seq(datesModel),
     currentTaxYear = taxYear,
     showPrevTaxYears = false

@@ -327,9 +327,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
+          obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "EOPS"
+          periodKey = "#003"
         ))
     ),
     NextUpdatesModel(
