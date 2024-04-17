@@ -72,16 +72,10 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private lazy val journeyRestartUrl: (JourneyType) => MtdItUser[_] => Future[Result] =
-    (journeyType: JourneyType) => user => {
+  private lazy val journeyRestartUrl: MtdItUser[_] => Future[Result] =
+    user => {
       Future.successful {
-        (journeyType.operation, isAgent(user)) match {
-          case (Add, false) => Redirect(controllers.manageBusinesses.add.routes.AddIncomeSourceController.show())
-          case (Add, true) => Redirect(controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent())
-          case (Manage, _) => Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent(user)))
-          case (Cease, false) => Redirect(controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show())
-          case (Cease, true) => Redirect(controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent())
-        }
+        Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent(user)))
       }
     }
 
@@ -107,12 +101,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
               codeBlock(data)
             }
           }
-          else journeyRestartUrl(journeyType)(user)
+          else journeyRestartUrl(user)
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
             s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-          journeyRestartUrl(journeyType)(user)
+          journeyRestartUrl(user)
       }
     }
   }
