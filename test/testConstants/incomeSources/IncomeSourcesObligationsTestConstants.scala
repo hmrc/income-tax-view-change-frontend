@@ -105,9 +105,9 @@ object IncomeSourcesObligationsTestConstants {
   val startDateTaxYear2024 = LocalDate.of(2024, 4, 6)
   val endDateTaxYear2024 = LocalDate.of(2025, 4, 5)
 
-  val eopsDeadlineTaxYear2022 = LocalDate.of(2024, 1, 31)
-  val eopsDeadlineTaxYear2023 = LocalDate.of(2025, 1, 31)
-  val eopsDeadlineTaxYear2024 = LocalDate.of(2026, 1, 31)
+  val crystallisedDeadlineTaxYear2022 = LocalDate.of(2024, 1, 31)
+  val crystallisedDeadlineTaxYear2023 = LocalDate.of(2025, 1, 31)
+  val crystallisedlineTaxYear2024 = LocalDate.of(2026, 1, 31)
 
   val quarterlyDatesYearOne = Seq(
     DatesModel(startDateQ1_2022, endDateQ1_2022, endDateQ1_2022.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
@@ -146,8 +146,8 @@ object IncomeSourcesObligationsTestConstants {
   val viewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = quarterlyObligationDatesFull,
     finalDeclarationDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised"),
-      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, crystallisedDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised"),
+      DatesModel(startDateTaxYear2024, endDateTaxYear2024, crystallisedlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
     ),
     currentTaxYear = taxYear2023,
     showPrevTaxYears = true
@@ -156,7 +156,7 @@ object IncomeSourcesObligationsTestConstants {
   val obligationsViewModelSimple: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = quarterlyObligationDatesSimple,
     finalDeclarationDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised")
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, crystallisedDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised")
     ),
     currentTaxYear = taxYear2023,
     showPrevTaxYears = true

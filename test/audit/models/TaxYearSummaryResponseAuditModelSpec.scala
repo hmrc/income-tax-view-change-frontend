@@ -42,7 +42,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val auditType: String = "TaxYearOverviewResponse"
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
-  val updateTypeQuarterly: String = messages("updateTab.updateType.quarterly")
+  val updateTypeQuarterly: String = "Quarterly Update"
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,

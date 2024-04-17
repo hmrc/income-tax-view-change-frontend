@@ -82,7 +82,7 @@ class NextUpdatesViewSpec extends TestSupport {
     }
 
     "have a summary section for final declarations" in new Setup(obligationsModel) {
-      pageDocument.select("details h2").get(2).text() shouldBe obligationsMessages.summaryDeclaration
+      pageDocument.select("details h2").get(1).text() shouldBe obligationsMessages.summaryDeclaration
     }
 
     "have the correct line 1 for final declaration section" in new Setup(obligationsModel) {
