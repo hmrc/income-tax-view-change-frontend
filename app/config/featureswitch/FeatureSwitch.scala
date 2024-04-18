@@ -144,6 +144,6 @@ case object OptOut extends FeatureSwitch {
 }
 
 case object AdjustPaymentsOnAccount extends FeatureSwitch {
-  override val name: String = s"$prefix.adjust-payments-on-account"
+  override val name: String = s"$prefix.enable-adjust-payments-on-account"
   override val displayText: String = "Adjust Payments On Account"
 }
