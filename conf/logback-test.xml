@@ -6,7 +6,7 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>logs/income-tax-view-change-frontend.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%date{ISO8601} %level %simpleMethodLog [%message] %replace(exception=[%xException]){'^exception=\[\]$',''} thread=[%thread] %n</pattern>
+            <pattern>%date{ISO8601} %level %logger{0}#%M:%line [%message] %replace(exception=[%xException]){'^exception=\[\]$',''} thread=[%thread] %n</pattern>
             <!--
                 <pattern>[%.-4level]  %date{ISO8601} %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
              -->
