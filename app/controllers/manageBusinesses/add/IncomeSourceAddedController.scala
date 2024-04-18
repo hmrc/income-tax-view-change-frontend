@@ -24,7 +24,7 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.Logging
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
@@ -47,8 +47,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             implicit val sessionService: SessionService,
                                             val ec: ExecutionContext,
                                             dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils
-    with JourneyCheckerManageBusinesses with Logging {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -63,7 +62,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    logger.debug(s"handling request for $incomeSourceType")
     withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
         incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
@@ -77,7 +75,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
         )
       }) getOrElse {
-        logger.error(
+        Logger("application").error(
           s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
@@ -85,7 +83,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       }
     } recover {
       case ex: Exception =>
-        logger.error(s"${if (isAgent) "[Agent]" else ""}" +
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
           s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
         errorHandler(isAgent).showInternalServerError()
     }
@@ -111,7 +109,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         }
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
-        logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+        Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
