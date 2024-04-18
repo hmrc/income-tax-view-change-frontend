@@ -19,14 +19,18 @@ package services
 import connectors.FinancialDetailsConnector
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                                     val financialDetailsService: FinancialDetailsService,
                                      implicit val ec: ExecutionContext){
 
-  def canCustomerClaimToAdjust(nino: Nino, taxYear: TaxYear): Future[Boolean] = ???
+  def canCustomerClaimToAdjust(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Boolean] = ???
+
+  def maybePoATaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = ???
 
 }
