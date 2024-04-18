@@ -44,7 +44,7 @@ object FeatureSwitch {
     CalendarQuarterTypes,
     IncomeSourcesNewJourney,
     OptOut,
-    ClaimToAdjustPOA
+    AdjustPaymentsOnAccount
   )
 
   def apply(str: String): FeatureSwitch =
@@ -143,7 +143,7 @@ case object OptOut extends FeatureSwitch {
   override val displayText = "Opt Out"
 }
 
-case object ClaimToAdjustPOA extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-claim-to-adjust-poa"
-  override val displayText: String = "Claim to Adjust POA"
+case object AdjustPaymentsOnAccount extends FeatureSwitch {
+  override val name: String = s"$prefix.adjust-payments-on-account"
+  override val displayText: String = "Adjust Payments On Account"
 }
