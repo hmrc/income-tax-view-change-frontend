@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package services.ClaimToAdjustPOA
 
-import connectors.FinancialDetailsConnector
-import models.core.Nino
-import models.incomeSourceDetails.TaxYear
+import mocks.connectors.MockFinancialDetailsConnector
+import testUtils.TestSupport
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
-@Singleton
-class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
-                                     implicit val ec: ExecutionContext){
-
-  def canCustomerClaimToAdjust(nino: Nino, taxYear: TaxYear): Future[Boolean] = ???
+class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector {
 
 }
