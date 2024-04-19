@@ -76,11 +76,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     isEnabled(ForecastCalculation) && calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
 
-  private def showUpdates(obligationsModel: ObligationsModel): Boolean = {
-    val hasObligations = obligationsModel.obligations.nonEmpty
-    hasObligations
-  }
-
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    taxYear: Int,
@@ -105,8 +100,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           documentDetailsWithDueDates,
           obligations,
           codingOutEnabled = codingOutEnabled,
-          showForecastData = showForecast(calculationSummary),
-          showUpdates = showUpdates(obligations)
+          showForecastData = showForecast(calculationSummary)
         )
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
@@ -128,8 +122,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           documentDetailsWithDueDates,
           obligations,
           codingOutEnabled,
-          isEnabled(ForecastCalculation),
-          showUpdates(obligations))
+          isEnabled(ForecastCalculation))
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, messagesApi, viewModel))

@@ -60,8 +60,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true,
-          showUpdates = true
+          testObligationsModel, codingOutEnabled = true, showForecastData = true
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -73,8 +72,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary.copy(timestamp = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true,
-          showUpdates = true
+          testObligationsModel, codingOutEnabled = true, showForecastData = true
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"
@@ -87,8 +85,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           Some(testCalculationSummary),
           testWithMissingOriginalAmountChargesList,
           testObligationsModel,
-          codingOutEnabled = true,
-          showUpdates = true
+          codingOutEnabled = true
         )
 
         thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"

@@ -24,17 +24,16 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    charges: List[DocumentDetailWithDueDate],
                                    obligations: ObligationsModel,
                                    codingOutEnabled: Boolean,
-                                   showForecastData: Boolean = false,
-                                   showUpdates: Boolean) {
+                                   showForecastData: Boolean = false
+                                  ) {
 
+  def showUpdates: Boolean = {
+    obligations.obligations.exists(_.obligations.nonEmpty)
+  }
 
   calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
     require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
     require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
-  })
-
-  obligations.obligations.filter(_ => showUpdates).foreach(maybeObligation => {
-    require(maybeObligation.obligations.nonEmpty)
   })
 
   require(charges.forall(_.documentDetail.originalAmount.isDefined), "missing originalAmount on charges")

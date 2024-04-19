@@ -272,8 +272,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock),
-        obligations = updates, codingOutEnabled = true,
-        showUpdates = true),
+        obligations = updates, codingOutEnabled = true
+        ),
       messages
     )
 
@@ -301,8 +301,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock),
-        obligations = updates, showForecastData = true, codingOutEnabled = true,
-        showUpdates = true)
+        obligations = updates, showForecastData = true, codingOutEnabled = true
+      )
     )
 
   def errorAuditResponseJson(auditResponse: JsObject, messages: Option[Messages]): JsObject = {

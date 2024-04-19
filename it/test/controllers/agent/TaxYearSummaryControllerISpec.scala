@@ -360,7 +360,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-            allObligations, codingOutEnabled = true, showForecastData = true, showUpdates = true)))
+            allObligations, codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -434,7 +434,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
             allObligations,
-            codingOutEnabled = true, showForecastData = true, showUpdates = true)))
+            codingOutEnabled = true, showForecastData = true)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -696,7 +696,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             auditDD,
-            allObligations, codingOutEnabled = true, showForecastData = true, showUpdates = true)))
+            allObligations, codingOutEnabled = true, showForecastData = true)))
 
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
