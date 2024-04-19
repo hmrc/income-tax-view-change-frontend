@@ -745,7 +745,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           documentDetails = documentDetailClass2Nic.documentDetail
         ))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
-          ObligationsModel(Nil)
+          testObligtionsModel
         )
 
         val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
