@@ -36,15 +36,6 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
   object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockFinancialDetailsService)
 
-  object TestClaimToAdjustService2 extends ClaimToAdjustService(mockFinancialDetailsConnector, mockFinancialDetailsService)
-
-  val mockClaimToAdjustService: ClaimToAdjustService = spy(TestClaimToAdjustService2)
-
-  def setupSpyMaybePoATaxYear(response: Option[TaxYear]): Unit = {
-    when(mockClaimToAdjustService.maybePoATaxYear(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-  }
-
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
@@ -57,15 +48,9 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     None
   )(FakeRequest())
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockClaimToAdjustService)
-  }
-
   "maybePoATaxYear method" should {
     "return a taxYear" when {
       "a user has document details relating to PoA data" in {
-
         mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
         val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly)
@@ -73,7 +58,6 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         whenReady(result) {
           result => result shouldBe Some(TaxYear(startYear = 2023, endYear = 2024))
         }
-
       }
     }
     "return None" when {
@@ -92,23 +76,23 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
   "canCustomerClaimToAdjust method" should {
     "return true" when {
       "maybePoATaxYear returns a non empty value in its future" in {
-        setupSpyMaybePoATaxYear(Some(TaxYear(2023, 2024)))
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+        mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
-        result.map {
-          case true => succeed
-          case false => fail("The user was found to NOT be able to claim to adjust when they should be able to")
+        val result = TestClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe true
         }
       }
     }
     "return false" when {
       "maybePoATaxYear returns None in its future" in {
-        setupSpyMaybePoATaxYear(None)
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+        mockGetAllFinancialDetails(List((2024, empty1553Response)))
 
-        result.map {
-          case true => fail("The user was found TO be able to claim to adjust when they should not be able to")
-          case false => succeed
+        val result = TestClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe false
         }
       }
     }
