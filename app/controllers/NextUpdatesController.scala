@@ -19,10 +19,9 @@ package controllers
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, OptOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import models.nextUpdates._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -30,15 +29,15 @@ import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
-import views.html.{NextUpdates, NoNextUpdates}
+import views.html.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
+                                      nextUpdatesOptOutView: NextUpdatesOptOut,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
@@ -87,7 +86,11 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                   (implicit user: MtdItUser[_]): Html = {
     auditNextUpdates(user, isAgent, origin)
     val viewModel = nextUpdatesService.getNextUpdatesViewModel(obligationsModel)
-    nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+    if (isEnabled(OptOut)) {
+      nextUpdatesOptOutView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+    } else {
+      nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+    }
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
