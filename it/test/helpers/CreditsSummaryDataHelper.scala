@@ -16,8 +16,9 @@
 
 package helpers
 
-import models.creditDetailModel.{BalancingChargeCreditType, CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.CreditDetailModel
 import models.financialDetails.DocumentDetail
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
 

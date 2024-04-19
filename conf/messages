@@ -1028,13 +1028,17 @@ paymentHistory.info                                             = To view your c
 paymentHistory.info.2                                           = This will be a different Government Gateway ID and password to your Agent Services account.
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
-paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
-paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
-paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
-paymentHistory.taxYear                                          = {0} to {1} tax year
-paymentHistory.balancingChargeCredit                            = Credit from overpaid tax
-paymentsHistory.CardRef                                         = Payment made by debit card ref:
+
 paymentHistory.refund                                           = Refund issued
+paymentHistory.payment                                          = Payment you made to HMRC
+paymentHistory.cutOver                                          = Credit from an earlier tax year
+paymentHistory.mfa                                              = Credit from HMRC adjustment
+paymentHistory.balancingCharge                                  = Credit from overpaid tax
+paymentHistory.repaymentInterest                                = Credit from repayment interest
+
+paymentHistory.taxYear                                          = {0} to {1} tax year
+
+paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
@@ -1131,9 +1135,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has res
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
 credit-and-refund.upcoming-allocated-credit-3                     = for further information.
 
-credit-and-refund.refundProgress-prt-1                            =
-credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
-credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
@@ -1155,7 +1156,23 @@ credit-and-refund.credit-from-earlier-tax-year                    = credit from 
 credit-and-refund.credit-from-earlier-tax-year-2                  = credit from an earlier tax year
 
 credit-and-refund.payment                                         = from a payment you made to HMRC on
-credit-and-refund.credit                                          =
+
+credit-and-refund.refundProgress-prt-1                            =
+credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
+
+credit-and-refund.row.mfa-1                                       =
+credit-and-refund.row.mfa-2                                       = credit from HMRC adjustment -
+
+credit-and-refund.row.cutOver-1                                   =
+credit-and-refund.row.cutOver-2                                   = credit from an earlier tax year -
+
+credit-and-refund.row.balancingCharge-1                           =
+credit-and-refund.row.balancingCharge-2                           = credit from overpaid tax -
+
+credit-and-refund.row.repaymentInterest-1                      =
+credit-and-refund.row.repaymentInterest-2                      = credit from repayment interest -
+
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1465,7 +1482,7 @@ incomeSources.add.SE.AccountingMethod.drop-down-text          = You created an i
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 
-incomeSources.add.AccountingMethod.no-selection               = Select if you use cash or standard accounting
+incomeSources.add.AccountingMethod.no-selection               = Select if you use cash basis or traditional accounting
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
 incomeSources.ceaseBusiness.checkDetails.caption                    = Sole trader business
@@ -1607,6 +1624,24 @@ business-ceased.obligation.heading1.uk-property.part2               = UK propert
 business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
 business-ceased.obligation.heading1.base                            = has ceased
 business-ceased.obligation.heading2.text                            = What you must do
+business-ceased.obligation.next-update.text                         = Your next upcoming update
+business-ceased.obligation.next-update.next-quarterly.text          = Your next quarterly update for tax year {0} to {1} is due by
+business-ceased.obligation.next-update.final-declaration.text       = Your final declaration for tax year {0} to {1} is due by
+business-ceased.obligation.view-all-business-link.text              = View all your businesses
+business-ceased.obligation.view-updates.text                        = View your upcoming updates
+business-ceased.obligation.view-updates-overdue.text                = View your overdue and upcoming updates
+business-ceased.obligation.capital-gain-tax.text                    = Capital gain tax
+business-ceased.obligation.capital-gain-tax.info1.text              = If you’ve sold property, you may need to pay Capital Gains Tax.
+business-ceased.obligation.capital-gain-tax.info2.text              = Check what you need to pay Capital Gains Tax on
+business-ceased.obligation.inset.single.text                        = You have <b>1 overdue update</b>.
+business-ceased.obligation.inset.multiple.text                      = You have <b>{0} overdue updates</b>.
+business-ceased.obligation.inset.quarterly.single.text              = You must submit this update with all required income and expenses through your record keeping software.
+business-ceased.obligation.inset.quarterly.multiple.text            = You must submit these updates with all required income and expenses through your record keeping software.
+business-ceased.obligation.inset.annually.text                      = You must submit your final declarations and pay the tax you owe
+business-ceased.obligation.inset.previous-year.text                 = You must make sure that you have sent all the required income and expenses for the tax year earlier than {0} to {1}.
+
+
+
 
 business-ceased.obligation.quarterly-heading                        = Send quarterly updates
 business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1691,32 +1726,36 @@ incomeSources.manage.quarterly-period.standard                        =   Standa
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
 incomeSources.manage.quarterly-period.standard.summary                =   What is a standard quarterly period?
 incomeSources.manage.quarterly-period.calendar.summary                =   What is a calendar quarterly period?
-incomeSources.manage.quarterly-period.standard.content.p1             =   This income source is reporting from 6th April in line with the tax year, also known as standard quarters.
-incomeSources.manage.quarterly-period.standard.content.p2             =   You can change this to report from the 1st of the month, by calendar quarters, in your compatible software if it supports it.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   This income source is currently reporting from the 1st April by calendar quarters.
+incomeSources.manage.quarterly-period.standard.content.p1             =   This business is reporting from 6th April in line with the tax year, also known as standard quarters.
+incomeSources.manage.quarterly-period.standard.content.p2             =   If your software supports it, you can change this to report from the 1st of the month by calendar quarters.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from the 1st April by calendar quarters.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
-incomeSources.manage.quarterly-period.content.p3                      =   Learn more about quarterly periods
+incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
+incomeSources.manage.quarterly-period.content.graceperiod.info        =   The business is currently within a grace period. From April {0} when the grace period ends, you will be required to report quarterly.
 
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
-incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader business
+incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader
 incomeSources.manage.business-manage-details.business-name            =   Business name
-incomeSources.manage.business-manage-details.business-address         =   Business address
+incomeSources.manage.business-manage-details.business-address         =   Address
 incomeSources.manage.business-manage-details.date-started             =   Date started
-incomeSources.manage.business-manage-details.accounting-method        =   Accounting method for sole trader income
-incomeSources.manage.business-manage-details.reporting-method         =   Income reporting method {0}-{1}
+incomeSources.manage.business-manage-details.accounting-method        =   Accounting method
+incomeSources.manage.business-manage-details.reporting-method         =   Reporting frequency {0} to {1}
 incomeSources.manage.business-manage-details.change                   =   Change
 incomeSources.manage.business-manage-details.quarterly                =   Quarterly
 incomeSources.manage.business-manage-details.annually                 =   Annually
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly (grace period)
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Annually (grace period)
 incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
+incomeSources.manage.business-manage-details.tradetype                =   Type of trade
 
-incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property business
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method for UK property income
+incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
+incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
-incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income
+incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property
+incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method
 
 incomeSources.cease.error.UK.notCeased.text                       = Your UK property business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
@@ -1790,6 +1829,14 @@ manageBusinesses.type-of-property.h2                                     = What 
 manageBusinesses.type-of-property.uk                                     = UK property business
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
+
+
+# credits
+
+credit.description.balancingCharge                                    = Credit from overpaid tax
+credit.description.cutOver                                            = Credit from an earlier tax year
+credit.description.mfa                                                = Credit from HMRC adjustment
+credit.description.repaymentInterest                                  = Credit from repayment interest
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Businesses that have ceased

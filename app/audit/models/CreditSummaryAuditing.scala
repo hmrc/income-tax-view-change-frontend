@@ -16,9 +16,11 @@
 
 package audit.models
 
-import models.creditDetailModel.{CreditDetailModel, CreditType}
+import models.creditDetailModel.CreditDetailModel
+import models.financialDetails.CreditType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
+
 import scala.language.implicitConversions
 
 object CreditSummaryAuditing {
@@ -32,7 +34,7 @@ object CreditSummaryAuditing {
   }
 
   private def toDescription(creditType: CreditType)
-                           (implicit messages: MessagesApi): String = messages(creditType.key)(Lang("en"))
+                           (implicit messages: MessagesApi): String = messages(s"credit.description.${creditType.key}")(Lang("en"))
 
   implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
                                                       (implicit messages: MessagesApi): CreditSummaryDetails = {

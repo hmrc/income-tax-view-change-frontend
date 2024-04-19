@@ -27,8 +27,6 @@ class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Config
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
   lazy val desSimulatorUrl: String = servicesConfig.baseUrl("des-simulator")
 
-  lazy val sessionDataUrl: String = servicesConfig.baseUrl("session-data")
-
   lazy val matchingStubUrl: String = servicesConfig.baseUrl("matching-stub")
 
   lazy val optOutUserPrefixes: Seq[String] = config.get[Seq[String]]("optOutNinoPrefix")

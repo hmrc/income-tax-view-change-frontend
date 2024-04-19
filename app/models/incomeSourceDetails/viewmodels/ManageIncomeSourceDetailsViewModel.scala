@@ -23,6 +23,7 @@ import models.incomeSourceDetails.{LatencyDetails, QuarterReportingType}
 import java.time.LocalDate
 
 case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
+                                              incomeSource: Option[String],
                                               tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],

@@ -18,7 +18,8 @@ package testConstants
 
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
-import models.creditDetailModel.{BalancingChargeCreditType, CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.CreditDetailModel
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -88,6 +89,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000123,
         "transactionDate" -> "2020-08-16",
         "type" -> "type",
@@ -119,6 +121,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2020",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000124,
         "transactionDate" -> "2020-08-16",
         "type" -> "type",
@@ -195,6 +198,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000123,
         "transactionDate" -> "2020-08-16",
         "type" -> "type",
@@ -226,6 +230,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2020",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000124,
         "transactionDate" -> "2020-08-16",
         "type" -> "type",
@@ -294,6 +299,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000123,
         "transactionDate" -> "transactionDate",
         "type" -> "type",
@@ -321,6 +327,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2020",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000124,
         "transactionDate" -> "transactionDate",
         "type" -> "type",
@@ -380,6 +387,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000123,
         "transactionDate" -> "transactionDate",
         "type" -> "type",
@@ -407,6 +415,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2020",
         "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
         "transactionId" -> id1040000124,
         "transactionDate" -> "transactionDate",
         "type" -> "type",
@@ -470,6 +479,7 @@ object FinancialDetailsTestConstants {
 
   def financialDetail(taxYear: Int = 2018,
                       mainType: String = "SA Payment on Account 1",
+                      mainTransaction: String = "4920",
                       chargeType: String = NIC4_WALES,
                       originalAmount: BigDecimal = 100,
                       dunningLock: Option[String] = None,
@@ -481,6 +491,7 @@ object FinancialDetailsTestConstants {
                      ): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
+    mainTransaction = Some(mainTransaction),
     transactionId = transactionId,
     transactionDate = Some(LocalDate.parse("2022-08-16")),
     `type` = Some("type"),
@@ -570,7 +581,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
         paymentLotItem = None, latePaymentInterestAmount = None)),
-      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction")
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction", mainTransaction = "4022")
       )
     )
 
@@ -665,6 +676,7 @@ object FinancialDetailsTestConstants {
       FinancialDetail(
         taxYear = "2019",
         mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
         transactionId = Some(id1040000123),
         transactionDate = Some(LocalDate.parse("2020-08-16")),
         `type` = Some("type"),
@@ -693,6 +705,7 @@ object FinancialDetailsTestConstants {
       FinancialDetail(
         taxYear = "2020",
         mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
         transactionId = Some(id1040000124),
         transactionDate = Some(LocalDate.parse("2020-08-16")),
         `type` = Some("type"),
@@ -737,6 +750,7 @@ object FinancialDetailsTestConstants {
                                         dunningLock: List[Option[String]],
                                         documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
                                         mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+                                        mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                         outstandingAmount: List[Option[BigDecimal]] = List(Some(50), Some(75)),
                                         taxYear: String = fixedDate.getYear.toString,
                                         balanceDetails: BalanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)): FinancialDetailsModel =
@@ -749,13 +763,14 @@ object FinancialDetailsTestConstants {
           None, None, None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = dunningLock(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = dunningLock(1)))))
       )
     )
 
   def testFinancialDetailsModelWithNoLpi(documentDescription: List[Option[String]],
                                          mainType: List[Option[String]],
+                                         mainTransaction: List[Option[String]],
                                          dueDate: List[Option[LocalDate]],
                                          outstandingAmount: List[Option[BigDecimal]],
                                          taxYear: String): FinancialDetailsModel =
@@ -768,13 +783,14 @@ object FinancialDetailsTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
                                             mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+                                            mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                             dueDate: List[Option[LocalDate]],
                                             dunningLock: List[Option[String]],
                                             outstandingAmount: List[Option[BigDecimal]] = List(Some(50), Some(75)),
@@ -789,8 +805,8 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate(1), dunningLock = dunningLock(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate(1), dunningLock = dunningLock(1)))))
       )
     )
 
@@ -809,7 +825,7 @@ object FinancialDetailsTestConstants {
         )
       ),
       financialDetails = List(
-        FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
           Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
       )
     )
@@ -828,7 +844,7 @@ object FinancialDetailsTestConstants {
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )),
       financialDetails = List(
-        FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
           Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
       )
     )
@@ -847,7 +863,7 @@ object FinancialDetailsTestConstants {
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )),
       financialDetails = List(
-        FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
           Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
       )
     )
@@ -864,13 +880,14 @@ object FinancialDetailsTestConstants {
           documentDueDate = Some(LocalDate.parse("2019-05-15"))
         )),
       financialDetails = List(
-        FinancialDetail("2018", Some("ITSA PAYE Charge"), Some("id1040000123"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(1400),
+        FinancialDetail("2018", Some("ITSA PAYE Charge"), Some("4000"), Some("id1040000123"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(1400),
           Some(1400), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2019-05-15"))))))
       )
     )
 
   def testFinancialDetailsModelWithLPI(documentDescription: List[Option[String]],
                                        mainType: List[Option[String]],
+                                       mainTransaction: List[Option[String]],
                                        dueDate: List[Option[LocalDate]],
                                        dunningLock: List[Option[String]],
                                        outstandingAmount: List[Option[BigDecimal]],
@@ -884,13 +901,14 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = dunningLock(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = dunningLock(1)))))
       )
     )
 
   def testFinancialDetailsModelWithLPIDunningLock(documentDescription: List[Option[String]],
                                                   mainType: List[Option[String]],
+                                                  mainTransaction: List[Option[String]],
                                                   dueDate: List[Option[LocalDate]],
                                                   outstandingAmount: List[Option[BigDecimal]],
                                                   taxYear: String,
@@ -905,13 +923,14 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithLpiDunningLockZero(documentDescription: List[Option[String]],
                                                       mainType: List[Option[String]],
+                                                      mainTransaction: List[Option[String]],
                                                       dueDate: List[Option[LocalDate]],
                                                       outstandingAmount: List[Option[BigDecimal]],
                                                       taxYear: String,
@@ -926,13 +945,14 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithNoLpi(documentDescription: List[Option[String]],
                                          mainType: List[Option[String]],
+                                         mainTransaction: List[Option[String]],
                                          dueDate: List[Option[LocalDate]],
                                          outstandingAmount: List[Option[BigDecimal]],
                                          taxYear: String,
@@ -945,13 +965,14 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
+                                                     mainTransaction: List[Option[String]],
                                                      dueDate: List[Option[LocalDate]],
                                                      outstandingAmount: List[Option[BigDecimal]],
                                                      taxYear: String,
@@ -967,13 +988,14 @@ object FinancialDetailsTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelOneItemInList(documentDescription: Option[String],
                                              mainType: Option[String],
+                                             mainTransaction: Option[String],
                                              dueDate: Option[LocalDate],
                                              outstandingAmount: Option[BigDecimal],
                                              taxYear: String): FinancialDetailsModel =
@@ -986,7 +1008,7 @@ object FinancialDetailsTestConstants {
           documentDueDate = dueDate)
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate))))
+        FinancialDetail(taxYear, mainType, mainTransaction, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate))))
       )
     )
 
@@ -1045,6 +1067,7 @@ object FinancialDetailsTestConstants {
   val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("TRM New Charge"), Some("TRM Amend Charge")),
     mainType = List(Some("SA Balancing Charge"), Some("SA Balancing Charge")),
+    mainTransaction = List(Some("4910"), Some("4910")),
     dueDate = dueDateOverdue,
     dunningLock = noDunningLocks
   )
@@ -1052,6 +1075,7 @@ object FinancialDetailsTestConstants {
   val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
     mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    mainTransaction = List(Some("4000"), Some("4022")),
     dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(35))),
     outstandingAmount = List(Some(100), Some(50)),
     taxYear = fixedDate.getYear.toString,
@@ -1062,6 +1086,7 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(35)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(Some(25), Some(50)),
     taxYear = fixedDate.getYear.toString
@@ -1070,6 +1095,7 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString
@@ -1078,6 +1104,7 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithMixedData3: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString,
@@ -1090,6 +1117,7 @@ object FinancialDetailsTestConstants {
                                                   ): FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = outstandingAmount,
     taxYear = fixedDate.getYear.toString,
@@ -1153,6 +1181,7 @@ object FinancialDetailsTestConstants {
     chargesList =
       testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
         mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+        mainTransaction = List(Some("4920"), Some("4930")),
         dueDate = dueDateOverdue,
         dunningLock = oneDunningLock,
         outstandingAmount = List(Some(50), Some(75)),
@@ -1163,11 +1192,13 @@ object FinancialDetailsTestConstants {
       ).getAllDocumentDetailsWithDueDates() ++
         testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
           mainType = Some("SA Payment on Account 2"),
+          mainTransaction = Some("4930"),
           dueDate = Some(fixedDate.plusDays(1)),
           outstandingAmount = Some(100),
           taxYear = fixedDate.getYear.toString).getAllDocumentDetailsWithDueDates() ++
         testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
           mainType = Some("SA Payment on Account 1"),
+          mainTransaction = Some("4920"),
           dueDate = Some(fixedDate.plusDays(45)),
           outstandingAmount = Some(125),
           taxYear = fixedDate.getYear.toString).getAllDocumentDetailsWithDueDates(),
@@ -1199,11 +1230,11 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = creditDocumentDetailList,
     financialDetails = List(
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
     )
   )
@@ -1212,11 +1243,11 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(0), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailList,
     financialDetails = List(
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
     )
   )
@@ -1230,11 +1261,11 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailListMFA,
     financialDetails = List(
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
     )
   )
@@ -1257,17 +1288,17 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(1.00), Some(6.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailAllCreditTypesList,
     financialDetails = List(
-      FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("BCC01"), totalAmount = Some(250), originalAmount = Some(250), outstandingAmount = Some(250), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("BCC02"), totalAmount = Some(125), originalAmount = Some(125), outstandingAmount = Some(125), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("MFACREDIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("MFACREDIT02"), totalAmount = Some(1000), originalAmount = Some(1000), outstandingAmount = Some(1000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA PAYE in year Repayment"), Some("MFACREDIT03"), totalAmount = Some(800), originalAmount = Some(800), outstandingAmount = Some(800), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("CUTOVERCREDIT01"), totalAmount = Some(200), originalAmount = Some(200), outstandingAmount = Some(200), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("CUTOVERCREDIT02"), totalAmount = Some(2000), originalAmount = Some(2000), outstandingAmount = Some(2000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("CUTOVERCREDIT03"), totalAmount = Some(700), originalAmount = Some(700), outstandingAmount = Some(700), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+      FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("4905"), Some("BCC01"), totalAmount = Some(250), originalAmount = Some(250), outstandingAmount = Some(250), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("4905"), Some("BCC02"), totalAmount = Some(125), originalAmount = Some(125), outstandingAmount = Some(125), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2021", Some("SA Payment on Account 1"), Some("4920"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+      FinancialDetail("2021", Some("SA Payment on Account 1"), Some("4920"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("SA Payment on Account 1"), Some("4920"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("4004"), Some("MFACREDIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("4004"), Some("MFACREDIT02"), totalAmount = Some(1000), originalAmount = Some(1000), outstandingAmount = Some(1000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA PAYE in year Repayment"), Some("4011"), Some("MFACREDIT03"), totalAmount = Some(800), originalAmount = Some(800), outstandingAmount = Some(800), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("6110"), Some("CUTOVERCREDIT01"), totalAmount = Some(200), originalAmount = Some(200), outstandingAmount = Some(200), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("6110"), Some("CUTOVERCREDIT02"), totalAmount = Some(2000), originalAmount = Some(2000), outstandingAmount = Some(2000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("6110"), Some("CUTOVERCREDIT03"), totalAmount = Some(700), originalAmount = Some(700), outstandingAmount = Some(700), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )
 
@@ -1440,9 +1471,12 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = MFADebitsDocumentDetails,
     financialDetails = List(
-      FinancialDetail("2018", Some("ITSA PAYE Charge"), Some("MFADEBIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Calc Error Correction"), Some("MFADEBIT02"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2018", Some("ITSA Manual Penalty Pre CY-4"), Some("MFADEBIT03"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+      FinancialDetail(taxYear = "2018", mainType = Some("ITSA PAYE Charge"), mainTransaction = Some("4000"), transactionId = Some("MFADEBIT01"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainType = Some("ITSA Calc Error Correction"), mainTransaction = Some("4022"), transactionId = Some("MFADEBIT02"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainType = Some("ITSA Manual Penalty Pre CY-4"), mainTransaction = Some("4002"), transactionId = Some("MFADEBIT03"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )
 
@@ -1476,6 +1510,7 @@ object CreditAndRefundConstants {
                                                         dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: String = "SA Payment on Account 1",
+                                                        mainTransaction: String = "4920",
                                                         paymentLot: Option[String] = None,
                                                         paymentLotItem: Option[String] = None
                                                        ):
@@ -1486,7 +1521,23 @@ object CreditAndRefundConstants {
       outstandingAmount = outstandingAmount,
       dueDate = dueDate,
       originalAmount = originalAmount),
-      financialDetail(mainType = mainType))
+      financialDetail(mainType = mainType, mainTransaction = mainTransaction))
+  }
+
+  def documentAndFinancialDetailWithCreditType(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0)), mainType: String, mainTransaction: String):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      taxYear = taxYear,
+      paymentLot = None,
+      paymentLotItem = None,
+      documentDescription = Some("TRM New Charge"),
+      outstandingAmount = outstandingAmount,
+      originalAmount = Some(BigDecimal(-2400.0))),
+      financialDetail(
+        taxYear = taxYear,
+        mainType = mainType,
+        mainTransaction = mainTransaction)
+    )
   }
 
   def documentDetailWithDueDateFinancialDetailListModelMFA(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
@@ -1498,7 +1549,8 @@ object CreditAndRefundConstants {
       documentDescription = Some("TRM New Charge"),
       outstandingAmount = outstandingAmount,
       originalAmount = Some(BigDecimal(-2400.0))),
-      financialDetail(mainType = "ITSA Overpayment Relief")
+      financialDetail(mainType = "ITSA Overpayment Relief",
+        mainTransaction = "4004")
     )
   }
 }

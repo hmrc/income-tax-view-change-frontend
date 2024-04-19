@@ -16,27 +16,27 @@
 
 package testOnly.connectors
 
+import config.FrontendAppConfig
 import connectors.RawResponseReads
 import play.api.libs.json.{JsValue, Json}
-import testOnly.TestOnlyAppConfig
 import testOnly.models.SessionDataModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataConnector @Inject()(val appConfig: TestOnlyAppConfig,
+class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                      val http: HttpClient
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def getSessionData(sessionId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.sessionDataUrl}/income-tax-session-data/$sessionId"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/$sessionId"
 
     http.GET[HttpResponse](url)(httpReads, hc, ec)
   }
 
   def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.sessionDataUrl}/income-tax-session-data/"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)
 

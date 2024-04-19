@@ -1020,11 +1020,11 @@ paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
-paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
-paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
-paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.cutOver                                          = Credyd o flwyddyn dreth gynharach
+paymentHistory.mfa                                              = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
-paymentHistory.balancingChargeCredit                            = Credyd o ordaliad treth
+paymentHistory.balancingCharge                                  = Credyd o ordaliad treth
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -1149,12 +1149,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF we
 credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
 credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
 
-
-credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
-credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
-
-credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
-
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
@@ -1184,7 +1178,22 @@ credit-and-refund.credit-from-earlier-tax-year                    = credyd o flw
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
 
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
-credit-and-refund.credit                                          = Credyd o
+
+credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
+credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
+
+credit-and-refund.row.mfa-1                                       = Credyd o
+credit-and-refund.row.mfa-2                                       = o ganlyniad i addasiad gan CThEF -
+
+credit-and-refund.row.cutOver-1                                   = Credyd o
+credit-and-refund.row.cutOver-2                                   = o flwyddyn dreth gynharach -
+
+credit-and-refund.row.balancingCharge-1                           = Credyd o
+credit-and-refund.row.balancingCharge-2                           = o ordaliad treth -
+
+credit-and-refund.row.repaymentInterest-1                         = Credyd o
+credit-and-refund.row.repaymentInterest-2                         = o log ar ad-daliadau -
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1450,7 +1459,7 @@ incomeSources.add.SE.AccountingMethod.drop-down-text          = Gwnaethoch greu 
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
 
-incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu ar sail arian parod neu gyfrifyddu safonol
+incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu arian parod neu gyfrifyddu traddodiadol
 
 # add Business start date check
 add-business-start-date-check.heading                = A yw’r dyddiad hwn yn gywir?
@@ -1603,6 +1612,22 @@ business-ceased.obligation.heading1.uk-property.part2               = Eiddo yn y
 business-ceased.obligation.heading1.foreign-property.part2          = Eiddo tramor
 business-ceased.obligation.heading1.base                            = wedi dod i ben
 business-ceased.obligation.heading2.text                            = Yr hyn y mae’n rhaid i chi ei wneud
+business-ceased.obligation.next-update.text                         = Eich diweddariad nesaf sydd ar y gweill
+business-ceased.obligation.next-update.next-quarterly.text          = Y dyddiad cau ar gyfer cyflwyno’ch datganiad terfynol ar gyfer blwyddyn dreth {0} i {1} yw
+business-ceased.obligation.next-update.final-declaration.text       = Y dyddiad cau ar gyfer cyflwyno’ch datganiad terfynol ar gyfer blwyddyn dreth {0} i {1} yw
+business-ceased.obligation.view-all-business-link.text              = Bwrw golwg dros eich busnesau
+business-ceased.obligation.view-updates.text                        = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+business-ceased.obligation.view-updates-overdue.text                = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
+business-ceased.obligation.capital-gain-tax.text                    = Treth enillion cyfalaf
+business-ceased.obligation.capital-gain-tax.info1.text              = Os ydych wedi gwerthu eiddo, efallai y bydd yn rhaid i chi dalu Treth Enillion Cyfalaf.
+business-ceased.obligation.capital-gain-tax.info2.text              = Gwiriwch yr hyn sydd ei angen arnoch i dalu Treth Enillion Cyfalaf (yn agor tab newydd)
+business-ceased.obligation.inset.single.text                        = Mae gennych <b>1 diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.multiple.text                      = Mae gennych <b>{0} diweddariad sy’n hwyr</b>.
+business-ceased.obligation.inset.quarterly.single.text              = Mae’n rhaid i chi gyflwyno’r diweddariad hwn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
+business-ceased.obligation.inset.quarterly.multiple.text            = Mae’n rhaid i chi gyflwyno’r diweddariadau hyn gyda’r holl incwm a threuliau sydd eu hangen trwy eich meddalwedd cadw cofnodion.
+business-ceased.obligation.inset.annually.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch.
+business-ceased.obligation.inset.previous-year.text                 = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {0} i {1}.
+
 
 business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-ceased.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
@@ -1671,31 +1696,35 @@ incomeSources.manage.quarterly-period.standard                        =   Safono
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
 incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
-incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r ffynhonnell incwm hon yn adrodd o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwch newid hyn i adrodd o’r 1af o’r mis, yn ôl chwarterau calendr, yn eich meddalwedd sy’n cydweddu os yw’n gallu gwneud hynny.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
-incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am gyfnodau chwarterol
+incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
+incomeSources.manage.quarterly-period.content.graceperiod.info        =   Mae’r busnes o fewn cyfnod gras ar hyn o bryd. O Ebrill {0} ymlaen, pan mae’r cyfnod, bydd angen i chi cyflwyno adroddiadau’n chwarterol.
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
-incomeSources.manage.business-manage-details.sole-trader-section      =   Busnesau unig fasnachwr
+incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
-incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad y busnes
+incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad
 incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
-incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-incomeSources.manage.business-manage-details.reporting-method         =   Dull o adrodd am incwm ar gyfer {0}-{1}
+incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu
+incomeSources.manage.business-manage-details.reporting-method         =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
 incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter (cyfnod gras)
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob blwyddyn (cyfnod gras)
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
+incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 
-incomeSources.manage.uk-property-manage-details.uk-property-section              =   Busnes eiddo yn y DU
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu ar gyfer incwm o eiddo yn y DU
+incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
+incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 
-incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
+incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Eiddo tramor
+incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu
 
 incomeSources.cease.error.UK.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo yn y DU i ben. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.cease.error.FP.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo tramor i ben. Rhowch gynnig arall arni yn nes ymlaen.
@@ -1777,6 +1806,11 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+credit.description.balancingCharge                                      = Credyd o ordaliad treth
+credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
+credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
+credit.description.repaymentInterest                                    = Credyd o log ar ad-daliadau
 
 # businesses that have ceased
 manageBusinesses.ceased.heading                                          = Busnesau sydd wedi dod i ben

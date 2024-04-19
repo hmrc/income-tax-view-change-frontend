@@ -46,7 +46,10 @@ case class Payment(reference: Option[String],
                    documentDate: LocalDate,
                    transactionId: Option[String],
                    mainType: Option[String] = None,
+                   mainTransaction: Option[String] = None,
                    clearingSAPDocument: Option[String] = None) {
+
+  val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 
   def credit: Option[BigDecimal] = amount match {
     case None => None
@@ -54,14 +57,6 @@ case class Payment(reference: Option[String],
     case Some(_) if (amount.get > 0.00) => None
     case Some(credit) => Some(credit)
   }
-
-  def isCutOverCredit: Boolean = mainType.contains("ITSA Cutover Credits") && credit.isDefined
-
-  def isBalancingChargeCredit: Boolean = mainType.contains("SA Balancing Charge Credit") && credit.isDefined
-
-  def isMFACredit: Boolean = MfaCreditUtils.validMFACreditType(mainType) && credit.isDefined
-
-  def isPaymentToHMRC: Boolean = credit.isEmpty && lotItem.isDefined && lot.isDefined
 
   def allocationStatus(): Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
     case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>

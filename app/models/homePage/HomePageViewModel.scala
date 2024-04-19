@@ -30,7 +30,17 @@ case class HomePageViewModel(utr: Option[String],
                             dunningLockExists: Boolean = false,
                             origin: Option[String] = None)
 
-case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int])
+case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int) {
+
+  def verify: Either[Throwable, NextPaymentsTileViewModel] = {
+    if (!(overDuePaymentsCount == 0) && nextPaymentDueDate.isEmpty) {
+      Left(new Exception("Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"))
+    } else {
+      Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount))
+    }
+  }
+
+}
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
 
