@@ -26,11 +26,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
-                                     val financialDetailsService: FinancialDetailsService,
-                                     implicit val ec: ExecutionContext){
+                                     val financialDetailsService: FinancialDetailsService)
+                                    (implicit ec: ExecutionContext) {
 
-  def canCustomerClaimToAdjust(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Boolean] = ???
+  def canCustomerClaimToAdjust(nino: String)(implicit hc: HeaderCarrier): Future[Boolean] = ???
 
-  def maybePoATaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = ???
+  def maybePoATaxYear(nino: String)(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = ???
 
 }
