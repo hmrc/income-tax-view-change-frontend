@@ -770,5 +770,42 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
       }
     }
+
+    "calls to retrieve data were successful with No Obligations and Referer was a Home page" should {
+      "show the Tax Year Summary Page and back link to the Home page" in {
+        enable(CodingOut)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetails(
+          documentDetails = documentDetailClass2Nic.documentDetail
+        ))
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
+        )
+
+        val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
+
+        val expectedContent: String = taxYearSummaryView(
+          testYearPlusTwo,
+          TaxYearSummaryViewModel(
+            Some(calcOverview),
+            class2NicsChargesList,
+            testObligtionsModel,
+            codingOutEnabled = true,
+            showUpdates = false),
+          agentHomeBackLink,
+          isAgent = true,
+        ).toString
+
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe expectedContent
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+      }
+    }
   }
 }

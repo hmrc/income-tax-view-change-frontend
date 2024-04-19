@@ -37,7 +37,6 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     require(maybeObligation.obligations.nonEmpty)
   })
 
-
   require(charges.forall(_.documentDetail.originalAmount.isDefined), "missing originalAmount on charges")
 
 }
