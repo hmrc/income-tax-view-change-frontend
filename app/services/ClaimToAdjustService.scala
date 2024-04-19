@@ -40,7 +40,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def maybePoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
     val a = financialDetailsService.getAllFinancialDetails map {
-      item => item.collect({ case (_, model: FinancialDetailsModel) => getPoAPayments(model.documentDetails)})
+      item => item.collect({ case (_, model: FinancialDetailsModel) =>
+        getPoAPayments(model.documentDetails)})
     }
     a.map(_.headOption.flatten)
   }

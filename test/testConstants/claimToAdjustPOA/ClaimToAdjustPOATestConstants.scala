@@ -41,7 +41,7 @@ object ClaimToAdjustPOATestConstants {
   val documentDetailPOA2 = DocumentDetail(
     taxYear = 2024,
     transactionId = "DOCID01",
-    documentDescription = Some("ITSA- POA 2"),
+    documentDescription = Some("ITSA - POA 2"),
     documentText = None,
     outstandingAmount = Some(100.00),
     originalAmount = Some(100.00),

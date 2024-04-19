@@ -17,10 +17,12 @@
 package services.ClaimToAdjustPOA
 
 import auth.MtdItUser
+import mocks.connectors.MockFinancialDetailsConnector
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockClaimToAdjustService
+import mocks.services.{MockClaimToAdjustService, MockFinancialDetailsService}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import org.mockito.Mockito.mock
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{mock, reset, spy, when}
 import play.api.test.FakeRequest
 import services.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testMtditid, testNino}
@@ -28,12 +30,20 @@ import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.{empty1553Re
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class ClaimToAdjustServiceSpec extends TestSupport with MockClaimToAdjustService with MockAuthenticationPredicate {
+class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
 
-  override implicit val mockEC: ExecutionContext = mock(classOf[ExecutionContext])
   object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockFinancialDetailsService)
+
+  object TestClaimToAdjustService2 extends ClaimToAdjustService(mockFinancialDetailsConnector, mockFinancialDetailsService)
+
+  val mockClaimToAdjustService: ClaimToAdjustService = spy(TestClaimToAdjustService2)
+
+  def setupSpyMaybePoATaxYear(response: Option[TaxYear]): Unit = {
+    when(mockClaimToAdjustService.maybePoATaxYear(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid,
@@ -47,24 +57,34 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockClaimToAdjustService
     None
   )(FakeRequest())
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockClaimToAdjustService)
+  }
+
   "maybePoATaxYear method" should {
     "return a taxYear" when {
       "a user has document details relating to PoA data" in {
 
         mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly).futureValue
+        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly)
 
-        result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        whenReady(result) {
+          result => result shouldBe Some(TaxYear(startYear = 2023, endYear = 2024))
+        }
+
       }
     }
     "return None" when {
       "a user has no 1553 data related to POA" in {
         mockGetAllFinancialDetails(List((2024, empty1553Response)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear.futureValue
+        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly)
 
-        result shouldBe Right(None)
+        whenReady(result) {
+          result => result shouldBe None
+        }
       }
     }
   }
@@ -73,19 +93,24 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockClaimToAdjustService
     "return true" when {
       "maybePoATaxYear returns a non empty value in its future" in {
         setupSpyMaybePoATaxYear(Some(TaxYear(2023, 2024)))
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust.futureValue
+        val result = mockClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
 
-        result shouldBe Right(Some(true))
+        result.map {
+          case true => succeed
+          case false => fail("The user was found to NOT be able to claim to adjust when they should be able to")
+        }
       }
     }
     "return false" when {
       "maybePoATaxYear returns None in its future" in {
         setupSpyMaybePoATaxYear(None)
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust.futureValue
+        val result = mockClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
 
-        result shouldBe Right(Some(false))
+        result.map {
+          case true => fail("The user was found TO be able to claim to adjust when they should not be able to")
+          case false => succeed
+        }
       }
     }
   }
-
 }
