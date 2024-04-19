@@ -129,7 +129,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[DateServiceInterface].to[TestDateService])
-    .configure(config)
+    //.configure(config)
     .build()
 
 

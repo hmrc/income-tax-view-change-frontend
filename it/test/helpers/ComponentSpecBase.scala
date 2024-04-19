@@ -138,8 +138,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "calculation-polling.timeout" -> "3000",
     "calculation-polling.attempts" -> "10",
     "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
+
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
+
     "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
@@ -164,7 +166,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
     .overrides(bind[DateServiceInterface].to[TestDateService])
-    .configure(config)
+    //.configure(config)
     .build()
 
   override def beforeAll(): Unit = {
