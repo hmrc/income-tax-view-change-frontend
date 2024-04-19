@@ -55,7 +55,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
+        lot = None, lotItem = None, dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   "Navigating to the Charge Summary Page" should {
@@ -225,7 +225,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
 
       disable(ChargeHistory)
       enable(PaymentAllocation)
@@ -516,12 +516,12 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
               "subItem" -> "002",
               "dueDate" -> "2022-07-28",
               "clearingDate" -> "2022-07-28",
+              "clearingReason" -> "Cleared by Payment",
               "amount" -> 1200,
               "paymentReference" -> "GF235687",
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
-              "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         ),
@@ -544,7 +544,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
               "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "paymentLotItem" -> "5",
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         )

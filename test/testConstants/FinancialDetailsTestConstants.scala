@@ -574,14 +574,12 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  // TODO: MISUV-7407 UPDATE THIS
   def chargesWithAllocatedPaymentModel(taxYear: Int = 2018,
                                        outstandingAmount: Option[BigDecimal] = Some(1400.0),
                                        lpiWithDunningLock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        // charge
         documentDetailModel(
           taxYear = taxYear,
           outstandingAmount = outstandingAmount,
@@ -590,7 +588,6 @@ object FinancialDetailsTestConstants {
           lpiWithDunningLock = lpiWithDunningLock,
           transactionId = id1040000123
         ),
-        // payment on account
         documentDetailModel(taxYear = 9999,
           outstandingAmount = outstandingAmount.map(amount => -amount),
           paymentLot = Some("paymentLot"),

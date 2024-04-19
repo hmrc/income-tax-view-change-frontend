@@ -142,7 +142,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
     val paymentAllocations: List[PaymentsWithChargeType] =
       if (paymentAllocationEnabled) {
-        financialDetails.flatMap(_.allocation)
+        financialDetails.flatMap(_.chargeWithAllocatedPayment)
       } else Nil
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {

@@ -50,8 +50,8 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
     "contain only payment allocations with a defined message file" in {
       val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](variedFinancialDetailsJson)
 
-      result.get.financialDetails.head.allocation.get.payments.length shouldBe 1
-      result.get.financialDetails(1).allocation shouldBe None
+      result.get.financialDetails.head.chargeWithAllocatedPayment.get.payments.length shouldBe 1
+      result.get.financialDetails(1).chargeWithAllocatedPayment shouldBe None
 
     }
 

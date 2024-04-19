@@ -40,7 +40,6 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 
 
-//TODO: MISUV-7407 - Flesh out these tests
 class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
   with ImplicitDateFormatter

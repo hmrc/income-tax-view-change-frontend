@@ -54,7 +54,7 @@
 
                 val matchingPayment = payments.findMatchingPaymentDocument(payment.clearingSAPDocument)
 
-            if(matchingPayment.isDefined) {
+                if(matchingPayment.isDefined) {
                     val link = if(isAgent) {
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
                     } else {
@@ -62,9 +62,7 @@
                     }
                     val linkText = if (isMFADebit) messages("chargeSummary.paymentAllocations.mfaDebit") else
                         allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
-                                val x = messages(msg, codingOutFrom, codingOutTo)
-                                println(x)
-                                x
+                                messages(msg, codingOutFrom, codingOutTo)
                             }).getOrElse(
                             throw MissingFieldException("Allocation link text missing")
                         )
