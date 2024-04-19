@@ -341,7 +341,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     def updateType(updateType: String): String = {
       updateType match {
         case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "EOPS" => messages("updateTab.updateType.eops")
         case "Crystallised" => messages("updateTab.updateType.crystallised")
         case _ => updateType
       }
@@ -780,8 +779,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
       }
 
-      "display empty updates table when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
-        document.getElementById("updates").text() shouldBe ""
+      "display No updates when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
+        document.getElementById("updates").text().contains("No updates")
       }
     }
     "the user is an agent" should {

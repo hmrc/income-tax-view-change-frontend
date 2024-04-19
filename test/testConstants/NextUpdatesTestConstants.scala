@@ -118,18 +118,18 @@ object NextUpdatesTestConstants {
     LocalDate.of(2017, 1, 1),
     LocalDate.of(2018, 1, 1),
     LocalDate.of(2018, 1, 1),
-    "EOPS",
+    "Quarterly",
     Some(LocalDate.of(2018, 1, 30)),
-    "EOPS"
+    "#003"
   )
 
   val previousObligationFour: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 30),
-    "EOPS",
+    "Quarterly",
     Some(LocalDate.of(2019, 1, 30)),
-    "EOPS"
+    "#004"
   )
 
 
@@ -139,7 +139,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2019, 1, 31),
     "Crystallised",
     Some(LocalDate.of(2018, 1, 31)),
-    "Crystallised "
+    "Crystallised"
   )
 
 
@@ -187,7 +187,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 1),
-    obligationType = "EOPS",
+    obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002"
   ))
@@ -195,7 +195,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = mockedCurrentTime20171031,
-    obligationType = "EOPS",
+    obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#003"
   ))
@@ -223,11 +223,6 @@ object NextUpdatesTestConstants {
         obligations = List(
           openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1))))
       ),
-      obligationsEOPSDataSuccessModel.copy(
-        obligations = List(
-          overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))
-        )
-      ),
       obligationsCrystallisedSuccessModel.copy(
         obligations = List(
           crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6)))))
@@ -241,26 +236,6 @@ object NextUpdatesTestConstants {
   val obligationsCrystallisedOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsCrystallisedSuccessModel))
 
   val emptyObligationsSuccessModel: ObligationsModel = ObligationsModel(Seq())
-
-  val nextUpdateEOPSOverdueJson: JsValue = Json.obj(
-    "start" -> "2017-04-06",
-    "end" -> "2018-04-05",
-    "due" -> "2017-07-31",
-    "periodKey" -> "#002"
-  )
-  val nextUpdateEOPSOpenJson: JsValue = Json.obj(
-    "start" -> "2017-04-06",
-    "end" -> "2018-04-05",
-    "due" -> "2018-05-01",
-    "periodKey" -> "#003"
-  )
-  val obligationsEOPSDataSuccessJson: JsValue = Json.obj(
-    "obligations" -> Json.arr(
-      nextUpdateEOPSOverdueJson,
-      nextUpdateEOPSOpenJson
-    )
-  )
-
 
   val twoObligationsSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueObligation, openEOPSObligation))
 

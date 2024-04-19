@@ -1086,6 +1086,7 @@ updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
 updateTab.updateType.quarterly                                  = Quarterly update
 updateTab.updateType.crystallised                               = Final declaration
+updateTab.noUpdates                                             = No updates
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                           = Your final tax overview

@@ -1056,6 +1056,8 @@ updateTab.due                                                   = Yn ddyledus er
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
 updateTab.updateType.crystallised                               = Datganiad terfynol
+updateTab.noUpdates                                             = No updates but in Welsh
+
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English

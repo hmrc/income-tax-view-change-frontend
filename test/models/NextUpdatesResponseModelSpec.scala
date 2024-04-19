@@ -97,64 +97,6 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
     }
 
-    "for the 1st EOPS Obligation" should {
-
-      val obligation = obligationsEOPSDataSuccessModel.obligations.head
-
-      "have the start date as 6th April 2017" in {
-        obligation.start shouldBe "2017-4-6".toLocalDate
-      }
-
-      "have the end date as 5th April 2018" in {
-        obligation.end shouldBe "2018-4-5".toLocalDate
-      }
-
-      "have the due date as 1st Oct 2018" in {
-        obligation.due shouldBe "2017-10-1".toLocalDate
-      }
-
-      "have the periodKey as '#002'" in {
-        obligation.periodKey shouldBe "#002"
-      }
-
-      "return 'Open' with getObligationStatus" in {
-        getNextUpdateStatus(obligation) shouldBe Overdue("2017-10-1")
-      }
-
-      "have the obligation type 'Eops'" in {
-        obligation.obligationType shouldBe "EOPS"
-      }
-    }
-
-    "for the 2nd EOPS Obligation" should {
-
-      val obligation = obligationsEOPSDataSuccessModel.obligations(1)
-
-      "have the start date as 6th April 2017" in {
-        obligation.start shouldBe "2017-4-6".toLocalDate
-      }
-
-      "have the end date as 5th April 2018" in {
-        obligation.end shouldBe "2018-4-5".toLocalDate
-      }
-
-      "have the due date as 31st Oct 2018" in {
-        obligation.due shouldBe "2017-10-31".toLocalDate
-      }
-
-      "have the periodKey as '#003'" in {
-        obligation.periodKey shouldBe "#003"
-      }
-
-      "return 'Open' with getObligationStatus" in {
-        getNextUpdateStatus(obligation) shouldBe Open("2017-10-31")
-      }
-
-      "have the obligation type 'Eops'" in {
-        obligation.obligationType shouldBe "EOPS"
-      }
-    }
-
     "be formatted to JSON correctly" in {
       Json.toJson[NextUpdatesModel](nextUpdatesDataSelfEmploymentSuccessModel) shouldBe obligationsDataSuccessJson
     }

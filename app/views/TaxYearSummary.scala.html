@@ -273,7 +273,6 @@
 }
 
 @updatesContent = {
-    @if(groupedObligations.nonEmpty){
         @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
         @groupedObligations.map { case (due, dueObligations) =>
 
@@ -313,7 +312,6 @@
             }
         </div>
         }
-    }
 }
 
 @noForecastContent = {

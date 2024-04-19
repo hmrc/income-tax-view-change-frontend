@@ -90,7 +90,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       table.select(".govuk-table__head").text() shouldBe "Update type Income source"
 
-      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.crystallised")
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 
