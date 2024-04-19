@@ -272,6 +272,9 @@
     .sortBy(_._1)
 }
 
+@showUpdates = @{viewModel.showUpdates}
+
+
 @updatesContent = {
         @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
         @groupedObligations.map { case (due, dueObligations) =>
@@ -426,5 +429,5 @@
     }
 }
 
-    @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
+    @taxYearSummaryTabsPartial(showForecastData, showUpdates, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
 }
