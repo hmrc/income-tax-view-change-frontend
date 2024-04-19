@@ -86,7 +86,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       val table = section.select(".govuk-table")
 
-      table.select(".govuk-table__caption").text() shouldBe ""
+      table.select(".govuk-table__caption").text() shouldBe "Quarterly period from 6 Apr 2017 to 5 Apr 2018"
 
       table.select(".govuk-table__head").text() shouldBe "Update type Income source"
 

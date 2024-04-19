@@ -183,7 +183,7 @@ object NextUpdatesTestConstants {
     )
   )
 
-  val overdueEOPSObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
+  val overdueQuarterlyObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 1),
@@ -191,7 +191,7 @@ object NextUpdatesTestConstants {
     dateReceived = None,
     periodKey = "#002"
   ))
-  val openEOPSObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
+  val openQuarterlyObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = mockedCurrentTime20171031,
@@ -210,18 +210,23 @@ object NextUpdatesTestConstants {
   ))
 
 
-  val obligationsEOPSDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueEOPSObligation, openEOPSObligation))
+  val obligationsQuarterlyDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueQuarterlyObligation, openQuarterlyObligation))
 
   val obligationsCrystallisedSuccessModel: NextUpdatesModel = NextUpdatesModel(testMtditid, List(crystallisedObligation))
 
   val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel,
-    obligationsEOPSDataSuccessModel, obligationsCrystallisedSuccessModel))
+    obligationsQuarterlyDataSuccessModel, obligationsCrystallisedSuccessModel))
 
   val obligationsAllDeadlinesWithDateReceivedSuccessModel: ObligationsModel = ObligationsModel(
     Seq(
       nextUpdatesDataSelfEmploymentSuccessModel.copy(
         obligations = List(
           openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1))))
+      ),
+      obligationsQuarterlyDataSuccessModel.copy(
+        obligations = List(
+          overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))
+        )
       ),
       obligationsCrystallisedSuccessModel.copy(
         obligations = List(
@@ -231,13 +236,13 @@ object NextUpdatesTestConstants {
 
   val obligationsCrystallisedEmptySuccessModel: NextUpdatesModel = NextUpdatesModel(testNino, List())
 
-  val obligationsPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsEOPSDataSuccessModel, obligationsCrystallisedEmptySuccessModel))
+  val obligationsPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsQuarterlyDataSuccessModel, obligationsCrystallisedEmptySuccessModel))
 
   val obligationsCrystallisedOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsCrystallisedSuccessModel))
 
   val emptyObligationsSuccessModel: ObligationsModel = ObligationsModel(Seq())
 
-  val twoObligationsSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueObligation, openEOPSObligation))
+  val twoObligationsSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueObligation, openQuarterlyObligation))
 
   val crystallisedDeadlineSuccess: NextUpdatesModel = NextUpdatesModel(testMtditid, List(openCrystObligation))
 
