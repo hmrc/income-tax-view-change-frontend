@@ -38,8 +38,8 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach with Moc
     reset(mockClaimToAdjustService)
   }
 
-  def setupSpyMaybePoATaxYear(nino: String)(response: Option[TaxYear]): Unit = {
-    when(mockClaimToAdjustService.maybePoATaxYear(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+  def setupSpyMaybePoATaxYear(response: Option[TaxYear]): Unit = {
+    when(mockClaimToAdjustService.maybePoATaxYear(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

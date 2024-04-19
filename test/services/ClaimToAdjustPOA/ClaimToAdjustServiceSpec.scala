@@ -16,27 +16,44 @@
 
 package services.ClaimToAdjustPOA
 
-import mocks.connectors.MockFinancialDetailsConnector
-import mocks.services.{MockClaimToAdjustService, MockFinancialDetailsService}
-import models.incomeSourceDetails.TaxYear
+import auth.MtdItUser
+import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.services.MockClaimToAdjustService
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.mockito.Mockito.mock
+import play.api.test.FakeRequest
 import services.ClaimToAdjustService
+import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.{empty1553Response, userPOADetails2024}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.ExecutionContext
 
-class ClaimToAdjustServiceSpec extends TestSupport  with MockClaimToAdjustService {
+class ClaimToAdjustServiceSpec extends TestSupport with MockClaimToAdjustService with MockAuthenticationPredicate {
 
   override implicit val mockEC: ExecutionContext = mock(classOf[ExecutionContext])
   object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockFinancialDetailsService)
 
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid,
+    testNino,
+    None,
+    incomeSources = IncomeSourceDetailsModel(testNino, "123", None, List.empty, List.empty),
+    None,
+    Some("1234567890"),
+    Some("12345-credId"),
+    Some(Individual),
+    None
+  )(FakeRequest())
+
   "maybePoATaxYear method" should {
     "return a taxYear" when {
       "a user has document details relating to PoA data" in {
+
         mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear("TESTNINO").futureValue
+        val result = TestClaimToAdjustService.maybePoATaxYear()(user = testUser, hc = implicitly).futureValue
 
         result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
       }
@@ -45,7 +62,7 @@ class ClaimToAdjustServiceSpec extends TestSupport  with MockClaimToAdjustServic
       "a user has no 1553 data related to POA" in {
         mockGetAllFinancialDetails(List((2024, empty1553Response)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear("TESTNINO").futureValue
+        val result = TestClaimToAdjustService.maybePoATaxYear.futureValue
 
         result shouldBe Right(None)
       }
@@ -55,16 +72,16 @@ class ClaimToAdjustServiceSpec extends TestSupport  with MockClaimToAdjustServic
   "canCustomerClaimToAdjust method" should {
     "return true" when {
       "maybePoATaxYear returns a non empty value in its future" in {
-        setupSpyMaybePoATaxYear("TESTNINO")(Some(TaxYear(2023, 2024)))
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust("TESTNINO").futureValue
+        setupSpyMaybePoATaxYear(Some(TaxYear(2023, 2024)))
+        val result = mockClaimToAdjustService.canCustomerClaimToAdjust.futureValue
 
         result shouldBe Right(Some(true))
       }
     }
     "return false" when {
       "maybePoATaxYear returns None in its future" in {
-        setupSpyMaybePoATaxYear("TESTNINO")(None)
-        val result = mockClaimToAdjustService.canCustomerClaimToAdjust("TESTNINO").futureValue
+        setupSpyMaybePoATaxYear(None)
+        val result = mockClaimToAdjustService.canCustomerClaimToAdjust.futureValue
 
         result shouldBe Right(Some(false))
       }

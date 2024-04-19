@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUser
 import connectors.FinancialDetailsConnector
-import models.core.Nino
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -39,7 +38,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def maybePoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
+  def maybePoATaxYear()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
     val a = financialDetailsService.getAllFinancialDetails map {
       item => item.collect({ case (_, model: FinancialDetailsModel) => getPoAPayments(model.documentDetails)})
     }
