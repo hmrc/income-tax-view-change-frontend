@@ -53,7 +53,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockClaimToAdjustService
 
         mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear()(user = testUser, hc = implicitly).futureValue
+        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly).futureValue
 
         result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
       }
