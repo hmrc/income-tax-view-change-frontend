@@ -28,7 +28,7 @@ import mocks.services.{MockCalculationService, MockFinancialDetailsService, Mock
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -38,6 +38,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino, testTaxYear, testYearPlusOne, testYearPlusTwo}
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
@@ -81,11 +82,26 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
   val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
   val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
-  val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+
+  val testObligtionsModel: ObligationsModel = ObligationsModel(Seq(
+    NextUpdatesModel(
+      identification = "testId",
+      obligations = List(
+        NextUpdateModel(
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "Quarterly",
+          dateReceived = Some(fixedDate),
+          periodKey = "Quarterly"
+        )
+      )
+    )
+  ))
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
@@ -114,7 +130,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           testChargesList,
           testObligtionsModel,
           codingOutEnabled = true,
-          showForecastData = shouldShowForecastData),
+          showForecastData = shouldShowForecastData,
+          showUpdates = true),
         taxYearsBackLink,
       ).toString
 
@@ -160,7 +177,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -189,7 +207,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           homeBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveAndRefererToHomePage)
@@ -224,7 +243,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -254,7 +274,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             payeChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -286,7 +307,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink,
         ).toString
 
@@ -317,7 +339,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink,
 
         ).toString
@@ -349,7 +372,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             charges,
             testObligtionsModel,
-            codingOutEnabled = true
+            codingOutEnabled = true,
+            showUpdates = true
           ),
           taxYearsBackLink
         ).toString
@@ -384,7 +408,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink
         ).toString
 
@@ -464,7 +489,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
               testChargesList,
               testObligtionsModel,
               codingOutEnabled = true,
-              showForecastData = true),
+              showForecastData = true,
+              showUpdates = true),
             taxYearsBackLink
           ).toString()).text()
 
@@ -536,7 +562,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -565,7 +592,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           taxYearsBackLink
         ).toString
 
@@ -728,7 +756,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            showUpdates = true),
           agentHomeBackLink,
           isAgent = true,
         ).toString
