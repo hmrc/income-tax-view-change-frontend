@@ -313,7 +313,7 @@
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
-                            documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+                            documentDetail.originalAmount.get.toCurrency
                         }</td>
                     </tr>
                 }
