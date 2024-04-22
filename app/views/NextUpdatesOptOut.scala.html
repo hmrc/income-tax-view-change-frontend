@@ -24,6 +24,7 @@
 	mainTemplate: unifiedLayout,
 	h1: h1,
 	h2: h2,
+	h3: h3,
 	p: p,
 	link: link,
 	detailsDropdown: detailsDropdown,
@@ -61,6 +62,15 @@
      }
 		@messages("nextUpdates.previousYears.textTwo")
 	}
+
+	@h3(msg = "nextUpdates.updates.software.heading", optId = Some("updatesSoftware-heading"))
+	@p(){
+		<div class="govuk-body app-get-help-link">
+			@messages("nextUpdates.updates.software.dec1")
+			@link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
+			@messages("nextUpdates.updates.software.dec3")
+		</div>
+	}
 }
 
 @detailsContent = {
@@ -73,14 +83,8 @@
 		<br>
 		<br>
 	</div>
-	<div id="details-content-1">
-		@h2(msg = "obligations.annualUpdates", optId = Some("annualUpdates-heading"))
-		@p(id = Some("annual-dropdown-line1"))(Html(messages("nextUpdates.dropdown.annualReturn.text")))
-		@p(id = Some("annual-dropdown-line2"))(Html(messages("nextUpdates.dropdown.annualReturn.text.lin2")))
-	</div>
 	<div id="details-content-2">
 		@h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))
 		@p(id = Some("final-declaration-line1"))(Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
-		optout
 	</div>
 }
