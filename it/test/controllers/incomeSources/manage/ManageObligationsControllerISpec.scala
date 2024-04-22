@@ -53,7 +53,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    testQuarterlyObligationDates, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+    testQuarterlyObligationDates, Seq.empty, 2023, showPrevTaxYears = false
   )
 
 

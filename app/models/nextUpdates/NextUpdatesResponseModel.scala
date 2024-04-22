@@ -54,14 +54,14 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
       }
     }.flatten
 
-    if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
+    val nonEOPSDeadlines = deadlines.filter(_.obligation.obligationType != "EOPS")
+
+
+    if (previous) nonEOPSDeadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
-
-  def allEops(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "EOPS")
 
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
@@ -100,7 +100,6 @@ object ObligationsModel {
 
 case class NextUpdatesModel(identification: String, obligations: List[NextUpdateModel]) {
   val currentQuarterlyDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "Quarterly").sortBy(_.start.toEpochDay)
-  val currentEOPsDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "EOPS").sortBy(_.start.toEpochDay)
   val currentCrystDeadlines: List[NextUpdateModel] = obligations.filter(_.obligationType == "Crystallised").sortBy(_.start.toEpochDay)
 }
 

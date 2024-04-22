@@ -37,8 +37,6 @@ class ManageObligationsViewSpec extends ViewSpec {
     val h2: String = "What you must do"
     val quarterlyHeading: String = "Send quarterly updates"
     val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
-    val eopsHeading: String = "Send end of period statements"
-    val eopsText: String = "You must submit end of period statements using your software by the deadline."
     val finalDecHeading: String = "Submit final declarations and pay your tax"
     val finalDecText: String = "You must submit your final declarations and pay the tax you owe by the deadline."
     val tableHeading1: String = "Tax year"
@@ -52,12 +50,10 @@ class ManageObligationsViewSpec extends ViewSpec {
 
   val day = LocalDate.of(2022, 1, 1)
 
-  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
   val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
-    Seq(eopsDates),
     Seq(finalDeclarationDates),
     2023,
     showPrevTaxYears = true
@@ -68,7 +64,7 @@ class ManageObligationsViewSpec extends ViewSpec {
   val quarterly = "quarterly"
   val annually = "annual"
 
-  val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
+  val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
   val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall)
@@ -136,20 +132,6 @@ class ManageObligationsViewSpec extends ViewSpec {
       tableContent.text() should include("5 May 2024")
     }
 
-    "Display EOPS obligations if the user has them" in new Setup(validSECallWithName) {
-      val eopsSection: Element = layoutContent.getElementById("eops")
-      eopsSection.text() should include(ManageObligationsMessages.eopsHeading)
-      eopsSection.text() should include(ManageObligationsMessages.eopsText)
-
-      val tableHeadings: Elements = eopsSection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1)
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading2)
-
-      val tableContent: Elements = eopsSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("2022 to 2022")
-      tableContent.text() should include("3 January 2022")
-    }
-
     "Display final declaration obligations if the user has them" in new Setup(validSECallWithName) {
       val finalDecSection: Element = layoutContent.getElementById("finalDec")
       finalDecSection.text() should include(ManageObligationsMessages.finalDecHeading)
@@ -166,7 +148,6 @@ class ManageObligationsViewSpec extends ViewSpec {
 
     "Not display any obligation sections when user has no obligations" in new Setup(validCallNoData) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
-      Option(layoutContent.getElementById("eops")) shouldBe None
       Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
   }

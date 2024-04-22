@@ -84,7 +84,8 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true
+          testObligationsModel,
+          codingOutEnabled = true
         )
 
         thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"

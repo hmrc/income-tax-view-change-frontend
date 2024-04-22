@@ -36,7 +36,6 @@ object TaxYearSummaryMessages {
 
   def updateTabDue(dueDate: String): String = messagesAPI("updateTab.due", dueDate)
   val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")
-  val annualUpdate: String = messagesAPI("updateTab.updateType.eops")
   val propertyIncome: String = messagesAPI("updateTab.obligationType.property")
   val paymentHistoryHeading: String = messagesAPI("Payment refund and history")
 
