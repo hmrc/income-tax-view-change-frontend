@@ -41,7 +41,6 @@ import utils.ImplicitsWithFunUtils._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
