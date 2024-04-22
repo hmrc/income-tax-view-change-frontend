@@ -438,7 +438,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       enable(ChargeHistory)
       enable(PaymentAllocation)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithMissingOriginalAmountJson())
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 

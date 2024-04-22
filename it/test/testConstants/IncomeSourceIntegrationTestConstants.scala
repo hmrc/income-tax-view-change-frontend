@@ -463,7 +463,7 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 
-  def testValidFinancialDetailsModelWithMissingOriginalAmountJson(): JsValue = Json.obj(
+  def testFinancialDetailsModelWithMissingOriginalAmountJson(): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
