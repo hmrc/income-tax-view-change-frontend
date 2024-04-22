@@ -238,7 +238,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        //will-revert//elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("main h2")(paymentHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
       )
