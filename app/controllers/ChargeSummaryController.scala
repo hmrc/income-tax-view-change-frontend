@@ -37,23 +37,13 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
 import views.html.ChargeSummary
 import views.html.errorPages.CustomNotFoundError
+import utils.ImplicitsWithFunUtils._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
-import controllers.ChargeSummaryController._
 
-object ChargeSummaryController {
-  case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
-  type ItvcResponse[T]  = Either[ErrorCode, T]
-  type ItvcResult  = Future[Result]
-  implicit def toEither[T](t: T): ItvcResponse[T] = Right(t)
-  implicit def toEither[T](ec: ErrorCode): ItvcResponse[T] = Left(ec)
-  implicit def toF[A](e: Either[ErrorCode, A]): Future[A] = e match {
-    case Right(a) => Future.successful(a)
-    case Left(errorCode) => Future.failed(errorCode)
-  }
-}
+
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
@@ -205,19 +195,21 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   private def doShowChargeSummary(request: ChargeSummaryViewRequest)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): ItvcResult = {
 
+
     def processSteps(): ItvcResult = for {
-      sessionGatewayPage <- toF(getGatewayPage())
-      documentDetailWithDueDate <- toF(request.chargeDetails.findDocumentDetailByIdWithDueDate(request.documentNumber).toRight(ErrorCode("missing DocumentDetailByIdWithDueDate")))
-      financialDetails <- toF(Right(request.chargeDetails.financialDetails.filter(_.transactionId.contains(request.documentNumber))))
-      paymentBreakdown <- toF(paymentBreakdown(request.isLatePaymentCharge, financialDetails))
-      paymentAllocationEnabled <- toF(isEnabled(PaymentAllocation))
-      paymentAllocations <- toF(paymentAllocations(paymentAllocationEnabled, paymentBreakdown))
-      _ <- toF(mandatoryViewDataPresent(request.isLatePaymentCharge, documentDetailWithDueDate))
-      _ <- toF(checkIfCodingOutIsDisabled(documentDetailWithDueDate))
+      sessionGatewayPage <- user.session.get(gatewayPage).map(GatewayPage(_)).toFuture
+      documentDetailWithDueDate <- request.chargeDetails.findDocumentDetailByIdWithDueDate(request.documentNumber)
+        .toRight(ErrorCode("missing DocumentDetailByIdWithDueDate")).toFuture
+      financialDetails <- request.chargeDetails.financialDetails.filter(_.transactionId.contains(request.documentNumber)).toFuture
+      paymentBreakdown <- paymentBreakdown(request.isLatePaymentCharge, financialDetails).toFuture
+      paymentAllocationEnabled <- isEnabled(PaymentAllocation).toFuture
+      paymentAllocations <- paymentAllocations(paymentAllocationEnabled, paymentBreakdown).toFuture
+      _ <- mandatoryViewDataPresent(request.isLatePaymentCharge, documentDetailWithDueDate).toFuture
+      _ <- checkIfCodingOutIsDisabled(documentDetailWithDueDate).toFuture
       viewDataE <- fetchChargeHistory(ChargeSummaryViewData(request, sessionGatewayPage, documentDetailWithDueDate, paymentBreakdown, paymentAllocationEnabled, paymentAllocations))
-      viewData <- toF(viewDataE)
-      _ <- toF(auditChargeSummary(viewData))
-      result <- toF(processChargeSummaryView(viewData))
+      viewData <- viewDataE.toFuture
+      _ <- auditChargeSummary(viewData).toFuture
+      result <- processChargeSummaryView(viewData).toFuture
     } yield result
 
     processSteps() recover {
@@ -225,28 +217,26 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  def getGatewayPage()(implicit user: MtdItUser[_]): ItvcResponse[Option[GatewayPage]] = {
-    user.session.get(gatewayPage).map(GatewayPage(_))
-  }
-  def paymentBreakdown(isLatePaymentCharge: Boolean, fd: List[FinancialDetail]): ItvcResponse[List[FinancialDetail]] =
+  def paymentBreakdown(isLatePaymentCharge: Boolean, fd: List[FinancialDetail]): List[FinancialDetail] =
     if (!isLatePaymentCharge) fd.filter(_.messageKeyByTypes.isDefined) else Nil
-  def paymentAllocations(paymentAllocationEnabled: Boolean, financialDetails: List[FinancialDetail]): ItvcResponse[List[PaymentsWithChargeType]] =
+  def paymentAllocations(paymentAllocationEnabled: Boolean, financialDetails: List[FinancialDetail]): List[PaymentsWithChargeType] =
     if (paymentAllocationEnabled) financialDetails.flatMap(_.allocation) else Nil
   def checkIfCodingOutIsDisabled(data: DocumentDetailWithDueDate): ItvcResponse[Boolean] = {
     if (isDisabled(CodingOut) && (data.documentDetail.isPayeSelfAssessment ||
       data.documentDetail.isClass2Nic ||
       data.documentDetail.isCancelledPayeSelfAssessment))
-      ErrorCode("Coding Out is disabled and redirected to not found page", showInternalServerError = false)
-    else true
+      ErrorCode("Coding Out is disabled and redirected to not found page", showInternalServerError = false).toLeftE
+    else true.toRightE
   }
-  def auditChargeSummary(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): ItvcResponse[Boolean] = {
+
+  def auditChargeSummary(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Boolean = {
     auditChargeSummary(data.documentDetailWithDueDate, data.paymentBreakdown, data.chargeHistory,
       data.paymentAllocations, data.request.isLatePaymentCharge, data.request.isMFADebit, data.request.taxYear)
     true
   }
 
-  def processChargeSummaryView(data: ChargeSummaryViewData)
-                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): ItvcResponse[Result] = {
+  def processChargeSummaryView(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Result = {
+
     Ok(chargeSummaryView(
       currentDate = dateService.getCurrentDate,
       documentDetailWithDueDate = data.documentDetailWithDueDate,
@@ -285,12 +275,12 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       case (_, false, name) => Some(name)
     }
 
-    if (undefinedOptions.isEmpty) true
+    if (undefinedOptions.isEmpty) true.toRightE
     else {
       val valuePhrase = if (undefinedOptions.size > 1) "values" else "value"
       val msg = s"Missing view $valuePhrase: ${undefinedOptions.mkString(", ")}"
       Logger("application").error(msg)
-      ErrorCode(msg)
+      ErrorCode(msg).toLeftE
     }
   }
 
