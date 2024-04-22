@@ -135,7 +135,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           }
     }
 
-    private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
+  //to be removed
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
                                      (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
       if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
         financialDetailsConnector.getChargeHistory(user.mtditid, documentNumber).map {
@@ -147,6 +148,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       }
     }
 
+    //to be removed
     def doShowChargeSummary2(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                     chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                     isAgent: Boolean, origin: Option[String],
