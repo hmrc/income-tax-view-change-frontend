@@ -204,10 +204,6 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  def toTaxYear: TaxYear = {
-    makeTaxYearWithEndYear(this.taxYear)
-  }
-
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],

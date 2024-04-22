@@ -50,9 +50,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
 
     val poa1: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-      .sortBy(_.taxYear).reverse.headOption.map(_.toTaxYear)
+      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
     val poa2: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
-      .sortBy(_.taxYear).reverse.headOption.map(_.toTaxYear)
+      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
 
     if (poa1 == poa2) {
       Right(poa1)

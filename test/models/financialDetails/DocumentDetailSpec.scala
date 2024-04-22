@@ -327,12 +327,5 @@ class DocumentDetailSpec extends UnitSpec {
         }
       }
     }
-    "toTaxYear" should {
-      "extract taxYear field and return a taxYear object" when {
-        "given a DocumentDetail object" in {
-          documentDetailBalancingCharge.documentDetail.toTaxYear shouldBe TaxYear(2017, 2018)
-        }
-      }
-    }
   }
 }
