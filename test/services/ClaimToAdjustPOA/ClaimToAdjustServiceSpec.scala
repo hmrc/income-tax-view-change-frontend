@@ -18,19 +18,14 @@ package services.ClaimToAdjustPOA
 
 import auth.MtdItUser
 import mocks.connectors.MockFinancialDetailsConnector
-import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockClaimToAdjustService, MockFinancialDetailsService}
+import mocks.services.MockFinancialDetailsService
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{mock, reset, spy, when}
 import play.api.test.FakeRequest
 import services.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.{empty1553Response, userPOADetails2024}
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.{empty1553Response, genericUserPOADetails, genericUserPOADetailsPOA1Only, genericUserPOADetailsPOA2Only, userPOADetails2018OnlyPOA1, userPOADetails2018OnlyPOA2, userPOADetails2024}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-
-import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
 
@@ -53,10 +48,48 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has document details relating to PoA data" in {
         mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly)
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Some(TaxYear(startYear = 2023, endYear = 2024))
+          result => result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        }
+      }
+      "a user has document details relating to multiple years of PoA data" in {
+        mockGetAllFinancialDetails(List(
+          (2023, genericUserPOADetails(2023)),
+          (2022, genericUserPOADetails(2022))
+        ))
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
+        }
+      }
+      "a user has document details relating to more poa 1 than poa 2 but the most recent tax year of PoAs is normal" in {
+        mockGetAllFinancialDetails(List(
+          (2023, genericUserPOADetails(2023)),
+          (2022, genericUserPOADetails(2022)),
+          (2018, userPOADetails2018OnlyPOA1)
+        ))
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
+        }
+      }
+      "a user has document details relating to more poa 2 than poa 1 but the most recent tax year of PoAs is normal" in {
+        mockGetAllFinancialDetails(List(
+          (2023, genericUserPOADetails(2023)),
+          (2022, genericUserPOADetails(2022)),
+          (2018, userPOADetails2018OnlyPOA2)
+        ))
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
         }
       }
     }
@@ -64,35 +97,55 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       "a user has no 1553 data related to POA" in {
         mockGetAllFinancialDetails(List((2024, empty1553Response)))
 
-        val result = TestClaimToAdjustService.maybePoATaxYear(user = testUser, hc = implicitly)
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe None
+          result => result shouldBe Right(None)
         }
       }
     }
-  }
+    "return an Exception" when {
+      "the most recent document for poa 1 is more recent than for poa 2" in {
+        mockGetAllFinancialDetails(List(
+          (2024, genericUserPOADetailsPOA1Only(2024)),
+          (2023, genericUserPOADetails(2023))))
 
-  "canCustomerClaimToAdjust method" should {
-    "return true" when {
-      "maybePoATaxYear returns a non empty value in its future" in {
-        mockGetAllFinancialDetails(List((2024, userPOADetails2024)))
-
-        val result = TestClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe true
+          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
         }
       }
-    }
-    "return false" when {
-      "maybePoATaxYear returns None in its future" in {
-        mockGetAllFinancialDetails(List((2024, empty1553Response)))
+      "the most recent document for poa 2 is more recent than for poa 1" in {
+        mockGetAllFinancialDetails(List(
+          (2024, genericUserPOADetailsPOA2Only(2024)),
+          (2023, genericUserPOADetails(2023))))
 
-        val result = TestClaimToAdjustService.canCustomerClaimToAdjust(user = testUser, hc = implicitly)
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe false
+          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+        }
+      }
+      "there is a poa document for poa 1 but nothing for poa 2" in {
+        mockGetAllFinancialDetails(List(
+          (2024, genericUserPOADetailsPOA1Only(2024))
+        ))
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+        }
+      }
+      "there is a poa document for poa 2 but nothing for poa 1" in {
+        mockGetAllFinancialDetails(List(
+          (2024, genericUserPOADetailsPOA2Only(2024))
+        ))
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
         }
       }
     }

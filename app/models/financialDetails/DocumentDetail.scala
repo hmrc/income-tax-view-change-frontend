@@ -17,6 +17,8 @@
 package models.financialDetails
 
 import enums.CodingOutType._
+import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -200,6 +202,10 @@ case class DocumentDetail(taxYear: Int,
     } else {
       documentDueDate
     }
+  }
+
+  def toTaxYear: TaxYear = {
+    makeTaxYearWithEndYear(this.taxYear)
   }
 
 }

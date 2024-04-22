@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
+import models.incomeSourceDetails.TaxYear
 import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel}
 import testUtils.UnitSpec
 
@@ -323,6 +324,13 @@ class DocumentDetailSpec extends UnitSpec {
         "the originalAmount is zero" in {
           documentDetailBalancingCharge.documentDetail
             .copy(originalAmount = Some(BigDecimal(0))).getBalancingChargeDueDate() shouldBe None
+        }
+      }
+    }
+    "toTaxYear" should {
+      "extract taxYear field and return a taxYear object" when {
+        "given a DocumentDetail object" in {
+          documentDetailBalancingCharge.documentDetail.toTaxYear shouldBe TaxYear(2017, 2018)
         }
       }
     }

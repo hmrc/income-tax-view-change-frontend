@@ -22,7 +22,39 @@ import java.time.LocalDate
 
 object ClaimToAdjustPOATestConstants {
 
-  val documentDetailPOA1 = DocumentDetail(
+  def genericDocumentDetailPOA1(taxYearEnd: Int) = DocumentDetail(
+    taxYear = taxYearEnd,
+    transactionId = "DOCID01",
+    documentDescription = Some("ITSA- POA 1"),
+    documentText = None,
+    outstandingAmount = Some(100.00),
+    originalAmount = Some(100.00),
+    documentDate = LocalDate.of(taxYearEnd, 3, 29),
+    interestOutstandingAmount = Some(100),
+    interestRate = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    latePaymentInterestAmount = Some(100),
+    latePaymentInterestId = None
+  )
+
+  def genericDocumentDetailPOA2(taxYearEnd: Int) = DocumentDetail(
+    taxYear = taxYearEnd,
+    transactionId = "DOCID01",
+    documentDescription = Some("ITSA - POA 2"),
+    documentText = None,
+    outstandingAmount = Some(100.00),
+    originalAmount = Some(100.00),
+    documentDate = LocalDate.of(taxYearEnd, 3, 29),
+    interestOutstandingAmount = Some(100),
+    interestRate = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    latePaymentInterestAmount = Some(100),
+    latePaymentInterestId = None
+  )
+
+  val documentDetail2024POA1 = DocumentDetail(
     taxYear = 2024,
     transactionId = "DOCID01",
     documentDescription = Some("ITSA- POA 1"),
@@ -38,7 +70,7 @@ object ClaimToAdjustPOATestConstants {
     latePaymentInterestId = None
   )
 
-  val documentDetailPOA2 = DocumentDetail(
+  val documentDetail2024POA2 = DocumentDetail(
     taxYear = 2024,
     transactionId = "DOCID01",
     documentDescription = Some("ITSA - POA 2"),
@@ -56,7 +88,37 @@ object ClaimToAdjustPOATestConstants {
 
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List(documentDetailPOA1, documentDetailPOA2),
+    documentDetails = List(documentDetail2024POA1, documentDetail2024POA2),
+    financialDetails = List.empty,
+  )
+
+  def genericUserPOADetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
+    financialDetails = List.empty,
+  )
+
+  def genericUserPOADetailsPOA1Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd)),
+    financialDetails = List.empty,
+  )
+
+  def genericUserPOADetailsPOA2Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd)),
+    financialDetails = List.empty,
+  )
+
+  val userPOADetails2018OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(2018)),
+    financialDetails = List.empty,
+  )
+
+  val userPOADetails2018OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA2(2018)),
     financialDetails = List.empty,
   )
 

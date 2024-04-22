@@ -21,6 +21,7 @@ import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -31,34 +32,31 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      val financialDetailsService: FinancialDetailsService)
                                     (implicit ec: ExecutionContext) {
 
-  def canCustomerClaimToAdjust(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Boolean] = {
-    maybePoATaxYear.map {
-      case Some(_) => true
-      case None => false
-    }
-  }
-
-  def maybePoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
+  def getPoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     val a = financialDetailsService.getAllFinancialDetails map {
-      item => item.collect({ case (_, model: FinancialDetailsModel) =>
-        getPoAPayments(model.documentDetails)})
+      item =>
+        item.collect({ case (_, model: FinancialDetailsModel) =>
+          getPoAPayments(model.documentDetails)
+        })
     }
-    a.map(_.headOption.flatten)
+    a.map(_.head)
   }
 
-  def getPoAPayments(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
-    val poa1: List[DocumentDetail] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-    val poa2: List[DocumentDetail] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
+  private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
 
-    if ((poa1.length == 1) && (poa2.length == 1)) {
-      if (poa1.head.taxYear == poa2.head.taxYear) {
-        Some(makeTaxYearWithEndYear(poa1.head.taxYear))
-      } else {
-        None
-      }
+    val poa1: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
+      .sortBy(_.taxYear).reverse.headOption.map(_.toTaxYear)
+    val poa2: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
+      .sortBy(_.taxYear).reverse.headOption.map(_.toTaxYear)
+
+    if (poa1 == poa2) {
+      Right(poa1)
     } else {
-      None
+      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
+        s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
+      Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
     }
   }
+
 
 }
