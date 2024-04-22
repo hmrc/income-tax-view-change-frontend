@@ -618,10 +618,8 @@ forecast_taxCalc.noForecast.text                                = Byddwch yn gal
 ## NextUpdates Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
 obligations.quarterly.to                                        = i
-obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
 nextUpdates.quarterly                                           = Diweddariad bob chwarter
-nextUpdates.eops            									= Datganiadau diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
@@ -692,10 +690,6 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligation.dropdown.quarterlyReturn.text.v2.lin2                = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
 obligation.dropdown.quarterlyReturn.info.v2                     = Beth yw diweddariad chwarterol?
 obligation.dropdown.quarterlyReturn.text.v2                     = Mae diweddariad chwarterol yn nodi’r incwm a’r treuliau ar gyfer pob cyfnod 3 mis.
-obligations.annualUpdates                                       = Datganiad diwedd cyfnod
-obligation.dropdown.annualReturn.text.v2.lin2                   = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
-obligation.dropdown.annualUpdates.info.v2                       = Beth yw diweddariad blynyddol?
-obligation.dropdown.annualReturn.text.v2                        = Yn y diweddariad blynyddol, mae’n rhaid i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu cyflwyno yn gywir, neu mae’n rhaid i chi gywiro unrhyw gamgymeriadau
 obligations.opens-in-new-tab                                    = (yn agor mewn tab newydd)
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 obligation.dropdown.finalDeclaration.text.v2                    = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich {0}.
@@ -712,13 +706,10 @@ nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Gan ddefnyddio
 nextUpdates.dropdown.quarterlyReturn.text.lin3                  = Mae’n bosibl y byddwch yn gallu dewis eich cyfnod chwarterol yn eich meddalwedd. Er enghraifft, mae chwarterau safonol yn adrodd o 6 Ebrill i 5 Gorffennaf ond mae chwarterau calendr yn adrodd o 1 Ebrill i 30 Mehefin.
 nextUpdates.dropdown.quarterlyReturn.link.text                  = Dysgwch ragor am gyfnodau chwarterol
 nextUpdates.dropdown.quarterlyReturn.link.link                  = https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
-nextUpdates.dropdown.annualReturn.text                          = Mewn datganiad diwedd cyfnod, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
-nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un datganiad diwedd cyfnod ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
-nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y datganiad diwedd cyfnod y gwnaethoch ei anfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+nextUpdates.dropdown.finalDeclaration.text                      = Eich datganiad terfynol yw’r cam olaf yn eich Ffurflen Dreth, lle rydych yn cadarnhau eich bod wedi cyflwyno’ch holl incwm a threuliau (hyd eithaf eich gwybodaeth). Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
-nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
 nextUpdates.section.heading.updates								= Cyfnod chwarterol o {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
@@ -1064,8 +1055,9 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
-updateTab.updateType.eops                                       = Datganiad diwedd cyfnod
 updateTab.updateType.crystallised                               = Datganiad terfynol
+updateTab.noUpdates                                             = No updates but in Welsh
+
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
@@ -1568,8 +1560,6 @@ business-added.sole-trader.base                        = i’ch cyfrif
 
 business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business-added.eops-heading                             = Anfon datganiadau diwedd cyfnod
-business-added.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
 business-added.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
 business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
 business-added.table.heading-1                          = Blwyddyn dreth
@@ -1631,8 +1621,6 @@ business-ceased.obligation.inset.previous-year.text                 = Mae’n rh
 
 business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-ceased.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business-ceased.obligation.eops-heading                             = Anfon datganiadau diwedd cyfnod
-business-ceased.obligation.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
 business-ceased.obligation.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
 business-ceased.obligation.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
 business-ceased.obligation.table.heading-1                          = Blwyddyn dreth

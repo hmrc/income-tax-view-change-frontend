@@ -257,7 +257,6 @@
 @updateTypeHelper(updateType: String) = @{
     updateType match {
         case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "EOPS" => messages("updateTab.updateType.eops")
         case "Crystallised" => messages("updateTab.updateType.crystallised")
         case _ => updateType
     }
@@ -273,8 +272,10 @@
     .sortBy(_._1)
 }
 
+@showUpdates = @{viewModel.showUpdates}
+
+
 @updatesContent = {
-    @if(groupedObligations.nonEmpty){
         @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
         @groupedObligations.map { case (due, dueObligations) =>
 
@@ -314,7 +315,6 @@
             }
         </div>
         }
-    }
 }
 
 @noForecastContent = {
@@ -429,5 +429,5 @@
     }
 }
 
-    @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
+    @taxYearSummaryTabsPartial(showForecastData, showUpdates, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
 }
