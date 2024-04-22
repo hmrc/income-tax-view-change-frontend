@@ -788,6 +788,11 @@ sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
 sections.open												       = Show
 sections.close												       = Hide
+nextUpdates.updates.software.heading    					       = Submitting updates in software
+nextUpdates.updates.software.dec1       					       = Use your
+nextUpdates.updates.software.dec2       					       = compatible record keeping software
+nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
+nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
