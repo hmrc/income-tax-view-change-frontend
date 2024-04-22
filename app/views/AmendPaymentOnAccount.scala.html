@@ -1,0 +1,125 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    govukInsetText : GovukInsetText,
+    govukSummaryList : GovukSummaryList,
+    continueButton: ContinueButton,
+    govukButton : GovukButton,
+    link: link,
+    p: p
+)
+
+@(isAgent: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+
+@mainTemplate(
+    pageTitle = "Adjusting your payments on account",
+    backUrl = Some("/"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @hmrcPageHeading(PageHeading(
+        text = "Adjusting your payments on account",
+        headingClasses = Some("govuk-heading-xl"),
+        section = Some("Adjust payments on account for 2023 to 2024 tax year"),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @p(){You can adjust both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions (opens in new tab) to be lower than the previous tax year.}
+
+    @govukInsetText(InsetText(
+        content = Text("For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.")
+    ))
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text("Full amount")
+                ),
+                value = Value(
+                    classes = "govuk-summary-list__value govuk-table__cell--numeric",
+                    content = HtmlContent("£3,000.00")
+                ),
+            ),
+        ),
+        card = Some(Card(
+            title = Some(CardTitle(
+                content = Text("First payment on account")
+            )),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text("More details"),
+                        attributes = Map("id" -> "poa1-more-details-date-link")
+                    )
+                )
+            ))
+        ))
+    ))
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text("Full amount")
+                ),
+                value = Value(
+                    classes = "govuk-summary-list__value govuk-table__cell--numeric",
+                    content = HtmlContent("£3,000.00")
+                ),
+            ),
+        ),
+        card = Some(Card(
+            title = Some(CardTitle(
+                content = Text("Second payment on account")
+            )),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text("More details"),
+                        attributes = Map("id" -> "poa2-more-details-date-link")
+                    )
+                )
+            ))
+        ))
+    ))
+
+    @p(){Both payments on account need to be adjusted at the same time. You can't change one without the other.}
+
+    <div class="govuk-button-group govuk-!-padding-top-3">
+        @govukButton(Button(
+            content = Text("Adjust my payments on account"),
+            href = Some("/")
+        ))
+        @link(link = "/", messageKey = "Cancel")
+    </div>
+
+}

@@ -147,5 +147,11 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
+# amend POAs
+
+GET         /adjust-poa/start                                             controllers.AmendPOAController.show(isAgent: Boolean = false)
+GET         /agents/adjust-poa/start                                      controllers.AmendPOAController.show(isAgent: Boolean = true)
+
+
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
