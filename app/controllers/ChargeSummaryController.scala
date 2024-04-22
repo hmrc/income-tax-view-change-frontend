@@ -131,13 +131,13 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       financialDetails <- getFinancialDetails(request).toFuture
       paymentBreakdown <- paymentBreakdown(request.isLatePaymentCharge, financialDetails).toFuture
       paymentAllocationEnabled <- isEnabled(PaymentAllocation).toFuture
-      paymentAllocations <- paymentAllocations(paymentAllocationEnabled, paymentBreakdown).toFuture
+      paymentAllocations <- paymentAllocations(paymentAllocationEnabled, financialDetails).toFuture
       _ <- mandatoryViewDataPresent(request.isLatePaymentCharge, documentDetailWithDueDate).toFuture
-      _ <- checkIfCodingOutIsDisabled(documentDetailWithDueDate).toFuture
+      _ <- codingOutNotDisabled(documentDetailWithDueDate).toFuture
       viewDataE <- fetchChargeHistory(ChargeSummaryViewData(request, sessionGatewayPage, documentDetailWithDueDate, paymentBreakdown, paymentAllocationEnabled, paymentAllocations))
       viewData <- viewDataE.toFuture
-      _ <- auditChargeSummary(viewData).toFuture
-      result <- processChargeSummaryView(viewData).toFuture
+      _ <- audit(viewData).toFuture
+      result <- view(viewData).toFuture
     } yield result
 
     processSteps() recover {
@@ -157,12 +157,14 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   }
 
   def paymentBreakdown(isLatePaymentCharge: Boolean, fd: List[FinancialDetail]): List[FinancialDetail] =
-    if (!isLatePaymentCharge) fd.filter(_.messageKeyByTypes.isDefined) else Nil
+    if (!isLatePaymentCharge) {
+      fd.filter(_.messageKeyByTypes.isDefined)
+    } else Nil
 
   def paymentAllocations(paymentAllocationEnabled: Boolean, financialDetails: List[FinancialDetail]): List[PaymentsWithChargeType] =
     if (paymentAllocationEnabled) financialDetails.flatMap(_.allocation) else Nil
 
-  def checkIfCodingOutIsDisabled(data: DocumentDetailWithDueDate): ItvcResponse[Boolean] = {
+  def codingOutNotDisabled(data: DocumentDetailWithDueDate): ItvcResponse[Boolean] = {
     if (isDisabled(CodingOut) && (data.documentDetail.isPayeSelfAssessment ||
       data.documentDetail.isClass2Nic ||
       data.documentDetail.isCancelledPayeSelfAssessment))
@@ -170,13 +172,13 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     else true.toRightE
   }
 
-  def auditChargeSummary(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Boolean = {
+  def audit(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Boolean = {
     auditChargeSummary(data.documentDetailWithDueDate, data.paymentBreakdown, data.chargeHistory,
       data.paymentAllocations, data.request.isLatePaymentCharge, data.request.isMFADebit, data.request.taxYear)
     true
   }
 
-  def processChargeSummaryView(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Result = {
+  def view(data: ChargeSummaryViewData)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Result = {
 
     Ok(chargeSummaryView(
       currentDate = dateService.getCurrentDate,
