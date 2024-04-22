@@ -24,10 +24,11 @@ import scala.language.implicitConversions
 object ImplicitsWithFunUtils {
 
   case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
+
   type ItvcResponse[T]  = Either[ErrorCode, T]
   type ItvcResult  = Future[Result]
 
-  implicit class TypeToRight[V](v: V) {
+  implicit class ValueToEither[V](v: V) {
     def toRightE: Right[ErrorCode, V] = Right(v)
     def toLeftE[R]: Left[ErrorCode, R] = Left(v.asInstanceOf[ErrorCode])
   }
@@ -38,8 +39,6 @@ object ImplicitsWithFunUtils {
       case Left(errorCode) => Future.failed(errorCode)
     }
   }
-  implicit def toF[T](response: ItvcResponse[T]): Future[T] = response.toFuture
-
 
   implicit class TypeToFuture[T](t: T) {
     def toFuture: Future[T] = Future.successful(t)
