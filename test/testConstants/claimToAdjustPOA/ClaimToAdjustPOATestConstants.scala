@@ -16,7 +16,7 @@
 
 package testConstants.claimToAdjustPOA
 
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsModel}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 
 import java.time.LocalDate
 
@@ -110,22 +110,18 @@ object ClaimToAdjustPOATestConstants {
     financialDetails = List.empty,
   )
 
-  val userPOADetails2018OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
+  val userPOADetails2023OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List(genericDocumentDetailPOA1(2018)),
+    documentDetails = List(genericDocumentDetailPOA1(2023)),
     financialDetails = List.empty,
   )
 
-  val userPOADetails2018OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
+  val userPOADetails2023OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List(genericDocumentDetailPOA2(2018)),
+    documentDetails = List(genericDocumentDetailPOA2(2023)),
     financialDetails = List.empty,
   )
 
-  val empty1553Response: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List.empty,
-    financialDetails = List.empty,
-  )
+  def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
 
 }

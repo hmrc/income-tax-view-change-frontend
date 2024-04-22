@@ -18,10 +18,11 @@ package services
 
 import auth.MtdItUser
 import connectors.FinancialDetailsConnector
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -29,23 +30,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
-                                     val financialDetailsService: FinancialDetailsService)
+                                     implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) {
 
   def getPoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-    val a = financialDetailsService.getAllFinancialDetails map {
-      item =>
-        item.collect({ case (_, model: FinancialDetailsModel) =>
-          getPoAPayments(model.documentDetails)
-        })
-    }
-    a map(_.headOption) map {
-      case None =>
-        Logger("application").error(s"[ClaimToAdjustService][getPoATaxYear] User has no financial details")
-        Left(new Exception("User has no financial details"))
-      case Some(result) => result
-    }
+    {
+      getAllFinancialDetails map {
+        item =>
+          item.collect {
+            case (_, model: FinancialDetailsModel) => model.documentDetails
+          }
+      }
+    }.map(result => getPoAPayments(result.flatten))
   }
+
 
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
 
@@ -63,5 +61,20 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
+  def getAllFinancialDetails(implicit user: MtdItUser[_],
+                             hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
+    Logger("application").debug(
+      s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+
+    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
+      taxYear =>
+        Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Getting financial details for TaxYear: ${taxYear}")
+        financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
+          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
+          case _ => None
+        }
+    }).map(_.flatten)
+  }
 
 }
