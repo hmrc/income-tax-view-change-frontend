@@ -24,8 +24,12 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    charges: List[DocumentDetailWithDueDate],
                                    obligations: ObligationsModel,
                                    codingOutEnabled: Boolean,
-                                   showForecastData: Boolean = false) {
+                                   showForecastData: Boolean = false
+                                  ) {
 
+  def showUpdates: Boolean = {
+    obligations.obligations.exists(_.obligations.nonEmpty)
+  }
 
   calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
     require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
