@@ -209,7 +209,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       (viewSection1, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
       (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined, "Late Payment Interest Amount"),
-      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount"),
+      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount")
     )
 
     val undefinedOptions = values.filter(_._1).flatMap {
