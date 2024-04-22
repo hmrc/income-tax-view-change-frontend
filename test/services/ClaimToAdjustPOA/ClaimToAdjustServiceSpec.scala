@@ -105,6 +105,15 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       }
     }
     "return an Exception" when {
+      "getAllFinancialDetails returns a failed future" in {
+        mockGetAllFinancialDetails(List.empty)
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result.toString shouldBe Left(new Exception("User has no financial details")).toString
+        }
+      }
       "the most recent document for poa 1 is more recent than for poa 2" in {
         mockGetAllFinancialDetails(List(
           (2024, genericUserPOADetailsPOA1Only(2024)),

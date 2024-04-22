@@ -39,7 +39,12 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
           getPoAPayments(model.documentDetails)
         })
     }
-    a.map(_.head)
+    a map(_.headOption) map {
+      case None =>
+        Logger("application").error(s"[ClaimToAdjustService][getPoATaxYear] User has no financial details")
+        Left(new Exception("User has no financial details"))
+      case Some(result) => result
+    }
   }
 
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
