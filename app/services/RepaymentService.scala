@@ -47,7 +47,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
           Left(ex)
         }
       case None =>
-        Logger("application").error("[RepaymentService][start] - Amount is none")
+        Logger("application").error("Amount is none")
         Future.successful(Left(RepaymentStartJourneyAmountIsNoneException))
 
     }

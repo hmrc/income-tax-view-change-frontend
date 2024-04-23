@@ -64,10 +64,10 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
-      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"Requesting previous Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getFulfilledObligations()
     } else {
-      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getNextUpdates()
     }
   }
@@ -97,7 +97,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) =>
         Logger("application").error(
-          s"[IncomeSourceAddedController][handleRequest] - Error: $message, code $code")
+          s"Error: $message, code $code")
         Seq.empty
       case NextUpdateModel(start, end, due, obligationType, _, periodKey) =>
         Seq(DatesModel(start,

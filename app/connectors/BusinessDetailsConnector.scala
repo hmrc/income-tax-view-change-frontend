@@ -53,12 +53,12 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[IncomeSourceDetailsModel].fold(
             invalid => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] $invalid")
@@ -68,9 +68,9 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status == 404) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
           }

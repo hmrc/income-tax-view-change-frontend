@@ -183,10 +183,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
-        Logger("application").error(s"[Agent][TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
       case _ =>
-        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Logger("application").error(s"Could not retrieve financial details for year: $taxYear")
         Future.successful(agentItvcErrorHandler.showInternalServerError())
     }
   }
@@ -200,10 +200,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case obligationsModel: ObligationsModel => f(obligationsModel)
       case _ =>
         if (isAgent) {
-          Logger("application").error(s"[TaxYearSummaryController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
+          Logger("application").error(s"Could not retrieve obligations for year: $taxYear")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         } else {
-          Logger("application").error(s"[Agent][TaxYearSummaryController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
+          Logger("application").error(s"[Agent]Could not retrieve obligations for year: $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
     }

@@ -51,7 +51,7 @@ class ObligationsConnector @Inject()(val http: HttpClient,
   def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
     val url = getReportDeadlinesUrl(mtdUser.nino)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getNextUpdates] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
