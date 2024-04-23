@@ -46,35 +46,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
     "renderViewNextUpdates" when {
 
-      "the user has a eops property income obligation only" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
-
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
-
-        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        verifyNextUpdatesCall(testNino)
-
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
-
-        Then("the view displays the correct title, username and links")
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("nextUpdates.heading")
-        )
-
-        Then("the page displays one eops property income obligation")
-        res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")("End of year update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")("1 January 2018"),
-        )
-      }
-
       "the user has no obligations" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -179,33 +150,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
           elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
-        )
-
-      }
-
-      "the user has a eops SE income obligation only" in {
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-
-        val res = IncomeTaxViewChangeFrontend.getNextUpdates
-
-        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyNextUpdatesCall(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
-
-        Then("the view displays the correct title")
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual("nextUpdates.heading")
-        )
-
-        Then("the page displays SE income source obligation dates")
-        res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "End of year update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "31 January 2018"),
         )
 
       }

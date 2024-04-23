@@ -214,7 +214,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
-
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, codingOutEnabled = false), "testBackURL", isAgent)
 
@@ -341,7 +340,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     def updateType(updateType: String): String = {
       updateType match {
         case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "EOPS" => messages("updateTab.updateType.eops")
         case "Crystallised" => messages("updateTab.updateType.crystallised")
         case _ => updateType
       }
@@ -778,10 +776,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 2).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
-      }
-
-      "display empty updates table when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
-        document.getElementById("updates").text() shouldBe ""
       }
     }
     "the user is an agent" should {
