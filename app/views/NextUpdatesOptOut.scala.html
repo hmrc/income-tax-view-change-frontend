@@ -63,9 +63,9 @@
 		@messages("nextUpdates.previousYears.textTwo")
 	}
 
-	@h3(msg = "nextUpdates.updates.software.heading", optId = Some("updatesSoftware-heading"))
+	@h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
 	@p(){
-		<div class="govuk-body app-get-help-link">
+		<div id="updates-software-link" class="govuk-body app-get-help-link">
 			@messages("nextUpdates.updates.software.dec1")
 			@link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
 			@messages("nextUpdates.updates.software.dec3")
