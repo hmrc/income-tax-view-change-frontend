@@ -16,19 +16,27 @@
 
 package testConstants
 
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus}
 import models.itsaStatus._
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 
 
 object ITSAStatusTestConstants {
-  val statusDetail = StatusDetail("2023-06-15T15:38:33.960Z", "No Status", "Sign up - return available", Some(8000.25))
-  val statusDetailMTDMandated = StatusDetail("2023-06-15T15:38:33.960Z", "MTD Mandated", "Sign up - return available", Some(8000.25))
-  val statusDetailMinimal = StatusDetail("2023-06-15T15:38:33.960Z", "No Status", "Sign up - return available", None)
+  val statusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", Some(8000.25))
+  val statusDetailMTDMandated = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, "Sign up - return available", Some(8000.25))
+  val statusDetailMinimal = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", None)
   val successITSAStatusResponseModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetail)))
   val successITSAStatusResponseMTDMandatedModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated)))
+  val successMultipleYearITSAStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+    )
+  }
   val successITSAStatusResponseModelMinimal = ITSAStatusResponseModel("2019-20", None)
   val errorITSAStatusError = ITSAStatusResponseError(BAD_REQUEST, "Dummy message")
   val badJsonErrorITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing ITSA Status response")
@@ -85,4 +93,7 @@ object ITSAStatusTestConstants {
   val errorHttpResponse = HttpResponse(Status.BAD_REQUEST, "Dummy message", Map.empty)
   val notFoundHttpResponse = HttpResponse(Status.NOT_FOUND, "Dummy message", Map.empty)
   val badJsonHttpResponse = HttpResponse(Status.OK, Json.obj(), Map.empty)
+
+
+  val yearToStatus: Map[TaxYear, ITSAStatus] = Map(TaxYear(2020) -> NoStatus, TaxYear(2021) -> Mandated)
 }

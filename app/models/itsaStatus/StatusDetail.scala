@@ -16,17 +16,31 @@
 
 package models.itsaStatus
 
-import play.api.libs.json.{Format, Json}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import play.api.libs.json.{Format, Json, Reads}
 
 case class StatusDetail(submittedOn: String,
-                        status: String,
+                        status: ITSAStatus,
                         statusReason: String,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 
-  def isMandatedOrVoluntary: Boolean = status.equals("MTD Mandated") || status.equals("MTD Voluntary")
+  def isMandatedOrVoluntary: Boolean = status == Mandated || status == Voluntary
 
 }
 
 object StatusDetail {
   implicit val format: Format[StatusDetail] = Json.format
+}
+
+object ITSAStatus extends Enumeration {
+  type ITSAStatus = Value
+  val NoStatus = Value("No Status")
+  val Mandated = Value("MTD Mandated")
+  val Voluntary = Value("MTD Voluntary")
+  val Annual = Value("Annual")
+  val NonDigital = Value("Non Digital")
+  val Dormant = Value("Dormant")
+  val Exempt = Value("MTD Exempt")
+
+  implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
 }
