@@ -46,21 +46,30 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
 
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
-
-    val poa1: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-    val poa2: Option[TaxYear] = documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
-      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-
-    if (poa1 == poa2) {
-      Right(poa1)
-    } else {
+    {
+      for {
+        poa1 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+      } yield {
+        if (poa1 == poa2) {
+          Right(Some(poa1))
+        } else {
+          Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
+            s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
+          Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
+        }
+      }
+    }.getOrElse {
+      // TODO: tidy up relevant unit tests, as this is a separate error, see log details;
       Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-        s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
+        s"Unable to find required POA records")
       Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
     }
   }
 
+  // TODO: this method need to be optimised
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
     Logger("application").debug(
