@@ -105,7 +105,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
-            s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
+            s"Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
           journeyRestartUrl(user)
       }
     }

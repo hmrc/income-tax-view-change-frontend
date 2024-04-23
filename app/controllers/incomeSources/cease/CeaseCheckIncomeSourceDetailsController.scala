@@ -97,7 +97,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(user.incomeSources, IncomeSourceId(id), endDate) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][getViewModel]: " +
+            Logger("application").error(s"" +
               s"Unable to get view model for SelfEmployment: ${ex.getMessage} - ${ex.getCause}")
             None
         }
@@ -105,12 +105,12 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(user.incomeSources, endDate, incomeSourceType) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][getViewModel]: " +
+            Logger("application").error(s"" +
               s"Unable to get view model for $incomeSourceType: ${ex.getMessage} - ${ex.getCause}")
             None
         }
       case (_, _, _) =>
-        Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][getViewModel]: " +
+        Logger("application").error(s"" +
           s"Unable to get required data from session for $incomeSourceType")
         None
     }
@@ -169,13 +169,13 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             val incomeSourceId = IncomeSourceId(property.incomeSourceId)
             updateCessationDate(endDate, incomeSourceType, incomeSourceId, isAgent)
           case None =>
-            Logger("application").error(s"[CheckCeaseBusinessDetailsController][ceaseProperty]: Unable to retrieve property income source.")
+            Logger("application").error(s"Unable to retrieve property income source.")
             Future.successful {
               errorHandler(isAgent).showInternalServerError()
             }
         }
       case None =>
-        Logger("application").error(s"[CheckCeaseBusinessDetailsController][ceaseProperty]: Missing end date")
+        Logger("application").error(s"Missing end date")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }

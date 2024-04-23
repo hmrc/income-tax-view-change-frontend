@@ -79,7 +79,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
-          Logger("application").error("[DeclareIncomeSourceCeasedController][handleRequest]: IncomeSourceId not found for SelfEmployment")
+          Logger("application").error("IncomeSourceId not found for SelfEmployment")
           Future.successful { showInternalServerError() }
         case (_, _, maybeBusinessName) =>
           Future.successful(

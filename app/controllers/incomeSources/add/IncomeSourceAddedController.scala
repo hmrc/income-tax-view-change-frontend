@@ -111,7 +111,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix +
-          s"[IncomeSourceAddedController][handleSuccess]: Unable to retrieve Mongo session data for $incomeSourceType")
+          s"Unable to retrieve Mongo session data for $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }

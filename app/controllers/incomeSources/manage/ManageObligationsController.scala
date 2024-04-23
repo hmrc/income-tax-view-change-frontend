@@ -66,7 +66,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               incomeSourceIdOption
             )
           case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
+            Logger("application").error(s"${ex.getMessage}")
             Future.successful {
               errorHandler(false).showInternalServerError()
             }
@@ -88,7 +88,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               incomeSourceIdOption
             )
           case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful {
               errorHandler(true).showInternalServerError()
             }

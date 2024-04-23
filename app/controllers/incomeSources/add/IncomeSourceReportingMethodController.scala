@@ -91,7 +91,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
+            s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }
@@ -171,7 +171,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
         }
       case _ =>
-        Logger("application").info("[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
+        Logger("application").info("Latency details not available")
         Future.successful(None)
     }
   }
@@ -191,7 +191,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Could not find an incomeSourceId in session data for $incomeSourceType")
+            s"Could not find an incomeSourceId in session data for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }
