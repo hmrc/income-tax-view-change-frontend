@@ -62,7 +62,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] =
+  lazy val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
