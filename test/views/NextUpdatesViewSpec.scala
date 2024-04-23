@@ -32,6 +32,8 @@ class NextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
+  val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
+  val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
   class Setup(currentObligations: NextUpdatesViewModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
@@ -105,6 +107,11 @@ class NextUpdatesViewSpec extends TestSupport {
 
       table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
+    }
+
+    s"have the correct Claim To Adjust PoA Link and Text" in new Setup(obligationsModel) {
+      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
+      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
     }
   }
 }

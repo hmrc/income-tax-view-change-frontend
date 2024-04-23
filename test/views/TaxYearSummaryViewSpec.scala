@@ -268,6 +268,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false), "testBackURL", isAgent)
 
+  def poaView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    ???
+  )
+
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object TaxYearSummaryMessages {
@@ -325,6 +329,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val messageAction: String = "! Warning " + messages("tax-year-summary.message.action")
     val messageError1: String = messages("tax-year-summary.message.C15015")
     val messageError2: String = messages("tax-year-summary.message.C15016")
+    val claimToAdjustPoaParagraph: String = messages("tax-year-summary.claim-to-adjust-poa.paragraph")
+    val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -413,6 +419,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView()) {
         layoutContent.getOptionalSelector("p.govuk-body") shouldBe None
+      }
+
+      "display relevant paragraph and link relating to claim to adjust PoA" in new Setup(poaView()) {
+        document.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaParagraph
+        document.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLinkIndividual
       }
 
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
