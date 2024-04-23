@@ -53,7 +53,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
           .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
       } yield {
-        if (poa1 == poa2) {
+        if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
           Right(Some(poa1))
         } else {
           Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
