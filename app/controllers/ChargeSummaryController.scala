@@ -37,10 +37,35 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
 import views.html.ChargeSummary
 import views.html.errorPages.CustomNotFoundError
-import utils.ImplicitsWithFunUtils._
+import ChargeSummaryController._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
+object ChargeSummaryController {
+
+  case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
+
+  type ItvcResponse[T]  = Either[ErrorCode, T]
+  type ItvcResult  = Future[Result]
+
+  implicit class ValueToEither[V](v: V) {
+    def toRightE: Right[ErrorCode, V] = Right(v)
+    def toLeftE[R]: Left[ErrorCode, R] = Left(v.asInstanceOf[ErrorCode])
+  }
+
+  implicit class EitherToFuture[T](either: Either[ErrorCode, T]) {
+    def toFuture: Future[T] = either match {
+      case Right(a) => Future.successful(a)
+      case Left(errorCode) => Future.failed(errorCode)
+    }
+  }
+
+  implicit class TypeToFuture[T](t: T) {
+    def toFuture: Future[T] = Future.successful(t)
+  }
+
+}
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
