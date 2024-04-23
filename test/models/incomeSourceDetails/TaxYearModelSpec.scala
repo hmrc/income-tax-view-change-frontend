@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.incomeSourceDetails
 
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import testUtils.UnitSpec
 
 class TaxYearModelSpec extends UnitSpec {
@@ -125,6 +125,16 @@ class TaxYearModelSpec extends UnitSpec {
     "given an input with numerical years in the format YYYY-YYYY with a numerical difference of 1" should {
       "return a TaxYear model" in {
         TaxYear.getTaxYearModel("2021-2022").isDefined shouldBe true
+      }
+    }
+  }
+  "makeTaxYearWithEndYear" should {
+    "create a TaxYear object" when {
+      "given the Tax Year end year" in {
+        val result = makeTaxYearWithEndYear(2024)
+
+        result.startYear shouldBe 2023
+        result shouldBe TaxYear(2023, 2024)
       }
     }
   }

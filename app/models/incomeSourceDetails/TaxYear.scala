@@ -28,7 +28,7 @@ case class TaxYear(startYear: Int, endYear: Int) {
   def formatTaxYearRange: String = {
     s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
   }
-
+  
 }
 
 object TaxYear {
@@ -56,6 +56,10 @@ object TaxYear {
         )
       case _ => None
     }
+  }
+
+  def makeTaxYearWithEndYear(endYear: Int): TaxYear = {
+    TaxYear(startYear = (endYear - 1), endYear = endYear)
   }
 
   def apply(endYear: Int): TaxYear = {
