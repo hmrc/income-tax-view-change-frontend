@@ -43,6 +43,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     None
   )(FakeRequest())
 
+  val exceptionMessage1: String = "The most recent PoA 1 & 2 documents were expected to be from the same tax year. They are not."
+
   "getPoATaxYear method" should {
     "return a taxYear" when {
       "a user has document details relating to PoA data" in {
@@ -88,18 +90,18 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     }
 
     // TODO: fix this unit test
-//    "return None" when {
-//      "a user has no 1553 data related to POA" in {
-//        setupMockGetFinancialDetailsError(2024, testNino)(financialDetailsErrorModel())
-//        setupMockGetFinancialDetailsError(2023, testNino)(financialDetailsErrorModel())
-//
-//        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
-//
-//        whenReady(result) {
-//          result => result shouldBe Right(None)
-//        }
-//      }
-//    }
+    "return None" when {
+      "a user has no 1553 data related to POA" in {
+        setupMockGetFinancialDetailsError(2024, testNino)(financialDetailsErrorModel())
+        setupMockGetFinancialDetailsError(2023, testNino)(financialDetailsErrorModel())
+
+        val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(None)
+        }
+      }
+    }
 
     "return an Exception" when {
       "the most recent document for poa 1 is more recent than for poa 2" in {
@@ -109,7 +111,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+          result => result.toString shouldBe Left(new Exception(exceptionMessage1)).toString
         }
       }
       "the most recent document for poa 2 is more recent than for poa 1" in {
@@ -119,7 +121,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+          result => result.toString shouldBe Left(new Exception(exceptionMessage1)).toString
         }
       }
       "there is a poa document for poa 1 but nothing for poa 2" in {
@@ -128,7 +130,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+          result => result.toString shouldBe Left(new Exception(exceptionMessage1)).toString
         }
       }
       "there is a poa document for poa 2 but nothing for poa 1" in {
@@ -138,7 +140,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = TestClaimToAdjustService.getPoATaxYear(user = testUser, hc = implicitly)
 
         whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")).toString
+          result => result.toString shouldBe Left(new Exception(exceptionMessage1)).toString
         }
       }
     }

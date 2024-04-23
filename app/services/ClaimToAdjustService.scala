@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.FinancialDetailsConnector
+import exceptions.MissingFieldException
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -48,24 +49,25 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
     {
       for {
-        poa1 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-        poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa1 <- Option(documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear)))
+        poa2 <- Option(documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear)))
       } yield {
-        if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
-          Right(Some(poa1))
+        if (poa1 == poa2) {
+          Right(poa1)
         } else {
           Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-            s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
-          Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
+            s"The most recent PoA 1 & 2 documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
+          Left(new Exception("The most recent PoA 1 & 2 documents were expected to be from the same tax year. They are not."))
         }
       }
     }.getOrElse {
       // TODO: tidy up relevant unit tests, as this is a separate error, see log details;
       Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
         s"Unable to find required POA records")
-      Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
+      // TODO: Fix this. The code is unreachable
+      Right(None)
     }
   }
 
