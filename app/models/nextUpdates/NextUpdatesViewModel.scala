@@ -18,10 +18,24 @@ package models.nextUpdates
 
 import java.time.LocalDate
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel]) {
+
+case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel]) {}
+
+case class NextUpdateOptOutViewModel(allDeadlines: Seq[DeadlineViewModel],
+                                     currentYearItsaStatus: Boolean,
+                                     previousYearItsaStatus: Boolean,
+                                     previousYearCrystallisedStatus: Boolean) {
+
+  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus)) Some({}) else None
+
+  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+
+  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
 
 }
 
-case class DeadlineViewModel(obligationType: ObligationType, standardAndCalendar: Boolean, deadline: LocalDate, standardQuarters: Seq[NextUpdateModelWithIncomeType], calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {
-
-}
+case class DeadlineViewModel(obligationType: ObligationType,
+                             standardAndCalendar: Boolean,
+                             deadline: LocalDate,
+                             standardQuarters: Seq[NextUpdateModelWithIncomeType],
+                             calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {}
