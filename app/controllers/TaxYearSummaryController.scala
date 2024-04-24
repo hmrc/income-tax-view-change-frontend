@@ -107,7 +107,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           mtdItUser, messagesApi, taxYearSummaryViewModel, liabilityCalc.messages))
 
         Logger("application").info(
-          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
+          s"[$taxYear]] Rendered Tax year summary page with Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -128,7 +128,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           mtdItUser, messagesApi, viewModel))
 
         Logger("application").info(
-          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
+          s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -139,11 +139,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         ))
       case _: LiabilityCalculationError if isAgent =>
         Logger("application").error(
-          s"[Agent][TaxYearSummaryController][view][$taxYear]] No new calc deductions data error found. Downstream error")
+          s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
         agentItvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"[TaxYearSummaryController][view][$taxYear]] No new calc deductions data error found. Downstream error")
+          s"[$taxYear]] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

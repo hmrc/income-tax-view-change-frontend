@@ -34,7 +34,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
   def uploadCalculationListData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s"[OptOutCustomDataService][uploadCalculationListData] -" +
+      Logger("application").info(s"" +
         s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatTaxYearRange} > and < status: $status >")
       dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = taxYear.formatTaxYearRange, crystallisationStatus = status)
     }
@@ -43,7 +43,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
   def uploadITSAStatusData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s"[OptOutCustomDataService][uploadCalculationListData] -" +
+      Logger("application").info(s"" +
         s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatTaxYearRange} > and < status: $status >")
       dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYear.formatTaxYearRange, ITSAStatus = status)
     }

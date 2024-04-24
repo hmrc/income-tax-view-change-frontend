@@ -162,7 +162,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
       if (latePayment) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application")
-        .error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+        .error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
     }
   }

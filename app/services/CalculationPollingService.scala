@@ -104,7 +104,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
     Logger("application")
-      .info("[CalculationPollingService][attemptToPollCalc]")
+      .info("")
     for {
       statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {

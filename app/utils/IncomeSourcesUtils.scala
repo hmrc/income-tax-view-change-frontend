@@ -49,7 +49,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       activeProperty match {
         case property :: Nil => Some(property)
         case _ =>
-          Logger("application").error(s"[ActivePropertyBusinessesHelper][getActiveProperty]" +
+          Logger("application").error(s"" +
             s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
           None
       }

@@ -140,7 +140,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
           case Left(_) =>
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
-      case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
+      case _ => Logger("application").error("")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
