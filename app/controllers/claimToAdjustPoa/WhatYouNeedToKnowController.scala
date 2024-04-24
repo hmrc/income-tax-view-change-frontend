@@ -72,7 +72,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       errorHandler.showInternalServerError()
   }
 
-  def continue(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       handleContinueRequest(isAgent)
   }

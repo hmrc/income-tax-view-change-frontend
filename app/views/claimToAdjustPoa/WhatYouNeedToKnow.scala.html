@@ -51,9 +51,12 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent) {
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = getMessage("heading"),
+    <span class="govuk-caption-xl">@getMessage("caption")</span>
+
+    @h1(msg = getMessage("h1"),
      id = Some("incomeSources.add.addIncomeSources-h1"))
 
     @p(id = Some("incomeSources.add.addIncomeSources-p1")) {
@@ -69,8 +72,7 @@
         @getMessage("p2")
     }
 
-    @h2(msg = getMessage("h2"),
-        optId = Some("incomeSources.add.addIncomeSources-h2"))
+    <h2 class="govuk-heading-l">@getMessage("h2")</h2>
 
     @p(id = Some("incomeSources.add.addIncomeSources-p3")) {
         @getMessage("p3")
@@ -86,10 +88,10 @@
 
     @newTabLinkHTML(getMessage("link1"), getMessage("link-text"))
 
-    @govukButton(Button(
-        content = Text(getMessage("continue-button")))
-    )
-
-    @link(getMessage("link2"))
-
+    <div class="govuk-button-group govuk-!-padding-top-3">
+        @govukButton(Button(
+            content = Text(getMessage("continue-button")))
+        )
+        @link(getMessage("link2"))
+    </div>
 }
