@@ -17,7 +17,6 @@
 package testConstants
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus}
 import models.itsaStatus._
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
@@ -95,5 +94,5 @@ object ITSAStatusTestConstants {
   val badJsonHttpResponse = HttpResponse(Status.OK, Json.obj(), Map.empty)
 
 
-  val yearToStatus: Map[TaxYear, ITSAStatus] = Map(TaxYear(2020) -> NoStatus, TaxYear(2021) -> Mandated)
+  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear(2020) -> statusDetail, TaxYear(2021) -> statusDetailMTDMandated)
 }

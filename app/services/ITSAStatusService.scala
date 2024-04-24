@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.itsaStatus.ITSAStatusResponseModel
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -47,10 +46,8 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  private def getStatus(itsaStatusResponseModel: ITSAStatusResponseModel): Option[ITSAStatus] = {
-    itsaStatusResponseModel
-      .itsaStatusDetails
-      .flatMap(statusDetail => statusDetail.headOption.map(detail => detail.status))
+  private def getStatusDetail(itsaStatusResponseModel: ITSAStatusResponseModel): Option[StatusDetail] = {
+    itsaStatusResponseModel.itsaStatusDetails.flatMap(statusDetail => statusDetail.headOption)
   }
 
   def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
@@ -63,10 +60,11 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
 
-  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
     getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
-      _.map(item => TaxYear(item.taxYear.split("-")(0).toInt + 1) -> getStatus(item)).flatMap {
-        case (taxYear, Some(status)) => Some(taxYear -> status)
+      //item.taxYear has string format as 2022-20
+      _.map(item => TaxYear(item.taxYear.split("-")(0).toInt + 1) -> getStatusDetail(item)).flatMap {
+        case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
         case _ => None
       }.toMap
     }

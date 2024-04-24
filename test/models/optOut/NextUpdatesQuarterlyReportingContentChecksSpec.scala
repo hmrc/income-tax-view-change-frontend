@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.optOut
 
 import testUtils.TestSupport
 
-class NextUpdatesOptOutViewModelSpec extends TestSupport {
+class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
-  "NextUpdatesOptOutViewModel" when {
+  "QuarterlyReportingContentChecks" when {
     "called showUpdateTypeDetailsSection" should {
       "return Some[Unit] indicating to show - update type detail section" in {
         Seq((true, true, true),
@@ -30,10 +30,10 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
           (false, true, false)).foreach {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdateOptOutViewModel(Seq.empty,
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = Some(previousYearCrystallised))
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
@@ -46,10 +46,10 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
 
-            val viewModel = NextUpdateOptOutViewModel(Seq.empty,
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = Some(previousYearCrystallised))
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
@@ -66,10 +66,10 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
           (false, true, false)).foreach {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdateOptOutViewModel(Seq.empty,
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = Some(previousYearCrystallised))
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
@@ -82,10 +82,10 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
 
-            val viewModel = NextUpdateOptOutViewModel(Seq.empty,
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = Some(previousYearCrystallised))
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
