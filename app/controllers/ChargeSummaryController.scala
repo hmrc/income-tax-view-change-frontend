@@ -227,7 +227,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): ItvcResponse[Boolean] = {
 
-
     val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !(isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment))
     val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
     val viewSection3 = isEnabled(ChargeHistory) && (isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
