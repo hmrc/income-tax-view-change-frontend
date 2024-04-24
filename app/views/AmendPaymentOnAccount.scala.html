@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
+@import implicits.ImplicitCurrencyFormatter._
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-
 
 @this(
     mainTemplate: unifiedLayout,
@@ -33,10 +33,20 @@
     p: p
 )
 
-@(isAgent: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(
+        isAgent: Boolean,
+        taxYearStartYear: String,
+        taxYearEndYear: String,
+        poaOneFullAmount: Int,
+        poaTwoFullAmount: Int
+)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"paymentOnAccount.$key", args: _*)
+}
 
 @mainTemplate(
-    pageTitle = "Adjusting your payments on account",
+    pageTitle = getMessage("heading"),
     backUrl = Some("/"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
@@ -44,39 +54,43 @@
 ) {
 
     @hmrcPageHeading(PageHeading(
-        text = "Adjusting your payments on account",
+        text = getMessage("heading"),
         headingClasses = Some("govuk-heading-xl"),
-        section = Some("Adjust payments on account for 2023 to 2024 tax year"),
+        section = Some(getMessage("caption", taxYearStartYear, taxYearEndYear)),
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    @p(){You can adjust both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions (opens in new tab) to be lower than the previous tax year.}
+    @p(){
+        @getMessage("p1")
+        @link(link = getMessage("class4NationalInsurance.link"), messageKey = getMessage("class4NationalInsurance.link.text"), rel = Some ("noreferrer noopener"), target = Some ("_blank"))
+        @getMessage("p2")
+    }
 
     @govukInsetText(InsetText(
-        content = Text("For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.")
+        content = Text(getMessage("inset-text"))
     ))
 
     @govukSummaryList(SummaryList(
         rows = Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text("Full amount")
+                    content = Text(getMessage("table-heading.key"))
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent("£3,000.00")
+                    content = HtmlContent(poaOneFullAmount.toCurrencyString)
                 ),
             ),
         ),
         card = Some(Card(
             title = Some(CardTitle(
-                content = Text("First payment on account")
+                content = Text(getMessage("table-heading-1"))
             )),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = "/",
-                        content = Text("More details"),
+                        content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa1-more-details-date-link")
                     )
                 )
@@ -88,23 +102,23 @@
         rows = Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text("Full amount")
+                    content = Text(getMessage("table-heading.key"))
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent("£3,000.00")
+                    content = HtmlContent(poaTwoFullAmount.toCurrencyString)
                 ),
             ),
         ),
         card = Some(Card(
             title = Some(CardTitle(
-                content = Text("Second payment on account")
+                content = Text(getMessage("table-heading-2"))
             )),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = "/",
-                        content = Text("More details"),
+                        content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa2-more-details-date-link")
                     )
                 )
@@ -112,14 +126,14 @@
         ))
     ))
 
-    @p(){Both payments on account need to be adjusted at the same time. You can't change one without the other.}
+    @p(){@getMessage("p3")}
 
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
-            content = Text("Adjust my payments on account"),
+            content = Text(getMessage("button")),
             href = Some("/")
         ))
-        @link(link = "/", messageKey = "Cancel")
+        @link(link = "/", messageKey = getMessage("cancel.link"))
     </div>
 
 }

@@ -42,12 +42,24 @@ class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future.successful(Ok(view(isAgent)))
+        Future.successful(Ok(view(
+          isAgent,
+          taxYearStartYear = "2023",
+          taxYearEndYear = "2024",
+          poaOneFullAmount = 3000,
+          poaTwoFullAmount = 3000
+        )))
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future.successful(Ok(view(isAgent)))
+        Future.successful(Ok(view(
+          isAgent,
+          taxYearStartYear = "2023",
+          taxYearEndYear = "2024",
+          poaOneFullAmount = 3000,
+          poaTwoFullAmount = 3000
+        )))
     }
 }
