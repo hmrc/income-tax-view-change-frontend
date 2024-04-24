@@ -58,7 +58,7 @@ class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedF
         }
       case _ =>
         val errorPrefix = if (isAgent) "[Agent]"
-        else "[CannotGoBackErrorController][handleRequest]: "
+        else " "
         Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()

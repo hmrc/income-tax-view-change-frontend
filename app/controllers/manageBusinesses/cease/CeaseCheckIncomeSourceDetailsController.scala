@@ -198,7 +198,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         Future.successful(Redirect(redirectCall))
 
       case Left(error) =>
-        Logger("application").error("[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
+        Logger("application").error("" +
           " Unsuccessful update response received")
 
         auditingService.extendedAudit(CeaseIncomeSourceAuditModel(

@@ -99,7 +99,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     }.recover {
       case ex: Exception =>
         Logger("application").error(
-          "[UKPropertyReportingMethodController][handleRequest]:" +
+          "" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
