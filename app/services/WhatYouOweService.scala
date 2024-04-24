@@ -67,7 +67,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
     unpaidCharges match {
       case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
+        throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption

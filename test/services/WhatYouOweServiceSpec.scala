@@ -143,7 +143,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           val ex = res.failed.futureValue
           ex shouldBe an[Exception]
-          ex.getMessage shouldBe "[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
+          ex.getMessage shouldBe "Error response while getting Unpaid financial details"
         }
       }
       "when both financial details return success and outstanding charges return 404" should {

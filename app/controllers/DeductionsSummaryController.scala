@@ -70,7 +70,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
           liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-        Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+        Logger("application").info(s"${if (isAgent) "[Agent]"}[$taxYear] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(

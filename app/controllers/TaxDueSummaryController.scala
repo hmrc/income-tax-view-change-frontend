@@ -73,8 +73,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          "[TaxDueController][showTaxDueSummary[" + taxYear +
-            "]] No new calc deductions data error found. Downstream error")
+          s"[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

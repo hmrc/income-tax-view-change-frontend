@@ -49,7 +49,7 @@ trait ClientConfirmedController extends BaseAgentController {
 
   def getClientNino(implicit request: Request[_]): String = {
     request.session.get(SessionKeys.clientNino)
-      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientNino] client nino not found"))
+      .getOrElse(throw new InternalServerException("client nino not found"))
   }
 
   def getClientName(implicit request: Request[_]): Option[Name] = {

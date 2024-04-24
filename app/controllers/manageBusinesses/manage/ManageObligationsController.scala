@@ -79,7 +79,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
                 None
               )
             case (_, _, _, _) =>
-              Logger("application").error(s"[ManageObligationsController][Missing session values]")
+              Logger("application").error(s"Missing session values")
               Future.successful {
                 errorHandler(isAgent).showInternalServerError()
               }

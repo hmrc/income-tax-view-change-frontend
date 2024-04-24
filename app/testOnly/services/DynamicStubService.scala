@@ -57,7 +57,7 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         throw new Exception("Failed to retrieve ITSAStatus")
       case _ =>
         Logger("application").error(s"Unexpected error. List of ITSAStatusResponseModels was empty!")
-        throw new Exception("[ITSAStatusService][getITSAStatusDetail] - Unexpected error. List of ITSAStatusResponseModels was empty!")
+        throw new Exception("Unexpected error. List of ITSAStatusResponseModels was empty!")
     }
   }
 
