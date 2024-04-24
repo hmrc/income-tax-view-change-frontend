@@ -81,10 +81,10 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("[InYearTaxCalculationController][show] No calculation data returned from downstream.")
+        Logger("application").info("No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("[InYearTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
+        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }

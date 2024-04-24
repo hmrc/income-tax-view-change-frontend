@@ -44,12 +44,12 @@ trait ClientConfirmedController extends BaseAgentController {
 
   def getClientMtditid(implicit request: Request[_]): String = {
     request.session.get(SessionKeys.clientMTDID)
-      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientMtditid] client mtditid not found"))
+      .getOrElse(throw new InternalServerException("client mtditid not found"))
   }
 
   def getClientNino(implicit request: Request[_]): String = {
     request.session.get(SessionKeys.clientNino)
-      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientNino] client nino not found"))
+      .getOrElse(throw new InternalServerException("client nino not found"))
   }
 
   def getClientName(implicit request: Request[_]): Option[Name] = {
@@ -82,8 +82,8 @@ trait ClientConfirmedController extends BaseAgentController {
         userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
         userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
       case _ =>
-        Logger("application").error("[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
-        throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
+        Logger("application").error("Failed to retrieve income sources for agent")
+        throw new InternalServerException("IncomeSourceDetailsModel not created")
     }
   }
 

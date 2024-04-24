@@ -56,7 +56,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error("[IncomeTaxViewChangeConnector][getLegacyCalculationList] - " +
+              Logger("application").error("" +
                 s"Json validation error parsing legacy calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
             },
@@ -64,9 +64,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
       }
@@ -85,7 +85,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error("[IncomeTaxViewChangeConnector][getCalculationList] - " +
+              Logger("application").error("" +
                 s"Json validation error parsing calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
             },
@@ -93,9 +93,9 @@ class CalculationListConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
       }

@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class NinoLookupService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
 
   def getNino(mtdRef: String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
-    Logger("application").debug(s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
+    Logger("application").debug(s"Requesting NINO from connector for user with MtdRef: $mtdRef")
     businessDetailsConnector.getNino(mtdRef)
   }
 }

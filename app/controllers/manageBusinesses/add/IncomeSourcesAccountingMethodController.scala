@@ -93,7 +93,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 
@@ -173,7 +173,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 

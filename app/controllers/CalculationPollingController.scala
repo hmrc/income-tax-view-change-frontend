@@ -54,22 +54,22 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     (calculationId, user.nino, user.mtditid) match {
       case (Some(calculationId), nino, mtditid) =>
-        Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
+        Logger("application").info(s"Polling started for $calculationId")
         pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, taxYear, mtditid) flatMap {
           case OK =>
-            Logger("application").info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
+            Logger("application").info(s"Received OK response for calcId: $calculationId")
             Future.successful(Redirect(successfulPollRedirect))
           case _ =>
-            Logger("application").info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
+            Logger("application").info(s"No calculation found for calcId: $calculationId")
             Future.successful(itvcErrorHandler.showInternalServerError())
         } recover {
           case ex: Exception =>
-            Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"Polling failed with exception: ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
         }
 
       case _ =>
-        Logger("application").error("[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
+        Logger("application").error("calculationId and nino not found in session")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
