@@ -98,7 +98,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     } recover {
       case ex: Exception =>
         Logger("application")
-          .error(s"[DeclareIncomeSourceCeasedController][handleRequest] Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
+          .error(s"Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError()
     }
 

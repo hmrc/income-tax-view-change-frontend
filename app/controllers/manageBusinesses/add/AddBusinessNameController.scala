@@ -92,7 +92,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }.recover {
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 

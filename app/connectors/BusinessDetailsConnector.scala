@@ -61,7 +61,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[IncomeSourceDetailsModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] $invalid")
+              Logger("application").error(s"$invalid")
               IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
             },
             valid => valid
@@ -99,7 +99,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[IncomeSourceDetailsModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] $invalid")
+              Logger("application").error(s"$invalid")
               IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
             },
             valid => {

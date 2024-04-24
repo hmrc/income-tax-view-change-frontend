@@ -144,7 +144,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     incomeSourceType match {
       case SelfEmployment =>
         id.orElse {
-          val message = "[ManageObligationsController][getIncomeSourceId] Missing required income source ID for Self Employment"
+          val message = "Missing required income source ID for Self Employment"
           Logger("application").error(message)
           None
         }

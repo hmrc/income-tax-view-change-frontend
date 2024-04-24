@@ -144,7 +144,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest] Error Submitting Cease Date: ${ex.getMessage}", ex.getCause)
+        Logger("application").error(s"Error Submitting Cease Date: ${ex.getMessage}", ex.getCause)
         errorHandler(isAgent).showInternalServerError()
     }
   }
@@ -154,7 +154,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     (incomeSourceIdOpt, endDateOpt) match {
       case (Some(incomeSourceId), Some(endDate)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent)
       case _ => Future.successful {
-        Logger("application").error(s"[CheckCeaseBusinessDetailsController][ceaseSelfEmployment] Missing income source id or end date")
+        Logger("application").error(s"Missing income source id or end date")
         errorHandler(isAgent).showInternalServerError()
       }
     }

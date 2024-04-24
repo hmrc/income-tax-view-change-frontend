@@ -111,7 +111,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[ReportingMethodController][handleRequest] Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }

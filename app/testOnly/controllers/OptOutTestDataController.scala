@@ -73,7 +73,7 @@ class OptOutTestDataController @Inject()(
     }.recover {
       case ex: Throwable =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[OptOutTestDataController][retrieveData] " +
+        Logger("application").error(s"" +
           s"${if (isAgent) "Agent" else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
         errorHandler.showInternalServerError()
     }

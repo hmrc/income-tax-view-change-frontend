@@ -52,20 +52,20 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
     hc.sessionId match {
       case Some(sessionId: SessionId) => post(isAgent = isAgent, sessionId) flatMap {
         case Left(ex) =>
-          Logger("application").error(s"[SessionStorageServiceController][handleShow] " +
+          Logger("application").error(s"" +
             s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
           Future.successful(handleError(isAgent))
         case Right(id: String) =>
           handlePostSuccess(id, isAgent)
       }
       case None =>
-        Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
+        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - HeaderCarrier contained no sessionId!")
         Future.successful(handleError(isAgent))
     }
   }.recover {
     case ex: Throwable =>
-      Logger("application").error(s"[SessionStorageServiceController][handleShow] " +
+      Logger("application").error(s"" +
         s"${if (isAgent) "Agent" else "Individual"} - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
       handleError(isAgent)
   }
@@ -73,7 +73,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   private def handlePostSuccess(id: String, isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     sessionDataService.getSessionData(id) map {
       case Left(ex) =>
-        Logger("application").error(s"[SessionStorageServiceController][handleShow] ${if (isAgent) "Agent" else "Individual"}" +
+        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataModel) =>
