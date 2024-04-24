@@ -97,21 +97,18 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(user.incomeSources, IncomeSourceId(id), endDate) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"" +
-              s"Unable to get view model for SelfEmployment: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"Unable to get view model for SelfEmployment: ${ex.getMessage} - ${ex.getCause}")
             None
         }
       case (None, Some(endDate), _) =>
         incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(user.incomeSources, endDate, incomeSourceType) match {
           case Right(viewModel) => Some(viewModel)
           case Left(ex) =>
-            Logger("application").error(s"" +
-              s"Unable to get view model for $incomeSourceType: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"Unable to get view model for $incomeSourceType: ${ex.getMessage} - ${ex.getCause}")
             None
         }
       case (_, _, _) =>
-        Logger("application").error(s"" +
-          s"Unable to get required data from session for $incomeSourceType")
+        Logger("application").error(s"Unable to get required data from session for $incomeSourceType")
         None
     }
   }

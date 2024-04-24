@@ -78,8 +78,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s"" +
-            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -101,8 +100,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s"" +
-            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }

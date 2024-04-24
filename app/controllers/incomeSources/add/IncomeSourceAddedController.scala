@@ -76,8 +76,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         )
       }) getOrElse {
         Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"" +
-            s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }

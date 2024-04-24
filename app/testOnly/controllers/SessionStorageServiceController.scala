@@ -52,8 +52,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
     hc.sessionId match {
       case Some(sessionId: SessionId) => post(isAgent = isAgent, sessionId) flatMap {
         case Left(ex) =>
-          Logger("application").error(s"" +
-            s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
+          Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
           Future.successful(handleError(isAgent))
         case Right(id: String) =>
           handlePostSuccess(id, isAgent)
@@ -65,8 +64,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
     }
   }.recover {
     case ex: Throwable =>
-      Logger("application").error(s"" +
-        s"${if (isAgent) "Agent" else "Individual"} - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
       handleError(isAgent)
   }
 
