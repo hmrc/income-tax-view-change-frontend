@@ -1,0 +1,95 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.injected.InputHelper
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukBackLink : GovukBackLink,
+        govukButton : GovukButton,
+        govukWarningText : GovukWarningText,
+        inputHelper: InputHelper,
+)
+@(isAgent: Boolean, backUrl: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+
+@link(link: String) = {
+    <a href="#" class="govuk-link">@link</a>
+}
+
+@getMessage(key: String, args: String*) = @{
+ messages(s"claimToAdjustPoa.whatYouNeedToKnow.$key", args: _*)
+}
+
+@newTabLinkHTML(link: String, linkText: String) = {
+    <p class="govuk-body">
+        @linkText <a href="#" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
+    </p>
+}
+
+@mainTemplate(pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent) {
+
+    @h1(msg = getMessage("heading"),
+     id = Some("incomeSources.add.addIncomeSources-h1"))
+
+    @p(id = Some("incomeSources.add.addIncomeSources-p1")) {
+        @getMessage("p1")
+    }
+
+    @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = Text(getMessage("warning-text"))
+    ))
+
+    @p(id = Some("incomeSources.add.addIncomeSources-p2")) {
+        @getMessage("p2")
+    }
+
+    @h2(msg = getMessage("h2"),
+        optId = Some("incomeSources.add.addIncomeSources-h2"))
+
+    @p(id = Some("incomeSources.add.addIncomeSources-p3")) {
+        @getMessage("p3")
+    }
+
+    @p(id = Some("incomeSources.add.addIncomeSources-p4")) {
+        @getMessage("p4")
+    }
+
+    @p(id = Some("incomeSources.add.addIncomeSources-p5")) {
+        @getMessage("p5")
+    }
+
+    @newTabLinkHTML(getMessage("link1"), getMessage("link-text"))
+
+    @govukButton(Button(
+        content = Text(getMessage("continue-button")))
+    )
+
+    @link(getMessage("link2"))
+
+}

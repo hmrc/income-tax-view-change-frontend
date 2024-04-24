@@ -1813,3 +1813,19 @@ manageBusinesses.check-answers.reporting.quarterly                       = Bob c
 manageBusinesses.check-answers.reporting.annually                        = Bob blwyddyn
 manageBusinesses.check-answers.confirm                                   = Cadarnhau ac yn eich blaen
 manageBusinesses.check-answers.change                                    = Newid
+
+#######################################################################################################################
+## Claim to Adjust POA - Add ##
+#######################################################################################################################
+
+# what you need to know
+claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	What you need to know
+claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	xxxxx
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   bbbbbbbbbb
+claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   You can adjust your payments on account at any point before submitting your tax return for 2023 to 2024, and no later than 31 January 2025.
+claimToAdjustPoa.whatYouNeedToKnow.bold-text                            = 	You may have to pay interest if you reduce your payments on account too much and underpay
+claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   If your next tax bill is lower than you’d expected and you’ve overpaid through your payments on account, we’ll credit your account.
+claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Interest charges
+claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   If you reduce your payments on account by too much, and your final tax bill shows you owe more tax than you’ve paid through your payments on account, we'll add the difference to your account as an overdue charge.
+claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Like with other late payments, HMRC will charge you interest on that amount, from the date each payment on account was due, until it is paid.
+claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   To avoid paying interest, you can increase your payments on account again, up to the initial amount created by HMRC, before each payment is due.
