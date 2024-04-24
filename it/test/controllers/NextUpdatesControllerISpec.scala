@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
+import config.featureswitch.OptOut
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
@@ -176,6 +177,72 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       }
 
+      "the user has a Opt Out Feature Switch Enabled" in {
+        enable(OptOut)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+
+        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the view displays the correct title, username and links")
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual("nextUpdates.heading")
+        )
+
+        Then("the page displays the property obligation dates")
+        res should have(
+          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
+          elementTextBySelector("#updates-software-link")
+          (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
+            "to keep digital records of all your business income and expenses. You must submit these " +
+            "updates through your software by each date shown."),
+        )
+      }
+
+      "the user has a Opt Out Feature Switch Disabled" in {
+        disable(OptOut)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+
+        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the view displays the correct title, username and links")
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual("nextUpdates.heading")
+        )
+
+        Then("the page displays the property obligation dates")
+        res should have(
+          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          isElementVisibleById("#updates-software-heading")(expectedValue = false),
+          isElementVisibleById("#updates-software-link")(expectedValue = false),
+        )
+      }
     }
   }
 

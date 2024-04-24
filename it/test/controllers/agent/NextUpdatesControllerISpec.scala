@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, OptOut}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -38,7 +38,7 @@ import java.time.LocalDate
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
+  lazy val fixedDate: LocalDate = LocalDate.of(2024, 6, 5)
 
   val incomeSourceDetails: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -154,6 +154,87 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       res should have(
         httpStatus(INTERNAL_SERVER_ERROR)
       )
+    }
+
+    "the user has obligations and the Opt Out feature switch enabled" in {
+      stubAuthorisedAgentUser(authorised = true)
+      enable(OptOut)
+
+      val currentObligations: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel(
+          identification = "testId",
+          obligations = List(
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+          ))
+      ))
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        status = OK,
+        response = incomeSourceDetails
+      )
+
+      IncomeTaxViewChangeStub.stubGetNextUpdates(
+        nino = testNino,
+        deadlines = currentObligations
+      )
+
+      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      verifyNextUpdatesCall(testNino)
+
+      Then("the next update view displays the correct title")
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent("nextUpdates.heading"),
+        elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
+        elementTextBySelector("#updates-software-link")
+        (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
+          "to keep digital records of all your business income and expenses. You must submit these " +
+          "updates through your software by each date shown."),
+      )
+
+      verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+    }
+
+    "the user has obligations and the Opt Out feature switch disabled" in {
+      stubAuthorisedAgentUser(authorised = true)
+      disable(OptOut)
+
+      val currentObligations: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel(
+          identification = "testId",
+          obligations = List(
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+          ))
+      ))
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        status = OK,
+        response = incomeSourceDetails
+      )
+
+      IncomeTaxViewChangeStub.stubGetNextUpdates(
+        nino = testNino,
+        deadlines = currentObligations
+      )
+
+      val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      verifyNextUpdatesCall(testNino)
+
+      Then("the next update view displays the correct title")
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent("nextUpdates.heading"),
+        isElementVisibleById("#updates-software-heading")(expectedValue = false),
+        isElementVisibleById("#updates-software-link")(expectedValue = false),
+      )
+
+      verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
     }
   }
 
