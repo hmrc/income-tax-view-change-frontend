@@ -256,7 +256,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     handleUpdateResults(isAgent, incomeSourceType, id, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 

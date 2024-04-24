@@ -127,7 +127,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     )
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[DeclareIncomeSourceCeasedController][handleSubmitRequest]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       showInternalServerError()
   }
 

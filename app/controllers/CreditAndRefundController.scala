@@ -93,7 +93,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
         Ok(view(viewModel, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
+        s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
     }
   }
