@@ -44,6 +44,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object ChargeSummaryController {
 
+  case class ChargeSummaryViewRequest(taxYear: Int, documentNumber: String, isLatePaymentCharge: Boolean,
+                                      chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
+                                      isAgent: Boolean, origin: Option[String], isMFADebit: Boolean)
+  case class ChargeSummaryViewData(request: ChargeSummaryViewRequest, sessionGatewayPage: Option[GatewayPage],
+                                   documentDetailWithDueDate: DocumentDetailWithDueDate,
+                                   paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean,
+                                   paymentAllocations:  List[PaymentsWithChargeType],
+                                   chargeHistory: List[ChargeHistoryModel] = List())
+
   case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
 
   type ItvcResponse[T]  = Either[ErrorCode, T]
@@ -148,7 +157,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           }
     }
 
-  private def doShowChargeSummary(request: ChargeSummaryViewRequest)
+  def doShowChargeSummary(request: ChargeSummaryViewRequest)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): ItvcResult = {
 
     def processSteps(): ItvcResult = for {
@@ -252,15 +261,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       ErrorCode(msg).toLeftE
     }
   }
-
-  case class ChargeSummaryViewRequest(taxYear: Int, documentNumber: String, isLatePaymentCharge: Boolean,
-                                              chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
-                                              isAgent: Boolean, origin: Option[String], isMFADebit: Boolean)
-  case class ChargeSummaryViewData(request: ChargeSummaryViewRequest, sessionGatewayPage: Option[GatewayPage],
-                                           documentDetailWithDueDate: DocumentDetailWithDueDate,
-                                           paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean,
-                                           paymentAllocations:  List[PaymentsWithChargeType],
-                                           chargeHistory: List[ChargeHistoryModel] = List())
 
   def fetchChargeHistory(data: ChargeSummaryViewData)
                                    (implicit user: MtdItUser[_]): Future[Either[ErrorCode, ChargeSummaryViewData]] = {
