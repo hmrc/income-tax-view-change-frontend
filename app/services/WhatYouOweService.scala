@@ -46,7 +46,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
     financialDetailsService.getAllCreditFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details")
+        throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsResponseModel] =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         financialDetailsModelList.flatMap(_.documentDetails)
@@ -98,7 +98,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       financialDetailsConnector.getOutstandingCharges("utr", saUtr.get, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
-        case _ => throw new Exception("[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges")
+        case _ => throw new Exception("Error response while getting outstanding charges")
       }
     } else {
       Future.successful(None)

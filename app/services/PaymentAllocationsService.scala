@@ -37,7 +37,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
   def getPaymentAllocation(nino: Nino, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
-    val functionName = "[PaymentAllocationsService][getPaymentAllocation]"
+    val functionName = ""
     financialDetailsConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
       case docDetailsWithFDModel: FinancialDetailsWithDocumentDetailsModel
         if docDetailsWithFDModel.documentDetails.head.paymentLot.isEmpty &&

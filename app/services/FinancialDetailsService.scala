@@ -62,7 +62,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
       case error: ChargesHistoryErrorModel =>
         Logger("application").error(s"$error")
-        Future.failed(new InternalServerException("[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"))
+        Future.failed(new InternalServerException("Failed to retrieve successful charge history"))
     }
   }
 

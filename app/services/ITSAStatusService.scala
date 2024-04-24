@@ -46,7 +46,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         Future.successful(isMandatedOrVoluntary)
       case Left(error) =>
         Logger("application").error(s"$error")
-        Future.failed(new Exception("[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"))
+        Future.failed(new Exception("Failed to retrieve ITSAStatus"))
     }
   }
 

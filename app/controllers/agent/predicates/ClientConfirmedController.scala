@@ -44,7 +44,7 @@ trait ClientConfirmedController extends BaseAgentController {
 
   def getClientMtditid(implicit request: Request[_]): String = {
     request.session.get(SessionKeys.clientMTDID)
-      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientMtditid] client mtditid not found"))
+      .getOrElse(throw new InternalServerException("client mtditid not found"))
   }
 
   def getClientNino(implicit request: Request[_]): String = {
@@ -83,7 +83,7 @@ trait ClientConfirmedController extends BaseAgentController {
         userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
       case _ =>
         Logger("application").error("Failed to retrieve income sources for agent")
-        throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
+        throw new InternalServerException("IncomeSourceDetailsModel not created")
     }
   }
 
