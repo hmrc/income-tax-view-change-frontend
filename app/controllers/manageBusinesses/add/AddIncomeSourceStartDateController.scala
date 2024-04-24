@@ -118,7 +118,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }.recover {
       case ex =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"[AddIncomeSourceStartDateController]${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -150,7 +150,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   }.recover {
     case ex =>
       Logger("application")
-        .error(s"[AddIncomeSourceStartDateController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+        .error(s"[${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }

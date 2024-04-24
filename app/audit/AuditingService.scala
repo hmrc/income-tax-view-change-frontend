@@ -38,11 +38,11 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     Logger("application").debug(s"Splunk Audit Event:\n\n$dataEvent")
     auditConnector.sendEvent(dataEvent).map {
       case Success =>
-        Logger("application").debug("[AuditingService][audit] - Splunk Audit Successful")
+        Logger("application").debug("Splunk Audit Successful")
       case Failure(err, _) =>
-        Logger("application").debug(s"[AuditingService][audit] - Splunk Audit Error, message: $err")
+        Logger("application").debug(s"Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug("[AuditingService][audit] - Auditing Disabled")
+        Logger("application").debug("Auditing Disabled")
     }
   }
 
@@ -62,11 +62,11 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
-        Logger("application").debug("[AuditingService][extendedAudit] - Splunk Audit Successful")
+        Logger("application").debug("Splunk Audit Successful")
       case Failure(err, _) =>
-        Logger("application").debug(s"[AuditingService][extendedAudit] - Splunk Audit Error, message: $err")
+        Logger("application").debug(s"Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug("[AuditingService][extendedAudit] - Auditing Disabled")
+        Logger("application").debug("Auditing Disabled")
     }
   }
 

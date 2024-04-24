@@ -4,13 +4,13 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>logs/income-tax-view-change-frontend.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>[%.-4level]  %date{ISO8601} %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
+            <pattern>[%.-4level]  %date{ISO8601} %class{0}#%M:%line %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
         </encoder>
     </appender>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>[%.-4level]  %date{ISO8601} %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
+            <pattern>[%.-4level]  %date{ISO8601} %class{0}#%M:%line %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
         </encoder>
     </appender>
 

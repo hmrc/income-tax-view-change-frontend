@@ -91,7 +91,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
+            s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }
@@ -99,7 +99,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     }.recover {
       case ex: Exception =>
         Logger("application").error(
-          "[UKPropertyReportingMethodController][handleRequest]:" +
+          "" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
@@ -111,7 +111,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[ReportingMethodController][handleRequest] Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
@@ -171,7 +171,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
         }
       case _ =>
-        Logger("application").info("[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
+        Logger("application").info("Latency details not available")
         Future.successful(None)
     }
   }
@@ -191,7 +191,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Could not find an incomeSourceId in session data for $incomeSourceType")
+            s"Could not find an incomeSourceId in session data for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }
@@ -256,7 +256,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     handleUpdateResults(isAgent, incomeSourceType, id, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 
@@ -283,7 +283,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
-      val prefix = "[IncomeSourceReportingMethodController][handleUpdateResults]: "
+      val prefix = ""
 
       if (successCount == results.length) {
         Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")
