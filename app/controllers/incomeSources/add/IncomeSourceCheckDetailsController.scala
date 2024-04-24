@@ -95,7 +95,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case None =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix +
-          s"[IncomeSourceCheckDetailsController][handleRequest]: Unable to construct view model for $incomeSourceType")
+          s"Unable to construct view model for $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
@@ -104,7 +104,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     case ex: Throwable =>
       val agentPrefix = if (isAgent) "[Agent]" else ""
       Logger("application").error(agentPrefix +
-        s"[IncomeSourceCheckDetailsController][handleRequest]: Unexpected exception ${ex.getMessage} - ${ex.getCause}")
+        s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 
@@ -205,7 +205,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-            s"[IncomeSourceCheckDetailsController][handleSubmit]: Unable to construct view model for $incomeSourceType")
+            s"Unable to construct view model for $incomeSourceType")
           Future.successful {
             Redirect(errorRedirectUrl(isAgent, incomeSourceType))
           }
@@ -213,7 +213,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
+      Logger("application").error(s"${ex.getMessage}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 }

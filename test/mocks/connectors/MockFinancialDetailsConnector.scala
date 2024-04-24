@@ -18,7 +18,7 @@ package mocks.connectors
 
 import connectors.FinancialDetailsConnector
 import models.core.Nino
-import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
 import org.mockito.ArgumentMatchers
@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
+
 import scala.concurrent.Future
 
 trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
@@ -38,6 +39,11 @@ trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetFinancialDetailsError(taxYear: Int, nino: String)(response: FinancialDetailsErrorModel): Unit = {
     when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }

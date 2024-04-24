@@ -61,7 +61,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, isAgent)
             case None => Logger("application")
-              .error(s"[ManageIncomeSourceDetailsController][show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
               Future.successful(if (isAgent) {
                 itvcErrorHandlerAgent.showInternalServerError()
               } else {
@@ -103,7 +103,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Left(exception) => Future.failed(exception)
             }.recover {
               case ex =>
-                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
+                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {
@@ -304,7 +304,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 ))
               case Left(error) =>
                 Logger("application")
-                  .error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
+                  .error(s"unable to find income source: $error. isAgent = $isAgent")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {
