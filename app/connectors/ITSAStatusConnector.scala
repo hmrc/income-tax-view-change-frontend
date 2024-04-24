@@ -54,9 +54,9 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           Left(ITSAStatusResponseError(response.status, response.body))
       }

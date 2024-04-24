@@ -74,7 +74,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         Future.successful(handleErrorGettingDueDates(isAgent))
     } recover {
       case ex =>
-        Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
         handleErrorGettingDueDates(isAgent)
     }
 

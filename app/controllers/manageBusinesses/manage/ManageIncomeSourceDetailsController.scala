@@ -103,7 +103,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Left(exception) => Future.failed(exception)
             }.recover {
               case ex =>
-                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
+                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {

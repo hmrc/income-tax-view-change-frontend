@@ -178,7 +178,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case (Some(form.responseYes), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
       case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
       case _ =>
-        Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
         Future.successful(showInternalServerError(isAgent))
     }
   }

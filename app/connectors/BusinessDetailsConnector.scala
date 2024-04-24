@@ -72,13 +72,13 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
           } else if (status >= 500) {
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
           }
           IncomeSourceDetailsError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - Unexpected future failed error, ${ex.getMessage}")
+        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
     }
   }
@@ -90,13 +90,13 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.incomeSourceOverrides())
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     //Passing the updated headercarrier implicitly to the request
     http.GET[HttpResponse](url)(implicitly, hc = hc, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[IncomeSourceDetailsModel].fold(
             invalid => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] $invalid")
@@ -114,15 +114,15 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
           }
           IncomeSourceDetailsError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Unexpected future failed error, ${ex.getMessage}")
+        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
     }
   }
@@ -130,30 +130,30 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
   def getNino(mtdRef: String)(implicit headerCarrier: HeaderCarrier): Future[NinoResponse] = {
 
     val url = getNinoLookupUrl(mtdRef)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getNino] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[NinoResponseSuccess].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getNino] - Json Validation Error - $invalid")
+              Logger("application").error(s"Json Validation Error - $invalid")
               NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
             },
             valid => valid
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
           }
           NinoResponseError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getNino] - Unexpected future failed error, ${ex.getMessage}")
+        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
     }
   }

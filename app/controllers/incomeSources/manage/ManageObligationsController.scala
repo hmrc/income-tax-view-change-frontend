@@ -168,7 +168,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"${if (isAgent) "[Agent]"}[ManageObligationsController][handleRequest] - $message")
+      s"${if (isAgent) "[Agent]"}$message")
     Future.successful {
       errorHandler(isAgent).showInternalServerError()
     }
