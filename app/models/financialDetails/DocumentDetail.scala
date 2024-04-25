@@ -26,6 +26,7 @@ import java.time.LocalDate
 
 case class DocumentDetail(taxYear: Int,
                           transactionId: String,
+                          totalAmount: BigDecimal,
                           documentDescription: Option[String],
                           documentText: Option[String],
                           outstandingAmount: Option[BigDecimal],
@@ -44,6 +45,10 @@ case class DocumentDetail(taxYear: Int,
                           amountCodedOut: Option[BigDecimal] = None,
                           documentDueDate: Option[LocalDate] = None
                          ) {
+
+  def isPoAOne: Boolean = documentDescription.exists(_.equals("ITSA- POA 1"))
+
+  def isPoATwo: Boolean = documentDescription.exists(_.equals("ITSA- POA 2"))
 
   def credit: Option[BigDecimal] = originalAmount match {
     case None => None
@@ -216,6 +221,7 @@ object DocumentDetail {
   implicit val reads: Reads[DocumentDetail] = (
     (__ \ "taxYear").read[Int] and
       (__ \ "transactionId").read[String] and
+      (__ \ "totalAmount").read[BigDecimal] and
       (__ \ "documentDescription").readNullable[String] and
       (__ \ "documentText").readNullable[String] and
       (__ \ "outstandingAmount").readNullable[BigDecimal] and

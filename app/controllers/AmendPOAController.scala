@@ -19,8 +19,11 @@ package controllers
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
+import implicits.ImplicitCurrencyFormatter
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.AmendPaymentOnAccount
@@ -30,36 +33,44 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                   claimToAdjustService: ClaimToAdjustService,
                                    val auth: AuthenticatorPredicate,
                                    view: AmendPaymentOnAccount,
-                                   val itvcErrorHandler: ItvcErrorHandler,
+                                   implicit val itvcErrorHandler: ItvcErrorHandler,
                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                   (implicit val appConfig: FrontendAppConfig,
                                    implicit override val mcc: MessagesControllerComponents,
                                    val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future.successful(Ok(view(
-          isAgent,
-          taxYearStartYear = "2023",
-          taxYearEndYear = "2024",
-          poaOneFullAmount = 3000,
-          poaTwoFullAmount = 3000
-        )))
+        claimToAdjustService.getPoATaxYear map {
+          case Right(Some(taxYearModel)) =>
+            Ok(view(
+              documentId = "blah",
+              isAgent = isAgent,
+              taxYearModel = taxYearModel,
+              poaOneFullAmount = 3000.toCurrencyString,
+              poaTwoFullAmount = 3000.toCurrencyString
+            ))
+          case Left(ex) =>
+            Logger("application").error(s"Failed to retrieve tax years for Payment on accounts: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
+        }
+
     }
 
-  def submit(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        Future.successful(Ok(view(
-          isAgent,
-          taxYearStartYear = "2023",
-          taxYearEndYear = "2024",
-          poaOneFullAmount = 3000,
-          poaTwoFullAmount = 3000
-        )))
-    }
+//  def submit(isAgent: Boolean): Action[AnyContent] =
+//    auth.authenticatedAction(isAgent) {
+//      implicit user =>
+//        Future.successful(Ok(view(
+//          isAgent,
+//          taxYearStartYear = 2023,
+//          taxYearEndYear = 2024,
+//          poaOneFullAmount = 3000.toCurrencyString,
+//          poaTwoFullAmount = 3000.toCurrencyString
+//        )))
+//    }
 }

@@ -48,18 +48,17 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
     {
       for {
-        poa1 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-        poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poaOneDocDetail  <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
+        poaOneTaxYear     = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
+        poaOneTotalAmount = poaOneDocDetail.totalAmount
+        poaTwoDocDetail  <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
+        poaOneTaxYear     = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
+        poaOneTotalAmount = poaTwoDocDetail.totalAmount
       } yield {
-        if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
-          Right(Some(poa1))
-        } else {
-          Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-            s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
-          Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
-        }
+        Right((
+          (poaOneTaxYear, poaOneTotalAmount),
+          (poaOneTaxYear, poaOneTotalAmount)
+        ))
       }
     }.getOrElse {
       // TODO: tidy up relevant unit tests, as this is a separate error, see log details;

@@ -14,35 +14,49 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitCurrencyFormatter._
 @import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 
 @this(
-    mainTemplate: unifiedLayout,
-    hmrcPageHeading: HmrcPageHeading,
-    govukInsetText : GovukInsetText,
-    govukSummaryList : GovukSummaryList,
-    continueButton: ContinueButton,
-    govukButton : GovukButton,
+    p: p,
     link: link,
-    p: p
+    govukButton : GovukButton,
+    mainTemplate: unifiedLayout,
+    continueButton: ContinueButton,
+    govukInsetText : GovukInsetText,
+    hmrcPageHeading: HmrcPageHeading,
+    govukSummaryList : GovukSummaryList
 )
 
 @(
-        isAgent: Boolean,
-        taxYearStartYear: String,
-        taxYearEndYear: String,
-        poaOneFullAmount: Int,
-        poaTwoFullAmount: Int
-)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    documentId: String,
+    isAgent: Boolean,
+    taxYearModel: TaxYear,
+    poaOneFullAmount: String,
+    poaTwoFullAmount: String
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages
+)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"paymentOnAccount.$key", args: _*)
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@getChargeSummaryUrl = @{
+    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(taxYearModel.endYear, documentId).url
+    else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, documentId).url
 }
 
 @mainTemplate(
@@ -56,13 +70,18 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-xl"),
-        section = Some(getMessage("caption", taxYearStartYear, taxYearEndYear)),
+        section = Some(getMessage("caption", taxYearModel.startYear.toString, taxYearModel.endYear.toString)),
         captionClasses = Some("govuk-caption-xl")
     ))
 
     @p(){
         @getMessage("p1")
-        @link(link = getMessage("class4NationalInsurance.link"), messageKey = getMessage("class4NationalInsurance.link.text"), rel = Some ("noreferrer noopener"), target = Some ("_blank"))
+        @link(
+            link = getMessage("class4NationalInsurance.link"),
+            messageKey = getMessage("class4NationalInsurance.link.text"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank")
+        )
         @getMessage("p2")
     }
 
@@ -78,7 +97,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaOneFullAmount.toCurrencyString)
+                    content = HtmlContent(poaOneFullAmount)
                 ),
             ),
         ),
@@ -89,7 +108,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = "/",
+                        href = getChargeSummaryUrl,
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa1-more-details-date-link")
                     )
@@ -106,7 +125,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaTwoFullAmount.toCurrencyString)
+                    content = HtmlContent(poaTwoFullAmount)
                 ),
             ),
         ),
@@ -117,7 +136,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = "/",
+                        href = getChargeSummaryUrl,
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa2-more-details-date-link")
                     )
@@ -126,14 +145,17 @@
         ))
     ))
 
-    @p(){@getMessage("p3")}
+    @p(){ @getMessage("p3") }
 
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
             content = Text(getMessage("button")),
             href = Some("/")
         ))
-        @link(link = "/", messageKey = getMessage("cancel.link"))
+        @link(
+            link = getHomePageUrl,
+            messageKey = getMessage("cancel.link")
+        )
     </div>
 
 }
