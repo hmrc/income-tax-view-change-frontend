@@ -17,19 +17,22 @@
 package services
 
 import auth.MtdItUser
-import connectors.FinancialDetailsConnector
+import connectors.{CalculationListConnector, FinancialDetailsConnector}
+import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+import models.core.Nino
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                                     val calculationListConnector: CalculationListConnector,
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) {
 
@@ -84,6 +87,98 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
           case _ => None
         }
     }).map(_.flatten)
+  }
+
+  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
+    val a = checkCrystallisation(nino, getPoaAdjustableTaxYears).map {
+      case None => Right(None)
+      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+        case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
+        case _ => None
+      }
+    }
+
+  }
+
+  private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
+    {
+      for {
+        poa1 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
+          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+      } yield {
+        if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
+          Right(Some(poa1))
+        } else {
+          Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
+            s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
+          Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
+        }
+      }
+    }.getOrElse {
+      // TODO: tidy up relevant unit tests, as this is a separate error, see log details;
+      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
+        s"Unable to find required POA records")
+      Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
+    }
+  }
+  private def getPoaAdjustableTaxYears: List[TaxYear] = {
+    if(dateService.isAfterTaxReturnDeadlineButBeforeTaxYearEnd) {
+      List(
+        TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
+      )
+    } else {
+      List(
+        TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd).addYears(-1),
+        TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
+      )
+    }
+  }
+
+  private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
+    //getPoaAdjustableTaxYears.sortBy(_.endYear)
+    taxYearList match {
+      case ::(head, next) => isTaxYearCrystallised(head, nino).flatMap {
+        case true => Future.successful(Some(head))
+        case false => checkCrystallisation(nino, next)
+      }
+      case Nil => Future.successful(None)
+    }
+  }
+
+
+  // Next 3 methods taken from Calculation List Service (with small changes), but I don't like the code duplication. Is there any solution to this?
+  private def isTaxYearCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
+
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    val futureTaxYear = taxYear.endYear >= currentTaxYearEnd
+    val legacyTaxYear = taxYear.endYear <= 2023
+    (futureTaxYear, legacyTaxYear) match {
+      case (true, _) =>
+        // tax year cannot be crystallised unless it is in the past
+        Future.successful(false)
+      case (_, true) => getLegacyCrystallisationResult(nino, taxYear.endYear)
+      case (_, false) => getTYSCrystallisationResult(nino, taxYear.endYear)
+    }
+  }
+
+  private def getLegacyCrystallisationResult(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    calculationListConnector.getLegacyCalculationList(nino, taxYear.toString).flatMap {
+      case res: CalculationListModel => Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+    }
+  }
+
+  private def getTYSCrystallisationResult(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
+    calculationListConnector.getCalculationList(nino, taxYearRange).flatMap {
+      case res: CalculationListModel => Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+    }
   }
 
 }
