@@ -26,7 +26,6 @@ import java.time.LocalDate
 
 case class DocumentDetail(taxYear: Int,
                           transactionId: String,
-                          totalAmount: BigDecimal,
                           documentDescription: Option[String],
                           documentText: Option[String],
                           outstandingAmount: Option[BigDecimal],
@@ -221,7 +220,6 @@ object DocumentDetail {
   implicit val reads: Reads[DocumentDetail] = (
     (__ \ "taxYear").read[Int] and
       (__ \ "transactionId").read[String] and
-      (__ \ "totalAmount").read[BigDecimal] and
       (__ \ "documentDescription").readNullable[String] and
       (__ \ "documentText").readNullable[String] and
       (__ \ "outstandingAmount").readNullable[BigDecimal] and

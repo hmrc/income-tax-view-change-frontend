@@ -41,17 +41,18 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poaOneDocDetail   <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
         transactionId      = poaOneDocDetail.transactionId
         poaOneTaxYear      = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
-        poaOneTotalAmount  = poaOneDocDetail.totalAmount
+        poaOneTotalAmount  = poaOneDocDetail.originalAmount
         poaTwoDocDetail   <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
         poaTwoTaxYear      = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
-        poaTwoTotalAmount  = poaTwoDocDetail.totalAmount
+        poaTwoTotalAmount  = poaTwoDocDetail.originalAmount
         if poaOneTaxYear  == poaTwoTaxYear
       } yield {
+        // TODO: .get has to be used here, DocumentDetail.originalAmount is not an optional field according to #API1553 - this needs to be fixed in BE/FE
         PaymentOnAccount(
           transactionId,
           poaOneTaxYear,
-          poaOneTotalAmount,
-          poaTwoTotalAmount
+          poaOneTotalAmount.get,
+          poaTwoTotalAmount.get
         )
       }
     } toRight {
