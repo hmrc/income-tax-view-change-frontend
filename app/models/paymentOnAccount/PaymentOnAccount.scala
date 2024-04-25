@@ -19,7 +19,8 @@ package models.paymentOnAccount
 import models.incomeSourceDetails.TaxYear
 
 case class PaymentOnAccount(
-                             transactionId: String,
+                             poaOneTransactionId: String,
+                             poaTwoTransactionId: String,
                              taxYear: TaxYear,
                              paymentOnAccountOne: BigDecimal,
                              paymentOnAccountTwo: BigDecimal

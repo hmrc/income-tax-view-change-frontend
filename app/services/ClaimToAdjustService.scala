@@ -17,7 +17,8 @@
 package services
 
 import auth.MtdItUser
-import connectors.FinancialDetailsConnector
+import connectors.{CalculationListConnector, FinancialDetailsConnector}
+import exceptions.MissingFieldException
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -26,45 +27,57 @@ import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                                     val calculationListConnector: CalculationListConnector,
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) {
 
-  private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail])
-                                                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Either[Throwable, PaymentOnAccount] = {
+  private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
+
     {
       for {
-        poaOneDocDetail   <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
-        transactionId      = poaOneDocDetail.transactionId
-        poaOneTaxYear      = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
-        poaOneTotalAmount  = poaOneDocDetail.originalAmount
-        poaTwoDocDetail   <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
-        poaTwoTaxYear      = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
-        poaTwoTotalAmount  = poaTwoDocDetail.originalAmount
-        if poaOneTaxYear  == poaTwoTaxYear
+        poaOneDocDetail              <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
+        poaOneTransactionId           = poaOneDocDetail.transactionId
+        poaOneTaxYear                 = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
+        poaOneTotalAmount             = poaOneDocDetail.originalAmount
+        poaTwoDocDetail              <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
+        poaTwoTransactionId           = poaTwoDocDetail.transactionId
+        poaTwoDueDate                 = poaTwoDocDetail.documentDueDate
+        poaTwoTaxYear                 = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
+        poaTwoTotalAmount             = poaTwoDocDetail.originalAmount
+        taxReturnDeadline             = poaTwoDueDate map(d => LocalDate.of(d.getYear + 1, 1, 31))
+        poaTwoDueDateIsBeforeDeadline = poaTwoDueDate.flatMap(poa => taxReturnDeadline.map(d => poa isAfter d))
       } yield {
-        // TODO: .get has to be used here, DocumentDetail.originalAmount is not an optional field according to #API1553 - this needs to be fixed in BE/FE
-        PaymentOnAccount(
-          transactionId,
-          poaOneTaxYear,
-          poaOneTotalAmount.get,
-          poaTwoTotalAmount.get
-        )
+        (poaOneTaxYear, poaTwoTaxYear, poaTwoDueDateIsBeforeDeadline) match {
+          case (_, _, Some(true)) if poaOneTaxYear == poaTwoTaxYear =>
+            Right(
+              PaymentOnAccount(
+                poaOneTransactionId,
+                poaTwoTransactionId,
+                poaOneTaxYear,
+                poaOneTotalAmount.get,  // TODO: based on API#1553 DocumentDetail.originalAmount is not an optional field
+                poaTwoTotalAmount.get   // TODO: Therefore .get has to be used until this is fixed in BE/FE
+              )
+            )
+          case (_, _, Some(true)) =>
+            Left(new Exception("Latest found PoA 1 & 2 documents are not from same tax year as expected"))
+          case (_, _, Some(false)) =>
+            Left(new Exception(s"PoA2 has dueDate: $poaTwoDueDate which is past the tax return deadline: $taxReturnDeadline"))
+          case (_, _, None) =>
+            Left(MissingFieldException("Missing field: documentDueDate"))
+        }
       }
-    } toRight {
-      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] Unable to find required POA records")
-      new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")
-    }
+    } getOrElse Left(new Exception("Unexpected Error occurred"))
   }
 
   def getPaymentsOnAccount(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, PaymentOnAccount]] = {
     getAllFinancialDetails map {
-      item =>
-        item.collect {
+      _.collect {
           case (_, model: FinancialDetailsModel) => model.documentDetails
         }
     }

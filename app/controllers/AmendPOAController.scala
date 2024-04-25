@@ -24,16 +24,17 @@ import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ClaimToAdjustService
+import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.AmendPaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                   calculationListService: CalculationListService,
                                    claimToAdjustService: ClaimToAdjustService,
                                    val auth: AuthenticatorPredicate,
                                    view: AmendPaymentOnAccount,
@@ -47,18 +48,25 @@ class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        claimToAdjustService.getPaymentsOnAccount map {
+        claimToAdjustService.getPaymentsOnAccount flatMap {
           case Right(poa: PaymentOnAccount) =>
-            Ok(view(
-              isAgent = isAgent,
-              taxYearModel = poa.taxYear,
-              documentId = poa.transactionId,
-              poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
-              poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
-            ))
+            calculationListService.isTaxYearCrystallised(poa.taxYear.endYear) map {
+              case Some(false) | None =>
+                Ok(view(
+                  isAgent = isAgent,
+                  taxYearModel = poa.taxYear,
+                  poaOneTransactionId = poa.poaOneTransactionId,
+                  poaTwoTransactionId = poa.poaTwoTransactionId,
+                  poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
+                  poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
+                ))
+              case _ =>
+                Logger("application").error("Tax Year of return is crystallized - Payment on Account cannot be adjusted")
+                showInternalServerError(isAgent)
+            }
           case Left(ex) =>
             Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
-            showInternalServerError(isAgent)
+            Future.successful(showInternalServerError(isAgent))
         }
     }
 }

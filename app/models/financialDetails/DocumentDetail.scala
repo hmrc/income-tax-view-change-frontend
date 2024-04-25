@@ -47,7 +47,7 @@ case class DocumentDetail(taxYear: Int,
 
   def isPoAOne: Boolean = documentDescription.exists(_.equals("ITSA- POA 1"))
 
-  def isPoATwo: Boolean = documentDescription.exists(_.equals("ITSA- POA 2"))
+  def isPoATwo: Boolean = documentDescription.exists(_.equals("ITSA - POA 2"))
 
   def credit: Option[BigDecimal] = originalAmount match {
     case None => None

@@ -34,7 +34,8 @@
 )
 
 @(
-    documentId: String,
+    poaOneTransactionId: String,
+    poaTwoTransactionId: String,
     isAgent: Boolean,
     taxYearModel: TaxYear,
     poaOneFullAmount: String,
@@ -54,9 +55,9 @@
     else         controllers.routes.HomeController.show().url
 }
 
-@getChargeSummaryUrl = @{
-    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(taxYearModel.endYear, documentId).url
-    else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, documentId).url
+@getChargeSummaryUrl(id: String) = @{
+    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(taxYearModel.endYear, id).url
+    else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, id).url
 }
 
 @mainTemplate(
@@ -108,7 +109,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = getChargeSummaryUrl,
+                        href = getChargeSummaryUrl(poaOneTransactionId),
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa1-more-details-date-link")
                     )
@@ -136,7 +137,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = getChargeSummaryUrl,
+                        href = getChargeSummaryUrl(poaTwoTransactionId),
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa2-more-details-date-link")
                     )
