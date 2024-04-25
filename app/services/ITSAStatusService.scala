@@ -18,9 +18,10 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.itsaStatus.ITSAStatusResponseModel
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,22 +32,41 @@ import scala.concurrent.{ExecutionContext, Future}
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
-
-  def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    val yearEnd = dateService.getCurrentTaxYearEnd.toString.substring(2).toInt
-    val yearStart = yearEnd - 1
-
+  private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
+                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
       nino = user.nino,
-      taxYear = s"$yearStart-$yearEnd",
-      futureYears = false,
-      history = false).flatMap {
-      case Right(itsaStatus: List[ITSAStatusResponseModel]) =>
-        val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
-        Future.successful(isMandatedOrVoluntary)
+      taxYear = taxYear.formatTaxYearRange,
+      futureYears = futureYears,
+      history = history).flatMap {
+      case Right(itsaStatus) => Future.successful(itsaStatus)
       case Left(error) =>
         Logger("application").error(s"$error")
         Future.failed(new Exception("Failed to retrieve ITSAStatus"))
+    }
+  }
+
+  private def getStatusDetail(itsaStatusResponseModel: ITSAStatusResponseModel): Option[StatusDetail] = {
+    itsaStatusResponseModel.itsaStatusDetails.flatMap(statusDetail => statusDetail.headOption)
+  }
+
+  def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    val yearEnd = dateService.getCurrentTaxYearEnd
+    val taxYear = TaxYear(yearEnd)
+
+    getITSAStatusDetail(taxYear, futureYears = false, history = false)
+      .map(statusDetail =>
+        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+  }
+
+
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
+    getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
+      //item.taxYear has string format as 2022-20
+      _.map(item => TaxYear(item.taxYear.split("-")(0).toInt + 1) -> getStatusDetail(item)).flatMap {
+        case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
+        case _ => None
+      }.toMap
     }
   }
 

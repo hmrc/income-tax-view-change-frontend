@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package mocks.services
 
-import java.time.LocalDate
+import org.mockito.Mockito.{mock, reset, when}
+import org.scalatest.BeforeAndAfterEach
+import services.DateService
+import testUtils.UnitSpec
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
+trait MockDateService extends UnitSpec with BeforeAndAfterEach {
 
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[NextUpdateModelWithIncomeType],
-                             calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {}
+  val mockDateService: DateService = mock(classOf[DateService])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockDateService)
+  }
+
+  def setupMockGetCurrentTaxYearEnd(out: Int): Unit = {
+    when(mockDateService.getCurrentTaxYearEnd).thenReturn(out)
+  }
+
+}
