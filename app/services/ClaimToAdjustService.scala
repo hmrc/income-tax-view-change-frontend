@@ -21,6 +21,7 @@ import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,6 +33,25 @@ import scala.concurrent.{ExecutionContext, Future}
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) {
+
+  private def getPoAPaymentsVersionTwo(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
+    {
+      for {
+        poaOneDocDetail <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
+        poaOneTaxYear = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
+        poaOneTotalAmount = poaOneDocDetail.totalAmount
+        poaTwoDocDetail <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
+        poaTwoTaxYear = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
+        poaTwoTotalAmount = poaTwoDocDetail.totalAmount
+        if poaOneTaxYear == poaTwoTaxYear
+      } yield {
+        PaymentOnAccount(poaOneTaxYear, poaOneTotalAmount, poaTwoTotalAmount)
+      }
+    } toRight {
+      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] Unable to find required POA records")
+      new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")
+    }
+  }
 
   def getPoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     {
