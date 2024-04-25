@@ -16,9 +16,23 @@
 
 package models.nextUpdates
 
+import models.incomeSourceDetails.TaxYear
+
 import java.time.LocalDate
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
+case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel], optOutMessage: OptOutMessage)
+
+case class OptOutStatus()
+
+case class CanOptOutOfPreviousYear() extends OptOutStatus
+
+case class CanOptOutOfCurrentYear() extends OptOutStatus
+
+case class CanOptOutOfNextYear() extends OptOutStatus
+
+
+
+case class OptOutMessage(showOptOut: Boolean = true, yearFrom: Int = 2023, yearTo: Int = 2024)
 
 case class DeadlineViewModel(obligationType: ObligationType,
                              standardAndCalendar: Boolean,

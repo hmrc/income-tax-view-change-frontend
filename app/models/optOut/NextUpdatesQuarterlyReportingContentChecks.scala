@@ -23,4 +23,11 @@ case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boo
   def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
 
   def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+
+
+
+//  OneYearOptOut = ExactlyOneOf(OptOutCY-1, OptOutCY, OptOutCY+1)
+//  OptOutCY-1: ITSA(CY-1) == V and CY-1-Not-Crystallised
+//  OptOutCY : ITSA(CY) == V
+//  OptOutCY+1: ITSA(CY+1) == V or (ITSA(CY) == V AND ITSA(CY+1) = Unknown)
 }
