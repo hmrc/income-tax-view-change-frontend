@@ -20,6 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
+import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,7 +30,7 @@ import utils.AuthenticatorPredicate
 import views.html.AmendPaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -46,20 +47,19 @@ class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        claimToAdjustService.getPoATaxYear map {
-          case Right(Some(taxYearModel)) =>
+        claimToAdjustService.getPaymentsOnAccount map {
+          case Right(poa: PaymentOnAccount) =>
             Ok(view(
-              documentId = "blah",
               isAgent = isAgent,
-              taxYearModel = taxYearModel,
-              poaOneFullAmount = 3000.toCurrencyString,
-              poaTwoFullAmount = 3000.toCurrencyString
+              taxYearModel = poa.taxYear,
+              documentId = poa.transactionId,
+              poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
+              poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
             ))
           case Left(ex) =>
             Logger("application").error(s"Failed to retrieve tax years for Payment on accounts: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
-
     }
 
 //  def submit(isAgent: Boolean): Action[AnyContent] =

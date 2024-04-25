@@ -34,24 +34,40 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) {
 
-  private def getPoAPaymentsVersionTwo(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
+  private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail])
+                                                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Either[Throwable, PaymentOnAccount] = {
     {
       for {
-        poaOneDocDetail <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
-        poaOneTaxYear = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
-        poaOneTotalAmount = poaOneDocDetail.totalAmount
-        poaTwoDocDetail <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
-        poaTwoTaxYear = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
-        poaTwoTotalAmount = poaTwoDocDetail.totalAmount
-        if poaOneTaxYear == poaTwoTaxYear
+        poaOneDocDetail   <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
+        transactionId      = poaOneDocDetail.transactionId
+        poaOneTaxYear      = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
+        poaOneTotalAmount  = poaOneDocDetail.totalAmount
+        poaTwoDocDetail   <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
+        poaTwoTaxYear      = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
+        poaTwoTotalAmount  = poaTwoDocDetail.totalAmount
+        if poaOneTaxYear  == poaTwoTaxYear
       } yield {
-        PaymentOnAccount(poaOneTaxYear, poaOneTotalAmount, poaTwoTotalAmount)
+        PaymentOnAccount(
+          transactionId,
+          poaOneTaxYear,
+          poaOneTotalAmount,
+          poaTwoTotalAmount
+        )
       }
     } toRight {
       Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] Unable to find required POA records")
       new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not.")
     }
   }
+
+  def getPaymentsOnAccount(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, PaymentOnAccount]] = {
+    getAllFinancialDetails map {
+      item =>
+        item.collect {
+          case (_, model: FinancialDetailsModel) => model.documentDetails
+        }
+    }
+  } map(result => getPaymentsOnAccountFromDocumentDetails(result.flatten))
 
   def getPoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     {
