@@ -57,20 +57,8 @@ class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
               poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
             ))
           case Left(ex) =>
-            Logger("application").error(s"Failed to retrieve tax years for Payment on accounts: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
     }
-
-//  def submit(isAgent: Boolean): Action[AnyContent] =
-//    auth.authenticatedAction(isAgent) {
-//      implicit user =>
-//        Future.successful(Ok(view(
-//          isAgent,
-//          taxYearStartYear = 2023,
-//          taxYearEndYear = 2024,
-//          poaOneFullAmount = 3000.toCurrencyString,
-//          poaTwoFullAmount = 3000.toCurrencyString
-//        )))
-//    }
 }
