@@ -35,10 +35,6 @@
 )
 @(isAgent: Boolean, backUrl: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
-@link(link: String) = {
-    <a href="#" class="govuk-link">@link</a>
-}
-
 @getMessage(key: String, args: String*) = @{
  messages(s"claimToAdjustPoa.whatYouNeedToKnow.$key", args: _*)
 }
@@ -88,10 +84,10 @@
 
     @newTabLinkHTML(getMessage("link1"), getMessage("link-text"))
 
-    <div class="govuk-button-group govuk-!-padding-top-3">
-        @govukButton(Button(
-            content = Text(getMessage("continue-button")))
-        )
-        @link(getMessage("link2"))
+    <div class="govuk-button-group">
+    @govukButton(Button(
+        content = Text(getMessage("continue-button"))
+    ))
+    <a class="govuk-link" href="/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel">@getMessage("cancel")</a>
     </div>
 }

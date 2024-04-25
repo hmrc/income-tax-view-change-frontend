@@ -81,5 +81,8 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
     Future.successful(Ok)
   }
 
-  def handleCancelRequest(isAgent: Boolean) = ???
+  def handleCancelRequest(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit request =>
+      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+  }
 }

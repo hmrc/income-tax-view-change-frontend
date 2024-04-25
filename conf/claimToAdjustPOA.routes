@@ -5,3 +5,9 @@
 
 GET          /adjust-poa/what-you-need-to-know                              controllers.claimToAdjustPoa.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/what-you-need-to-know                       controllers.claimToAdjustPoa.WhatYouNeedToKnowController.show(isAgent: Boolean = true)
+
+POST          /adjust-poa/what-you-need-to-know                              controllers.claimToAdjustPoa.WhatYouNeedToKnowController.submit(isAgent: Boolean = false)
+POST          /agents/adjust-poa/what-you-need-to-know                       controllers.claimToAdjustPoa.WhatYouNeedToKnowController.submit(isAgent: Boolean = true)
+
+GET         /adjust-poa/what-you-need-to-know/cancel                              controllers.claimToAdjustPoa.WhatYouNeedToKnowController.handleCancelRequest(isAgent: Boolean = false)
+GET         /agents/adjust-poa/what-you-need-to-know/cancel                       controllers.claimToAdjustPoa.WhatYouNeedToKnowController.handleCancelRequest(isAgent: Boolean = true)
