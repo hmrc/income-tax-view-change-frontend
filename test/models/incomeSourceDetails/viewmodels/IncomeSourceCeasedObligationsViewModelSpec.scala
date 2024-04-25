@@ -84,7 +84,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
   val taxYear: TaxYear = TaxYear(mockDateService().getCurrentTaxYearEnd - 1, mockDateService().getCurrentTaxYearEnd)
   val viewAllBusinessLink: Call = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
-  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.getNextUpdates()
+  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.show()
   val viewUpcomingUpdatesLinkNoDueMessageKey: String = "business-ceased.obligation.view-updates.text"
   val viewUpcomingUpdatesLinkDueMessageKeyDue: String = "business-ceased.obligation.view-updates-overdue.text"
 

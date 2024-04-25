@@ -39,7 +39,7 @@ class RoutesSpec extends TestSupport {
   //Next Updates route
   "The URL for the NextUpdatesController.getNextObligation action" should {
     s"be equal to $contextRoute/next-updates" in {
-      controllers.routes.NextUpdatesController.getNextUpdates().url shouldBe s"$contextRoute/next-updates"
+      controllers.routes.NextUpdatesController.show().url shouldBe s"$contextRoute/next-updates"
     }
   }
 

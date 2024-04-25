@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package views
+package views.nextUpdates
 
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
-import views.html.NextUpdates
+import views.html.nextUpdates.NextUpdatesOptOut
 
 import java.time.LocalDate
 
-class NextUpdatesViewSpec extends TestSupport {
+class NextUpdatesOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
+  val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
   class Setup(currentObligations: NextUpdatesViewModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
@@ -46,14 +46,17 @@ class NextUpdatesViewSpec extends TestSupport {
     val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
     val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
     val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
+    val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
+    val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
   }
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
+  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+  })
 
   "Next Updates page" should {
 
@@ -94,8 +97,8 @@ class NextUpdatesViewSpec extends TestSupport {
     }
 
     s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      pageDocument.select("p:nth-child(5)").text shouldBe obligationsMessages.info
+      pageDocument.select("p:nth-child(5) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {
@@ -105,6 +108,11 @@ class NextUpdatesViewSpec extends TestSupport {
 
       table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
+    }
+
+    s"have the Submitting updates in software" in new Setup(obligationsModel) {
+      pageDocument.getElementById("updates-software-heading").text() shouldBe obligationsMessages.updatesInSoftware
+      pageDocument.getElementById("updates-software-link").text() shouldBe obligationsMessages.updatesInSoftwareDesc
     }
   }
 }
