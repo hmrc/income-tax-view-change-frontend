@@ -92,10 +92,13 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     }
   }
 
-  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
+  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier): Future[WYOClaimToAdjustViewModel] = {
+    if (isEnabled(AdjustPaymentsOnAccount) ){
     claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
       case Right(value) => Future.successful(whatYouOweService.getWYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
       case Left(ex: Throwable) => Future.failed(ex)
+    }} else {
+      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
   }
 

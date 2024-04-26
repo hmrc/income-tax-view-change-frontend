@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.{AdjustPaymentsOnAccount, CreditsRefundsRepay, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -46,6 +46,8 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
   trait Setup {
 
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+
+    disable(AdjustPaymentsOnAccount)
 
     val controller = new WhatYouOweController(
       whatYouOweService,

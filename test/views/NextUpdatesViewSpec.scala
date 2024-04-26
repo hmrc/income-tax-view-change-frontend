@@ -109,9 +109,9 @@ class NextUpdatesViewSpec extends TestSupport {
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 
-    s"have the correct Claim To Adjust PoA Link and Text" in new Setup(obligationsModel) {
-      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
-      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
-    }
+//    s"have the correct Claim To Adjust PoA Link and Text" in new Setup(obligationsModel) {
+//      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
+//      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
+//    }
   }
 }

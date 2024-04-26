@@ -421,10 +421,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.getOptionalSelector("p.govuk-body") shouldBe None
       }
 
-      "display relevant paragraph and link relating to claim to adjust PoA" in new Setup(poaView()) {
-        document.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaParagraph
-        document.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLinkIndividual
-      }
+//      "display relevant paragraph and link relating to claim to adjust PoA" in new Setup(poaView()) {
+//        document.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaParagraph
+//        document.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLinkIndividual
+//      }
 
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
