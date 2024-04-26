@@ -29,4 +29,8 @@ case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
     }
   }
 
+  def ctaLink = {
+    claimToAdjustTaxYear
+  }
+
 }

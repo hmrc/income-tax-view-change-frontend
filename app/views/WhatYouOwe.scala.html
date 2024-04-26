@@ -329,7 +329,7 @@
     useFallbackBackLink = true
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
-    @(claimToAdjustViewModel.poaTaxYear)
+    @(claimToAdjustViewModel.claimToAdjustTaxYear)
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
         @saNoteParagraph
@@ -416,6 +416,11 @@
             @if(!whatYouOweChargesList.isChargesListEmpty) {
                 @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
                 @dunningLockParagraph
+            }
+            @if(claimToAdjustViewModel.poaTaxYear.nonEmpty) @{
+                link(link = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+                messageKey = s"Adjust payments on account for the ${claimToAdjustViewModel.poaTaxYear.map(_.startYear)} to ${claimToAdjustViewModel.poaTaxYear.map(_.endYear)} tax year",
+                id = Some("adjust-poa-link"))
             }
             @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
