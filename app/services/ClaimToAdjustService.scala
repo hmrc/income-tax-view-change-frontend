@@ -119,19 +119,12 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
-    println("XXXXXX" + taxYearList)
     taxYearList match {
       case ::(head, next) => isTaxYearNonCrystallised(head, nino).flatMap {
-        case true =>
-          println("AAAAAAAAAA")
-          Future.successful(Some(head))
-        case false =>
-          println("BBBBBBBBBB")
-          checkCrystallisation(nino, next)
+        case true => Future.successful(Some(head))
+        case false => checkCrystallisation(nino, next)
       }
-      case Nil =>
-        println("CCCCCCCCC")
-        Future.successful(None)
+      case Nil => Future.successful(None)
     }
   }
 
@@ -141,16 +134,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear.endYear >= currentTaxYearEnd
     if (futureTaxYear) {
-      println("DDDDDDDDDDD")
       Future.successful(true)
     } else {
       isTYSCrystallised(nino, taxYear.endYear).map {
-        case true =>
-          println("EEEEEEEE")
-          false
-        case false =>
-          println("FFFFFFFFFF")
-          true
+        case true => false
+        case false => true
       }
     }
   }
@@ -158,20 +146,12 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def isTYSCrystallised(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
     calculationListConnector.getCalculationList(nino, taxYearRange).flatMap {
-      case res: CalculationListModel =>
-        println("ZZZZZZZZZZZZZ" + res.crystallised)
-        Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 =>
-        println("YYYYYYYYYYY")
-        Future.successful(Some(false))
+      case res: CalculationListModel => Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     } map {
-      case Some(true) =>
-        println("MMMMMMMM")
-        true
-      case _ =>
-        println("NNNNNNNNNN")
-        false
+      case Some(true) => true
+      case _ => false
     }
   }
 

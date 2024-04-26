@@ -78,14 +78,12 @@ class CalculationListConnector @Inject()(val http: HttpClient,
 
     val url = getCalculationListUrl(nino.value, taxYearRange)
 
-    println("KKKKKKKKKKKK" + url)
 
     http.GET[HttpResponse](url)(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
     ) map { response =>
-      println("LLLLLLLLLL" + response.body)
       response.status match {
         case OK =>
           response.json.validate[CalculationListModel].fold(
