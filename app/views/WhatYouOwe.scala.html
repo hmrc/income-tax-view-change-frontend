@@ -321,6 +321,16 @@
     if(isAgent) messages("whatYouOwe.payments-made-agent") else messages("whatYouOwe.payments-made")
 }
 
+    @getClaimToAdjustPoaSection = @{
+        claimToAdjustViewModel.claimToAdjustTaxYear match {
+            case Some(value) =>
+                link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                messageKey = s"Adjust payments on account for the ${value.startYear} to ${value.endYear} tax year",
+                id = Some("adjust-poa-link"))
+            case None => Html("")
+        }
+    }
+
 @mainTemplate(
     pageTitle = messages(getHeading),
     backUrl = Some(backUrl),
@@ -416,11 +426,9 @@
                 @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
                 @dunningLockParagraph
             }
-            @if(claimToAdjustViewModel.poaTaxYear.nonEmpty) @{
-                link(link = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
-                messageKey = s"Adjust payments on account for the ${claimToAdjustViewModel.poaTaxYear.map(_.startYear)} to ${claimToAdjustViewModel.poaTaxYear.map(_.endYear)} tax year",
-                id = Some("adjust-poa-link"))
-            }
+
+            @getClaimToAdjustPoaSection
+
             @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
                     <div id="coding-out-wrapper">

@@ -17,6 +17,7 @@
 package models.nextPayments.viewmodels
 
 import models.incomeSourceDetails.TaxYear
+import play.twirl.api.Html
 
 case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
                                      poaTaxYear: Option[TaxYear]) {
@@ -29,8 +30,16 @@ case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
     }
   }
 
-  def ctaLink = {
-    claimToAdjustTaxYear
+}
+
+object WYOClaimToAdjustViewModel {
+
+  def ctaLink(isAgent: Boolean): String = {
+    if (isAgent) {
+      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+    } else {
+      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    }
   }
 
 }
