@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.optOut
 
-import java.time.LocalDate
+object OptOutModel {}
+case class OptOutMessageResponse(showOptOut: Boolean = true, yearFrom: String = "2023", yearTo: String = "2024")
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
-
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[NextUpdateModelWithIncomeType],
-                             calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {}
+//sealed trait OptOutStatus
+//case class CanOptOutOfPreviousYear() extends OptOutStatus
+//case class CanOptOutOfCurrentYear() extends OptOutStatus
+//case class CanOptOutOfNextYear() extends OptOutStatus

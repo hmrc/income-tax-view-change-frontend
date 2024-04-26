@@ -80,7 +80,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       }
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
     }.filter(deadline => deadline.obligationType != EopsObligation)
-    NextUpdatesViewModel(allDeadlines, OptOutMessage())
+    NextUpdatesViewModel(allDeadlines)
   }
 
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {

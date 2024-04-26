@@ -18,6 +18,7 @@
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optOut.OptOutMessageResponse
 
 
 @this(
@@ -31,7 +32,11 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: NextUpdatesViewModel, optOutMessage: OptOutMessageResponse, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+
+@showOptOut = @{
+	optOutMessage.showOptOut
+}
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
@@ -45,6 +50,13 @@
 	@h1(msg = "nextUpdates.heading")
 
 	@detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+
+	@if(showOptOut){
+		@p(){
+			@messages("nextUpdates.optOutOneYear", optOutMessage.yearFrom, optOutMessage.yearTo)
+		}
+	}
+
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 

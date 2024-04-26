@@ -23,10 +23,11 @@ import config.featureswitch.{FeatureSwitching, OptOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates._
+import models.optOut.OptOutMessageResponse
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{IncomeSourceDetailsService, NextUpdatesService}
+import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService_MISUV_7542}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -41,6 +42,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
+                                      optOutService: OptOutService_MISUV_7542,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -58,9 +60,10 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             case obligations: ObligationsModel => obligations
             case _ => ObligationsModel(Nil)
           }
+          optOutMessage <- optOutService.displayOptOutMessage()
         } yield {
           if (nextUpdates.obligations.nonEmpty) {
-            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
+            Ok(view(nextUpdates, optOutMessage, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
           } else {
             itvcErrorHandler.showInternalServerError()
           }
@@ -74,20 +77,23 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
         mtdItUser =>
-          nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
-              Ok(view(nextUpdates, controllers.routes.HomeController.showAgent.url, isAgent = true)(mtdItUser))
-            case _ => agentItvcErrorHandler.showInternalServerError()
+          optOutService.displayOptOutMessage().flatMap {
+            optOutMessage =>
+              nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
+                case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
+                  Ok(view(nextUpdates, optOutMessage, controllers.routes.HomeController.showAgent.url, isAgent = true)(mtdItUser))
+                case _ => agentItvcErrorHandler.showInternalServerError()
+              }
           }
       }
   }
 
-  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
+  private def view(obligationsModel: ObligationsModel, optOutMessage: OptOutMessageResponse, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     auditNextUpdates(user, isAgent, origin)
     val viewModel = nextUpdatesService.getNextUpdatesViewModel(obligationsModel)
     if (isEnabled(OptOut)) {
-      nextUpdatesOptOutView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+      nextUpdatesOptOutView(currentObligations = viewModel, optOutMessage, backUrl = backUrl, isAgent = isAgent, origin = origin)
     } else {
       nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
     }

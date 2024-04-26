@@ -32,12 +32,6 @@
 
 @(currentObligations: NextUpdatesViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
-@showOptOut = @{
-	currentObligations.optOutMessage.showOptOut
-}
-
-
-
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
 	backUrl = Some(backUrl),
@@ -52,13 +46,6 @@
 	@p(){@messages("nextUpdates.info")}
 
 	@detailsDropdown("nextUpdates.dropdown.info", detailsContent)
-
-	@if(showOptOut){
-		@p(){
-			@messages("nextUpdates.optOutOneYear", currentObligations.optOutMessage.yearFrom.toString, currentObligations.optOutMessage.yearTo.toString)
-		}
-	}
-
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 

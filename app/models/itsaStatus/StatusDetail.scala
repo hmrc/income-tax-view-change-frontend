@@ -25,6 +25,7 @@ case class StatusDetail(submittedOn: String,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 
   def isMandatedOrVoluntary: Boolean = status == Mandated || status == Voluntary
+  def isVoluntary: Boolean = status == Voluntary
 
 }
 
