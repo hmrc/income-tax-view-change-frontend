@@ -30,7 +30,8 @@ import utils.AuthenticatorPredicate
 import views.html.AmendPaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -50,7 +51,9 @@ class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
       implicit user =>
         claimToAdjustService.getPaymentsOnAccount flatMap {
           case Right(poa: PaymentOnAccount) =>
-            calculationListService.isTaxYearCrystallised(poa.taxYear.endYear) map {
+            println(s"\n${Await.ready(calculationListService.isTaxYearCrystallised(poa.taxYear.startYear), 1000.milli)}\n")
+            println(s"\n${Await.ready(calculationListService.isTaxYearCrystallised(poa.taxYear.endYear), 1000.milli)}\n")
+            calculationListService.isTaxYearCrystallised(poa.taxYear.startYear) map {
               case Some(false) | None =>
                 Ok(view(
                   isAgent = isAgent,

@@ -38,6 +38,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                     (implicit ec: ExecutionContext) {
 
   private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
+    println(s"\nCALLING getPaymentsOnAccountFromDocumentDetails\n")
 
     {
       for {
@@ -51,8 +52,20 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poaTwoTaxYear                 = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
         poaTwoTotalAmount             = poaTwoDocDetail.originalAmount
         taxReturnDeadline             = poaTwoDueDate map(d => LocalDate.of(d.getYear + 1, 1, 31))
-        poaTwoDueDateIsBeforeDeadline = poaTwoDueDate.flatMap(poa => taxReturnDeadline.map(d => poa isAfter d))
+        poaTwoDueDateIsBeforeDeadline = poaTwoDueDate.flatMap(poa => taxReturnDeadline.map(d => poa isBefore d))
       } yield {
+
+        println(s"poaOneTransactionId: ${poaOneTransactionId}")
+        println(s"poaOneTaxYear: ${poaOneTaxYear}")
+        println(s"poaOneTotalAmount: ${poaOneTotalAmount}")
+        println(s"poaTwoTransactionId: ${poaTwoTransactionId}")
+        println(s"poaTwoDueDate: ${poaTwoDueDate}")
+        println(s"poaTwoTaxYear: ${poaTwoTaxYear}")
+        println(s"poaTwoTotalAmount: ${poaTwoTotalAmount}")
+        println(s"taxReturnDeadline: ${taxReturnDeadline}")
+        println(s"poaTwoDueDateIsBeforeDeadline: ${poaTwoDueDateIsBeforeDeadline}")
+        println(s"")
+
         (poaOneTaxYear, poaTwoTaxYear, poaTwoDueDateIsBeforeDeadline) match {
           case (_, _, Some(true)) if poaOneTaxYear == poaTwoTaxYear =>
             Right(
@@ -71,8 +84,17 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
           case (_, _, None) =>
             Left(MissingFieldException("Missing field: documentDueDate"))
         }
+        Right(
+          PaymentOnAccount(
+            poaOneTransactionId,
+            poaTwoTransactionId,
+            poaOneTaxYear,
+            poaOneTotalAmount.get,  // TODO: based on API#1553 DocumentDetail.originalAmount is not an optional field
+            poaTwoTotalAmount.get   // TODO: Therefore .get has to be used until this is fixed in BE/FE
+          )
+        )
       }
-    } getOrElse Left(new Exception("Unexpected Error occurred"))
+    }.getOrElse(Left(new Exception("Unexpected Error occurred")))
   }
 
   def getPaymentsOnAccount(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, PaymentOnAccount]] = {
