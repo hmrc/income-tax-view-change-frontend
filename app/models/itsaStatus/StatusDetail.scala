@@ -17,7 +17,7 @@
 package models.itsaStatus
 
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import play.api.libs.json.{Format, Json, Reads}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,
                         status: ITSAStatus,
@@ -43,4 +43,5 @@ object ITSAStatus extends Enumeration {
   val Exempt = Value("MTD Exempt")
 
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
+  implicit val itsaStatusWrite: Writes[ITSAStatus] = Writes.enumNameWrites
 }
