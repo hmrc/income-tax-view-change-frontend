@@ -327,9 +327,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
+          obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "EOPS"
+          periodKey = "#003"
         ))
     ),
     NextUpdatesModel(
@@ -340,7 +340,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
+          dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#004"
         ))
     )
@@ -482,12 +482,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(annualUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString)
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
       }
 
@@ -554,12 +554,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
 
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(annualUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
         )
 
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(

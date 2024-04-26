@@ -50,7 +50,7 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
   )
 
   val successResponse = HttpResponse(status = Status.OK, json = feedbackFormData, headers = Map.empty)
-  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "[FeedbackConnector][submit] - RESPONSE status: BAD_REQUEST")
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "RESPONSE status: BAD_REQUEST")
 
   val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter)
 

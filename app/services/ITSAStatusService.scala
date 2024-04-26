@@ -45,8 +45,8 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
         Future.successful(isMandatedOrVoluntary)
       case Left(error) =>
-        Logger("application").error(s"[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] $error")
-        Future.failed(new Exception("[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"))
+        Logger("application").error(s"$error")
+        Future.failed(new Exception("Failed to retrieve ITSAStatus"))
     }
   }
 

@@ -28,7 +28,7 @@ import mocks.services.{MockCalculationService, MockFinancialDetailsService, Mock
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -38,6 +38,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino, testTaxYear, testYearPlusOne, testYearPlusTwo}
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
@@ -81,11 +82,26 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
   val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
   val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
-  val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+
+  val testObligtionsModel: ObligationsModel = ObligationsModel(Seq(
+    NextUpdatesModel(
+      identification = "testId",
+      obligations = List(
+        NextUpdateModel(
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "Quarterly",
+          dateReceived = Some(fixedDate),
+          periodKey = "Quarterly"
+        )
+      )
+    )
+  ))
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
@@ -114,7 +130,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           testChargesList,
           testObligtionsModel,
           codingOutEnabled = true,
-          showForecastData = shouldShowForecastData),
+          showForecastData = shouldShowForecastData
+        ),
         taxYearsBackLink,
       ).toString
 
@@ -622,7 +639,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockShowInternalServerError()
         val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
     "there was a problem retrieving the calculation for the user" should {
@@ -717,7 +734,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           documentDetails = documentDetailClass2Nic.documentDetail
         ))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
-          ObligationsModel(Nil)
+          testObligtionsModel
         )
 
         val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
@@ -729,6 +746,43 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             class2NicsChargesList,
             testObligtionsModel,
             codingOutEnabled = true),
+          agentHomeBackLink,
+          isAgent = true,
+        ).toString
+
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe expectedContent
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+      }
+    }
+
+    "calls to retrieve data were successful with No Obligations and Referer was a Home page" should {
+      "show the Tax Year Summary Page and back link to the Home page" in {
+        enable(CodingOut)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetails(
+          documentDetails = documentDetailClass2Nic.documentDetail
+        ))
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
+        )
+
+        val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
+
+        val expectedContent: String = taxYearSummaryView(
+          testYearPlusTwo,
+          TaxYearSummaryViewModel(
+            Some(calcOverview),
+            class2NicsChargesList,
+            ObligationsModel(Nil),
+            codingOutEnabled = true
+          ),
           agentHomeBackLink,
           isAgent = true,
         ).toString

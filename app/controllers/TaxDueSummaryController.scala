@@ -69,12 +69,11 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
           isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
+        Logger("application").info("No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          "[TaxDueController][showTaxDueSummary[" + taxYear +
-            "]] No new calc deductions data error found. Downstream error")
+          s"[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

@@ -155,7 +155,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
+          s"Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
 
@@ -275,7 +275,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
+        s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 }

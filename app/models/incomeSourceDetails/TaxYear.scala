@@ -59,5 +59,9 @@ object TaxYear {
     }
   }
 
+  def makeTaxYearWithEndYear(endYear: Int): TaxYear = {
+    TaxYear(startYear = (endYear - 1), endYear = endYear)
+  }
+
 }
 

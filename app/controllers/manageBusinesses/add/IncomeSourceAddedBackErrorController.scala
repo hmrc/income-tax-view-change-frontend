@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
             Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
           }
         case None => Logger("application").error(
-          "[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
+          "Error: Unable to find id in session")
           Future.successful {
             (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
           }

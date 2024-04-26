@@ -71,10 +71,10 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
         case Right(Some(location)) =>
           Redirect(location)
         case Right(None) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
+          Logger("application").error("No redirect location returned from connector")
           itvcErrorHandler.showInternalServerError()
         case Left(_) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - Unexpected response")
+          Logger("application").error("Unexpected response")
           itvcErrorHandler.showInternalServerError()
       }
     }
@@ -122,7 +122,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application")
-        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 

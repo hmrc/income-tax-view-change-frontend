@@ -79,7 +79,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
-          Logger("application").error("[DeclareIncomeSourceCeasedController][handleRequest]: IncomeSourceId not found for SelfEmployment")
+          Logger("application").error("IncomeSourceId not found for SelfEmployment")
           Future.successful { showInternalServerError() }
         case (_, _, maybeBusinessName) =>
           Future.successful(
@@ -98,7 +98,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     } recover {
       case ex: Exception =>
         Logger("application")
-          .error(s"[DeclareIncomeSourceCeasedController][handleRequest] Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
+          .error(s"Error getting declare income source ceased page: ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError()
     }
 
@@ -127,7 +127,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     )
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[DeclareIncomeSourceCeasedController][handleSubmitRequest]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       showInternalServerError()
   }
 

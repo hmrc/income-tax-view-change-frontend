@@ -130,7 +130,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         .thenReturn(Future.successful(false))
     case ITSA_STATUS_ERROR =>
       when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-        .thenReturn(Future.failed(new Exception("[ITSAStatusService][hasEligibleITSAStatusCurrentYear] - Failed to retrieve ITSAStatus")))
+        .thenReturn(Future.failed(new Exception("Failed to retrieve ITSAStatus")))
     case _ =>
       when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
         .thenReturn(Future.successful(true))

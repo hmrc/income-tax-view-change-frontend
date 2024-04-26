@@ -146,7 +146,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
         mockShowInternalServerError()
         val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
         exception shouldBe an[InternalServerException]
-        exception.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        exception.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
 
     }

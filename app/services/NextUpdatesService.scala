@@ -64,22 +64,22 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
-      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"Requesting previous Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getFulfilledObligations()
     } else {
-      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getNextUpdates()
     }
   }
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
-    obligationsModel.obligationsByDate map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
       if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
         val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
       }
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-    }
+    }.filter(deadline => deadline.obligationType != EopsObligation)
   }
 
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
@@ -87,7 +87,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     obligationsConnector.getAllObligations(fromDate, toDate).map {
       case obligationsResponse: ObligationsModel => ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
       case error: NextUpdatesErrorModel => error
-      case _ => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
+      case _ => NextUpdatesErrorModel(500, "Invalid response from connector")
     }
 
   }
@@ -97,7 +97,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) =>
         Logger("application").error(
-          s"[IncomeSourceAddedController][handleRequest] - Error: $message, code $code")
+          s"Error: $message, code $code")
         Seq.empty
       case NextUpdateModel(start, end, due, obligationType, _, periodKey) =>
         Seq(DatesModel(start,
@@ -132,11 +132,9 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
       val sortedObligationsByYear = obligationsGroupedByYear.toSeq.sortBy(_._1).map(_._2.distinct.sortBy(_.periodKey))
 
-      val eopsDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.periodKey.contains("EOPS")).distinct.sortBy(_.inboundCorrespondenceFrom)
-
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 
-      ObligationsViewModel(sortedObligationsByYear, eopsDates, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
+      ObligationsViewModel(sortedObligationsByYear, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
     }
     processingRes
   }

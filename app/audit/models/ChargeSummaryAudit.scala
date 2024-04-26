@@ -47,7 +47,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
       if (isLatePaymentCharge) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
-      Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      Logger("application").error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
     }
   }

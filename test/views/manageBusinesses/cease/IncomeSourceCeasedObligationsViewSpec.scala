@@ -37,8 +37,6 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     val h2Content: String = "What you must do"
     val quarterlyHeading: String = "Send quarterly updates"
     val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
-    val eopsHeading: String = "Send end of period statements"
-    val eopsText: String = "You must submit end of period statements using your software by the deadline."
     val finalDecHeading: String = "Submit final declarations and pay your tax"
     val finalDecText: String = "You must submit your final declarations and pay the tax you owe by the deadline."
     val tableHeading1: String = "Tax year"
@@ -53,18 +51,16 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val testId: String = "XAIS00000000005"
 
   val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
-  val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
+  val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day: LocalDate = fixedDate
   val cessationDate: LocalDate = day.plusDays(1)
 
-  val eopsDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
   val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallised")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
-    Seq(eopsDates),
     Seq(finalDeclarationDates, finalDeclarationDates2),
     2023,
     showPrevTaxYears = true
