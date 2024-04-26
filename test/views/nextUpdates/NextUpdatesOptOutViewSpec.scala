@@ -44,7 +44,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       NextUpdatesQuarterlyReportingContentChecks(
         currentYearItsaStatus = false,
         previousYearItsaStatus = true,
-        previousYearCrystallisedStatus = Some(false))
+        previousYearCrystallisedStatus = Some(true))
 
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, checks, "testBackURL")))
   }
@@ -93,7 +93,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("quarterly-dropdown-line2").text() shouldBe obligationsMessages.quarterlyLine2
     }
 
-    "don't show quarterly updates section" in new Setup(obligationsModel) {
+    "don't show quarterly updates section" in new Setup(obligationsModel, quarterlyUpdateContentShow = false) {
       pageDocument.select("#quarterly-dropdown-line1").isEmpty shouldBe true
       pageDocument.select("#quarterly-dropdown-line2").isEmpty shouldBe true
     }
