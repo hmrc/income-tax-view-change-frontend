@@ -72,8 +72,8 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             Future.successful(errorHandler.showInternalServerError())
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
-            optOutService.getNextUpdatesQuarterlyReportingContentChecks.map { _ =>
-              Ok(nextUpdatesOptOutView(viewModel, backUrl.url, isAgent, origin))
+            optOutService.getNextUpdatesQuarterlyReportingContentChecks.map { checks =>
+              Ok(nextUpdatesOptOutView(viewModel, checks, backUrl.url, isAgent, origin))
             }
           case (_, false) =>
             auditNextUpdates(user, isAgent, origin)

@@ -18,6 +18,7 @@ package views.nextUpdates
 
 import config.FrontendAppConfig
 import models.nextUpdates._
+import models.optOut.NextUpdatesQuarterlyReportingContentChecks
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -33,8 +34,19 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
-  class Setup(currentObligations: NextUpdatesViewModel) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
+  class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true) {
+
+    val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
+      currentYearItsaStatus = true,
+      previousYearItsaStatus = true,
+      previousYearCrystallisedStatus = Some(true))
+    else
+      NextUpdatesQuarterlyReportingContentChecks(
+        currentYearItsaStatus = false,
+        previousYearItsaStatus = true,
+        previousYearCrystallisedStatus = Some(false))
+
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, checks, "testBackURL")))
   }
 
   object obligationsMessages {
@@ -76,13 +88,16 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       pageDocument.select("details h2").get(0).text() shouldBe obligationsMessages.summaryQuarterly
     }
 
-    "have the correct line 1 for quarterly updates section" in new Setup(obligationsModel) {
+    "have the correct details for quarterly updates section" in new Setup(obligationsModel) {
       pageDocument.getElementById("quarterly-dropdown-line1").text() shouldBe obligationsMessages.quarterlyLine1
-    }
-
-    "have the correct line 2 for quarterly updates section" in new Setup(obligationsModel) {
       pageDocument.getElementById("quarterly-dropdown-line2").text() shouldBe obligationsMessages.quarterlyLine2
     }
+
+    "don't show quarterly updates section" in new Setup(obligationsModel) {
+      pageDocument.select("#quarterly-dropdown-line1").isEmpty shouldBe true
+      pageDocument.select("#quarterly-dropdown-line2").isEmpty shouldBe true
+    }
+
 
     "have a summary section for final declarations" in new Setup(obligationsModel) {
       pageDocument.select("details h2").get(1).text() shouldBe obligationsMessages.summaryDeclaration
@@ -113,6 +128,11 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     s"have the Submitting updates in software" in new Setup(obligationsModel) {
       pageDocument.getElementById("updates-software-heading").text() shouldBe obligationsMessages.updatesInSoftware
       pageDocument.getElementById("updates-software-link").text() shouldBe obligationsMessages.updatesInSoftwareDesc
+    }
+
+    s"don't show the Submitting updates in software section" in new Setup(obligationsModel, quarterlyUpdateContentShow = false) {
+      pageDocument.select("#updates-software-heading").isEmpty shouldBe true
+      pageDocument.select("#updates-software-link").isEmpty shouldBe true
     }
   }
 }

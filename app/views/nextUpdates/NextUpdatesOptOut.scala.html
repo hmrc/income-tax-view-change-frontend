@@ -18,6 +18,7 @@
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optOut.NextUpdatesQuarterlyReportingContentChecks
 
 
 @this(
@@ -31,7 +32,11 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: NextUpdatesViewModel,
+  checks:NextUpdatesQuarterlyReportingContentChecks,
+  backUrl: String,
+  isAgent: Boolean = false,
+  origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
@@ -44,7 +49,9 @@
 
 	@h1(msg = "nextUpdates.heading")
 
-	@detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+	@checks.showUpdateTypeDetailsSection.map { _ =>
+	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+	}
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 
@@ -63,14 +70,17 @@
 		@messages("nextUpdates.previousYears.textTwo")
 	}
 
-	@h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
-	@p(){
-		<div id="updates-software-link" class="govuk-body app-get-help-link">
-			@messages("nextUpdates.updates.software.dec1")
-			@link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
-			@messages("nextUpdates.updates.software.dec3")
-		</div>
-	}
+
+	@checks.showUseCompatibleSoftwareSection.map { _ =>
+	    @h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
+	    @p(){
+            <div id="updates-software-link" class="govuk-body app-get-help-link">
+                @messages("nextUpdates.updates.software.dec1")
+                @link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
+                @messages("nextUpdates.updates.software.dec3")
+            </div>
+        }
+    }
 }
 
 @detailsContent = {
