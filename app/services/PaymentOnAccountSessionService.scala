@@ -16,16 +16,13 @@
 
 package services
 
-import config.FrontendAppConfig
 import models.paymentOnAccount.PoAAmmendmentData
 import repositories.PoAAmmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentOnAccountSessionService @Inject()(
-                                                poAAmmendmentDataRepository: PoAAmmendmentDataRepository) {
+class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     setMongoData(PoAAmmendmentData(hc.sessionId.get.value))
@@ -39,6 +36,7 @@ class PaymentOnAccountSessionService @Inject()(
     }
   }
 
+  // TODO: we need to drop this method and pass actual model/value from consumer
   def getMongoKey(key: String)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value) map {

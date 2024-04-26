@@ -17,11 +17,9 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.incomeSourceDetails.UIJourneySessionData
 import models.paymentOnAccount.PoAAmmendmentData
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters.{and, equal}
-import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions, Indexes, ReplaceOptions}
+import org.mongodb.scala.model._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -36,10 +34,16 @@ class PoAAmmendmentDataRepository @Inject()(
                                              clock: Clock
                                            )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[PoAAmmendmentData](
-    collectionName = "ui-journey-session-data",
+    collectionName = "poa-ui-journey-session-data",
     mongoComponent = mongoComponent,
     domainFormat = PoAAmmendmentData.format,
     indexes = Seq(
+      IndexModel(
+        Indexes.ascending("sessionId"),
+        IndexOptions()
+          .name("sessionIdIndex")
+          .unique(true)
+      ),
       IndexModel(
         Indexes.ascending("lastUpdated"),
         IndexOptions()
