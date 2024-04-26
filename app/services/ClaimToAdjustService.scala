@@ -89,7 +89,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }).map(_.flatten)
   }
 
-  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
+  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -101,7 +101,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
-    documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA ")))
+    documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA 2")))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 

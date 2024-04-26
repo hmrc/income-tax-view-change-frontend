@@ -30,7 +30,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
-import services.WhatYouOweService
+import services.{ClaimToAdjustService, WhatYouOweService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
@@ -49,6 +49,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
     val controller = new WhatYouOweController(
       whatYouOweService,
+      mock(classOf[ClaimToAdjustService]),
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       mockAuthService,
