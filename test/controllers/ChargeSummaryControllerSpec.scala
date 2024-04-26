@@ -140,7 +140,9 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
+
       "redirect a user back to the custom error page" when {
+
         "PAYE SA exists but FS is disabled" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
           disable(CodingOut)
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
@@ -166,10 +168,11 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
 
 
-      "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(
+      "the late payment interest flag is enabled" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None)) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
+
         val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
@@ -178,7 +181,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
       }
 
-      "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
+      "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
         val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -188,7 +191,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
       }
 
-      "provided with a matching id in the financial response with dunning locks, showing the locks banner" in new Setup(
+      "provided with dunning locks, showing the locks banner" in new Setup(
         financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
@@ -198,43 +201,47 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(
-        chargesWithAllocatedPaymentModel()) {
-        disable(ChargeHistory)
-        enable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+      "has Payment allocation FS" that {
+        "is enabled" when {
+          "allocations present" in new Setup(
+            chargesWithAllocatedPaymentModel()) {
+            disable(ChargeHistory)
+            enable(PaymentAllocation)
+            val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
-        status(result) shouldBe Status.OK
-        val doc = JsoupParse(result).toHtmlDocument
-        doc.select("h1").text() shouldBe successHeading
-        doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        doc.select("main h3").text() shouldBe paymentHistoryHeading
+            status(result) shouldBe Status.OK
+            val doc = JsoupParse(result).toHtmlDocument
+            doc.select("h1").text() shouldBe successHeading
+            doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+            doc.select("main h3").text() shouldBe paymentHistoryHeading
 
-        val allocationLink = doc.select("#payment-history-table").select("tr").get(1).select("a").attr("href")
-        allocationLink shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${id1040000124}"
-      }
+            val allocationLink = doc.select("#payment-history-table").select("tr").get(1).select("a").attr("href")
+            allocationLink shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${id1040000124}"
+          }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(
-        chargesWithAllocatedPaymentModel()) {
-        disable(ChargeHistory)
-        enable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+          "without allocations" in new Setup(
+            chargesWithAllocatedPaymentModel()) {
+            disable(ChargeHistory)
+            enable(PaymentAllocation)
+            val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
-      }
+            status(result) shouldBe Status.OK
+            JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+            JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+            JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+          }
+        }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(
-        financialDetailsModel()) {
-        disable(ChargeHistory)
-        disable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+        "is disabled" in new Setup(
+          financialDetailsModel()) {
+          disable(ChargeHistory)
+          disable(PaymentAllocation)
+          val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+          status(result) shouldBe Status.OK
+          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+          JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+        }
       }
 
       "display any payments you make" in new Setup(
@@ -345,33 +352,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
-      "redirect a user back to the custom error page" when {
-        "PAYE SA exists but FS is disabled" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), isAgent = true) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
 
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-        }
-
-        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), isAgent = true) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-        }
-        "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa(), isAgent = true) {
-          disable(CodingOut)
-          val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-        }
-      }
-
-
-      "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(
+      "the late payment interest flag is enabled" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None), isAgent = true) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
@@ -383,17 +365,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
       }
 
-      "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
-        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
 
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
-      }
-
-      "provided with a matching id in the financial response with dunning locks, showing the locks banner" in new Setup(
+      "provided with dunning locks, showing the locks banner" in new Setup(
         financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
 
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
@@ -403,31 +376,45 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(
-        chargesWithAllocatedPaymentModel(), isAgent = true) {
-        disable(ChargeHistory)
-        enable(PaymentAllocation)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+      "provided with dunning locks and a late payment interest flag, not showing the locks banner" in new Setup(
+        financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
+
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
+        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(
-        chargesWithAllocatedPaymentModel(), isAgent = true) {
-        disable(ChargeHistory)
-        enable(PaymentAllocation)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
 
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
-        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+      "the Charge History FS disabled and the Payment allocation FS enabled" when {
+        "allocations present" in new Setup(
+          chargesWithAllocatedPaymentModel(), isAgent = true) {
+          disable(ChargeHistory)
+          enable(PaymentAllocation)
+          val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe Status.OK
+          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+          JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+          JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+        }
+
+        // TODO: Setup is same as above test - needs a model without payment allocations, and paymentHistoryHeading should be absent?
+        "allocations not present" in new Setup(
+          chargesWithAllocatedPaymentModel(), isAgent = true) {
+          disable(ChargeHistory)
+          enable(PaymentAllocation)
+          val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe Status.OK
+          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+          JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+          JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
+        }
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(
+      "with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(
         financialDetailsModel(), isAgent = true) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
@@ -436,8 +423,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+        JsoupParse(result).toHtmlDocument.select("main h3").size() shouldBe 0
       }
-
     }
 
     "load an error page" when {

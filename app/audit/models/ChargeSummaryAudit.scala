@@ -19,7 +19,8 @@ package audit.models
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
+import models.chargeSummary.PaymentHistoryAllocations
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -28,7 +29,7 @@ import utils.Utilities._
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                              paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
+                              paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
                               isMFADebit: Boolean = false, taxYear: Int) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
@@ -115,7 +116,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     else Seq.empty
   }
 
-  private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] = {
+  private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentHistoryAllocations): Seq[JsObject] = {
     val description = if(docDateDetail.documentDetail.isPayeSelfAssessment){
      Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
    } else if (docDateDetail.documentDetail.isCancelledPayeSelfAssessment) {
@@ -124,7 +125,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
      Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
    }
 
-    paymentAllocation.payments.map(payment => Json.obj() ++
+    paymentAllocation.allocations.map(payment => Json.obj() ++
       ("date", payment.dueDate) ++
       ("description", description) ++
       ("amount", payment.amount.map(_.abs))

@@ -27,6 +27,7 @@ import controllers.predicates._
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
+import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -85,7 +86,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
       Logger("application").debug(s"[ChargeSummaryController][handleRequest] - financialResponses = $financialResponses")
 
-      val payments = financialResponses.collect {
+      val paymentsFromAllYears = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
@@ -96,8 +97,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
-        case Some(fdm: FinancialDetailsModel) if fdm.documentDetails.exists(_.transactionId == id) =>
-          doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
+        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
+          doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case Some(error: FinancialDetailsErrorModel) =>
@@ -124,25 +125,24 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           }
     }
 
-
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
-                                  chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
+                                  chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
                                   isMFADebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
-    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
-    val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
-
+    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
+    val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
-        financialDetails.filter(_.messageKeyByTypes.isDefined)
+        financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
       } else Nil
-
     val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
-    val paymentAllocations: List[PaymentsWithChargeType] =
+    val paymentAllocations: List[PaymentHistoryAllocations] =
       if (paymentAllocationEnabled) {
-        financialDetails.flatMap(_.chargeWithAllocatedPayment)
+        financialDetailsForCharge
+          .filter(_.messageKeyByTypes.isDefined)
+          .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
@@ -162,7 +162,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
             paymentAllocations = paymentAllocations,
-            payments = payments,
+            payments = paymentsForAllYears,
             chargeHistoryEnabled = isEnabled(ChargeHistory),
             paymentAllocationEnabled = paymentAllocationEnabled,
             latePaymentInterestCharge = isLatePaymentCharge,
@@ -191,7 +191,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                                 paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
+                                 paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
                                  isMFADebit: Boolean, taxYear: Int)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     auditingService.extendedAudit(ChargeSummaryAudit(

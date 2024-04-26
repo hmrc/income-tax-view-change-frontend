@@ -64,6 +64,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
             Ok(whatYouOwe(
               currentDate = dateService.getCurrentDate,
+              // TODO: creditCharges is not used in view, can remove above call to getCreditCharges()?
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
               currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,

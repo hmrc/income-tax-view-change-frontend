@@ -26,6 +26,7 @@ import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -41,11 +42,9 @@ import java.time.LocalDate
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-
-  val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001")
+  val paymentAllocation: List[PaymentHistoryAllocations] = List(
+    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2020-08-16", -10000.0),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2023-04-05", -9000.0)
   )
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
     "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("002")))
@@ -60,11 +59,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        lot = None, lotItem = None, dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
+    PaymentHistoryAllocations(
+      allocations = List(
+        PaymentHistoryAllocation(
+          amount = Some(amount),
+          dueDate = Some(LocalDate.parse(date)),
+          clearingSAPDocument = Some("0123456789012"),
+          clearingId = Some("PAYID01"))),
+      chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   s"GET ok" should {
     "load the page with the right data for Payments Breakdown" in {

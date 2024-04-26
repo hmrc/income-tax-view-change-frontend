@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import auth.MtdItUser
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -133,21 +134,44 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     )
   }
 
-  def findMatchingPaymentDocument(clearingSAPDocument: Option[String]): Option[String] = {
+  // TODO: Update to support allocated credits
+  def getAllocationsToCharge(charge: FinancialDetail): Option[PaymentHistoryAllocations] = {
 
-    def isPayment(subItem: SubItem): Boolean = subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined
-
-    def isPaymentWithMatchingSapDocumentCode(sapDoc: String)(subItem: Seq[SubItem]) : Boolean = {
-      subItem.exists(si => si.clearingSAPDocument.contains(sapDoc) && isPayment(si))
+    def hasDocumentDetailForPayment(transactionId: String): Boolean = {
+        documentDetails
+          .find(_.transactionId == transactionId)
+          .exists(documentDetail => {
+            documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
+          })
     }
 
-    clearingSAPDocument.flatMap {
-      sapDoc => {
-        financialDetails.find(_.items.exists(isPaymentWithMatchingSapDocumentCode(sapDoc))).flatMap(_.transactionId)
+    def findIdOfClearingPayment(clearingSAPDocument: Option[String]): Option[String] = {
+
+      def hasMatchingSapCode(subItem: SubItem): Boolean = clearingSAPDocument.exists(id => subItem.clearingSAPDocument.contains(id))
+
+      financialDetails
+        .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
+        .find(_.items.exists(_.exists(hasMatchingSapCode)))
+        .flatMap(_.transactionId)
+    }
+
+    charge.items
+      .map { subItems =>
+        subItems.collect {
+          case subItem if subItem.clearingSAPDocument.isDefined =>
+            PaymentHistoryAllocation(
+              dueDate = subItem.dueDate,
+              amount = subItem.amount,
+              clearingSAPDocument = subItem.clearingSAPDocument,
+              clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+        }
+        // only return payments for now
+        .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))
       }
-    }
+      .collect {
+        case payments if payments.nonEmpty => PaymentHistoryAllocations(payments, charge.mainType, charge.chargeType)
+      }
   }
-
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
     FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,

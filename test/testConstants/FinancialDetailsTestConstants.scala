@@ -591,6 +591,7 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
+        // charge
         documentDetailModel(
           taxYear = taxYear,
           outstandingAmount = outstandingAmount,
@@ -599,24 +600,48 @@ object FinancialDetailsTestConstants {
           lpiWithDunningLock = lpiWithDunningLock,
           transactionId = id1040000123
         ),
+        // payment
         documentDetailModel(taxYear = 9999,
           outstandingAmount = outstandingAmount.map(amount => -amount),
           paymentLot = Some("paymentLot"),
           paymentLotItem = Some("paymentLotItem"),
           lpiWithDunningLock = lpiWithDunningLock,
-          transactionId = id1040000124)),
+          transactionId = id1040000124
+        ),
+        // credit
+        documentDetailModel(
+          taxYear = taxYear,
+          transactionId = id1040000125,
+          outstandingAmount = outstandingAmount,
+          paymentLot = None,
+          paymentLotItem = None,
+        )),
       financialDetails = List(
         // charge
         financialDetail(
           transactionId = Some(id1040000123),
           taxYear = taxYear,
+
+//          mainType = "ITSA- POA 1",
+//          mainTransaction = "4920",
           additionalSubItems = Seq(
+            // cleared by payment
             SubItem(
               amount = Some(500.0),
-              dueDate = Some(LocalDate.parse("2018-09-08")),
+              dueDate = Some(LocalDate.parse("2018-09-07")),
               clearingDate = Some(LocalDate.parse("2018-09-07")),
               clearingReason = Some("Cleared by Payment"),
-              clearingSAPDocument = Some("003530048269"),
+              clearingSAPDocument = Some("000000000000"),
+              paymentAmount = Some(500.0),
+              paymentLot = None,
+              paymentLotItem = None),
+            // cleared by credit
+            SubItem(
+              amount = Some(500.0),
+              dueDate = Some(LocalDate.parse("2018-09-10")),
+              clearingDate = Some(LocalDate.parse("2018-09-10")),
+              clearingReason = Some("Cleared by Credit?"),
+              clearingSAPDocument = Some("000000000001"),
               paymentAmount = Some(500.0),
               paymentLot = None,
               paymentLotItem = None)
@@ -625,15 +650,35 @@ object FinancialDetailsTestConstants {
         financialDetail(
           transactionId = Some(id1040000124),
           taxYear = taxYear,
+          mainType = "Payment on Account",
+          mainTransaction = "0060",
           additionalSubItems = Seq(
             SubItem(
               amount = Some(500.0),
-              clearingDate = Some(LocalDate.parse("2018-09-08")),
-              clearingSAPDocument = Some("003530048269"),
+              clearingDate = Some(LocalDate.parse("2018-09-07")),
+              clearingSAPDocument = Some("000000000000"),
               paymentAmount = Some(500.0),
               paymentLot = Some("paymentLot"),
               paymentLotItem = Some("paymentLotItem"))
-          )))
+          )),
+        // credit
+        financialDetail(
+          transactionId = Some(id1040000125),
+          taxYear = taxYear,
+          mainType = "ITSA Cutover Credits",
+          mainTransaction = "6110",
+          additionalSubItems = Seq(
+            SubItem(
+              amount = Some(500.0),
+              dueDate = Some(LocalDate.parse("2018-09-10")),
+              clearingDate = Some(LocalDate.parse("2018-09-10")),
+              clearingReason = Some("Allocated to Charge"),
+              clearingSAPDocument = Some("000000000001"),
+              paymentAmount = Some(500.0),
+              paymentLot = None,
+              paymentLotItem = None)
+          ),
+          chargeType = "Cutover Credits"))
     )
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(

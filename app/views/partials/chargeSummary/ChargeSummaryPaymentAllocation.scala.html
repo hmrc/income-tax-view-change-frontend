@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.PaymentsWithChargeType
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails.DocumentDetailWithDueDate
@@ -25,7 +26,7 @@
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
 
-@(  paymentAllocations: List[PaymentsWithChargeType],
+@(  paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel,
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     isAgent: Boolean = false,
@@ -46,13 +47,13 @@
     </a>
 }
 
-@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+@for(allocation <- paymentAllocations ; payment <- allocation.allocations) {
     <tr>
         <td class="govuk-table__cell govuk-!-width-one-quarter">@{payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort}</td>
         <td class="govuk-table__cell">
             @{
 
-                val matchingPayment = payments.findMatchingPaymentDocument(payment.clearingSAPDocument)
+                val matchingPayment = payment.clearingId
 
                 if(matchingPayment.isDefined) {
                     val link = if(isAgent) {

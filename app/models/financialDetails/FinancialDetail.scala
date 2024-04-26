@@ -75,30 +75,6 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  def chargeWithAllocatedPayment(implicit dateService: DateServiceInterface): Option[PaymentsWithChargeType] = {
-
-    // get charge
-
-    items
-      .map { subItems =>
-        subItems.collect {
-          case subItem if subItem.clearingReason.contains("Cleared by Payment") =>
-
-            // TODO: MISUV-7407 This has always returned Payment, but is actually Charge?
-
-            Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
-              method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-              dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId,
-              clearingSAPDocument = subItem.clearingSAPDocument)
-        }
-      }
-      .collect {
-        case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
-      }
-      // returns poa1, poa2 or bcd charges
-      .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
-  }
-
   def getCreditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 }
 
