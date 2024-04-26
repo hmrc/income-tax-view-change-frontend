@@ -621,9 +621,6 @@ object FinancialDetailsTestConstants {
         financialDetail(
           transactionId = Some(id1040000123),
           taxYear = taxYear,
-
-//          mainType = "ITSA- POA 1",
-//          mainTransaction = "4920",
           additionalSubItems = Seq(
             // cleared by payment
             SubItem(

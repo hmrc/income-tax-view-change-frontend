@@ -984,8 +984,6 @@ object IncomeSourceIntegrationTestConstants {
             "dueDate" -> dueDate,
             "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
-//            "paymentLot" -> "081203010024",
-//            "paymentLotItem" -> "000001"
           ))
       ),
       Json.obj(
@@ -1002,9 +1000,6 @@ object IncomeSourceIntegrationTestConstants {
             "dueDate" -> dueDate,
             "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
-//            ,
-//            "paymentLot" -> "081203010024",
-//            "paymentLotItem" -> "000001"
           ),
           Json.obj(
             "interestLock" -> interestLocks.head,
@@ -1025,9 +1020,6 @@ object IncomeSourceIntegrationTestConstants {
             "dueDate" -> dueDate,
             "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
-
-//            "paymentLot" -> "081203010024",
-//            "paymentLotItem" -> "000001"
           ),
           Json.obj(
             "interestLock" -> interestLocks(1),
