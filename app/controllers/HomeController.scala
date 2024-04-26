@@ -70,11 +70,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
       case Left(ex) =>
-        Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
         Future.successful(handleErrorGettingDueDates(isAgent))
     } recover {
       case ex =>
-        Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
         handleErrorGettingDueDates(isAgent)
     }
 
@@ -118,7 +118,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             isAgent = isAgent
           ))
         case Left(ex: Throwable) =>
-          Logger("application").error(s"[HomeController][buildHomePage]: Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
           handleErrorGettingDueDates(isAgent)
     }
 }

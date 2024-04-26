@@ -69,15 +69,15 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
           case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
             btaNavPartial = user.btaNavPartial)(implicitly, messages))
           case _ =>
-            Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+            Logger("application").warn(s"[$taxYear] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
         }
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-        Logger("application").info(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data found.")
+        Logger("application").info(s"[$taxYear] No income data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No new calc income data error found. Downstream error")
+          s"[$taxYear] No new calc income data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

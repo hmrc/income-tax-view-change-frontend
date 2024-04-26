@@ -219,7 +219,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                 Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYear.endYear), Some(true))))
             }
             sessionService.setMongoData(newUIJourneySessionData)
-            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
+            Logger("application").debug("Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
                 IncomeSourceReportingMethodAuditModel(

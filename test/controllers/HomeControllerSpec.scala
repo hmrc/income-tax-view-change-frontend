@@ -543,7 +543,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
 
         result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.failed.futureValue.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
 

@@ -273,7 +273,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
 
         result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+        result.failed.futureValue.getMessage shouldBe "Failed to retrieve successful charge history"
       }
     }
 

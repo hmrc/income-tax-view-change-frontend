@@ -109,11 +109,11 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           origin = origin)))
       case Left(_) => {
         if (isAgent) {
-          Logger("application").error(s"[CreditsSummaryController][showAgentCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         }
         else {
-          Logger("application").error(s"[CreditsSummaryController][showCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
       }

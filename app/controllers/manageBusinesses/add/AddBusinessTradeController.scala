@@ -85,7 +85,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -130,7 +130,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
