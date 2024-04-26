@@ -119,36 +119,59 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
+    println("XXXXXX" + taxYearList)
     taxYearList match {
-      case ::(head, next) => isTaxYearCrystallised(head, nino).flatMap {
-        case true => Future.successful(Some(head))
-        case false => checkCrystallisation(nino, next)
+      case ::(head, next) => isTaxYearNonCrystallised(head, nino).flatMap {
+        case true =>
+          println("AAAAAAAAAA")
+          Future.successful(Some(head))
+        case false =>
+          println("BBBBBBBBBB")
+          checkCrystallisation(nino, next)
       }
-      case Nil => Future.successful(None)
+      case Nil =>
+        println("CCCCCCCCC")
+        Future.successful(None)
     }
   }
 
   // Next 2 methods taken from Calculation List Service (with small changes), but I don't like the code duplication. Is there any solution to this?
-  private def isTaxYearCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  private def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear.endYear >= currentTaxYearEnd
     if (futureTaxYear) {
-      Future.successful(false)
+      println("DDDDDDDDDDD")
+      Future.successful(true)
     } else {
-      getTYSCrystallisationResult(nino, taxYear.endYear)
+      isTYSCrystallised(nino, taxYear.endYear).map {
+        case true =>
+          println("EEEEEEEE")
+          false
+        case false =>
+          println("FFFFFFFFFF")
+          true
+      }
     }
   }
 
-  private def getTYSCrystallisationResult(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  private def isTYSCrystallised(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
     calculationListConnector.getCalculationList(nino, taxYearRange).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+      case res: CalculationListModel =>
+        println("ZZZZZZZZZZZZZ" + res.crystallised)
+        Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 204 =>
+        println("YYYYYYYYYYY")
+        Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     } map {
-      case Some(true) => true
-      case _ => false
+      case Some(true) =>
+        println("MMMMMMMM")
+        true
+      case _ =>
+        println("NNNNNNNNNN")
+        false
     }
   }
 
