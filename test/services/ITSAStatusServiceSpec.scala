@@ -50,7 +50,7 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Left(errorITSAStatusError))
         TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).failed.futureValue.getMessage shouldBe
-          "[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"
+          "Failed to retrieve ITSAStatus"
       }
     }
   }

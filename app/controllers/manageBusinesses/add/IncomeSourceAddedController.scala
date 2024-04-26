@@ -76,8 +76,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         )
       }) getOrElse {
         Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"[IncomeSourceAddedController][handleRequest] - " +
-            s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
@@ -110,14 +109,12 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         }
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"[IncomeSourceAddedController][handleSuccess]: Unable to retrieve Mongo session data for $incomeSourceType")
+        Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
     }
   }
-
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url

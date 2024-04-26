@@ -68,12 +68,12 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
           } recover {
             case ex: Exception =>
               Logger("application").error(
-                s"[ViewAllCeasedBusinessesController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
+                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
               showInternalServerError(isAgent)
           }
         case Left(ex) =>
           Logger("application").error(
-            s"[ViewAllCeasedBusinessesController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
+            s"Error: ${ex.getMessage} - ${ex.getCause}")
           Future(showInternalServerError(isAgent))
       }
     }

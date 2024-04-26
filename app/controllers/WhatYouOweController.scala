@@ -24,10 +24,12 @@ import config.featureswitch._
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
+import models.core.Nino
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, WhatYouOweService}
+import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.WhatYouOwe
@@ -36,6 +38,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
+                                     val claimToAdjustService: ClaimToAdjustService,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -59,24 +62,27 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
         val codingOutEnabled = isEnabled(CodingOut)
 
-        whatYouOweService.getCreditCharges().map {
+        whatYouOweService.getCreditCharges().flatMap {
           creditCharges =>
-
-            Ok(whatYouOwe(
-              currentDate = dateService.getCurrentDate,
-              creditCharges,
-              whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-              currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
-              btaNavPartial = user.btaNavPartial,
-              dunningLock = whatYouOweChargesList.hasDunningLock,
-              codingOutEnabled = codingOutEnabled,
-              MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
-              isAgent = isAgent,
-              whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
-              isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-              creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-              origin = origin)(user, user, messages)
-            ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+            claimToAdjustViewModel(Nino(user.nino)).map {
+              ctaViewModel =>
+                Ok(whatYouOwe(
+                  currentDate = dateService.getCurrentDate,
+                  creditCharges,
+                  whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+                  currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+                  btaNavPartial = user.btaNavPartial,
+                  dunningLock = whatYouOweChargesList.hasDunningLock,
+                  codingOutEnabled = codingOutEnabled,
+                  MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
+                  isAgent = isAgent,
+                  whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
+                  isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+                  creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+                  origin = origin,
+                  claimToAdjustViewModel = ctaViewModel)(user, user, messages)
+                ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+            }
         }
     } recover {
       case ex: Exception =>
@@ -85,6 +91,17 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         itvcErrorHandler.showInternalServerError()
     }
   }
+
+  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier): Future[WYOClaimToAdjustViewModel] = {
+    if (isEnabled(AdjustPaymentsOnAccount) ){
+    claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+      case Right(value) => Future.successful(whatYouOweService.getWYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
+      case Left(ex: Throwable) => Future.failed(ex)
+    }} else {
+      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+    }
+  }
+
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -104,4 +121,5 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         isAgent = true
       )
   }
+
 }

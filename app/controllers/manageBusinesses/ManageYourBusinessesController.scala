@@ -72,12 +72,12 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
           }.recover {
             case ex: Exception =>
               Logger("application").error(
-                s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
+                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
               showInternalServerError(isAgent)
           }
         case Left(ex) =>
           Logger("application").error(
-            s"[ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
+            s"Error: ${ex.getMessage} - ${ex.getCause}")
           Future(showInternalServerError(isAgent))
       }
     }

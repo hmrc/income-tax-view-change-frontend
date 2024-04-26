@@ -73,11 +73,11 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
       }).recover {
         case ex if isAgent =>
           Logger("application")
-            .error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
+            .error(s"Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandlerAgent.showInternalServerError()
         case ex =>
           Logger("application")
-            .error(s"[Agent][RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
+            .error(s"[Agent]Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber - ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandler.showInternalServerError()
       }
     } else {

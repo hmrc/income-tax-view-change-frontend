@@ -100,7 +100,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
               incomeSourceType = incomeSourceType))
           }
         case incomeSourceD@(Right(None), _) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}${incomeSourceD._1}- =${incomeSourceD._2}=")
           Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
         case (Left(exception), _) => Future.failed(exception)
       }
@@ -108,7 +108,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
   }.recover {
     case ex: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 

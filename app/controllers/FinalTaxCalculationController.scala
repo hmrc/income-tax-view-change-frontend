@@ -70,10 +70,10 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
         Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+        Logger("application").info("No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("[FinalTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
+        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -136,14 +136,14 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
               summaryData -> submissionOverview.asJsonString
             )
           case _ =>
-            Logger("application").error("[Agent][FinalTaxCalculationController][submit] UTR missing.")
+            Logger("application").error("[Agent]UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-        Logger("application").info("[Agent][FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        Logger("application").info("[Agent]No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("[Agent][FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
+        Logger("application").error("[Agent]Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -168,14 +168,14 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
               SessionKeys.summaryData -> submissionOverview.asJsonString
             )
           case _ =>
-            Logger("application").error("[FinalTaxCalculationController][submit] Name or UTR missing.")
+            Logger("application").error("Name or UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-        Logger("application").info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        Logger("application").info("No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("[FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
+        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }
