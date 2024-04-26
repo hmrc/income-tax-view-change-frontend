@@ -43,6 +43,8 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
 
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
+    override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
+
     override def getAccountingPeriodEndDate(startDate: LocalDate):LocalDate = {
       val startDateYear = startDate.getYear
       val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)

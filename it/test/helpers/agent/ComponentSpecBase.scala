@@ -71,6 +71,8 @@ class TestDateService extends DateServiceInterface {
       accountingPeriodEndDate.plusYears(1)
     }
   }
+
+  override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
