@@ -25,6 +25,7 @@
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -53,6 +54,7 @@
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
+        claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -413,6 +415,11 @@
             @if(!whatYouOweChargesList.isChargesListEmpty) {
                 @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
                 @dunningLockParagraph
+            }
+            @if(claimToAdjustViewModel.poaTaxYear.nonEmpty) @{
+                link(link = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+                messageKey = s"Adjust payments on account for the ${claimToAdjustViewModel.poaTaxYear.map(_.startYear)} to ${claimToAdjustViewModel.poaTaxYear.map(_.endYear)} tax year",
+                id = Some("adjust-poa-link"))
             }
             @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
