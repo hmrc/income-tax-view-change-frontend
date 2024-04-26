@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, OptOut}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -31,6 +31,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
+import testConstants.CalculationListIntegrationTestConstants
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -159,7 +160,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     "the user has obligations and the Opt Out feature switch enabled" in {
       stubAuthorisedAgentUser(authorised = true)
       enable(OptOut)
-
+      val currentTaxYear = dateService.getCurrentTaxYearEnd
+      val previousYear = currentTaxYear - 1
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel(
           identification = "testId",
@@ -177,6 +179,9 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         nino = testNino,
         deadlines = currentObligations
       )
+      ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+      CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
 
       val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
 
@@ -240,7 +245,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
   "API#1171 GetBusinessDetails Caching" when {
     "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
+      testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
         () => IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation))
     }
   }

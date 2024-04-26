@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateService) {
+class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateServiceInterface) {
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     val endYear = dateService.getCurrentTaxYearEnd
     val currentYear = TaxYear(endYear)

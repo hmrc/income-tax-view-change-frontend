@@ -18,13 +18,15 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.{ComponentSpecBase, WiremockHelper}
+import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.{JsArray, Json}
 import testConstants.BaseIntegrationTestConstants.testNino
 
 
 object ITSAStatusDetailsStub extends ComponentSpecBase {
-  def getUrl(taxYearRange: String = "23-24"): String =
-    s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=false&history=false"
+  def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false): String =
+    s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=$futureYears&history=false"
 
   def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2024-25"): StubMapping = {
     WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), OK,
@@ -41,6 +43,38 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
           |    ]
           |  }
           |]""".stripMargin
+    )
+  }
+
+  def stubGetITSAStatusFutureYearsDetails(taxYear: Int): StubMapping = {
+    val previousYear = taxYear - 1
+    val futureYear = taxYear + 1
+
+    def shortTaxYear(taxYear: Int) = taxYear.toString.takeRight(2).toInt
+
+    val taxYearToStatus: Map[String, String] = Map(
+      s"${futureYear - 1}-${shortTaxYear(futureYear)}" -> ITSAStatus.Mandated.toString,
+      s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> ITSAStatus.Mandated.toString,
+      s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> ITSAStatus.Mandated.toString
+    )
+    WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true), OK,
+
+      taxYearToStatus.foldLeft(JsArray()) {
+        case (array, (taxYear, status)) =>
+          val itsaStatusObject = Json.parse(
+            s"""  {
+               |    "taxYear": "$taxYear",
+               |    "itsaStatusDetails": [
+               |      {
+               |        "submittedOn": "2023-06-01T10:19:00.303Z",
+               |        "status": "$status",
+               |        "statusReason": "Sign up - return available",
+               |        "businessIncomePriorTo2Years": 99999999999.99
+               |      }
+               |    ]
+               |  }""".stripMargin)
+          array.append(itsaStatusObject)
+      }.toString()
     )
   }
 

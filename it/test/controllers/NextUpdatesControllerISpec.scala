@@ -20,11 +20,12 @@ import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import config.featureswitch.OptOut
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -180,11 +181,17 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a Opt Out Feature Switch Enabled" in {
         enable(OptOut)
 
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
@@ -248,7 +255,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
+      testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
         () => IncomeTaxViewChangeFrontend.getNextUpdates)
     }
   }
