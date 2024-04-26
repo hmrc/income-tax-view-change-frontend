@@ -105,7 +105,7 @@ object  RepaymentHistoryUtils {
   }
 
   private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
-    Logger("application").info("[RepaymentHistoryUtils][combinePaymentHistoryData][paymentToHMRCEntry], json:" + Json.prettyPrint(Json.toJson(payment)))
+    Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
       creditType = PaymentType,

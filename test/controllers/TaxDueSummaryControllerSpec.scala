@@ -119,7 +119,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
 

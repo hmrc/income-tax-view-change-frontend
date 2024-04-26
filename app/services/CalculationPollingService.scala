@@ -84,7 +84,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                      mtditid: String
                                     )
                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
-    Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for calcId: $calcId and nino: $nino")
+    Logger("application").debug(s"Starting polling for calcId: $calcId and nino: $nino")
     for {
       result <-
         calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
@@ -104,7 +104,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
     Logger("application")
-      .info("[CalculationPollingService][attemptToPollCalc]")
+      .info("")
     for {
       statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {

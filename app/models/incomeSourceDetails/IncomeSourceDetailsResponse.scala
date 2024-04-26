@@ -56,7 +56,7 @@ case class IncomeSourceDetailsModel(nino: String,
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
     val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
-    Logger("application").debug(s"[IncomeSourceDetailsModel][orderedTaxYearsByYearOfMigration] - Tax years list = $taxYears")
+    Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
   }
 

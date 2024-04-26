@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.nextUpdates
+package views
 
 import config.FrontendAppConfig
 import models.nextUpdates._
@@ -24,16 +24,14 @@ import play.api.test.Helpers._
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
-import views.html.nextUpdates.NextUpdates
+import views.html.NextUpdatesOptOut
 
 import java.time.LocalDate
 
-class NextUpdatesViewSpec extends TestSupport {
+class NextUpdatesOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
-  val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
-  val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+  val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
   class Setup(currentObligations: NextUpdatesViewModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
@@ -48,6 +46,8 @@ class NextUpdatesViewSpec extends TestSupport {
     val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
     val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
     val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
+    val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
+    val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
   }
 
@@ -97,8 +97,8 @@ class NextUpdatesViewSpec extends TestSupport {
     }
 
     s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      pageDocument.select("p:nth-child(5)").text shouldBe obligationsMessages.info
+      pageDocument.select("p:nth-child(5) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {
@@ -110,9 +110,9 @@ class NextUpdatesViewSpec extends TestSupport {
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 
-//    s"have the correct Claim To Adjust PoA Link and Text" in new Setup(obligationsModel) {
-//      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
-//      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
-//    }
+    s"have the Submitting updates in software" in new Setup(obligationsModel) {
+      pageDocument.getElementById("updates-software-heading").text() shouldBe obligationsMessages.updatesInSoftware
+      pageDocument.getElementById("updates-software-link").text() shouldBe obligationsMessages.updatesInSoftwareDesc
+    }
   }
 }

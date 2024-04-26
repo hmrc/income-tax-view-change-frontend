@@ -136,7 +136,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
 
         val result = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
     "there is no firstAccountingPeriodEndDate from income source details" should {

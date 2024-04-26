@@ -67,7 +67,7 @@ class CreditServiceSpec extends TestSupport {
         val result = service.getCreditCharges()(headerCarrier, mtdItUser).failed.futureValue
 
         result shouldBe an[Exception]
-        result.getMessage shouldBe "[CreditService][getCreditCharges] Error response while getting Unpaid financial details"
+        result.getMessage shouldBe "Error response while getting Unpaid financial details"
       }
     }
   }

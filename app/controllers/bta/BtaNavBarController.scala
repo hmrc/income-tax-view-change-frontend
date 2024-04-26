@@ -41,7 +41,7 @@ class BtaNavBarController @Inject()(BtaNavBarPartialConnector: BtaNavBarPartialC
     for {
       navLinks <- maybeNavLinks
     } yield {
-      logger.info("[BtaNavBarController][btaNavBarPartial] successful")
+      logger.info("successful")
       Some(navBar(navBarService.partialList(navLinks)))
     }
   }

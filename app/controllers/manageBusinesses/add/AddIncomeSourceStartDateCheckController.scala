@@ -104,14 +104,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
             )
           }
         case None =>
-          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleRequest]: " +
+          Logger("application").error("" +
             "Failed to get income source start date from session")
           Future.successful(showInternalServerError(isAgent))
       }
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController]${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -150,14 +150,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
               )
           )
         case None =>
-          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
+          Logger("application").error("" +
             "Failed to get income source start date from session")
           Future.successful(showInternalServerError(isAgent))
       }
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController]${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -178,7 +178,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case (Some(form.responseYes), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
       case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
       case _ =>
-        Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
         Future.successful(showInternalServerError(isAgent))
     }
   }
