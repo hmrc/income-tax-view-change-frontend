@@ -17,7 +17,7 @@
 package services.ClaimToAdjustPOA
 
 import auth.MtdItUser
-import mocks.connectors.MockFinancialDetailsConnector
+import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
@@ -27,9 +27,9 @@ import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
+class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector{
 
-  object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, dateService)
+  object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockCalculationListConnector, dateService)
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid,
