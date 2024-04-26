@@ -16,32 +16,26 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.mocks.MockAuditingService
-import auth.FrontendAuthorisedFunctions
 import config.ItvcErrorHandler
-import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockNextUpdates
 import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.NextUpdatesService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.{NextUpdates, NoNextUpdates}
+import views.html.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -58,6 +52,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     val controller = new controllers.NextUpdatesController(
       app.injector.instanceOf[NoNextUpdates],
       app.injector.instanceOf[NextUpdates],
+      app.injector.instanceOf[NextUpdatesOptOut],
       mockIncomeSourceDetailsService,
       mockAuditingService,
       mockNextUpdatesService,
@@ -75,6 +70,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   object TestNextUpdatesController extends NextUpdatesController(
     app.injector.instanceOf[NoNextUpdates],
     app.injector.instanceOf[NextUpdates],
+    app.injector.instanceOf[NextUpdatesOptOut],
     mockIncomeSourceDetailsService,
     mockAuditingService,
     mockNextUpdatesService,
@@ -96,8 +92,10 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001"))),
     NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS")))
-  )).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)})
+  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
+  })
+
   private def getQuarterType(string: String) = {
     if (string == "Quarterly") QuarterlyObligation else EopsObligation
   }

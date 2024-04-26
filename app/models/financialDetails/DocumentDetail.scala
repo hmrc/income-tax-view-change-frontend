@@ -190,7 +190,7 @@ case class DocumentDetail(taxYear: Int,
       case _ => "balancingCharge.text"
     }
     case error =>
-      Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      Logger("application").error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 

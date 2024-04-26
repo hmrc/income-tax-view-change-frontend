@@ -51,16 +51,16 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[RepaymentHistoryModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentId] - Json validation error parsing repayment response, error $invalid")
+              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
               RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentId] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPaymentHistoryByRepaymentId] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           RepaymentHistoryErrorModel(response.status, response.body)
       }
@@ -80,16 +80,16 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[RepaymentHistoryModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentDate] - Json validation error parsing repayment response, error $invalid")
+              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
               RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentDate] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPaymentHistoryByRepaymentDate] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           RepaymentHistoryErrorModel(response.status, response.body)
       }

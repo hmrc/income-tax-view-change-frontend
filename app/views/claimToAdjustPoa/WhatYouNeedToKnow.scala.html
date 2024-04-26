@@ -50,44 +50,45 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    <span class="govuk-caption-xl">@getMessage("caption")</span>
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption")</span>
 
     @h1(msg = getMessage("h1"),
-     id = Some("incomeSources.add.addIncomeSources-h1"))
+     id = Some("h1"))
 
-    @p(id = Some("incomeSources.add.addIncomeSources-p1")) {
+    @p(id = Some("p1")) {
         @getMessage("p1")
     }
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
-        content = Text(getMessage("warning-text"))
+        content = Text(getMessage("warning-text")),
+        attributes = Map("id" -> "warning-text")
     ))
 
-    @p(id = Some("incomeSources.add.addIncomeSources-p2")) {
+    @p(id = Some("p2")) {
         @getMessage("p2")
     }
 
     <h2 class="govuk-heading-l">@getMessage("h2")</h2>
 
-    @p(id = Some("incomeSources.add.addIncomeSources-p3")) {
+    @p(id = Some("p3")) {
         @getMessage("p3")
     }
 
-    @p(id = Some("incomeSources.add.addIncomeSources-p4")) {
+    @p(id = Some("p4")) {
         @getMessage("p4")
     }
 
-    @p(id = Some("incomeSources.add.addIncomeSources-p5")) {
+    @p(id = Some("p5")) {
         @getMessage("p5")
     }
 
-    @newTabLinkHTML(getMessage("link1"), getMessage("link-text"))
+    @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
     <div class="govuk-button-group">
     @govukButton(Button(
         content = Text(getMessage("continue-button"))
     ))
-    <a class="govuk-link" href="/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel">@getMessage("cancel")</a>
+    <a class="govuk-link" id = "3" href="/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel">@getMessage("cancel")</a>
     </div>
 }

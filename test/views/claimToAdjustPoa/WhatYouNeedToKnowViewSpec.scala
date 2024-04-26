@@ -30,26 +30,69 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  val testBackUrl: String = "/testBackUrl"
+  val testBackUrl: String = "/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel"
 
   class Setup(isAgent: Boolean = false) {
     val view: Html = whatYouNeedToKnowView(backUrl = testBackUrl, isAgent = isAgent)
     val document: Document = Jsoup.parse(view.toString())
+    val groupButton: Elements = document.select("div.govuk-button-group")
+    val elements = groupButton.first().children()
   }
 
-  "The WhatYouNeedToKnow page" when {
-    "an individual loads the page" should {
-      "have the correct title" in new Setup() {
-        println(document)
+  "The WhatYouNeedToKnow page" should {
+      "render the page heading" in new Setup {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.whatYouNeedToKnow.heading"))
       }
 
-      "have a 'Continue' button" in new Setup {
-        val continueButton: Elements = document.select("div.govuk-button-group")
-        continueButton.text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.continue-button")
-//        println("AAAA" + continueButton.attr("href"))
-        //continueButton.attr("href") shouldBe testBackUrl
+      "render the caption" in new Setup {
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.caption")
       }
-    }
+
+      "render the main heading" in new Setup {
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h1")
+      }
+
+      "render the first paragraph" in new Setup {
+        document.getElementById("p1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p1")
+      }
+
+      "render the warning text" in new Setup {
+        document.getElementById("warning-text").text shouldBe s"! Warning ${msgs("claimToAdjustPoa.whatYouNeedToKnow.warning-text")}"
+      }
+
+      "render the second paragraph" in new Setup {
+        document.getElementById("p2").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p2")
+      }
+
+      "render the subheading" in new Setup {
+        document.select("h2").get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h2")
+      }
+
+      "render the third paragraph" in new Setup {
+        document.getElementById("p3").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p3")
+      }
+
+      "render the fourth paragraph" in new Setup {
+        document.getElementById("p4").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p4")
+      }
+
+      "render the fifth paragraph" in new Setup {
+        document.getElementById("p5").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p5")
+      }
+
+      "render the newTabLinkHTML with href" in new Setup {
+        document.select("a.govuk-link").get(4).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.link")
+        document.select("a.govuk-link").get(4).attr("href") shouldBe "#"
+      }
+
+      "have a 'Continue' button" in new Setup {
+        elements.get(0).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.continue-button")
+      }
+
+      "have a 'Cancel' button with backUrl" in new Setup {
+        val secondElement = elements.get(1)
+        elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
+        secondElement.attr("href") shouldBe testBackUrl
+      }
   }
 }
