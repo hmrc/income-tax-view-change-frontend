@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.NextUpdatesQuarterlyReportingContentChecks
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, OptOutQuery, OptOutRules, OptOutSymbol}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -49,31 +49,4 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield optOutChecks
   }
 
-//  case class ErrorCode(message: String)
-//  def getOptOutStatus: Future[Either[ErrorCode, OptOutStatus]] = {
-//    val endYear = dateService.getCurrentTaxYearEnd
-//    val currentYear = TaxYear(endYear)
-//    val previousYear = currentYear.addYears(-1)
-//    val nextYear = currentYear.addYears(1)
-//
-//    val targetYearsList1: List[TaxYear] = List(currentYear, previousYear, nextYear)
-//
-//    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-//    val previousYearCalcStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
-//
-//
-//    for {
-//      targetYears <- Future.successful(targetYearsList1)
-//      targetYear <- targetYears
-//      statusMap <- taxYearITSAStatus
-//      isCurrentYearStatusMandatoryOrVoluntary = statusMap(currentYear).isMandatedOrVoluntary
-//      isPreviousYearStatusMandatoryOrVoluntary = statusMap(previousYear).isMandatedOrVoluntary
-//      calStatus <- previousYearCalcStatus
-//      optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
-//        isCurrentYearStatusMandatoryOrVoluntary,
-//        isPreviousYearStatusMandatoryOrVoluntary,
-//        calStatus)
-//    } yield optOutChecks
-//    ???
-//  }
 }

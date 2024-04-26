@@ -1,4 +1,4 @@
-N,V,.,.,PY
-.,.,V,.,CY
-.,.,.,V,NY
-.,.,V,U,NY
+N,V,U,U,PY
+.,U,V,.,CY
+.,U,U,V,NY
+.,U,V,U,NY

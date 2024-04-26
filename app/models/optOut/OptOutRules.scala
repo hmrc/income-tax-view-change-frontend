@@ -28,7 +28,6 @@ object OptOutSymbol {
   val FinalizedNo = OptOutSymbol("N")
   val FinalizedAny = OptOutSymbol("_")
 
-  val Empty = OptOutSymbol("E")
   val Unknown = OptOutSymbol("U")
 
   val Mandatory = OptOutSymbol("M")
@@ -62,7 +61,7 @@ case class OptOutQuery(finalised: OptOutSymbol,
 }
 
 object OptOutRules {
-  val regex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
+  val optOutOutcomeRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
   private def splitYN(s: String): List[String] = if(s.startsWith("_")) List(s.replace("_", "Y"), s.replace("_", "N"), s) else List(s)
   val rules: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules.csv")).getLines()
     .flatMap(l => splitYN(l))
@@ -74,7 +73,7 @@ object OptOutRules {
   def query(query: OptOutQuery): OptOutOutcome = {
     val matched = rules.find(l => l.startsWith(query.asText()))
     matched.map {
-      case regex(outcome) => OptOutOutcome.parse(outcome)
+      case optOutOutcomeRegex(outcome) => OptOutOutcome.parse(outcome)
       case _ => OptOutOutcome.NoOptOut
     }.getOrElse(OptOutOutcome.NoOptOut)
   }
@@ -91,7 +90,7 @@ object OptOutRules {
       .map(t => t._2)
 
     allMatched.map {
-      case regex(outcome) => OptOutOutcome.parse(outcome)
+      case optOutOutcomeRegex(outcome) => OptOutOutcome.parse(outcome)
       case _ => OptOutOutcome.NoOptOut
     }.toSet
   }
@@ -101,21 +100,21 @@ object OptOutRules {
 object SomeMain extends App {
 
   val queryStrings = List(
-    OptOutQuery(FinalizedNo, Voluntary, Empty, Empty),
-    OptOutQuery(FinalizedNo, Empty, Voluntary, Empty),
+    OptOutQuery(FinalizedNo, Voluntary, Unknown, Unknown),
+    OptOutQuery(FinalizedNo, Unknown, Voluntary, Unknown),
 //
-    OptOutQuery(FinalizedNo, Empty, Empty, Voluntary),
-    OptOutQuery(FinalizedYes, Empty, Empty, Voluntary),
-    OptOutQuery(FinalizedAny, Empty, Empty, Voluntary),
+    OptOutQuery(FinalizedNo, Unknown, Unknown, Voluntary),
+    OptOutQuery(FinalizedYes, Unknown, Unknown, Voluntary),
+    OptOutQuery(FinalizedAny, Unknown, Unknown, Voluntary),
 
-    OptOutQuery(FinalizedNo, Empty, Voluntary, Unknown),
+    OptOutQuery(FinalizedNo, Unknown, Voluntary, Unknown),
 
     OptOutQuery(FinalizedNo, Voluntary, Voluntary, Voluntary)
   )
 
   println()
   println("Rules In File:")
-  OptOutRules.rules.foreach(println)
+  OptOutRules.rulesRegex.foreach(println)
 
   println()
   println("Query Expressions:")
@@ -135,7 +134,6 @@ object SomeMain extends App {
   println("N = FinalizedNo")
   println("_ = FinalizedAny")
 
-  println("E = Empty")
   println("U = Unknown")
 
   println("M = Mandatory")

@@ -27,7 +27,7 @@ import models.optOut.OptOutMessageResponse
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService_MISUV_7542}
+import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService2}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -42,7 +42,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
-                                      optOutService: OptOutService_MISUV_7542,
+                                      optOutService: OptOutService2,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -50,6 +50,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                      (implicit mcc: MessagesControllerComponents,
                                       implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
                                       val ec: ExecutionContext)
+
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
@@ -76,7 +77,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-        mtdItUser =>
+        implicit mtdItUser =>
           optOutService.displayOptOutMessage().flatMap {
             optOutMessage =>
               nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {

@@ -26,6 +26,7 @@ case class StatusDetail(submittedOn: String,
 
   def isMandatedOrVoluntary: Boolean = status == Mandated || status == Voluntary
   def isVoluntary: Boolean = status == Voluntary
+  def isMandated: Boolean = status == Mandated
 
 }
 
