@@ -90,42 +90,23 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-    val a = checkCrystallisation(nino, getPoaAdjustableTaxYears).map {
-      case None => Right(None)
+    checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
+      case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
+        case financialDetails: FinancialDetailsModel => Right(arePoAPaymentsPresent(financialDetails.documentDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => None
+        case _ => Right(None)
       }
     }
-
   }
 
-  private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
-    {
-      for {
-        poa1 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA- POA 1")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-        poa2 <- documentDetails.filter(_.documentDescription.exists(_.equals("ITSA - POA 2")))
-          .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-      } yield {
-        if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
-          Right(Some(poa1))
-        } else {
-          Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-            s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
-          Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
-        }
-      }
-    }.getOrElse {
-      // TODO: tidy up relevant unit tests, as this is a separate error, see log details;
-      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-        s"Unable to find required POA records")
-      Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
-    }
+  private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
+    documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA ")))
+      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
+
   private def getPoaAdjustableTaxYears: List[TaxYear] = {
-    if(dateService.isAfterTaxReturnDeadlineButBeforeTaxYearEnd) {
+    if (dateService.isAfterTaxReturnDeadlineButBeforeTaxYearEnd) {
       List(
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
       )
@@ -133,12 +114,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       List(
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd).addYears(-1),
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
-      )
+      ).sortBy(_.endYear)
     }
   }
 
   private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
-    //getPoaAdjustableTaxYears.sortBy(_.endYear)
     taxYearList match {
       case ::(head, next) => isTaxYearCrystallised(head, nino).flatMap {
         case true => Future.successful(Some(head))
@@ -148,27 +128,15 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-
-  // Next 3 methods taken from Calculation List Service (with small changes), but I don't like the code duplication. Is there any solution to this?
+  // Next 2 methods taken from Calculation List Service (with small changes), but I don't like the code duplication. Is there any solution to this?
   private def isTaxYearCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear.endYear >= currentTaxYearEnd
-    val legacyTaxYear = taxYear.endYear <= 2023
-    (futureTaxYear, legacyTaxYear) match {
-      case (true, _) =>
-        // tax year cannot be crystallised unless it is in the past
-        Future.successful(false)
-      case (_, true) => getLegacyCrystallisationResult(nino, taxYear.endYear)
-      case (_, false) => getTYSCrystallisationResult(nino, taxYear.endYear)
-    }
-  }
-
-  private def getLegacyCrystallisationResult(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    calculationListConnector.getLegacyCalculationList(nino, taxYear.toString).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+    if (futureTaxYear) {
+      Future.successful(false)
+    } else {
+      getTYSCrystallisationResult(nino, taxYear.endYear)
     }
   }
 
@@ -178,6 +146,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+    } map {
+      case Some(true) => true
+      case _ => false
     }
   }
 

@@ -20,6 +20,8 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -123,5 +125,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
     documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
+  }
+
+  def getWYOClaimToAdjustViewModel(isAdjustPaymentsOnAccountFSEnabled: Boolean, poaTaxYear: Option[TaxYear]): WYOClaimToAdjustViewModel = {
+    WYOClaimToAdjustViewModel(
+      adjustPaymentsOnAccountFSEnabled = isAdjustPaymentsOnAccountFSEnabled,
+      poaTaxYear = poaTaxYear
+    )
   }
 }
