@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, OptOutQuery, OptOutRules, OptOutSymbol}
+import models.optOut.NextUpdatesQuarterlyReportingContentChecks
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

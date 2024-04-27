@@ -16,28 +16,30 @@
 
 package models.optOut
 
-import OptOutSymbol._
+import OptOutRulesSupport._
 
 object OptOutRulesMain extends App {
 
   val queryStrings = List(
-    OptOutQuery(FinalizedNo, Voluntary, Unknown, Unknown),
-    OptOutQuery(FinalizedNo, Unknown, Voluntary, Unknown),
-    OptOutQuery(FinalizedNo, Unknown, Unknown, Voluntary),
-    OptOutQuery(FinalizedNo, Unknown, Voluntary, Voluntary),
+    toCsv("N", "V", "U", "U"),
+    toCsv("N", "U", "V", "U"),
+    toCsv("N", "U", "U", "V"),
+    toCsv("N", "U", "V", "V"),
   )
 
   println()
   println("Rules In File:")
-  OptOutRules.rulesRegex.foreach(println)
+  OptOutRules.fileLines.foreach(println)
 
   println()
   println("Query Expressions:")
-  queryStrings.map(q => q.asText()).foreach(q => println(s"${q}"))
+  queryStrings.map(q => q).foreach(q => println(s"${q}"))
 
   println()
-  println("Query2 Results:")
-  queryStrings.map(q => (q.asText(), OptOutRules.query(q).map(r => r.code).mkString(","))).foreach(t => println(s"${t._1} -> \t${t._2}"))
+  println("Query Results:")
+  queryStrings.map(q => (q, OptOutRules.query(q).mkString(",")))
+    .map(t => (t._1, if(t._2.isEmpty) "NO" else t._2))
+    .foreach(t => println(s"${t._1} -> \t${t._2}"))
 
   println()
   println("Key Definitions:")

@@ -19,7 +19,8 @@ package services
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optOut.{OptOutMessageResponse, OptOutQuery, OptOutRules, OptOutSymbol}
+import models.optOut.OptOutRulesSupport.toCsv
+import models.optOut.{OptOutMessageResponse, OptOutRules, OptOutRulesSupport}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -85,11 +86,12 @@ class OptOutOutcomeOption1 extends OptOutOutcome {
                 currentYearState: StatusDetail,
                 nextYearState: StatusDetail ): Set[String] = {
 
-    val finalised = OptOutSymbol.toFinalized(finalisedStatus)
-    val pySymbol = OptOutSymbol.toSymbol(previousYearState)
-    val cySymbol = OptOutSymbol.toSymbol(currentYearState)
-    val nySymbol = OptOutSymbol.toSymbol(nextYearState)
-    val optOutOutcome = OptOutRules.query(OptOutQuery(finalised, pySymbol, cySymbol, nySymbol))
-    optOutOutcome.map(_.code)
+    val finalised = OptOutRulesSupport.toFinalized(finalisedStatus)
+    val pySymbol = OptOutRulesSupport.toSymbol(previousYearState)
+    val cySymbol = OptOutRulesSupport.toSymbol(currentYearState)
+    val nySymbol = OptOutRulesSupport.toSymbol(nextYearState)
+    val optOutOutcome = OptOutRules.query(toCsv(finalised, pySymbol, cySymbol, nySymbol))
+
+    optOutOutcome
   }
 }
