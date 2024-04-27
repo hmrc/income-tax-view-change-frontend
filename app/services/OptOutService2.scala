@@ -86,10 +86,10 @@ class OptOutOutcomeOption1 extends OptOutOutcome {
                 nextYearState: StatusDetail ): Set[String] = {
 
     val finalised = OptOutSymbol.toFinalized(finalisedStatus)
-    val pyStatus = OptOutSymbol.toSymbol(previousYearState)
-    val cyStatus = OptOutSymbol.toSymbol(currentYearState)
-    val nyStatus = OptOutSymbol.toSymbol(nextYearState)
-    val optOutOutcome = OptOutRules.query(OptOutQuery(finalised, pyStatus, cyStatus, nyStatus))
+    val pySymbol = OptOutSymbol.toSymbol(previousYearState)
+    val cySymbol = OptOutSymbol.toSymbol(currentYearState)
+    val nySymbol = OptOutSymbol.toSymbol(nextYearState)
+    val optOutOutcome = OptOutRules.query(OptOutQuery(finalised, pySymbol, cySymbol, nySymbol))
     optOutOutcome.map(_.code)
   }
 }

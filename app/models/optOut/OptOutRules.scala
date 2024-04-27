@@ -72,7 +72,7 @@ case class OptOutQuery(finalised: OptOutSymbol,
 }
 
 object OptOutRules {
-  val optOutOutcomeRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
+  val optOutOutcomeRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)-.*?""".r
 
   val rulesRegex: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules-regex.csv")).getLines()
     .toList
