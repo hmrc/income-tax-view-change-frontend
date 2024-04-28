@@ -32,7 +32,7 @@ object OptOutRulesMain extends App {
 
   println()
   println("Rules In File:")
-  service.fileLines.filter(!_.startsWith("-")).foreach(println)
+  service.onlyRuleLines.foreach(println)
 
   println()
   println("Queries:")

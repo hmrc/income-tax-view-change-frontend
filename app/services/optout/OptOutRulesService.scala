@@ -21,8 +21,9 @@ import models.itsaStatus.StatusDetail
 import scala.io.Source
 import scala.util.matching.Regex
 
-case class Rule(text: String) {
-  def regExp: Regex =  text.substring(0, text.lastIndexOf(",")).r
+case class Rule(ruleWithOption: String) {
+  private val ruleWithoutOption: String = ruleWithOption.substring(0, ruleWithOption.lastIndexOf(","))
+  def ruleWithoutOptionRegEx: Regex =  ruleWithoutOption.r
 }
 
 object OptOutRulesService {
@@ -49,22 +50,27 @@ object OptOutRulesService {
 
 class OptOutRulesService {
 
-  val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
-
   /* todo: needs to be made testable! */
-  val fileLines: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules.csv"))
+  private val fileLines: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules.csv"))
     .getLines().toList
 
-  def findOptOutOptions(queryString: String): Set[String] = {
-    val allMatched = fileLines
-      .filter(l => !l.startsWith("-"))
-      .map(v => Rule(v))
-      .filter(rule => rule.regExp.matches(queryString))
-      .map(rule => rule.text)
+  def onlyRuleLines: List[String] = fileLines.filter(onlyRuleLinesFun)
+
+  def findOptOutOptions(query: String): Set[String] = {
+
+    val allMatched = onlyRuleLines
+      .map(toRule)
+      .filter(isMatch(_)(query))
+      .map(rule => rule.ruleWithOption)
 
     allMatched.map {
       case optOutOptionRegex(outcome) => outcome
       case _ => "NO"
     }.toSet
   }
+
+  private val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
+  private val onlyRuleLinesFun: String => Boolean = v => v.nonEmpty && !v.startsWith("-")
+  private val toRule: String => Rule = v => Rule(v)
+  private val isMatch: Rule => String => Boolean = r => query => r.ruleWithoutOptionRegEx.matches(query)
 }
