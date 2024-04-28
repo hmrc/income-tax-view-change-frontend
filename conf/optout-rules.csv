@@ -1,3 +1,9 @@
+-/////////////////////////////////////////////////
+- OptOut Option Rules File
+-/////////////////////////////////////////////////
+-
+- all lines starting with a dash '-' are comments
+-
 - if previous year finalised and previous is voluntary then can opt-out from previous year
 N,V,U,U,PY
 -
