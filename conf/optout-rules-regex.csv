@@ -1,7 +1,0 @@
-- comment to explain how this file works
-- comment 2
-- comment 3
-N,V,U,U,PY-if previous year finalised and previous is voluntary then can opt-out from previous year
-.,U,V,U,CY-if current year is voluntary then can opt-out from current year
-.,U,U,V,NY-if next year is voluntary then can opt-out from next year
-.,U,V,U,NY-if current year is voluntary and next year is unknown then can opt-out from next year

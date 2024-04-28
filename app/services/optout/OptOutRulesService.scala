@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package models.optOut
+package services.optout
 
 import models.itsaStatus.StatusDetail
+
 import scala.io.Source
 import scala.util.matching.Regex
 
@@ -24,7 +25,7 @@ case class Rule(text: String) {
   def regExp: Regex =  text.substring(0, text.lastIndexOf(",")).r
 }
 
-object OptOutRulesSupport {
+object OptOutRulesService {
 
   def toSymbol(statusDetail: StatusDetail): String = {
     (statusDetail.isAnnual, statusDetail.isVoluntary, statusDetail.isMandated) match {
@@ -38,22 +39,23 @@ object OptOutRulesSupport {
     case true => "Y"
     case false => "N"
   }
-  def toCsv(finalised: String,
-            previousYear: String,
-            currentYear: String,
-            nextYear: String): String = {
+  def toQuery(finalised: String,
+              previousYear: String,
+              currentYear: String,
+              nextYear: String): String = {
     List(finalised, previousYear, currentYear, nextYear).mkString(",")
   }
 }
 
-object OptOutRules {
+class OptOutRulesService {
 
-  val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)-.*?""".r
+  val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
 
-  val fileLines: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules-regex.csv")).getLines()
-    .toList
+  /* todo: needs to be made testable! */
+  val fileLines: List[String] = Source.fromInputStream(getClass.getResourceAsStream("/optout-rules.csv"))
+    .getLines().toList
 
-  def query(queryString: String): Set[String] = {
+  def findOptOutOptions(queryString: String): Set[String] = {
     val allMatched = fileLines
       .filter(l => !l.startsWith("-"))
       .map(v => Rule(v))

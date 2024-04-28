@@ -14,49 +14,33 @@
  * limitations under the License.
  */
 
-package models.optOut
+package services.optout
 
-import OptOutRulesSupport._
+import services.optout.OptOutRulesService._
 
+/* todo: to be removed */
 object OptOutRulesMain extends App {
 
+  val service = new OptOutRulesService()
+
   val queryStrings = List(
-    toCsv("N", "V", "U", "U"),
-    toCsv("N", "U", "V", "U"),
-    toCsv("N", "U", "U", "V"),
-    toCsv("N", "U", "V", "V"),
+    toQuery("N", "V", "U", "U"),
+    toQuery("N", "U", "V", "U"),
+    toQuery("N", "U", "U", "V"),
+    toQuery("N", "U", "V", "V"),
   )
 
   println()
   println("Rules In File:")
-  OptOutRules.fileLines.foreach(println)
+  service.fileLines.filter(!_.startsWith("-")).foreach(println)
 
   println()
-  println("Query Expressions:")
+  println("Queries:")
   queryStrings.map(q => q).foreach(q => println(s"${q}"))
 
   println()
-  println("Query Results:")
-  queryStrings.map(q => (q, OptOutRules.query(q).mkString(",")))
+  println("OptOut Options:")
+  queryStrings.map(q => (q, service.findOptOutOptions(q).mkString(",")))
     .map(t => (t._1, if(t._2.isEmpty) "NO" else t._2))
     .foreach(t => println(s"${t._1} -> \t${t._2}"))
-
-  println()
-  println("Key Definitions:")
-  println("Y = FinalizedYes")
-  println("N = FinalizedNo")
-  println("_ = FinalizedAny")
-
-  println("U = Unknown")
-
-  println("M = Mandatory")
-  println("V = Voluntary")
-  println("A = Annual")
-
-  println("PY = Can offer previous year")
-  println("CY = Can offer current year")
-  println("NY = Can offer next year")
-  println("NO = No opt-out can be offered")
-
-
 }

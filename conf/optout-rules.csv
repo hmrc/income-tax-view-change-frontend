@@ -1,0 +1,34 @@
+- if previous year finalised and previous is voluntary then can opt-out from previous year
+N,V,U,U,PY
+-
+-if current year is voluntary then can opt-out from current year
+.,U,V,U,CY
+-
+- if next year is voluntary then can opt-out from next year
+.,U,U,V,NY
+-
+-if current year is voluntary and next year is unknown then can opt-out from next year
+.,U,V,U,NY
+-
+- rule format:
+- finalized,previous-year,current-year,next-year,opt-out-option
+- previous-year-finalized-yes-no, previous-year-status, current-year-status, current-year-status, next-year-status, opt-out-option
+- example: N,V,U,U,PY
+-
+- query format:
+- finalized,previous-year,current-year,next-year
+- example: N,V,U,U
+-
+- Key Definitions:
+- Y = Finalized
+- N = Not Finalized
+-
+- M = Mandatory
+- V = Voluntary
+- A = Annual
+- U = Unknown
+-
+- PY = Can offer previous year
+- CY = Can offer current year
+- NY = Can offer next year
+- NO = No opt-out can be offered

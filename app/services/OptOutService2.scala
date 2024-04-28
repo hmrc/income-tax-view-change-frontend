@@ -16,26 +16,36 @@
 
 package services
 
+
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optOut.OptOutRulesSupport.toCsv
-import models.optOut.{OptOutMessageResponse, OptOutRules, OptOutRulesSupport}
+import models.itsaStatus.StatusDetail
+import services.optout.OptOutRulesService.{toFinalized, toQuery, toSymbol}
+import models.optOut.OptOutMessageResponse
+import services.optout.OptOutRulesService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
-class OptOutService2 @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateService)
+class OptOutService2 @Inject()(itsaStatusService: ITSAStatusService,
+                               calculationListService: CalculationListService,
+                               dateService: DateService)
                               (implicit ec: ExecutionContext) {
 
-  val optOutOutcome = new OptOutOutcomeOption1()
-  //val optOutOutcome = new OptOutOutcomeOption2()
+  /* todo: consider the two solutions
+  *  solution 1: in this branch: services.optout.OptOutRulesService
+  *  solution 2: checkout git branch OptOutExperiment and review OutputSpecV14 file
+  *  then fully integrate the chosen solution and remove solution-1 if not chosen
+  * */
+  val optOutOptions = new OptOutOptionsSolution1()
+  //val optOutOutcome = new OptOutOptionsSolution2()
 
-  def toF[T](opl: Option[T], failValue: T): Future[T] = opl
-    .map(v => Future.successful(v))
-    .getOrElse(Future.successful(failValue))
+  implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
+    def toF: Future[Boolean] = opl
+      .map(v => Future.successful(v))
+      .getOrElse(Future.successful(false))
+  }
 
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[OptOutMessageResponse] = {
 
@@ -45,53 +55,59 @@ class OptOutService2 @Inject()(itsaStatusService: ITSAStatusService, calculation
     val previousYear = currentYear.addYears(-1)
     val nextYear = currentYear.addYears(+1)
 
-    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = Future.successful({
-      Map(
-        TaxYear(2023, 2024) -> StatusDetail("submittedOn", ITSAStatus.Voluntary, "statusReason", Some(BigDecimal.valueOf(10))),
-        TaxYear(2024, 2025) -> StatusDetail("submittedOn", ITSAStatus.NoStatus, "statusReason", Some(BigDecimal.valueOf(10))),
-        TaxYear(2025, 2026) -> StatusDetail("submittedOn", ITSAStatus.NoStatus, "statusReason", Some(BigDecimal.valueOf(10))),
-      )
-    })
-      //itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+    /* todo: get the api call working to return good data */
 
-    val finalisedStatus: Future[Option[Boolean]] = Future.successful(Some(false))
-      //calculationListService.isTaxYearCrystallised(previousYear.endYear)
+//    val getStatusTillAvailableFutureYearsStub = Future.successful({
+//      Map(
+//        TaxYear(2023, 2024) -> StatusDetail("submittedOn", ITSAStatus.Voluntary, "statusReason", Some(BigDecimal.valueOf(10))),
+//        TaxYear(2024, 2025) -> StatusDetail("submittedOn", ITSAStatus.NoStatus, "statusReason", Some(BigDecimal.valueOf(10))),
+//        TaxYear(2025, 2026) -> StatusDetail("submittedOn", ITSAStatus.NoStatus, "statusReason", Some(BigDecimal.valueOf(10))),
+//      )
+//    })
+    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+
+//  val isTaxYearCrystallisedStub = Future.successful(Some(false))
+    val finalisedStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
 
       statusMap <- taxYearITSAStatus
       finalisedStatus <- finalisedStatus
-      finalisedStatusBool <- toF(finalisedStatus, false)
+      finalisedStatusBool <- finalisedStatus.toF
 
-      outcome = optOutOutcome.determine(finalisedStatusBool,
+      outcomeOptions = optOutOptions.getOptOutOptionsFor(finalisedStatusBool,
         statusMap(previousYear), statusMap(currentYear), statusMap(nextYear))
 
-      response = OptOutMessageResponse(!outcome.isEmpty)
+      response = OptOutMessageResponse(outcomeOptions.nonEmpty)
     } yield response
   }
 
 
 }
 
-trait OptOutOutcome {
-  def determine(finalisedStatus: Boolean,
-               previousYearState: StatusDetail,
-               currentYearState: StatusDetail,
-               nextYearState: StatusDetail ): Set[String]
+trait OptOutOptions {
+  def getOptOutOptionsFor(finalisedStatus: Boolean,
+                          previousYearState: StatusDetail,
+                          currentYearState: StatusDetail,
+                          nextYearState: StatusDetail ): Set[String]
 }
 
-class OptOutOutcomeOption1 extends OptOutOutcome {
-  def determine(finalisedStatus: Boolean,
-                previousYearState: StatusDetail,
-                currentYearState: StatusDetail,
-                nextYearState: StatusDetail ): Set[String] = {
+/* todo: to be refactored */
+class OptOutOptionsSolution1 extends OptOutOptions {
 
-    val finalised = OptOutRulesSupport.toFinalized(finalisedStatus)
-    val pySymbol = OptOutRulesSupport.toSymbol(previousYearState)
-    val cySymbol = OptOutRulesSupport.toSymbol(currentYearState)
-    val nySymbol = OptOutRulesSupport.toSymbol(nextYearState)
-    val optOutOutcome = OptOutRules.query(toCsv(finalised, pySymbol, cySymbol, nySymbol))
+  val optOutRulesService = new OptOutRulesService()
 
-    optOutOutcome
+  def getOptOutOptionsFor(finalisedStatus: Boolean,
+                          previousYearState: StatusDetail,
+                          currentYearState: StatusDetail,
+                          nextYearState: StatusDetail ): Set[String] = {
+
+    val finalised = toFinalized(finalisedStatus)
+    val pySymbol = toSymbol(previousYearState)
+    val cySymbol = toSymbol(currentYearState)
+    val nySymbol = toSymbol(nextYearState)
+    val optOutOptions = optOutRulesService.findOptOutOptions(toQuery(finalised, pySymbol, cySymbol, nySymbol))
+
+    optOutOptions
   }
 }
