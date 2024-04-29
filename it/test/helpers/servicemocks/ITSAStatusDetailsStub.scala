@@ -78,8 +78,8 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
     )
   }
 
-  def stubGetITSAStatusDetailsError: StubMapping = {
-    WiremockHelper.stubGet(getUrl(), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+  def stubGetITSAStatusDetailsError(taxYear: String = "23-24", futureYears: Boolean = false): StubMapping = {
+    WiremockHelper.stubGet(getUrl(taxYear, futureYears), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
   }
 
 

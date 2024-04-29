@@ -18,9 +18,10 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
+import config.featureswitch.OptOut
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
-import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
+import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
 import models.nextUpdates._
 import org.jsoup.Jsoup
@@ -45,6 +46,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockIncomeSourceDetailsService
   with MockIncomeSourceDetailsPredicate
   with MockAuditingService
+  with MockOptOutService
   with TestSupport {
 
   val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
@@ -343,11 +345,23 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         }
       }
     }
+
+    "the opt out feature switch is enabled and optOutService returns failed future" should {
+      s"show an INTERNAL SERVER ERROR page with HTTP ${Status.INTERNAL_SERVER_ERROR} Status " in {
+        enable(OptOut)
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBusinessIncomeSourceError()
+        mockSingleBusinessIncomeSourceWithDeadlines()
+        mockGetNextUpdatesQuarterlyReportingContentChecks(Future.failed(new Exception("api failure")))
+        mockObligations
+        val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 
   /* AGENT **/
   "The NextUpdatesController.showAgent function" when {
-
     "the user is not authenticated" should {
       "redirect them to sign in" in new AgentTestsSetup {
         setupMockAgentAuthorisationException(withClientPredicate = false)
@@ -382,6 +396,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
     "the user has all correct details" should {
       "return Status OK (200) when we have obligations" in new AgentTestsSetup {
+        disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()

@@ -23,6 +23,7 @@ import config.featureswitch.{FeatureSwitching, OptOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates._
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService}
@@ -74,6 +75,10 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             auditNextUpdates(user, isAgent, origin)
             optOutService.getNextUpdatesQuarterlyReportingContentChecks.map { checks =>
               Ok(nextUpdatesOptOutView(viewModel, checks, backUrl.url, isAgent, origin))
+            }.recover {
+              case ex =>
+                Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+                errorHandler.showInternalServerError()
             }
           case (_, false) =>
             auditNextUpdates(user, isAgent, origin)
