@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PoAAmmendmentDataRepository @Inject()(
+class PoAAmendmentDataRepository @Inject()(
                                              mongoComponent: MongoComponent,
                                              appConfig: FrontendAppConfig,
                                              clock: Clock

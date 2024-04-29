@@ -16,26 +16,26 @@
 
 package services
 
-import models.paymentOnAccount.{PoAAmmendmentData, PoASessionData}
+import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import repositories.PoAAmmendmentDataRepository
+import repositories.PoAAmendmentDataRepository
 import testUtils.TestSupport
 
 import scala.concurrent.Future
 
 class PaymentOnAccountSessionServiceSpec extends TestSupport {
 
-  val mockRepository: PoAAmmendmentDataRepository = mock(classOf[PoAAmmendmentDataRepository])
+  val mockRepository: PoAAmendmentDataRepository = mock(classOf[PoAAmendmentDataRepository])
 
   object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
     mockRepository)
 
-  val ammendmentData: PoAAmmendmentData = PoAAmmendmentData(poaAdjustmentReason = Some("reason X"), newPoAAmount = None)
+  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some("reason X"), newPoAAmount = None)
 
   val sessionData: PoASessionData = PoASessionData(
     sessionId = "session-123456",
-    poaAmmendmentData = Some(ammendmentData)
+    poaAmendmentData = Some(ammendmentData)
   )
 
   "PaymentOnAccountSessionService.createSession" should {

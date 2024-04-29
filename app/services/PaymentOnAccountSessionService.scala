@@ -16,28 +16,28 @@
 
 package services
 
-import models.paymentOnAccount.{PoAAmmendmentData, PoASessionData}
-import repositories.PoAAmmendmentDataRepository
+import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
+import repositories.PoAAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmmendmentDataRepository) {
+class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier): Future[Boolean] = {
     setMongoData(None)
   }
 
-  def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoAAmmendmentData]]] = {
+  def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoAAmendmentData]]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value) map {
       case Some(data: PoASessionData) =>
-        Right(data.poaAmmendmentData)
+        Right(data.poaAmendmentData)
       case None => Right(None)
     }
   }
 
-  def setMongoData(poAAmmendmentData: Option[PoAAmmendmentData])(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def setMongoData(poAAmmendmentData: Option[PoAAmendmentData])(implicit hc: HeaderCarrier): Future[Boolean] = {
     poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
