@@ -20,7 +20,6 @@ import auth.MtdItUser
 import connectors.{CalculationListConnector, FinancialDetailsConnector}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.core.Nino
-import connectors.{CalculationListConnector, FinancialDetailsConnector}
 import exceptions.MissingFieldException
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
@@ -41,8 +40,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                     (implicit ec: ExecutionContext) {
 
   private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
-    println(s"\nCALLING getPaymentsOnAccountFromDocumentDetails\n")
-
     {
       for {
         poaOneDocDetail              <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
@@ -57,17 +54,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         taxReturnDeadline             = poaTwoDueDate map(d => LocalDate.of(d.getYear + 1, 1, 31))
         poaTwoDueDateIsBeforeDeadline = poaTwoDueDate.flatMap(poa => taxReturnDeadline.map(d => poa isBefore d))
       } yield {
-
-        println(s"poaOneTransactionId: ${poaOneTransactionId}")
-        println(s"poaOneTaxYear: ${poaOneTaxYear}")
-        println(s"poaOneTotalAmount: ${poaOneTotalAmount}")
-        println(s"poaTwoTransactionId: ${poaTwoTransactionId}")
-        println(s"poaTwoDueDate: ${poaTwoDueDate}")
-        println(s"poaTwoTaxYear: ${poaTwoTaxYear}")
-        println(s"poaTwoTotalAmount: ${poaTwoTotalAmount}")
-        println(s"taxReturnDeadline: ${taxReturnDeadline}")
-        println(s"poaTwoDueDateIsBeforeDeadline: ${poaTwoDueDateIsBeforeDeadline}")
-        println(s"")
 
         (poaOneTaxYear, poaTwoTaxYear, poaTwoDueDateIsBeforeDeadline) match {
           case (_, _, Some(true)) if poaOneTaxYear == poaTwoTaxYear =>
