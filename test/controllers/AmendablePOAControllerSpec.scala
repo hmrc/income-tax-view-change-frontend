@@ -16,12 +16,11 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
-import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import testConstants.BaseTestConstants
@@ -31,12 +30,17 @@ import views.html.AmendablePaymentOnAccount
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendablePOAControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with TestSupport with FeatureSwitching with MockClaimToAdjustService with MockCalculationListService {
+class AmendablePOAControllerSpec
+  extends MockAuthenticationPredicate
+    with TestSupport
+    with FeatureSwitching
+    with MockClaimToAdjustService
+    with MockCalculationListService
+    with MockCalculationListConnector
+    with MockFinancialDetailsConnector {
 
   object TestAmendablePOAController extends AmendablePOAController(
     authorisedFunctions = mockAuthService,
-    calculationListService = mockCalculationListService,
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
@@ -49,10 +53,11 @@ class AmendablePOAControllerSpec extends MockAuthenticationPredicate with MockIn
   )
 
   "AmendablePOAController.show" should {
-    s"return status: ${Status.OK}" when {
+    s"return status: $OK" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
-
+        enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -60,16 +65,46 @@ class AmendablePOAControllerSpec extends MockAuthenticationPredicate with MockIn
         setupMockTaxYearNotCrystallised()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.OK
-        status(resultAgent) shouldBe Status.OK
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+      }
+    }
+    s"return status: $SEE_OTHER" when {
+      "AdjustPaymentsOnAccount FS is disabled" in {
+        disable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
 
-    s"return status: ${Status.INTERNAL_SERVER_ERROR}" when {
-      "PaymentOnAccount model is not returned successfully" in {
+    s"return status: $INTERNAL_SERVER_ERROR" when {
+      "PaymentOnAccount model is not built successfully" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockGetPaymentsOnAccountBuildFailure()
+
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "an Exception is returned from ClaimToAdjustService" in {
+        enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -77,25 +112,10 @@ class AmendablePOAControllerSpec extends MockAuthenticationPredicate with MockIn
         setupMockGetPaymentsOnAccountFailure()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      "PaymentOnAccount model is returned successfully but tax year is crystallised" in {
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        setupMockGetPaymentsOnAccount()
-        setupMockTaxYearCrystallised()
-
-        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
+        result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+        resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }

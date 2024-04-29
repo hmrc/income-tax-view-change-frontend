@@ -16,6 +16,8 @@
 
 package mocks.services
 
+import connectors.CalculationListConnector
+import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import models.paymentOnAccount.PaymentOnAccount
 import org.mockito.ArgumentMatchers.any
@@ -30,24 +32,38 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   val claimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
 
+  val calculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
+
   def setupMockGetPaymentsOnAccount(): Unit =
-    when(claimToAdjustService.getPaymentsOnAccount(any(), any()))
+    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
       .thenReturn(
         Future.successful(
           Right(
-            PaymentOnAccount(
-              poaOneTransactionId = "poaOne-Id",
-              poaTwoTransactionId = "poaTwo-Id",
-              taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-              paymentOnAccountOne = 5000.00,
-              paymentOnAccountTwo = 5000.00
+            Some(
+              PaymentOnAccount(
+                poaOneTransactionId = "poaOne-Id",
+                poaTwoTransactionId = "poaTwo-Id",
+                taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+                paymentOnAccountOne = 5000.00,
+                paymentOnAccountTwo = 5000.00
+              )
             )
           )
         )
       )
 
+  def setupMockGetPaymentsOnAccountBuildFailure(): Unit =
+    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
+      .thenReturn(
+        Future.successful(
+          Right(
+            None
+          )
+        )
+      )
+
   def setupMockGetPaymentsOnAccountFailure(): Unit =
-    when(claimToAdjustService.getPaymentsOnAccount(any(), any()))
+    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
       .thenReturn(
         Future.successful(
           Left(

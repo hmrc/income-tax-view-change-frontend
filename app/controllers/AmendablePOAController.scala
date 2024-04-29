@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                       calculationListService: CalculationListService,
                                        claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
                                        view: AmendablePaymentOnAccount,
@@ -67,7 +66,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
               Logger("application").error(s"Failed to create PaymentOnAccount model")
               Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
-              Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
+              Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)
           }
         } else {
