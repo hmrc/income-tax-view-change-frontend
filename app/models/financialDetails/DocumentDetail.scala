@@ -45,10 +45,6 @@ case class DocumentDetail(taxYear: Int,
                           documentDueDate: Option[LocalDate] = None
                          ) {
 
-  def isPoAOne: Boolean = documentDescription.exists(_.equals("ITSA- POA 1"))
-
-  def isPoATwo: Boolean = documentDescription.exists(_.equals("ITSA - POA 2"))
-
   def credit: Option[BigDecimal] = originalAmount match {
     case None => None
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None

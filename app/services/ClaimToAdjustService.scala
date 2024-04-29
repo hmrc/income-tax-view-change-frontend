@@ -42,11 +42,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPaymentsOnAccountFromDocumentDetails(documentDetails: List[DocumentDetail]): Either[Throwable, PaymentOnAccount] = {
     {
       for {
-        poaOneDocDetail              <- documentDetails.filter(_.isPoAOne).sortBy(_.taxYear).reverse.headOption
+        poaOneDocDetail              <- documentDetails.filter(isPoAOne).sortBy(_.taxYear).reverse.headOption
         poaOneTransactionId           = poaOneDocDetail.transactionId
         poaOneTaxYear                 = makeTaxYearWithEndYear(poaOneDocDetail.taxYear)
         poaOneTotalAmount             = poaOneDocDetail.originalAmount
-        poaTwoDocDetail              <- documentDetails.filter(_.isPoATwo).sortBy(_.taxYear).reverse.headOption
+        poaTwoDocDetail              <- documentDetails.filter(isPoATwo).sortBy(_.taxYear).reverse.headOption
         poaTwoTransactionId           = poaTwoDocDetail.transactionId
         poaTwoDueDate                 = poaTwoDocDetail.documentDueDate
         poaTwoTaxYear                 = makeTaxYearWithEndYear(poaTwoDocDetail.taxYear)
@@ -93,6 +93,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         }
     }
   } map(result => getPaymentsOnAccountFromDocumentDetails(result.flatten))
+
+  private val isPoAOne: DocumentDetail => Boolean = documentDetail => documentDetail.documentDescription contains "ITSA- POA 1"
+
+  private val isPoATwo: DocumentDetail => Boolean = documentDetail => documentDetail.documentDescription contains "ITSA - POA 2"
 
   def getPoATaxYear(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     {
