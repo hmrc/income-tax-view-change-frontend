@@ -20,6 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
+import models.core.Nino
 import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -28,6 +29,7 @@ import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.AmendablePaymentOnAccount
+import controllers.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,31 +50,37 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        if (isEnabled(AdjustPaymentsOnAccount))
-          claimToAdjustService.getPaymentsOnAccount flatMap {
-            case Right(poa: PaymentOnAccount) =>
-              calculationListService.isTaxYearCrystallised(poa.taxYear.endYear) map {
-                case Some(false) | None =>
-                  Ok(view(
-                    isAgent = isAgent,
-                    taxYearModel = poa.taxYear,
-                    poaOneTransactionId = poa.poaOneTransactionId,
-                    poaTwoTransactionId = poa.poaTwoTransactionId,
-                    poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
-                    poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
-                  ))
-                case _ =>
-                  Logger("application").error("Tax Year of return is crystallized - Payment on Account cannot be adjusted")
-                  showInternalServerError(isAgent)
-              }
+        if (isEnabled(AdjustPaymentsOnAccount)) {
+          claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(user.nino)) flatMap {
+            case Right(Some(poa: PaymentOnAccount)) =>
+              Future.successful(
+                Ok(view(
+                  isAgent = isAgent,
+                  taxYearModel = poa.taxYear,
+                  poaOneTransactionId = poa.poaOneTransactionId,
+                  poaTwoTransactionId = poa.poaTwoTransactionId,
+                  poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
+                  poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
+                ))
+              )
+            case Right(None) =>
+              Logger("application").error(s"Failed to create PaymentOnAccount model")
+              Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
               Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
-              Future.successful(showInternalServerError(isAgent))
+              Future.failed(ex)
           }
-        else
-          Future.successful(Redirect(
-            if (isAgent) controllers.routes.HomeController.showAgent.url
-            else         controllers.routes.HomeController.show().url
-          ))
+        } else {
+          Future.successful(
+            Redirect(
+              if (isAgent) HomeController.showAgent
+              else         HomeController.show()
+            )
+          )
+        } recover {
+          case ex: Exception =>
+            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
+        }
     }
 }
