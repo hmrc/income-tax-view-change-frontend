@@ -25,6 +25,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterestAndOverdue}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -39,10 +40,10 @@ import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
-  val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Balancing Charge", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -8000.0, lotItem = "000001")
+  val paymentAllocation: List[PaymentHistoryAllocations] = List(
+    paymentsWithCharge("SA Balancing Charge", ITSA_NI, "2018-04-14", -10000.0),
+    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-04-14", -9000.0),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2018-04-14", -8000.0)
   )
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request", Some("001")))
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -52,11 +53,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
 
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
+    PaymentHistoryAllocations(
+      allocations = List(PaymentHistoryAllocation(
+        amount = Some(amount),
+        dueDate = Some(LocalDate.parse(date)),
+        clearingSAPDocument = Some("012345678901"), clearingId = Some("012345678901"))),
+      chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   "Navigating to the Charge Summary Page" should {
 
@@ -225,7 +228,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
 
       disable(ChargeHistory)
       enable(PaymentAllocation)
@@ -535,8 +538,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
               "paymentReference" -> "GF235687",
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
-              "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         ),
@@ -559,7 +561,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
               "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "paymentLotItem" -> "5",
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         )
