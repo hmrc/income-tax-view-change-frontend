@@ -66,10 +66,18 @@ class PoAAmendmentDataRepository @Inject()(
           .headOption()
     }
 
+  def get2(sessionId: String): Future[Either[Throwable, PoASessionData]] = {
+    val data = PoASessionData(sessionId)
+    for {
+      maybeRecord <- collection.find(dataFilter(data)).headOption()
+    } yield maybeRecord match {
+      case Some(record) => Right(record)
+      case None => Left(new Error(s"Unable to find record for session: ${sessionId}"))
+    }
+  }
+
   def set(data: PoASessionData): Future[Boolean] = {
-
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
-
     collection
       .replaceOne(
         filter = dataFilter(data),
@@ -78,5 +86,21 @@ class PoAAmendmentDataRepository @Inject()(
       )
       .toFuture()
       .map(_.wasAcknowledged())
+  }
+
+  def set2(data: PoASessionData): Future[Either[Throwable, Unit]] = {
+    val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
+    for {
+      res <- collection
+        .replaceOne(
+          filter = dataFilter(data),
+          replacement = updatedAnswers,
+          options = ReplaceOptions().upsert(true)
+        )
+        .toFuture()
+        .map(_.wasAcknowledged())
+    } yield if (res) {
+      Right(())
+    } else Left(new Error(s"Unable to saver record: ${updatedAnswers}"))
   }
 }
