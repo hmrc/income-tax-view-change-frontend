@@ -16,200 +16,87 @@
 
 package controllers
 
-import config.featureswitch.{AdjustPaymentsOnAccount, CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
-import services.{ClaimToAdjustService, WhatYouOweService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
-import views.html.WhatYouOwe
+import views.html.AmendablePaymentOnAccount
 
-import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AmendablePOAControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with TestSupport with FeatureSwitching {
+  with MockFrontendAuthorisedFunctions with TestSupport with FeatureSwitching with MockClaimToAdjustService with MockCalculationListService {
 
-  trait Setup {
-
-    val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
-
-    disable(AdjustPaymentsOnAccount)
-
-    val controller = new WhatYouOweController(
-      whatYouOweService,
-      mock(classOf[ClaimToAdjustService]),
-      app.injector.instanceOf[ItvcErrorHandler],
-      app.injector.instanceOf[AgentItvcErrorHandler],
-      mockAuthService,
-      mockAuditingService,
-      dateService,
-      app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[MessagesControllerComponents],
-      ec,
-      app.injector.instanceOf[WhatYouOwe],
-      testAuthenticator
-    )
-  }
-
-  def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
-
-  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(documentDetailWithDueDateModel(2019))
-      ++ List(documentDetailWithDueDateModel(2020))
-      ++ List(documentDetailWithDueDateModel(2021)),
-    Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
-    ))
+  object TestAmendablePOAController extends AmendablePOAController(
+    authorisedFunctions = mockAuthService,
+    calculationListService = mockCalculationListService,
+    claimToAdjustService = claimToAdjustService,
+    auth = testAuthenticator,
+    view = app.injector.instanceOf[AmendablePaymentOnAccount],
+    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
+  )(
+    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    appConfig = app.injector.instanceOf[FrontendAppConfig],
+    ec = app.injector.instanceOf[ExecutionContext]
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
+  "AmendablePOAController.show" should {
+    s"return status: ${Status.OK}" when {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
 
-  val noFinancialDetailErrors = List(testFinancialDetail(2018))
-  val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
-  val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
-
-  "The WhatYouOweController.viewPaymentsDue function" when {
-    "obtaining a users charge" should {
-      "send the user to the paymentsOwe page with full data of charges" in new Setup {
-        mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListFull))
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
 
-        when(whatYouOweService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List()))
-
-        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
         status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-
       }
+    }
 
-      "return success page with empty data in WhatYouOwe model" in new Setup {
-        mockSingleBISWithCurrentYearAsMigrationYear()
+    s"return status: ${Status.INTERNAL_SERVER_ERROR}" when {
+      "PaymentOnAccount model is not returned successfully" in {
+
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweChargesListEmpty))
-
-        when(whatYouOweService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List()))
-
-        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.OK
-        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-
-      }
-
-      "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-          .thenReturn(Future.failed(new Exception("failed to retrieve data")))
+        setupMockGetPaymentsOnAccountFailure()
 
-        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+      "PaymentOnAccount model is returned successfully but tax year is crystallised" in {
 
-      "User fails to be authorised" in new Setup {
-        setupMockAgentAuthorisationException(withClientPredicate = false)
-
-        val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-
-      }
-
-      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
-
-      "show money in your account if the user has available credit in his account" in new Setup {
-        enable(CreditsRefundsRepay)
-        mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
-
-        when(whatYouOweService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List()))
-
-        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.OK
-        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
-        doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
-
-        status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
-        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (true)
-        docAgent.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount-agent")
-      }
-
-      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
-
-      "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
-        disable(CreditsRefundsRepay)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-          .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearCrystallised()
 
-        when(whatYouOweService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List()))
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
-        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.OK
-        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
-
-        status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
-        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (false)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
-
   }
 }

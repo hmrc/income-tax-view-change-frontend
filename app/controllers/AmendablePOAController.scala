@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import views.html.AmendPaymentOnAccount
+import views.html.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +37,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                        calculationListService: CalculationListService,
                                        claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
-                                       view: AmendPaymentOnAccount,
+                                       view: AmendablePaymentOnAccount,
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                       (implicit val appConfig: FrontendAppConfig,
