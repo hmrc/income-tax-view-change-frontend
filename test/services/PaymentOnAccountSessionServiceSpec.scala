@@ -58,4 +58,18 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
       result.futureValue shouldBe true
     }
   }
+  "PaymentOnAccountSessionService.setAdjustmentReason" should {
+    "update the adjustment reason" in {
+      when(mockRepository.set(any())).thenReturn(Future.successful(true))
+      val result = TestPaymentOnAccountSessionService.setAdjustmentReason("Just because")
+      result.futureValue shouldBe true
+    }
+  }
+  "PaymentOnAccountSessionService.setNewPoAAmount" should {
+    "update the PoA amount" in {
+      when(mockRepository.set(any())).thenReturn(Future.successful(true))
+      val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+      result.futureValue shouldBe true
+    }
+  }
 }

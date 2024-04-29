@@ -41,4 +41,26 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
+  def setAdjustmentReason(poaAdjustmentReason: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoASessionData) =>
+        data.poaAmendmentData match {
+          case Some(value) => setMongoData(Some(value.copy(poaAdjustmentReason = Some(poaAdjustmentReason))))
+          case None => Future.successful(false)
+        }
+      case None => Future.successful(false)
+    }
+  }
+
+  def setNewPoAAmount(newPoAAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoASessionData) =>
+        data.poaAmendmentData match {
+          case Some(value) => setMongoData(Some(value.copy(newPoAAmount = Some(newPoAAmount))))
+          case None => Future.successful(false)
+        }
+      case None => Future.successful(false)
+    }
+  }
+
 }
