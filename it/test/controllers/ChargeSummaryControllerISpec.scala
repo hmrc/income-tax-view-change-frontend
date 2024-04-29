@@ -519,7 +519,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
               "subItem" -> "002",
               "dueDate" -> "2022-07-28",
               "clearingDate" -> "2022-07-28",
-              "clearingReason" -> "Cleared by Payment",
               "amount" -> 1200,
               "paymentReference" -> "GF235687",
               "paymentAmount" -> 1200,

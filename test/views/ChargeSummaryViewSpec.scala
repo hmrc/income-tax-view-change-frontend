@@ -181,7 +181,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       amount = Some(500.0),
       dueDate = Some(LocalDate.parse("2018-09-08")),
       clearingDate = Some(LocalDate.parse("2018-09-07")),
-      clearingReason = Some("Cleared by Payment"),
       clearingSAPDocument=Some("123456789012"),
       paymentAmount = Some(500.0),
       paymentLot = None,

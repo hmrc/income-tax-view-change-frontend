@@ -543,7 +543,6 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
-            "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912",
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate))
@@ -982,7 +981,6 @@ object IncomeSourceIntegrationTestConstants {
           Json.obj("amount" -> 10000,
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
-            "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
           ))
       ),
@@ -998,7 +996,6 @@ object IncomeSourceIntegrationTestConstants {
           Json.obj("amount" -> 9000,
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
-            "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
           ),
           Json.obj(
@@ -1018,7 +1015,6 @@ object IncomeSourceIntegrationTestConstants {
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
-            "clearingReason" -> "Cleared by Payment",
             "clearingSAPDocument" -> "012345678912"
           ),
           Json.obj(

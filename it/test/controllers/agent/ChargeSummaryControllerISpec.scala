@@ -404,7 +404,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               dunningLock = Some("Stand over order"),
               interestLock = Some("Manual RPI Signal"),
               clearingDate = Some(LocalDate.parse("2019-08-13")),
-              clearingReason = Some("Cleared by Payment"),
               clearingSAPDocument = Some("012345678912"))))
           ),
           FinancialDetail(
@@ -417,7 +416,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               amount = Some(9000),
               dunningLock = Some("dunning lock"),
               interestLock = Some("Manual RPI Signal"),
-              clearingReason = Some("Cleared by Payment"),
               clearingDate = Some(LocalDate.parse("2019-08-13")),
               clearingSAPDocument = Some("012345678912"))))
           ),
@@ -576,7 +574,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               "subItem" -> "002",
               "dueDate" -> "2022-07-28",
               "clearingDate" -> "2022-07-28",
-              "clearingReason" -> "Cleared by Payment",
               "amount" -> 1200,
               "paymentReference" -> "GF235687",
               "paymentAmount" -> 1200,
