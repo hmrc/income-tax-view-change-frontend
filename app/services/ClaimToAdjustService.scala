@@ -66,22 +66,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                 poaTwoTotalAmount.get   // TODO: Therefore .get has to be used until this is fixed in BE/FE
               )
             )
-          case (_, _, Some(true)) =>
-            Left(new Exception("Latest found PoA 1 & 2 documents are not from same tax year as expected"))
-          case (_, _, Some(false)) =>
-            Left(new Exception(s"PoA2 has dueDate: $poaTwoDueDate which is past the tax return deadline: $taxReturnDeadline"))
-          case (_, _, None) =>
-            Left(MissingFieldException("Missing field: documentDueDate"))
+          case (_, _, Some(true) ) => Left(new Exception("Latest found PoA 1 & 2 documents are not from same tax year as required"))
+          case (_, _, Some(false)) => Left(new Exception(s"PoA2 has dueDate: $poaTwoDueDate which is past the tax return deadline: $taxReturnDeadline"))
+          case (_, _, None)        => Left(MissingFieldException("Missing field: documentDueDate"))
         }
-        Right(
-          PaymentOnAccount(
-            poaOneTransactionId,
-            poaTwoTransactionId,
-            poaOneTaxYear,
-            poaOneTotalAmount.get,  // TODO: based on API#1553 DocumentDetail.originalAmount is not an optional field
-            poaTwoTotalAmount.get   // TODO: Therefore .get has to be used until this is fixed in BE/FE
-          )
-        )
       }
     }.getOrElse(Left(new Exception("Unexpected Error occurred")))
   }
