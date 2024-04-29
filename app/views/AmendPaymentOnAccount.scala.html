@@ -60,6 +60,10 @@
     else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, id).url
 }
 
+@getWhatYouNeedToKnowUrl = @{
+    controllers.routes.WhatYouNeedToKnowController.show(isAgent).url
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
@@ -151,7 +155,7 @@
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
             content = Text(getMessage("button")),
-            href = Some("/")
+            href = Some(getWhatYouNeedToKnowUrl)
         ))
         @link(
             link = getHomePageUrl,
