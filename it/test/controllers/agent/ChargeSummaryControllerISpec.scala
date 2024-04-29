@@ -26,6 +26,7 @@ import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -41,11 +42,9 @@ import java.time.LocalDate
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-
-  val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001")
+  val paymentAllocation: List[PaymentHistoryAllocations] = List(
+    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2020-08-16", -10000.0),
+    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2023-04-05", -9000.0)
   )
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
     "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("002")))
@@ -60,12 +59,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
-
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
+    PaymentHistoryAllocations(
+      allocations = List(
+        PaymentHistoryAllocation(
+          amount = Some(amount),
+          dueDate = Some(LocalDate.parse(date)),
+          clearingSAPDocument = Some("0123456789012"),
+          clearingId = Some("PAYID01"))),
+      chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   s"GET ok" should {
     "load the page with the right data for Payments Breakdown" in {
@@ -103,7 +105,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        taxYear = taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear = taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -137,7 +139,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -169,7 +171,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -201,7 +203,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment(
-        taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -255,7 +257,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
 
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(NOT_FOUND, Json.parse(
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(NOT_FOUND, Json.parse(
         """
           |{
           |   "code": "NO_DATA_FOUND",
@@ -264,7 +266,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           |""".stripMargin))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+        getCurrentTaxYearEnd.getYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -280,7 +282,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
 
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(FORBIDDEN, Json.parse(
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(FORBIDDEN, Json.parse(
         """
           |{
           |   "code": "REQUEST_NOT_PROCESSED",
@@ -289,7 +291,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           |""".stripMargin))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+        getCurrentTaxYearEnd.getYear.toString, "CHARGEID01", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -306,7 +308,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
 
-        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(INTERNAL_SERVER_ERROR, Json.parse(
+        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(INTERNAL_SERVER_ERROR, Json.parse(
           """
             |{
             |   "code": "SERVER_ERROR",
@@ -315,7 +317,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             |""".stripMargin))
 
         val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-          getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+          getCurrentTaxYearEnd.getYear.toString, "CHARGEID01", clientDetailsWithConfirmation
         )
 
         result should have(
@@ -363,7 +365,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         documentDetails = List(
           DocumentDetail(
             taxYear = getCurrentTaxYearEnd.getYear,
-            transactionId = "testId",
+            transactionId = "CHARGEID01",
             documentDescription = Some("ITSA- POA 1"),
             documentText = Some("documentText"),
             outstandingAmount = Some(1.2),
@@ -375,26 +377,62 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             interestOutstandingAmount = Some(42.5),
             effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1)),
             documentDueDate = Some(LocalDate.of(2023, 7, 1))
+          ),
+          DocumentDetail(
+            taxYear = 9999,
+            transactionId =  "PAYID01",
+            documentDescription =  Some("Payment On Account"),
+            documentText = Some("documentText"),
+            outstandingAmount =  Some(-1.2),
+            originalAmount =  Some(-123.45),
+            documentDate =  LocalDate.of(2018, 3, 29),
+            paymentLot =  Some("081203010024"),
+            paymentLotItem =  Some("000001"),
+            effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1)),
+            documentDueDate = Some(LocalDate.of(2023, 7, 1))
           )
         ),
         financialDetails = List(
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
-            transactionId = Some("testId"),
+            transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.parse("2020-08-16")), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
-              amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
+            items = Some(Seq(SubItem(Some(LocalDate.parse("2020-08-16")),
+              amount = Some(10000),
+              dunningLock = Some("Stand over order"),
+              interestLock = Some("Manual RPI Signal"),
+              clearingDate = Some(LocalDate.parse("2019-08-13")),
+              clearingSAPDocument = Some("012345678912"))))
           ),
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
-            transactionId = Some("testId"),
-            mainType = Some("SA Payment on Account 2"),
+            transactionId = Some("CHARGEID01"),
+            mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(currentDate), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
-              amount = Some(9000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
+            items = Some(Seq(SubItem(Some(currentDate),
+              amount = Some(9000),
+              dunningLock = Some("dunning lock"),
+              interestLock = Some("Manual RPI Signal"),
+              clearingDate = Some(LocalDate.parse("2019-08-13")),
+              clearingSAPDocument = Some("012345678912"))))
+          ),
+          FinancialDetail(
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
+            transactionId = Some("PAYID01"),
+            mainType = Some("Payment"),
+            originalAmount = Some(123.45),
+            items = Some(Seq(SubItem(
+              Some(currentDate),
+              amount = Some(9000),
+              dunningLock = Some("dunning lock"),
+              interestLock = Some("Manual RPI Signal"),
+              clearingDate = Some(LocalDate.parse("2019-08-13")),
+              paymentLot = Some("paymentLot"),
+              paymentLotItem = Some("000001"),
+              clearingSAPDocument = Some("012345678912"))))
           )
         )
       ))
@@ -437,14 +475,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   private def stubChargeHistorySuccess() = {
-    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(OK, Json.obj(
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(OK, Json.obj(
       "idType" -> "MTDBSA",
       "idValue" -> testMtditid,
       "regimeType" -> "ITSA",
       "chargeHistoryDetails" -> Json.arr(
         Json.obj(
           "taxYear" -> getCurrentTaxYearEnd.getYear.toString,
-          "documentId" -> "testId",
+          "documentId" -> "CHARGEID01",
           "documentDate" -> "2018-03-29",
           "documentDescription" -> "ITSA- POA 1",
           "totalAmount" -> 123456789012345.67,
@@ -540,8 +578,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               "paymentReference" -> "GF235687",
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
-              "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         ),
@@ -564,7 +601,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               "paymentAmount" -> 1200,
               "paymentMethod" -> "Payment",
               "paymentLot" -> "MA999991A",
-              "paymentLotItem" -> "5"
+              "paymentLotItem" -> "5",
+              "clearingSAPDocument" -> "012345678912"
             )
           )
         )
@@ -652,7 +690,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getChargeSummary(
-          getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+          getCurrentTaxYearEnd.getYear.toString, "CHARGEID01", clientDetailsWithConfirmation
         ))
     }
   }
