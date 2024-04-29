@@ -17,7 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.paymentOnAccount.PoAAmmendmentData
+import models.paymentOnAccount.PoASessionData
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import uk.gov.hmrc.mongo.MongoComponent
@@ -33,10 +33,10 @@ class PoAAmmendmentDataRepository @Inject()(
                                              appConfig: FrontendAppConfig,
                                              clock: Clock
                                            )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[PoAAmmendmentData](
+  extends PlayMongoRepository[PoASessionData](
     collectionName = "poa-ui-journey-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = PoAAmmendmentData.format,
+    domainFormat = PoASessionData.format,
     indexes = Seq(
       IndexModel(
         Indexes.ascending("sessionId"),
@@ -54,19 +54,19 @@ class PoAAmmendmentDataRepository @Inject()(
     replaceIndexes = true
   ) {
 
-  private def dataFilter(data: PoAAmmendmentData): Bson = {
+  private def dataFilter(data: PoASessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId))
   }
 
-  def get(sessionId: String): Future[Option[PoAAmmendmentData]] = {
-    val data = PoAAmmendmentData(sessionId)
+  def get(sessionId: String): Future[Option[PoASessionData]] = {
+    val data = PoASessionData(sessionId)
         collection
           .find(dataFilter(data))
           .headOption()
     }
 
-  def set(data: PoAAmmendmentData): Future[Boolean] = {
+  def set(data: PoASessionData): Future[Boolean] = {
 
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
 

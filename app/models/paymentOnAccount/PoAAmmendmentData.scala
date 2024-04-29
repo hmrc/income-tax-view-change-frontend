@@ -17,25 +17,32 @@
 package models.paymentOnAccount
 
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{OFormat, __}
+import play.api.libs.json.{Json, OFormat, __}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
-case class PoAAmmendmentData(
+case class PoASessionData(
                               sessionId: String,
-                              poaAdjustmentReason: Option[String] = None,
-                              newPoAAmount: Option[BigDecimal] = None,
+                              poaAmmendmentData: Option[PoAAmmendmentData] = None,
                               lastUpdated: Instant = Instant.now
                             )
 
-object PoAAmmendmentData {
-  implicit val format: OFormat[PoAAmmendmentData] = {
+object PoASessionData {
+  implicit val format: OFormat[PoASessionData] = {
     ((__ \ "sessionId").format[String]
-      ~ (__ \ "poaAdjustmentReason").formatNullable[String]
-      ~ (__ \ "newPoAAmount").formatNullable[BigDecimal]
+      ~ (__ \ "poaAmmendmentData").formatNullable[PoAAmmendmentData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      )(PoAAmmendmentData.apply, unlift(PoAAmmendmentData.unapply)
+      )(PoASessionData.apply, unlift(PoASessionData.unapply)
     )
   }
+}
+
+case class PoAAmmendmentData(
+                              poaAdjustmentReason: Option[String] = None,
+                              newPoAAmount: Option[BigDecimal] = None,
+                            )
+
+object PoAAmmendmentData {
+  implicit val formats: OFormat[PoAAmmendmentData] = Json.format[PoAAmmendmentData]
 }

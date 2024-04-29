@@ -16,44 +16,29 @@
 
 package services
 
-import models.paymentOnAccount.PoAAmmendmentData
+import models.paymentOnAccount.{PoAAmmendmentData, PoASessionData}
 import repositories.PoAAmmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmmendmentDataRepository) {
 
-  def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    setMongoData(PoAAmmendmentData(hc.sessionId.get.value))
+  def createSession(implicit hc: HeaderCarrier): Future[Boolean] = {
+    setMongoData(None)
   }
 
   def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoAAmmendmentData]]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value) map {
-      case Some(data: PoAAmmendmentData) =>
-        Right(Some(data))
+      case Some(data: PoASessionData) =>
+        Right(data.poaAmmendmentData)
       case None => Right(None)
     }
   }
 
-  // TODO: we need to drop this method and pass actual model/value from consumer
-  def getMongoKey(key: String)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    poAAmmendmentDataRepository.get(hc.sessionId.get.value) map {
-      case Some(data: PoAAmmendmentData) =>
-        val field = data.getClass.getDeclaredField(key)
-        field.setAccessible(true)
-        try {
-          Right(field.get(data).asInstanceOf[Option[String]])
-        } catch {
-          case err: ClassCastException => Left(err)
-        }
-      case None => Right(None)
-    }
-  }
-
-  def setMongoData(poAAmmendmentData: PoAAmmendmentData): Future[Boolean] = {
-    poAAmmendmentDataRepository.set(poAAmmendmentData)
+  def setMongoData(poAAmmendmentData: Option[PoAAmmendmentData])(implicit hc: HeaderCarrier): Future[Boolean] = {
+    poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
 }

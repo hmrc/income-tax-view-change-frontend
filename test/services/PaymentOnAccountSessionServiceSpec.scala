@@ -16,7 +16,7 @@
 
 package services
 
-import models.paymentOnAccount.PoAAmmendmentData
+import models.paymentOnAccount.{PoAAmmendmentData, PoASessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import repositories.PoAAmmendmentDataRepository
@@ -31,8 +31,11 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
   object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
     mockRepository)
 
-  val sessionData: PoAAmmendmentData = PoAAmmendmentData(
-    sessionId = "session-123456", poaAdjustmentReason = Some("reason X"), newPoAAmount = None
+  val ammendmentData: PoAAmmendmentData = PoAAmmendmentData(poaAdjustmentReason = Some("reason X"), newPoAAmount = None)
+
+  val sessionData: PoASessionData = PoASessionData(
+    sessionId = "session-123456",
+    poaAmmendmentData = Some(ammendmentData)
   )
 
   "PaymentOnAccountSessionService.createSession" should {
@@ -45,19 +48,13 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
   "PaymentOnAccountSessionService.getMongo" should {
     "return the correct mongo data" in {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-      TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
-    }
-  }
-  "PaymentOnAccountSessionService.getMongoKey" should {
-    "return the correct session value for given key" in {
-      when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-      TestPaymentOnAccountSessionService.getMongoKey("poaAdjustmentReason")(headerCarrier, ec).futureValue shouldBe Right(Some("reason X"))
+      TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(ammendmentData))
     }
   }
   "PaymentOnAccountSessionService.setMongoData" should {
     "set the mongo value" in {
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
-      val result = TestPaymentOnAccountSessionService.setMongoData(sessionData)
+      val result = TestPaymentOnAccountSessionService.setMongoData(Some(ammendmentData))
       result.futureValue shouldBe true
     }
   }
