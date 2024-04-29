@@ -19,6 +19,7 @@ package services
 import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalactic.Fail
 import repositories.PoAAmendmentDataRepository
 import testUtils.TestSupport
 
@@ -60,16 +61,38 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
   }
   "PaymentOnAccountSessionService.setAdjustmentReason" should {
     "update the adjustment reason" in {
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
       val result = TestPaymentOnAccountSessionService.setAdjustmentReason("Just because")
-      result.futureValue shouldBe true
+      result.futureValue shouldBe Right(())
+    }
+    "return an error" when {
+      "no mongo session can be found" in {
+        when(mockRepository.get(any())).thenReturn(Future.successful(None))
+        val result = TestPaymentOnAccountSessionService.setAdjustmentReason("Just because")
+        result.futureValue match {
+          case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
+          case _ => Fail
+        }
+      }
     }
   }
   "PaymentOnAccountSessionService.setNewPoAAmount" should {
     "update the PoA amount" in {
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
       val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
-      result.futureValue shouldBe true
+      result.futureValue shouldBe Right(())
+    }
+    "return an error" when {
+      "no mongo session can be found" in {
+        when(mockRepository.get(any())).thenReturn(Future.successful(None))
+        val result = TestPaymentOnAccountSessionService.setNewPoAAmount(100.00)
+        result.futureValue match {
+          case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
+          case _ => Fail
+        }
+      }
     }
   }
 }

@@ -40,7 +40,7 @@ object PoASessionData {
 
 case class PoAAmendmentData(
                               poaAdjustmentReason: Option[String] = None,
-                              newPoAAmount: Option[BigDecimal] = None,
+                              newPoAAmount: Option[BigDecimal] = None
                             )
 
 object PoAAmendmentData {

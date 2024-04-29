@@ -41,25 +41,47 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
-  def setAdjustmentReason(poaAdjustmentReason: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setAdjustmentReason(poaAdjustmentReason: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoASessionData) =>
-        data.poaAmendmentData match {
-          case Some(value) => setMongoData(Some(value.copy(poaAdjustmentReason = Some(poaAdjustmentReason))))
-          case None => Future.successful(false)
+        val newData: PoAAmendmentData = data.poaAmendmentData match {
+          case Some(value) =>
+            value.copy(poaAdjustmentReason = Some(poaAdjustmentReason))
+          case None =>
+            PoAAmendmentData(poaAdjustmentReason = Some(poaAdjustmentReason))
         }
-      case None => Future.successful(false)
+        setMongoData(Some(newData))
+          .flatMap(v => {
+            if (v)
+              Future.successful(Right(()))
+            else {
+              Future.successful(Left(new Error("Unable to save records")))
+            }
+          })
+      case None =>
+        Future.successful(Left(new Error("No active mongo session found")))
     }
   }
 
-  def setNewPoAAmount(newPoAAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setNewPoAAmount(newPoAAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoASessionData) =>
-        data.poaAmendmentData match {
-          case Some(value) => setMongoData(Some(value.copy(newPoAAmount = Some(newPoAAmount))))
-          case None => Future.successful(false)
+        val newData: PoAAmendmentData = data.poaAmendmentData match {
+          case Some(value) =>
+            value.copy(newPoAAmount = Some(newPoAAmount))
+          case None =>
+            PoAAmendmentData(newPoAAmount = Some(newPoAAmount))
         }
-      case None => Future.successful(false)
+        setMongoData(Some(newData))
+          .flatMap(v => {
+            if (v)
+              Future.successful(Right(()))
+            else {
+              Future.successful(Left(new Error("Unable to save records")))
+            }
+          })
+      case None =>
+        Future.successful(Left(new Error("No active mongo session found")))
     }
   }
 
