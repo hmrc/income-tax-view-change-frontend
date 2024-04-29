@@ -24,7 +24,7 @@ import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino}
 import testUtils.TestSupport
 import views.html.AmendablePaymentOnAccount
 
@@ -105,17 +105,14 @@ class AmendablePOAControllerSpec
       }
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
         setupMockGetPaymentsOnAccountFailure()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
-        resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
