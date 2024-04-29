@@ -24,7 +24,7 @@ import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.servicemocks.AuditStub
-import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
+import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -38,42 +38,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
-import java.time.LocalDate
-import java.time.Month.APRIL
-import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
-
-@Singleton
-class TestDateService extends DateServiceInterface {
-
-  override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
-
-  override def isBeforeLastDayOfTaxYear: Boolean = true
-
-  override def getCurrentTaxYearEnd: Int = {
-    val currentDate = getCurrentDate
-    if (isBeforeLastDayOfTaxYear) currentDate.getYear else currentDate.getYear + 1
-  }
-
-  override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
-
-  override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
-    val startDateYear = startDate.getYear
-    val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
-
-    if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate
-    } else {
-      accountingPeriodEndDate.plusYears(1)
-    }
-  }
-
-  override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
-}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -92,11 +61,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
-  implicit val dateService: DateService = new DateService() {
-    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
-
-    override def getCurrentTaxYearEnd: Int = 2023
-  }
+  implicit val dateService: DateServiceInterface = app.injector.instanceOf[DateServiceInterface]
 
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),

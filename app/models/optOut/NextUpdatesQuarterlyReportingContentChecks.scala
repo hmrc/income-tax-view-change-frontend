@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.optOut
 
-import java.time.LocalDate
+case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
+  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
 
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[NextUpdateModelWithIncomeType],
-                             calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {}
+  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+
+  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+}
