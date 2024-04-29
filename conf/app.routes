@@ -149,8 +149,8 @@ GET          /agents/how-to-claim-refund-external                         contro
 
 # amend POAs
 
-GET         /adjust-poa/start                                             controllers.AmendPOAController.show(isAgent: Boolean = false)
-GET         /agents/adjust-poa/start                                      controllers.AmendPOAController.show(isAgent: Boolean = true)
+GET         /adjust-poa/start                                             controllers.AmendablePOAController.show(isAgent: Boolean = false)
+GET         /agents/adjust-poa/start                                      controllers.AmendablePOAController.show(isAgent: Boolean = true)
 
 GET         /adjust-poa/what-you-need-to-know                             controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
 GET         /agents/adjust-poa/what-you-need-to-know                      controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = true)

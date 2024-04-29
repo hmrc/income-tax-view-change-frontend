@@ -33,14 +33,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendPOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                   calculationListService: CalculationListService,
-                                   claimToAdjustService: ClaimToAdjustService,
-                                   val auth: AuthenticatorPredicate,
-                                   view: AmendPaymentOnAccount,
-                                   implicit val itvcErrorHandler: ItvcErrorHandler,
-                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                  (implicit val appConfig: FrontendAppConfig,
+class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                       calculationListService: CalculationListService,
+                                       claimToAdjustService: ClaimToAdjustService,
+                                       val auth: AuthenticatorPredicate,
+                                       view: AmendPaymentOnAccount,
+                                       implicit val itvcErrorHandler: ItvcErrorHandler,
+                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                      (implicit val appConfig: FrontendAppConfig,
                                    implicit override val mcc: MessagesControllerComponents,
                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
