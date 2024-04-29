@@ -150,8 +150,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         financialDetails.flatMap(_.allocation)
       } else Nil
 
-
-
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
         if (isDisabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
@@ -162,7 +160,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
 
-          mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)  match {
+          mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
             case Right(_) =>
 
               Ok(chargeSummaryView(
