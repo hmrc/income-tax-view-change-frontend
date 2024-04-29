@@ -17,7 +17,7 @@
 package controllers
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
 import models.paymentOnAccount.PaymentOnAccount
@@ -48,25 +48,31 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        claimToAdjustService.getPaymentsOnAccount flatMap {
-          case Right(poa: PaymentOnAccount) =>
-            calculationListService.isTaxYearCrystallised(poa.taxYear.endYear) map {
-              case Some(false) | None =>
-                Ok(view(
-                  isAgent = isAgent,
-                  taxYearModel = poa.taxYear,
-                  poaOneTransactionId = poa.poaOneTransactionId,
-                  poaTwoTransactionId = poa.poaTwoTransactionId,
-                  poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
-                  poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
-                ))
-              case _ =>
-                Logger("application").error("Tax Year of return is crystallized - Payment on Account cannot be adjusted")
-                showInternalServerError(isAgent)
-            }
-          case Left(ex) =>
-            Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
-            Future.successful(showInternalServerError(isAgent))
-        }
+        if (isEnabled(AdjustPaymentsOnAccount))
+          claimToAdjustService.getPaymentsOnAccount flatMap {
+            case Right(poa: PaymentOnAccount) =>
+              calculationListService.isTaxYearCrystallised(poa.taxYear.endYear) map {
+                case Some(false) | None =>
+                  Ok(view(
+                    isAgent = isAgent,
+                    taxYearModel = poa.taxYear,
+                    poaOneTransactionId = poa.poaOneTransactionId,
+                    poaTwoTransactionId = poa.poaTwoTransactionId,
+                    poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
+                    poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
+                  ))
+                case _ =>
+                  Logger("application").error("Tax Year of return is crystallized - Payment on Account cannot be adjusted")
+                  showInternalServerError(isAgent)
+              }
+            case Left(ex) =>
+              Logger("application").error(s"Failed to retrieve PaymentOnAccount model: ${ex.getMessage} - ${ex.getCause}")
+              Future.successful(showInternalServerError(isAgent))
+          }
+        else
+          Future.successful(Redirect(
+            if (isAgent) controllers.routes.HomeController.showAgent.url
+            else         controllers.routes.HomeController.show().url
+          ))
     }
 }
