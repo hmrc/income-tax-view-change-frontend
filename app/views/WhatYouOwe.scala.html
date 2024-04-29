@@ -325,7 +325,7 @@
         claimToAdjustViewModel.claimToAdjustTaxYear match {
             case Some(value) =>
                 link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
-                messageKey = s"Adjust payments on account for the ${value.startYear} to ${value.endYear} tax year",
+                messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
                 id = Some("adjust-poa-link"))
             case None => Html("")
         }
