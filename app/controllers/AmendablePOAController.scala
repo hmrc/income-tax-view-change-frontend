@@ -25,7 +25,7 @@ import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationListService, ClaimToAdjustService}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.AmendablePaymentOnAccount
@@ -42,8 +42,8 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                       (implicit val appConfig: FrontendAppConfig,
-                                   implicit override val mcc: MessagesControllerComponents,
-                                   val ec: ExecutionContext)
+                                       implicit override val mcc: MessagesControllerComponents,
+                                       val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
 
   def show(isAgent: Boolean): Action[AnyContent] =
