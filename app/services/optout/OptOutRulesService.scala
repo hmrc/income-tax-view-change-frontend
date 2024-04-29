@@ -70,7 +70,8 @@ class OptOutRulesService {
   }
 
   private val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
-  private val onlyRuleLinesFun: String => Boolean = v => v.nonEmpty && !v.startsWith("-")
+  private val optOutRuleRegex: Regex = """^(\.|Y|N),(\.|U|A|V|M),(\.|U|A|V|M),(\.|U|A|V|M),(PY|CY|NY)$""".r
+  private val onlyRuleLinesFun: String => Boolean = v => v.trim.nonEmpty && !v.startsWith("-") && optOutRuleRegex.matches(v)
   private val toRule: String => Rule = v => Rule(v)
   private val isMatch: Rule => String => Boolean = r => query => r.ruleWithoutOptionRegEx.matches(query)
 }
