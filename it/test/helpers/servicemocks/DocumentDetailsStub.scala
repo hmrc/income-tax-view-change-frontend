@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
-import services.DateService
+import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.testTaxYear
 
 import java.time.LocalDate
@@ -36,7 +36,7 @@ object DocumentDetailsStub {
     documentDueDate = Some(LocalDate.parse("2018-02-14"))
   )
 
-  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail(chargeType),
     dueDate = Some(LocalDate.parse(dueDate))
   )
@@ -59,7 +59,7 @@ object DocumentDetailsStub {
     documentDueDate = Some(LocalDate.of(2023, 7, 1))
   )
 
-  def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+  def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest(chargeType),
     dueDate = Some(LocalDate.parse(dueDate))
   )
@@ -81,7 +81,7 @@ object DocumentDetailsStub {
     documentDueDate = Some(LocalDate.of(2017, 7, 1))
   )
 
-  def docDateDetailWithInterestAndOverdue(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+  def docDateDetailWithInterestAndOverdue(dueDate: String, chargeType: String)(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterestAndOverdue(chargeType),
     dueDate = Some(LocalDate.parse(dueDate))
   )
