@@ -92,11 +92,24 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }).map(_.flatten)
   }
 
+  // TODO: Create dependency so getPoaTaxYearForEntryPoint and getPoaForNonCrystallisedTaxYear are hard dependant
+
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel => Right(arePoAPaymentsPresent(financialDetails.documentDetails))
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
+        case _ => Right(None)
+      }
+    }
+  }
+
+  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccount]]] = {
+    checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
+      case None => Future.successful(Right(None))
+      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+        case financialDetails: FinancialDetailsModel => Right(getPaymentOnAccountModel(financialDetails.documentDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }
@@ -155,17 +168,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     } map {
       case Some(true) => true
       case _ => false
-    }
-  }
-
-  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccount]]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
-      case None => Future.successful(Right(None))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(getPaymentOnAccountModel(financialDetails.documentDetails))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => Right(None)
-      }
     }
   }
 
