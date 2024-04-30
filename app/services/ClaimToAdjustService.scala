@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,21 +54,20 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoAPayments(documentDetails: List[DocumentDetail]): Either[Throwable, Option[TaxYear]] = {
     {
       for {
-        poa1 <- documentDetails.filter(isPoAOne).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-        poa2 <- documentDetails.filter(isPoATwo).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa1 <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa2 <- documentDetails.filter(isUnPaidPoATwo).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
       } yield {
         if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
           Right(Some(poa1))
         } else {
-          Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
+          Logger("application").error(
             s"PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not. < PoA1 TaxYear: $poa1, PoA2 TaxYear: $poa2 >")
           Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
         }
       }
     }.getOrElse {
       // TODO: tidy up relevant unit tests, as this is a separate error, see log details;
-      Logger("application").error(s"[ClaimToAdjustService][getPoAPayments] " +
-        s"Unable to find required POA records")
+      Logger("application").error("Unable to find required POA records")
       Left(new Exception("PoA 1 & 2 most recent documents were expected to be from the same tax year. They are not."))
     }
   }
@@ -76,12 +75,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   // TODO: this method need to be optimised
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger("application").debug(
-      s"[ClaimToAdjustService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    Logger("application").debug(s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
-        Logger("application").debug(s"[ClaimToAdjustService][getAllFinancialDetails] - Getting financial details for TaxYear: ${taxYear}")
+        Logger("application").debug(s"Getting financial details for TaxYear: $taxYear")
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
@@ -103,32 +101,34 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccount] = {
     for {
-      poaOneDocDetail          <- documentDetails.filter(isPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail          <- documentDetails.filter(isPoATwo).sortBy(_.taxYear).reverse.headOption
-      latestDocumentDetail     <- documentDetails.filter(isPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
-      poasAreBeforeTaxDeadline <- poaOneDocDetail.documentDueDate.flatMap(one => poaTwoDocDetail.documentDueDate.map(two => arePoAsBeforeDeadline(one, two)))
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
+      poaTwoDocDetail          <- documentDetails.filter(isUnPaidPoATwo).sortBy(_.taxYear).reverse.headOption
+      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
+      poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
     } yield {
 
-      Logger("application").debug(s"Payments on Accounts 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
+      Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
+      Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
+      Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
 
       PaymentOnAccount(
         poaOneTransactionId = poaOneDocDetail.transactionId,
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne = poaOneDocDetail.originalAmount.get,       // TODO: based on API#1553 DocumentDetail.originalAmount is not an optional field
-        paymentOnAccountTwo = poaOneDocDetail.originalAmount.get        // TODO: Therefore .get has to be used until this is fixed in BE/FE
+        paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
+        paymentOnAccountTwo = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
       )
     }
   }
 
-  private def arePoAsBeforeDeadline(poaOneDate: LocalDate, poaTwoDate: LocalDate): Boolean = {
-
-    val poaOneTaxReturnDeadline = LocalDate.of(poaOneDate.getYear + 1, 1, 31)
-
-    val poaTwoTaxReturnDeadline = LocalDate.of(poaTwoDate.getYear + 1, 1, 31)
-
-    (poaOneDate isBefore poaOneTaxReturnDeadline) &&
-    (poaTwoDate isBefore poaTwoTaxReturnDeadline)
+  private def arePoAsBeforeTaxReturnDeadline(poaTwoDate: Option[LocalDate]): Option[Boolean] = {
+    for {
+      poaTwoDeadline             <- taxReturnDeadlineOf(poaTwoDate)
+      poaTwoDateIsBeforeDeadline <- poaTwoDate.map(_.isBefore(poaTwoDeadline))
+    } yield {
+      Logger("application").debug(s"PoA 1 - documentDueDate: $poaTwoDate, TaxReturnDeadline: $poaTwoDeadline")
+      poaTwoDateIsBeforeDeadline
+    }
   }
 
   private def getPoaAdjustableTaxYears: List[TaxYear] = {
@@ -181,11 +181,21 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private val isPoAOne: DocumentDetail => Boolean = documentDetail => documentDetail.documentDescription contains "ITSA- POA 1"
+  private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
+    documentDetail.documentDescription.contains("ITSA- POA 1") &&
+    !documentDetail.outstandingAmount.contains(0)
 
-  private val isPoATwo: DocumentDetail => Boolean = documentDetail => documentDetail.documentDescription contains "ITSA - POA 2"
+  private val isUnPaidPoATwo: DocumentDetail => Boolean = documentDetail =>
+    documentDetail.documentDescription.contains("ITSA - POA 2") &&
+    !documentDetail.outstandingAmount.contains(0)
 
-  private val isPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains("ITSA- POA 1") ||
-    documentDetail.documentDescription.contains("ITSA - POA 2")
+  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
+    (documentDetail.documentDescription.contains("ITSA- POA 1") && !documentDetail.outstandingAmount.contains(0)) ||
+    (documentDetail.documentDescription.contains("ITSA - POA 2") && !documentDetail.outstandingAmount.contains(0))
+
+  private val LAST_DAY_OF_JANUARY: Int = 31
+
+  private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] = dueDate => {
+    dueDate.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
+  }
 }
