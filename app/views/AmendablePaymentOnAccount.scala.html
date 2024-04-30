@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import _root_.implicits.ImplicitCurrencyFormatter._
 
 @this(
     p: p,
@@ -38,8 +39,8 @@
     poaTwoTransactionId: String,
     isAgent: Boolean,
     taxYearModel: TaxYear,
-    poaOneFullAmount: String,
-    poaTwoFullAmount: String
+    poaOneFullAmount: BigDecimal,
+    poaTwoFullAmount: BigDecimal
 )(
     implicit request: Request[_],
     user: MtdItUser[_],
@@ -102,7 +103,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaOneFullAmount)
+                    content = HtmlContent(poaOneFullAmount.toCurrencyString)
                 ),
             ),
         ),
@@ -130,7 +131,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaTwoFullAmount)
+                    content = HtmlContent(poaTwoFullAmount.toCurrencyString)
                 ),
             ),
         ),

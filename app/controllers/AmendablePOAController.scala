@@ -58,8 +58,8 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                   taxYearModel = poa.taxYear,
                   poaOneTransactionId = poa.poaOneTransactionId,
                   poaTwoTransactionId = poa.poaTwoTransactionId,
-                  poaOneFullAmount = poa.paymentOnAccountOne.toCurrencyString,
-                  poaTwoFullAmount = poa.paymentOnAccountTwo.toCurrencyString
+                  poaOneFullAmount = poa.paymentOnAccountOne,
+                  poaTwoFullAmount = poa.paymentOnAccountTwo
                 ))
               )
             case Right(None) =>
