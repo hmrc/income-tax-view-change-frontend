@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.nextUpdates
 
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.NoNextUpdates
+import views.html.nextUpdates.NoNextUpdates
 
 class NoNextUpdatesViewSpec extends TestSupport {
 

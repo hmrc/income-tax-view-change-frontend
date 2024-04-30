@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
 import java.time.LocalDate
-import java.time.Month.APRIL
+import java.time.Month.{APRIL, JANUARY}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -55,9 +55,21 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     currentDate.isBefore(lastDayOfTaxYear)
   }
 
+  def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = {
+    val currentDate = getCurrentDate
+    val lastDayOfTaxReturn = getLastDayOfTaxReturn
+    val lastDayOfTaxYear = getLastDayOfTaxYear
+    currentDate.isAfter(lastDayOfTaxReturn) && currentDate.isBefore(lastDayOfTaxYear)
+  }
+
   private def getLastDayOfTaxYear: LocalDate = {
     val currentYear = getCurrentDate.getYear
     LocalDate.of(currentYear, APRIL, 6)
+  }
+
+  private def getLastDayOfTaxReturn: LocalDate = {
+    val currentYear = getCurrentDate.getYear
+    LocalDate.of(currentYear, JANUARY, 31)
   }
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
@@ -82,6 +94,8 @@ trait DateServiceInterface {
   def getCurrentTaxYearStart: LocalDate
 
   def isBeforeLastDayOfTaxYear: Boolean
+
+  def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
 

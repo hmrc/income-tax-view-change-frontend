@@ -20,17 +20,17 @@ import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, OptOut}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates._
 import models.optOut.OptOutMessageResponse
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
-import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService2}
+import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
-import views.html.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
+import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,68 +42,80 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
-                                      optOutService: OptOutService2,
                                       itvcErrorHandler: ItvcErrorHandler,
+                                      optOutService: OptOutService,
                                       val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions,
                                       val auth: AuthenticatorPredicate)
                                      (implicit mcc: MessagesControllerComponents,
                                       implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
                                       val ec: ExecutionContext)
-
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
-        for {
-          nextUpdates <- nextUpdatesService.getNextUpdates().map {
-            case obligations: ObligationsModel => obligations
-            case _ => ObligationsModel(Nil)
-          }
-          optOutMessage <- optOutService.displayOptOutMessage()
-        } yield {
-          if (nextUpdates.obligations.nonEmpty) {
-            Ok(view(nextUpdates, optOutMessage, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
-          } else {
-            itvcErrorHandler.showInternalServerError()
-          }
-        }
-      } else {
-        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
-      }
+  private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+    if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+      action
+    } else {
+      Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
+    }
   }
 
-  val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
+  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
+                    (implicit user: MtdItUser[_]): Future[Result] =
+    hasAnyIncomeSource {
+      for {
+        nextUpdates <- nextUpdatesService.getNextUpdates().map {
+          case obligations: ObligationsModel => obligations
+          case _ => ObligationsModel(Nil)
+        }
+        viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
+        result <- (nextUpdates.obligations, isEnabled(OptOut)) match {
+          case (Nil, _) =>
+            Future.successful(errorHandler.showInternalServerError())
+          case (_, true) =>
+            auditNextUpdates(user, isAgent, origin)
+            optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
+              optOutService.displayOptOutMessage() map { optOutMessage =>
+                Ok(nextUpdatesOptOutView(viewModel, optOutMessage, checks, backUrl.url, isAgent, origin))
+              }
+            }.recover {
+              case ex =>
+                Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+                errorHandler.showInternalServerError()
+            }
+          case (_, false) =>
+            auditNextUpdates(user, isAgent, origin)
+            Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin)))
+        }
+      } yield result
+    }(user, origin)
+
+
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      getNextUpdates(
+        controllers.routes.HomeController.show(origin),
+        isAgent = false,
+        itvcErrorHandler,
+        origin)
+  }
+
+  def showAgent: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-        implicit mtdItUser =>
-          optOutService.displayOptOutMessage().flatMap {
-            optOutMessage =>
-              nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-                case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
-                  Ok(view(nextUpdates, optOutMessage, controllers.routes.HomeController.showAgent.url, isAgent = true)(mtdItUser))
-                case _ => agentItvcErrorHandler.showInternalServerError()
-              }
-          }
+        mtdItUser =>
+          getNextUpdates(
+            controllers.routes.HomeController.showAgent,
+            isAgent = true,
+            agentItvcErrorHandler,
+            None)(mtdItUser)
       }
-  }
-
-  private def view(obligationsModel: ObligationsModel, optOutMessage: OptOutMessageResponse, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
-    auditNextUpdates(user, isAgent, origin)
-    val viewModel = nextUpdatesService.getNextUpdatesViewModel(obligationsModel)
-    if (isEnabled(OptOut)) {
-      nextUpdatesOptOutView(currentObligations = viewModel, optOutMessage, backUrl = backUrl, isAgent = isAgent, origin = origin)
-    } else {
-      nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
-    }
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     if (isAgent) {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdatesAgent.url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.showAgent.url))
     } else {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates(origin).url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.show(origin).url))
     }
 }

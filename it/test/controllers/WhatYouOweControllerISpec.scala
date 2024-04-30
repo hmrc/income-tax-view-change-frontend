@@ -88,6 +88,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
+    override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {

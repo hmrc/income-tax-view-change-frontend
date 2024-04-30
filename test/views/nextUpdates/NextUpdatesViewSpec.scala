@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package views.nextUpdates
 
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
-import views.html.NextUpdates
+import views.html.nextUpdates.NextUpdates
 
 import java.time.LocalDate
 
@@ -32,6 +32,8 @@ class NextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
+  val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
+  val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
   class Setup(currentObligations: NextUpdatesViewModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
@@ -52,8 +54,9 @@ class NextUpdatesViewSpec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
+  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+  })
 
   "Next Updates page" should {
 
@@ -106,5 +109,10 @@ class NextUpdatesViewSpec extends TestSupport {
       table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
       table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
+
+//    s"have the correct Claim To Adjust PoA Link and Text" in new Setup(obligationsModel) {
+//      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
+//      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
+//    }
   }
 }

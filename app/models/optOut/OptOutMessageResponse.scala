@@ -16,10 +16,10 @@
 
 package models.optOut
 
-object OptOutModel {}
-case class OptOutMessageResponse(showOptOut: Boolean = true, yearFrom: String = "2023", yearTo: String = "2024")
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.StatusDetail
 
-//sealed trait OptOutStatus
-//case class CanOptOutOfPreviousYear() extends OptOutStatus
-//case class CanOptOutOfCurrentYear() extends OptOutStatus
-//case class CanOptOutOfNextYear() extends OptOutStatus
+case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
+case class OptOutMessageResponse(canOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
+  def firstYear: TaxYear = taxYears(0)
+}

@@ -35,7 +35,7 @@
 @(currentObligations: NextUpdatesViewModel, optOutMessage: OptOutMessageResponse, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @showOptOut = @{
-	optOutMessage.showOptOut
+	optOutMessage.canOptOut
 }
 
 @mainTemplate(
@@ -53,7 +53,7 @@
 
 	@if(showOptOut){
 		@p(){
-			@messages("nextUpdates.optOutOneYear", optOutMessage.yearFrom, optOutMessage.yearTo)
+			@messages("nextUpdates.optOutOneYear", optOutMessage.firstYear.startYear.toString, optOutMessage.firstYear.endYear.toString)
 		}
 	}
 

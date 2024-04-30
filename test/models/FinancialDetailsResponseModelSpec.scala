@@ -73,7 +73,17 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
   }
 
+"getAllocationsToCharge" should {
+  val chargesWithPayments = chargesWithAllocatedPaymentModel()
+  val chargeFinancialDetail = chargesWithPayments.financialDetails.find(_.transactionId.contains(id1040000123)).head
+  val allocationsToCharge = chargesWithPayments.getAllocationsToCharge(chargeFinancialDetail).head
 
+  "only return allocations from Payments" in {
+    allocationsToCharge.allocations.size shouldBe 1
+    val allocation = allocationsToCharge.allocations.head
+    allocation.dueDate shouldBe Some(LocalDate.parse("2018-09-07"))
+  }
+}
   "getAllDueDates" should {
 
     val fd1 = FinancialDetail(

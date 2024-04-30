@@ -48,6 +48,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
+    override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
+
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  {
       val startDateYear = startDate.getYear
       val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)

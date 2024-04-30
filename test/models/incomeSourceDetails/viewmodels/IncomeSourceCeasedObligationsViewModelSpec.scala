@@ -60,6 +60,8 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
+    override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
+
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
       val startDateYear = startDate.getYear
       val accountingPeriodEndDate = LocalDate.of(startDateYear, Month.APRIL, 5)
@@ -84,7 +86,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
   val taxYear: TaxYear = TaxYear(mockDateService().getCurrentTaxYearEnd - 1, mockDateService().getCurrentTaxYearEnd)
   val viewAllBusinessLink: Call = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
-  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.getNextUpdates()
+  val viewUpcomingUpdatesLink: Call = controllers.routes.NextUpdatesController.show()
   val viewUpcomingUpdatesLinkNoDueMessageKey: String = "business-ceased.obligation.view-updates.text"
   val viewUpcomingUpdatesLinkDueMessageKeyDue: String = "business-ceased.obligation.view-updates-overdue.text"
 

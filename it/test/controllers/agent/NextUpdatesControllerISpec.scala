@@ -21,16 +21,17 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, OptOut}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
+import testConstants.CalculationListIntegrationTestConstants
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -159,7 +160,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     "the user has obligations and the Opt Out feature switch enabled" in {
       stubAuthorisedAgentUser(authorised = true)
       enable(OptOut)
-
+      val currentTaxYear = dateService.getCurrentTaxYearEnd
+      val previousYear = currentTaxYear - 1
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel(
           identification = "testId",
@@ -177,6 +179,9 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         nino = testNino,
         deadlines = currentObligations
       )
+      ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+      CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
 
       val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
 
@@ -236,11 +241,55 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
       verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
     }
+
+    "show Internal Server Error page" when {
+      "Opt Out feature switch is enabled" when {
+        "ITSA Status API Failure" in {
+          stubAuthorisedAgentUser(authorised = true)
+          enable(OptOut)
+          val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+          val currentObligations: ObligationsModel = ObligationsModel(Seq(
+            NextUpdatesModel(
+              identification = "testId",
+              obligations = List(
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+              ))
+          ))
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetails
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligations
+          )
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+
+          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          verifyNextUpdatesCall(testNino)
+
+          Then("show Internal Server Error Page")
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitleAgent("standardError.heading", isErrorPage = true)
+          )
+        }
+      }
+    }
   }
+
 
   "API#1171 GetBusinessDetails Caching" when {
     "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
+      testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
         () => IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation))
     }
   }

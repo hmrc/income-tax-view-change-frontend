@@ -68,9 +68,9 @@ viewModel: HomePageViewModel,
 
 @nextUpdatesControllerURL = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.getNextUpdatesAgent.url
+        controllers.routes.NextUpdatesController.showAgent.url
     } else {
-        controllers.routes.NextUpdatesController.getNextUpdates(viewModel.origin).url
+        controllers.routes.NextUpdatesController.show(viewModel.origin).url
     }
 }
 

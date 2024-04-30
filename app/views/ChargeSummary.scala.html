@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.PaymentsWithChargeType
@@ -45,7 +46,7 @@
 )
 @(currentDate: LocalDate,
     documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
-    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean
@@ -231,8 +232,6 @@
 
     @if(hasPaymentBreakdown && !isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
-            paymentAllocations,
-            payments,
             documentDetailWithDueDate,
             paymentBreakdown,
             latePaymentInterestCharge,

@@ -22,6 +22,7 @@ import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -86,7 +87,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
-
+  val ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(
+    adjustPaymentsOnAccountFSEnabled = false,
+    poaTaxYear = None
+  )
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
 
@@ -119,7 +123,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       dateService.getCurrentDate,
       creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true, claimToAdjustViewModel = ctaViewModel)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -176,7 +180,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
-      isAgent = true)(FakeRequest(), agentUser, implicitly)
+      isAgent = true,
+      claimToAdjustViewModel = ctaViewModel
+    )(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 

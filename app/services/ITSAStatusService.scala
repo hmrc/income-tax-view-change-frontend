@@ -62,7 +62,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
 
   def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
     getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
-      //item.taxYear has string format as 2022-20
+      //item.taxYear has string format as 2021-22
       _.map(item => TaxYear(item.taxYear.split("-")(0).toInt + 1) -> getStatusDetail(item)).flatMap {
         case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
         case _ => None

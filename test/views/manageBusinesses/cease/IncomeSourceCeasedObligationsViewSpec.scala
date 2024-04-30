@@ -95,7 +95,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       businessName = Some("Test Name")))
 
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
-  val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.getNextUpdates().url
+  val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url
 
   "Income Source Ceased Obligations " should {
     "Display the correct banner message and heading" when {
