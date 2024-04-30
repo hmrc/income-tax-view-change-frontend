@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package mocks.services
 
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.CalculationListService
 import testUtils.UnitSpec
@@ -29,10 +29,19 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
 
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockCalculationListService)
+  }
   def setupMockTaxYearNotCrystallised(): Unit =
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.any())(any(), any()))
       .thenReturn(Future.successful(Some(false)))
 
+  def setupMockIsTaxYearCrystallisedCall(taxYear: Int)(out: Future[Option[Boolean]]): Unit = {
+    when(mockCalculationListService
+      .isTaxYearCrystallised(ArgumentMatchers.eq(taxYear))(any, any))
+      .thenReturn(out)
+  }
   def setupMockTaxYearCrystallised(): Unit =
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.any())(any(), any()))
       .thenReturn(Future.successful(Some(true)))

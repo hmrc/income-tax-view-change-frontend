@@ -46,8 +46,8 @@ case class Payment(reference: Option[String],
                    documentDate: LocalDate,
                    transactionId: Option[String],
                    mainType: Option[String] = None,
-                   mainTransaction: Option[String] = None) {
-
+                   mainTransaction: Option[String] = None,
+                   clearingSAPDocument: Option[String] = None) {
 
   val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 

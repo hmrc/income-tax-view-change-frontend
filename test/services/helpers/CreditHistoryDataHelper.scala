@@ -108,7 +108,7 @@ trait CreditHistoryDataHelper {
         mainType = Some("SA Repayment Supplement Credit"), mainTransaction = Some("6020"), transactionId = Some(documentDetailsWhichIsRepaymentInterestCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-500)), outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
-        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot5"), paymentLotItem = Some("paymentLotItem5")))))
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
     )
   )
 
@@ -124,17 +124,17 @@ trait CreditHistoryDataHelper {
         mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110"), transactionId = Some(documentDetailsWhichIsCutOverCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-100)), outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
-        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot1"), paymentLotItem = Some("paymentLotItem1"))))),
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
       FinancialDetail(taxYear = "2022",
         mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), transactionId = Some(documentDetailsWhichIsMfaCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-300)), outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
-        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot2"), paymentLotItem = Some("paymentLotItem2"))))),
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
       FinancialDetail(taxYear = "2022",
         mainType = Some("SA Balancing Charge Credit"), mainTransaction = Some("4905"), transactionId = Some(documentDetailsWhichIsBCCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = Some(BigDecimal(-200)), outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
-        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")), paymentLot = Some("paymentLot3"), paymentLotItem = Some("paymentLotItem3")))))
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
     )
   )
 
@@ -211,10 +211,7 @@ trait CreditHistoryDataHelper {
         paymentReference = Some("paymentReference"),
         paymentAmount = Some(BigDecimal("2000.00")),
         dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod"),
-        paymentLot = Some("paymentLot"),
-        paymentLotItem = Some("paymentLotItem"),
-        paymentId = Some("paymentLot-paymentLotItem")
+        paymentMethod = Some("paymentMethod")
       ),
       SubItem(
         subItemId = Some("2"),
@@ -226,8 +223,6 @@ trait CreditHistoryDataHelper {
         paymentAmount = Some(BigDecimal("3000.00")),
         dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod2"),
-        paymentLot = Some("paymentLot2"),
-        paymentLotItem = None,
         paymentId = None
       )))
   )
@@ -240,9 +235,7 @@ trait CreditHistoryDataHelper {
         documentText = Some("documentText"),
         originalAmount = Some(-300.00),
         outstandingAmount = Some(-200.00),
-        documentDate = LocalDate.of(2018, 3, 29),
-        paymentLot = Some("paymentLot"),
-        paymentLotItem = Some("paymentLotItem")
+        documentDate = LocalDate.of(2018, 3, 29)
       )
     ),
     financialDetails = List(
@@ -259,9 +252,7 @@ trait CreditHistoryDataHelper {
         documentText = Some("documentText"),
         originalAmount = Some(-300.00),
         outstandingAmount = Some(-200.00),
-        documentDate = LocalDate.of(2018, 3, 29),
-        paymentLot = Some("paymentLot"),
-        paymentLotItem = Some("paymentLotItem")
+        documentDate = LocalDate.of(2018, 3, 29)
       )
     ),
     financialDetails = List(
