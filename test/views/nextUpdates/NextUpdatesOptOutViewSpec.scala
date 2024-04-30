@@ -18,7 +18,7 @@ package views.nextUpdates
 
 import config.FrontendAppConfig
 import models.nextUpdates._
-import models.optOut.NextUpdatesQuarterlyReportingContentChecks
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -46,7 +46,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, checks, "testBackURL")))
+    val optOutMessage = OptOutMessageResponse()
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, optOutMessage, checks, "testBackURL")))
   }
 
   object obligationsMessages {

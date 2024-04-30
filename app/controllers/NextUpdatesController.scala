@@ -79,7 +79,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
               optOutService.displayOptOutMessage() map { optOutMessage =>
                 Ok(nextUpdatesOptOutView(viewModel, optOutMessage, checks, backUrl.url, isAgent, origin))
               }
-            }.recover {
+            } recover {
               case ex =>
                 Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
                 errorHandler.showInternalServerError()
