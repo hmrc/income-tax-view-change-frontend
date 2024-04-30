@@ -251,6 +251,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
       }
     }
+  }.recover{
+    case ex: Throwable =>
+      val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      errorHandler.showInternalServerError()
   }
 
   def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {

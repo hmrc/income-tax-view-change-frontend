@@ -17,6 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import models.financialDetails.DocumentDetailWithDueDate
+import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.nextUpdates.ObligationsModel
 import testConstants.FinancialDetailsTestConstants.{dateService, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -50,17 +51,16 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
     periodTo = Some(LocalDate.of(2021, 1, 1))
   )
 
+  val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2024, 2025)))
 
   "TaxYearSummaryViewModel model" when {
-
-
     "forecastIncomeTaxAndNics is not defined in CalculationSummaryValue" should {
       "throw IllegalArgumentException" in {
 
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true
+          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -72,7 +72,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary.copy(timestamp = None)),
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, codingOutEnabled = true, showForecastData = true
+          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"
@@ -85,10 +85,39 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           Some(testCalculationSummary),
           testWithMissingOriginalAmountChargesList,
           testObligationsModel,
-          codingOutEnabled = true
+          codingOutEnabled = true, ctaViewModel = testCTAViewModel
         )
 
         thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"
+      }
+    }
+  }
+
+  "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" when {
+    "adjustPaymentsOnAccountFSEnabled is false" should {
+      "return None" in {
+        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, Some(TaxYear(2023, 2024)))
+
+        testModel.claimToAdjustTaxYear shouldBe None
+      }
+    }
+    "adjustPaymentsOnAccountFSEnabled is true" should {
+      "return None" in {
+        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
+
+        testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
+      }
+    }
+  }
+  "TYSClaimToAdjustViewModel object" when {
+    "ctaLink val is called for an individual" should {
+      "return the correct redirect link" in {
+        TYSClaimToAdjustViewModel.ctaLink(false) shouldBe "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+      }
+    }
+    "ctaLink val is called for an agent" should {
+      "return the correct redirect link" in {
+        TYSClaimToAdjustViewModel.ctaLink(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
       }
     }
   }
