@@ -35,7 +35,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
   val calculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
 
   def setupMockGetPaymentsOnAccount(): Unit =
-    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
       .thenReturn(
         Future.successful(
           Right(
@@ -53,7 +53,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
       )
 
   def setupMockGetPaymentsOnAccountBuildFailure(): Unit =
-    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
       .thenReturn(
         Future.successful(
           Right(
@@ -63,7 +63,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
       )
 
   def setupMockGetPaymentsOnAccountFailure(): Unit =
-    when(claimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
       .thenReturn(
         Future.successful(
           Left(
