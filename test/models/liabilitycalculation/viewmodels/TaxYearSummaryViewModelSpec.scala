@@ -102,7 +102,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
       }
     }
     "adjustPaymentsOnAccountFSEnabled is true" should {
-      "return None" in {
+      "return a TaxYear" in {
         val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
 
         testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
