@@ -17,7 +17,6 @@
 package models.nextPayments.viewmodels
 
 import models.incomeSourceDetails.TaxYear
-import play.twirl.api.Html
 
 case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
                                      poaTaxYear: Option[TaxYear]) {

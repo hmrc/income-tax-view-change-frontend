@@ -17,6 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import models.financialDetails.DocumentDetailWithDueDate
+import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.ObligationsModel
 
 
@@ -24,7 +25,8 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    charges: List[DocumentDetailWithDueDate],
                                    obligations: ObligationsModel,
                                    codingOutEnabled: Boolean,
-                                   showForecastData: Boolean = false
+                                   showForecastData: Boolean = false,
+                                   ctaViewModel: TYSClaimToAdjustViewModel
                                   ) {
 
   def showUpdates: Boolean = {
@@ -40,4 +42,27 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
 
 }
 
+case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
+                                     poaTaxYear: Option[TaxYear]) {
 
+  val claimToAdjustTaxYear: Option[TaxYear] = {
+    if (adjustPaymentsOnAccountFSEnabled) {
+      poaTaxYear
+    } else {
+      None
+    }
+  }
+
+}
+
+object TYSClaimToAdjustViewModel {
+
+  def ctaLink(isAgent: Boolean): String = {
+    if (isAgent) {
+      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+    } else {
+      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    }
+  }
+
+}
