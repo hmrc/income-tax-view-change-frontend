@@ -951,7 +951,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
       }
     }
 
-
     "API#1171 IncomeSourceDetails Caching" when {
       "caching should be ENABLED" in {
         testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 1,
