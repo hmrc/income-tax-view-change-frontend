@@ -90,8 +90,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
-
-    println("IIIIIII" + getPoaAdjustableTaxYears)
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -103,11 +101,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
-    val a = documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA 2")))
+    documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA 2")))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-
-    println("KKKKKKKK" + a)
-a
   }
 
   private def getPoaAdjustableTaxYears: List[TaxYear] = {
@@ -126,12 +121,8 @@ a
   private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
     taxYearList match {
       case ::(head, next) => isTaxYearNonCrystallised(head, nino).flatMap {
-        case true =>
-          println("RRRRRRRR")
-          Future.successful(Some(head))
-        case false =>
-          println("TTTTTTTTT")
-          checkCrystallisation(nino, next)
+        case true => Future.successful(Some(head))
+        case false => checkCrystallisation(nino, next)
       }
       case Nil => Future.successful(None)
     }
