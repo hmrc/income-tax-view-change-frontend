@@ -27,7 +27,8 @@ import models.optOut.OptOutMessageResponse
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService}
+import services.optout.OptOutService
+import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}

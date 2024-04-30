@@ -19,6 +19,7 @@ package services
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import models.incomeSourceDetails.TaxYear
 import models.optOut.NextUpdatesQuarterlyReportingContentChecks
+import services.optout.OptOutService
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 

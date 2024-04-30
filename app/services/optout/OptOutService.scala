@@ -14,22 +14,36 @@
  * limitations under the License.
  */
 
-package services
+package services.optout
 
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, YearStatusDetail}
-import services.optout.OptOutRulesService
-import services.optout.OptOutRulesService.{toFinalized, toQuery, toSymbol}
+import services.optout.OptOutService.BooleanOptionToFuture
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import OptOutService._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
+object OptOutService {
+  val optOutOptions = new OptOutOptionsTacticalSolution
+  implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
+    def toF: Future[Boolean] = opl
+      .map(v => Future.successful(v))
+      .getOrElse(Future.successful(false))
+  }
+  implicit class TypeToFuture[T](t: T) {
+    def toF: Future[T] = Future.successful(t)
+  }
+}
+
 @Singleton
 class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateServiceInterface) {
+
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     val endYear = dateService.getCurrentTaxYearEnd
     val currentYear = TaxYear(endYear)
@@ -48,23 +62,6 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
         isPreviousYearStatusMandatoryOrVoluntary,
         calStatus)
     } yield optOutChecks
-  }
-
-  /* todo: consider the two solutions
-  *  solution 1: in this branch: services.optout.OptOutRulesService
-  *  solution 2: checkout git branch OptOutExperiment and review OutputSpecV14 file
-  *  then fully integrate the chosen solution and remove solution-1 if not chosen
-  * */
-  val optOutOptions = new OptOutOptionsSolution1()
-  //val optOutOutcome = new OptOutOptionsSolution2()
-
-  implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
-    def toF: Future[Boolean] = opl
-      .map(v => Future.successful(v))
-      .getOrElse(Future.successful(false))
-  }
-  implicit class TypeToFuture[T](t: T) {
-    def toF: Future[T] = Future.successful(t)
   }
 
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutMessageResponse] = {
@@ -91,37 +88,3 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
   }
 }
 
-trait OptOutOptions {
-  def getOptOutOptionsFor(finalisedStatus: Boolean,
-                          previousYearState: YearStatusDetail,
-                          currentYearState: YearStatusDetail,
-                          nextYearState: YearStatusDetail ): OptOutMessageResponse
-}
-
-/* todo: to be refactored */
-class OptOutOptionsSolution1 extends OptOutOptions {
-
-  val optOutRulesService = new OptOutRulesService()
-
-  def getOptOutOptionsFor(finalisedStatus: Boolean,
-                          previousYearState: YearStatusDetail,
-                          currentYearState: YearStatusDetail,
-                          nextYearState: YearStatusDetail): OptOutMessageResponse = {
-
-    val finalised = toFinalized(finalisedStatus)
-    val pySymbol = toSymbol(previousYearState.statusDetail)
-    val cySymbol = toSymbol(currentYearState.statusDetail)
-    val nySymbol = toSymbol(nextYearState.statusDetail)
-
-    val response = optOutRulesService.findOptOutOptions(toQuery(finalised, pySymbol, cySymbol, nySymbol)).map {
-      case "PY" => OptOutMessageResponse(canOptOut = true, taxYears = Array(previousYearState.taxYear))
-      case "CY" => OptOutMessageResponse(canOptOut = true, taxYears = Array(currentYearState.taxYear))
-      case "NY" => OptOutMessageResponse(canOptOut = true, taxYears = Array(nextYearState.taxYear))
-    } reduce { (l, r) =>
-      OptOutMessageResponse(canOptOut = true, taxYears = Array.concat(l.taxYears, r.taxYears))
-    }
-
-    response.copy(taxYears = response.taxYears.sortBy(_.startYear))
-
-  }
-}
