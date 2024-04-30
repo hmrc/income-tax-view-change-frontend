@@ -32,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
 import testConstants.messages.TaxYearSummaryMessages._
@@ -1158,6 +1159,80 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
     }
 
+    "Claim to adjust POA section" should {
+      "show" when {
+        "The user has amendable POAs for the given tax year and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = true))
+        }
+      }
+      "not show" when {
+        "The user has amendable POAs for the given tax year but the FS is Disabled" in {
+          disable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+        "The user has no amendable POAs and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK, testEmptyFinancialDetailsModelJson)
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+      }
+    }
   }
 
   "API#1171 IncomeSourceDetails Caching" when {

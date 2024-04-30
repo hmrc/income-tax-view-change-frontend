@@ -234,6 +234,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   private def handleRequest(taxYear: Int, origin: Option[String], isAgent: Boolean)
                            (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
                             ec: ExecutionContext, messages: Messages): Future[Result] = {
+
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
         val codingOutEnabled: Boolean = isEnabled(CodingOut)
@@ -243,6 +244,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           viewModel <- claimToAdjustViewModel(Nino(value = user.nino), taxYear)
           liabilityCalcResponse <- calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear)
         } yield {
+          println(viewModel.toString + "OOOOOOOOOO")
           view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled, viewModel,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
             origin = origin, isAgent = isAgent)
@@ -307,13 +309,15 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[TYSClaimToAdjustViewModel] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
-      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap { result =>
+        println(result.toString + "PPPPPPPPP")
+        result match {
         case Right(value) => value match {
           case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value)))
           case _ => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
         }
         case Left(ex: Throwable) => Future.failed(ex)
-      }
+      }}
     } else {
       Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
