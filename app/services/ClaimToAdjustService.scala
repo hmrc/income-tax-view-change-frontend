@@ -171,9 +171,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccount] = {
     for {
-      poaOneDocDetail <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
-      latestDocumentDetail <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
+      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
+      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
       poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
     } yield {
 
@@ -184,7 +184,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       PaymentOnAccount(
         poaOneTransactionId = poaOneDocDetail.transactionId,
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
-        taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+        taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
         paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
         paymentOnAccountTwo = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
       )
@@ -193,7 +193,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def arePoAsBeforeTaxReturnDeadline(poaTwoDate: Option[LocalDate]): Option[Boolean] = {
     for {
-      poaTwoDeadline <- taxReturnDeadlineOf(poaTwoDate)
+      poaTwoDeadline             <- taxReturnDeadlineOf(poaTwoDate)
       poaTwoDateIsBeforeDeadline <- poaTwoDate.map(_.isBefore(poaTwoDeadline))
     } yield {
       Logger("application").debug(s"PoA 1 - documentDueDate: $poaTwoDate, TaxReturnDeadline: $poaTwoDeadline")
@@ -202,11 +202,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA- POA 1") &&
-      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+    !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA - POA 2") &&
-      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+    !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
     isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
