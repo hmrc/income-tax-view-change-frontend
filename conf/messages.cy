@@ -715,7 +715,7 @@ nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
-nextUpdates.optOutOneYear                                       = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to opt out of quarterly updates and report annually instead.
+nextUpdates.optOutOneYear                                       = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
 
 sections.open.all												= Dangos pob adran
