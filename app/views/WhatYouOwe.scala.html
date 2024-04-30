@@ -325,15 +325,15 @@
     if(isAgent) messages("whatYouOwe.payments-made-agent") else messages("whatYouOwe.payments-made")
 }
 
-    @getClaimToAdjustPoaSection = @{
-        claimToAdjustViewModel.claimToAdjustTaxYear match {
-            case Some(value) =>
-                link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+@getClaimToAdjustPoaSection = @{
+    claimToAdjustViewModel.claimToAdjustTaxYear match {
+        case Some(value) =>
+            link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
                 messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
                 id = Some("adjust-poa-link"))
-            case None => Html("")
-        }
+        case None => Html("")
     }
+}
 
 @mainTemplate(
     pageTitle = messages(getHeading),
