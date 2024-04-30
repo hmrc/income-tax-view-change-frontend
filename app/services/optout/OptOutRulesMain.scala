@@ -28,6 +28,11 @@ object OptOutRulesMain extends App {
     toQuery("N", "U", "V", "U"),
     toQuery("N", "U", "U", "V"),
     toQuery("N", "U", "V", "V"),
+
+    toQuery("Y", "V", "U", "U"),
+    toQuery("Y", "U", "V", "U"),
+    toQuery("Y", "U", "U", "V"),
+    toQuery("Y", "U", "V", "V"),
   )
 
   println()

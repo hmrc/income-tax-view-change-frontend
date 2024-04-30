@@ -5,16 +5,16 @@
 - all lines starting with a dash '-' are comments
 
 - if previous year finalised and previous is voluntary then can opt-out from previous year
-N,V,U,U,PY
+N,V,(M|A|U),(M|A|U),PY
 
 -if current year is voluntary then can opt-out from current year
-.,U,V,U,CY
+.,(M|A|U),V,(M|A|U),CY
 
 - if next year is voluntary then can opt-out from next year
-.,U,U,V,NY
+.,(M|A|U),(M|A|U),V,NY
 
 -if current year is voluntary and next year is unknown then can opt-out from next year
-.,U,V,U,NY
+.,(M|A|U),V,(M|A|U),NY
 
 - rule format:
 - finalized,previous-year,current-year,next-year,opt-out-option

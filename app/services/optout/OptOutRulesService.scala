@@ -23,7 +23,7 @@ import scala.util.matching.Regex
 
 case class Rule(ruleWithOption: String) {
   private val ruleWithoutOption: String = ruleWithOption.substring(0, ruleWithOption.lastIndexOf(","))
-  def ruleWithoutOptionRegEx: Regex =  ruleWithoutOption.r
+  def ruleWithoutOptionRegEx: Regex =   s"""$ruleWithoutOption""".r
 }
 
 object OptOutRulesService {
@@ -70,7 +70,7 @@ class OptOutRulesService {
   }
 
   private val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r
-  private val optOutRuleRegex: Regex = """^(\.|Y|N),(\.|U|A|V|M),(\.|U|A|V|M),(\.|U|A|V|M),(PY|CY|NY)$""".r
+  private val optOutRuleRegex: Regex = """^.*?,.*?,.*?,.*?,.*?""".r
   private val onlyRuleLinesFun: String => Boolean = v => v.trim.nonEmpty && !v.startsWith("-") && optOutRuleRegex.matches(v)
   private val toRule: String => Rule = v => Rule(v)
   private val isMatch: Rule => String => Boolean = r => query => r.ruleWithoutOptionRegEx.matches(query)
