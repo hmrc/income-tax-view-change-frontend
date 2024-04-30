@@ -44,7 +44,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 object ChargeSummaryController {
-  case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
+  case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true)
 }
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
