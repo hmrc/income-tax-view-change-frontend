@@ -190,8 +190,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
-    (documentDetail.documentDescription.contains("ITSA- POA 1") && !documentDetail.outstandingAmount.contains(BigDecimal(0))) ||
-    (documentDetail.documentDescription.contains("ITSA - POA 2") && !documentDetail.outstandingAmount.contains(BigDecimal(0)))
+    isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
