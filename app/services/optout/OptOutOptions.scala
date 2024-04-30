@@ -26,7 +26,7 @@ trait OptOutOptions {
 }
 
 
-//todo: reconsider this design, this is a tactical implementation onlys
+//todo: to be replaced, this is a tactical implementation only
 class OptOutOptionsTacticalSolution extends OptOutOptions {
 
   def getOptOutOptionsFor(finalisedStatus: Boolean,
