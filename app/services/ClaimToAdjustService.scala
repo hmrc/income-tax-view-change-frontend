@@ -55,7 +55,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     {
       for {
         poa1 <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-        poa2 <- documentDetails.filter(isUnPaidPoATwo).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+        poa2 <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
       } yield {
         if (poa1 == poa2) { // TODO: what about scenario when both are None? this is not expect to be an error
           Right(Some(poa1))
@@ -102,7 +102,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccount] = {
     for {
       poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail          <- documentDetails.filter(isUnPaidPoATwo).sortBy(_.taxYear).reverse.headOption
+      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
       latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
       poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
     } yield {
@@ -185,7 +185,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     documentDetail.documentDescription.contains("ITSA- POA 1") &&
     !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
-  private val isUnPaidPoATwo: DocumentDetail => Boolean = documentDetail =>
+  private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA - POA 2") &&
     !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
