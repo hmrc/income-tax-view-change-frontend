@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package views.nextUpdates
 
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
-import views.html.NextUpdates
+import views.html.nextUpdates.NextUpdates
 
 import java.time.LocalDate
 
@@ -54,8 +54,9 @@ class NextUpdatesViewSpec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
+  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+  })
 
   "Next Updates page" should {
 

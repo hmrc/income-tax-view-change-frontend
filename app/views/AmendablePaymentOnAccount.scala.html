@@ -1,0 +1,166 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.incomeSourceDetails.TaxYear
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import _root_.implicits.ImplicitCurrencyFormatter._
+
+@this(
+    p: p,
+    link: link,
+    govukButton : GovukButton,
+    mainTemplate: unifiedLayout,
+    continueButton: ContinueButton,
+    govukInsetText : GovukInsetText,
+    hmrcPageHeading: HmrcPageHeading,
+    govukSummaryList : GovukSummaryList
+)
+
+@(
+    poaOneTransactionId: String,
+    poaTwoTransactionId: String,
+    isAgent: Boolean,
+    taxYearModel: TaxYear,
+    poaOneFullAmount: BigDecimal,
+    poaTwoFullAmount: BigDecimal
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"paymentOnAccount.$key", args: _*)
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@getChargeSummaryUrl(id: String) = @{
+    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(taxYearModel.endYear, id).url
+    else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, id).url
+}
+
+@getWhatYouNeedToKnowUrl = @{
+    controllers.routes.WhatYouNeedToKnowController.show(isAgent).url
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some("/"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-xl"),
+        section = Some(getMessage("caption", taxYearModel.startYear.toString, taxYearModel.endYear.toString)),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @p(){
+        @getMessage("p1")
+        @link(
+            link = getMessage("class4NationalInsurance.link"),
+            messageKey = getMessage("class4NationalInsurance.link.text"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank")
+        )
+        @getMessage("p2")
+    }
+
+    @govukInsetText(InsetText(
+        content = Text(getMessage("inset-text"))
+    ))
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("table-heading.key"))
+                ),
+                value = Value(
+                    classes = "govuk-summary-list__value govuk-table__cell--numeric",
+                    content = HtmlContent(poaOneFullAmount.toCurrencyString)
+                ),
+            ),
+        ),
+        card = Some(Card(
+            title = Some(CardTitle(
+                content = Text(getMessage("table-heading-1"))
+            )),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = getChargeSummaryUrl(poaOneTransactionId),
+                        content = Text(getMessage("table-heading.link")),
+                        attributes = Map("id" -> "poa1-more-details-date-link")
+                    )
+                )
+            ))
+        ))
+    ))
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("table-heading.key"))
+                ),
+                value = Value(
+                    classes = "govuk-summary-list__value govuk-table__cell--numeric",
+                    content = HtmlContent(poaTwoFullAmount.toCurrencyString)
+                ),
+            ),
+        ),
+        card = Some(Card(
+            title = Some(CardTitle(
+                content = Text(getMessage("table-heading-2"))
+            )),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = getChargeSummaryUrl(poaTwoTransactionId),
+                        content = Text(getMessage("table-heading.link")),
+                        attributes = Map("id" -> "poa2-more-details-date-link")
+                    )
+                )
+            ))
+        ))
+    ))
+
+    @p(){ @getMessage("p3") }
+
+    <div class="govuk-button-group govuk-!-padding-top-3">
+        @govukButton(Button(
+            content = Text(getMessage("button")),
+            href = Some(getWhatYouNeedToKnowUrl)
+        ))
+        @link(
+            link = getHomePageUrl,
+            messageKey = getMessage("cancel.link")
+        )
+    </div>
+}

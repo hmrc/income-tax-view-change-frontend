@@ -14,8 +14,8 @@ GET         /agents/client-income-tax                                     contro
 GET         /agents                                                       controllers.HomeController.showAgent
 
 #NextUpdates
-GET         /next-updates                                                 controllers.NextUpdatesController.getNextUpdates(origin: Option[String] ?= None)
-GET         /agents/next-updates                                          controllers.NextUpdatesController.getNextUpdatesAgent
+GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
+GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
@@ -146,6 +146,14 @@ GET          /agents/how-to-claim-refund                                  contro
 
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
+
+# amend POAs
+
+GET         /adjust-poa/start                                             controllers.AmendablePOAController.show(isAgent: Boolean = false)
+GET         /agents/adjust-poa/start                                      controllers.AmendablePOAController.show(isAgent: Boolean = true)
+
+GET         /adjust-poa/what-you-need-to-know                             controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
+GET         /agents/adjust-poa/what-you-need-to-know                      controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = true)
 
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes

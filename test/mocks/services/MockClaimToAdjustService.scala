@@ -16,23 +16,59 @@
 
 package mocks.services
 
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import connectors.CalculationListConnector
+import models.core.Nino
+import models.incomeSourceDetails.TaxYear
+import models.paymentOnAccount.PaymentOnAccount
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.ClaimToAdjustService
-import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
 trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
+  val claimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockClaimToAdjustService)
-  }
+  val calculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
 
+  def setupMockGetPaymentsOnAccount(): Unit =
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+      .thenReturn(
+        Future.successful(
+          Right(
+            Some(
+              PaymentOnAccount(
+                poaOneTransactionId = "poaOne-Id",
+                poaTwoTransactionId = "poaTwo-Id",
+                taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+                paymentOnAccountOne = 5000.00,
+                paymentOnAccountTwo = 5000.00
+              )
+            )
+          )
+        )
+      )
+
+  def setupMockGetPaymentsOnAccountBuildFailure(): Unit =
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+      .thenReturn(
+        Future.successful(
+          Right(
+            None
+          )
+        )
+      )
+
+  def setupMockGetPaymentsOnAccountFailure(): Unit =
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+      .thenReturn(
+        Future.successful(
+          Left(
+            new Exception("Unexpected Error occurred")
+          )
+        )
+      )
 }
