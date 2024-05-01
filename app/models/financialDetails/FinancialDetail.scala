@@ -75,20 +75,6 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  def allocation(implicit dateService: DateServiceInterface): Option[PaymentsWithChargeType] = items
-    .map { subItems =>
-      subItems.collect {
-        case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
-          Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
-            method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-            dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
-      }
-    }
-    .collect {
-      case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
-    }
-    .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
-
   def getCreditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 }
 
@@ -144,6 +130,7 @@ object FinancialDetail {
     val CTypeAccepted = "Balancing"
 
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
+
     val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT,
       CTypeSL, CTypeCancelled, CTypeAccepted)
 

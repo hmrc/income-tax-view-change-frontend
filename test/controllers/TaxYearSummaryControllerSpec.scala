@@ -639,7 +639,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockShowInternalServerError()
         val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
     "there was a problem retrieving the calculation for the user" should {

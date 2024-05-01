@@ -279,7 +279,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockShowInternalServerError()
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
     "there was a problem retrieving the charges for the user" should {

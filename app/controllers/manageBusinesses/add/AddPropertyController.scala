@@ -90,7 +90,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
       case _ =>
-        Logger("application").error(s"[AddPropertyControllers][handleValidForm] - Unexpected response, isAgent = $isAgent")
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
         Future.successful(showInternalServerError(isAgent))
     }
   }

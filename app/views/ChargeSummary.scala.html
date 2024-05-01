@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.PaymentsWithChargeType
@@ -45,7 +46,7 @@
 )
 @(currentDate: LocalDate,
     documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
-    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean
@@ -231,8 +232,6 @@
 
     @if(hasPaymentBreakdown && !isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
-            paymentAllocations,
-            payments,
             documentDetailWithDueDate,
             paymentBreakdown,
             latePaymentInterestCharge,
@@ -313,16 +312,16 @@
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
-                            documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+                            documentDetail.originalAmount.get.toCurrency
                         }</td>
                     </tr>
                 }
 
                 @if(latePaymentInterestCharge) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
 
@@ -330,7 +329,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFromCodingOut, taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell">@{documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency}</td>
+                        <td class="govuk-table__cell">@{documentDetail.originalAmount.get.toCurrency}</td>
                     </tr>
                 }
 

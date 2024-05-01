@@ -62,7 +62,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       else handleShowRequest(None, incomeSourceType, isAgent)
     }.recover {
       case ex =>
-        Logger("application").error(s"[ReportingMethodChangeErrorController][show] - ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
     }
   }
@@ -83,7 +83,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
             )
           )
         case None =>
-          Logger("error").info("[ReportingMethodChangeErrorController][handleShowRequest]: " +
+          Logger("error").info("" +
             s"could not find incomeSourceId for $incomeSourceType")
           showInternalServerError(isAgent)
       }

@@ -57,10 +57,10 @@ class FeedbackConnector @Inject()(val http: HttpClient,
       resp =>
         resp.status match {
           case OK =>
-            Logger("application").info(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
+            Logger("application").info(s"RESPONSE status: ${resp.status}")
             Right(())
           case status =>
-            Logger("application").error(s"[FeedbackConnector][submit] - RESPONSE status: ${resp.status}")
+            Logger("application").error(s"RESPONSE status: ${resp.status}")
             Left(status)
         }
     }

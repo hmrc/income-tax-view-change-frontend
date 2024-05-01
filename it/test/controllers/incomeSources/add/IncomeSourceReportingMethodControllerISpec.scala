@@ -192,7 +192,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.equals(API1878)) {
       And("API 1878 getITSAStatus returns an error response")
-      stubGetITSAStatusDetailsError
+      stubGetITSAStatusDetailsError()
     } else {
       And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
       ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)

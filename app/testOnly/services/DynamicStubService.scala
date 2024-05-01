@@ -23,8 +23,8 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.Nino
-import uk.gov.hmrc.http.HeaderCarrier
+import testOnly.models.{DataModel, Nino}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,37 +35,45 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
 
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
                               (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("[CalculationService][overwriteCalculationList] - " +
+    Logger("application").debug("" +
       s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     dynamicStubConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
   }
 
-  def getITSAStatusDetail(taxYear: TaxYear, nino: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusResponseModel] = {
+  def getITSAStatusDetail(taxYear: TaxYear, nino: String, futureYears: Boolean = false)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
 
     itsaStatusConnector.getITSAStatusDetail(
       nino = nino,
       taxYear = taxYear.formatTaxYearRange,
-      futureYears = false,
+      futureYears = futureYears,
       history = false
     ) map {
       case Right(itsaStatus: List[ITSAStatusResponseModel]) if itsaStatus.nonEmpty =>
-        Logger("application").info(s"[DynamicStubService][getITSAStatusDetail] - Success! >! ITSA Status Response Model: $itsaStatus !<")
-        itsaStatus.head
+        Logger("application").info(s"Success! >! ITSA Status Response Model: $itsaStatus !<")
+        itsaStatus
       case Left(error) =>
-        Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] $error")
-        throw new Exception("[ITSAStatusService][getITSAStatusDetail] - Failed to retrieve ITSAStatus")
+        Logger("application").error(s"$error")
+        throw new Exception("Failed to retrieve ITSAStatus")
       case _ =>
-        Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] Unexpected error. List of ITSAStatusResponseModels was empty!")
-        throw new Exception("[ITSAStatusService][getITSAStatusDetail] - Unexpected error. List of ITSAStatusResponseModels was empty!")
+        Logger("application").error(s"Unexpected error. List of ITSAStatusResponseModels was empty!")
+        throw new Exception("Unexpected error. List of ITSAStatusResponseModels was empty!")
     }
   }
 
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, ITSAStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("[ITSAStatusService][overwriteItsaStatus] - " +
+    Logger("application").debug("" +
       s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
   }
+
+  def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    dynamicStubConnector.addData(dataModel).map { response =>
+      Logger("application").info(s"${response.status} " + response.body)
+      response
+    }
+  }
+
 
 }

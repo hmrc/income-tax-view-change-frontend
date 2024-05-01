@@ -141,10 +141,10 @@ object TransitionProfitRow {
     (incomeTaxCharged, totalTaxableProfit) match {
       case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))
       case (None, Some(_)) =>
-        Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing incomeTaxChargedOnTransitionProfits")
+        Logger("application").warn(s"missing incomeTaxChargedOnTransitionProfits")
         None
       case (Some(_), None) =>
-        Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing totalTaxableTransitionProfit")
+        Logger("application").warn(s"missing totalTaxableTransitionProfit")
         None
       case _ => None
     }
