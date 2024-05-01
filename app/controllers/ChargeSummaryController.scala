@@ -38,9 +38,11 @@ import utils.FallBackBackLinks
 import views.html.ChargeSummary
 import views.html.errorPages.CustomNotFoundError
 import ChargeSummaryController._
+import cats.data.EitherT
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 object ChargeSummaryController {
 
@@ -55,8 +57,10 @@ object ChargeSummaryController {
 
   case class ErrorCode(message: String, code: Int = 0, showInternalServerError: Boolean = true) extends RuntimeException(message)
 
+
   type ItvcResponse[T]  = Either[ErrorCode, T]
   type ItvcResult  = Future[Result]
+  type ItvcFResponse[T]  = Future[ItvcResponse[T]]
 
   implicit class ValueToEither[V](v: V) {
     def toRightE: Right[ErrorCode, V] = Right(v)
@@ -72,6 +76,18 @@ object ChargeSummaryController {
 
   implicit class TypeToFuture[T](t: T) {
     def toFuture: Future[T] = Future.successful(t)
+  }
+
+  implicit class FEitherToEitherT[T](e: Future[Either[ErrorCode, T]]) {
+    def unpack: EitherT[Future, ErrorCode, T] = EitherT(e)
+  }
+
+  implicit class TypeToEitherT[T](t: T) {
+    def unpack: EitherT[Future, ErrorCode, T] = EitherT(Future.successful(Right[ErrorCode, T](t).asInstanceOf[Either[ErrorCode, T]]))
+  }
+
+  implicit class EitherToEitherT[T](e: Either[ErrorCode, T]) {
+    def unpack: EitherT[Future, ErrorCode, T] = EitherT(Future.successful(e))
   }
 
 }
@@ -177,6 +193,30 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
     processSteps() recover {
       case ec: ErrorCode => onError(ec.message, request.isAgent, showInternalServerError = ec.showInternalServerError)
+    }
+  }
+
+  def doShowChargeSummaryWithEitherT(request: ChargeSummaryViewRequest)
+                         (implicit user: MtdItUser[_], dateService: DateServiceInterface): ItvcResult = {
+
+    def processSteps(): EitherT[Future, ErrorCode, Result] = for {
+      sessionGatewayPage <- getGatewayPage(user).unpack
+      documentDetailWithDueDate <- getDocumentDetailWithDueDate(request).unpack
+      financialDetails <- getFinancialDetails(request).unpack
+      paymentBreakdown <- paymentBreakdown(request.isLatePaymentCharge, financialDetails).unpack
+      paymentAllocationEnabled <- isEnabled(PaymentAllocation).unpack
+      paymentAllocations <- paymentAllocations(paymentAllocationEnabled, financialDetails).unpack
+      _ <- mandatoryViewDataPresent(request.isLatePaymentCharge, documentDetailWithDueDate).unpack
+      _ <- codingOutNotDisabled(documentDetailWithDueDate).unpack
+      viewDataE <- fetchChargeHistory(ChargeSummaryViewData(request, sessionGatewayPage, documentDetailWithDueDate, paymentBreakdown, paymentAllocationEnabled, paymentAllocations)).unpack
+      viewData <- viewDataE.unpack
+      _ <- audit(viewData).unpack
+      result <- view(viewData).unpack
+    } yield result
+
+    processSteps().value.map {
+      case Right(result) => result
+      case Left(ec) => onError(ec.message, request.isAgent, showInternalServerError = ec.showInternalServerError)
     }
   }
 
