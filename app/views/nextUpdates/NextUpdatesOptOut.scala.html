@@ -56,7 +56,9 @@
 
 	@if(optOutMessage.canOptOut){
 		@p(){
-			@messages("nextUpdates.optOutOneYear", optOutMessage.firstYear.startYear.toString, optOutMessage.firstYear.endYear.toString)
+			<span id="optout-message">
+				@messages("nextUpdates.optOutOneYear", optOutMessage.firstYear.startYear.toString, optOutMessage.firstYear.endYear.toString)
+			</span>
 		}
 	}
 
