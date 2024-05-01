@@ -22,6 +22,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FinancialDetailsConnector
+import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.GatewayPage
@@ -41,6 +42,10 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
+object ChargeSummaryController {
+  case class ErrorCode(message: String)
+}
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
@@ -62,7 +67,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] =
+  lazy val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
@@ -154,26 +159,61 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
-          Ok(chargeSummaryView(
-            currentDate = dateService.getCurrentDate,
-            documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-            gatewayPage = sessionGatewayPage,
-            paymentBreakdown = paymentBreakdown,
-            chargeHistory = chargeHistory,
-            paymentAllocations = paymentAllocations,
-            payments = paymentsForAllYears,
-            chargeHistoryEnabled = isEnabled(ChargeHistory),
-            paymentAllocationEnabled = paymentAllocationEnabled,
-            latePaymentInterestCharge = isLatePaymentCharge,
-            codingOutEnabled = isEnabled(CodingOut),
-            btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent,
-            isMFADebit = isMFADebit
-          ))
+
+          mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
+            case Right(_) =>
+
+              Ok(chargeSummaryView(
+                currentDate = dateService.getCurrentDate,
+                documentDetailWithDueDate = documentDetailWithDueDate,
+                backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+                gatewayPage = sessionGatewayPage,
+                paymentBreakdown = paymentBreakdown,
+                chargeHistory = chargeHistory,
+                paymentAllocations = paymentAllocations,
+                payments = paymentsForAllYears,
+                chargeHistoryEnabled = isEnabled(ChargeHistory),
+                paymentAllocationEnabled = paymentAllocationEnabled,
+                latePaymentInterestCharge = isLatePaymentCharge,
+                codingOutEnabled = isEnabled(CodingOut),
+                btaNavPartial = user.btaNavPartial,
+                isAgent = isAgent,
+                isMFADebit = isMFADebit
+              ))
+
+            case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+          }
+
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
+    }
+  }
+
+  def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): Either[ErrorCode, Boolean] = {
+
+    val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !(isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment))
+    val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
+    val viewSection3 = isEnabled(ChargeHistory) && (isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
+
+    val values = List(
+      (viewSection1, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount"),
+      (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
+      (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined, "Late Payment Interest Amount"),
+      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount")
+    )
+
+    val undefinedOptions = values.filter(_._1).flatMap {
+      case (_, true, _) => None
+      case (_, false, name) => Some(name)
+    }
+
+    if (undefinedOptions.isEmpty) Right(true)
+    else {
+      val valuePhrase = if (undefinedOptions.size > 1) "values" else "value"
+      val msg = s"Missing view $valuePhrase: ${undefinedOptions.mkString(", ")}"
+      Logger("application").error(msg)
+      Left(ErrorCode(msg))
     }
   }
 
