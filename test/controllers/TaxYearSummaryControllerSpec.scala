@@ -72,7 +72,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     mockAuthService,
     app.injector.instanceOf[NavBarPredicate],
     mockAuditingService,
-    mockClaimToAdjustService
+    claimToAdjustService
   )(appConfig,
     app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],
