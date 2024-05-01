@@ -219,7 +219,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.show().url)
         link.map(_.text) shouldBe Some(messages("home.updates.view"))
       }
       "is empty except for the title" when {
@@ -229,7 +229,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.show().url)
         link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
       }
     }

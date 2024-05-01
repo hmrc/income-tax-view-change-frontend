@@ -1851,8 +1851,10 @@ manageBusinesses.check-answers.change                                    = Chang
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	What you need to know
 claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	What you need to know
-claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Adjust payments on account for 2023 to 2024 tax year
-claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   You can adjust your payments on account at any point before submitting your tax return for 2023 to 2024, and no later than 31 January 2025.
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   You can adjust your payments on account at any point before submitting your tax return for {0} to {1}, and no later than
+claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
+claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
 claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
 claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   If your next tax bill is lower than you’d expected and you’ve overpaid through your payments on account, we’ll credit your account.
 claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Interest charges
@@ -1863,3 +1865,19 @@ claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Cont
 claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
+
+
+paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
+paymentOnAccount.heading                             = Adjusting your payments on account
+paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
+paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions
+paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
+paymentOnAccount.p2                                  = to be lower than the previous tax year.
+paymentOnAccount.inset-text                          = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.
+paymentOnAccount.table-heading-1                     = First payment on account
+paymentOnAccount.table-heading.link                  = More details
+paymentOnAccount.table-heading.key                   = Full amount
+paymentOnAccount.table-heading-2                     = Second payment on account
+paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
+paymentOnAccount.button                              = Adjust my payments on account
+paymentOnAccount.cancel.link                         = Cancel

@@ -16,6 +16,7 @@
 
 package views.claimToAdjustPoa
 
+import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -30,10 +31,12 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  val testBackUrl: String = "/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel"
+  val testBackUrl: String = "/report-quarterly/income-and-expenses/view"
+  val testOpenUrlInNewTab: String =
+    "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
   class Setup(isAgent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(backUrl = testBackUrl, isAgent = isAgent)
+    val view: Html = whatYouNeedToKnowView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
@@ -45,7 +48,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "render the caption" in new Setup {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.caption")
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
       }
 
       "render the main heading" in new Setup {
@@ -53,7 +56,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "render the first paragraph" in new Setup {
-        document.getElementById("p1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p1")
+        document.getElementById("p1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p1", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString, (fixedDate.getYear + 2).toString)
       }
 
       "render the warning text" in new Setup {
@@ -82,7 +85,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
 
       "render the newTabLinkHTML with href" in new Setup {
         document.select("a.govuk-link").get(4).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.link")
-        document.select("a.govuk-link").get(4).attr("href") shouldBe "#"
+        document.select("a.govuk-link").get(4).attr("href") shouldBe testOpenUrlInNewTab
       }
 
       "have a 'Continue' button" in new Setup {
@@ -90,9 +93,8 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "have a 'Cancel' button with backUrl" in new Setup {
-        val secondElement = elements.get(1)
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
-        secondElement.attr("href") shouldBe testBackUrl
+        document.getElementById("cancel").attr("href") shouldBe testBackUrl
       }
   }
 }

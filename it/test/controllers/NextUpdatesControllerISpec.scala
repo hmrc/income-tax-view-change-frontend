@@ -20,11 +20,13 @@ import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import config.featureswitch.OptOut
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -180,11 +182,17 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a Opt Out Feature Switch Enabled" in {
         enable(OptOut)
 
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(dateService.getCurrentTaxYearEnd)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
@@ -204,12 +212,19 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
           elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+        )
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
           elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
           elementTextBySelector("#updates-software-link")
           (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
             "to keep digital records of all your business income and expenses. You must submit these " +
             "updates through your software by each date shown."),
         )
+
       }
 
       "the user has a Opt Out Feature Switch Disabled" in {
@@ -244,11 +259,47 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         )
       }
     }
+
+    "show Internal Server Error page" when {
+      "Opt Out feature switch is enabled" when {
+        "ITSA Status API Failure" in {
+          enable(OptOut)
+
+          val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+
+          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+          AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+          Then("show Internal Server Error Page")
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitleIndividual("standardError.heading", isErrorPage = true)
+          )
+        }
+      }
+    }
+
   }
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {
-      testIncomeSourceDetailsCaching(false, 2,
+      testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
         () => IncomeTaxViewChangeFrontend.getNextUpdates)
     }
   }

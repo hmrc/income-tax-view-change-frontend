@@ -16,13 +16,14 @@
 
 package controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.financialDetails.PoaAndTotalAmount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
@@ -33,56 +34,51 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val view: WhatYouNeedToKnow,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            auth: AuthenticatorPredicate)
+                                            implicit val itvcErrorHandler: ItvcErrorHandler,
+                                            auth: AuthenticatorPredicate,
+                                            val claimToAdjustService: ClaimToAdjustService,
+                                            val calculationListService: CalculationListService,
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  private def getBackUrl(isAgent: Boolean): String = {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
-  }
-
-//  private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): Call = {
-//    (isAgent, totalAmountLessThanPoa) match {
-//      case (false, false) => routes.WhatYouNeedToKnowController.show(isAgent)
-//      case (false, _) => routes.WhatYouNeedToKnowController.show(isAgent)
-//      case (_, false) => routes.WhatYouNeedToKnowController.show(isAgent)
-//      case (_, _) => routes.WhatYouNeedToKnowController.show(isAgent)
-//    }  }
+    private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
+      ((isAgent, totalAmountLessThanPoa) match {
+        case (false, false) => controllers.routes.HomeController.show()
+        case (false, _) => controllers.routes.HomeController.show()
+        case (_, false) => controllers.routes.HomeController.show()
+        case (_, _) => controllers.routes.HomeController.show()
+      }).url  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-  implicit user =>
-      handleRequest(
-        isAgent = isAgent,
-        backUrl = getBackUrl(isAgent)
-      )
-  }
-
-  def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future.successful {
-      Ok(view(isAgent, backUrl))
-    }
-  }.recover {
-    case ex =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
-      errorHandler.showInternalServerError()
+    implicit user =>
+      claimToAdjustService.getPoATaxYear.flatMap {
+        case Right(Some(poaTaxYear)) =>
+          Future.successful(Ok(view(isAgent, poaTaxYear)))
+        case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest]")
+          Future.successful(showInternalServerError(isAgent))
+        case Left(ex) =>
+          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+          Future.successful(showInternalServerError(isAgent))
+      }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit request =>
-      handleContinueRequest(isAgent)
-  }
-
-  def handleContinueRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future.successful(Ok)
-  }
-
-  def handleCancelRequest(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit request =>
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
-  }
+    implicit user =>
+      println("AAAAAA")
+      claimToAdjustService.getDocumentDetail.flatMap {
+        case Right(poaModel: PoaAndTotalAmount) => {
+          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
+            Future.successful(Redirect(getRedirect(isAgent = isAgent, totalAmountLessThanPoa = false)))
+          } else {
+            Future.successful(Redirect(getRedirect(isAgent = isAgent, totalAmountLessThanPoa = true)))
+          }
+        }
+        case Left(error: Throwable) =>
+          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
+          Future.successful(showInternalServerError(isAgent))
+        }
+      }
 }

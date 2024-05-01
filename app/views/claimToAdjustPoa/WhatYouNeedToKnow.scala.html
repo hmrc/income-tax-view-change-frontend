@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 @import views.html.helpers.injected.InputHelper
+@import views.html.layouts.unifiedLayout
 
 
 @this(
@@ -33,7 +34,17 @@
         govukWarningText : GovukWarningText,
         inputHelper: InputHelper,
 )
-@(isAgent: Boolean, backUrl: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+
+@(isAgent: Boolean, poaTaxYear: TaxYear)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+
+@getSubmitUrl = @{
+    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.submit(isAgent).url
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
 
 @getMessage(key: String, args: String*) = @{
  messages(s"claimToAdjustPoa.whatYouNeedToKnow.$key", args: _*)
@@ -41,23 +52,29 @@
 
 @newTabLinkHTML(link: String, linkText: String) = {
     <p class="govuk-body">
-        @linkText <a href="#" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
+        @linkText <a href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
     </p>
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
-    backUrl = Some(backUrl),
+    backUrl = Some("/"),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true) {
 
-    <span class="govuk-caption-xl" id="caption">@getMessage("caption")</span>
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)</span>
 
     @h1(msg = getMessage("h1"),
      id = Some("h1"))
 
-    @p(id = Some("p1")) {
-        @getMessage("p1")
-    }
+    <p class="govuk-body" id = Some("p1")>
+        @getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)
+        <span> </span>
+        <span class="govuk-body govuk-!-font-weight-bold govuk-body govuk-!-font-size-700">
+        @getMessage("bold", (poaTaxYear.endYear + 1).toString)</span>
+        @getMessage("onlyForWelsh", " ")
+
+    </p>
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
@@ -86,9 +103,11 @@
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
     <div class="govuk-button-group">
-    @govukButton(Button(
-        content = Text(getMessage("continue-button"))
-    ))
-    <a class="govuk-link" id = "3" href="/report-quarterly/income-and-expenses/view/adjust-poa/what-you-need-to-know/cancel">@getMessage("cancel")</a>
+
+        @govukButton(Button(
+            content = Text(getMessage("continue-button")),
+            href = Some(getSubmitUrl)
+        ))
+        <a class="govuk-link" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>
 }
