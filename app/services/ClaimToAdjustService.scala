@@ -92,24 +92,35 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }).map(_.flatten)
   }
 
-  // TODO: Create dependency so getPoaTaxYearForEntryPoint and getPoaForNonCrystallisedTaxYear are hard dependant
-
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
-      case None => Future.successful(Right(None))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(arePoAPaymentsPresent(financialDetails.documentDetails))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => Right(None)
-      }
+    for {
+      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+    } yield res match {
+      case Right(Some(financialDetails)) =>
+        val x = arePoAPaymentsPresent(financialDetails.documentDetails)
+        Right(x)
+      case Right(None) => Right(None)
+      case Left(ex) => Left(ex)
     }
   }
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccount]]] = {
+    for {
+      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+    } yield res match {
+      case Right(Some(financialDetails)) =>
+        val x = getPaymentOnAccountModel(financialDetails.documentDetails)
+        Right(x)
+      case Right(None) => Right(None)
+      case Left(ex) => Left(ex)
+    }
+  }
+
+  private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(getPaymentOnAccountModel(financialDetails.documentDetails))
+        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }
@@ -202,6 +213,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       poaTwoDateIsBeforeDeadline
     }
   }
+
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA- POA 1") &&
     !documentDetail.outstandingAmount.contains(BigDecimal(0))
