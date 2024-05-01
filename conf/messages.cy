@@ -715,6 +715,7 @@ nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
+## todo-MISUV-7349: is part of the message in bold font?
 nextUpdates.optOutOneYear                                       = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
 

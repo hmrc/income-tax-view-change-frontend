@@ -34,7 +34,7 @@ object OptOutService {
   implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
     def toF: Future[Boolean] = opl
       .map(v => Future.successful(v))
-      .getOrElse(Future.successful(false))
+      .getOrElse(Future.successful(false))//todo-MISUV-7349: if the Option[Boolean] here is a None is that an error case
   }
   implicit class TypeToFuture[T](t: T) {
     def toF: Future[T] = Future.successful(t)
