@@ -66,12 +66,15 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear >= currentTaxYearEnd
     val legacyTaxYear = taxYear <= 2023
-    (futureTaxYear, legacyTaxYear) match {
-      case (true, _) =>
-        // tax year cannot be crystallised unless it is in the past
-        Future.successful(Some(false))
+    val futureWithOptionBoolean = (futureTaxYear, legacyTaxYear) match {
+      case (true, _) => Future.successful(Some(false)) /* tax year cannot be crystallised unless it is in the past */
       case (_, true) => getLegacyCrystallisationResult(user, taxYear)
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
+    }
+
+    futureWithOptionBoolean.map {
+      case None => Some(false)//when the flag is not present then default to false i.e not-crystallised
+      case Some(b) => Some(b)
     }
   }
 
