@@ -18,7 +18,7 @@ package forms.adjustPoa
 
 import forms.mappings.{Enumerable, Mappings}
 import play.api.data.Form
-import viewmodels.adjustPoa.checkAnswers.{AllowanceOrReliefHigher, MainIncomeLower, OtherIncomeLower, SelectYourReason}
+import viewmodels.adjustPoa.checkAnswers.{AllowanceOrReliefHigher, MainIncomeLower, MoreTaxedAtSource, OtherIncomeLower, SelectYourReason}
 
 class SelectYourReasonFormProvider extends Mappings {
   def apply(): Form[SelectYourReason] = {
@@ -26,7 +26,8 @@ class SelectYourReasonFormProvider extends Mappings {
     implicit val enumerableAddress: Enumerable[SelectYourReason] =
       Enumerable(Seq(("a" -> MainIncomeLower),
         ("b" -> OtherIncomeLower),
-        ("c" -> AllowanceOrReliefHigher)): _*)
+        ("c" -> AllowanceOrReliefHigher),
+        ("d" -> MoreTaxedAtSource)): _*)
 
     Form(
       "value" -> enumerable[SelectYourReason](s"adjust-poa.select-your-reason.error.required")

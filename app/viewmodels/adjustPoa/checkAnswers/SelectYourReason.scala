@@ -16,9 +16,24 @@
 
 package viewmodels.adjustPoa.checkAnswers
 
+import play.api.libs.json.{JsPath, JsString, Reads, Writes}
+
 sealed trait SelectYourReason
 
 case object MainIncomeLower extends SelectYourReason
 case object OtherIncomeLower extends SelectYourReason
 case object AllowanceOrReliefHigher extends SelectYourReason
+case object MoreTaxedAtSource extends SelectYourReason
+
+object SelectYourReason {
+
+  implicit val reads: Reads[SelectYourReason] = JsPath.read[String].map {
+    case "MainIncomeLower" => MainIncomeLower
+    case "OtherIncomeLower" => OtherIncomeLower
+    case "AllowanceOrReliefHigher" => AllowanceOrReliefHigher
+    case "MoreTaxedAtSource" => MoreTaxedAtSource
+  }
+
+  implicit val writes: Writes[SelectYourReason] = Writes[SelectYourReason](reason => JsString(reason.toString))
+}
 

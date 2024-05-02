@@ -147,8 +147,6 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-=======
-
 # Adjust POA
 
 GET         /adjust-poa/start                                             controllers.AmendablePOAController.show(isAgent: Boolean = false)
@@ -162,6 +160,13 @@ GET          /adjust-poa/change-select-your-reason                        contro
 
 GET          /agents/adjust-poa/select-your-reason                        controllers.adjustPoa.SelectYourReasonController.show(isAgent: Boolean = true, isChange: Boolean = false)
 GET          /agents/adjust-poa/change-select-your-reason                 controllers.adjustPoa.SelectYourReasonController.show(isAgent: Boolean = true, isChange: Boolean = true)
+
+POST         /adjust-poa/select-your-reason                               controllers.adjustPoa.SelectYourReasonController.submit(isAgent: Boolean = false, isChange: Boolean = false)
+POST         /adjust-poa/change-select-your-reason                        controllers.adjustPoa.SelectYourReasonController.submit(isAgent: Boolean = false, isChange: Boolean = true)
+
+POST         /agents/adjust-poa/select-your-reason                        controllers.adjustPoa.SelectYourReasonController.submit(isAgent: Boolean = true, isChange: Boolean = false)
+POST         /agents/adjust-poa/change-select-your-reason                 controllers.adjustPoa.SelectYourReasonController.submit(isAgent: Boolean = true, isChange: Boolean = true)
+
 
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes

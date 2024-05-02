@@ -19,6 +19,7 @@ package services
 import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
 import repositories.PoAAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import viewmodels.adjustPoa.checkAnswers.SelectYourReason
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +42,7 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
-  def setAdjustmentReason(poaAdjustmentReason: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+  def setAdjustmentReason(poaAdjustmentReason: SelectYourReason)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoASessionData) =>
         val newData: PoAAmendmentData = data.poaAmendmentData match {

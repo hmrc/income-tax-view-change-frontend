@@ -16,33 +16,39 @@
 
 package controllers.adjustPoa
 
-import auth.MtdItUser
+import cats.data.EitherT
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
-import enums.JourneyType.{Add, JourneyType}
+import forms.adjustPoa.SelectYourReasonFormProvider
+import models.core.Nino
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.AuthenticatorPredicate
+import views.html.adjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourReasonController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val sessionService: SessionService,
-                                          auth: AuthenticatorPredicate)
+class SelectYourReasonController @Inject()(
+                                            val view: SelectYourReasonView,
+                                            val formProvider: SelectYourReasonFormProvider,
+                                            val sessionService: PaymentOnAccountSessionService,
+                                            val claimToAdjustService: ClaimToAdjustService,
+                                            val authorisedFunctions: AuthorisedFunctions,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching  {
 
 
 //  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
@@ -71,28 +77,65 @@ class SelectYourReasonController @Inject()(val authorisedFunctions: AuthorisedFu
 //    }
 //  }
 
+
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
-      withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
-        Future.successful {
-          Ok("")
+
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+      val result = for {
+        session <- EitherT(sessionService.getMongo)
+        poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+      } yield {
+        (session, poa) match {
+          case (Some(s), Some(p)) =>
+            val form = formProvider.apply()
+            Ok(view(
+              selectYourReasonForm = s.poaAdjustmentReason.fold(form)(form.fill),
+              taxYear = p.taxYear,
+              isAgent = isAgent,
+              isChange = isChange,
+              backUrl = "TODO",
+              useFallbackLink = true))
+          case (None, _) =>
+            Logger("application").error(s"[SelectYourReasonController][handleRequest] Couldn't resolve view, session missing")
+            errorHandler.showInternalServerError()
+          case (_, None) =>
+            Logger("application").error(s"[SelectYourReasonController][handleRequest] Couldn't resolve view, POA missing")
+            errorHandler.showInternalServerError()
         }
-      }.recover {
+      }
+
+      result.fold(
+        ex => {
+          Logger("application").error(s"[SelectYourReasonController][handleRequest]: ${ex.getMessage} - ${ex.getCause}")
+          errorHandler.showInternalServerError()
+        },
+        view => view
+      )
+    }
+
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit request =>
+
+      formProvider.apply()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, TaxYear(2023, 2024), isAgent, isChange, "TODO", true))),
+          value => {
+            for {
+              result <- sessionService.setAdjustmentReason(value)
+            } yield {
+              result match {
+                case Right(value) => Ok(s"${value}")
+                case _ => throw new IllegalArgumentException("")
+              }
+            }
+          }).recover {
         case ex =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
           Logger("application").error(s"[SelectYourReasonController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
           errorHandler.showInternalServerError()
       }
-    }
-
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
-      withSessionData(JourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
-        Future.successful(Ok(""))
-      }
-  }
-
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future.successful(Ok(""))
   }
 }
