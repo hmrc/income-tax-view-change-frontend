@@ -67,7 +67,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
@@ -102,7 +102,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
@@ -136,7 +136,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
@@ -171,7 +171,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
@@ -206,7 +206,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
@@ -234,7 +234,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
@@ -266,7 +266,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val currentYear = 2024
         val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
