@@ -607,6 +607,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getNextUpdates: WSResponse = get(s"/next-updates")
 
+    def getOptOutCheckpoint: WSResponse =
+      get("optout/confirm-opt-out-from-quarterly-reporting/checkpoint")
+
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 
     def getBtaPartial: WSResponse = get(s"/partial")

@@ -17,12 +17,15 @@
 package views.nextUpdates
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.nextUpdates._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, YearStatusDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.FinancialDetailsTestConstants.{currentYear, currentYearMinusOne}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
 import views.html.nextUpdates.NextUpdatesOptOut
@@ -34,7 +37,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
-  class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true) {
+  class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true, showOptOutMessage: Boolean = false) {
 
     val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
       currentYearItsaStatus = true,
@@ -46,7 +49,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val optOutMessage = OptOutMessageResponse()
+    val optOutMessage = OptOutMessageResponse(showOptOutMessage)
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, optOutMessage, checks, "testBackURL")))
   }
 
@@ -62,6 +65,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
     val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
+    val optOutMessage: String = messages("nextUpdates.optOutOneYear")
   }
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
