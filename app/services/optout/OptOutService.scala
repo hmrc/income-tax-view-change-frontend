@@ -78,7 +78,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     for {
       finalisedStatus <- finalisedStatus
       statusMap <- taxYearITSAStatus
-      finalisedStatusBool <- finalisedStatus.toF
+      finalisedStatusBool <- finalisedStatus.toF//if finalised flag is missing from api response then we assume 'false'
       outcomeOptionsResponse <- optOutOptions.getOptOutOptionsFor(finalisedStatusBool,
         YearStatusDetail(previousYear, statusMap(previousYear)),
         YearStatusDetail(currentYear, statusMap(currentYear)),
