@@ -33,7 +33,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, optOutMessage: OptOutMessageResponse,
+@(currentObligations: NextUpdatesViewModel, optOut: OptOutMessageResponse,
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,
@@ -54,10 +54,10 @@
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
-	@if(optOutMessage.canOptOut){
+	@if(optOut.oneYearOptOut){
 		@p(){
 			<span id="optout-message">
-				@messages("nextUpdates.optOutOneYear-1", optOutMessage.firstYear.startYear.toString, optOutMessage.firstYear.endYear.toString)
+				@messages("nextUpdates.optOutOneYear-1", optOut.firstYear.startYear.toString, optOut.firstYear.endYear.toString)
 				@link(link = controllers.optOut.routes.OptOutCheckpointController.show.url, messageKey = "nextUpdates.optOutOneYear-2")
 			</span>
 		}
