@@ -332,7 +332,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         "ITSA Status API Failure" in {
           enable(OptOut)
 
-          val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd)
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
 
 

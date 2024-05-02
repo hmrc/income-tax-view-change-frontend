@@ -26,6 +26,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
+import models.incomeSourceDetails.TaxYear
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -71,6 +72,8 @@ class TestDateService extends DateServiceInterface {
   override def getCurrentTaxYearEnd: Int = 2023
 
   override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
+
+  override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
 
   override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
