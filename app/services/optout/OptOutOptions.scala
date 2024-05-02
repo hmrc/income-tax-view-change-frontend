@@ -25,6 +25,7 @@ trait OptOutOptions {
                           nextYearState: YearStatusDetail ): OptOutMessageResponse
 }
 
+//todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
 class OptOutOptionsTacticalSolution extends OptOutOptions {
 
   def getOptOutOptionsFor(finalisedStatus: Boolean,
@@ -39,7 +40,7 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     (finalisedStatus, isPY_V, isCY_V, isNY_V) match {
       case (false, true, false, false) => OptOutMessageResponse(canOptOut = true, taxYears = Array(previousYearState.taxYear))
       case (false, false, true, false) => OptOutMessageResponse(canOptOut = true, taxYears = Array(currentYearState.taxYear))
-      case (false, false, false, true) =>OptOutMessageResponse(canOptOut = true, taxYears = Array(nextYearState.taxYear))
+      case (false, false, false, true) => OptOutMessageResponse(canOptOut = true, taxYears = Array(nextYearState.taxYear))
       case _ => OptOutMessageResponse()
     }
   }
