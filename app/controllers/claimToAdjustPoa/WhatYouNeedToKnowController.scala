@@ -16,16 +16,17 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.PoaAndTotalAmount
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -45,21 +46,24 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                             val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-    private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
-      ((isAgent, totalAmountLessThanPoa) match {
-        case (false, false) => controllers.routes.HomeController.show()
-        case (false, _) => controllers.routes.HomeController.show()
-        case (_, false) => controllers.routes.HomeController.show()
-        case (_, _) => controllers.routes.HomeController.show()
-      }).url  }
-
-  //continue button redirects to the HomeController successfully
+  private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
+    ((isAgent, totalAmountLessThanPoa) match {
+      case (false, false) => controllers.routes.HomeController.show()
+      case (false, _) => controllers.routes.HomeController.show()
+      case (_, false) => controllers.routes.HomeController.show()
+      case (_, _) => controllers.routes.HomeController.show()
+    }).url
+  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       claimToAdjustService.getPoATaxYear.flatMap {
         case Right(Some(poaTaxYear)) =>
-          Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, totalAmountLessThanPoa = true))))
+          amountComparison map {
+            case Right(value) => Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, totalAmountLessThanPoa = value)))
+            case Left(ex) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+              showInternalServerError(isAgent)
+          }
         case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest]")
           Future.successful(showInternalServerError(isAgent))
         case Left(ex) =>
@@ -68,24 +72,17 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  // I have created a new method to include the check for which amount is greater than the other, feel free to call it
-  // or just include the code as part of the show method
-
-//  def amountComparison(isAgent: Boolean, poaTaxYear: TaxYear): Action[AnyContent] = {
-//    auth.authenticatedAction(isAgent) {
-//    implicit user =>
-//      claimToAdjustService.getDocumentDetail.flatMap {
-//        case Right(poaModel: PoaAndTotalAmount) => {
-//          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
-//            Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, false))))
-//          } else {
-//            Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, true))))
-//          }
-//        }
-//        case Left(error: Throwable) =>
-//          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
-//          Future.successful(showInternalServerError(isAgent))
-//        }
-//      }
-//  }
+  def amountComparison(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, Boolean]] = {
+      claimToAdjustService.getDocumentDetail.map {
+        case Right(poaModel: PoaAndTotalAmount) =>
+          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
+            Right(false)
+          } else {
+            Right(true)
+          }
+        case Left(error: Throwable) =>
+          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
+          Left(error)
+      }
+  }
 }
