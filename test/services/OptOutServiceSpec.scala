@@ -30,7 +30,7 @@ class OptOutServiceSpec extends TestSupport
   with MockCalculationListService
   with MockDateService {
 
-  val taxYear: TaxYear = TaxYear(2021)
+  val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.addYears(-1)
   val crystallised: Boolean = true
 
