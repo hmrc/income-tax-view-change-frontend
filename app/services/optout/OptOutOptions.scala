@@ -25,8 +25,6 @@ trait OptOutOptions {
                           nextYearState: YearStatusDetail ): OptOutMessageResponse
 }
 
-
-//todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
 class OptOutOptionsTacticalSolution extends OptOutOptions {
 
   def getOptOutOptionsFor(finalisedStatus: Boolean,
