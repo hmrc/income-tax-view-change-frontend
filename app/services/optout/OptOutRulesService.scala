@@ -66,7 +66,10 @@ class OptOutRulesService {
     allMatched.flatMap {
       case optOutOptionRegex(outcome) => outcome.split("-")
       case _ => Set("NO")
-    }.sortBy(_.trim).toSet
+    }.sortBy(_.trim) match {
+      case Nil => Set("NO")
+      case v => v.toSet
+    }
   }
 
   private val optOutOptionRegex: Regex = """^.*?,.*?,.*?,.*?,(.*?)""".r

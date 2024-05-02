@@ -1,79 +1,43 @@
 
-(N|Y),M,M,V,NY
+- 22 rule expressions
 
-(N|Y),M,V,M,CY
-
-(N|Y),M,V,U,CY-NY
-
-(N|Y),M,V,V,CY-NY
-
-(N|Y),M,V,A,CY
-
-(N|Y),M,A,V,NY
-
-N,V,M,M,PY
-
-N,V,M,U,PY
-
-N,V,M,V,PY-NY
-
-Y,V,M,V,NY
-
+- PY opt-outs
+N,V,M,(M|U),PY
 N,V,M,A,PY
-
-N,V,V,M,PY-CY
-
-Y,V,V,M,CY
-
-N,V,V,U,PY-CY-NY
-
-Y,V,V,U,CY-NY
-
-N,V,V,V,CY-NY-PY
-
-Y,V,V,V,CY-NY
-
-N,V,V,V,PY,CY-NY
-
-Y,V,V,V,CY-NY
-
-N,V,V,A,PY-CY
-
-Y,V,V,A,CY
-
 N,V,A,(M|U),PY
-
-N,V,A,V,PY-NY
-
-Y,V,A,V,NY
-
 N,V,A,A,PY
 
+- CY opt-outs
+(N|Y),M,V,(M|A),CY
+Y,V,V,(M|A),CY
+(Y|N),U,V,(M|A),CY
+(Y|N),A,V,(M|A),CY
+
+- NY opt-outs
+(N|Y),M,(M|A),V,NY
+Y,V,(M|A),V,NY
+(Y|N),A,A,V,NY
+(Y|N),U,M,V,NY
+(Y|N),U,A,V,NY
+(Y|N),U,U,V,NY
 (Y|N),A,M,V,NY
 
-(Y|N),A,V,M,CY
+- CY-NY opt-outs
+(N|Y),M,V,(U|V),CY-NY
+Y,V,V,(U|V),CY-NY
 
-(Y|N),A,V,U,CY-NY
+Y,V,V,V,CY-NY
+(Y|N),A,V,(U|V),CY-NY
+(Y|N),U,V,(U|V),CY-NY
 
-(Y|N),A,V,V,CY-NY
+- PY-NY opt-outs
+N,V,(M|A),V,PY-NY
 
-(Y|N),A,V,A,CY
+- PY-CY opt-outs
+N,V,V,(M|A),PY-CY
 
-(Y|N),A,A,V,NY
-
-(Y|N),U,M,V,NY
-
-(Y|N),U,V,M,CY
-
-(Y|N),U,V,U,CY-NY
-
-(Y|N),U,V,V,CY-NY
-
-(Y|N),U,V,A,CY
-
-(Y|N),U,A,V,NY
-
-(Y|N),U,U,V,NY
+- PY-CY-NY opt-outs
+N,V,V,(U|V),PY-CY-NY
 
 -/////////////////////////////////////////////////
 - OptOut Option Rules File

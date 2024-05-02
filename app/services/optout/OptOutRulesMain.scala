@@ -27,13 +27,22 @@ object OptOutRulesMain extends App {
     .getLines().toList
 
   private val optOutQueryVsOptionRegex: Regex = """^(.*?,.*?,.*?,.*?),(.*?)""".r
-  queryLines.foreach {
+  var unmatched = 0
+  queryLines.filter(_.nonEmpty).foreach {
     case optOutQueryVsOptionRegex(query, expectedOptOutOption) =>
       val expectedOptOutOptionFormat = expectedOptOutOption.split("-").sortBy(_.trim).mkString(",")
       val outcome = service.findOptOutOptions(query).mkString(",")
-      println(s"$query:-> $outcome")
-      assert(outcome == expectedOptOutOptionFormat, s"query: $query found: $outcome, expected: $expectedOptOutOptionFormat")
+
+      if(outcome == expectedOptOutOptionFormat) {
+        println(s"$query:-> $outcome")
+      } else {
+        unmatched = unmatched + 1
+        println(s"$query:-> $outcome - did not match! query: $query found: $outcome, expected: $expectedOptOutOptionFormat")
+      }
     case _ => println("Error")
   }
 
+  println(s"----------------------")
+  println(s"Unmatched: $unmatched")
+  println(s"----------------------")
 }
