@@ -68,8 +68,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutMessageResponse] = {
 
     val processSteps = for {
-      yearEnd <- dateService.getCurrentTaxYearEnd.toF
-      currentYear <- TaxYear.forYearEnd(yearEnd).toF
+      currentYear <- dateService.getCurrentTaxYear.toF
       previousYear <- currentYear.previousYear.toF
       nextYear <- currentYear.nextYear.toF
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear)
