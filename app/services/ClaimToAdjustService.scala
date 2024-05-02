@@ -46,7 +46,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         val x = arePoAPaymentsPresent(financialDetails.documentDetails)
         Right(x)
       case Right(None) => Right(None)
-      case Left(ex) => Left(ex)
+      case Left(ex) =>
+        Logger("application").error(s"[ClaimToAdjustService][getPoaTaxYearForEntryPoint] There was an error getting FinancialDetailsModel" +
+          s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
+        Left(ex)
     }
   }
 
@@ -58,7 +61,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         val x = getPaymentOnAccountModel(financialDetails.documentDetails)
         Right(x)
       case Right(None) => Right(None)
-      case Left(ex) => Left(ex)
+      case Left(ex) =>
+        Logger("application").error(s"[ClaimToAdjustService][getPoaForNonCrystallisedTaxYear] There was an error getting FinancialDetailsModel" +
+          s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
+        Left(ex)
     }
   }
 
@@ -74,7 +80,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def arePoAPaymentsPresent(documentDetails: List[DocumentDetail]): Option[TaxYear] = {
-    documentDetails.filter(_.documentDescription.exists(description => description.equals("ITSA- POA 1") || description.equals("ITSA - POA 2")))
+    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
@@ -92,39 +98,34 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])(implicit hc: HeaderCarrier): Future[Option[TaxYear]] = {
-    taxYearList match {
-      case ::(head, next) => isTaxYearNonCrystallised(head, nino).flatMap {
-        case true => Future.successful(Some(head))
-        case false => checkCrystallisation(nino, next)
+    taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
+      acc.flatMap {
+        case Some(_) => acc
+        case None => isTaxYearNonCrystallised(item, nino) map {
+          case true => Some(item)
+          case false => None
+        }
       }
-      case Nil => Future.successful(None)
     }
   }
 
-  // Next 2 methods taken from Calculation List Service (with small changes), but I don't like the code duplication. Is there any solution to this?
-  private def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
-
+  private def isFutureTaxYear(taxYear: TaxYear): Boolean = {
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
-    val futureTaxYear = taxYear.endYear >= currentTaxYearEnd
-    if (futureTaxYear) {
+    taxYear.endYear >= currentTaxYearEnd
+  }
+
+  private def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    if (isFutureTaxYear(taxYear)) {
       Future.successful(true)
     } else {
-      isTYSCrystallised(nino, taxYear.endYear).map {
-        case true => false
-        case false => true
+      calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
+        case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      } map {
+        case Some(true) => false
+        case _ => true
       }
-    }
-  }
-
-  private def isTYSCrystallised(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
-    calculationListConnector.getCalculationList(nino, taxYearRange).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-    } map {
-      case Some(true) => true
-      case _ => false
     }
   }
 
@@ -176,5 +177,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] = dueDate => {
     dueDate.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
   }
+
+  private val poaDocumentDescriptions: List[String] = List("ITSA- POA 1", "ITSA - POA 2")
 
 }
