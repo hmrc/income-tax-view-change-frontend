@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.ClaimToAdjustPOA
+package services.claimToAdjust
 
 import auth.MtdItUser
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
@@ -27,7 +27,7 @@ import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector{
+class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector {
 
   object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockCalculationListConnector, dateService)
 
@@ -45,5 +45,52 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
   // TODO: implement UT with referring to correct method under test
 
+  "getPoaTaxYearForEntryPoint method" should {
+    "return an option containing a taxYear" when {
+      "a user has document details relating to PoA data, for a CTA amendable year that is non-crystallised" in {
+      }
+    }
+  }
 
+  "arePoAPaymentsPresent method" should {
+    "return an option containing a taxYear" when {
+      "given a list of DocumentDetail models from the same tax year" when {
+        "POA 1 or 2s are contained within these DocumentDetails" in {
+
+        }
+      }
+    }
+  }
+
+  "getPoaAdjustableTaxYears method" should {
+    "return a list containing just the current TaxYear" when {
+      "the current date is between the POA deadline and tax year end date (31st Feb and 5th April)" in {
+
+      }
+    }
+  }
+
+  "checkCrystallisation method" should {
+    "return a future of an option containing a tax year" when {
+      "the user has not crystallised said given tax year" in {
+
+      }
+    }
+  }
+
+  "isFutureTaxYear method" should {
+    "return true" when {
+      "the tax year given is in a future tax year" in {
+
+      }
+    }
+  }
+
+  "isTaxYearNonCrystallised method" should {
+    "return a future containing true" when {
+      "the user has not crystallised a given tax year" in {
+
+      }
+    }
+  }
 }
