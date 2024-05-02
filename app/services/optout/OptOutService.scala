@@ -48,7 +48,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     val yearEnd = dateService.getCurrentTaxYearEnd
     val currentYear = TaxYear.forYearEnd(yearEnd)
-    val previousYear = currentYear.addYears(-1)
+    val previousYear = currentYear.previousYear
 
     val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
     val previousYearCalcStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
@@ -70,8 +70,8 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     val processSteps = for {
       yearEnd <- dateService.getCurrentTaxYearEnd.toF
       currentYear <- TaxYear.forYearEnd(yearEnd).toF
-      previousYear <- currentYear.addYears(-1).toF
-      nextYear <- currentYear.addYears( +1).toF
+      previousYear <- currentYear.previousYear.toF
+      nextYear <- currentYear.nextYear.toF
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
       finalisedStatusBool <- finalisedStatus.toF

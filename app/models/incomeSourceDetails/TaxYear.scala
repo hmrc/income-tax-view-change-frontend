@@ -28,7 +28,12 @@ case class TaxYear(startYear: Int, endYear: Int) {
   def formatTaxYearRange: String = {
     s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
   }
-  
+
+  def previousYear: TaxYear = addYears(-1)
+
+  def nextYear: TaxYear = addYears( +1)
+
+
 }
 
 object TaxYear {
@@ -66,6 +71,5 @@ object TaxYear {
     require(isValidYear(endYear.toString), "invalid year")
     TaxYear(startYear = endYear - 1, endYear = endYear)
   }
-
 }
 
