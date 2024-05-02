@@ -57,7 +57,7 @@
 	@if(optOut.oneYearOptOut){
 		@p(){
 			<span id="optout-message">
-				@messages("nextUpdates.optOutOneYear-1", optOut.firstYear.startYear.toString, optOut.firstYear.endYear.toString)
+				@messages("nextUpdates.optOutOneYear-1", optOut.oneYearOptOutTaxYear.startYear.toString, optOut.oneYearOptOutTaxYear.endYear.toString)
 				@link(link = controllers.optOut.routes.OptOutCheckpointController.show.url, messageKey = "nextUpdates.optOutOneYear-2")
 			</span>
 		}

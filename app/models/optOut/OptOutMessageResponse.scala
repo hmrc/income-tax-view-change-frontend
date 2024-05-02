@@ -21,5 +21,5 @@ import models.itsaStatus.StatusDetail
 
 case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
 case class OptOutMessageResponse(oneYearOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
-  def firstYear: TaxYear = taxYears(0)
+  def oneYearOptOutTaxYear: TaxYear = taxYears(0)
 }

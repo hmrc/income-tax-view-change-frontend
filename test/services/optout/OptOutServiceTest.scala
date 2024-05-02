@@ -87,8 +87,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) =>
               assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.firstYear.startYear == 2022)
-              assert(r.firstYear.endYear == 2023)
+              assert(r.oneYearOptOutTaxYear.startYear == 2022)
+              assert(r.oneYearOptOutTaxYear.endYear == 2023)
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -156,8 +156,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) =>
               assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.firstYear.startYear == 2023)
-              assert(r.firstYear.endYear == 2024)
+              assert(r.oneYearOptOutTaxYear.startYear == 2023)
+              assert(r.oneYearOptOutTaxYear.endYear == 2024)
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -191,8 +191,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) =>
               assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.firstYear.startYear == 2024)
-              assert(r.firstYear.endYear == 2025)
+              assert(r.oneYearOptOutTaxYear.startYear == 2024)
+              assert(r.oneYearOptOutTaxYear.endYear == 2025)
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -286,8 +286,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) =>
               assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.firstYear.startYear == 2022)
-              assert(r.firstYear.endYear == 2023)
+              assert(r.oneYearOptOutTaxYear.startYear == 2022)
+              assert(r.oneYearOptOutTaxYear.endYear == 2023)
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
