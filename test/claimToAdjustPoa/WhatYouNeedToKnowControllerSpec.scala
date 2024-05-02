@@ -16,6 +16,12 @@
 
 package claimToAdjustPoa
 
+import controllers.WhatYouNeedToKnowController
+
 class WhatYouNeedToKnowControllerSpec {
+
+  object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
+
+  )
 
 }

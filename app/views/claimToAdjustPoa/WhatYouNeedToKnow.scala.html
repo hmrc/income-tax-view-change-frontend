@@ -35,11 +35,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
-
-@getSubmitUrl = @{
-    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.submit(isAgent).url
-}
+@(isAgent: Boolean, poaTaxYear: TaxYear, getRedirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -106,7 +102,7 @@
 
         @govukButton(Button(
             content = Text(getMessage("continue-button")),
-            href = Some(getSubmitUrl)
+            href = Some(getRedirect)
         ))
         <a class="govuk-link" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>

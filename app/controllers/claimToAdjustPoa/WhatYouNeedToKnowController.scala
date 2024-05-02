@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.PoaAndTotalAmount
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -52,11 +53,13 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
         case (_, _) => controllers.routes.HomeController.show()
       }).url  }
 
+  //continue button redirects to the HomeController successfully
+
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       claimToAdjustService.getPoATaxYear.flatMap {
         case Right(Some(poaTaxYear)) =>
-          Future.successful(Ok(view(isAgent, poaTaxYear)))
+          Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, totalAmountLessThanPoa = true))))
         case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest]")
           Future.successful(showInternalServerError(isAgent))
         case Left(ex) =>
@@ -65,20 +68,24 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      println("AAAAAA")
-      claimToAdjustService.getDocumentDetail.flatMap {
-        case Right(poaModel: PoaAndTotalAmount) => {
-          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
-            Future.successful(Redirect(getRedirect(isAgent = isAgent, totalAmountLessThanPoa = false)))
-          } else {
-            Future.successful(Redirect(getRedirect(isAgent = isAgent, totalAmountLessThanPoa = true)))
-          }
-        }
-        case Left(error: Throwable) =>
-          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
-          Future.successful(showInternalServerError(isAgent))
-        }
-      }
+  // I have created a new method to include the check for which amount is greater than the other, feel free to call it
+  // or just include the code as part of the show method
+
+//  def amountComparison(isAgent: Boolean, poaTaxYear: TaxYear): Action[AnyContent] = {
+//    auth.authenticatedAction(isAgent) {
+//    implicit user =>
+//      claimToAdjustService.getDocumentDetail.flatMap {
+//        case Right(poaModel: PoaAndTotalAmount) => {
+//          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
+//            Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, false))))
+//          } else {
+//            Future.successful(Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, true))))
+//          }
+//        }
+//        case Left(error: Throwable) =>
+//          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
+//          Future.successful(showInternalServerError(isAgent))
+//        }
+//      }
+//  }
 }
