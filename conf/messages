@@ -1858,3 +1858,9 @@ paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
+
+# opt out confirm and opt out
+optout.confirmOptOut.heading = Confirm and opt out for the 2022 to 2023 tax year
+optout.confirmOptOut.desc = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.confirmOptOut.confirm = Confirm
+optout.confirmOptOut.cancel = Cancel
