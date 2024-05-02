@@ -23,6 +23,7 @@ import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageR
 import services.optout.OptOutService.BooleanOptionToFuture
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -82,7 +83,9 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield outcomeOptionsResponse
 
     processSteps recover {
-      case _ => OptOutMessageResponse()
+      case e =>
+        Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
+        OptOutMessageResponse()
     }
   }
 }
