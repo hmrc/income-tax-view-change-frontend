@@ -66,25 +66,24 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
 
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutMessageResponse] = {
 
-    val endYear = dateService.getCurrentTaxYearEnd
-
-    val currentYear = TaxYear(endYear)
-    val previousYear = currentYear.addYears(-1)
-    val nextYear = currentYear.addYears(+1)
-
-    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-    val finalisedStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
-
-    for {
-      finalisedStatus <- finalisedStatus
-      statusMap <- taxYearITSAStatus
-      finalisedStatusBool <- finalisedStatus.toF//if finalised flag is missing from api response then we assume 'false'
+    val processSteps = for {
+      endYear <- dateService.getCurrentTaxYearEnd.toF
+      currentYear <- TaxYear(endYear).toF
+      previousYear <- currentYear.addYears(-1).toF
+      nextYear <- currentYear.addYears(+1).toF
+      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear)
+      statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+      finalisedStatusBool <- finalisedStatus.toF
       outcomeOptionsResponse <- optOutOptions.getOptOutOptionsFor(finalisedStatusBool,
         YearStatusDetail(previousYear, statusMap(previousYear)),
         YearStatusDetail(currentYear, statusMap(currentYear)),
         YearStatusDetail(nextYear, statusMap(nextYear))
       ).toF
     } yield outcomeOptionsResponse
+
+    processSteps recover {
+      case _ => OptOutMessageResponse()
+    }
   }
 }
 

@@ -79,7 +79,6 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(false)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-
         val response = service.displayOptOutMessage()
 
         Await.result(response, 10.seconds)
@@ -194,6 +193,101 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
               assert(r.canOptOut, "canOptOut should be true")
               assert(r.firstYear.startYear == 2024)
               assert(r.firstYear.endYear == 2025)
+            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
+          }
+          case _ =>
+        }
+      }
+    }
+
+    "getStatusTillAvailableFutureYears api call fail" should {
+
+      "return default response" in {
+
+        val currentYear = 2024
+        val previousYear: TaxYear = TaxYear(currentYear - 1)
+        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+
+        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
+
+        val finalised: Option[Boolean] = Some(false)
+        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+
+        val response = service.displayOptOutMessage()
+
+        Await.result(response, 10.seconds)
+
+        response.value match {
+          case Some(t) => t match {
+            case Success(r) =>
+              assert(!r.canOptOut, "canOptOut should be false")
+            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
+          }
+          case _ =>
+        }
+      }
+    }
+
+    "isTaxYearCrystallised api call fail" should {
+
+      "return default response" in {
+
+        val currentYear = 2024
+        val previousYear: TaxYear = TaxYear(currentYear - 1)
+        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          TaxYear(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+          TaxYear(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+          TaxYear(currentYear + 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
+        )
+        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
+
+        val response = service.displayOptOutMessage()
+
+        Await.result(response, 10.seconds)
+
+        response.value match {
+          case Some(t) => t match {
+            case Success(r) =>
+              assert(!r.canOptOut, "canOptOut should be false")
+            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
+          }
+          case _ =>
+        }
+      }
+    }
+
+    "PY is V, CY is U, NY is U and finalised is missing from api call response" should {
+
+      "assume finalised as false and offer PY as OptOut Option" in {
+
+        val currentYear = 2024
+        val previousYear: TaxYear = TaxYear(currentYear - 1)
+        when(dateService.getCurrentTaxYearEnd).thenReturn(currentYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          TaxYear(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          TaxYear(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+          TaxYear(currentYear + 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+        )
+        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        val finalised: Option[Boolean] = None
+        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+
+        val response = service.displayOptOutMessage()
+
+        Await.result(response, 10.seconds)
+
+        response.value match {
+          case Some(t) => t match {
+            case Success(r) =>
+              assert(r.canOptOut, "canOptOut should be true")
+              assert(r.firstYear.startYear == 2022)
+              assert(r.firstYear.endYear == 2023)
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
