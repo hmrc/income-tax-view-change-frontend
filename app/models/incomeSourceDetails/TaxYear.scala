@@ -62,7 +62,7 @@ object TaxYear {
     TaxYear(startYear = (endYear - 1), endYear = endYear)
   }
 
-  def apply(endYear: Int): TaxYear = {
+  def forYearEnd(endYear: Int): TaxYear = {
     require(isValidYear(endYear.toString), "invalid year")
     TaxYear(startYear = endYear - 1, endYear = endYear)
   }
