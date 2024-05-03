@@ -38,9 +38,9 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     val isNY_V = nextYearState.statusDetail.isVoluntary
 
     (finalisedStatus, isPY_V, isCY_V, isNY_V) match {
-      case (false, true, false, false) => OptOutMessageResponse(canOptOut = true, taxYears = Array(previousYearState.taxYear))
-      case (false, false, true, false) => OptOutMessageResponse(canOptOut = true, taxYears = Array(currentYearState.taxYear))
-      case (false, false, false, true) => OptOutMessageResponse(canOptOut = true, taxYears = Array(nextYearState.taxYear))
+      case (false, true, false, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(previousYearState.taxYear))
+      case (false, false, true, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(currentYearState.taxYear))
+      case (false, false, false, true) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(nextYearState.taxYear))
       case _ => OptOutMessageResponse()
     }
   }

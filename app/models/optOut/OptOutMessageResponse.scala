@@ -16,15 +16,15 @@
 
 package models.optOut
 
-import models.calculationList.CalculationListModel
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import play.api.libs.json.{Format, Json}
 
 case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
-case class OptOutMessageResponse(canOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
-  def firstYear: TaxYear = taxYears(0)
+case class OptOutMessageResponse(oneYearOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
+  def oneYearOptOutTaxYear: TaxYear = taxYears(0)
 }
+
 
 case class OptOutUpdateReason(code: Int) {
   private val validCodes = List(10)
