@@ -48,11 +48,10 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
   private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
-    ((isAgent, totalAmountLessThanPoa) match {
-      case (false, false) => controllers.routes.HomeController.show()
-      case (false, _) => controllers.routes.HomeController.show()
-      case (_, false) => controllers.routes.HomeController.show()
-      case (_, _) => controllers.routes.HomeController.show()
+    (if (totalAmountLessThanPoa) {
+      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
+    } else {
+      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent)
     }).url
   }
 
