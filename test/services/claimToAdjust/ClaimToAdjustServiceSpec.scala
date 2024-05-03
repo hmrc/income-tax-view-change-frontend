@@ -144,7 +144,19 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     }
     "return an exception" when {
       "financialDetailsConnector returns an error model" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
 
+
+        setupMockGetFinancialDetails(2024, testNino)(financialDetailsErrorModel(500))
+        setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
+
+        val f = fixture(LocalDate.of(2023, 8, 27))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+
+        whenReady(result) {
+          result => result.toString shouldBe Left(new Exception("There was an error whilst fetching financial details data")).toString
+        }
       }
     }
   }

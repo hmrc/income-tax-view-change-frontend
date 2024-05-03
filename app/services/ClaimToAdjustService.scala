@@ -70,7 +70,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap { result =>
-      println(result.toString + "PPPPPPP" + nino.value)
       result match {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -117,9 +116,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   private def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    println("LLLLLL" + taxYear)
     if (isFutureTaxYear(taxYear)) {
-      println("KKKKKKKKKK" + taxYear.toString)
       Future.successful(true)
     } else {
       calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
