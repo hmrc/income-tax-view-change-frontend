@@ -23,5 +23,7 @@ case class PaymentOnAccount(
                              poaTwoTransactionId: String,
                              taxYear: TaxYear,
                              paymentOnAccountOne: BigDecimal,
-                             paymentOnAccountTwo: BigDecimal
+                             paymentOnAccountTwo: BigDecimal,
+                             poARelevantAmountOne: BigDecimal,
+                             poARelevantAmountTwo: BigDecimal
                            )

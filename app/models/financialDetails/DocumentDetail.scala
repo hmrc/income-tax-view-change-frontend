@@ -205,10 +205,6 @@ case class DocumentDetail(taxYear: Int,
 
 }
 
-case class PoaAndTotalAmount(
-                            originalAmount: Option[BigDecimal],
-                            poaRelevantAmount: Option[BigDecimal]
-                            )
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,

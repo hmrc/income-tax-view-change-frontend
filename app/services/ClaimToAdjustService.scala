@@ -145,7 +145,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
         paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
+        paymentOnAccountTwo = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
+        poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+        poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )
     }
   }
@@ -162,11 +164,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA- POA 1") &&
-    !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains("ITSA - POA 2") &&
-    !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
     isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)

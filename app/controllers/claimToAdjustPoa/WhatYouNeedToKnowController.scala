@@ -20,7 +20,8 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.financialDetails.PoaAndTotalAmount
+import models.core.Nino
+import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -57,13 +58,9 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      claimToAdjustService.getPoATaxYear.flatMap {
-        case Right(Some(poaTaxYear)) =>
-          amountComparison map {
-            case Right(value) => Ok(view(isAgent, poaTaxYear, getRedirect(isAgent, totalAmountLessThanPoa = value)))
-            case Left(ex) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
-          }
+      claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)).flatMap {
+        case Right(Some(poa)) =>
+          Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
         case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest]")
           Future.successful(showInternalServerError(isAgent))
         case Left(ex) =>
@@ -72,17 +69,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def amountComparison(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, Boolean]] = {
-      claimToAdjustService.getDocumentDetail.map {
-        case Right(poaModel: PoaAndTotalAmount) =>
-          if (poaModel.originalAmount >= poaModel.poaRelevantAmount) {
-            Right(false)
-          } else {
-            Right(true)
-          }
-        case Left(error: Throwable) =>
-          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${error.getMessage} - ${error.getCause}")
-          Left(error)
-      }
+  def totalAmountLessThanPoa(poaModel: PaymentOnAccount)(implicit user: MtdItUser[_], hc: HeaderCarrier): Boolean = {
+    (poaModel.paymentOnAccountOne + poaModel.paymentOnAccountTwo) < (poaModel.poARelevantAmountOne + poaModel.poARelevantAmountTwo)
   }
 }
