@@ -25,7 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
-import play.api.http.Status.NOT_FOUND
+import play.api.http.Status.{NOT_FOUND, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -60,7 +60,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case Right(Some(financialDetails)) =>
         val x = getPaymentOnAccountModel(financialDetails.documentDetails)
         Right(x)
-      case Right(None) => Right(None)
+      case Right(None) =>
+        Right(None)
       case Left(ex) =>
         Logger("application").error(s"[ClaimToAdjustService][getPoaForNonCrystallisedTaxYear] There was an error getting FinancialDetailsModel" +
           s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
@@ -120,7 +121,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     } else {
       calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised)
-        case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+        case err: CalculationListErrorModel if err.code == NO_CONTENT => Future.successful(Some(false))
         case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       } map {
         case Some(true) => false
@@ -136,7 +137,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
       poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
     } yield {
-
       Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
       Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
       Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
@@ -146,7 +146,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
         paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
+        paymentOnAccountTwo = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
       )
     }
   }
@@ -161,17 +161,19 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
+  private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail => {
     documentDetail.documentDescription.contains("ITSA- POA 1") &&
-    !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+  }
 
-  private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
+  private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail => {
     documentDetail.documentDescription.contains("ITSA - POA 2") &&
-    !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+  }
 
-  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
+  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail => {
     isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
-
+  }
   private val LAST_DAY_OF_JANUARY: Int = 31
 
   private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] = dueDate => {
