@@ -75,7 +75,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
-      }}
+      }
     }
   }
 
