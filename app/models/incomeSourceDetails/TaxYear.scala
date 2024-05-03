@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails
 
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 
 import scala.util.Try
 
@@ -35,7 +35,6 @@ case class TaxYear(startYear: Int, endYear: Int) {
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     endYear >= currentTaxYearEnd
   }
-  
 }
 
 object TaxYear {

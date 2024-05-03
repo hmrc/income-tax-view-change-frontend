@@ -20,7 +20,6 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.nextUpdates.ObligationsModel
 
-
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
                                    charges: List[DocumentDetailWithDueDate],
                                    obligations: ObligationsModel,

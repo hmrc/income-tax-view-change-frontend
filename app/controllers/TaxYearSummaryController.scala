@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -31,7 +31,6 @@ import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
@@ -252,7 +251,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
       }
     }
-  }.recover{
+  }.recover {
     case ex: Throwable =>
       val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
