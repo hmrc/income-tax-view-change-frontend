@@ -22,6 +22,7 @@ import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
 import repositories.PoAAmendmentDataRepository
 import testUtils.TestSupport
+import viewmodels.adjustPoa.checkAnswers.MainIncomeLower
 
 import scala.concurrent.Future
 
@@ -32,7 +33,7 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
   object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
     mockRepository)
 
-  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some("reason X"), newPoAAmount = None)
+  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = None)
 
   val sessionData: PoASessionData = PoASessionData(
     sessionId = "session-123456",
@@ -51,6 +52,11 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(ammendmentData))
     }
+
+    "return the correct mongo data" in {
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+      TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(ammendmentData))
+    }
   }
   "PaymentOnAccountSessionService.setMongoData" should {
     "set the mongo value" in {
@@ -63,13 +69,13 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
     "update the adjustment reason" in {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
-      val result = TestPaymentOnAccountSessionService.setAdjustmentReason("Just because")
+      val result = TestPaymentOnAccountSessionService.setAdjustmentReason(MainIncomeLower)
       result.futureValue shouldBe Right(())
     }
     "return an error" when {
       "no mongo session can be found" in {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
-        val result = TestPaymentOnAccountSessionService.setAdjustmentReason("Just because")
+        val result = TestPaymentOnAccountSessionService.setAdjustmentReason(MainIncomeLower)
         result.futureValue match {
           case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
           case _ => Fail

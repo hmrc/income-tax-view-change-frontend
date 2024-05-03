@@ -16,6 +16,7 @@
 
 package controllers.adjustPoa
 
+import auth.MtdItUser
 import cats.data.EitherT
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
@@ -23,17 +24,19 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.core.Nino
-import models.incomeSourceDetails.TaxYear
+import models.paymentOnAccount.{PaymentOnAccount, PoAAmendmentData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import viewmodels.adjustPoa.checkAnswers.SelectYourReason
 import views.html.adjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
 
 @Singleton
 class SelectYourReasonController @Inject()(
@@ -42,73 +45,34 @@ class SelectYourReasonController @Inject()(
                                             val sessionService: PaymentOnAccountSessionService,
                                             val claimToAdjustService: ClaimToAdjustService,
                                             val authorisedFunctions: AuthorisedFunctions,
-                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching  {
-
-
-//  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
-//    ((isAgent, isChange) match {
-//      case (false, false) => routes.AddIncomeSourceController.show()
-//      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-//      case (_, false) => routes.AddIncomeSourceController.showAgent()
-//      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-//    }).url
-//  }
-
-//  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-//    (isAgent, isChange) match {
-//      case (false, false) => routes.AddBusinessNameController.submit()
-//      case (false, _) => routes.AddBusinessNameController.submitChange()
-//      case (_, false) => routes.AddBusinessNameController.submitAgent()
-//      case (_, _) => routes.AddBusinessNameController.submitChangeAgent()
-//    }
-//  }
-
-//  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
-//    (isAgent, isChange) match {
-//      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
-//      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-//      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-//    }
-//  }
-
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
 
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-      val result = for {
-        session <- EitherT(sessionService.getMongo)
-        poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-      } yield {
-        (session, poa) match {
-          case (Some(s), Some(p)) =>
-            val form = formProvider.apply()
-            Ok(view(
-              selectYourReasonForm = s.poaAdjustmentReason.fold(form)(form.fill),
-              taxYear = p.taxYear,
-              isAgent = isAgent,
-              isChange = isChange,
-              backUrl = "TODO",
-              useFallbackLink = true))
-          case (None, _) =>
-            Logger("application").error(s"[SelectYourReasonController][handleRequest] Couldn't resolve view, session missing")
-            errorHandler.showInternalServerError()
-          case (_, None) =>
-            Logger("application").error(s"[SelectYourReasonController][handleRequest] Couldn't resolve view, POA missing")
-            errorHandler.showInternalServerError()
-        }
-      }
+      withSessionAndPoa(isAgent) { (session, poa) =>
 
-      result.fold(
+        // TODO: if amount has been entered, and is > current amount, autofill reason 005 and redirect
+
+        val form = formProvider.apply()
+        Ok(view(
+          selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
+          taxYear = poa.taxYear,
+          isAgent = isAgent,
+          isChange = isChange,
+          backUrl = "TODO",
+          useFallbackLink = true))
+      } fold (
         ex => {
-          Logger("application").error(s"[SelectYourReasonController][handleRequest]: ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"[SelectYourReasonController][show]: ${ex.getMessage} - ${ex.getCause}")
           errorHandler.showInternalServerError()
         },
         view => view
@@ -121,21 +85,59 @@ class SelectYourReasonController @Inject()(
       formProvider.apply()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, TaxYear(2023, 2024), isAgent, isChange, "TODO", true))),
-          value => {
-            for {
-              result <- sessionService.setAdjustmentReason(value)
-            } yield {
-              result match {
-                case Right(value) => Ok(s"${value}")
-                case _ => throw new IllegalArgumentException("")
-              }
-            }
-          }).recover {
-        case ex =>
-          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"[SelectYourReasonController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+          formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
+            BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true))
+          },
+          value => saveValueAndRedirect(isChange, isAgent, value))
+        .fold(
+          ex => {
+            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+            Logger("application").error(s"[SelectYourReasonController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+            errorHandler.showInternalServerError()
+          },
+          result => result
+      )
+  }
+
+  private def withSessionAndPoa (isAgent: Boolean)
+                                (block: (PoAAmendmentData,PaymentOnAccount) => Result)
+                                (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    for {
+      session <- EitherT(sessionService.getMongo)
+      poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+    } yield {
+      (session, poa) match {
+        case (Some(s), Some(p)) =>
+          block(s, p)
+        case (None, _) =>
+          Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] session missing")
+          errorHandler.showInternalServerError()
+        case (_, None) =>
+          Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] POA missing")
           errorHandler.showInternalServerError()
       }
+    }
+  }
+
+  private def saveValueAndRedirect(isChange: Boolean, isAgent: Boolean, value: SelectYourReason)
+                                  (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+    for {
+      _ <- EitherT(sessionService.setAdjustmentReason(value))
+      redirect <- withSessionAndPoa(isAgent) { (session, _) =>
+        (isChange, session.newPoAAmount) match {
+          // TODO: direct to CYA
+          case (false, Some(_)) => Redirect(controllers.routes.HomeController.show())
+          // TODO: direct to amount page
+          case (false, None) => Redirect(controllers.routes.HomeController.show())
+          // TODO: direct to CYA
+          case (true, _) => Redirect(controllers.routes.HomeController.show())
+        }
+      }
+    } yield {
+      redirect
+    }
   }
 }

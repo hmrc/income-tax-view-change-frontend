@@ -16,24 +16,48 @@
 
 package viewmodels.adjustPoa.checkAnswers
 
-import play.api.libs.json.{JsPath, JsString, Reads, Writes}
+import play.api.libs.json._
 
-sealed trait SelectYourReason
+import scala.util.Try
 
-case object MainIncomeLower extends SelectYourReason
-case object OtherIncomeLower extends SelectYourReason
-case object AllowanceOrReliefHigher extends SelectYourReason
-case object MoreTaxedAtSource extends SelectYourReason
+sealed trait SelectYourReason {
+  val code: String
+}
+
+case object MainIncomeLower extends SelectYourReason {
+  override val code: String = "001"
+}
+case object OtherIncomeLower extends SelectYourReason {
+  override val code: String = "002"
+}
+case object AllowanceOrReliefHigher extends SelectYourReason {
+  override val code: String = "003"
+}
+case object MoreTaxedAtSource extends SelectYourReason {
+  override val code: String = "004"
+}
+case object Increase extends SelectYourReason {
+  override val code: String = "005"
+}
 
 object SelectYourReason {
 
-  implicit val reads: Reads[SelectYourReason] = JsPath.read[String].map {
-    case "MainIncomeLower" => MainIncomeLower
-    case "OtherIncomeLower" => OtherIncomeLower
-    case "AllowanceOrReliefHigher" => AllowanceOrReliefHigher
-    case "MoreTaxedAtSource" => MoreTaxedAtSource
-  }
+  private val codeMapping: Map[String, SelectYourReason] = Seq(
+    MainIncomeLower,
+    OtherIncomeLower,
+    AllowanceOrReliefHigher,
+    MoreTaxedAtSource,
+    Increase
+  ).map(reason => (reason.code -> reason))
+    .toMap
 
-  implicit val writes: Writes[SelectYourReason] = Writes[SelectYourReason](reason => JsString(reason.toString))
+  implicit val format: Format[SelectYourReason] = Format(
+    Reads {
+      case JsString(value) if codeMapping.contains(value) => JsResult.fromTry(Try(codeMapping(value)))
+      case value => JsError(s"Could not parse SelectYourReason from value: $value")
+    },
+    Writes[SelectYourReason] { value =>
+      JsString(value.code)
+    }
+  )
 }
-
