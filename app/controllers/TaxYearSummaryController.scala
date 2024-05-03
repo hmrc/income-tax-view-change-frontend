@@ -313,7 +313,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value)))
           case _ => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
         }
-        case Left(ex: Throwable) => Future.failed(ex)
+        case Left(ex: Throwable) =>
+          Logger("application").error(s"[TaxYearSummaryController][claimToAdjustViewModel] There was an error when getting the POA Entry point" +
+            s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
+          Future.failed(ex)
       }
     } else {
       Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
