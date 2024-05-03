@@ -16,12 +16,108 @@
 
 package claimToAdjustPoa
 
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import controllers.claimToAdjustPoa.WhatYouNeedToKnowController
+import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
+import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testUtils.TestSupport
+import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
-class WhatYouNeedToKnowControllerSpec {
+import scala.concurrent.{ExecutionContext, Future}
 
-//  object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
-//
-//  )
+class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
+  with TestSupport
+  with FeatureSwitching
+  with MockClaimToAdjustService
+  with MockCalculationListService
+  with MockCalculationListConnector
+  with MockFinancialDetailsConnector{
+
+  object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
+    authorisedFunctions = mockAuthService,
+    claimToAdjustService = claimToAdjustService,
+    auth = testAuthenticator,
+    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
+    view = app.injector.instanceOf[WhatYouNeedToKnow]
+  )(
+    mcc = app.injector.instanceOf[MessagesControllerComponents],
+    appConfig = app.injector.instanceOf[FrontendAppConfig],
+    ec = app.injector.instanceOf[ExecutionContext]
+  )
+
+  "WhatYouNeedToKnowController.show" should {
+    "redirect to the home page" when {
+      "FS is disabled" in {
+        disable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+    }
+    "return Ok" when {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+      }
+    }
+    "return an error 500" when {
+      "PaymentOnAccount model is not built successfully" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccountBuildFailure()
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "an Exception is returned from ClaimToAdjustService" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccountFailure()
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+        resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
 
 }

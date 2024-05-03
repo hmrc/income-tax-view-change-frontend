@@ -17,15 +17,16 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes.HomeController
 import models.core.Nino
 import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationListService, ClaimToAdjustService}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
@@ -56,18 +57,31 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)).flatMap {
-        case Right(Some(poa)) =>
-          Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
-        case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest]")
-          Future.successful(showInternalServerError(isAgent))
-        case Left(ex) =>
-          Logger("application").error(s"[WhatYouNeedToKnowController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
-          Future.successful(showInternalServerError(isAgent))
+      if (isEnabled(AdjustPaymentsOnAccount)) {
+        claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)).flatMap {
+          case Right(Some(poa)) =>
+            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
+          case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][show]")
+            Future.successful(showInternalServerError(isAgent))
+          case Left(ex) =>
+            Logger("application").error(s"[WhatYouNeedToKnowController][show] ${ex.getMessage} - ${ex.getCause}")
+            Future.successful(showInternalServerError(isAgent))
+        }
+      }else {
+        Future.successful(
+          Redirect(
+            if (isAgent) HomeController.showAgent
+            else         HomeController.show()
+          )
+        )
+      } recover {
+        case ex: Exception =>
+          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
       }
   }
 
-  def totalAmountLessThanPoa(poaModel: PaymentOnAccount)(implicit user: MtdItUser[_], hc: HeaderCarrier): Boolean = {
+  private def totalAmountLessThanPoa(poaModel: PaymentOnAccount): Boolean = {
     (poaModel.paymentOnAccountOne + poaModel.paymentOnAccountTwo) < (poaModel.poARelevantAmountOne + poaModel.poARelevantAmountTwo)
   }
 }
