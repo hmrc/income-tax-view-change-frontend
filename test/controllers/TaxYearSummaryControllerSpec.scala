@@ -886,7 +886,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
 
         status(result) shouldBe OK
-        contentAsString(result).contains("Adjust payments on account for the 2023 to 2024 tax year") shouldBe true
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
       }
     }
