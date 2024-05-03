@@ -58,11 +58,7 @@ case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
 object TYSClaimToAdjustViewModel {
 
   def ctaLink(isAgent: Boolean): String = {
-    if (isAgent) {
-      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
-    } else {
-      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
-    }
+    controllers.routes.AmendablePOAController.show(isAgent = isAgent).url
   }
 
 }

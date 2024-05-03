@@ -25,7 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
-import play.api.http.Status.{NOT_FOUND, NO_CONTENT}
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -110,23 +110,15 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def isFutureTaxYear(taxYear: TaxYear): Boolean = {
-    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
-    taxYear.endYear >= currentTaxYearEnd
-  }
-
   private def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    if (isFutureTaxYear(taxYear)) {
+    if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
       calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised)
-        case err: CalculationListErrorModel if err.code == NO_CONTENT => Future.successful(Some(false))
+        case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
+        case err: CalculationListErrorModel if err.code == 204 => Future.successful(false)
         case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-      } map {
-        case Some(true) => false
-        case _ => true
-      }
+      }.map(!_)
     }
   }
 

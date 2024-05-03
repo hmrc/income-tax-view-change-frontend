@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails
 
+import services.{DateService, DateServiceInterface}
+
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
@@ -27,6 +29,11 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def formatTaxYearRange: String = {
     s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
+  }
+
+  def isFutureTaxYear(implicit dateService: DateServiceInterface): Boolean = {
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    endYear >= currentTaxYearEnd
   }
   
 }
