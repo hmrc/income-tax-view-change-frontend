@@ -122,6 +122,12 @@ object ClaimToAdjustPOATestConstants {
     financialDetails = List.empty,
   )
 
+  val userNoPOADetails: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List.empty,
+    financialDetails = List.empty,
+  )
+
   def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
 
 }

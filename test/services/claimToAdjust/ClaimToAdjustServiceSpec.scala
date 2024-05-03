@@ -19,17 +19,32 @@ package services.claimToAdjust
 import auth.MtdItUser
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
+import models.calculationList.{CalculationListModel, CalculationListResponseModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
-import services.ClaimToAdjustService
-import testConstants.BaseTestConstants.{testMtditid, testNino}
+import services.{ClaimToAdjustService, DateService}
+import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
 import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import scala.language.reflectiveCalls
+import java.time.LocalDate
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector {
 
-  object TestClaimToAdjustService extends ClaimToAdjustService(mockFinancialDetailsConnector, mockCalculationListConnector, dateService)
+  def fixture(date: LocalDate) = new {
+    implicit val mockDateService: DateService = new DateService {
+      override def getCurrentDate: LocalDate = date
+
+      override def isBeforeLastDayOfTaxYear: Boolean = {
+        val currentDate = getCurrentDate
+        val lastDayOfTaxYear = LocalDate.of(date.getYear, 4, 5)
+        currentDate.isBefore(lastDayOfTaxYear)
+      }
+    }
+    val testClaimToAdjustService = new ClaimToAdjustService(mockFinancialDetailsConnector, mockCalculationListConnector, mockDateService)
+  }
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid,
@@ -43,54 +58,97 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     None
   )(FakeRequest())
 
-  // TODO: implement UT with referring to correct method under test
+  val calculationListSuccessResponseModelCrystallised: CalculationListResponseModel = CalculationListModel(
+    calculationId = "TEST_ID",
+    calculationTimestamp = "TEST_STAMP",
+    calculationType = "TEST_TYPE",
+    crystallised = Some(true)
+  )
+
+  val calculationListSuccessResponseModelNonCrystallised: CalculationListResponseModel = CalculationListModel(
+    calculationId = "TEST_ID",
+    calculationTimestamp = "TEST_STAMP",
+    calculationType = "TEST_TYPE",
+    crystallised = Some(false)
+  )
+
+  val calculationListSuccessResponseModelCrystallisationMissing: CalculationListResponseModel = CalculationListModel(
+    calculationId = "TEST_ID",
+    calculationTimestamp = "TEST_STAMP",
+    calculationType = "TEST_TYPE",
+    crystallised = None
+  )
+
+  val financialDetailsModelBothPoAs: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None),
+    documentDetails = List.empty,
+    financialDetails = List.empty
+  )
 
   "getPoaTaxYearForEntryPoint method" should {
-    "return an option containing a taxYear" when {
-      "a user has document details relating to PoA data, for a CTA amendable year that is non-crystallised" in {
+    "return a future of a right with an option containing a taxYear" when {
+      "a user has two sets of document details relating to PoA data. The first year is a CTA amendable year and is non-crystallised" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
+
+        val f = fixture(LocalDate.of(2023, 8, 27))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
+        }
+      }
+      "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
+
+        val f = fixture(LocalDate.of(2023, 8, 27))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        }
+      }
+      "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
+
+        val f = fixture(LocalDate.of(2024, 4, 1))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+
+        whenReady(result) {
+          result => result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        }
       }
     }
-  }
+    "return a future right which is empty" when {
+      "for amendable Poa years a user has non-crystallised tax years but no poa data" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+        setupMockGetFinancialDetails(2024, testNino)(userNoPOADetails)
+        setupMockGetFinancialDetails(2023, testNino)(userNoPOADetails)
 
-  "arePoAPaymentsPresent method" should {
-    "return an option containing a taxYear" when {
-      "given a list of DocumentDetail models from the same tax year" when {
-        "POA 1 or 2s are contained within these DocumentDetails" in {
+        val f = fixture(LocalDate.of(2023, 8, 27))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
 
+        whenReady(result) {
+          result => result shouldBe Right(None)
         }
       }
     }
   }
 
-  "getPoaAdjustableTaxYears method" should {
-    "return a list containing just the current TaxYear" when {
-      "the current date is between the POA deadline and tax year end date (31st Feb and 5th April)" in {
-
+  "getPoaForNonCrystallisedTaxYear method" should {
+    "return a future of an option containing a PaymentOnAccount object" when {
+      "a user has document details relating to PoA data for a CTA amendable year that is non-crystallised" in {
       }
     }
   }
 
-  "checkCrystallisation method" should {
-    "return a future of an option containing a tax year" when {
-      "the user has not crystallised said given tax year" in {
-
-      }
-    }
-  }
-
-  "isFutureTaxYear method" should {
-    "return true" when {
-      "the tax year given is in a future tax year" in {
-
-      }
-    }
-  }
-
-  "isTaxYearNonCrystallised method" should {
-    "return a future containing true" when {
-      "the user has not crystallised a given tax year" in {
-
-      }
-    }
-  }
 }
