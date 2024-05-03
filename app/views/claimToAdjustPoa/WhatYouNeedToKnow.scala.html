@@ -65,11 +65,7 @@
 
     <p class="govuk-body" id = Some("p1")>
         @getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)
-        <span> </span>
-        <span class="govuk-body govuk-!-font-weight-bold govuk-body govuk-!-font-size-700">
-        @getMessage("bold", (poaTaxYear.endYear + 1).toString)</span>
-        @getMessage("onlyForWelsh", " ")
-
+        <b>@getMessage("bold", (poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
     </p>
 
     @govukWarningText(WarningText(
