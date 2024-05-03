@@ -31,7 +31,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  val testBackUrl: String = "/report-quarterly/income-and-expenses/view"
+  val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
   val testOpenUrlInNewTab: String =
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
@@ -56,7 +56,9 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "render the first paragraph" in new Setup {
-        document.getElementById("p1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p1", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString, (fixedDate.getYear + 2).toString)
+        document.getElementById("p1").text shouldBe
+          msgs("claimToAdjustPoa.whatYouNeedToKnow.p1", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString) + " " +
+            msgs("claimToAdjustPoa.whatYouNeedToKnow.bold", (fixedDate.getYear + 2).toString) + msgs("claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh")
       }
 
       "render the warning text" in new Setup {
@@ -94,7 +96,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
 
       "have a 'Cancel' button with backUrl" in new Setup {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testBackUrl
+        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
       }
   }
 }

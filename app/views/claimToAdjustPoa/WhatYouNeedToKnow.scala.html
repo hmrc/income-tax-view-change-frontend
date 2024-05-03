@@ -63,7 +63,7 @@
     @h1(msg = getMessage("h1"),
      id = Some("h1"))
 
-    <p class="govuk-body" id = Some("p1")>
+    <p class="govuk-body" id="p1" >
         @getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)
         <b>@getMessage("bold", (poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
     </p>
@@ -100,6 +100,6 @@
             content = Text(getMessage("continue-button")),
             href = Some(redirect)
         ))
-        <a class="govuk-link" href=@getHomePageUrl>@getMessage("cancel")</a>
+        <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>
 }
