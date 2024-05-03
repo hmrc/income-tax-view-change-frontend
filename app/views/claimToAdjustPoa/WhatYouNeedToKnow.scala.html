@@ -35,7 +35,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, getRedirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -98,7 +98,7 @@
 
         @govukButton(Button(
             content = Text(getMessage("continue-button")),
-            href = Some(getRedirect)
+            href = Some(redirect)
         ))
         <a class="govuk-link" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>

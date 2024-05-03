@@ -43,7 +43,7 @@ case class DocumentDetail(taxYear: Int,
                           effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None,
                           documentDueDate: Option[LocalDate] = None,
-                          poaRelevantAmount: Option[BigDecimal]
+                          poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {

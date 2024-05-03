@@ -40,7 +40,6 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,
-                                            val calculationListService: CalculationListService,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
