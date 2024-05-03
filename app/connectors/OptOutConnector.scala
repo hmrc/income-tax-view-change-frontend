@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,52 +17,50 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.optOut.OptOutApiCallResponse
-import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.incomeSourceDetails.TaxYear
+import models.optOut.{OptOutApiCallFailureResponse, OptOutApiCallRequest, OptOutApiCallResponse, OptOutApiCallSuccessfulResponse}
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutConnector @Inject()(val http: HttpClient,
-                                val appConfig: FrontendAppConfig
-                               )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
+                               (implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  //todo appConfig.itvcProtectedService?
+  private val log = Logger("application")
+
   def getUrl(taxableEntityId: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
   }
 
-  def makeOptOutCall(taxableEntityId: String)(implicit headerCarrier: HeaderCarrier): Future[OptOutApiCallResponse] = {
+  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
+                             (implicit headerCarrier: HeaderCarrier): Future[OptOutApiCallResponse] = {
 
-    val body = ""
+    val body = OptOutApiCallRequest(taxYear = taxYear.toString)
 
-    http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
+    http.PUT[OptOutApiCallRequest, HttpResponse](
       getUrl(taxableEntityId),
       body, Seq[(String, String)]()).map { response =>
       response.status match {
-        case OK => response.json.validate[OptOutApiCallResponse].fold(
+        case OK => response.json.validate[OptOutApiCallSuccessfulResponse].fold(
           invalid => {
-            Logger("application").error("" +
-              s"Json validation error parsing update income source response, error $invalid")
-            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+            log.error(s"Json validation error parsing update income source response, error $invalid")
+            OptOutApiCallFailureResponse("Json validation error parsing response")
           },
           valid => valid
         )
         case _ =>
-          response.json.validate[OptOutApiCallResponse].fold(
+          response.json.validate[OptOutApiCallFailureResponse].fold(
             invalid => {
-              Logger("application").error("" +
-                s"Json validation error parsing update income source response, error $invalid")
-              //UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+              log.error(s"Json validation error parsing update income source response, error $invalid")
+              OptOutApiCallFailureResponse("Json validation error parsing response")
             },
             valid => valid
           )
       }
     }
   }
-
 }

@@ -25,6 +25,16 @@ case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
 case class OptOutMessageResponse(canOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
   def firstYear: TaxYear = taxYears(0)
 }
+
+case class OptOutUpdateReason(code: Int) {
+  private val validCodes = List(10)
+  assert(validCodes.contains(code))
+}
+case class OptOutApiCallRequest(taxYear: String, updateReason: Int = 10)
+object OptOutApiCallRequest {
+  implicit val format: Format[OptOutApiCallRequest] = Json.format[OptOutApiCallRequest]
+}
+
 sealed trait OptOutApiCallResponse
 case class OptOutApiCallSuccessfulResponse() extends OptOutApiCallResponse
 case class OptOutApiCallFailureResponse(message: String, code: Int = 500) extends OptOutApiCallResponse
