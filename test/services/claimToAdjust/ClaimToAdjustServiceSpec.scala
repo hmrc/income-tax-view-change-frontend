@@ -142,6 +142,11 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         }
       }
     }
+    "return an exception" when {
+      "financialDetailsConnector returns an error model" in {
+
+      }
+    }
   }
 
   "getPoaForNonCrystallisedTaxYear method" should {
