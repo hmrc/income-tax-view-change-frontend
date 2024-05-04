@@ -48,7 +48,7 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
         case OK => response.json.validate[OptOutApiCallSuccessfulResponse].fold(
           invalid => {
             log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutApiCallFailureResponse("Json validation error parsing response")
+            OptOutApiCallFailureResponse("0", "Json validation error parsing response")
           },
           valid => valid
         )
@@ -56,7 +56,7 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
           response.json.validate[OptOutApiCallFailureResponse].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutApiCallFailureResponse("Json validation error parsing response")
+              OptOutApiCallFailureResponse("0", "Json validation error parsing response")
             },
             valid => valid
           )
