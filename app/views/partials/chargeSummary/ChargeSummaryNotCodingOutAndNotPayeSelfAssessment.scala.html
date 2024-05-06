@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.CommonConverters._
 @import views.html.components._
 @import models.financialDetails.{DocumentDetailWithDueDate, DocumentDetail}
 
@@ -74,8 +75,8 @@
     <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
         <span>
         @{
-            if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-            else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+            if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.toCurrency()
+            else documentDetail.originalAmount.toCurrency()
         }
         </span>
     </dd>

@@ -15,6 +15,7 @@
  *@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.CommonConverters._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.DocumentDetailWithDueDate
@@ -312,7 +313,7 @@
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
-                            documentDetail.originalAmount.get.toCurrency
+                            documentDetail.originalAmount.toCurrency("Original Amount")
                         }</td>
                     </tr>
                 }
@@ -321,7 +322,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.toCurrency()}</td>
                     </tr>
                 }
 
@@ -329,7 +330,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFromCodingOut, taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell">@{documentDetail.originalAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell">@{documentDetail.originalAmount.toCurrency()}</td>
                     </tr>
                 }
 
