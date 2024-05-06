@@ -173,8 +173,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
-  private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] = dueDate => {
-    dueDate.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
-  }
-
+  private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] =
+    _.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
 }
