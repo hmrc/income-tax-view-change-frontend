@@ -18,36 +18,90 @@ package controllers.agent
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 class AmendablePOAControllerISpec extends ComponentSpecBase {
 
   private val amendPoaUrl = controllers.routes.AmendablePOAController.show(isAgent = true).url
+  private val testTaxYear = 2024
 
   s"calling GET $amendPoaUrl" should {
-    "render the Adjusting your payments on account page" when {
+    s"return status $OK and render the Adjusting your payments on account page" when {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+
+        When(s"I call GET $amendPoaUrl")
+        val res = IncomeTaxViewChangeFrontend.getAdjustPaymentsOnAccount(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(OK)
+        )
       }
     }
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
         disable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+
+        When(s"I call GET $amendPoaUrl")
+        val res = IncomeTaxViewChangeFrontend.getAdjustPaymentsOnAccount(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.showAgent.url)
+        )
       }
     }
-    s"return $INTERNAL_SERVER_ERROR" when {
-      "no non-crystallised financial details are found" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(AdjustPaymentsOnAccount)
-      }
-    }
-    s"return $INTERNAL_SERVER_ERROR" when {
-      "an error model is returned when fetching financial details data" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(AdjustPaymentsOnAccount)
-      }
+  }
+  s"return $INTERNAL_SERVER_ERROR" when {
+    "no non-crystallised financial details are found" in {
+      stubAuthorisedAgentUser(authorised = true)
+      enable(AdjustPaymentsOnAccount)
+
+      And("I wiremock stub empty financial details response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+        OK, testEmptyFinancialDetailsModelJson
+      )
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+        OK, testEmptyFinancialDetailsModelJson
+      )
+
+      When(s"I call GET $amendPoaUrl")
+      val res = IncomeTaxViewChangeFrontend.getAdjustPaymentsOnAccount(clientDetailsWithConfirmation)
+
+      res should have(
+        httpStatus(INTERNAL_SERVER_ERROR)
+      )
     }
   }
 }
