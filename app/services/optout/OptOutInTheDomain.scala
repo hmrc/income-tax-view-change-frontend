@@ -9,14 +9,21 @@ import services.optout.OptOutRulesService.{toFinalized, toQuery, toSymbol}
 object OptOutInTheDomain {
 
   val optOutService = new OptOutRulesService()
-  case class OptOutOption(taxYear: TaxYear)
+
+  sealed trait OptOutYearOption {
+    val taxYear: TaxYear
+  }
+  case class OptOutPreviousYearOption(taxYear: TaxYear) extends OptOutYearOption
+  case class OptOutCurrentYearOption(taxYear: TaxYear) extends OptOutYearOption
+  case class OptOutNextYearOption(taxYear: TaxYear) extends OptOutYearOption
+
   case class Crystallized(value: Boolean, taxYear: TaxYear)
   case class OptOutStatus(crystallized: Crystallized,
                           previousYearItsaStatus: YearStatusDetail,
                           currentYearItsaStatus: YearStatusDetail,
                           nextYearItsaStatus: YearStatusDetail) {
 
-    val optOutOptions: Array[OptOutOption] = {
+    val optOutOptions: Array[OptOutYearOption] = {
 
       optOutService.findOptOutOptions(
         toQuery(toFinalized(crystallized.value),
@@ -26,9 +33,9 @@ object OptOutInTheDomain {
         )
 
       ).flatMap {
-        case "PY" => List(OptOutOption(previousYearItsaStatus.taxYear))
-        case "CY" => List(OptOutOption(currentYearItsaStatus.taxYear))
-        case "NY" => List(OptOutOption(nextYearItsaStatus.taxYear))
+        case "PY" => List(OptOutPreviousYearOption(previousYearItsaStatus.taxYear))
+        case "CY" => List(OptOutCurrentYearOption(currentYearItsaStatus.taxYear))
+        case "NY" => List(OptOutNextYearOption(nextYearItsaStatus.taxYear))
         case _ => List()
       }
     }.toList.sortBy(_.taxYear.toString).toArray
@@ -48,34 +55,43 @@ object OptOutInTheDomain {
 
 object SomeMain extends App {
 
-  val previousYearCrystalized = Crystallized(value = false, taxYear = TaxYear(2023))
-  val previousYearStatusDetail= YearStatusDetail(TaxYear(2023), StatusDetail("", ITSAStatus.Voluntary, ""))
-  val currentYearStatusDetail = YearStatusDetail(TaxYear(2024), StatusDetail("", ITSAStatus.Voluntary, ""))
-  val nextYearStatusDetail = YearStatusDetail(TaxYear(2025), StatusDetail("", ITSAStatus.Voluntary, ""))
+  runFor(
+    Crystallized(value = false, taxYear = TaxYear(2023)),
+    YearStatusDetail(TaxYear(2023), StatusDetail("", ITSAStatus.Voluntary, "")),
+    YearStatusDetail(TaxYear(2024), StatusDetail("", ITSAStatus.Voluntary, "")),
+    YearStatusDetail(TaxYear(2025), StatusDetail("", ITSAStatus.Voluntary, "")),
+  )
 
-  val optOutStatus = OptOutStatus(previousYearCrystalized, previousYearStatusDetail, currentYearStatusDetail, nextYearStatusDetail)
+  runFor(
+    Crystallized(value = true, taxYear = TaxYear(2023)),
+    YearStatusDetail(TaxYear(2023), StatusDetail("", ITSAStatus.Voluntary, "")),
+    YearStatusDetail(TaxYear(2024), StatusDetail("", ITSAStatus.Voluntary, "")),
+    YearStatusDetail(TaxYear(2025), StatusDetail("", ITSAStatus.Mandated, "")),
+  )
 
-  println()
-  println(optOutStatus.asText)
-  println(s"User can opt-out: ${optOutStatus.canOptOut}")
-  println("User can opt-out of the following years:")
-  optOutStatus.optOutOptions.map(v => s"\t${v.taxYear.toString}").foreach(println)
-  println(s"User can opt-out of year ${previousYearStatusDetail.taxYear}: ${optOutStatus.canOptOutOfYear(previousYearCrystalized.taxYear)}")
-  println(s"User can opt-out of year ${TaxYear(2021)}: ${optOutStatus.canOptOutOfYear(TaxYear(2021))}")
+  runFor(
+    Crystallized(value = true, taxYear = TaxYear(2023)),
+    YearStatusDetail(TaxYear(2023), StatusDetail("", ITSAStatus.Mandated, "")),
+    YearStatusDetail(TaxYear(2024), StatusDetail("", ITSAStatus.Mandated, "")),
+    YearStatusDetail(TaxYear(2025), StatusDetail("", ITSAStatus.Mandated, "")),
+  )
 
-  val previousYearCrystalized2 = Crystallized(value = true, taxYear = TaxYear(2023))
-  val previousYearStatusDetail2= YearStatusDetail(TaxYear(2023), StatusDetail("", ITSAStatus.Mandated, ""))
-  val currentYearStatusDetail2 = YearStatusDetail(TaxYear(2024), StatusDetail("", ITSAStatus.Mandated, ""))
-  val nextYearStatusDetail2 = YearStatusDetail(TaxYear(2025), StatusDetail("", ITSAStatus.Mandated, ""))
+  def runFor(previousYearCrystalized: Crystallized,
+             previousYearStatusDetail: YearStatusDetail,
+             currentYearStatusDetail: YearStatusDetail,
+             nextYearStatusDetail: YearStatusDetail
+            ): Unit = {
 
-  val optOutStatus2 = OptOutStatus(previousYearCrystalized2, previousYearStatusDetail2, currentYearStatusDetail2, nextYearStatusDetail2)
+    val optOutStatus = OptOutStatus(previousYearCrystalized, previousYearStatusDetail, currentYearStatusDetail, nextYearStatusDetail)
 
-  println()
-  println(optOutStatus2.asText)
-  println(s"User can opt-out: ${optOutStatus2.canOptOut}")
-  println("User can opt-out of the following years:")
-  optOutStatus2.optOutOptions.map(v => s"\t$v")
-  println(s"User can opt-out of year ${previousYearStatusDetail2.taxYear}: ${optOutStatus2.canOptOutOfYear(previousYearCrystalized2.taxYear)}")
-  println(s"User can opt-out of year ${TaxYear(2021)}: ${optOutStatus2.canOptOutOfYear(TaxYear(2021))}")
+    println()
+    println(optOutStatus.asText)
+    println(s"User can opt-out: ${optOutStatus.canOptOut}")
+    println("User can opt-out of the following years:")
+    optOutStatus.optOutOptions.map(v => s"\t${v.taxYear.toString}").foreach(println)
+    println(s"User can opt-out of year ${previousYearStatusDetail.taxYear}: ${optOutStatus.canOptOutOfYear(previousYearCrystalized.taxYear)}")
+    println(s"User can opt-out of year ${TaxYear(2021)}: ${optOutStatus.canOptOutOfYear(TaxYear(2021))}")
+
+  }
 
 }
