@@ -26,15 +26,18 @@ trait OptOutOptions {
                           nextYearState: YearStatusDetail): OptOutMessageResponse
 }
 
-case class CurrentTaxYearOptOut(currentTaxYear: YearStatusDetail) {
+trait OptOut {
+  def canOptOut: Boolean
+}
+case class CurrentTaxYearOptOut(currentTaxYear: YearStatusDetail) extends OptOut {
   def canOptOut: Boolean = currentTaxYear.statusDetail.isVoluntary
 }
 
-case class NextTaxYearOptOut(nextTaxYear: YearStatusDetail, currentTaxYear: YearStatusDetail) {
+case class NextTaxYearOptOut(nextTaxYear: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
   def canOptOut: Boolean = nextTaxYear.statusDetail.isVoluntary || (currentTaxYear.statusDetail.isVoluntary && nextTaxYear.statusDetail.isUnknown)
 }
 
-case class PreviousTaxYearOptOut(previousTaxYear: YearStatusDetail, crystallised: Boolean) {
+case class PreviousTaxYearOptOut(previousTaxYear: YearStatusDetail, crystallised: Boolean) extends OptOut {
   def canOptOut: Boolean = previousTaxYear.statusDetail.isVoluntary && !crystallised
 }
 
@@ -68,13 +71,13 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     val currentYear = CurrentTaxYearOptOut(currentYearState)
     val nextYear = NextTaxYearOptOut(nextYearState, currentYearState)
 
-    val voluntaryOptOutYearsAvailable: Seq[String] = validOptOut(previousYear, currentYear, nextYear)
+    val voluntaryOptOutYearsAvailable: Seq[OptOut] = validOptOut(previousYear, currentYear, nextYear)
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
       voluntaryOptOutYearsAvailable match {
-        case Seq("CY-1") => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
-        case Seq("CY"  ) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
-        case Seq("CY+1") => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
+        case Seq(previousTaxYearOptOut: PreviousTaxYearOptOut) => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
+        case Seq(currentTaxYearOptOut: CurrentTaxYearOptOut  ) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
+        case Seq(nextTaxYearOptOut: NextTaxYearOptOut        ) => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
         case _ => OptOutMessageResponse()
       }
     } else {
@@ -84,14 +87,12 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
 
   private def validOptOut(currentYearMinusOne: PreviousTaxYearOptOut,
                           currentYear: CurrentTaxYearOptOut,
-                          currentYearPlusOne: NextTaxYearOptOut): Seq[String] = {
-      val outcomes = Seq(
-        if (currentYearMinusOne.canOptOut) Some("CY-1") else None,
-        if (currentYear.canOptOut) Some("CY") else None,
-        if (currentYearPlusOne.canOptOut) Some("CY+1") else None
-      ).flatten
-
-      outcomes
+                          currentYearPlusOne: NextTaxYearOptOut): Seq[OptOut] = {
+      Seq[OptOut](
+        currentYearMinusOne,
+        currentYear,
+        currentYearPlusOne
+      ).filter(_.canOptOut)
   }
 }
 
