@@ -65,19 +65,14 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None =>
-        println("\n@@@@ NO crystallisation years found\n")
         Future.successful(Right(None))
       case Some(taxYear: TaxYear) =>
-        println(s"\n@@@@ CALLING: financialDetailsConnector.getFinancialDetails(${taxYear.endYear}, ${nino.value})\n")
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel =>
-          println("\n@@@@ Right(Some(financialDetails))\n")
           Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
-          println("\n@@@@ Left(new Exception())\n")
           Left(new Exception("There was an error whilst fetching financial details data"))
         case _ =>
-          println("\n@@@@ _ CASE Right(None) \n")
           Right(None)
       }
     }
