@@ -49,8 +49,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val optOutMessage = OptOutOneYearViewModel()
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, optOutMessage, checks, "testBackURL")))
+    val optOutOneYearViewModel = OptOutOneYearViewModel(taxYears = Array(TaxYear.forYearEnd(2024)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
   }
 
   object obligationsMessages {
@@ -117,8 +117,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     }
 
     s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(5)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(5) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {

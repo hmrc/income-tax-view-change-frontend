@@ -66,19 +66,19 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
   def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
                                     previousYearState: TaxYearITSAStatus,
                                     currentYearState: TaxYearITSAStatus,
-                                    nextYearState: TaxYearITSAStatus): OptOutOneYearViewModel = {
+                                    nextYearState: TaxYearITSAStatus): Option[OptOutOneYearViewModel] = {
 
     val voluntaryOptOutYearsAvailable: Seq[OptOut] = Seq[OptOut](
       PreviousTaxYearOptOut(previousYearState, finalisedStatus),
       CurrentTaxYearOptOut(currentYearState),
       NextTaxYearOptOut(nextYearState, currentYearState)).filter(
-        _.canOptOut
-      )
-    
+      _.canOptOut
+    )
+
     if (voluntaryOptOutYearsAvailable.size == 1) {
-      OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray)
+      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray))
     } else {
-      OptOutOneYearViewModel()
+      None
     }
   }
 }
