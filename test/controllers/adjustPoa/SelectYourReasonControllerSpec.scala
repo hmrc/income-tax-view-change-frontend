@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package controllers.adjustPoa
 
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
@@ -21,16 +22,19 @@ import forms.adjustPoa.SelectYourReasonFormProvider
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import models.incomeSourceDetails.TaxYear
+import models.paymentOnAccount.{PaymentOnAccount, PoAAmendmentData}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
-import services.PaymentOnAccountSessionService
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{OK, POST, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
+import viewmodels.adjustPoa.checkAnswers.MainIncomeLower
 import views.html.adjustPoa.SelectYourReasonView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with TestSupport
   with FeatureSwitching
@@ -47,7 +51,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
     view = app.injector.instanceOf[SelectYourReasonView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     formProvider = app.injector.instanceOf[SelectYourReasonFormProvider],
-    sessionService = mock[PaymentOnAccountSessionService],
+    sessionService = mockPaymentOnAccountSessionService,
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -55,24 +59,173 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
+  val defaultPoaForNonCrystallisedTaxYear: Option[PaymentOnAccount] = Some(
+    PaymentOnAccount(
+      poaOneTransactionId = "poaOne-Id",
+      poaTwoTransactionId = "poaTwo-Id",
+      taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+      paymentOnAccountOne = 5000.00,
+      paymentOnAccountTwo = 5000.00
+    ))
+
+  def setupTest(sessionResponse: Either[Throwable, Option[PoAAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccount]): Unit = {
+    enable(AdjustPaymentsOnAccount)
+    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+    mockSingleBISWithCurrentYearAsMigrationYear()
+    setupMockGetPaymentsOnAccount(claimToAdjustResponse)
+    setupMockTaxYearCrystallised()
+    setupMockPaymentOnAccountSessionService(Future.successful(sessionResponse))
+  }
+
   "SelectYourReasonController.show" should {
-    s"return status: $OK" when {
-      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
-        enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
+    s"return status $SEE_OTHER and set Reason when new amount is greater than current amount" in {
+      setupTest(
+        sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
+        claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
 
-        setupMockGetPaymentsOnAccount()
-        setupMockTaxYearNotCrystallised()
+      val result = TestSelectYourReasonController.show(isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+    }
 
-        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestSelectYourReasonController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
+    s"return status: $OK when PoA tax year crystallized" when {
 
-        status(result) shouldBe OK
-        status(resultAgent) shouldBe OK
+      "in change mode must pre-populate the answer" when {
+        "user is agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+          val result = TestSelectYourReasonController.show(isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+          status(result) shouldBe OK
+        }
+
+        "user is not agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+          val result = TestSelectYourReasonController.show(isAgent = false, isChange = true)(fakeRequestWithNinoAndOrigin("PTA"))
+          status(result) shouldBe OK
+        }
+      }
+
+      s"in normal mode" when {
+        "user is agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+          val result = TestSelectYourReasonController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
+          status(result) shouldBe OK
+        }
+
+        "user is not agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+          val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+          status(result) shouldBe OK
+        }
       }
     }
+
+    s"return status: $INTERNAL_SERVER_ERROR" when {
+
+      "Payment On Account Session data is missing" in {
+        setupTest(
+          sessionResponse = Right(None),
+          claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "POA data is missing" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData())),
+          claimToAdjustResponse = None)
+        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "Something goes wrong in payment on account session Service" in {
+        setupTest(
+          sessionResponse = Left(new Exception("Something went wrong")),
+          claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+
+        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
+  "SelectYourReasonController.submit" should {
+
+    s"return $BAD_REQUEST" when {
+
+      s"no option is selected" in {
+
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData())),
+          claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+
+        val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+          .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+        val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+
+        status(result) shouldBe BAD_REQUEST
+      }
+    }
+
+    s"return $SEE_OTHER" when {
+
+      "in normal mode" when {
+        "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+
+          setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
+
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+            .withFormUrlEncodedBody("value" -> "a")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/enter-poa-amount")
+        }
+
+        "if 'totalAmount' is less than 'poaRelevantAmount'" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = defaultPoaForNonCrystallisedTaxYear)
+
+          setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
+
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+            .withFormUrlEncodedBody("value" -> "a")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+        }
+      }
+
+      "in check mode" when {
+        "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
+          // TODO
+        }
+
+        "if 'totalAmount' is less than 'poaRelevantAmount'" in {
+          // TODO
+        }
+      }
+    }
+
   }
 }

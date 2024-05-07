@@ -16,11 +16,15 @@
 
 package mocks.services
 
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import models.paymentOnAccount.PoAAmendmentData
+import org.mockito.ArgumentMatchers.{any, same, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.PaymentOnAccountSessionService
 import testUtils.UnitSpec
+import viewmodels.adjustPoa.checkAnswers.SelectYourReason
+
+import scala.concurrent.Future
 
 trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEach {
 
@@ -29,6 +33,15 @@ trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEac
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockPaymentOnAccountSessionService)
+  }
+
+  def setupMockPaymentOnAccountSessionService(response: Future[Either[Throwable, Option[PoAAmendmentData]]]): Unit = {
+      when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(response)
+  }
+
+  def setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(reason: SelectYourReason,
+                                                                 response: Future[Either[Throwable, Unit]] = Future.successful(Right(()))): Unit = {
+    when(mockPaymentOnAccountSessionService.setAdjustmentReason(same(reason))(any(), any())).thenReturn(response)
   }
 
 }

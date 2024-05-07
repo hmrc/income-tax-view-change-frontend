@@ -60,6 +60,8 @@ class SelectYourReasonController @Inject()(
 
       withSessionAndPoa(isAgent) { (session, poa) =>
 
+
+
         // TODO: if amount has been entered, and is > current amount, autofill reason 005 and redirect
 
         val form = formProvider.apply()
@@ -79,7 +81,7 @@ class SelectYourReasonController @Inject()(
       )
     }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit request =>
 
       formProvider.apply()

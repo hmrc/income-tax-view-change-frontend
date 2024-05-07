@@ -52,11 +52,6 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
       when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
       TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(ammendmentData))
     }
-
-    "return the correct mongo data" in {
-      when(mockRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-      TestPaymentOnAccountSessionService.getMongo(headerCarrier, ec).futureValue shouldBe Right(Some(ammendmentData))
-    }
   }
   "PaymentOnAccountSessionService.setMongoData" should {
     "set the mongo value" in {

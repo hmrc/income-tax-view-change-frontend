@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package viewmodels.adjustPoa.checkAnswers
 
 import play.api.libs.json.{JsError, JsString, Json}
