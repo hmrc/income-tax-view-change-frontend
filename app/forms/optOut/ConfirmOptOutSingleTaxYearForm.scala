@@ -16,8 +16,8 @@
 
 package forms.optOut
 
+import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping}
-import play.api.data.{Form, Forms}
 
 case class ConfirmOptOutSingleTaxYearForm(confirmOptOut: Boolean)
 
@@ -31,7 +31,7 @@ object ConfirmOptOutSingleTaxYearForm {
       mapping(
         confirmOptOutField -> boolean.verifying(
           noResponseErrorMessageKey,
-          response => response == true || response == false)
+          response => response.isInstanceOf[Boolean])
       )(ConfirmOptOutSingleTaxYearForm.apply)(ConfirmOptOutSingleTaxYearForm.unapply)
     )
   }
