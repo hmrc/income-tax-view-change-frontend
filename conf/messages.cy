@@ -1836,4 +1836,4 @@ paymentOnAccount.table-heading.key                   = Y swm llawn
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
-paymentOnAccount.cancel.lin                          = Canslo
+paymentOnAccount.cancel.link                         = Canslo
