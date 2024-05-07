@@ -30,6 +30,11 @@
 
 @(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@confirmOptOutURL = @{
+    if(isAgent) controllers.optout.routes.ConfirmedOptOutController.showAgent().url
+    else controllers.optout.routes.ConfirmedOptOutController.show().url
+}
+
 @mainTemplate(
     pageTitle = messages("optout.confirmOptOut.heading"),
     backUrl = Some("#"),
@@ -45,9 +50,9 @@
 }
 
 <div class="govuk-button-group">
-    <button id="confirm-button" type="submit" class="govuk-button" data-module="govuk-button">
+    <a class="govuk-button" role="button" data-module="govuk-button" id="confirm-button" href="@confirmOptOutURL" data-module="govuk-button">
         @messages("optout.confirmOptOut.confirm")
-    </button>
+    </a>
     <a class="govuk-link" id="cancel-button" href="#">
         @messages("optout.confirmOptOut.cancel")
     </a>

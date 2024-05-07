@@ -37,6 +37,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val title: String = messages("htmlTitle", heading)
     val summary: String = messages("optout.confirmOptOut.desc")
     val confirmButton: String = messages("optout.confirmOptOut.confirm")
+    val confirmedOptOutURL: String = controllers.optout.routes.ConfirmedOptOutController.show().url
+    val confirmedOptOutURLAgent: String = controllers.optout.routes.ConfirmedOptOutController.showAgent().url
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
   }
 
@@ -54,6 +56,14 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
       pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURL
+    }
+
+    "have the correct summary heading and page contents for Agents" in new Setup(true) {
+      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
+      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
+      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
 
   }
