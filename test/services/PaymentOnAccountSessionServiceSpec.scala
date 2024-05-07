@@ -43,7 +43,7 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
     "create the mongo session" in {
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
       val result = TestPaymentOnAccountSessionService.createSession
-      result.futureValue shouldBe true
+      result.futureValue shouldBe Right(())
     }
   }
   "PaymentOnAccountSessionService.getMongo" should {
