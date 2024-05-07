@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPoa
+package controllers.agent
 
 import config.featureswitch.AdjustPaymentsOnAccount
-import helpers.ComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
+class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
 
-  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(false).url
+  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(true).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(false).url
-  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(true).url
+  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true).url
 
   s"calling GET $whatYouNeedToKnowUrl" should {
     s"return status $OK and render the What You Need To Know page (with correct link)" when {
       "User is authorised and has originalAmount >= relevantAmount" in {
         enable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -52,7 +53,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow(clientDetailsWithConfirmation)
 
         lazy val document: Document = Jsoup.parse(res.body)
         val continueButton = document.getElementById("continue")
@@ -64,6 +65,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       }
       "User is authorised and has originalAmount < relevantAmount" in {
         enable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -79,7 +81,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow(clientDetailsWithConfirmation)
 
         lazy val document: Document = Jsoup.parse(res.body)
         val continueButton = document.getElementById("continue")
@@ -93,6 +95,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -108,11 +111,11 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
+          redirectURI(controllers.routes.HomeController.showAgent.url)
         )
       }
     }
@@ -120,6 +123,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
       enable(AdjustPaymentsOnAccount)
+      stubAuthorisedAgentUser(authorised = true)
 
       And("I wiremock stub empty financial details response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -130,7 +134,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       )
 
       When(s"I call GET $whatYouNeedToKnowUrl")
-      val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+      val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow(clientDetailsWithConfirmation)
 
       res should have(
         httpStatus(INTERNAL_SERVER_ERROR)

@@ -352,7 +352,7 @@ object IncomeSourceIntegrationTestConstants {
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                          interestLocks: List[String] = noInterestLock,
                                          latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                         isClass2Nic: Boolean = false
+                                         isClass2Nic: Boolean = false, poaRelevantAmount: Option[BigDecimal] = None
                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -373,7 +373,8 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "interestOutstandingAmount" -> 80.0,
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -383,7 +384,8 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -393,7 +395,8 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> 9999,
@@ -406,7 +409,8 @@ object IncomeSourceIntegrationTestConstants {
         "paymentLotItem" -> "000001",
         "latePaymentInterestId" -> "latePaymentInterestId",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       )
     ),
     "financialDetails" -> Json.arr(

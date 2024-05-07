@@ -26,7 +26,7 @@ import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val view: WhatYouNeedToKnow,
+                                            val sessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,
@@ -60,8 +61,12 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       if (isEnabled(AdjustPaymentsOnAccount)) {
         claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)).flatMap {
           case Right(Some(poa)) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
-          case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][show]")
+            sessionService.createSession.map {
+              case true => Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa))))
+              case _ => Logger("application").error(s"[WhatYouNeedToKnowController][show] error creating mongo session")
+                showInternalServerError(isAgent)
+            }
+          case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][show] no payment on account data found")
             Future.successful(showInternalServerError(isAgent))
           case Left(ex) =>
             Logger("application").error(s"[WhatYouNeedToKnowController][show] ${ex.getMessage} - ${ex.getCause}")

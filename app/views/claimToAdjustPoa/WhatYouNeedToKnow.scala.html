@@ -97,6 +97,7 @@
     <div class="govuk-button-group">
 
         @govukButton(Button(
+            id = Some("continue"),
             content = Text(getMessage("continue-button")),
             href = Some(redirect)
         ))
