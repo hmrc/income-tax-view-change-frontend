@@ -45,7 +45,9 @@ object OptOutService {
 @Singleton
 class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateServiceInterface) {
 
-  def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
+  def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
+                                                    hc: HeaderCarrier,
+                                                    ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     val yearEnd = dateService.getCurrentTaxYearEnd
     val currentYear = TaxYear.forYearEnd(yearEnd)
     val previousYear = currentYear.previousYear
