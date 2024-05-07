@@ -19,6 +19,7 @@ package controllers.claimToAdjustPOA
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes
 import implicits.ImplicitCurrencyFormatter
 import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import models.core.Nino
@@ -67,8 +68,8 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         } else {
           Future.successful(
             Redirect(
-              if (isAgent) HomeController.showAgent
-              else         HomeController.show()
+              if (isAgent) routes.HomeController.showAgent
+              else         routes.HomeController.show()
             )
           )
         } recover {
