@@ -19,7 +19,6 @@ package controllers.agent
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.paymentOnAccount.PoAAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -65,7 +64,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe None
+        sessionService.getMongo.futureValue shouldBe Right(None)
         continueButton.attr("href") shouldBe selectReasonUrl
       }
       "User is authorised and has originalAmount < relevantAmount" in {
@@ -94,7 +93,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe None
+        sessionService.getMongo.futureValue shouldBe Right(None)
         continueButton.attr("href") shouldBe enterPOAAmountUrl
       }
     }
