@@ -34,7 +34,7 @@ case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
 object WYOClaimToAdjustViewModel {
 
   def ctaLink(isAgent: Boolean): String = {
-    controllers.routes.AmendablePOAController.show(isAgent = isAgent).url
+    controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = isAgent).url
   }
 
 }

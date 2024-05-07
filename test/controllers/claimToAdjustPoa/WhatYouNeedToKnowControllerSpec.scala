@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package claimToAdjustPoa
+package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
-import controllers.claimToAdjustPoa.WhatYouNeedToKnowController
+import controllers.claimToAdjustPOA.WhatYouNeedToKnowController
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}

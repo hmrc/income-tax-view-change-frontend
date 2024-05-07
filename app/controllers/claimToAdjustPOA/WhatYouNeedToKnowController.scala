@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPoa
+package controllers.claimToAdjustPOA
 
-import auth.MtdItUser
 import cats.data.EitherT
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -29,7 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -51,9 +49,9 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
     (if (totalAmountLessThanPoa) {
-      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
+      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
     } else {
-      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent)
+      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
     }).url
   }
 

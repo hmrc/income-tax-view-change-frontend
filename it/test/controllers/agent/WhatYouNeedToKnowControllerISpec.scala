@@ -28,11 +28,11 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
 
-  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(true).url
+  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(true).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(true).url
-  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(true).url
+  val selectReasonUrl = controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(true).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 

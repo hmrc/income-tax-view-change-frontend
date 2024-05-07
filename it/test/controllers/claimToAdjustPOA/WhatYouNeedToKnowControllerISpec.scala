@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPoa
+package controllers.claimToAdjustPOA
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
@@ -28,11 +28,11 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
-  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(false).url
+  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(false).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(false).url
-  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(false).url
+  val selectReasonUrl = controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(false).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
