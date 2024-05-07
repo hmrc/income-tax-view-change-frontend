@@ -19,16 +19,17 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
+import models.core.Nino
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
@@ -59,7 +60,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val retrieveBtaNavBar: NavBarPredicate,
-                                         val auditingService: AuditingService)
+                                         val auditingService: AuditingService,
+                                         claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
@@ -81,6 +83,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                    taxYear: Int,
                    obligations: ObligationsModel,
                    codingOutEnabled: Boolean,
+                   claimToAdjustViewModel: TYSClaimToAdjustViewModel,
                    backUrl: String,
                    origin: Option[String],
                    isAgent: Boolean
@@ -100,7 +103,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           documentDetailsWithDueDates,
           obligations,
           codingOutEnabled = codingOutEnabled,
-          showForecastData = showForecast(calculationSummary)
+          showForecastData = showForecast(calculationSummary),
+          ctaViewModel = claimToAdjustViewModel
         )
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
@@ -122,7 +126,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           documentDetailsWithDueDates,
           obligations,
           codingOutEnabled,
-          isEnabled(ForecastCalculation))
+          isEnabled(ForecastCalculation),
+          claimToAdjustViewModel)
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, messagesApi, viewModel))
@@ -228,13 +233,17 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   private def handleRequest(taxYear: Int, origin: Option[String], isAgent: Boolean)
                            (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
                             ec: ExecutionContext, messages: Messages): Future[Result] = {
+
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
         val codingOutEnabled: Boolean = isEnabled(CodingOut)
         val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
         val nino: String = if (isAgent) getClientNino else user.nino
-        calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse =>
-          view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
+        for {
+          viewModel <- claimToAdjustViewModel(Nino(value = user.nino), taxYear)
+          liabilityCalcResponse <- calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear)
+        } yield {
+          view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled, viewModel,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
             origin = origin, isAgent = isAgent)
             .addingToSession(gatewayPage -> TaxYearSummaryPage.name)
@@ -242,6 +251,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
       }
     }
+  }.recover {
+    case ex: Throwable =>
+      val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      errorHandler.showInternalServerError()
   }
 
   def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
@@ -288,6 +302,23 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
     } else {
       liabilityCalc
+    }
+  }
+
+  private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[TYSClaimToAdjustViewModel] = {
+    if (isEnabled(AdjustPaymentsOnAccount)) {
+      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+        case Right(value) => value match {
+          case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value)))
+          case _ => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+        }
+        case Left(ex: Throwable) =>
+          Logger("application").error(s"[TaxYearSummaryController][claimToAdjustViewModel] There was an error when getting the POA Entry point" +
+            s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
+          Future.failed(ex)
+      }
+    } else {
+      Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
   }
 }
