@@ -135,7 +135,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
         paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount"))
+        paymentOnAccountTwo = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
+        poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+        poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )
     }
   }

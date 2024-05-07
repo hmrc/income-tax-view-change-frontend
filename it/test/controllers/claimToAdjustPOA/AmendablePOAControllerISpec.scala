@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPOA
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
@@ -40,10 +40,10 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub financial details for multiple years with POAs")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
 
         When(s"I call GET $amendPoaUrl")

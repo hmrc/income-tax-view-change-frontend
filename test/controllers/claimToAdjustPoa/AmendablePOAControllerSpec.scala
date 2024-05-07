@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPoa
 
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -23,11 +23,11 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{status, _}
+import play.api.test.Helpers._
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.AmendablePaymentOnAccount
+import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import scala.concurrent.{ExecutionContext, Future}
 

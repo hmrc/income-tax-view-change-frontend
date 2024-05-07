@@ -46,7 +46,9 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
                 poaTwoTransactionId = "poaTwo-Id",
                 taxYear = TaxYear.makeTaxYearWithEndYear(2024),
                 paymentOnAccountOne = 5000.00,
-                paymentOnAccountTwo = 5000.00
+                paymentOnAccountTwo = 5000.00,
+                poARelevantAmountOne = 5000.00,
+                poARelevantAmountTwo = 5000.00
               )
             )
           )

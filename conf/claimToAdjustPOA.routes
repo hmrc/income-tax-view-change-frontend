@@ -1,0 +1,16 @@
+
+########################################################################################################################################################
+#                                                            Claim To Adjust POA                                                                       #
+########################################################################################################################################################
+
+GET          /adjust-poa/start                                               controllers.claimToAdjustPOA.AmendablePOAController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/start                                        controllers.claimToAdjustPOA.AmendablePOAController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/what-you-need-to-know                              controllers.claimToAdjustPOA.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/what-you-need-to-know                       controllers.claimToAdjustPOA.WhatYouNeedToKnowController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/select-your-reason                                 controllers.claimToAdjustPOA.SelectYourReasonController.show(isAgent: Boolean = false)
+GET          /agent/adjust-poa/select-your-reason                           controllers.claimToAdjustPOA.SelectYourReasonController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPOA.EnterPoAAmountController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPOA.EnterPoAAmountController.show(isAgent: Boolean = true)

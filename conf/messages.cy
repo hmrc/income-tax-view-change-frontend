@@ -1823,6 +1823,10 @@ manageBusinesses.check-answers.reporting.annually                        = Bob b
 manageBusinesses.check-answers.confirm                                   = Cadarnhau ac yn eich blaen
 manageBusinesses.check-answers.change                                    = Newid
 
+#######################################################################################################################
+## Claim to Adjust POA - Add ##
+#######################################################################################################################
+
 paymentOnAccount.caption                             = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
@@ -1837,3 +1841,21 @@ paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.link                         = Canslo
+
+# what you need to know
+claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
+claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	Yr hyn y mae angen i chi ei wybod
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   Gallwch addasu eich taliadau ar gyfrif ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn
+claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 Ionawr {0}
+claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   {0}fan bellaf.
+claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	Mae’n bosibl y bydd yn rhaid i chi dalu llog os byddwch yn gostwng eich taliadau ar gyfrif gormod, ac yn gwneud tandaliad
+claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   Os bydd eich bil treth nesaf yn is na’r disgwyl, ac rydych wedi gordalu trwy’ch taliadau ar gyfrif, byddwn yn credydu’ch cyfrif.
+claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Taliadau llog
+claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   Os byddwch yn gostwng eich taliadau ar gyfrif gormod, a bod eich bil treth terfynol yn dangos bod arnoch fwy o dreth na’r hyn rydych wedi’i thalu drwy’ch taliadau ar gyfrif, byddwn yn ychwanegu’r gwahaniaeth i’ch cyfrif fel tâl am fod yn hwyr.
+claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Yn unol ag unrhyw daliadau a wnaed yn hwyr, bydd CThEF yn codi llog ar y swm hwnnw o’r dyddiad yr oedd pob taliad ar gyfrif yn ddyledus, hyd nes bod y swm yn cael ei dalu.
+claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   Er mwyn osgoi talu llog, gallwch gynyddu’ch taliadau ar gyfrif cyn bod pob taliad yn ddyledus, hyd at y swm cychwynnol a gyfrifwyd gan CThEF.
+claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Yn eich blaen
+claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gweler yr arweiniad ynghylch
+claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
+claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canslo

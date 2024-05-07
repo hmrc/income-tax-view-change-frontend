@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,74 @@
 
 package controllers.claimToAdjustPOA
 
-import config.featureswitch.FeatureSwitching
+import cats.data.EitherT
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitCurrencyFormatter
+import controllers.routes.HomeController
+import models.core.Nino
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                            val auth: AuthenticatorPredicate,
+                                            val view: WhatYouNeedToKnow,
+                                            val sessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
+                                            auth: AuthenticatorPredicate,
+                                            val claimToAdjustService: ClaimToAdjustService,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            implicit override val mcc: MessagesControllerComponents,
+                                            mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/what-you-need-to-know")
-    }
+  def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
+    (if (poa.totalAmountLessThanPoa) {
+      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
+    } else {
+      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
+    }).url
+  }
+
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      if (isEnabled(AdjustPaymentsOnAccount)) {
+        {
+          for {
+            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+            _ <- EitherT(sessionService.createSession)
+          } yield poaMaybe
+        }.value.flatMap {
+          case Right(Some(poa)) =>
+            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, poa))))
+          case Left(ex) =>
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            Future.successful(showInternalServerError(isAgent))
+          case Right(None) =>
+            Logger("application").error(s"No payment on account data found")
+            Future.successful(showInternalServerError(isAgent))
+        }
+      } else {
+        Future.successful(
+          Redirect(
+            if (isAgent) HomeController.showAgent
+            else HomeController.show()
+          )
+        )
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
+      }
+  }
 }
