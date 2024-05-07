@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPOA
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
