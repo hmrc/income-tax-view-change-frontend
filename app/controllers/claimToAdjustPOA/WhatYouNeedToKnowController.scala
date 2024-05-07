@@ -47,6 +47,14 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                             val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
+  def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
+    (if (poa.totalAmountLessThanPoa) {
+      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
+    } else {
+      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
+    }).url
+  }
+
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
@@ -57,7 +65,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, poa.getRedirect(isAgent))))
+            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, poa))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
