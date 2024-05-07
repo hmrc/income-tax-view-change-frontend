@@ -16,7 +16,7 @@
 
 package services.optout
 
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.optOut.{OptOutMessageResponse, YearStatusDetail}
 
 trait OptOutOptions {
@@ -31,15 +31,16 @@ trait OptOut {
   val taxYearStatusDetail: YearStatusDetail
 }
 case class CurrentTaxYearOptOut(taxYearStatusDetail: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary
 }
 
 case class NextTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary || (currentTaxYear.statusDetail.isVoluntary && taxYearStatusDetail.statusDetail.isUnknown)
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary ||
+    (currentTaxYear.statusDetail.status == Voluntary && taxYearStatusDetail.statusDetail.status == NoStatus)
 }
 
 case class PreviousTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, crystallised: Boolean) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary && !crystallised
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary && !crystallised
 }
 
 //todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
