@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, TaxYearITSAStatus}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
 import services.optout.OptOutService.BooleanOptionToFuture
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
@@ -67,7 +67,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield optOutChecks
   }
 
-  def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutMessageResponse] = {
+  def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutOneYearViewModel] = {
 
     val processSteps = for {
       currentYear <- dateService.getCurrentTaxYear.toF
@@ -86,7 +86,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     processSteps recover {
       case e =>
         Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
-        OptOutMessageResponse()
+        OptOutOneYearViewModel()
     }
   }
 }

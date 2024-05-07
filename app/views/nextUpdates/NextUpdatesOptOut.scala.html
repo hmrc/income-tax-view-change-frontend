@@ -19,7 +19,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optOut.NextUpdatesQuarterlyReportingContentChecks
-@import models.optOut.OptOutMessageResponse
+@import models.optOut.OptOutOneYearViewModel
 
 
 @this(
@@ -33,7 +33,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, optOut: OptOutMessageResponse,
+@(currentObligations: NextUpdatesViewModel, optOut: OptOutOneYearViewModel,
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,

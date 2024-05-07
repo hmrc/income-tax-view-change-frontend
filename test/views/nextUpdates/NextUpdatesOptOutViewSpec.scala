@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.nextUpdates._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, TaxYearITSAStatus}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -49,7 +49,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val optOutMessage = OptOutMessageResponse()
+    val optOutMessage = OptOutOneYearViewModel()
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, optOutMessage, checks, "testBackURL")))
   }
 
