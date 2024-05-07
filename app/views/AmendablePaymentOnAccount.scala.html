@@ -76,7 +76,7 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    @p(){
+    @p(id = Some("paragraph-1-text")){
         @getMessage("p1")
         @link(
             link = getMessage("class4NationalInsurance.link"),
@@ -147,14 +147,16 @@
         ))
     ))
 
-    @p(){ @getMessage("p3") }
+    @p(id = Some("paragraph-2-text")){ @getMessage("p3") }
 
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
+            id = Some("adjust-my-payments-button"),
             content = Text(getMessage("button")),
             href = Some(getWhatYouNeedToKnowUrl)
         ))
         @link(
+            id = Some("cancel-link"),
             link = getHomePageUrl,
             messageKey = getMessage("cancel.link")
         )
