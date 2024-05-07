@@ -84,7 +84,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.createSession(any())).thenReturn(Future(true))
+        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Right(())))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -104,7 +104,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.createSession(any())).thenReturn(Future(false))
+        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Left(new Error(""))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
