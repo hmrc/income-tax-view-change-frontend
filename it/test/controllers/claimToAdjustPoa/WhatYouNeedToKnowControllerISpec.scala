@@ -22,6 +22,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
@@ -32,6 +33,8 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(false).url
   val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false).url
+
+  val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
   s"calling GET $whatYouNeedToKnowUrl" should {
     s"return status $OK and render the What You Need To Know page (with correct link)" when {
@@ -60,6 +63,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
+        sessionService.getMongo.futureValue shouldBe None
         continueButton.attr("href") shouldBe selectReasonUrl
       }
       "User is authorised and has originalAmount < relevantAmount" in {
@@ -87,6 +91,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
+        sessionService.getMongo.futureValue shouldBe None
         continueButton.attr("href") shouldBe enterPOAAmountUrl
       }
     }
