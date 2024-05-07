@@ -28,17 +28,18 @@ trait OptOutOptions {
 
 trait OptOut {
   def canOptOut: Boolean
+  val taxYearStatusDetail: YearStatusDetail
 }
-case class CurrentTaxYearOptOut(currentTaxYear: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = currentTaxYear.statusDetail.isVoluntary
-}
-
-case class NextTaxYearOptOut(nextTaxYear: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = nextTaxYear.statusDetail.isVoluntary || (currentTaxYear.statusDetail.isVoluntary && nextTaxYear.statusDetail.isUnknown)
+case class CurrentTaxYearOptOut(taxYearStatusDetail: YearStatusDetail) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary
 }
 
-case class PreviousTaxYearOptOut(previousTaxYear: YearStatusDetail, crystallised: Boolean) extends OptOut {
-  def canOptOut: Boolean = previousTaxYear.statusDetail.isVoluntary && !crystallised
+case class NextTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary || (currentTaxYear.statusDetail.isVoluntary && taxYearStatusDetail.statusDetail.isUnknown)
+}
+
+case class PreviousTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, crystallised: Boolean) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary && !crystallised
 }
 
 //todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
@@ -74,12 +75,7 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     val voluntaryOptOutYearsAvailable: Seq[OptOut] = validOptOut(previousYear, currentYear, nextYear)
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
-      voluntaryOptOutYearsAvailable match {
-        case Seq(previousTaxYearOptOut: PreviousTaxYearOptOut) => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
-        case Seq(currentTaxYearOptOut: CurrentTaxYearOptOut  ) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
-        case Seq(nextTaxYearOptOut: NextTaxYearOptOut        ) => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
-        case _ => OptOutMessageResponse()
-      }
+      OptOutMessageResponse(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray)
     } else {
       OptOutMessageResponse()
     }
