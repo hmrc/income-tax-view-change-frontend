@@ -358,6 +358,9 @@ tax-year-summary.agent.message.C559105                         = mae’r swm a h
 tax-year-summary.agent.message.C559113                         = ar gyfer eiddo tramor eich cleient, mae naill ai angen iddo gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau.
 tax-year-summary.agent.message.C559114                         = ar gyfer llety gwyliau wedi’i ddodrefnu yn yr AEE eich cleient, mae naill ai angen iddo gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau ohonynt.
 
+tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng y ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch Cyfraniadau Yswiriant Gwladol Dosbarth 4 fod yn wahanol i gyfanswm eich taliadau ar gyfrif presennol.
+tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
+
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
@@ -873,6 +876,7 @@ whatYouOwe.cancelledPayeSelfAssessment.text                     = Hunanasesiad T
 whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}
 whatYouOwe.taxYear                                              = Blwyddyn dreth
 whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {2}%
+whatYouOwe.adjust-poa                                           = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2

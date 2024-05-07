@@ -30,69 +30,37 @@ object ClaimToAdjustPOATestConstants {
     outstandingAmount = Some(100.00),
     originalAmount = Some(100.00),
     poaRelevantAmount = Some(100.00),
+    documentDueDate = Some(LocalDate.of(taxYearEnd, 1, 31)),
     documentDate = LocalDate.of(taxYearEnd, 3, 29),
-    interestOutstandingAmount = Some(100),
+    interestOutstandingAmount = Some(150),
     interestRate = None,
     interestFromDate = None,
     interestEndDate = None,
-    latePaymentInterestAmount = Some(100),
+    latePaymentInterestAmount = Some(150),
     latePaymentInterestId = None
   )
 
   def genericDocumentDetailPOA2(taxYearEnd: Int) = DocumentDetail(
     taxYear = taxYearEnd,
-    transactionId = "DOCID01",
+    transactionId = "DOCID02",
     documentDescription = Some("ITSA - POA 2"),
     documentText = None,
-    outstandingAmount = Some(100.00),
-    originalAmount = Some(100.00),
+    outstandingAmount = Some(250.00),
+    originalAmount = Some(250.00),
     poaRelevantAmount = Some(100.00),
+    documentDueDate = Some(LocalDate.of(taxYearEnd, 7, 31)),
     documentDate = LocalDate.of(taxYearEnd, 3, 29),
-    interestOutstandingAmount = Some(100),
+    interestOutstandingAmount = Some(250),
     interestRate = None,
     interestFromDate = None,
     interestEndDate = None,
-    latePaymentInterestAmount = Some(100),
-    latePaymentInterestId = None
-  )
-
-  val documentDetail2024POA1 = DocumentDetail(
-    taxYear = 2024,
-    transactionId = "DOCID01",
-    documentDescription = Some("ITSA- POA 1"),
-    documentText = None,
-    outstandingAmount = Some(100.00),
-    originalAmount = Some(100.00),
-    poaRelevantAmount = Some(100.00),
-    documentDate = LocalDate.of(2024, 3, 29),
-    interestOutstandingAmount = Some(100),
-    interestRate = None,
-    interestFromDate = None,
-    interestEndDate = None,
-    latePaymentInterestAmount = Some(100),
-    latePaymentInterestId = None
-  )
-
-  val documentDetail2024POA2 = DocumentDetail(
-    taxYear = 2024,
-    transactionId = "DOCID01",
-    documentDescription = Some("ITSA - POA 2"),
-    documentText = None,
-    outstandingAmount = Some(100.00),
-    originalAmount = Some(100.00),
-    poaRelevantAmount = Some(100.00),
-    documentDate = LocalDate.of(2024, 3, 29),
-    interestOutstandingAmount = Some(100),
-    interestRate = None,
-    interestFromDate = None,
-    interestEndDate = None,
-    latePaymentInterestAmount = Some(100),
+    latePaymentInterestAmount = Some(250),
     latePaymentInterestId = None
   )
 
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List(documentDetail2024POA1, documentDetail2024POA2),
+    documentDetails = List(genericDocumentDetailPOA1(2024), genericDocumentDetailPOA2(2024)),
     financialDetails = List.empty,
   )
 
@@ -123,6 +91,12 @@ object ClaimToAdjustPOATestConstants {
   val userPOADetails2023OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA2(2023)),
+    financialDetails = List.empty,
+  )
+
+  val userNoPOADetails: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List.empty,
     financialDetails = List.empty,
   )
 
