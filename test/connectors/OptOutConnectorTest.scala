@@ -33,99 +33,89 @@
 package connectors
 
 import config.FrontendAppConfig
-import mocks.MockHttp
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutApiCallResponse
-import org.mockito.Mockito.{mock, when}
+import models.optOut.OptOutUpdateRequestModel._
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import testConstants.OptOutStatusUpdateTestConstants
-import testConstants.OptOutStatusUpdateTestConstants._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.Json
+import play.mvc.Http.Status
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
-class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with MockHttp {
+class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
 
-  val http: HttpClient = mock(classOf[HttpClient])
+  val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   implicit val headerCarrier: HeaderCarrier = mock(classOf[HeaderCarrier])
-  val connector = new OptOutConnector(http, appConfig)
+  val connector = new OptOutConnector(httpClient, appConfig)
 
   val taxYear = TaxYear.forYearEnd(2024)
   val taxableEntityId: String = "AB123456A"
-  when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-//  trait Setup {
-//
-//    val baseUrl = "http://localhost:9082"
-//    def getAppConfig(): FrontendAppConfig =
-//      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-//        override lazy val itvcProtectedService: String = baseUrl
-//      }
-//
-//    val connector = new OptOutConnector(http, getAppConfig())
-//  }
-
-  "updateCessationDate" should {
-
-    setupMockHttpPutWithHeaderCarrier(connector.getUrl(taxableEntityId))(
-      OptOutStatusUpdateTestConstants.request,
-      OptOutStatusUpdateTestConstants.successHttpResponse
-    )
-    val result: Future[OptOutApiCallResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
-    result.futureValue shouldBe expectedSuccessResponse
-
-//    s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
-//      "invalid json response" in new Setup {
-//        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-//          UpdateIncomeSourceTestConstants.request,
-//          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
-//        val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
-//        result.futureValue shouldBe badJsonResponse
-//      }
-//      "receiving a 500+ response" in new Setup {
-//        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-//          UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-//            json = Json.toJson(failureResponse), headers = Map.empty))
-//        val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
-//        result.futureValue shouldBe failureResponse
-//      }
-//    }
-
+  before {
+    reset(httpClient, appConfig, headerCarrier)
   }
 
-//  "updateTaxYearSpecific" should {
-//
-//    s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
-//      setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-//        UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-//        UpdateIncomeSourceTestConstants.successHttpResponse)
-//      val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-//        testNino, incomeSourceId, taxYearSpecific)
-//      result.futureValue shouldBe successResponse
-//    }
-//
-//    s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
-//      "invalid json response" in new Setup {
-//        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-//          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-//          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
-//        val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-//          testNino, incomeSourceId, taxYearSpecific)
-//        result.futureValue shouldBe badJsonResponse
-//      }
-//      "receiving a 500+ response" in new Setup {
-//        setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
-//          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
-//          HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-//            json = Json.toJson(failureResponse), headers = Map.empty))
-//        val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-//          testNino, incomeSourceId, taxYearSpecific)
-//        result.futureValue shouldBe failureResponse
-//      }
-//    }
-//  }
+  "For OptOutConnector.requestOptOutForTaxYear " when {
+
+    "happy case" should {
+
+      "return successful response" in {
+
+        when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
+
+        val apiRequest = OptOutApiCallRequest(taxYear.toString)
+        val apiResponse = OptOutApiCallSuccessfulResponse("123")
+        val httpResponse = HttpResponse(Status.OK, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
+
+        setupHttpClientMock[OptOutApiCallRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+
+        val result: Future[OptOutApiCallResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+
+        Await.result(result, 10.seconds)
+
+        result.value.map {
+          case Success(response) => response shouldBe apiResponse
+          case Failure(e) => fail(s"error: ${e.getMessage}")
+        }
+      }
+    }
+
+    "unhappy case" should {
+
+      "return failure response" in {
+
+        when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
+
+        val apiRequest = OptOutApiCallRequest(taxYear.toString)
+        val apiFailResponse = OptOutApiCallFailureResponse(List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+          "Submission has not passed validation. Invalid parameter taxableEntityId."))
+        )
+        val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
+
+        setupHttpClientMock[OptOutApiCallRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+
+        val result: Future[OptOutApiCallResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+
+        Await.result(result, 10.seconds)
+
+        result.value.map {
+          case Success(response) => response shouldBe apiFailResponse
+          case Failure(e) => fail(s"error: ${e.getMessage}")
+        }
+      }
+    }
+  }
+
+  def setupHttpClientMock[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit = {
+    when(httpClient.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
+      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+  }
 }

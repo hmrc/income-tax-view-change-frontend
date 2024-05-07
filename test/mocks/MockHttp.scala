@@ -33,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockHttp extends UnitSpec with BeforeAndAfterEach {
 
+  //todo: refactor: rename mockHttpGet to mockHttp
   val mockHttpGet: HttpClient = mock(classOf[HttpClient])
 
   override def beforeEach(): Unit = {

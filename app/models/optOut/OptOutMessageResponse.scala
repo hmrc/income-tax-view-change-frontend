@@ -18,24 +18,9 @@ package models.optOut
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import play.api.libs.json.{Format, Json}
 
 case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
 case class OptOutMessageResponse(taxYears: Array[TaxYear] = Array()) {
   def oneYearOptOutTaxYear: TaxYear = taxYears(0)
   def oneYearOptOut: Boolean = taxYears.length == 1
-}
-
-case class OptOutApiCallRequest(taxYear: String, updateReason: Int = 10)
-object OptOutApiCallRequest {
-  implicit val format: Format[OptOutApiCallRequest] = Json.format[OptOutApiCallRequest]
-}
-
-sealed trait OptOutApiCallResponse
-case class OptOutApiCallSuccessfulResponse(correlationId: String) extends OptOutApiCallResponse
-case class OptOutApiCallFailureResponse(code: String, reason: String) extends OptOutApiCallResponse
-
-object OptOutApiCallResponse {
-  implicit val formatSuccess: Format[OptOutApiCallSuccessfulResponse] = Json.format[OptOutApiCallSuccessfulResponse]
-  implicit val formatFailure: Format[OptOutApiCallFailureResponse] = Json.format[OptOutApiCallFailureResponse]
 }

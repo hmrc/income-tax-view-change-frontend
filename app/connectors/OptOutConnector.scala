@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optOut.{OptOutApiCallFailureResponse, OptOutApiCallRequest, OptOutApiCallResponse, OptOutApiCallSuccessfulResponse}
+import models.optOut.OptOutUpdateRequestModel._
 import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -42,21 +42,24 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
     val body = OptOutApiCallRequest(taxYear = taxYear.toString)
 
     http.PUT[OptOutApiCallRequest, HttpResponse](
-      getUrl(taxableEntityId),
-      body, Seq[(String, String)]()).map { response =>
+      getUrl(taxableEntityId), body, Seq[(String, String)]()
+    ).map { response =>
       response.status match {
-        case OK => response.json.validate[OptOutApiCallSuccessfulResponse].fold(
+        case OK =>
+          response.json.validate[OptOutApiCallSuccessfulResponse].fold(
           invalid => {
             log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutApiCallFailureResponse("0", "Json validation error parsing response")
+            OptOutApiCallFailureResponse(List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
           },
-          valid => valid
+          valid => {
+            valid.copy(correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader"))
+          }
         )
         case _ =>
           response.json.validate[OptOutApiCallFailureResponse].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutApiCallFailureResponse("0", "Json validation error parsing response")
+              OptOutApiCallFailureResponse(List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
             },
             valid => valid
           )
