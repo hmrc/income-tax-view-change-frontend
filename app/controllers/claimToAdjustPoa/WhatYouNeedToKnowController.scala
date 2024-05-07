@@ -17,6 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
+import cats.data.EitherT
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -59,32 +60,35 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
-        claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)).flatMap {
+        {
+          for {
+            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+            _ <- EitherT(sessionService.createSession)
+          } yield poaMaybe
+        }.value.flatMap {
           case Right(Some(poa)) =>
-            sessionService.createSession.map {
-              case true => Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa))))
-              case _ => Logger("application").error(s"[WhatYouNeedToKnowController][show] error creating mongo session")
-                showInternalServerError(isAgent)
-            }
-          case Right(None) => Logger("application").error(s"[WhatYouNeedToKnowController][show] no payment on account data found")
-            Future.successful(showInternalServerError(isAgent))
+            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
           case Left(ex) =>
-            Logger("application").error(s"[WhatYouNeedToKnowController][show] ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            Future.successful(showInternalServerError(isAgent))
+          case Right(None) =>
+            Logger("application").error(s"No payment on account data found")
             Future.successful(showInternalServerError(isAgent))
         }
-      }else {
+      } else {
         Future.successful(
           Redirect(
             if (isAgent) HomeController.showAgent
-            else         HomeController.show()
+            else HomeController.show()
           )
         )
-      } recover {
+      }.recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
       }
   }
+
 
   private def totalAmountLessThanPoa(poaModel: PaymentOnAccount): Boolean = {
     (poaModel.paymentOnAccountOne + poaModel.paymentOnAccountTwo) < (poaModel.poARelevantAmountOne + poaModel.poARelevantAmountTwo)
