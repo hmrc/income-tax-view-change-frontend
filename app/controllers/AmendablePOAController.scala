@@ -51,7 +51,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
       implicit user =>
         if (isEnabled(AdjustPaymentsOnAccount)) {
           claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount)) =>
+            case Right(Some(paymentOnAccount: PaymentOnAccount)) =>
               Future.successful(
                 Ok(view(
                   isAgent = isAgent,
