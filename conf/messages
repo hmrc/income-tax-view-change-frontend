@@ -374,6 +374,9 @@ tax-year-summary.agent.message.C559105                             = the amount 
 tax-year-summary.agent.message.C559113                             = for your client’s foreign property, they need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
 
+tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
+tax-year-summary.adjust-poa                                        = Adjust payments on account
+
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -887,6 +890,7 @@ whatYouOwe.moneyOnAccount-2                                        = in your acc
 whatYouOwe.moneyOnAccount-3                                        = claim a refund
 whatYouOwe.moneyOnAccount-agent                                    = Money in your client’s account
 whatYouOwe.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
+whatYouOwe.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
