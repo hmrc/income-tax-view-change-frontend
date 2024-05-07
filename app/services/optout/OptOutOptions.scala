@@ -51,9 +51,9 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     val isNY_V = nextYearState.statusDetail.isVoluntary
 
     (finalisedStatus, isPY_V, isCY_V, isNY_V) match {
-      case (false, true, false, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(previousYearState.taxYear))
-      case (false, false, true, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(currentYearState.taxYear))
-      case (false, false, false, true) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(nextYearState.taxYear))
+      case (false, true, false, false) => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
+      case (false, false, true, false) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
+      case (false, false, false, true) => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
       case _ => OptOutMessageResponse()
     }
   }
@@ -72,9 +72,9 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
       voluntaryOptOutYearsAvailable match {
-        case Seq("CY-1") => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(previousYearState.taxYear))
-        case Seq("CY") => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(currentYearState.taxYear))
-        case Seq("CY+1") => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(nextYearState.taxYear))
+        case Seq("CY-1") => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
+        case Seq("CY"  ) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
+        case Seq("CY+1") => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
         case _ => OptOutMessageResponse()
       }
     } else {
