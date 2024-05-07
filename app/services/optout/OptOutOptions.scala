@@ -31,16 +31,16 @@ trait OptOut {
   val taxYearStatusDetail: YearStatusDetail
 }
 case class CurrentTaxYearOptOut(taxYearStatusDetail: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary
+  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary
 }
 
 case class NextTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary ||
-    (currentTaxYear.statusDetail.status == Voluntary && taxYearStatusDetail.statusDetail.status == NoStatus)
+  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary ||
+    (currentTaxYear.status == Voluntary && taxYearStatusDetail.status == NoStatus)
 }
 
 case class PreviousTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, crystallised: Boolean) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.status == Voluntary && !crystallised
+  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary && !crystallised
 }
 
 //todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
