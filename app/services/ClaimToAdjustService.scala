@@ -66,14 +66,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     checkCrystallisation(nino, getPoaAdjustableTaxYears).flatMap {
       case None =>
         Future.successful(Right(None))
-      case Some(taxYear: TaxYear) =>
-        financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel =>
-          Right(Some(financialDetails))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
-          Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ =>
-          Right(None)
+      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
+        case _ => Right(None)
       }
     }
   }
