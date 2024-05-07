@@ -60,19 +60,20 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
 
-  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_],
+                                                          hc: HeaderCarrier,
+                                                          ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
     getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
-      _.map(parseTaxYear).flatMap {
+      _.map(responseModel => parseTaxYear(responseModel.taxYear) -> getStatusDetail(responseModel)).flatMap {
         case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
         case _ => None
       }.toMap
     }
   }
 
-  private def parseTaxYear(item: ITSAStatusResponseModel) = {
+  private def parseTaxYear(taxYear: String) = {
     //item.taxYear has string format as 2021-22
-    TaxYear.forYearEnd(item.taxYear.split("-")(0).toInt + 1) -> getStatusDetail(item)
+    TaxYear.forYearEnd(taxYear.split("-")(0).toInt + 1)
   }
-
 }
 
