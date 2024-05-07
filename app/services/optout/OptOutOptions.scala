@@ -85,9 +85,6 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
   private def validOptOut(currentYearMinusOne: PreviousTaxYearOptOut,
                           currentYear: CurrentTaxYearOptOut,
                           currentYearPlusOne: NextTaxYearOptOut): Seq[String] = {
-    if (!currentYearMinusOne.canOptOut && !currentYear.canOptOut && !currentYearPlusOne.canOptOut)
-      Seq("No Opt out")
-    else {
       val outcomes = Seq(
         if (currentYearMinusOne.canOptOut) Some("CY-1") else None,
         if (currentYear.canOptOut) Some("CY") else None,
@@ -95,7 +92,6 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
       ).flatten
 
       outcomes
-    }
   }
 }
 
