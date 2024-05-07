@@ -16,13 +16,30 @@
 
 package services.optout
 
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optOut.{OptOutMessageResponse, YearStatusDetail}
 
 trait OptOutOptions {
   def getOptOutOptionsFor(finalisedStatus: Boolean,
                           previousYearState: YearStatusDetail,
                           currentYearState: YearStatusDetail,
-                          nextYearState: YearStatusDetail ): OptOutMessageResponse
+                          nextYearState: YearStatusDetail): OptOutMessageResponse
+}
+
+trait OptOut {
+  def canOptOut: Boolean
+  val taxYearStatusDetail: YearStatusDetail
+}
+case class CurrentTaxYearOptOut(taxYearStatusDetail: YearStatusDetail) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary
+}
+
+case class NextTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, currentTaxYear: YearStatusDetail) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary || (currentTaxYear.statusDetail.isVoluntary && taxYearStatusDetail.statusDetail.isUnknown)
+}
+
+case class PreviousTaxYearOptOut(taxYearStatusDetail: YearStatusDetail, crystallised: Boolean) extends OptOut {
+  def canOptOut: Boolean = taxYearStatusDetail.statusDetail.isVoluntary && !crystallised
 }
 
 //todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
@@ -38,10 +55,30 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     val isNY_V = nextYearState.statusDetail.isVoluntary
 
     (finalisedStatus, isPY_V, isCY_V, isNY_V) match {
-      case (false, true, false, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(previousYearState.taxYear))
-      case (false, false, true, false) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(currentYearState.taxYear))
-      case (false, false, false, true) => OptOutMessageResponse(oneYearOptOut = true, taxYears = Array(nextYearState.taxYear))
+      case (false, true, false, false) => OptOutMessageResponse(taxYears = Array(previousYearState.taxYear))
+      case (false, false, true, false) => OptOutMessageResponse(taxYears = Array(currentYearState.taxYear))
+      case (false, false, false, true) => OptOutMessageResponse(taxYears = Array(nextYearState.taxYear))
       case _ => OptOutMessageResponse()
     }
   }
+
+  def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
+                                    previousYearState: YearStatusDetail,
+                                    currentYearState: YearStatusDetail,
+                                    nextYearState: YearStatusDetail): OptOutMessageResponse = {
+
+    val voluntaryOptOutYearsAvailable: Seq[OptOut] = Seq[OptOut](
+      PreviousTaxYearOptOut(previousYearState, finalisedStatus),
+      CurrentTaxYearOptOut(currentYearState),
+      NextTaxYearOptOut(nextYearState, currentYearState)).filter(
+        _.canOptOut
+      )
+    
+    if (voluntaryOptOutYearsAvailable.size == 1) {
+      OptOutMessageResponse(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray)
+    } else {
+      OptOutMessageResponse()
+    }
+  }
 }
+

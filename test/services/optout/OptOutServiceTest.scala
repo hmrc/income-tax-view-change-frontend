@@ -130,7 +130,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
       }
     }
 
-    "PY is U, CY is V, NY is U" should {
+    "PY is U, CY is V, NY is M" should {
 
       "offer CY OptOut Option" in {
 
@@ -141,7 +141,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
           TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
           TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Mandated, ""),
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 

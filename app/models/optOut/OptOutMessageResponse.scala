@@ -21,8 +21,9 @@ import models.itsaStatus.StatusDetail
 import play.api.libs.json.{Format, Json}
 
 case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
-case class OptOutMessageResponse(oneYearOptOut: Boolean = false, taxYears: Array[TaxYear] = Array()) {
+case class OptOutMessageResponse(taxYears: Array[TaxYear] = Array()) {
   def oneYearOptOutTaxYear: TaxYear = taxYears(0)
+  def oneYearOptOut: Boolean = taxYears.length == 1
 }
 
 case class OptOutApiCallRequest(taxYear: String, updateReason: Int = 10)
