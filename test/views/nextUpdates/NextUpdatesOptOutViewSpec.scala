@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.nextUpdates._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, YearStatusDetail}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, TaxYearITSAStatus}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._

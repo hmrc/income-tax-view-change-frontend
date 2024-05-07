@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, YearStatusDetail}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMessageResponse, TaxYearITSAStatus}
 import services.optout.OptOutService.BooleanOptionToFuture
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
@@ -77,9 +77,9 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
       finalisedStatusBool <- finalisedStatus.toF
       outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(finalisedStatusBool,
-        YearStatusDetail(previousYear, statusMap(previousYear).status),
-        YearStatusDetail(currentYear, statusMap(currentYear).status),
-        YearStatusDetail(nextYear, statusMap(nextYear).status)
+        TaxYearITSAStatus(previousYear, statusMap(previousYear).status),
+        TaxYearITSAStatus(currentYear, statusMap(currentYear).status),
+        TaxYearITSAStatus(nextYear, statusMap(nextYear).status)
       ).toF
     } yield outcomeOptionsResponse
 
