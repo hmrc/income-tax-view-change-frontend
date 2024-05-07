@@ -25,8 +25,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmendmentDataRepository) {
 
-  def createSession(implicit hc: HeaderCarrier): Future[Boolean] = {
-    setMongoData(None)
+  def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+    setMongoData(None).flatMap{ res =>
+      if (res)
+        Future.successful(Right(()))
+      else
+        Future.successful(Left(new Error("Unable to create mongo session")))
+    }
   }
 
   def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoAAmendmentData]]] = {
