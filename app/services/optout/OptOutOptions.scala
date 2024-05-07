@@ -73,23 +73,12 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
       NextTaxYearOptOut(nextYearState, currentYearState)).filter(
         _.canOptOut
       )
-
-
+    
     if (voluntaryOptOutYearsAvailable.size == 1) {
       OptOutMessageResponse(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray)
     } else {
       OptOutMessageResponse()
     }
-  }
-
-  private def validOptOut(currentYearMinusOne: PreviousTaxYearOptOut,
-                          currentYear: CurrentTaxYearOptOut,
-                          currentYearPlusOne: NextTaxYearOptOut): Seq[OptOut] = {
-      Seq[OptOut](
-        currentYearMinusOne,
-        currentYear,
-        currentYearPlusOne
-      ).filter(_.canOptOut)
   }
 }
 
