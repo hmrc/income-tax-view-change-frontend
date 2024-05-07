@@ -1830,17 +1830,17 @@ manageBusinesses.check-answers.change                                    = Newid
 paymentOnAccount.caption                             = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
-paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4
+paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
 paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = i fod yn is na’r flwyddyn dreth flaenorol.
 paymentOnAccount.inset-text                          = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un.
 paymentOnAccount.table-heading-1                     = Taliad cyntaf ar gyfrif
 paymentOnAccount.table-heading.link                  = Rhagor o fanylion
-paymentOnAccount.table-heading.key                   = Y swm llawn {0}
+paymentOnAccount.table-heading.key                   = Y swm llawn
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
-paymentOnAccount.cancel.lin                          = Canslo
+paymentOnAccount.cancel.link                         = Canslo
 
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod

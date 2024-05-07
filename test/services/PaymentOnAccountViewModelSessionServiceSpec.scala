@@ -16,7 +16,7 @@
 
 package services
 
-import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPOA.{PoAAmendmentData, PoASessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
@@ -25,7 +25,7 @@ import testUtils.TestSupport
 
 import scala.concurrent.Future
 
-class PaymentOnAccountSessionServiceSpec extends TestSupport {
+class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
 
   val mockRepository: PoAAmendmentDataRepository = mock(classOf[PoAAmendmentDataRepository])
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.paymentOnAccount
+package models.claimToAdjustPOA
 
 import models.incomeSourceDetails.TaxYear
 
-case class PaymentOnAccount(
+case class PaymentOnAccountViewModel(
                              poaOneTransactionId: String,
                              poaTwoTransactionId: String,
                              taxYear: TaxYear,
