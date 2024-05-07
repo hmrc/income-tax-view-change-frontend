@@ -61,8 +61,8 @@
     else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, id).url
 }
 
-@getWhatYouNeedToKnowUrl = @{
-    controllers.routes.WhatYouNeedToKnowController.show(isAgent).url
+@getWhatYouNeedToKnowUrl(isAgent: Boolean) = @{
+    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
 @mainTemplate(
@@ -156,7 +156,7 @@
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
             content = Text(getMessage("button")),
-            href = Some(getWhatYouNeedToKnowUrl)
+            href = Some(getWhatYouNeedToKnowUrl(isAgent))
         ))
         @link(
             link = getHomePageUrl,
