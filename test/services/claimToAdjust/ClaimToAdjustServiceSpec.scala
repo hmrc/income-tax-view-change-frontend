@@ -30,7 +30,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import scala.language.reflectiveCalls
 import java.time.LocalDate
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector {
 
@@ -171,7 +171,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccount("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00)))
         }
       }
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
@@ -184,7 +184,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccount("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00)))
         }
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
@@ -195,7 +195,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccount("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00)))
         }
       }
     }

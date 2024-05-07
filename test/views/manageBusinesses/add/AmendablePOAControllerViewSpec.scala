@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import models.incomeSourceDetails.TaxYear
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
@@ -36,7 +36,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           amendablePaymentOnAccount(
             isAgent = isAgent,
             paymentOnAccount =
-              PaymentOnAccount(
+              PaymentOnAccountViewModel(
                 poaOneTransactionId = "poa-one-id",
                 poaTwoTransactionId = "poa-two-id",
                 taxYear = TaxYear(2024),

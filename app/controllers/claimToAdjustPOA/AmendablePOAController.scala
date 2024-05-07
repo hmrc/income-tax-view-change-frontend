@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPOA
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import models.core.Nino
-import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,7 +29,6 @@ import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.AmendablePaymentOnAccount
-import controllers.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +50,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
       implicit user =>
         if (isEnabled(AdjustPaymentsOnAccount)) {
           claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount: PaymentOnAccount)) =>
+            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
               Future.successful(
                 Ok(view(
                   isAgent = isAgent,

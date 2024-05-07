@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPOA
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
-import models.paymentOnAccount.PaymentOnAccount
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import views.html.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

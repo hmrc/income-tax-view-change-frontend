@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.paymentOnAccount.PaymentOnAccount
+@import models.claimToAdjustPOA.PaymentOnAccountViewModel
 
 @this(
     p: p,
@@ -36,7 +36,7 @@
 
 @(
     isAgent: Boolean,
-    paymentOnAccount: PaymentOnAccount
+    paymentOnAccount: PaymentOnAccountViewModel
 )(
     implicit request: Request[_],
     user: MtdItUser[_],

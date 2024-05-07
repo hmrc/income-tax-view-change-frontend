@@ -23,7 +23,7 @@ import models.core.Nino
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -53,7 +53,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccount]]] = {
+  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
     for {
       res <- getPoaForNonCrystallisedFinancialDetails(nino)
     } yield res match {
@@ -118,7 +118,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccount] = {
+  private def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
     for {
       poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
       poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
@@ -130,7 +130,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
       Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
 
-      PaymentOnAccount(
+      PaymentOnAccountViewModel(
         poaOneTransactionId = poaOneDocDetail.transactionId,
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),

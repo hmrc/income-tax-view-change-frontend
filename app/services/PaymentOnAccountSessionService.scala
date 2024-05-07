@@ -16,7 +16,7 @@
 
 package services
 
-import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPOA.{PoAAmendmentData, PoASessionData}
 import repositories.PoAAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
