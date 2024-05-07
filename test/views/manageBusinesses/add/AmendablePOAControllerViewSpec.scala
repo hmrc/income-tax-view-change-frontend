@@ -26,8 +26,6 @@ import views.html.AmendablePaymentOnAccount
 
 class AmendablePOAControllerViewSpec extends TestSupport {
 
-  private val hiddenCaptionPrefix: String = "This section is "
-
   class Setup(isAgent: Boolean) {
 
     val amendablePaymentOnAccount: AmendablePaymentOnAccount = app.injector.instanceOf[AmendablePaymentOnAccount]
@@ -53,7 +51,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AmendablePaymentOnAccountView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-caption-xl").text() shouldBe hiddenCaptionPrefix + messages("paymentOnAccount.caption", "2023", "2024")
+        document.getElementsByClass("govuk-caption-xl").first().ownText() shouldBe messages("paymentOnAccount.caption", "2023", "2024")
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("paymentOnAccount.heading")
       }
       "render the first paragraph text" in new Setup(isAgent) {
