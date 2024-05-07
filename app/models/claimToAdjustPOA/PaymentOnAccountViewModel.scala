@@ -26,4 +26,16 @@ case class PaymentOnAccountViewModel(
                              paymentOnAccountTwo: BigDecimal,
                              poARelevantAmountOne: BigDecimal,
                              poARelevantAmountTwo: BigDecimal
-                           )
+                           ) {
+  private def totalAmountLessThanPoa: Boolean = {
+    (paymentOnAccountOne + paymentOnAccountTwo) < (poARelevantAmountOne + poARelevantAmountTwo)
+  }
+
+  def getRedirect(isAgent: Boolean): String = {
+    (if (totalAmountLessThanPoa) {
+      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
+    } else {
+      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
+    }).url
+  }
+}

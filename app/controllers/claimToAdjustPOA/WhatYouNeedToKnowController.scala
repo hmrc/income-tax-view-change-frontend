@@ -47,14 +47,6 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                             val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  private def getRedirect(isAgent: Boolean, totalAmountLessThanPoa: Boolean): String = {
-    (if (totalAmountLessThanPoa) {
-      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
-    } else {
-      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
-    }).url
-  }
-
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
@@ -65,7 +57,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, totalAmountLessThanPoa(poa)))))
+            Future.successful(Ok(view(isAgent, poa.taxYear, poa.getRedirect(isAgent))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
@@ -85,9 +77,5 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
       }
-  }
-
-  private def totalAmountLessThanPoa(poaModel: PaymentOnAccountViewModel): Boolean = {
-    (poaModel.paymentOnAccountOne + poaModel.paymentOnAccountTwo) < (poaModel.poARelevantAmountOne + poaModel.poARelevantAmountTwo)
   }
 }
