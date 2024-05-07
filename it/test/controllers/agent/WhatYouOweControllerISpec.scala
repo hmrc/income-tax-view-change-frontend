@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
@@ -914,6 +914,76 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
       )
+    }
+  }
+
+  "Claim to adjust POA section" should {
+    "show" when {
+      "The user has valid POAs and the FS is Enabled" in {
+        enable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+          testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK,
+          testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
+
+        When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+        val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent("whatYouOwe.heading-agent"),
+          isElementVisibleById("adjust-poa-link")(expectedValue = true))
+      }
+    }
+    "not show" when {
+      "The user does not have valid POAs but the FS is Enabled" in {
+        enable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+        And("I wiremock stub financial details for multiple years with NO POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+          testEmptyFinancialDetailsModelJson)
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK,
+          testEmptyFinancialDetailsModelJson)
+
+        When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+        val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent("whatYouOwe.heading-agent"),
+          isElementVisibleById("adjust-poa-link")(expectedValue = false))
+      }
+      "The user has valid POAs but the FS is Disabled" in {
+        disable(AdjustPaymentsOnAccount)
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+          testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK,
+          testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
+
+        When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+        val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent("whatYouOwe.heading-agent"),
+          isElementVisibleById("adjust-poa-link")(expectedValue = false))
+      }
     }
   }
 

@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
+import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -48,6 +48,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   val testTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
+  val testTaxYearPoa: Int = getCurrentTaxYearEnd.getYear
+
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
@@ -881,8 +883,73 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           }
         }
       }
-    }
+      "Claim to adjust POA section" should {
+        "show" when {
+          "The user has valid POAs and the FS is Enabled" in {
+            enable(AdjustPaymentsOnAccount)
 
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+
+            And("I wiremock stub financial details for multiple years with POAs")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              isElementVisibleById("adjust-poa-link")(expectedValue = true))
+          }
+        }
+        "not show" when {
+          "The user does not have valid POAs but the FS is Enabled" in {
+            enable(AdjustPaymentsOnAccount)
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+
+            And("I wiremock stub financial details for multiple years with NO POAs")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+              testEmptyFinancialDetailsModelJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+              testEmptyFinancialDetailsModelJson)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              isElementVisibleById("adjust-poa-link")(expectedValue = false))
+          }
+          "The user has valid POAs but the FS is Disabled" in {
+            disable(AdjustPaymentsOnAccount)
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+
+            And("I wiremock stub financial details for multiple years with POAs")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              isElementVisibleById("adjust-poa-link")(expectedValue = false))
+          }
+        }
+      }
+    }
 
     "API#1171 IncomeSourceDetails Caching" when {
       "caching should be ENABLED" in {

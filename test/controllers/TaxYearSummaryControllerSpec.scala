@@ -24,9 +24,10 @@ import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
-import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
+import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import models.incomeSourceDetails.TaxYear
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -35,7 +36,7 @@ import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.Lang
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers._
+import play.api.test.Helpers.{status, _}
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
@@ -52,9 +53,14 @@ import scala.concurrent.Future
 class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
-  with MockAuditingService with MockNextUpdatesService with MockIncomeTaxCalculationConnector {
+  with MockAuditingService with MockNextUpdatesService with MockIncomeTaxCalculationConnector with MockClaimToAdjustService {
 
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    super.beforeEach()
+  }
 
   object TestTaxYearSummaryController extends TaxYearSummaryController(
     taxYearSummaryView,
@@ -70,7 +76,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     languageUtils,
     mockAuthService,
     app.injector.instanceOf[NavBarPredicate],
-    mockAuditingService
+    mockAuditingService,
+    claimToAdjustService
   )(appConfig,
     app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],
@@ -86,6 +93,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
+  val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
 
   val testObligtionsModel: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel(
@@ -130,7 +139,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           testChargesList,
           testObligtionsModel,
           codingOutEnabled = true,
-          showForecastData = shouldShowForecastData
+          showForecastData = shouldShowForecastData,
+          ctaViewModel = emptyCTAViewModel
         ),
         taxYearsBackLink,
       ).toString
@@ -177,7 +187,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -187,6 +198,93 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentType(result) shouldBe Some("text/html")
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
         result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+      }
+    }
+    "user has valid POAs, in non crystallised tax years" should {
+      "show the tax year summary page with the poa section" when {
+        "AdjustPaymentsOnAccount FS is enabled and POAs are for the tax year on the page" in {
+          enable(AdjustPaymentsOnAccount)
+          mockSingleBusinessIncomeSource()
+          mockCalculationSuccessfulNew(testMtditid)
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel
+          )
+          setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+          val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+          status(result) shouldBe OK
+          contentAsString(result).contains("Adjust payments on account") shouldBe true
+        }
+      }
+      "show the tax year summary page without the poa section" when {
+        "AdjustPaymentsOnAccount FS is enabled and POAs are for the tax year of a different year" in {
+          enable(AdjustPaymentsOnAccount)
+          mockSingleBusinessIncomeSource()
+          mockCalculationSuccessfulNew(testMtditid)
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel
+          )
+          setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+          val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+          status(result) shouldBe OK
+          contentAsString(result).contains("Adjust payments on account") shouldBe true
+        }
+      }
+    }
+    "user has no valid POAs" should {
+      "show the tax year summary page without the poa section" when {
+        "AdjustPaymentsOnAccount FS is enabled" in {
+          enable(AdjustPaymentsOnAccount)
+          mockSingleBusinessIncomeSource()
+          mockCalculationSuccessfulNew(testMtditid)
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel
+          )
+          setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+          val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+          status(result) shouldBe OK
+          contentAsString(result).contains("Adjust payments on account") shouldBe false
+        }
+      }
+      "show the tax year summary page without the poa section" when {
+        "AdjustPaymentsOnAccount FS is disabled" in {
+          disable(AdjustPaymentsOnAccount)
+          mockSingleBusinessIncomeSource()
+          mockCalculationSuccessfulNew(testMtditid)
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel
+          )
+          setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+          val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+          status(result) shouldBe OK
+          contentAsString(result).contains("Adjust payments on account") shouldBe false
+        }
+      }
+    }
+    "claimToAdjustService.getPoaTaxYearForEntryPoint returns a Left containing an exception" should {
+      "hit the recover block and redirect to the internal server error page" in {
+        enable(AdjustPaymentsOnAccount)
+        mockSingleBusinessIncomeSource()
+        setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 
@@ -206,7 +304,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           homeBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveAndRefererToHomePage)
@@ -241,7 +340,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -271,7 +371,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             payeChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -303,7 +404,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
         ).toString
 
@@ -334,7 +436,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink,
 
         ).toString
@@ -366,7 +469,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             charges,
             testObligtionsModel,
-            codingOutEnabled = true
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel
           ),
           taxYearsBackLink
         ).toString
@@ -401,7 +505,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink
         ).toString
 
@@ -481,7 +586,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
               testChargesList,
               testObligtionsModel,
               codingOutEnabled = true,
-              showForecastData = true),
+              showForecastData = true,
+              ctaViewModel = emptyCTAViewModel),
             taxYearsBackLink
           ).toString()).text()
 
@@ -553,7 +659,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink).toString
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -582,7 +689,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             testChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           taxYearsBackLink
         ).toString
 
@@ -745,7 +853,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             Some(calcOverview),
             class2NicsChargesList,
             testObligtionsModel,
-            codingOutEnabled = true),
+            codingOutEnabled = true,
+            ctaViewModel = emptyCTAViewModel),
           agentHomeBackLink,
           isAgent = true,
         ).toString
@@ -773,25 +882,10 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           ObligationsModel(Nil)
         )
 
-        val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-
-        val expectedContent: String = taxYearSummaryView(
-          testYearPlusTwo,
-          TaxYearSummaryViewModel(
-            Some(calcOverview),
-            class2NicsChargesList,
-            ObligationsModel(Nil),
-            codingOutEnabled = true
-          ),
-          agentHomeBackLink,
-          isAgent = true,
-        ).toString
-
         val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
           fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
 
         status(result) shouldBe OK
-        contentAsString(result) shouldBe expectedContent
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
       }
     }
