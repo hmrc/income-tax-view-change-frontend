@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.AmendablePaymentOnAccount
+import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 class AmendablePOAControllerViewSpec extends TestSupport {
 
@@ -41,7 +41,9 @@ class AmendablePOAControllerViewSpec extends TestSupport {
                 poaTwoTransactionId = "poa-two-id",
                 taxYear = TaxYear(2024),
                 paymentOnAccountOne = BigDecimal(5000),
-                paymentOnAccountTwo = BigDecimal(5000)
+                paymentOnAccountTwo = BigDecimal(5000),
+                poARelevantAmountOne = BigDecimal(5000),
+                poARelevantAmountTwo = BigDecimal(5000)
               )
           )
         )

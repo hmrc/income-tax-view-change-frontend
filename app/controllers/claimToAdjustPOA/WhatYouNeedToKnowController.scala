@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
 import models.core.Nino
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -87,7 +87,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  private def totalAmountLessThanPoa(poaModel: PaymentOnAccount): Boolean = {
+  private def totalAmountLessThanPoa(poaModel: PaymentOnAccountViewModel): Boolean = {
     (poaModel.paymentOnAccountOne + poaModel.paymentOnAccountTwo) < (poaModel.poARelevantAmountOne + poaModel.poARelevantAmountTwo)
   }
 }
