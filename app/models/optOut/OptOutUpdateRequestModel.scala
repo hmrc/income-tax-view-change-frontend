@@ -17,16 +17,18 @@
 package models.optOut
 
 import play.api.libs.json.{Format, Json}
+import play.mvc.Http.Status.NO_CONTENT
 
 object OptOutUpdateRequestModel {
 
-  val defaultUpdateReason = 10
+  private val defaultUpdateReason: Int = 10
+  private val successfulStatusCode: Int = NO_CONTENT
 
   case class OptOutUpdateRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
   sealed trait OptOutUpdateResponse {
     val statusCode: Int
   }
-  case class OptOutUpdateResponseSuccess(statusCode: Int, correlationId: String) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = successfulStatusCode) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
   case class OptOutUpdateResponseFailure(statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
 

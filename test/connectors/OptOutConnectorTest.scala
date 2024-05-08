@@ -42,7 +42,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
-import play.mvc.Http.Status
+import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -73,8 +73,8 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
         val apiRequest = OptOutUpdateRequest(taxYear.toString)
-        val apiResponse = OptOutUpdateResponseSuccess(Status.NO_CONTENT, "123")
-        val httpResponse = HttpResponse(Status.NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val apiResponse = OptOutUpdateResponseSuccess("123", NO_CONTENT)
+        val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
@@ -98,11 +98,11 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         val apiRequest = OptOutUpdateRequest(taxYear.toString)
         val apiFailResponse = OptOutUpdateResponseFailure(
-          Status.BAD_REQUEST,
+          BAD_REQUEST,
           List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         )
-        val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
