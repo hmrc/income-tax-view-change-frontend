@@ -40,17 +40,14 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.wordspec.AsyncWordSpecLike
 import play.api.libs.json.Json
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
-class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
+class OptOutConnectorTest extends AsyncWordSpecLike with Matchers with BeforeAndAfter {
 
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
@@ -80,13 +77,11 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        Await.result(result, 10.seconds)
-
-        result.value.map {
-          case Success(response) =>
-            response shouldBe apiResponse
-          case Failure(e) => fail(s"error: ${e.getMessage}")
+        result map {
+          case r:OptOutUpdateResponseSuccess => assert(r == OptOutUpdateResponseSuccess("123", NO_CONTENT))
+          case _ => fail(s"should have passed")
         }
+
       }
     }
 
@@ -96,24 +91,22 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutUpdateRequest(taxYear.toString)
-        val apiFailResponse = OptOutUpdateResponseFailure(
-          BAD_REQUEST,
-          List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+        val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
-        )
+
+        val apiRequest = OptOutUpdateRequest(taxYear.toString)
+        val apiFailResponse = OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        Await.result(result, 10.seconds)
-
-        result.value.map {
-          case Success(response) => response shouldBe apiFailResponse
-          case Failure(e) => fail(s"error: ${e.getMessage}")
+        result map {
+          case r:OptOutUpdateResponseFailure => assert(r == OptOutUpdateResponseFailure(BAD_REQUEST, errorItems))
+          case _ => fail(s"should have passed")
         }
+
       }
     }
   }
