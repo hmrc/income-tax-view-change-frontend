@@ -78,6 +78,39 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
     )
   }
 
+  case class ITSAYearStatus(previousYear: ITSAStatus.ITSAStatus, currentYear: ITSAStatus.ITSAStatus, nextYear: ITSAStatus.ITSAStatus)
+  def stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(taxYear: Int, yearStatus: ITSAYearStatus): StubMapping = {
+    val previousYear = taxYear - 1
+    val futureYear = taxYear + 1
+
+    def shortTaxYear(taxYear: Int) = taxYear.toString.takeRight(2).toInt
+
+    val taxYearToStatus: Map[String, String] = Map(
+      s"${futureYear - 1}-${shortTaxYear(futureYear)}" -> yearStatus.nextYear.toString,
+      s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> yearStatus.currentYear.toString,
+      s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> yearStatus.previousYear.toString
+    )
+    WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true), OK,
+
+      taxYearToStatus.foldLeft(JsArray()) {
+        case (array, (taxYear, status)) =>
+          val itsaStatusObject = Json.parse(
+            s"""  {
+               |    "taxYear": "$taxYear",
+               |    "itsaStatusDetails": [
+               |      {
+               |        "submittedOn": "2023-06-01T10:19:00.303Z",
+               |        "status": "$status",
+               |        "statusReason": "Sign up - return available",
+               |        "businessIncomePriorTo2Years": 99999999999.99
+               |      }
+               |    ]
+               |  }""".stripMargin)
+          array.append(itsaStatusObject)
+      }.toString()
+    )
+  }
+
   def stubGetITSAStatusDetailsError(taxYear: String = "23-24", futureYears: Boolean = false): StubMapping = {
     WiremockHelper.stubGet(getUrl(taxYear, futureYears), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
   }

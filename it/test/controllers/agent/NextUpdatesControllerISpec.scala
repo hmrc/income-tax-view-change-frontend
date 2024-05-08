@@ -247,7 +247,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         "ITSA Status API Failure" in {
           stubAuthorisedAgentUser(authorised = true)
           enable(OptOut)
-          val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd)
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
             NextUpdatesModel(

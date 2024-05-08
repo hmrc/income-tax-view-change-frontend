@@ -718,6 +718,8 @@ nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
+nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
+nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
