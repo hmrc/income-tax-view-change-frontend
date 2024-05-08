@@ -20,7 +20,6 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
-import services.optout.OptOutService.BooleanOptionToFuture
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
 import play.api.Logger
@@ -32,11 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object OptOutService {
   val optOutOptions = new OptOutOptionsSingleYear
-  implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
-    def toF: Future[Boolean] = opl
-      .map(v => Future.successful(v))
-      .getOrElse(Future.successful(false))
-  }
   implicit class TypeToFuture[T](t: T) {
     def toF: Future[T] = Future.successful(t)
   }
@@ -73,10 +67,9 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       currentYear <- dateService.getCurrentTaxYear.toF
       previousYear <- currentYear.previousYear.toF
       nextYear <- currentYear.nextYear.toF
-      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear)
+      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear).map(_.getOrElse(false))
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      finalisedStatusBool <- finalisedStatus.toF
-      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(finalisedStatusBool,
+      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(finalisedStatus,
         TaxYearITSAStatus(previousYear, statusMap(previousYear).status),
         TaxYearITSAStatus(currentYear, statusMap(currentYear).status),
         TaxYearITSAStatus(nextYear, statusMap(nextYear).status)
