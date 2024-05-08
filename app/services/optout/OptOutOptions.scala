@@ -43,16 +43,29 @@ case class PreviousTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, crystal
   def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary && !crystallised
 }
 
+case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
+                      currentTaxYear: CurrentTaxYearOptOut,
+                      nextTaxYear: NextTaxYearOptOut) {
+
+  val optOutYears: Seq[OptOut] = Seq[OptOut](
+    previousTaxYear,
+    currentTaxYear,
+    nextTaxYear)
+}
+
 class OptOutOptionsSingleYear extends OptOutOptions {
   def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
                                     previousYearState: TaxYearITSAStatus,
                                     currentYearState: TaxYearITSAStatus,
                                     nextYearState: TaxYearITSAStatus): Option[OptOutOneYearViewModel] = {
 
-    val voluntaryOptOutYearsAvailable: Seq[OptOut] = Seq[OptOut](
-      PreviousTaxYearOptOut(previousYearState, finalisedStatus),
-      CurrentTaxYearOptOut(currentYearState),
-      NextTaxYearOptOut(nextYearState, currentYearState)).filter(
+    val previousTaxYear = PreviousTaxYearOptOut(previousYearState, finalisedStatus)
+    val currentTaxYear = CurrentTaxYearOptOut(currentYearState)
+    val nextTaxYear = NextTaxYearOptOut(nextYearState, currentYearState)
+
+    val optOutData = OptOutData(previousTaxYear, currentTaxYear, nextTaxYear)
+
+    val voluntaryOptOutYearsAvailable: Seq[OptOut] = optOutData.optOutYears.filter(
       _.canOptOut
     )
 
