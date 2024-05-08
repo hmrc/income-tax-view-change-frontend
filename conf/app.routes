@@ -17,6 +17,8 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
+GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
+
 #OptOut
 GET         /optout/review-confirm-taxyear                                controllers.optout.ConfirmOptOutController.show()
 GET         /agents/optout/review-confirm-taxyear                         controllers.optout.ConfirmOptOutController.showAgent()

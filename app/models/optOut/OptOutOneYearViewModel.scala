@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package models.nextPayments.viewmodels
+package models.optOut
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+case class TaxYearITSAStatus(taxYear: TaxYear, status: ITSAStatus) {}
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
-    }
-  }
+case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear) {
 
-}
-
-object WYOClaimToAdjustViewModel {
-
-  def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = isAgent).url
-  }
-
+  def startYear: String = oneYearOptOutTaxYear.startYear.toString
+  def endYear: String = oneYearOptOutTaxYear.endYear.toString
 }

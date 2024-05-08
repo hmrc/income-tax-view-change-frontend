@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package models.nextPayments.viewmodels
+package controllers.optOut
 
-import models.incomeSourceDetails.TaxYear
+import config.FrontendAppConfig
+import play.api.mvc.Results.Ok
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.AuthenticatorPredicate
 
-case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+import javax.inject.Inject
+import scala.concurrent.Future
+class OptOutCheckpointController @Inject()(auth: AuthenticatorPredicate) {
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleRequest()
+  }
+
+  def handleRequest(): Future[Result] = {
+      Future.successful {
+        Ok("")
+      }
     }
-  }
-
-}
-
-object WYOClaimToAdjustViewModel {
-
-  def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = isAgent).url
-  }
 
 }

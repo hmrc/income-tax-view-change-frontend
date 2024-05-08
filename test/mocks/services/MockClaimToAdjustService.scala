@@ -19,7 +19,7 @@ package mocks.services
 import connectors.CalculationListConnector
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -41,12 +41,14 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
         Future.successful(
           Right(
             Some(
-              PaymentOnAccount(
+              PaymentOnAccountViewModel(
                 poaOneTransactionId = "poaOne-Id",
                 poaTwoTransactionId = "poaTwo-Id",
                 taxYear = TaxYear.makeTaxYearWithEndYear(2024),
                 paymentOnAccountOne = 5000.00,
-                paymentOnAccountTwo = 5000.00
+                paymentOnAccountTwo = 5000.00,
+                poARelevantAmountOne = 5000.00,
+                poARelevantAmountTwo = 5000.00
               )
             )
           )

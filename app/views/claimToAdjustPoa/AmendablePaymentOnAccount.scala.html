@@ -17,11 +17,11 @@
 @import auth.MtdItUser
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.claimToAdjustPOA.PaymentOnAccountViewModel
 
 @this(
     p: p,
@@ -35,12 +35,8 @@
 )
 
 @(
-    poaOneTransactionId: String,
-    poaTwoTransactionId: String,
     isAgent: Boolean,
-    taxYearModel: TaxYear,
-    poaOneFullAmount: BigDecimal,
-    poaTwoFullAmount: BigDecimal
+    paymentOnAccount: PaymentOnAccountViewModel
 )(
     implicit request: Request[_],
     user: MtdItUser[_],
@@ -57,12 +53,12 @@
 }
 
 @getChargeSummaryUrl(id: String) = @{
-    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(taxYearModel.endYear, id).url
-    else         controllers.routes.ChargeSummaryController.show(taxYearModel.endYear, id).url
+    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(paymentOnAccount.taxYear.endYear, id).url
+    else         controllers.routes.ChargeSummaryController.show(paymentOnAccount.taxYear.endYear, id).url
 }
 
 @getWhatYouNeedToKnowUrl = @{
-    controllers.routes.WhatYouNeedToKnowController.show(isAgent).url
+    controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
 @mainTemplate(
@@ -76,17 +72,17 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-xl"),
-        section = Some(getMessage("caption", taxYearModel.startYear.toString, taxYearModel.endYear.toString)),
+        section = Some(getMessage("caption", paymentOnAccount.taxYear.startYear.toString, paymentOnAccount.taxYear.endYear.toString)),
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    @p(){
+    @p(id = Some("paragraph-1-text")){
         @getMessage("p1")
         @link(
             link = getMessage("class4NationalInsurance.link"),
             messageKey = getMessage("class4NationalInsurance.link.text"),
             rel = Some("noreferrer noopener"),
-            target = Some("_blank")
+            target = None
         )
         @getMessage("p2")
     }
@@ -103,7 +99,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaOneFullAmount.toCurrencyString)
+                    content = HtmlContent(paymentOnAccount.paymentOnAccountOne.toCurrencyString)
                 ),
             ),
         ),
@@ -114,7 +110,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = getChargeSummaryUrl(poaOneTransactionId),
+                        href = getChargeSummaryUrl(paymentOnAccount.poaOneTransactionId),
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa1-more-details-date-link")
                     )
@@ -131,7 +127,7 @@
                 ),
                 value = Value(
                     classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                    content = HtmlContent(poaTwoFullAmount.toCurrencyString)
+                    content = HtmlContent(paymentOnAccount.paymentOnAccountTwo.toCurrencyString)
                 ),
             ),
         ),
@@ -142,7 +138,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = getChargeSummaryUrl(poaTwoTransactionId),
+                        href = getChargeSummaryUrl(paymentOnAccount.poaTwoTransactionId),
                         content = Text(getMessage("table-heading.link")),
                         attributes = Map("id" -> "poa2-more-details-date-link")
                     )
@@ -151,14 +147,16 @@
         ))
     ))
 
-    @p(){ @getMessage("p3") }
+    @p(id = Some("paragraph-2-text")){ @getMessage("p3") }
 
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
+            id = Some("adjust-my-payments-button"),
             content = Text(getMessage("button")),
             href = Some(getWhatYouNeedToKnowUrl)
         ))
         @link(
+            id = Some("cancel-link"),
             link = getHomePageUrl,
             messageKey = getMessage("cancel.link")
         )
