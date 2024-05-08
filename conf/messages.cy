@@ -1838,8 +1838,8 @@ paymentOnAccount.p3                                  = Mae’n rhaid addasu’r 
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.lin                          = Canslo
 
-# opt out confirm and opt out
-optout.confirmOptOut.heading = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
-optout.confirmOptOut.desc = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
-optout.confirmOptOut.confirm = Confirm
-optout.confirmOptOut.cancel = Canslo
+# opt out confirm
+optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
+optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
+optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.cancel             = Canslo
