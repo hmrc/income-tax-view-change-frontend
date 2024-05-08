@@ -19,10 +19,7 @@ package models.optOut
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class TaxYearITSAStatus(taxYear: TaxYear, status: ITSAStatus) {}
-
 case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear) {
-
   def startYear: String = oneYearOptOutTaxYear.startYear.toString
   def endYear: String = oneYearOptOutTaxYear.endYear.toString
 }

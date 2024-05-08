@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
 import play.api.Logger
@@ -69,9 +69,9 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       nextYear <- currentYear.nextYear.toF
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      previousYearOptOut <- PreviousTaxYearOptOut(TaxYearITSAStatus(previousYear, statusMap(previousYear).status), finalisedStatus).toF
-      currentTaxYearOptOut <- CurrentTaxYearOptOut(TaxYearITSAStatus(currentYear, statusMap(currentYear).status)).toF
-      nextTaxYearOptOut <- NextTaxYearOptOut(TaxYearITSAStatus(nextYear, statusMap(nextYear).status), currentTaxYearOptOut).toF
+      previousYearOptOut <- PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus).toF
+      currentTaxYearOptOut <- CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear).toF
+      nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
       optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
       outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
     } yield outcomeOptionsResponse

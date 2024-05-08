@@ -16,8 +16,9 @@
 
 package services.optout
 
-import models.itsaStatus.ITSAStatus.{NoStatus, Voluntary}
-import models.optOut.{OptOutOneYearViewModel, TaxYearITSAStatus}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
+import models.optOut.OptOutOneYearViewModel
 
 trait OptOutOptions {
   def getOptOutOptionsForSingleYear(optOutData: OptOutData): Option[OptOutOneYearViewModel]
@@ -25,19 +26,19 @@ trait OptOutOptions {
 
 trait OptOut {
   def canOptOut: Boolean
-  val taxYearStatusDetail: TaxYearITSAStatus
+  val taxYear: TaxYear
 }
-case class CurrentTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary
-}
-
-case class NextTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, currentTaxYear: CurrentTaxYearOptOut) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary ||
-    (currentTaxYear.taxYearStatusDetail.status == Voluntary && taxYearStatusDetail.status == NoStatus)
+case class CurrentTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary
 }
 
-case class PreviousTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, crystallised: Boolean) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary && !crystallised
+case class NextTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, currentTaxYear: CurrentTaxYearOptOut) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary ||
+    (currentTaxYear.status == Voluntary && status == NoStatus)
+}
+
+case class PreviousTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, crystallised: Boolean) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary && !crystallised
 }
 
 case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
@@ -59,7 +60,7 @@ class OptOutOptionsSingleYear extends OptOutOptions {
   def getOptOutOptionsForSingleYear(optOutData: OptOutData): Option[OptOutOneYearViewModel] = {
 
     if (optOutData.countVoluntaryOptOutYears == 1) {
-      Some(OptOutOneYearViewModel(optOutData.availableOptOutYears.head.taxYearStatusDetail.taxYear))
+      Some(OptOutOneYearViewModel(optOutData.availableOptOutYears.head.taxYear))
     } else {
       None
     }
