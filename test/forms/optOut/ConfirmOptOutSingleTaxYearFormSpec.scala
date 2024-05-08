@@ -28,13 +28,13 @@ class ConfirmOptOutSingleTaxYearFormSpec extends UnitSpec {
   "ConfirmOptOutSingleTaxYearForm" when {
     "bind with a valid response" should {
       "contain the response" in {
-        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm().bind(validFormData);
+        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm().bind(validFormData)
         completedForm.data.get("confirm.opt.out") shouldBe Some("yes")
       }
     }
     "bind with a empty response" should {
       "contain the error message" in {
-        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm().bind(invalidFormData);
+        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm().bind(invalidFormData)
         completedForm.data.get("confirm.opt.out") shouldBe Some("")
         completedForm.errors shouldBe List(FormError(confirmOptOutField, List(noResponseErrorMessageKey)))
       }
