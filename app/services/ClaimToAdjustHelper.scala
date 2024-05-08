@@ -31,7 +31,7 @@ import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
 // TODO: This part of the logic expected to be moved within BE
-// plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
+// TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
 trait ClaimToAdjustHelper {
 
   private val POA1: String = "ITSA- POA 1"
@@ -42,11 +42,11 @@ trait ClaimToAdjustHelper {
   protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains("ITSA- POA 1") &&
+    documentDetail.documentDescription.contains(POA1) &&
       !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1) &&
+    documentDetail.documentDescription.contains(POA2) &&
       !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
   private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
