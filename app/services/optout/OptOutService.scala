@@ -69,7 +69,11 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       nextYear <- currentYear.nextYear.toF
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      optOutData <- OptOutData(PreviousTaxYearOptOut(TaxYearITSAStatus(previousYear, statusMap(previousYear).status), finalisedStatus), CurrentTaxYearOptOut( TaxYearITSAStatus(currentYear, statusMap(currentYear).status)), NextTaxYearOptOut(TaxYearITSAStatus(nextYear, statusMap(nextYear).status), TaxYearITSAStatus(currentYear, statusMap(currentYear).status))).toF
+      previousYearOptOut <- PreviousTaxYearOptOut(TaxYearITSAStatus(previousYear, statusMap(previousYear).status), finalisedStatus).toF
+      currentTaxYearOptOut <- CurrentTaxYearOptOut(TaxYearITSAStatus(currentYear, statusMap(currentYear).status)).toF
+      nextTaxYearOptOut <- NextTaxYearOptOut(TaxYearITSAStatus(nextYear, statusMap(nextYear).status),
+        TaxYearITSAStatus(currentYear, statusMap(currentYear).status)).toF
+      optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
       outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
     } yield outcomeOptionsResponse
 
