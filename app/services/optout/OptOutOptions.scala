@@ -51,6 +51,9 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
     previousTaxYear,
     currentTaxYear,
     nextTaxYear)
+
+  def availableOptOutYears: Seq[OptOut] = optOutYears.filter(_.canOptOut)
+
 }
 
 class OptOutOptionsSingleYear extends OptOutOptions {
@@ -65,9 +68,7 @@ class OptOutOptionsSingleYear extends OptOutOptions {
 
     val optOutData = OptOutData(previousTaxYear, currentTaxYear, nextTaxYear)
 
-    val voluntaryOptOutYearsAvailable: Seq[OptOut] = optOutData.optOutYears.filter(
-      _.canOptOut
-    )
+    val voluntaryOptOutYearsAvailable: Seq[OptOut] = optOutData.availableOptOutYears
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
       Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.head.taxYearStatusDetail.taxYear))
@@ -75,5 +76,7 @@ class OptOutOptionsSingleYear extends OptOutOptions {
       None
     }
   }
+
+
 }
 
