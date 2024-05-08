@@ -21,6 +21,7 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.nodes.Element
 import play.api.data.Form
 import play.api.mvc.Call
+import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import uk.gov.hmrc.http.HttpVerbs
 import views.html.optOut.ConfirmSingleYearOptOut
@@ -29,13 +30,19 @@ class ConfirmSingleYearOptOutViewSpec extends ViewSpec {
 
   val confirmSingleYearOptOutView: ConfirmSingleYearOptOut = app.injector.instanceOf[ConfirmSingleYearOptOut]
   val taxYear: TaxYear = TaxYear(2024)
-  val from: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm()
+
+  val form: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear)
+
+  val errorMessage: String = "some error message"
+  val formWithError: Form[ConfirmOptOutSingleTaxYearForm] = form.withError(ConfirmOptOutSingleTaxYearForm.confirmOptOutField, errorMessage)
+
   val submitAction: Call = Call(HttpVerbs.POST, "/some/url")
   val backUrl = "/some/back/url"
+  val renderedView: HtmlFormat.Appendable = confirmSingleYearOptOutView(taxYear, form, submitAction, backUrl, isAgent = false)
+  val renderedErrorView: HtmlFormat.Appendable = confirmSingleYearOptOutView(taxYear, formWithError, submitAction, backUrl, isAgent = false)
 
   "ConfirmSingleYearOptOutView" when {
     "called" should {
-      val renderedView = confirmSingleYearOptOutView(taxYear, from, submitAction, backUrl, isAgent = false)
       "have the correct title" in new Setup(renderedView) {
         document.title() shouldBe messages("htmlTitle", "Opt out of quarterly reporting for a single tax year")
       }
@@ -73,6 +80,10 @@ class ConfirmSingleYearOptOutViewSpec extends ViewSpec {
 
       "have a continue button" in new Setup(renderedView) {
         document.selectById("continue-button").text() shouldBe "Continue"
+      }
+
+      "have a error summary" in new Setup(renderedErrorView) {
+        document.select(".govuk-error-summary__body").get(0).text() shouldBe errorMessage
       }
 
     }

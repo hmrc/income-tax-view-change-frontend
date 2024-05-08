@@ -16,22 +16,29 @@
 
 package forms.optOut
 
+import models.incomeSourceDetails.TaxYear
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping}
+import play.api.data.Forms.{boolean, mapping, optional, text}
+import play.api.i18n.Messages
 
-case class ConfirmOptOutSingleTaxYearForm(confirmOptOut: Boolean)
+case class ConfirmOptOutSingleTaxYearForm(confirmOptOut: Option[Boolean], csrfToken: String)
 
 object ConfirmOptOutSingleTaxYearForm {
   val confirmOptOutField: String = "confirm-opt-out"
-  val noResponseErrorMessageKey: String = "error.boolean"
+  val noResponseErrorMessageKey: String = "optOut.confirmSingleYearOptOut.form.no-select.error"
+  val csrfToken: String = "csrfToken"
 
-  def apply(): Form[ConfirmOptOutSingleTaxYearForm] = {
+
+  def apply(taxYear: TaxYear)(implicit messages: Messages): Form[ConfirmOptOutSingleTaxYearForm] = {
+    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey,
+      taxYear.startYear.toString,
+      taxYear.endYear.toString)
 
     Form(
       mapping(
-        confirmOptOutField -> boolean.verifying(
-          noResponseErrorMessageKey,
-          response => response.isInstanceOf[Boolean])
+        confirmOptOutField -> optional(boolean).verifying(
+          noSelectionErrorMessage, response => response.isInstanceOf[Some[Boolean]]),
+        csrfToken -> text
       )(ConfirmOptOutSingleTaxYearForm.apply)(ConfirmOptOutSingleTaxYearForm.unapply)
     )
   }

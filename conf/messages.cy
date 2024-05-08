@@ -1840,3 +1840,4 @@ optOut.confirmSingleYearOptOut.inset.text                   = O 6 Ebrill {0} yml
 optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
+optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}

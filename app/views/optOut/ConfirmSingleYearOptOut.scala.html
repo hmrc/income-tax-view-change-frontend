@@ -64,12 +64,9 @@
 }
 
 @formBlock = {
-
     @formWithCSRF(action = submitAction, Symbol("id") -> "confirm-single-year-opt-out-form") {
-
-        @errorSummary(form = form)
-
         @govukRadios(Radios(
+            value = Some(""),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(getMessage("form.title",taxYear.startYear.toString, taxYear.endYear.toString)),
@@ -79,13 +76,13 @@
             items = Seq(
                 RadioItem(
                     id = Some("yes-response"),
-                    value = Some("yes"),
+                    value = Some("true"),
                     content = Text(messages("radioForm.yes")),
                     hint = Some(Hint(content = Text(getMessage("form.answer.one.hint"))))
                 ),
                 RadioItem(
                     id = Some("no-response"),
-                    value = Some("no"),
+                    value = Some("false"),
                     content = Text(messages("radioForm.no")),
                     hint = Some(Hint(content = Text(getMessage("form.answer.two.hint"))))
                 )
@@ -107,6 +104,7 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
+    @errorSummary(form = form)
     @headingContent
     @detailBlock
     @insetBlock

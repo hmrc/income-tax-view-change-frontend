@@ -1865,3 +1865,5 @@ optOut.confirmSingleYearOptOut.inset.text                   = From 6 April {0}, 
 optOut.confirmSingleYearOptOut.form.title                   = Do you still want to opt out for the {0} to {1} tax year?
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
+optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
+
