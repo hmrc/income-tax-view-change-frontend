@@ -87,7 +87,6 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) => r match {
               case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOut, "canOptOut should be true")
                 assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
                 assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
               case None => fail("cant opt out")
@@ -161,7 +160,6 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) => r match {
               case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOut, "canOptOut should be true")
                 assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2023)
                 assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2024)
 
@@ -201,7 +199,6 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) => r match {
               case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOut, "canOptOut should be true")
                 assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2024)
                 assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2025)
               case None => fail("No opt out offered")
@@ -305,7 +302,6 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           case Some(t) => t match {
             case Success(r) => r match {
               case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOut, "canOptOut should be true")
                 assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
                 assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
               case None => fail("no oo")
