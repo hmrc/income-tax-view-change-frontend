@@ -49,6 +49,20 @@
     </tr>
 }
 
+@transitionalProfitTaxBandTableRow = {
+    @viewModel.transitionProfitRow.map {
+        case TransitionProfitRow(tax, profit) => {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @messages("taxCal_breakdown.table.transitional_profit", profit.toCurrencyString)
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@tax.toCurrencyString</td>
+                </tr>
+        }
+    }
+}
+
+
 @taxReductionsTableRow(reliefsClaimedType: String) = @{
     viewModel.reliefsClaimed.flatMap { reliefsClaimed =>
         reliefsClaimed.find(relief => relief.`type` == s"$reliefsClaimedType").map{ relief =>
@@ -131,6 +145,7 @@
             @for(band <- viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
             }
+            @transitionalProfitTaxBandTableRow
             </tbody>
         </table>
     }

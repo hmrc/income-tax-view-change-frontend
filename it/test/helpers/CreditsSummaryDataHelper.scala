@@ -16,12 +16,14 @@
 
 package helpers
 
-import models.creditDetailModel.{BalancingChargeCreditType, CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.CreditDetailModel
 import models.financialDetails.DocumentDetail
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
 
 trait CreditsSummaryDataHelper {
+  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
   val chargesList: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
@@ -38,7 +40,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
@@ -52,7 +54,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
@@ -66,7 +68,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
@@ -111,7 +113,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
@@ -125,7 +127,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
@@ -139,7 +141,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.now().plusYears(1),
+      date = fixedDate.plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",

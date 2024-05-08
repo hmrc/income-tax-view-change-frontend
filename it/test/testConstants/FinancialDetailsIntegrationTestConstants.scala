@@ -21,7 +21,7 @@ import helpers.servicemocks.AuthStub.dateService
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import services.DateService
+import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import testConstants.IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 
@@ -52,9 +52,10 @@ object FinancialDetailsIntegrationTestConstants {
       paymentLot = Some("paymentLot")
     )
 
-  def financialDetail(taxYear: Int = 2018, mainType: Option[String] = Some("ITSA- POA 1")): FinancialDetail = FinancialDetail(
+  def financialDetail(taxYear: Int = 2018, mainType: Option[String] = Some("ITSA- POA 1"), mainTransaction: Option[String] = None): FinancialDetail = FinancialDetail(
     taxYear = taxYear.toString,
     mainType = mainType,
+    mainTransaction = mainTransaction,
     transactionId = Some("transactionId"),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -88,13 +89,13 @@ object FinancialDetailsIntegrationTestConstants {
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)))
-                                    (implicit dateService: DateService): DocumentDetailWithDueDate =
+                                    (implicit dateService: DateServiceInterface): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear, documentDescription, outstandingAmount, originalAmount), dueDate)
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
 
-  def fullDocumentDetailWithDueDateModel(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
+  def fullDocumentDetailWithDueDateModel(implicit dateService: DateServiceInterface): DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
@@ -108,6 +109,7 @@ object FinancialDetailsIntegrationTestConstants {
                                                         dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: Option[String] = Some("SA Payment on Account 1"),
+                                                        mainTransaction: Option[String] = Some("4920")
                                                        ):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(
@@ -115,7 +117,7 @@ object FinancialDetailsIntegrationTestConstants {
       outstandingAmount = outstandingAmount,
       dueDate = dueDate,
       originalAmount = originalAmount),
-      financialDetail(mainType = mainType))
+      financialDetail(mainType = mainType, mainTransaction = mainTransaction))
   }
 
   def financialDetailModelPartial(taxYear: Int = 2018,
@@ -153,6 +155,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
+                                mainTransaction: List[Option[String]],
                                 transactionIds: List[Option[String]],
                                 transactionDate: Option[LocalDate],
                                 `type`: Option[String],
@@ -187,14 +190,15 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
       )
     )
 
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
+                                                     mainTransaction: List[Option[String]],
                                                      transactionIds: List[Option[String]],
                                                      transactionDate: Option[LocalDate],
                                                      `type`: Option[String],
@@ -225,8 +229,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -247,6 +251,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -275,6 +280,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -304,6 +310,7 @@ object FinancialDetailsIntegrationTestConstants {
   def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock, interestLock: List[String] = noInterestLock): FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -332,6 +339,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -358,6 +366,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -384,6 +393,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueIn30DaysWithAZeroOutstandingAmount: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -441,18 +451,20 @@ object FinancialDetailsIntegrationTestConstants {
         taxYear = currentDate.getYear.toString,
         transactionId = Some("testMFA1"),
         mainType = Some("ITSA PAYE Charge"),
+        mainTransaction = Some("4000"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), transactionId = Some("testMFA1"))))
       ),
       FinancialDetail(
         taxYear = currentDate.getYear.toString,
         transactionId = Some("testMFA2"),
         mainType = Some("ITSA Calc Error Correction"),
+        mainTransaction = Some("4022"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 22)), amount = Some(12), transactionId = Some("testMFA2"))))
       )
     )
   )
 
-  def whatYouOweDataWithDataDueIn30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueIn30Days(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail(2021, "1040000123",
       Some("TRM New Charge"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
@@ -465,7 +477,7 @@ object FinancialDetailsIntegrationTestConstants {
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithDataDueInSomeDays(implicit dateService: DateService): WhatYouOweChargesList = {
+  def whatYouOweDataWithDataDueInSomeDays(implicit dateService: DateServiceInterface): WhatYouOweChargesList = {
     val inScopeChargeList = List(
       DocumentDetailWithDueDate(
         DocumentDetail(2021, "1040000123",
@@ -487,44 +499,44 @@ object FinancialDetailsIntegrationTestConstants {
     )
   }
 
-  def whatYouOweDataWithDataDueInMoreThan30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueInMoreThan30Days(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
-  def whatYouOweDataWithOverdueData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueData(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataFullData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataFullData(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock)(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates()
   )
 
-  def whatYouOweDataWithMixedData1(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMixedData1(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  def whatYouOweDataWithMixedData2(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMixedData2(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService).head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  def whatYouOweDataWithMFADebitsData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMFADebitsData(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsWithMFADebits.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
@@ -532,7 +544,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   val staticDateOutstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.parse("2022-01-01"))
 
-  def whatYouOweWithAZeroOutstandingAmount(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweWithAZeroOutstandingAmount(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail(2021, "transId1", Some("ITSA- POA 1"), None, Some(1000), Some(3400),
       LocalDate.parse("2018-03-29"), None, None, None, None, None, None, None, None, None, Some(LocalDate.parse("2018-02-14")), None, Some(LocalDate.parse("2018-02-14"))), Some(LocalDate.parse("2018-02-14")), false, false, false),

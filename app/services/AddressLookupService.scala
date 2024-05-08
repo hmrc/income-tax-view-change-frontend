@@ -41,10 +41,10 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       isChange = isChange
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
-        Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise $status")
+        Logger("application").info(s"error during initialise $status")
         Left(AddressError("status: " + status))
       case Right(PostAddressLookupSuccessResponse(location: Option[String])) =>
-        Logger("application").info(message = s"[AddressLookupService][initialiseAddressJourney] - success response: $location")
+        Logger("application").info(message = s"success response: $location")
         Right(location)
     }
   }
@@ -54,17 +54,17 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       case Some(incomeSourceId: IncomeSourceId) =>
         addressLookupConnector.getAddressDetails(incomeSourceId.value) map {
           case Left(UnexpectedGetStatusFailure(status)) =>
-            Logger("application").error(s"[AddressLookupService][fetchAddress] - failed to get details for $id with status $status")
+            Logger("application").error(s"failed to get details for $id with status $status")
             Left(AddressError("status: " + status))
-          case Left(_) => Logger("application").error(s"[AddressLookupService][fetchAddress] - failed to get details for $id with unknown status")
+          case Left(_) => Logger("application").error(s"failed to get details for $id with unknown status")
             Left(AddressError("status: unknown"))
           case Right(None) =>
-            Logger("application").info(s"[AddressLookupService][fetchAddress] - failed to get details for $id")
+            Logger("application").info(s"failed to get details for $id")
             Left(AddressError("Not found"))
           case Right(Some(model)) => Right(model)
         }
       case None =>
-        Logger("application").error("[AddressLookupService][fetchAddress] - No id provided")
+        Logger("application").error("No id provided")
         Future(Left(AddressError("No id provided")))
     }
   }

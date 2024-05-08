@@ -18,6 +18,7 @@ package testOnly.controllers
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.TimeMachineAddYear
 import models.calculationList.CalculationListResponseModel
@@ -35,9 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutTestDataController @Inject()(
                                           val auth: AuthenticatorPredicate,
@@ -47,7 +46,8 @@ class OptOutTestDataController @Inject()(
                                           implicit val dateService: DateServiceInterface,
                                           implicit val mcc: MessagesControllerComponents,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit val executionContext: ExecutionContext
                                         )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
@@ -55,28 +55,37 @@ class OptOutTestDataController @Inject()(
                           (implicit hc: HeaderCarrier, request: MtdItUser[_]): Future[Result] = {
 
     val taxYear: TaxYear = TaxYear(
-      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
-      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+      dateService.getCurrentTaxYearStart.getYear,
+      dateService.getCurrentTaxYearEnd
     )
+    val taxYearPlusOne = taxYear.addYears(1)
+    val taxYearMinusOne = taxYear.addYears(-1)
 
-    def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
+    def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, List[ITSAStatusResponseModel])] = for {
       crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.addYears(-1))
-      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYear.addYears(-1), nino)
+      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino)
       itsaStatusResponseCy <- dynamicStubService.getITSAStatusDetail(taxYear, nino)
-      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYear.addYears(1), nino)
-    } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
+      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYearPlusOne, nino)
+      itsaStatusFutureYearResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino, futureYears = true)
+    } yield (
+      crystallisationStatusResponseCyMinusOne,
+      itsaStatusResponseCyMinusOne.head,
+      itsaStatusResponseCy.head,
+      itsaStatusResponseCyPlusOne.head,
+      itsaStatusFutureYearResponseCyMinusOne)
 
     combinedResults.map { seqResult =>
-      Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
-        s"ITSA Status CY-1:           ${Json.toJson(seqResult._2)}\n" +
-        s"ITSA Status CY:             ${Json.toJson(seqResult._3)}\n" +
-        s"ITSA Status CY+1:           ${Json.toJson(seqResult._4)}")
+      Ok(
+        s"Crystallisation Status:               ${Json.toJson(seqResult._1)}\n" +
+          s"ITSA Status CY-1:                   ${Json.toJson(seqResult._2)}\n" +
+          s"ITSA Status CY:                     ${Json.toJson(seqResult._3)}\n" +
+          s"ITSA Status CY+1:                   ${Json.toJson(seqResult._4)}\n" +
+          s"ITSA Status Future Year from CY-1:  ${Json.toJson(seqResult._5)}\n")
 
     }.recover {
       case ex: Throwable =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[OptOutTestDataController][retrieveData] " +
-          s"${if (isAgent) "Agent" else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
         errorHandler.showInternalServerError()
     }
 

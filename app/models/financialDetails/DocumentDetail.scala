@@ -37,12 +37,13 @@ case class DocumentDetail(taxYear: Int,
                           interestFromDate: Option[LocalDate] = None,
                           interestEndDate: Option[LocalDate] = None,
                           latePaymentInterestAmount: Option[BigDecimal] = None,
-                          lpiWithDunningBlock: Option[BigDecimal] = None,
+                          lpiWithDunningLock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None,
-                          documentDueDate: Option[LocalDate] = None
+                          documentDueDate: Option[LocalDate] = None,
+                          poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
@@ -64,8 +65,8 @@ case class DocumentDetail(taxYear: Int,
   def outstandingAmountZero: Boolean =
     outstandingAmount.getOrElse[BigDecimal](0) == 0
 
-  def hasLpiWithDunningBlock: Boolean =
-    lpiWithDunningBlock.isDefined && lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0
+  def hasLpiWithDunningLock: Boolean =
+    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
@@ -190,7 +191,7 @@ case class DocumentDetail(taxYear: Int,
       case _ => "balancingCharge.text"
     }
     case error =>
-      Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      Logger("application").error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 
@@ -204,11 +205,12 @@ case class DocumentDetail(taxYear: Int,
 
 }
 
+
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
-  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate())
+  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 
 object DocumentDetail {
@@ -227,11 +229,12 @@ object DocumentDetail {
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
       (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
-      (__ \ "lpiWithDunningBlock").readNullable[BigDecimal] and
+      (__ \ "lpiWithDunningLock").readNullable[BigDecimal] and
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal] and
-      (__ \ "documentDueDate").readNullable[LocalDate]
+      (__ \ "documentDueDate").readNullable[LocalDate] and
+      (__ \ "poaRelevantAmount").readNullable[BigDecimal]
     )(DocumentDetail.apply _)
 }

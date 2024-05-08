@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
   val testStartDate: LocalDate = LocalDate.of(2022, 1, 1)
 
-  val currentDate = dateService.getCurrentDate()
+  val currentDate = dateService.getCurrentDate
 
   val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
     .longDate(currentDate.plusWeeks(1).plusDays(1))
@@ -87,12 +87,12 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   }
 
   def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = ((isAgent, isChange, incomeSourceType) match {
-    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-    case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent = false, isChange = false)
+    case (_, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent = true, isChange = false)
     case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
     case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    case (false, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-    case (_, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
+    case (false, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
+    case (_, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
     case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
     case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
     case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
@@ -161,7 +161,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             val backUrl = getBackUrl(isAgent, false, incomeSourceType)
-            document.getElementById("back").attr("href") shouldBe backUrl
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
         }
@@ -182,7 +182,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             val backUrl = getBackUrl(isAgent, true, incomeSourceType)
-            document.getElementById("back").attr("href") shouldBe backUrl
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
             document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
             document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
             document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
@@ -206,7 +206,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
-            document.getElementById("back").attr("href") shouldBe {
+            document.getElementById("back-fallback").attr("href") shouldBe {
               if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
               else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
             }

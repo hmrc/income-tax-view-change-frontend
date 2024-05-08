@@ -28,6 +28,7 @@ case class SubItem(dueDate: Option[LocalDate] = None,
                    interestLock: Option[String] = None,
                    clearingDate: Option[LocalDate] = None,
                    clearingReason: Option[String] = None,
+                   clearingSAPDocument: Option[String] = None,
                    outgoingPaymentMethod: Option[String] = None,
                    paymentReference: Option[String] = None,
                    paymentAmount: Option[BigDecimal] = None,
@@ -48,6 +49,7 @@ object SubItem {
     interestLock <- (JsPath \ "interestLock").readNullable[String]
     clearingDate <- (JsPath \ "clearingDate").readNullable[String]
     clearingReason <- (JsPath \ "clearingReason").readNullable[String]
+    clearingSAPDocument <- (JsPath \ "clearingSAPDocument").readNullable[String]
     outgoingPaymentMethod <- (JsPath \ "outgoingPaymentMethod").readNullable[String]
     paymentReference <- (JsPath \ "paymentReference").readNullable[String]
     paymentAmount <- (JsPath \ "paymentAmount").readNullable[BigDecimal]
@@ -68,6 +70,7 @@ object SubItem {
       interestLock,
       clearingDate.map(date => LocalDate.parse(date)),
       clearingReason,
+      clearingSAPDocument,
       outgoingPaymentMethod,
       paymentReference,
       paymentAmount,
@@ -84,7 +87,7 @@ object SubItem {
       true
     } catch {
       case _: Exception =>
-        Logger("application").warn(s"[SubItem][reads] The returned 'subItem' field <$s> could not be parsed as an integer")
+        Logger("application").warn(s"The returned 'subItem' field <$s> could not be parsed as an integer")
         false
     }
   }

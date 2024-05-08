@@ -16,14 +16,13 @@
 
 package controllers.manageBusinesses.manage
 
-import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -47,7 +46,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val annuallyIndicator: String = "A"
   val taxYear = "2023-2024"
   val timestamp = "2023-01-31T09:26:17Z"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
@@ -63,8 +62,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       latencyIndicator2 = annuallyIndicator
     )
 
-  private lazy val manageObligationsController = controllers.manageBusinesses.manage.routes
-    .ManageObligationsController
+  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
+    .CheckYourAnswersController
   private lazy val confirmReportingMethodSharedController = controllers.manageBusinesses.manage.routes
     .ConfirmReportingMethodSharedController
 
@@ -82,12 +81,12 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
     .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = false).url
 
-  val manageObligationsShowUKPropertyUrl: String = manageObligationsController
-    .showUKProperty(changeTo = annual, taxYear = taxYear).url
-  val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
-    .showForeignProperty(changeTo = annual, taxYear = taxYear).url
-  val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showSelfEmployment(changeTo = annual, taxYear = taxYear).url
+  val checkYourAnswersShowUKPropertyUrl: String = checkYourAnswersController
+    .show(isAgent = false, UkProperty).url
+  val checkYourAnswersShowForeignPropertyUrl: String = checkYourAnswersController
+    .show(isAgent = false, ForeignProperty).url
+  val checkYourAnswersShowSelfEmploymentUrl: String = checkYourAnswersController
+    .show(isAgent = false, SelfEmployment).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
@@ -221,7 +220,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   }
 
   s"calling POST $confirmReportingMethodSubmitUKPropertyUrl" should {
-    s"redirect to $manageObligationsShowUKPropertyUrl" when {
+    s"redirect to $checkYourAnswersShowUKPropertyUrl" when {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
@@ -230,27 +229,22 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmUKPropertyReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
-        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, UkProperty.journeyType, "MANAGE", "Annually", "2023-2024", "UK property")(testUser).detail)
-
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowUKPropertyUrl)
+          redirectURI(checkYourAnswersShowUKPropertyUrl)
         )
       }
     }
   }
 
   s"calling POST $confirmReportingMethodSubmitForeignPropertyUrl" should {
-    s"redirect to $manageObligationsShowForeignPropertyUrl" when {
+    s"redirect to $checkYourAnswersShowForeignPropertyUrl" when {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
@@ -259,27 +253,22 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmForeignPropertyReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
-        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, ForeignProperty.journeyType, "MANAGE", "Annually", "2023-2024", "Foreign property")(testUser).detail)
-
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowForeignPropertyUrl)
+          redirectURI(checkYourAnswersShowForeignPropertyUrl)
         )
       }
     }
   }
 
   s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
-    s"redirect to $manageObligationsShowSelfEmploymentUrl" when {
+    s"redirect to $checkYourAnswersShowSelfEmploymentUrl" when {
       "called with a valid form" in {
 
         Given("Income Sources FS is enabled")
@@ -291,20 +280,15 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
-        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, SelfEmployment.journeyType, "MANAGE", "Annually", "2023-2024", "business")(testUser).detail)
-
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(manageObligationsShowSelfEmploymentUrl)
+          redirectURI(checkYourAnswersShowSelfEmploymentUrl)
         )
       }
     }

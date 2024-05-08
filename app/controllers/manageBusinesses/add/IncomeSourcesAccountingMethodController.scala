@@ -82,7 +82,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           Future.successful(
             Ok(view(
               cashOrAccrualsFlag = cashOrAccrualsFlag,
-              incomeSourcesType = incomeSourceType,
+              incomeSourceType = incomeSourceType,
               form = IncomeSourcesAccountingMethodForm(incomeSourceType),
               postAction = postAction,
               isAgent = isAgent,
@@ -93,7 +93,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 
@@ -107,7 +107,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
 
     Future.successful(Ok(view(
       cashOrAccrualsFlag = cashOrAccrualsFlag,
-      incomeSourcesType = incomeSourceType,
+      incomeSourceType = incomeSourceType,
       form = IncomeSourcesAccountingMethodForm(incomeSourceType),
       postAction = postAction,
       isAgent = isAgent,
@@ -146,7 +146,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
-          incomeSourcesType = incomeSourceType,
+          incomeSourceType = incomeSourceType,
           form = hasErrors,
           postAction = postAction(isAgent, incomeSourceType),
           backUrl = getBackUrl(isAgent, isChange = false, incomeSourceType),
@@ -173,7 +173,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 

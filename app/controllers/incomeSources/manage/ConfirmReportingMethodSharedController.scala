@@ -108,7 +108,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
               postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-              isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             ))
                 }
                 else {
@@ -152,7 +152,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
               )
@@ -219,7 +219,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                 Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYear.endYear), Some(true))))
             }
             sessionService.setMongoData(newUIJourneySessionData)
-            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
+            Logger("application").debug("Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
                 IncomeSourceReportingMethodAuditModel(

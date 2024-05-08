@@ -87,6 +87,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val unknown: String = messages("incomeSources.generic.unknown")
     val annually: String = messages("incomeSources.manage.business-manage-details.annually")
     val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
+    val annuallyGracePeriod: String = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
+    val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
     val standard: String = messages("incomeSources.manage.quarterly-period.standard")
     val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
 
@@ -120,17 +122,17 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
     scenario match {
       case EXPIRED_LATENCY =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2025)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2025)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
           .thenReturn(Future.successful(Some(false)))
 
       case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderNoLatency()
@@ -138,34 +140,34 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockSessionService.setMongoKey(any(), any(), any())(any(), any())).thenReturn(Future(Right(true)))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
           .thenReturn(Future.successful(Some(false)))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(Some(true)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
           .thenReturn(Future.successful(Some(true)))
 
       case NON_ELIGIBLE_ITSA_STATUS =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
         mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
 
 
       case ERROR_TESTING =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
     }
@@ -196,7 +198,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         status(result) shouldBe Status.OK
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+          .getElementsByClass("govuk-summary-list__row").size() shouldBe 5
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
         document.getElementById("manage-details-table")
@@ -234,7 +236,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
       status(result) shouldBe Status.OK
       document.getElementById("manage-details-table")
-        .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+        .getElementsByClass("govuk-summary-list__row").size() shouldBe 5
       document.getElementById("manage-details-table")
         .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
       document.getElementById("manage-details-table")
@@ -261,12 +263,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dd").text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.calendar
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -281,12 +284,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -304,12 +308,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -327,12 +332,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe "Business name"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -340,9 +346,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
+          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Type of trade"
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
+          .getElementsByClass("govuk-summary-list__key").get(4).text() shouldBe "Accounting method"
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
@@ -358,10 +366,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -384,12 +393,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.calendar
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
@@ -404,12 +414,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -427,12 +438,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -450,12 +462,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe "Business name"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -463,9 +476,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
+          .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Type of trade"
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
+          .getElementsByClass("govuk-summary-list__key").get(4).text() shouldBe "Accounting method"
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
@@ -481,10 +496,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
+          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
@@ -506,6 +522,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
       }
@@ -521,12 +538,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -541,6 +559,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
@@ -561,6 +580,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -579,12 +599,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
       }
     }
   }
@@ -603,6 +624,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
       }
@@ -618,12 +640,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -638,6 +661,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
@@ -658,6 +682,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -676,12 +701,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterlyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
     }
@@ -701,6 +727,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
@@ -716,10 +743,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -734,6 +762,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
@@ -752,6 +781,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -770,12 +800,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
     }
@@ -795,6 +826,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
 
@@ -811,10 +843,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -829,6 +862,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
@@ -847,6 +881,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
@@ -865,12 +900,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        Option(document.getElementById("graceperiodinfo")).isDefined shouldBe true
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annuallyGracePeriod
 
       }
     }

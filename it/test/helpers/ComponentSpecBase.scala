@@ -22,10 +22,11 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
-import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
+import models.incomeSourceDetails.TaxYear
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -64,13 +65,15 @@ class TestHeaderExtractor extends HeaderExtractor {
 @Singleton
 class TestDateService extends DateServiceInterface {
 
-  override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+  override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-  override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean = false): Boolean = true
+  override def isBeforeLastDayOfTaxYear: Boolean = true
 
-  override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = 2023
+  override def getCurrentTaxYearEnd: Int = 2023
 
-  override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2022, 4, 6)
+  override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
+
+  override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
 
   override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
@@ -82,6 +85,8 @@ class TestDateService extends DateServiceInterface {
       accountingPeriodEndDate.plusYears(1)
     }
   }
+
+  override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -103,9 +108,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {
-    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
+    override def getCurrentTaxYearEnd: Int = 2023
   }
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
@@ -143,7 +148,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
-    "encryption.isEnabled" -> "false"
+    "encryption.isEnabled" -> "false",
+    "microservice.services.contact-frontend.host" -> mockHost,
+    "microservice.services.contact-frontend.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -265,6 +272,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentsDue: WSResponse = get("/what-you-owe?origin=PTA")
 
+    def getAdjustPaymentsOnAccount: WSResponse = get(s"/adjust-poa/start")
+
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
     def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
@@ -281,13 +290,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
+    def getPOAWhatYouNeedToKnow: WSResponse = get("/adjust-poa/what-you-need-to-know")
+
     def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
 
     def getCeaseIncomeSourcesIndividual: WSResponse = get("/income-sources/cease/cease-an-income-source")
 
     def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -299,7 +310,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -603,6 +614,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getNextUpdates: WSResponse = get(s"/next-updates")
 
+    def getOptOutCheckpoint: WSResponse =
+      get("optout/confirm-opt-out-from-quarterly-reporting/checkpoint")
+
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 
     def getBtaPartial: WSResponse = get(s"/partial")
@@ -627,13 +641,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
-    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-declare")
+    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-confirm-cease")
 
     def getCeaseIncomeSourcesIndividual: WSResponse = get("/manage-your-businesses/cease/cease-an-income-source")
 
-    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-declare")(
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(UkProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+    def postCeaseSelfEmployment(answer: Option[String]): WSResponse = post(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -641,11 +661,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/uk-property-end-date")
 
-    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-declare")
+    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-confirm-cease")
 
-    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-declare")(
+    def getCeaseSelfEmplyoment: WSResponse = get(s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed")
+
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-confirm-cease")(
       answer.fold(Map.empty[String, Seq[String]])(
-        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        declaration => DeclareIncomeSourceCeasedForm.form(ForeignProperty).fill(DeclareIncomeSourceCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
@@ -681,6 +703,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
+      "X-Session-ID" -> testSessionId)
+
+    def getFeedbackPage: WSResponse = getWithHeaders("/feedback",
+      "X-Session-ID" -> testSessionId)
+
+    def getThankyouPage: WSResponse = getWithHeaders("/thankyou",
       "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -785,11 +813,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseUKPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-details")
+    def getCheckCeaseUKPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-answers")
 
-    def postCheckCeaseUKPropertyDetails: WSResponse =
-      post("/manage-your-businesses/cease/uk-property-check-details")(Map.empty)
+    def postCheckCeaseUKPropertyAnswers: WSResponse =
+      post("/manage-your-businesses/cease/uk-property-check-answers")(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/manage-your-businesses/manage/view-and-manage-income-sources")
 
@@ -833,11 +861,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseForeignPropertyDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-details")
+    def getCheckCeaseForeignPropertyAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-answers")
 
-    def postCheckCeaseForeignPropertyDetails: WSResponse =
-      post(s"/manage-your-businesses/cease/foreign-property-check-details/")(Map.empty)
+    def postCheckCeaseForeignPropertyAnswers: WSResponse =
+      post(s"/manage-your-businesses/cease/foreign-property-check-answers/")(Map.empty)
 
 
     def postAddBusinessReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -855,17 +883,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
-    def getCheckCeaseBusinessDetails: WSResponse =
-      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-details")
+    def getCheckCeaseBusinessAnswers: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-answers")
 
-    def postCheckCeaseBusinessDetails: WSResponse =
-      post("/manage-your-businesses/cease/business-check-details")(Map.empty)
+    def postCheckCeaseBusinessAnswers: WSResponse =
+      post("/manage-your-businesses/cease/business-check-answers")(Map.empty)
 
-    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-foreign-property/cease-success", session)
 
-    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-uk-property-success", session)
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease-uk-property/cease-success", session)
 
-    def getBusinessCeasedObligations: WSResponse = get(uri = "/manage-your-businesses/cease/cease-business-success")
+    def getBusinessCeasedObligations: WSResponse = get(uri = "/manage-your-businesses/cease-sole-trader/cease-success")
 
     def getAddBusinessAddress: WSResponse =
       get("/manage-your-businesses/add-sole-trader/business-address")
@@ -894,6 +922,32 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-foreign-property-cannot-go-back")
 
     def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
+
+    def getViewAllCeasedBusinesses: WSResponse = get("/manage-your-businesses/ceased-businesses")
+
+    def getCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)
+    }
+
+    def getCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)
+    }
+
+    def postCheckYourAnswersUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/uk-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/foreign-property-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def postCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)(Map.empty)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

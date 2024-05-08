@@ -22,7 +22,6 @@ import enums.JourneyType.Cease
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
@@ -30,6 +29,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testEndDate2022, testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 
 import java.time.LocalDate
 
@@ -46,7 +46,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -68,7 +67,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getBusinessCeasedObligations
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -77,8 +76,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }
@@ -98,6 +96,9 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getUkPropertyCeasedObligations(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -105,8 +106,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }
@@ -126,6 +126,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+
+
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyCeasedObligations(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -133,8 +137,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(expectedText)
         )
       }
     }

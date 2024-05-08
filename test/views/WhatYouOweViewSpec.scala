@@ -21,7 +21,8 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -87,6 +88,22 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
 
+  def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
+    if (isFSEnabled) {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = true,
+        poaTaxYear = Some(TaxYear(
+          startYear = 2024,
+          endYear = 2025)
+        )
+      )
+    } else {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = false,
+        poaTaxYear = None)
+    }
+  }
+
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
 
@@ -97,12 +114,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   class TestSetup(creditCharges: List[DocumentDetail] = List(),
                   charges: WhatYouOweChargesList,
                   currentTaxYear: Int = fixedDate.getYear,
-                  hasLpiWithDunningBlock: Boolean = false,
+                  hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   whatYouOweCreditAmountEnabled: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
-                  MFADebitsEnabled: Boolean = false
+                  MFADebitsEnabled: Boolean = false,
+                  adjustPaymentsOnAccountFSEnabled: Boolean = false
                  ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -117,9 +135,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(
-      dateService.getCurrentDate(isEnabled(TimeMachineAddYear)),
-      creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
+      dateService.getCurrentDate,
+      creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true, claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled))(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -142,7 +160,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        MFADebitsEnabled: Boolean = false,
                        whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
-                       hasLpiWithDunningBlock: Boolean = false) {
+                       hasLpiWithDunningLock: Boolean = false,
+                       adjustPaymentsOnAccountFSEnabled: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       nino = "AA111111A",
@@ -162,12 +181,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
-    private val currentDateIs: LocalDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+    private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
-      hasLpiWithDunningBlock = hasLpiWithDunningBlock,
+      hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
       backUrl = "testBackURL",
       utr = Some("1234567890"),
@@ -176,7 +195,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
-      isAgent = true)(FakeRequest(), agentUser, implicitly)
+      isAgent = true,
+      claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+    )(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -195,6 +216,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     dunningLock = dunningLock,
     outstandingAmount = List(Some(50), Some(75)),
@@ -203,26 +225,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestAmount = latePaymentInterest
   )
 
-  def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+  def financialDetailsOverdueWithLpiDunningLock(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
     latePaymentInterestAmount = latePaymentInterest,
-    lpiWithDunningBlock = lpiWithDunningBlock
+    lpiWithDunningLock = lpiWithDunningLock
   )
 
-  def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+  def financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
+    mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.minusDays(10).toString), Some(fixedDate.minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
     latePaymentInterestAmount = latePaymentInterest,
-    lpiWithDunningBlock = lpiWithDunningBlock
+    lpiWithDunningLock = lpiWithDunningLock
   )
 
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
@@ -238,17 +262,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningBlock(latePaymentInterest: Option[BigDecimal],
-                                               lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueLPIDunningLock(latePaymentInterest: Option[BigDecimal],
+                                              lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates(),
+    chargesList = financialDetailsOverdueWithLpiDunningLock(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningBlockZero(latePaymentInterest: Option[BigDecimal],
-                                                   lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueLPIDunningLockZero(latePaymentInterest: Option[BigDecimal],
+                                                  lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates(),
+    chargesList = financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -370,6 +394,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+
+  def claimToAdjustLink(isAgent: Boolean): String = {
+    if (isAgent) {
+      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+    } else {
+      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    }
+  }
 
   "individual" when {
     "The What you owe view with financial details model" when {
@@ -690,7 +722,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56), Some(1000))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(1000))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -707,7 +739,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", latePaymentCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
-            pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
+            pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
 
@@ -719,7 +751,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56), Some(0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLockZero(Some(34.56), Some(0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -1049,6 +1081,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
+    "AdjustPaymentsOnAccount is enabled" should {
+      "display the claim to adjust payments on account link" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
+        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
+      }
+    }
+
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
@@ -1214,6 +1253,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
+      }
+    }
+
+    "AdjustPaymentsOnAccount is enabled" should {
+      "display the claim to adjust payments on account link" in new AgentTestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
+        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
       }
     }
   }

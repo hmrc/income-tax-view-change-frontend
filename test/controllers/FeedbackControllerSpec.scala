@@ -18,8 +18,9 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
+import connectors.FeedbackConnector
 import controllers.feedback.FeedbackController
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -48,6 +49,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
   val mockErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   val mockFeedbackView: Feedback = mock(classOf[Feedback])
   val mockThankYouView: FeedbackThankYou = mock(classOf[FeedbackThankYou])
+  val mockFeedbackConnector: FeedbackConnector = mock(classOf[FeedbackConnector])
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
   object TestFeedbackController extends FeedbackController()(
@@ -61,12 +63,12 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     mockFeedbackView,
     mockThankYouView,
     mockItvcHeaderCarrierForPartialsConverter,
-    mockHttpClient,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[MessagesControllerComponents],
     mockErrorHandler,
     mockItvcErrorHandler,
-    testAuthenticator
+    testAuthenticator,
+    mockFeedbackConnector
   )
 
   ".show" when {
@@ -104,7 +106,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
       "return an SEE_OTHER (303)" in {
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "test")))
+        when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
 
         when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
 
@@ -122,8 +124,9 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(OK, "test")))
 
-        when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
 
+        when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
         lazy val result = TestFeedbackController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
 
         status(result) shouldBe Status.SEE_OTHER

@@ -64,32 +64,26 @@
 }
 
 @ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.CeaseConfirmSoleTraderController.showAgent(Some(incomeSourceIdHash)).url
-    else controllers.manageBusinesses.cease.routes.CeaseConfirmSoleTraderController.show(Some(incomeSourceIdHash)).url
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment).url
 }
 
 @ceaseUkPropertyURL = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.CeaseConfirmUKPropertyController.showAgent().url
-    else controllers.manageBusinesses.cease.routes.CeaseConfirmUKPropertyController.show().url
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, UkProperty).url
 }
 
 @ceaseForeignPropertyURL = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.CeaseConfirmForeignPropertyController.showAgent().url
-    else controllers.manageBusinesses.cease.routes.CeaseConfirmForeignPropertyController.show().url
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty).url
 }
 
 @addBusinessNameURL = @{
-    if(isAgent)
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent().url
-    else
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show().url
+    controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = false).url
 }
 
 @viewAllCeasedBusinessesControllerURL = @{
-    if(isAgent)
-        controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.showAgent().url
-    else
-        controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show().url
+    controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent).url
 }
 
 @addUKPropertyStartDateURL = @{
@@ -102,9 +96,9 @@
 
 @addPropertyBusinessURL = @{
     if(isAgent)
-        controllers.manageBusinesses.add.routes.AddPropertyController.showAgent().url
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(true).url
     else
-        controllers.manageBusinesses.add.routes.AddPropertyController.show().url
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(false).url
 }
 
 @addPropertyLink(IsUKPropertyAvailable: Boolean, IsForeignPropertyAvailable: Boolean) = @{

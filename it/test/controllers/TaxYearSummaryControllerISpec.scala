@@ -25,13 +25,14 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks._
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
 import testConstants.messages.TaxYearSummaryMessages._
@@ -47,6 +48,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -327,9 +330,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
+          obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "EOPS"
+          periodKey = "#003"
         ))
     ),
     NextUpdatesModel(
@@ -340,7 +343,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
+          dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#004"
         ))
     )
@@ -482,12 +485,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(annualUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString)
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
       }
 
@@ -554,19 +557,21 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
 
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(annualUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
         )
 
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessfulExpected))))
+          )(FakeRequest()),
+          messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
+            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
       }
 
 
@@ -782,7 +787,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), emptyPaymentsList, allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          )(FakeRequest()),
+          messagesAPI,
+          TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            emptyPaymentsList,
+            allObligations,
+            codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+          )))
       }
 
       "financial details service returns an error" in {
@@ -1106,8 +1118,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
-          )(FakeRequest()), auditDD,
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          )(FakeRequest()),
+          messagesAPI, TaxYearSummaryViewModel(
+            Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+            auditDD, allObligations,
+            codingOutEnabled = true,
+            showForecastData = true, ctaViewModel = emptyCTAModel)))
+
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -1142,6 +1159,80 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
     }
 
+    "Claim to adjust POA section" should {
+      "show" when {
+        "The user has amendable POAs for the given tax year and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = true))
+        }
+      }
+      "not show" when {
+        "The user has amendable POAs for the given tax year but the FS is Disabled" in {
+          disable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+        "The user has no amendable POAs and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK, testEmptyFinancialDetailsModelJson)
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+      }
+    }
   }
 
   "API#1171 IncomeSourceDetails Caching" when {

@@ -142,8 +142,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -154,13 +154,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.minusDays(1) -> true))
@@ -175,8 +175,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
-              FinancialDetail("2018", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -187,13 +187,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.plusDays(5) -> false))
@@ -208,8 +208,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -220,13 +220,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Right(2))
@@ -239,7 +239,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe None
@@ -273,7 +273,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
 
         result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+        result.failed.futureValue.getMessage shouldBe "Failed to retrieve successful charge history"
       }
     }
 

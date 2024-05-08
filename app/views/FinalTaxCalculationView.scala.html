@@ -22,7 +22,7 @@
 @import config.FrontendAppConfig
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import models.liabilitycalculation.viewmodels.CalculationSummary
 
 @this(layout: unifiedLayout,
       breakdownPartial: taxYearSummaryBreakdownPartial,
@@ -34,7 +34,7 @@
       govukInsetText : GovukInsetText
 )
 
-@(overview: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None,
+@(overview: CalculationSummary, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None,
         origin: Option[String] = None)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{

@@ -16,7 +16,6 @@
 
 package utils
 
-import models.financialDetails.MfaCreditUtils
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor1
 import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel}
@@ -70,7 +69,7 @@ class CreditAndRefundUtilsSpec extends TestSupport {
       "return Option[UnallocatedCreditFromSingleCreditItem]" in {
         forAll(validMfaCreditMainTypes) { validMfaCreditMainType =>
           val unallocatedCreditType = maybeUnallocatedCreditType(
-            List(documentDetailWithDueDateFinancialDetailListModel(mainType = validMfaCreditMainType)),
+            List(documentDetailWithDueDateFinancialDetailListModel(mainType = validMfaCreditMainType, mainTransaction = "4004")),
             Some(balanceDetailsModel(
               firstPendingAmountRequested = None,
               secondPendingAmountRequested = None,
@@ -86,7 +85,7 @@ class CreditAndRefundUtilsSpec extends TestSupport {
     "maybeUnallocatedCreditType method called with proper values for unallocated credit from single credit item as a cut over credit" should {
       "return Option[UnallocatedCreditFromSingleCreditItem]" in {
         val unallocatedCreditType = maybeUnallocatedCreditType(
-          List(documentDetailWithDueDateFinancialDetailListModel(mainType = "ITSA Cutover Credits")),
+          List(documentDetailWithDueDateFinancialDetailListModel(mainType = "ITSA Cutover Credits", mainTransaction = "6110")),
           Some(balanceDetailsModel(
             firstPendingAmountRequested = None,
             secondPendingAmountRequested = None,

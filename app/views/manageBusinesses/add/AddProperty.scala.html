@@ -1,0 +1,86 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+
+@this(
+        mainTemplate: unifiedLayout,
+        h1: h1,
+        h2: h2,
+        link: link,
+        p: p,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
+        continueButton: ContinueButton,
+        govukRadios: GovukRadios)
+
+@(form: Form[_], isAgent: Boolean = false, backUrl: Option[String], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"manageBusinesses.type-of-property.$key", args: _*)
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    isAgent = isAgent,
+    backUrl = backUrl,
+    btaNavPartial = user.btaNavPartial) {
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "type-of-business") {
+
+        @errorSummary(form)
+
+        @h1(msg = getMessage("heading"), classes = "govuk-heading-l", id = Some("heading"))
+
+        @p(classes = "govuk-body", id = Some("text1")) {
+            @getMessage("text1")
+        }
+        @p(classes = "govuk-body", id = Some("text2")) {
+            @getMessage("text2")
+        }
+        @p(classes = "govuk-body", id = Some("text3")) {
+            @getMessage("text3")
+        }
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("h2")),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ))
+            )),
+            name = "type-of-business",
+            items = Seq(
+                RadioItem(
+                    content = Text(getMessage("uk")),
+                    value = Some("uk-property")
+                ),
+                RadioItem(
+                    content = Text(getMessage("foreign")),
+                    value = Some("foreign-property")
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
+        ).withFormField(form("type-of-property")))
+
+        @continueButton()
+    }
+
+}

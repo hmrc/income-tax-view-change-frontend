@@ -16,167 +16,109 @@
 
 package models.liabilitycalculation.viewmodels
 
-import implicits.ImplicitDateParser
-import models.liabilitycalculation.{Message, Messages}
-import testConstants.NewCalcBreakdownUnitTestConstants._
+import models.financialDetails.DocumentDetailWithDueDate
+import models.incomeSourceDetails.TaxYear
+import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
+import models.nextUpdates.ObligationsModel
+import testConstants.FinancialDetailsTestConstants.{dateService, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
+class TaxYearSummaryViewModelSpec extends UnitSpec {
+
+
+  val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = None))
+  )
+
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
+
+  val testCalculationSummary: CalculationSummary = CalculationSummary(
+    timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
+    income = 1,
+    deductions = 2.02,
+    totalTaxableIncome = 3,
+    taxDue = 4.04,
+    crystallised = Some(true),
+    unattendedCalc = true,
+    forecastIncome = Some(12500),
+    forecastIncomeTaxAndNics = Some(5000.99),
+    forecastAllowancesAndDeductions = Some(4200.00),
+    forecastTotalTaxableIncome = Some(8300),
+    periodFrom = Some(LocalDate.of(2020 - 1, 1, 1)),
+    periodTo = Some(LocalDate.of(2021, 1, 1))
+  )
+
+  val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2024, 2025)))
 
   "TaxYearSummaryViewModel model" when {
-    "create a minimal TaxYearSummaryViewModel when there is a minimal Calculation response" in {
-      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
-        TaxYearSummaryViewModel(
-          timestamp = None,
-          crystallised = None,
-          unattendedCalc = false,
-          taxDue = 0.0,
-          income = 0,
-          deductions = 0.0,
-          totalTaxableIncome = 0,
-          forecastIncome = None,
-          forecastIncomeTaxAndNics = None,
-          forecastAllowancesAndDeductions = None,
-          periodFrom = None,
-          periodTo = None
-        )
-    }
+    "forecastIncomeTaxAndNics is not defined in CalculationSummaryValue" should {
+      "throw IllegalArgumentException" in {
 
-    "successful successModelFull" should {
-
-      "create a full TaxYearSummaryViewModel when there is a full Calculation" in {
-        val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
-          timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-          crystallised = Some(true),
-          unattendedCalc = false,
-          taxDue = 5000.99,
-          income = 12500,
-          deductions = 12500,
-          totalTaxableIncome = 12500,
-          forecastIncome = Some(12500),
-          forecastIncomeTaxAndNics = Some(5000.99),
-          forecastAllowancesAndDeductions = Some(4200.00),
-          forecastTotalTaxableIncome = Some(8300),
-          periodFrom = Some(LocalDate.of(2018, 1, 1)),
-          periodTo = Some(LocalDate.of(2019, 1, 1)),
-          messages = Some(Messages(
-            info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
-            warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-            errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-          ))
+        val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
+          Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)),
+          testWithMissingOriginalAmountChargesList,
+          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
         )
 
-        TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel
-      }
-
-      "create a full TaxYearSummaryViewModel with forecast calculation" when {
-        "incomeTaxNicAndCgtAmount is not available then take incomeTaxNicAmount as forecastIncomeTaxAndNics" in {
-          val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
-            timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
-            unattendedCalc = false,
-            taxDue = 5000.99,
-            income = 12500,
-            deductions = 12500,
-            totalTaxableIncome = 12500,
-            forecastIncome = Some(12500),
-            forecastIncomeTaxAndNics = Some(6000.99),
-            forecastAllowancesAndDeductions = Some(4200.00),
-            forecastTotalTaxableIncome = Some(8300),
-            periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1)),
-            messages = Some(Messages(
-              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
-              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-            ))
-          )
-
-          val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
-            calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
-              endOfYearEstimate = Some(liabilityCalculationModelSuccessful.calculation.get.endOfYearEstimate.get.copy(
-                incomeTaxNicAndCgtAmount = None,incomeTaxNicAmount = Some(6000.99) )))))
-
-          TaxYearSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxYearSummaryViewModel
-        }
-      }
-
-
-      "create a full TaxYearSummaryViewModel with taxDue as totalIncomeTaxAndNicsAndCgt" when {
-        "the 'totalIncomeTaxAndNicsAndCgt' field is available" in {
-          val taxDue = 6000
-          val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
-            timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
-            unattendedCalc = false,
-            taxDue = taxDue,
-            income = 12500,
-            deductions = 12500,
-            totalTaxableIncome = 12500,
-            forecastIncome = Some(12500),
-            forecastIncomeTaxAndNics = Some(5000.99),
-            forecastAllowancesAndDeductions = Some(4200.00),
-            forecastTotalTaxableIncome = Some(8300),
-            periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1)),
-            messages = Some(Messages(
-              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
-              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-            ))
-          )
-
-          val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
-            calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
-              taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
-                totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
-
-          TaxYearSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxYearSummaryViewModel
-        }
+        thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
       }
     }
 
-    "error in tax calculation" should {
-      "create a TaxYearSummaryViewModel with multiple error message" in {
-        TaxYearSummaryViewModel(liabilityCalculationModelErrorMessagesForIndividual) shouldBe
-          TaxYearSummaryViewModel(
-            timestamp = None,
-            crystallised = None,
-            unattendedCalc = false,
-            taxDue = 0.0,
-            income = 0,
-            deductions = 0.0,
-            totalTaxableIncome = 0,
-            forecastIncome = None,
-            forecastIncomeTaxAndNics = None,
-            forecastAllowancesAndDeductions = None,
-            periodFrom = None,
-            periodTo = None,
-            messages = Some(Messages(
-              errors = Some(List(
-                Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
-                Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
-                Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
-                Message("C55009", "updates cannot include gaps.")
-              ))
-            ))
-          )
+    "Calculation timestamp is not defined in CalculationSummaryValue" should {
+      "throw IllegalArgumentException" in {
+        val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
+          Some(testCalculationSummary.copy(timestamp = None)),
+          testWithMissingOriginalAmountChargesList,
+          testObligationsModel, codingOutEnabled = true, showForecastData = true, ctaViewModel = testCTAViewModel
+        )
+
+        thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"
       }
     }
 
-    "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
-      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
-        TaxYearSummaryViewModel(
-          timestamp = None,
-          crystallised = None,
-          unattendedCalc = true,
-          taxDue = 0.0,
-          income = 0,
-          deductions = 0.0,
-          totalTaxableIncome = 0
+    "originalAmount is not defined in Charge list" should {
+      "throw IllegalArgumentException" in {
+        val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
+          Some(testCalculationSummary),
+          testWithMissingOriginalAmountChargesList,
+          testObligationsModel,
+          codingOutEnabled = true, ctaViewModel = testCTAViewModel
         )
+
+        thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"
+      }
+    }
+  }
+
+  "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" when {
+    "adjustPaymentsOnAccountFSEnabled is false" should {
+      "return None" in {
+        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, Some(TaxYear(2023, 2024)))
+
+        testModel.claimToAdjustTaxYear shouldBe None
+      }
+    }
+    "adjustPaymentsOnAccountFSEnabled is true" should {
+      "return a TaxYear" in {
+        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
+
+        testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
+      }
+    }
+  }
+  "TYSClaimToAdjustViewModel object" when {
+    "ctaLink val is called for an individual" should {
+      "return the correct redirect link" in {
+        TYSClaimToAdjustViewModel.ctaLink(false) shouldBe "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+      }
+    }
+    "ctaLink val is called for an agent" should {
+      "return the correct redirect link" in {
+        TYSClaimToAdjustViewModel.ctaLink(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+      }
     }
   }
 }

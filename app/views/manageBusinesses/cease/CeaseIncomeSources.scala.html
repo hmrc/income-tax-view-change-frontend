@@ -51,13 +51,13 @@
 }
 
 @ceaseUkPropertyURL = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
-    else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, UkProperty).url
 }
 
 @ceaseForeignPropertyURL = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
-    else controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty).url
 }
 
 @noneToUnknown(value: Option[String]) = @{
@@ -185,8 +185,9 @@
 
     }
 
-    @if(sources.ceasedBusinesses.nonEmpty) @{
-        ceasedBusinesses(sources.ceasedBusinesses)
+    @if(sources.ceasedBusinesses.nonEmpty) {
+        @h2(msg = getMessage("ceased-businesses.h1"),optId = Some("ceased-businesses-heading"))
+        @ceasedBusinesses(sources.ceasedBusinesses)
     }
 
 }

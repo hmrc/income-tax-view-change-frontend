@@ -20,6 +20,8 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -43,30 +45,32 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
+  // TODO: This is only used in WhatYouOweController. Return value never used?
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
     financialDetailsService.getAllCreditFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details")
+        throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsResponseModel] =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         financialDetailsModelList.flatMap(_.documentDetails)
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled, isTimeMachineEnabled)
+      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled)
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)
+  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
       case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
+        throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
@@ -74,7 +78,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail = if (isCodingOutEnabled) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear == (dateService.getCurrentTaxYearEnd(isTimeMachineEnabled) - 1))
+              && dd.taxYear == (dateService.getCurrentTaxYearEnd - 1))
           ).headOption
         } else None
 
@@ -83,7 +87,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isMFACreditsEnabled, isCodingOutEnabled),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(isTimeMachineEnabled)).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
@@ -97,14 +101,15 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       financialDetailsConnector.getOutstandingCharges("utr", saUtr.get, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
-        case _ => throw new Exception("[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges")
+        case _ => throw new Exception("Error response while getting outstanding charges")
       }
     } else {
       Future.successful(None)
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel], isMFACreditsEnabled: Boolean, isCodingOutEnabled: Boolean): List[DocumentDetailWithDueDate] = {
+  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
+                                     isMFACreditsEnabled: Boolean, isCodingOutEnabled: Boolean): List[DocumentDetailWithDueDate] = {
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
@@ -122,4 +127,5 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
     documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
   }
+
 }

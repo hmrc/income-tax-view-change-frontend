@@ -102,7 +102,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   }
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
@@ -197,7 +197,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.equals(API1878)) {
       And("API 1878 getITSAStatus returns an error response")
-      stubGetITSAStatusDetailsError
+      stubGetITSAStatusDetailsError()
     } else {
       And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
       ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
@@ -234,10 +234,10 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.isLegacy) {
       result should have(
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2023-2024")
+        elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2024-2025")
       )
     } else {
-      val currentTaxYear = dateService.getCurrentTaxYearEnd()
+      val currentTaxYear = dateService.getCurrentTaxYearEnd
       val taxYear1: Int = currentTaxYear
       val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
       result should have(
@@ -257,7 +257,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     And("Mongo storage is successfully set")
     sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
-    val currentTaxYear = dateService.getCurrentTaxYearEnd()
+    val currentTaxYear = dateService.getCurrentTaxYearEnd
     val taxYear1: Int = currentTaxYear
     val taxYear2: Int = currentTaxYear + 1
     val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"

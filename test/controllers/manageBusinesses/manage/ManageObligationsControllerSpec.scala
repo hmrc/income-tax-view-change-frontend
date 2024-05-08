@@ -19,13 +19,14 @@ package controllers.manageBusinesses.manage
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
+import enums.JourneyType.{JourneyType, Manage}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
+import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -33,10 +34,9 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import testUtils.TestSupport
 import utils.IncomeSourcesUtils
@@ -53,9 +53,9 @@ class ManageObligationsControllerSpec extends TestSupport
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
   with MockNextUpdatesService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionService {
 
-  val mockSessionService: SessionService = mock(classOf[SessionService])
   val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
   object TestManageObligationsController extends ManageObligationsController(
@@ -73,7 +73,13 @@ class ManageObligationsControllerSpec extends TestSupport
     appConfig = app.injector.instanceOf[FrontendAppConfig]
   )
 
-  val taxYear = "2023-2024"
+  private def setMongoSessionData(incomeSourceId: String, reportingMethod: String, taxYear: String, incomeSourceType: IncomeSourceType): Unit = {
+    setupMockCreateSession(true)
+    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType))
+      .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(incomeSourceId), reportingMethod = Some(reportingMethod), taxYear = Some(taxYear.toInt)))))))
+  }
+
+  val taxYear = "2024"
   val changeToA = "annual"
   val changeToQ = "quarterly"
   val testId = "XAIS00000000001"
@@ -127,11 +133,10 @@ class ManageObligationsControllerSpec extends TestSupport
 
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
+      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = "Quarterly")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       quarterlyObligationDatesSimple,
-      dates,
       dates,
       2023,
       showPrevTaxYears = true
@@ -155,11 +160,10 @@ class ManageObligationsControllerSpec extends TestSupport
     }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
+      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = "Quarterly")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       quarterlyObligationDatesSimple,
-      dates,
       dates,
       2023,
       showPrevTaxYears = true
@@ -180,19 +184,19 @@ class ManageObligationsControllerSpec extends TestSupport
       "the individual is not authenticated" should {
         "redirect them to sign in SE" in {
           setupMockAuthorisationException()
-          val result = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
+          val result = TestManageObligationsController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in UK property" in {
           setupMockAuthorisationException()
-          val result = TestManageObligationsController.showUKProperty(changeToQ, taxYear)(fakeRequestWithActiveSession)
+          val result = TestManageObligationsController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in Foreign property" in {
           setupMockAuthorisationException()
-          val result = TestManageObligationsController.showForeignProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          val result = TestManageObligationsController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -200,19 +204,19 @@ class ManageObligationsControllerSpec extends TestSupport
       "the agent is not authenticated" should {
         "redirect them to sign in SE" in {
           setupMockAgentAuthorisationException()
-          val result = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
+          val result = TestManageObligationsController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in UK property" in {
           setupMockAgentAuthorisationException()
-          val result = TestManageObligationsController.showAgentUKProperty(changeToA, taxYear)(fakeRequestConfirmedClient())
+          val result = TestManageObligationsController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
         "redirect them to sign in Foreign property" in {
           setupMockAgentAuthorisationException()
-          val result = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
+          val result = TestManageObligationsController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -222,7 +226,7 @@ class ManageObligationsControllerSpec extends TestSupport
         "redirect to the session timeout page" in {
           setupMockAuthorisationException()
 
-          val result = TestManageObligationsController.submit()(fakeRequestWithTimeoutSession)
+          val result = TestManageObligationsController.submit(false)(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -235,7 +239,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -244,7 +248,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(true)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -253,7 +257,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -262,7 +266,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(true)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showAgentUKProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -271,7 +275,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showForeignProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -280,7 +284,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationSuccess(true)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -292,16 +296,16 @@ class ManageObligationsControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(false)
         setUpBusiness(isAgent = false)
         when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-
-        val result: Future[Result] = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
+        setMongoSessionData(testId, changeToA, taxYear, SelfEmployment)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
         setupMockAuthorisationSuccess(true)
         setUpBusiness(isAgent = true)
         when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-
-        val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
+        setMongoSessionData(testId, changeToQ, taxYear, SelfEmployment)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       "show page with 'Sole trader business' when business has no name" in {
@@ -321,13 +325,12 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
+          DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = "Quarterly")
         )
 
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           quarterlyObligationDatesSimple,
-          dates,
           dates,
           2023,
           showPrevTaxYears = true
@@ -335,8 +338,8 @@ class ManageObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-
-        val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
+        setMongoSessionData(testId, changeToQ, taxYear, SelfEmployment)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
         contentAsString(result) should include("Sole trader business")
       }
@@ -346,23 +349,23 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when individual valid" in {
         setupMockAuthorisationSuccess(false)
         setUpProperty(isAgent = false, isUkProperty = true)
-
-        val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+        setMongoSessionData(testId, changeToA, taxYear, UkProperty)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
         setupMockAuthorisationSuccess(true)
         setUpProperty(isAgent = true, isUkProperty = true)
-
-        val result: Future[Result] = TestManageObligationsController.showAgentUKProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
+        setMongoSessionData(testId, changeToQ, taxYear, UkProperty)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       "return 500 INTERNAL_SERVER_ERROR" when {
         "user has no active UK properties" in {
           setupMockAuthorisationSuccess(false)
           mockNoIncomeSources()
-
-          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          setMongoSessionData(testId, changeToA, taxYear, UkProperty)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "user has more than one active UK property" in {
@@ -373,8 +376,8 @@ class ManageObligationsControllerSpec extends TestSupport
             .thenReturn(
               None
             )
-
-          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          setMongoSessionData(testId, changeToA, taxYear, UkProperty)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
@@ -384,15 +387,15 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when individual valid" in {
         setupMockAuthorisationSuccess(false)
         setUpProperty(isAgent = false, isUkProperty = false)
-
-        val result: Future[Result] = TestManageObligationsController.showForeignProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+        setMongoSessionData(testId, changeToA, taxYear, ForeignProperty)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
         setupMockAuthorisationSuccess(true)
         setUpProperty(isAgent = true, isUkProperty = false)
-
-        val result: Future[Result] = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
+        setMongoSessionData(testId, changeToQ, taxYear, ForeignProperty)
+        val result: Future[Result] = TestManageObligationsController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       "return 500 INTERNAL_SERVER_ERROR" when {
@@ -404,8 +407,8 @@ class ManageObligationsControllerSpec extends TestSupport
             .thenReturn(
               None
             )
-
-          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          setMongoSessionData(testId, changeToA, taxYear, ForeignProperty)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "user has more than one active foreign properties" in {
@@ -416,8 +419,8 @@ class ManageObligationsControllerSpec extends TestSupport
             .thenReturn(
               None
             )
-
-          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          setMongoSessionData(testId, changeToA, taxYear, ForeignProperty)
+          val result: Future[Result] = TestManageObligationsController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
@@ -449,7 +452,7 @@ class ManageObligationsControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestManageObligationsController.submit(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestManageObligationsController.submit(false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(false).url)
       }
@@ -457,7 +460,7 @@ class ManageObligationsControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(true)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestManageObligationsController.agentSubmit(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageObligationsController.submit(true)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true).url)
       }

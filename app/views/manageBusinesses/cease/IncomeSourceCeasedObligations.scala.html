@@ -21,7 +21,7 @@
 @import views.html.components._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 
 @this(
@@ -34,15 +34,10 @@
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukInsetText: GovukInsetText
 )
 
-@(
-        sources: ObligationsViewModel,
-        businessName: Option[String] = None,
-        isAgent: Boolean,
-        incomeSourceType: IncomeSourceType
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -58,141 +53,111 @@
     }
 }
 
-@getCeaseIncomeSourceCall = @{
-    if(isAgent) {
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
-    } else {
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
-    }
-}
-
-@getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-    s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
-}
-
 @getPageTitle = @{
-    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getMessage("heading1.base")
+    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType) + " " + getMessage("heading1.base")
     title.trim
 }
 
-@mainTemplate(pageTitle = getPageTitle,
-    isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
-
-    @formWithCSRF(action = getCeaseIncomeSourceCall) {
-
+@confirmationPanel = {
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
                 @getMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
-                @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
+                @getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType)
             </h1>
             <div class="govuk-panel__body">
                 @getMessage("heading1.base")
             </div>
         </div>
+}
 
-        <h2 class="govuk-label-wrapper">
+@whatYouMustDoHeading = {
+        <h2 id="heading-what-you-must-do" class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
                 @getMessage("heading2.text")
             </label>
         </h2>
+}
 
-        @if(sources.quarterlyObligationsDates.nonEmpty) {
-            <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
+@getNextUpdateDateMessage(key: String, startYear: Int) = {
+    @getMessage(key, startYear.toString, (startYear + 1).toString )
+}
 
-                @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                    @govukTable(Table(
-                        rows = quarterlyPeriods.map { quarterlyPeriod =>
-                            Seq(
-                                TableRow(
-                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
-                                ),
-                                TableRow(
-                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
-                                )
-                            )
-                        },
-                        head = Some(Seq(
-                            HeadCell(
-                                content = Text(getQuarterlyTableHeading(quarterlyPeriods))
-                            ),
-                            HeadCell(
-                                content = Text(getMessage("table.heading-2"))
-                            )
-                        )),
-                        caption = None,
-                        firstCellIsHeader = false
-                    ))
-                }
-            </div>
-        }
+@getNextFirstQuarterlyUpdate = {
+    @source.firstQuarterlyUpdate.map{ date =>
+        <li>
+            @getNextUpdateDateMessage("next-update.next-quarterly.text", date.inboundCorrespondenceFrom.getYear)
+            <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
+        </li>
+    }
+}
 
-        @if(sources.eopsObligationsDates.nonEmpty) {
-            <div class="box-simple" id="eops">
-                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-                <p class="govuk-body"> @getMessage("eops-p1") </p>
+@getNextFinalDeclarationUpdate(listFormat: Boolean = false) = {
+    @source.finalDeclarationUpdate.map{ date =>
+     @if(listFormat) { <li> }
+        @getNextUpdateDateMessage("next-update.final-declaration.text", date.inboundCorrespondenceFrom.getYear)
+        <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
+     @if(listFormat) { </li> } @if(!listFormat ){.} }
+}
 
-                @govukTable(Table(
-                    rows = sources.eopsObligationsDates.map { eopsDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${eopsDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${eopsDate.inboundCorrespondenceTo.toLongDate}")
-                            ),
-                            TableRow(
-                                content = Text(eopsDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading-1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading-2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-        }
+@insetMessage(keys: (String, String)) = @{
+        val messagePartOne = keys._1
+        val messagePartTwo = keys._2
+        s"${messages(messagePartOne, source.numberOfOverdueObligationCount)} " +
+        s"${messages(messagePartTwo, source.currentTaxYear.startYear.toString, source.currentTaxYear.endYear.toString)}"
+}
 
-        <div class="box-simple" id="finalDeclaration">
-            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
+@getInsetWarning(keys: (String, String)) = {
 
-            @govukTable(Table(
-                rows = sources.finalDeclarationDates.map { finalDecDate =>
-                    Seq(
-                        TableRow(
-                            content = Text(s"${finalDecDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.toLongDate}")
-                        ),
-                        TableRow(
-                            content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
-                        )
-                    )
-                },
-                head = Some(Seq(
-                    HeadCell(
-                        content = Text(getMessage("table.heading-1"))
-                    ),
-                    HeadCell(
-                        content = Text(getMessage("table.heading-2"))
-                    )
-                )),
-                caption = None,
-                firstCellIsHeader = false
-            ))
+    @govukInsetText(InsetText(content = HtmlContent(insetMessage(keys)), id=Some("warning-inset-text")))
+}
+
+@showCapitalGainBlock = {
+  @if(source.incomeSourceType != SelfEmployment) {
+    <div id="capital-gain-block" class="govuk-!-margin-bottom-7">
+        <h3 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
+                @getMessage("capital-gain-tax.text")
+            </label>
+        </h3>
+        <p id="capital-gain-content" class="govuk-body">@getMessage("capital-gain-tax.info1.text")</p>
+        <p>@link(id = Some("capital-gain-more-info-link"), link = "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on", messageKey = "business-ceased.obligation.capital-gain-tax.info2.text", target = Some("_blank"))</p>
+    </div>
+  }
+}
+
+
+@mainTemplate(pageTitle = getPageTitle,
+    isAgent = source.isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+        @confirmationPanel
+        @whatYouMustDoHeading
+
+        @source.insetWarningMessageKey.map(getInsetWarning(_))
+
+        <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
+            <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
+                <label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4 ">
+                    @getMessage("next-update.text")
+                </label>
+            </h3>
+            @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
+                <p id="final-declaration-update" class="govuk-body">@getNextFinalDeclarationUpdate()</p>
+            } else {
+                <ul id="quarterly-and-final-update-list" class="govuk-list govuk-list--bullet">
+                    @getNextFirstQuarterlyUpdate
+                    @getNextFinalDeclarationUpdate(listFormat = true)
+                </ul>
+            }
+
+            <p>@link(id = Some("view-all-updates"),link = source.viewUpcomingUpdatesLink.url, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
         </div>
 
-        <div class="govuk-!-margin-top-4"> </div>
+        @showCapitalGainBlock
 
-        @continueButton(
-            Some(getMessage("income-sources-button"))
-        )
-    }
+        <p>@link(id = Some("view-all-business-link"), link = source.viewAllBusinessLink.url, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
+        <br>
+        <br>
 }

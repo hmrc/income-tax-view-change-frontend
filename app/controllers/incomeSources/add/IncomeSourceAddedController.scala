@@ -72,12 +72,11 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           businessName = businessName,
           incomeSourceType = incomeSourceType,
           incomeSourceId = incomeSourceIdModel,
-          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart())
+          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
         )
       }) getOrElse {
         Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"[IncomeSourceAddedController][handleRequest] - " +
-            s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
@@ -111,7 +110,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix +
-          s"[IncomeSourceAddedController][handleSuccess]: Unable to retrieve Mongo session data for $incomeSourceType")
+          s"Unable to retrieve Mongo session data for $incomeSourceType")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }

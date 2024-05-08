@@ -22,6 +22,9 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.homePage._
+import models.incomeSourceDetails.TaxYear
 import models.admin.{CodingOut, CreditsRefundsRepay, ITSASubmissionIntegration, IncomeSources, IncomeSourcesNewJourney, MFACreditsAndDebits, PaymentHistoryRefunds, TimeMachineAddYear}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
@@ -30,7 +33,6 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,106 +58,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                   paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
-                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
-    homeView(
-      nextPaymentDueDate = nextPaymentDueDate,
-      overDuePaymentsCount = overDuePaymentsCount,
-      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-      user.saUtr,
-      ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear,
-      displayCeaseAnIncome = displayCeaseAnIncome,
-      isAgent = isAgent,
-      origin = origin,
-      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-      paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
-      incomeSourcesEnabled = isEnabled(IncomeSources),
-      incomeSourcesNewJourneyEnabled = isEnabled(IncomeSourcesNewJourney),
-      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
-    )
-  }
-
-  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
-
-    nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
-        val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-        val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-
-        val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
-          _.flatMap {
-            case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-            case _ => List.empty[LocalDate]
-          }.sortWith(_ isBefore _)
-        }
-
-        for {
-          paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-          unpaidCharges <- unpaidChargesFuture
-          dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
-            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-            case _ => Nil
-          })
-          outstandingChargesDueDate = outstandingChargesModel.flatMap {
-            case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
-            case _ => Nil
-          }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
-          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-          displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
-        } yield {
-          auditingService.extendedAudit(HomeAudit(
-            mtdItUser = user,
-            paymentsDueMerged,
-            overDuePaymentsCount,
-            nextUpdatesTileViewModel))
-
-          val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
-            unpaidCharges,
-            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
-            paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-          )
-
-          Ok(
-            view(
-              paymentsDueMerged,
-              Some(overDuePaymentsCount),
-              nextUpdatesTileViewModel,
-              paymentCreditAndRefundHistoryTileViewModel,
-              dunningLockExistsValue,
-              incomeSourceCurrentTaxYear,
-              displayCeaseAnIncome,
-              isAgent = isAgent
-            )
-          )
-        }
-      case Left(ex) =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
-    }.recover {
-      case ex =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
-    }
-  }
-
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(isAgent = false, origin)
@@ -165,4 +67,109 @@ class HomeController @Inject()(val homeView: views.html.Home,
     implicit mtdItUser =>
       handleShowRequest(isAgent = true)
   }
+
+  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
+      case Left(ex) =>
+        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Future.successful(handleErrorGettingDueDates(isAgent))
+    } recover {
+      case ex =>
+        Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        handleErrorGettingDueDates(isAgent)
+    }
+
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean, origin: Option[String])
+                           (implicit user: MtdItUser[_]): Future[Result] =
+    for {
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      paymentsDue = getDueDates(unpaidCharges)
+      dunningLockExists = hasDunningLock(unpaidCharges)
+      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
+      outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
+      overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
+    } yield {
+
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOut))
+
+      val paymentCreditAndRefundHistoryTileViewModel =
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
+
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSources),
+        isEnabled(IncomeSourcesNewJourney))
+
+      val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
+
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount).verify match {
+
+        case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
+          utr = user.saUtr,
+          nextPaymentsTileViewModel = viewModel,
+          returnsTileViewModel = returnsTileViewModel,
+          nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+          paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+          yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+          dunningLockExists = dunningLockExists,
+          origin = origin
+        )
+          auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
+          Ok(homeView(
+            homeViewModel,
+            isAgent = isAgent
+          ))
+        case Left(ex: Throwable) =>
+          Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
+          handleErrorGettingDueDates(isAgent)
+    }
+}
+
+private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+  (unpaidCharges collect {
+    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+  })
+    .flatten
+    .sortWith(_ isBefore _)
+    .sortBy(_.toEpochDay())
+
+private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                      (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+  whatYouOweService.getWhatYouOweChargesList(
+    unpaidCharges,
+    isEnabled(CodingOut),
+    isEnabled(MFACreditsAndDebits)
+  ) map {
+    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+      outstandingCharges.filter(_.isBalancingChargeDebit)
+        .filter(_.relevantDueDate.isDefined)
+    case _ => Nil
+  }
+
+private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
+  val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
+  val overdueChargesCount = outstandingChargesModel.length
+  overduePaymentsCountFromDate + overdueChargesCount
+}
+
+private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
+  (paymentsDue ::: outstandingChargesDueDate)
+    .sortWith(_ isBefore _)
+    .headOption
+
+private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
+  financialDetails
+    .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
+    .getOrElse(false)
+
+private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
+  outstandingCharges
+    .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
+    .flatten
+
+private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+  val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  errorHandler.showInternalServerError()
+}
 }

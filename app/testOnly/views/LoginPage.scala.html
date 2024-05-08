@@ -18,6 +18,7 @@
 @import testOnly.models._
 @import views.html.layouts.unifiedLayout
 @import play.api.libs.json.Json
+@import models.itsaStatus.ITSAStatus
 
 @this(
         layout: unifiedLayout,
@@ -30,45 +31,17 @@
 @(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
-    Seq(
+    ITSAStatus.values.unsorted.map { status =>
         SelectItem(
-            value = Some("Default"),
-            text = "Default"
-        ),
-        SelectItem(
-            value = Some("NoStatus"),
-            text = "No Status"
-        ),
-        SelectItem(
-            value = Some("Mandated"),
-            text = "MTD Mandated"
-        ),
-        SelectItem(
-            value = Some("Voluntary"),
-            text = "MTD Voluntary"
-        ),
-        SelectItem(
-            value = Some("Annual"),
-            text = "Annual"
-        ),
-        SelectItem(
-            value = Some("NonDigital"),
-            text = "Non Digital"
-        ),
-        SelectItem(
-            value = Some("Dormant"),
-            text = "Dormant"
-        ),
-        SelectItem(
-            value = Some("Exempt"),
-            text = "MTD Exempt"
+            value = Some(status.toString),
+            text = status.toString
         )
-    )
+    }.toSeq
 }
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
-    <script src="/report-quarterly/income-and-expenses/view/assets/javascripts/optOutCustomData.js"></script>
+    <script src="@testOnly.controllers.routes.TestOnlyAssetsController.at("optOutCustomData.js")"></script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 

@@ -19,30 +19,32 @@ package controllers
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{FeatureSwitching, OptOut}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import models.nextUpdates._
+import models.optOut.OptOutOneYearViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
+import services.optout.OptOutService
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
-import views.html.{NextUpdates, NoNextUpdates}
+import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
+                                      nextUpdatesOptOutView: NextUpdatesOptOut,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
+                                      optOutService: OptOutService,
                                       val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions,
                                       val auth: AuthenticatorPredicate)
@@ -51,59 +53,70 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
-        for {
-          nextUpdates <- nextUpdatesService.getNextUpdates().map {
-            case obligations: ObligationsModel => obligations
-            case _ => ObligationsModel(Nil)
-          }
-        } yield {
-          if (nextUpdates.obligations.nonEmpty) {
-            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
-          } else {
-            itvcErrorHandler.showInternalServerError()
-          }
-        }
-      } else {
-        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
-      }
-  }
-
-  val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-        mtdItUser =>
-          nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
-              Ok(view(nextUpdates, controllers.routes.HomeController.showAgent.url, isAgent = true)(mtdItUser))
-            case _ => agentItvcErrorHandler.showInternalServerError()
-          }
-      }
-  }
-
-  private def getViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
-    obligationsModel.obligationsByDate map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
-        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
-      }
-      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+  private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+    if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+      action
+    } else {
+      Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
     }
   }
 
-  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
-    auditNextUpdates(user, isAgent, origin)
-    val viewModel = getViewModel(obligationsModel)
-    nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
+                    (implicit user: MtdItUser[_]): Future[Result] =
+    hasAnyIncomeSource {
+      for {
+        nextUpdates <- nextUpdatesService.getNextUpdates().map {
+          case obligations: ObligationsModel => obligations
+          case _ => ObligationsModel(Nil)
+        }
+        viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
+        result <- (nextUpdates.obligations, isEnabled(OptOut)) match {
+          case (Nil, _) =>
+            Future.successful(errorHandler.showInternalServerError())
+          case (_, true) =>
+            auditNextUpdates(user, isAgent, origin)
+            optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
+              optOutService.displayOptOutMessage().map { optOutOneYearViewModel =>
+                Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
+              }
+            } recover {
+              case ex =>
+                Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+                errorHandler.showInternalServerError()
+            }
+          case (_, false) =>
+            auditNextUpdates(user, isAgent, origin)
+            Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin)))
+        }
+      } yield result
+    }(user, origin)
+
+
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      getNextUpdates(
+        controllers.routes.HomeController.show(origin),
+        isAgent = false,
+        itvcErrorHandler,
+        origin)
+  }
+
+  def showAgent: Action[AnyContent] = Authenticated.async { implicit request =>
+    implicit user =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+        mtdItUser =>
+          getNextUpdates(
+            controllers.routes.HomeController.showAgent,
+            isAgent = true,
+            agentItvcErrorHandler,
+            None)(mtdItUser)
+      }
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     if (isAgent) {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdatesAgent.url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.showAgent.url))
     } else {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates(origin).url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.show(origin).url))
     }
 }

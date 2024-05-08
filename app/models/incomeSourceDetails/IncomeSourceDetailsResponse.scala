@@ -48,15 +48,15 @@ case class IncomeSourceDetailsModel(nino: String,
   }
 
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
-    (startingTaxYear to dateService.getCurrentTaxYearEnd()).toList
+    (startingTaxYear to dateService.getCurrentTaxYearEnd).toList
   }
 
   def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd()).toList).getOrElse(List.empty[Int])
-    Logger("application").debug(s"[IncomeSourceDetailsModel][orderedTaxYearsByYearOfMigration] - Tax years list = $taxYears")
+    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
+    Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
   }
 

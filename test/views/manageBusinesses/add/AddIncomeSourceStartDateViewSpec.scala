@@ -73,13 +73,13 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
       }
       "render the back link which with correct redirect for normal journey" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
       }
       "render the back link which with correct redirect for change journey" in new Setup(
         isAgent, hasError = false, incomeSourceType, isChange = true) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -102,8 +102,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       case (true, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
       case (false, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
       case (true, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show()
-      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent()
+      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = false, isChange = false)
+      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = true, isChange = false)
     }).url
   }
 

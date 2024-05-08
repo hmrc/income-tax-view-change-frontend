@@ -118,7 +118,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }.recover {
       case ex =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"[AddIncomeSourceStartDateController]${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -150,7 +150,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   }.recover {
     case ex =>
       Logger("application")
-        .error(s"[AddIncomeSourceStartDateController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+        .error(s"[${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -204,12 +204,10 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                          isChange: Boolean): String = {
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-      case (false, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false)
-      case (_, false, _) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-    }).url
+      case (true, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (false, true, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = isChange)
+      case (_, _, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = isAgent)
+      }).url
   }
 }

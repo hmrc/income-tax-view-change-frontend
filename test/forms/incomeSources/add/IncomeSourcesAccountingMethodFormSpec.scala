@@ -35,10 +35,7 @@ class IncomeSourcesAccountingMethodFormSpec extends TestSupport with ImplicitDat
 
   val cashAccountingMethod = "cash"
   val traditionalAccountingMethod = "traditional"
-  val selfEmploymentRadioEmptyError: String = "incomeSources.add." + SelfEmployment.key + ".AccountingMethod.no-selection"
-  val UKPropertyRadioEmptyError: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod.no-selection"
-  val foreignPropertyRadioEmptyError: String = "incomeSources.add." + ForeignProperty.key + ".AccountingMethod.no-selection"
-
+  val radioEmptyError: String = "incomeSources.add.AccountingMethod.no-selection"
 
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -92,17 +89,17 @@ class IncomeSourcesAccountingMethodFormSpec extends TestSupport with ImplicitDat
     "bind with an invalid response Self Employment" in {
       val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment).bind(Map(selfEmploymentAccountingMethod -> ""))
       completedForm.data.get(selfEmploymentAccountingMethod) shouldBe Some("")
-      completedForm.errors shouldBe List(FormError(selfEmploymentAccountingMethod, List(selfEmploymentRadioEmptyError), List()))
+      completedForm.errors shouldBe List(FormError(selfEmploymentAccountingMethod, List(radioEmptyError), List()))
     }
     "bind with an invalid response UK Property" in {
       val completedForm = IncomeSourcesAccountingMethodForm(UkProperty).bind(Map(UKPropertyAccountingMethod -> ""))
       completedForm.data.get(UKPropertyAccountingMethod) shouldBe Some("")
-      completedForm.errors shouldBe List(FormError(UKPropertyAccountingMethod, List(UKPropertyRadioEmptyError), List()))
+      completedForm.errors shouldBe List(FormError(UKPropertyAccountingMethod, List(radioEmptyError), List()))
     }
     "bind with an invalid response Foreign Property" in {
       val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty).bind(Map(foreignPropertyAccountingMethod -> ""))
       completedForm.data.get(foreignPropertyAccountingMethod) shouldBe Some("")
-      completedForm.errors shouldBe List(FormError(foreignPropertyAccountingMethod, List(foreignPropertyRadioEmptyError), List()))
+      completedForm.errors shouldBe List(FormError(foreignPropertyAccountingMethod, List(radioEmptyError), List()))
     }
   }
 }

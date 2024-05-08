@@ -14,8 +14,10 @@ GET         /agents/client-income-tax                                     contro
 GET         /agents                                                       controllers.HomeController.showAgent
 
 #NextUpdates
-GET         /next-updates                                                 controllers.NextUpdatesController.getNextUpdates(origin: Option[String] ?= None)
-GET         /agents/next-updates                                          controllers.NextUpdatesController.getNextUpdatesAgent
+GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
+GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
+
+GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
@@ -149,3 +151,4 @@ GET          /agents/how-to-claim-refund-external                         contro
 
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
+->          /                                                             claimToAdjustPOA.Routes

@@ -17,10 +17,10 @@
 package services
 
 import mocks.connectors.MockITSAStatusConnector
-import org.mockito.ArgumentMatchers.any
+import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, when}
 import testConstants.BaseTestConstants.{testMtdItUser, testNino}
-import testConstants.ITSAStatusTestConstants.{errorITSAStatusError, successITSAStatusResponseMTDMandatedModel, successITSAStatusResponseModel}
+import testConstants.ITSAStatusTestConstants._
 import testUtils.TestSupport
 
 class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
@@ -28,29 +28,39 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
 
   object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
+  val taxYear = TaxYear.forYearEnd(2020)
+  val taxYearEnd = taxYear.endYear
+  val yearRange = taxYear.formatTaxYearRange
   "hasMandatedOrVoluntaryStatusCurrentYear " when {
-    val taxYearEnd = 2020
-    val yearEnd = taxYearEnd.toString.substring(2).toInt
-    val yearStart = yearEnd - 1
-    val yearRange = s"$yearStart-$yearEnd"
+
     "ITSAStatus is returned " should {
       "return True if the status is in [MTD Mandated, MTD Voluntary ] " in {
-        when(mockDateService.getCurrentTaxYearEnd(any())).thenReturn(taxYearEnd)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
         TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe true
       }
       "return false" in {
-        when(mockDateService.getCurrentTaxYearEnd(any())).thenReturn(taxYearEnd)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
         TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe false
       }
     }
     "ITSAStatus connector return an error" should {
       "return a failed future with error" in {
-        when(mockDateService.getCurrentTaxYearEnd(any())).thenReturn(taxYearEnd)
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Left(errorITSAStatusError))
         TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).failed.futureValue.getMessage shouldBe
-          "[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"
+          "Failed to retrieve ITSAStatus"
+      }
+    }
+  }
+
+  "getStatusTillAvailableFutureYears" when {
+    "ITSAStatus is returned " should {
+      "return a Map of TaxYear and Status" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearITSAStatusResponse))
+        TestITSAStatusService.getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToStatus
       }
     }
   }

@@ -34,7 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import testUtils.TestSupport
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
   val testStartDate: LocalDate = LocalDate.of(2022, 1, 1)
 
-  val currentDate = dateService.getCurrentDate()
+  val currentDate = dateService.getCurrentDate
 
   val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
     .longDate(currentDate.plusWeeks(1).plusDays(1))
@@ -161,7 +161,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             val backUrl = getBackUrl(isAgent, false, incomeSourceType)
-            document.getElementById("back").attr("href") shouldBe backUrl
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
         }
@@ -182,7 +182,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             val backUrl = getBackUrl(isAgent, true, incomeSourceType)
-            document.getElementById("back").attr("href") shouldBe backUrl
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
             document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
             document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
             document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
@@ -206,7 +206,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
-            document.getElementById("back").attr("href") shouldBe {
+            document.getElementById("back-fallback").attr("href") shouldBe {
               if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
               else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
             }

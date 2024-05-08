@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{JsObject, Json}
 import testUtils.UnitSpec
 
@@ -32,8 +32,8 @@ class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
   val nino = "AA000000A"
   val mtditid = "1234567890"
   val individual = "individual"
-  
-  val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(None, None, false, taxDue, income, deductions, totalTaxable)
+
+  val taxCalc: CalculationSummary = CalculationSummary(None, None, false, taxDue, income, deductions, totalTaxable)
   
   val viewInYearBodyNormal: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(income, deductions, totalTaxable, taxDue)
   val viewInYearBodyApplyModel: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(taxCalc)

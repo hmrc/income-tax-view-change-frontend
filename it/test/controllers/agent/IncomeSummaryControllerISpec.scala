@@ -39,6 +39,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -47,7 +48,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
@@ -58,7 +59,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
         propertyTradingStartDate,

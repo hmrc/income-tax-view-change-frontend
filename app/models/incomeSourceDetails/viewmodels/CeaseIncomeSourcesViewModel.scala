@@ -30,6 +30,7 @@ case class CeaseBusinessDetailsViewModel(incomeSourceId: IncomeSourceId, trading
 
 case class CheckCeaseIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                                   tradingName: Option[String],
+                                                  trade: Option[String],
                                                   address: Option[AddressModel],
                                                   businessEndDate: LocalDate,
                                                   incomeSourceType: IncomeSourceType

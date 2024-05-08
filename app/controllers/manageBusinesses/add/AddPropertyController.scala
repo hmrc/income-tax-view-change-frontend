@@ -16,34 +16,82 @@
 
 package controllers.manageBusinesses.add
 
-import auth.FrontendAuthorisedFunctions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.SessionTimeoutPredicate
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import forms.manageBusinesses.add.{AddProprertyForm => form}
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import utils.AuthenticatorPredicate
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import views.html.manageBusinesses.add.AddProperty
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
-//THIS CONTROLLER IS A PLACEHOLDER FOR THE PAGE TO BE BUILT IN MISUV-7077 (new income sources landing page)
 class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
-                                      val authorisedFunctions: FrontendAuthorisedFunctions,
-                                      val checkSessionTimeout: SessionTimeoutPredicate)
+                                      val addProperty: AddProperty,
+                                      val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                      mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+  extends ClientConfirmedController with I18nSupport with IncomeSourcesUtils{
 
-  def show(): Action[AnyContent] = Action {
-    Ok("")
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      handleRequest(isAgent)
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("")
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+    val backUrl = Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url)
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+    Future.successful(Ok(addProperty(form.apply, isAgent, backUrl, postAction)))
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    handleSubmitRequest(
+      isAgent = isAgent
+    )
+  }
+
+  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+    val backUrl = Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url)
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+    form.apply.bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful {
+          BadRequest(
+            addProperty(
+              isAgent = isAgent,
+              form = formWithErrors,
+              backUrl = backUrl,
+              postAction = postAction
+            )
+          )
+        },
+      formData =>
+        handleValidForm(formData, isAgent)
+    )
+  }
+
+  private def handleValidForm(validForm: form,
+                              isAgent: Boolean)
+                             (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
+    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, UkProperty).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
+
+    formResponse match {
+      case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
+      case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
+      case _ =>
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        Future.successful(showInternalServerError(isAgent))
+    }
   }
 }

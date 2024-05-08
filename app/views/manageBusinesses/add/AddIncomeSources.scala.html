@@ -48,8 +48,7 @@
 }
 
 @addBusinessNameURL = @{
-    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent().url
-    else controllers.manageBusinesses.add.routes.AddBusinessNameController.show().url
+    controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = false).url
 }
 
 @addUKPropertyStartDateURL = @{
@@ -173,8 +172,9 @@
         @hr()
     }
 
-    @if(sources.ceasedBusinesses.nonEmpty) @{
-        ceasedBusinesses(sources.ceasedBusinesses)
+    @if(sources.ceasedBusinesses.nonEmpty) {
+        @h2(msg = getMessage("ceasedBusinesses.heading"),optId = Some("ceased-businesses-heading"))
+        @ceasedBusinesses(sources.ceasedBusinesses)
     }
 
     <br>

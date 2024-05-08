@@ -27,3 +27,10 @@ case object AnnualReportingMethod extends ReportingMethod {
 case object QuarterlyReportingMethod extends ReportingMethod {
   override val name: String = "quarterly"
 }
+
+object ReportingMethod {
+  def apply(method: String): ReportingMethod = method.toLowerCase match {
+    case "annual" => AnnualReportingMethod
+    case "quarterly" => QuarterlyReportingMethod
+  }
+}

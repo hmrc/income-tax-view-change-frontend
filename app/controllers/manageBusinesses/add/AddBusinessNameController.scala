@@ -58,13 +58,8 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessNameController.submit()
-      case (false, _) => routes.AddBusinessNameController.submitChange()
-      case (_, false) => routes.AddBusinessNameController.submitAgent()
-      case (_, _) => routes.AddBusinessNameController.submitChangeAgent()
+    routes.AddBusinessNameController.submit(isAgent, isChange)
     }
-  }
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
     (isAgent, isChange) match {
@@ -74,24 +69,14 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     }
   }
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(
-        isAgent = false,
+        isAgent = isAgent,
         backUrl = getBackUrl(isAgent = false, isChange = false),
-        isChange = false
+        isChange = isChange
       )
   }
-
-  def showAgent(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleRequest(
-          isAgent = true,
-          backUrl = getBackUrl(isAgent = true, isChange = false),
-          isChange = false
-        )
-    }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
@@ -107,29 +92,13 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }.recover {
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
-      handleSubmitRequest(isAgent = false, isChange = false)
-  }
-
-  def submitAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(isAgent = true, isChange = false)
-  }
-
-  def submitChange: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
-      handleSubmitRequest(isAgent = false, isChange = true)
-  }
-
-  def submitChangeAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(isAgent = true, isChange = true)
-
+      handleSubmitRequest(isAgent, isChange)
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -177,27 +146,9 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }.recover {
   case ex =>
     Logger("application")
-      .error(s"[AddBusinessNameController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      .error(s"${ex.getMessage} - ${ex.getCause}")
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
-}
-
-def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-  implicit user =>
-    handleRequest(
-      isAgent = false,
-      backUrl = getBackUrl(isAgent = false, isChange = true),
-      isChange = true
-    )
-}
-
-def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-  implicit mtdItUser =>
-    handleRequest(
-      isAgent = true,
-      backUrl = getBackUrl(isAgent = true, isChange = true),
-      isChange = true
-    )
 }
 
 }

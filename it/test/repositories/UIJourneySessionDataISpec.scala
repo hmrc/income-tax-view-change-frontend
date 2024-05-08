@@ -54,5 +54,16 @@ class UIJourneySessionDataISpec extends ComponentSpecBase {
       val sessionData = await(repository.get("session-12345", "ADD-UKPROP"))
       sessionData shouldBe None
     }
+
+    "clearSession should remove all session data with a session ID" in {
+      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      await(repository.set(UIJourneySessionData("session-12345", "ADD-FPPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      val result = await(repository.clearSession("session-12345"))
+      result shouldBe true
+      val sessionData1 = await(repository.get("session-12345", "ADD-UKPROP"))
+      val sessionData2 = await(repository.get("session-12345", "ADD-FPPROP"))
+      sessionData1 shouldBe None
+      sessionData2 shouldBe None
+    }
   }
 }

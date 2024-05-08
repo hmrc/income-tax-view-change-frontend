@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -24,7 +25,7 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.admin.{CalendarQuarterTypes, TimeMachineAddYear}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.mkFromQueryString
+import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
@@ -62,7 +63,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, isAgent)
             case None => Logger("application")
-              .error(s"[ManageIncomeSourceDetailsController][show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
               Future.successful(if (isAgent) {
                 itvcErrorHandlerAgent.showInternalServerError()
               } else {
@@ -89,22 +90,22 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
         val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
 
-            hashCompareResult match {
-              case Left(exception: Exception) => Future.failed(exception)
-              case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-              case Right(incomeSourceId: IncomeSourceId) =>
-                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                  case Right(_) => handleRequest(
-                    sources = user.incomeSources,
-                    isAgent = isAgent,
-                    backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
-                    incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
-                    incomeSourceType = SelfEmployment
-                  )
-                  case Left(exception) => Future.failed(exception)
+        hashCompareResult match {
+          case Left(exception: Exception) => Future.failed(exception)
+          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+          case Right(incomeSourceId: IncomeSourceId) =>
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(_) => handleRequest(
+                sources = user.incomeSources,
+                isAgent = isAgent,
+                backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
+                incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
+                incomeSourceType = SelfEmployment
+              )
+              case Left(exception) => Future.failed(exception)
             }.recover {
               case ex =>
-                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
+                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {
@@ -122,7 +123,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         latencyDetails match {
           case Some(latencyDetails: LatencyDetails) =>
             val quarterIndicator = "Q"
-            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
             val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
             val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
             val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
@@ -139,8 +140,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
-          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
+          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
+          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
         } yield {
           Some(List(isTY1Crystallised.get, isTY2Crystallised.get))
         }
@@ -153,6 +154,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                           crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = incomeSource.incomeSource,
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
@@ -170,6 +172,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                 crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = None,
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
@@ -304,7 +307,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 ))
               case Left(error) =>
                 Logger("application")
-                  .error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
+                  .error(s"unable to find income source: $error. isAgent = $isAgent")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {
@@ -314,5 +317,32 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           }
       }
     }
+  }
+
+  def showChange(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
+        incomeSourceType match {
+          case SelfEmployment => incomeSourceIdOpt match {
+            case Some(realId) => handleSoleTrader(realId.hash, isAgent)
+            case None => Logger("application")
+              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              Future.successful(if (isAgent) {
+                itvcErrorHandlerAgent.showInternalServerError()
+              } else {
+                itvcErrorHandler.showInternalServerError()
+              })
+          }
+          case _ => handleRequest(
+            sources = user.incomeSources,
+            isAgent = isAgent,
+            incomeSourceIdHashMaybe = None,
+            backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url,
+            incomeSourceType = incomeSourceType
+          )
+        }
+      }
   }
 }

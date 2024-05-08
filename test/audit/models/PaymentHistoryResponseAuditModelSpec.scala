@@ -47,21 +47,22 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       userType = userType,
       arn = if (userType.contains(Agent)) Some(testArn) else None
     ),
-    payments = Seq(
+  payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-        dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None),
+        dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None,
+        mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930")),
       Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
-        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits")),
+        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
       Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-03")),
-        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits")),
+        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
       Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
+        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-04"), transactionId = None, documentDescription = None),
       Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
+        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
     ),
     CutOverCreditsEnabled = CutOver,

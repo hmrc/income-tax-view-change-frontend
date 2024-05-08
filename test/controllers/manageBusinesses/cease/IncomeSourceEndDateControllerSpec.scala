@@ -20,7 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.IncomeSourceEndDateForm
+import forms.manageBusinesses.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -164,7 +164,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
         document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
-        document.getElementById("back").attr("href") shouldBe backAction.url
+        document.getElementById("back-fallback").attr("href") shouldBe backAction.url
         document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {

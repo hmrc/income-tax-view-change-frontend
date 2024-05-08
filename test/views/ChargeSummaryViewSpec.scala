@@ -16,11 +16,12 @@
 
 package views
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -46,7 +47,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                   paymentBreakdown: List[FinancialDetail] = List(),
                   chargeHistory: List[ChargeHistoryModel] = List(),
-                  paymentAllocations: List[PaymentsWithChargeType] = List(),
+                  paymentAllocations: List[PaymentHistoryAllocations] = List(),
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   paymentAllocationEnabled: Boolean = false,
@@ -54,7 +55,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false) {
-    val view: Html = chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
+    val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
@@ -72,20 +73,23 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
-      document.select(Selectors.table).text() shouldBe
-        s"""
-           |Date Description Amount
-           |${rows.mkString("\n")}
-           |""".stripMargin.trim.linesIterator.mkString(" ")
+      document.select(Selectors.table).text() shouldBe s"""
+                                                          |Date Description Amount
+                                                          |${rows.mkString("\n")}
+                                                          |""".stripMargin.trim.linesIterator.mkString(" ")
+
     }
 
   }
 
-  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
+  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
+    PaymentHistoryAllocations(
+      allocations = List(PaymentHistoryAllocation(
+        dueDate = Some(LocalDate.parse(date)),
+        amount = Some(amount),
+        clearingSAPDocument = clearingSAPDocument,
+        clearingId = clearingId)),
+      chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   object Messages {
     val typePOA1 = "SA Payment on Account 1"
@@ -167,11 +171,21 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
-  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", LocalDate.now(), "", 1500, LocalDate.of(2018, 7, 6), "amended return")
-  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", LocalDate.now(), "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
+  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
+
+
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI),
+    financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
+      amount = Some(500.0),
+      dueDate = Some(LocalDate.parse("2018-09-08")),
+      clearingDate = Some(LocalDate.parse("2018-09-07")),
+      clearingSAPDocument=Some("123456789012"),
+      paymentAmount = Some(500.0),
+      paymentLot = None,
+      paymentLotItem = None)
+    )),
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB),
     financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI),
     financialDetail(originalAmount = 5678.9, chargeType = NIC4_WALES),
@@ -216,10 +230,23 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Clerical Interest Signal"))
   )
 
+  def subItemWithClearingSapDocument(clearingSAPDocument: String):SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
+
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
-    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
+    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
+      subItemWithClearingSapDocument("123456789012"),
+      subItemWithClearingSapDocument("223456789012"),
+      subItemWithClearingSapDocument("323456789012"),
+      subItemWithClearingSapDocument("423456789012"),
+      subItemWithClearingSapDocument("523456789012"),
+      subItemWithClearingSapDocument("623456789012"),
+      subItemWithClearingSapDocument("723456789012"),
+      subItemWithClearingSapDocument("823456789012"),
+      subItemWithClearingSapDocument("923456789012"),
+      subItemWithClearingSapDocument("023456789012")
+    ))))
   )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {
@@ -269,7 +296,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("h1").text() shouldBe balancingChargeHeading(2018)
       }
 
-      "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningBlock = None), codingOutEnabled = true) {
+      "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningLock = None), codingOutEnabled = true) {
         document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
       }
 
@@ -278,7 +305,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), codingOutEnabled = true) {
         document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
         document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
@@ -296,13 +323,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
       }
 
-      "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+      "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
+      "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
       }
 
@@ -311,7 +338,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
         document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
@@ -331,7 +358,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "not display a notification banner when there are no dunning locks in payment breakdown" in new TestSetup(
-        documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
+        documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown) {
 
         document.doesNotHave(Selectors.id("dunningLocksBanner"))
       }
@@ -379,7 +406,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
       }
 
-      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningBlock = None), dueDate = None) {
+      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningLock = None), dueDate = None) {
         verifySummaryListRowNumeric(1, dueDate, "N/A")
       }
 
@@ -415,7 +442,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,700.00")
       }
 
-      "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
+      "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
       }
 
@@ -473,28 +500,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
-      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
-      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
+      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
-      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe "what you owe"
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
-      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
+      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#main-content p a").text() shouldBe "what you owe"
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
@@ -508,7 +535,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
-        documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
+        documentDetailModel(lpiWithDunningLock = None, outstandingAmount = Some(0))) {
         document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
@@ -557,7 +584,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the charge creation item when history is found and allocations are disabled" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)),
-        chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentsWithChargeType]))) {
+        chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
@@ -601,18 +628,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         "allocations are enabled and present in the list" when {
 
           val paymentAllocations = List(
-            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
+            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("223456789012"), Some("PAYID01")),
 
-            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", 2400.0),
-            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", 2500.0),
+            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", 2400.0, Some("323456789012"), Some("PAYID01")),
+            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", 2500.0, Some("423456789012"), Some("PAYID01")),
 
-            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0),
-            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", 3500.0),
-            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", 3600.0),
-            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", 3700.0),
-            paymentsForCharge(typeBalCharge, SL, "2019-12-14", 3800.0),
-            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0),
+            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0, Some("523456789012"), Some("PAYID01")),
+            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", 3500.0, Some("623456789012"), Some("PAYID01")),
+            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", 3600.0, Some("723456789012"), Some("PAYID01")),
+            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", 3700.0, Some("823456789012"), Some("PAYID01")),
+            paymentsForCharge(typeBalCharge, SL, "2019-12-14", 3800.0, Some("923456789012"), Some("PAYID01")),
+            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0, Some("023456789012"), Some("PAYID01")),
           )
 
           val expectedPaymentAllocationRows = List(
@@ -644,7 +671,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
             verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
           }
         }
-
       }
 
       "hide payment allocations in history table" when {
@@ -709,8 +735,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "MFA Credits" when {
         val paymentAllocations = List(
-          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-          paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
+          paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"), Some("PAYID01")),
         )
 
         "Display an unpaid MFA Credit" in new TestSetup(
@@ -762,7 +788,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
-          document.select("p").get(2).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
           document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
@@ -775,7 +801,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
-        chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
+        chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
@@ -789,28 +815,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
-      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
+      "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
+      "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
-      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
+      "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }
 
-      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
+      "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }
@@ -825,17 +851,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(documentDetailModel(),
         chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
-          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0)), isAgent = true) {
+          paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
-
-
     }
+
     "MFA Credits" when {
+
       val paymentAllocations = List(
-        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0),
-        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0),
+        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
+        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"),  Some("PAYID01"))
       )
 
       "Display an unpaid MFA Credit" in new TestSetup(
@@ -859,7 +885,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "Display a paid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
           outstandingAmount = Some(0.00)), isMFADebit = true, isAgent = true,
-        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+          paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
@@ -875,6 +901,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#payment-link-2019").size() shouldBe 0
         // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
         document.select("#payment-history-table tr").size shouldBe 4
+
         document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
         document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
         document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2

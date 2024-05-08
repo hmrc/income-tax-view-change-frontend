@@ -39,7 +39,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val manageSelfEmploymentShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
   val manageUKPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
   val manageForeignPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = (currentTaxYear + 1)
@@ -101,11 +101,11 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Business address"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method for sole trader income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod)
         )
       }
@@ -118,7 +118,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -136,15 +136,15 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Business address"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method for sole trader income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Income reporting method 2022-2023"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesQuarterly),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Income reporting method 2023-2024"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesAnnually),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
@@ -176,15 +176,15 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Business address"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method for sole trader income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Income reporting method 2022-2023"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesAnnually),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Income reporting method 2023-2024"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesQuarterly),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -212,11 +212,11 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Business address"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(messagesUnknown),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method for sole trader income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")("Cash basis accounting")
         )
       }
@@ -244,7 +244,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod)
         )
       }
@@ -257,7 +257,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -272,7 +272,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
@@ -301,7 +301,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -326,7 +326,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")("Cash basis accounting"),
         )
       }
@@ -354,7 +354,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod)
         )
       }
@@ -367,7 +367,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2025-26")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -382,7 +382,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
@@ -411,7 +411,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -434,7 +434,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")("Cash basis accounting")
         )
       }

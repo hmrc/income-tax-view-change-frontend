@@ -66,7 +66,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               incomeSourceIdOption
             )
           case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
+            Logger("application").error(s"${ex.getMessage}")
             Future.successful {
               errorHandler(false).showInternalServerError()
             }
@@ -88,7 +88,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               incomeSourceIdOption
             )
           case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage} - ${ex.getCause}")
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful {
               errorHandler(true).showInternalServerError()
             }
@@ -168,7 +168,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"${if (isAgent) "[Agent]"}[ManageObligationsController][handleRequest] - $message")
+      s"${if (isAgent) "[Agent]"}$message")
     Future.successful {
       errorHandler(isAgent).showInternalServerError()
     }
@@ -197,7 +197,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     incomeSourceType match {
       case SelfEmployment =>
         id.orElse {
-          val message = "[ManageObligationsController][getIncomeSourceId] Missing required income source ID for Self Employment"
+          val message = "Missing required income source ID for Self Employment"
           Logger("application").error(message)
           None
         }

@@ -96,7 +96,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     case ex =>
                       val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
                       Logger("application")
-                        .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
                       errorHandler.showInternalServerError()
                   }
                 } else {
@@ -135,20 +135,22 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
     val ninoObj = Nino(nino)
     val taxYear: TaxYear = TaxYear(
-      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabledFromConfig(TimeMachineAddYear)).getYear,
-      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabledFromConfig(TimeMachineAddYear))
+      dateService.getCurrentTaxYearStart.getYear,
+      dateService.getCurrentTaxYearEnd
     )
 
     val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = crystallisationStatus)
     val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = cyMinusOneItsaStatus)
     val itsaStatusCyResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
     val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(1), status = cyPlusOneItsaStatus)
+    val combinedItsaStatusFutureYear = optOutCustomDataService.stubITSAStatusFutureYearData(nino, taxYear, cyMinusOneItsaStatus, cyItsaStatus, cyPlusOneItsaStatus)
 
     for {
       _ <- crystallisationStatusResult
       _ <- itsaStatusCyMinusOneResult
       _ <- itsaStatusCyResult
       _ <- itsaStatusCyPlusOneResult
+      _ <- combinedItsaStatusFutureYear
     } yield ()
 
   }

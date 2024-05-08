@@ -23,7 +23,7 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
+import models.financialDetails.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -279,7 +279,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockShowInternalServerError()
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
-        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+        result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
     "there was a problem retrieving the charges for the user" should {
