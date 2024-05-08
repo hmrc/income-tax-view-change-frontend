@@ -39,15 +39,18 @@ import models.optOut.OptOutUpdateRequestModel._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AsyncWordSpecLike
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future
 
-class OptOutConnectorTest extends AsyncWordSpecLike with Matchers with BeforeAndAfter {
+class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
@@ -77,10 +80,7 @@ class OptOutConnectorTest extends AsyncWordSpecLike with Matchers with BeforeAnd
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        result map {
-          case r:OptOutUpdateResponseSuccess => assert(r == OptOutUpdateResponseSuccess("123", NO_CONTENT))
-          case _ => fail(s"should have passed")
-        }
+        result.futureValue shouldBe OptOutUpdateResponseSuccess("123", NO_CONTENT)
 
       }
     }
@@ -102,10 +102,7 @@ class OptOutConnectorTest extends AsyncWordSpecLike with Matchers with BeforeAnd
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        result map {
-          case r:OptOutUpdateResponseFailure => assert(r == OptOutUpdateResponseFailure(BAD_REQUEST, errorItems))
-          case _ => fail(s"should have passed")
-        }
+        result.futureValue shouldBe OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
 
       }
     }
