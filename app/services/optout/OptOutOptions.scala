@@ -57,7 +57,7 @@ class OptOutOptionsSingleYear extends OptOutOptions {
     )
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
-      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray))
+      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.head.taxYearStatusDetail.taxYear))
     } else {
       None
     }
