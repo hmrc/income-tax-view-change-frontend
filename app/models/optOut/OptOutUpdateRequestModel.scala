@@ -21,12 +21,14 @@ import play.api.libs.json.{Format, Json}
 object OptOutUpdateRequestModel {
 
   val defaultUpdateReason = 10
-  val CorrelationIdHeader = "CorrelationId"
+
   case class OptOutApiCallRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
-  sealed trait OptOutApiCallResponse
-  case class OptOutApiCallSuccessfulResponse(correlationId: String) extends OptOutApiCallResponse
+  sealed trait OptOutApiCallResponse {
+    val statusCode: Int
+  }
+  case class OptOutApiCallSuccessfulResponse(statusCode: Int, correlationId: String) extends OptOutApiCallResponse
   case class ErrorItem(code: String, reason: String)
-  case class OptOutApiCallFailureResponse(failures: List[ErrorItem]) extends OptOutApiCallResponse
+  case class OptOutApiCallFailureResponse(statusCode: Int, failures: List[ErrorItem]) extends OptOutApiCallResponse
 
   implicit val formatSuccess: Format[OptOutApiCallSuccessfulResponse] = Json.format[OptOutApiCallSuccessfulResponse]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]

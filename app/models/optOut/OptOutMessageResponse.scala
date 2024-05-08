@@ -23,4 +23,5 @@ case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
 case class OptOutMessageResponse(taxYears: Array[TaxYear] = Array()) {
   def oneYearOptOutTaxYear: TaxYear = taxYears(0)
   def oneYearOptOut: Boolean = taxYears.length == 1
+
 }

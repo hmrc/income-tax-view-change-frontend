@@ -33,6 +33,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.OptOutConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
 import models.optOut.OptOutUpdateRequestModel._
 import org.mockito.ArgumentMatchers
@@ -72,8 +73,8 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
         val apiRequest = OptOutApiCallRequest(taxYear.toString)
-        val apiResponse = OptOutApiCallSuccessfulResponse("123")
-        val httpResponse = HttpResponse(Status.OK, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val apiResponse = OptOutApiCallSuccessfulResponse(Status.NO_CONTENT, "123")
+        val httpResponse = HttpResponse(Status.NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutApiCallRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
@@ -82,7 +83,8 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         Await.result(result, 10.seconds)
 
         result.value.map {
-          case Success(response) => response shouldBe apiResponse
+          case Success(response) =>
+            response shouldBe apiResponse
           case Failure(e) => fail(s"error: ${e.getMessage}")
         }
       }
@@ -95,7 +97,9 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
         val apiRequest = OptOutApiCallRequest(taxYear.toString)
-        val apiFailResponse = OptOutApiCallFailureResponse(List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+        val apiFailResponse = OptOutApiCallFailureResponse(
+          Status.BAD_REQUEST,
+          List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         )
         val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))

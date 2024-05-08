@@ -17,14 +17,19 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.OptOutConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
 import models.optOut.OptOutUpdateRequestModel._
 import play.api.Logger
-import play.api.http.Status.OK
+import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+
+object OptOutConnector {
+  val CorrelationIdHeader = "CorrelationId"
+}
 
 @Singleton
 class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
@@ -32,9 +37,9 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
 
   private val log = Logger("application")
 
-  def getUrl(taxableEntityId: String): String = {
+
+  def getUrl(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
-  }
 
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutApiCallResponse] = {
@@ -45,21 +50,24 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
       getUrl(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
       response.status match {
-        case OK =>
+        case Status.NO_CONTENT =>
           response.json.validate[OptOutApiCallSuccessfulResponse].fold(
           invalid => {
             log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutApiCallFailureResponse(List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+            OptOutApiCallFailureResponse(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
           },
           valid => {
-            valid.copy(correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader"))
+            valid.copy(
+              statusCode = response.status,
+              correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+            )
           }
         )
         case _ =>
           response.json.validate[OptOutApiCallFailureResponse].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutApiCallFailureResponse(List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+              OptOutApiCallFailureResponse(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
             },
             valid => valid
           )
