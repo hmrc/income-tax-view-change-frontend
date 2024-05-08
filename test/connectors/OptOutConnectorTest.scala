@@ -72,13 +72,13 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutApiCallRequest(taxYear.toString)
-        val apiResponse = OptOutApiCallSuccessfulResponse(Status.NO_CONTENT, "123")
+        val apiRequest = OptOutUpdateRequest(taxYear.toString)
+        val apiResponse = OptOutUpdateResponseSuccess(Status.NO_CONTENT, "123")
         val httpResponse = HttpResponse(Status.NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
-        setupHttpClientMock[OptOutApiCallRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutApiCallResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
         Await.result(result, 10.seconds)
 
@@ -96,17 +96,17 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutApiCallRequest(taxYear.toString)
-        val apiFailResponse = OptOutApiCallFailureResponse(
+        val apiRequest = OptOutUpdateRequest(taxYear.toString)
+        val apiFailResponse = OptOutUpdateResponseFailure(
           Status.BAD_REQUEST,
           List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         )
         val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
-        setupHttpClientMock[OptOutApiCallRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutApiCallResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
         Await.result(result, 10.seconds)
 

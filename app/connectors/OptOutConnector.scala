@@ -42,19 +42,19 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
 
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
-                             (implicit headerCarrier: HeaderCarrier): Future[OptOutApiCallResponse] = {
+                             (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val body = OptOutApiCallRequest(taxYear = taxYear.toString)
+    val body = OptOutUpdateRequest(taxYear = taxYear.toString)
 
-    http.PUT[OptOutApiCallRequest, HttpResponse](
+    http.PUT[OptOutUpdateRequest, HttpResponse](
       getUrl(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
       response.status match {
         case Status.NO_CONTENT =>
-          response.json.validate[OptOutApiCallSuccessfulResponse].fold(
+          response.json.validate[OptOutUpdateResponseSuccess].fold(
           invalid => {
             log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutApiCallFailureResponse(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+            OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
           },
           valid => {
             valid.copy(
@@ -64,10 +64,10 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
           }
         )
         case _ =>
-          response.json.validate[OptOutApiCallFailureResponse].fold(
+          response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutApiCallFailureResponse(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+              OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
             },
             valid => valid
           )

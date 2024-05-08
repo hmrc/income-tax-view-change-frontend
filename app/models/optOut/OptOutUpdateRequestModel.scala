@@ -22,17 +22,18 @@ object OptOutUpdateRequestModel {
 
   val defaultUpdateReason = 10
 
-  case class OptOutApiCallRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
-  sealed trait OptOutApiCallResponse {
+  case class OptOutUpdateRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
+  sealed trait OptOutUpdateResponse {
     val statusCode: Int
+    val isError: Boolean = false
   }
-  case class OptOutApiCallSuccessfulResponse(statusCode: Int, correlationId: String) extends OptOutApiCallResponse
+  case class OptOutUpdateResponseSuccess(statusCode: Int, correlationId: String) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
-  case class OptOutApiCallFailureResponse(statusCode: Int, failures: List[ErrorItem]) extends OptOutApiCallResponse
+  case class OptOutUpdateResponseFailure(statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
 
-  implicit val formatSuccess: Format[OptOutApiCallSuccessfulResponse] = Json.format[OptOutApiCallSuccessfulResponse]
+  implicit val formatSuccess: Format[OptOutUpdateResponseSuccess] = Json.format[OptOutUpdateResponseSuccess]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]
-  implicit val formatFailure: Format[OptOutApiCallFailureResponse] = Json.format[OptOutApiCallFailureResponse]
-  implicit val format: Format[OptOutApiCallRequest] = Json.format[OptOutApiCallRequest]
+  implicit val formatFailure: Format[OptOutUpdateResponseFailure] = Json.format[OptOutUpdateResponseFailure]
+  implicit val format: Format[OptOutUpdateRequest] = Json.format[OptOutUpdateRequest]
 
 }
