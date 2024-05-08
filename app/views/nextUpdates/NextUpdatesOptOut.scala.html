@@ -19,6 +19,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optOut.NextUpdatesQuarterlyReportingContentChecks
+@import models.optOut.OptOutOneYearViewModel
 
 
 @this(
@@ -32,7 +33,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel,
+@(currentObligations: NextUpdatesViewModel, oneYearOptOut: Option[OptOutOneYearViewModel],
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,
@@ -51,6 +52,15 @@
 
 	@checks.showUpdateTypeDetailsSection.map { _ =>
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+	}
+
+	@oneYearOptOut.map { oneYearOptOut =>
+		@p(){
+			<span id="optout-message">
+				@messages("nextUpdates.optOutOneYear-1", oneYearOptOut.startYear, oneYearOptOut.endYear)
+				@link(link = controllers.optOut.routes.OptOutCheckpointController.show.url, messageKey = "nextUpdates.optOutOneYear-2")
+			</span>
+		}
 	}
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>

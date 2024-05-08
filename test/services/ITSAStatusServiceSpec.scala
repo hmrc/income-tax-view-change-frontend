@@ -28,7 +28,7 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
 
   object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
-  val taxYear = TaxYear(2020)
+  val taxYear = TaxYear.forYearEnd(2020)
   val taxYearEnd = taxYear.endYear
   val yearRange = taxYear.formatTaxYearRange
   "hasMandatedOrVoluntaryStatusCurrentYear " when {

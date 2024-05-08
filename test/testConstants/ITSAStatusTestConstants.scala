@@ -94,5 +94,5 @@ object ITSAStatusTestConstants {
   val badJsonHttpResponse = HttpResponse(Status.OK, Json.obj(), Map.empty)
 
 
-  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear(2020) -> statusDetail, TaxYear(2021) -> statusDetailMTDMandated)
+  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetailMTDMandated)
 }

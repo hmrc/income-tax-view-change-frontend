@@ -25,7 +25,7 @@ import org.scalacheck.Properties
 import services.DateServiceInterface
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
-
+import _root_.models.incomeSourceDetails.TaxYear
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
 
@@ -36,6 +36,8 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   val testDateService = new DateServiceInterface {
 
     override def getCurrentDate: LocalDate = currentDate
+
+    override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(currentDate.getYear)
 
     override def getCurrentTaxYearEnd: Int = currentDate.getYear
 

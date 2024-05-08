@@ -787,6 +787,8 @@ nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
 nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
+nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
