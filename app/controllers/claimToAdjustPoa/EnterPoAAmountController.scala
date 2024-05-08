@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitCurrencyFormatter
-import models.paymentOnAccount.PaymentOnAccount
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationListService, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import views.html.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                            val auth: AuthenticatorPredicate,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            implicit override val mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
+class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                           val auth: AuthenticatorPredicate,
+                                           implicit val itvcErrorHandler: ItvcErrorHandler,
+                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          (implicit val appConfig: FrontendAppConfig,
+                                           implicit override val mcc: MessagesControllerComponents,
+                                           val ec: ExecutionContext)
+  extends ClientConfirmedController {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
         Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/what-you-need-to-know")
+          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount")
     }
+
 }

@@ -29,8 +29,12 @@ case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
     }
   }
 
-  def ctaLink = {
-    claimToAdjustTaxYear
+}
+
+object WYOClaimToAdjustViewModel {
+
+  def ctaLink(isAgent: Boolean): String = {
+    controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = isAgent).url
   }
 
 }

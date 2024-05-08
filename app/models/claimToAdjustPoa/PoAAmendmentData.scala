@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package models.paymentOnAccount
+package models.claimToAdjustPoa
 
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Json, OFormat, __}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-import viewmodels.adjustPoa.checkAnswers.SelectYourReason
 
 import java.time.Instant
 

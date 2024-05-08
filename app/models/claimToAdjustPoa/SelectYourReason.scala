@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.adjustPoa.checkAnswers
+package models.claimToAdjustPoa
 
 import play.api.libs.json._
 

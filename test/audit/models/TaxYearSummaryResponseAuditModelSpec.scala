@@ -21,7 +21,7 @@ import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -43,6 +43,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
   val updateTypeQuarterly: String = "Quarterly Update"
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,
@@ -272,7 +273,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock),
-        obligations = updates, codingOutEnabled = true
+        obligations = updates, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
         ),
       messages
     )
@@ -301,7 +302,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock),
-        obligations = updates, showForecastData = true, codingOutEnabled = true
+        obligations = updates, showForecastData = true, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
       )
     )
 

@@ -16,17 +16,16 @@
 
 package services
 
-import models.paymentOnAccount.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
 import repositories.PoAAmendmentDataRepository
 import testUtils.TestSupport
-import viewmodels.adjustPoa.checkAnswers.MainIncomeLower
 
 import scala.concurrent.Future
 
-class PaymentOnAccountSessionServiceSpec extends TestSupport {
+class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
 
   val mockRepository: PoAAmendmentDataRepository = mock(classOf[PoAAmendmentDataRepository])
 
@@ -44,7 +43,7 @@ class PaymentOnAccountSessionServiceSpec extends TestSupport {
     "create the mongo session" in {
       when(mockRepository.set(any())).thenReturn(Future.successful(true))
       val result = TestPaymentOnAccountSessionService.createSession
-      result.futureValue shouldBe true
+      result.futureValue shouldBe Right(())
     }
   }
   "PaymentOnAccountSessionService.getMongo" should {

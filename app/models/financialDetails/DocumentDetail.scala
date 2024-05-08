@@ -42,7 +42,8 @@ case class DocumentDetail(taxYear: Int,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None,
-                          documentDueDate: Option[LocalDate] = None
+                          documentDueDate: Option[LocalDate] = None,
+                          poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
@@ -204,6 +205,7 @@ case class DocumentDetail(taxYear: Int,
 
 }
 
+
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
@@ -232,6 +234,7 @@ object DocumentDetail {
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal] and
-      (__ \ "documentDueDate").readNullable[LocalDate]
+      (__ \ "documentDueDate").readNullable[LocalDate] and
+      (__ \ "poaRelevantAmount").readNullable[BigDecimal]
     )(DocumentDetail.apply _)
 }

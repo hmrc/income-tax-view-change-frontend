@@ -17,8 +17,8 @@
 package forms.adjustPoa
 
 import forms.mappings.{Enumerable, Mappings}
+import models.claimToAdjustPoa.{AllowanceOrReliefHigher, MainIncomeLower, MoreTaxedAtSource, OtherIncomeLower, SelectYourReason}
 import play.api.data.Form
-import viewmodels.adjustPoa.checkAnswers.{AllowanceOrReliefHigher, MainIncomeLower, MoreTaxedAtSource, OtherIncomeLower, SelectYourReason}
 
 class SelectYourReasonFormProvider extends Mappings {
   def apply(): Form[SelectYourReason] = {

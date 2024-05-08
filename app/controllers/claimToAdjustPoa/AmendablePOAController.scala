@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.claimToAdjustPoa
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes
 import implicits.ImplicitCurrencyFormatter
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.paymentOnAccount.PaymentOnAccount
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import views.html.AmendablePaymentOnAccount
-import controllers.routes._
+import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,15 +51,11 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
       implicit user =>
         if (isEnabled(AdjustPaymentsOnAccount)) {
           claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(poa: PaymentOnAccount)) =>
+            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
               Future.successful(
                 Ok(view(
                   isAgent = isAgent,
-                  taxYearModel = poa.taxYear,
-                  poaOneTransactionId = poa.poaOneTransactionId,
-                  poaTwoTransactionId = poa.poaTwoTransactionId,
-                  poaOneFullAmount = poa.paymentOnAccountOne,
-                  poaTwoFullAmount = poa.paymentOnAccountTwo
+                  paymentOnAccount = paymentOnAccount
                 ))
               )
             case Right(None) =>
@@ -72,8 +68,8 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         } else {
           Future.successful(
             Redirect(
-              if (isAgent) HomeController.showAgent
-              else         HomeController.show()
+              if (isAgent) routes.HomeController.showAgent
+              else         routes.HomeController.show()
             )
           )
         } recover {

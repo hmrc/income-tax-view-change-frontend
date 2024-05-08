@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.adjustPoa
+package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
 import cats.data.EitherT
@@ -23,16 +23,15 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.SelectYourReasonFormProvider
+import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
-import models.paymentOnAccount.{PaymentOnAccount, PoAAmendmentData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import viewmodels.adjustPoa.checkAnswers.SelectYourReason
-import views.html.adjustPoa.SelectYourReasonView
+import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,54 +54,49 @@ class SelectYourReasonController @Inject()(
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
-
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
       withSessionAndPoa(isAgent) { (session, poa) =>
-
-
-
-        // TODO: if amount has been entered, and is > current amount, autofill reason 005 and redirect
-
-        val form = formProvider.apply()
-        Ok(view(
-          selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
-          taxYear = poa.taxYear,
-          isAgent = isAgent,
-          isChange = isChange,
-          backUrl = "TODO",
-          useFallbackLink = true))
+        (session.newPoAAmount) match {
+          case Some(amount) if amount >= poa.totalAmount =>
+            saveValueAndRedirect(isChange, isAgent, Increase)
+          case _ =>
+            val form = formProvider.apply()
+            EitherT.rightT(Ok(view(
+              selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
+              taxYear = poa.taxYear,
+              isAgent = isAgent,
+              isChange = isChange,
+              backUrl = "TODO",
+              useFallbackLink = true)))
+        }
       } fold (
-        ex => {
-          Logger("application").error(s"[SelectYourReasonController][show]: ${ex.getMessage} - ${ex.getCause}")
-          errorHandler.showInternalServerError()
-        },
+        logAndShowErrorPage(isAgent, "show"),
         view => view
       )
     }
 
   def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit request =>
-
       formProvider.apply()
         .bindFromRequest()
         .fold(
           formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
-            BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true))
+            EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true)))
           },
           value => saveValueAndRedirect(isChange, isAgent, value))
         .fold(
-          ex => {
-            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-            Logger("application").error(s"[SelectYourReasonController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
-            errorHandler.showInternalServerError()
-          },
+          logAndShowErrorPage(isAgent, "submit"),
           result => result
       )
   }
 
+  private def logAndShowErrorPage(isAgent: Boolean, source: String)(ex: Throwable)(implicit request: Request[_]): Result = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    Logger("application").error(s"[SelectYourReasonController][$source]: ${ex.getMessage} - ${ex.getCause}")
+    errorHandler.showInternalServerError()
+  }
+
   private def withSessionAndPoa (isAgent: Boolean)
-                                (block: (PoAAmendmentData,PaymentOnAccount) => Result)
+                                (block: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                                 (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
 
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -110,32 +104,30 @@ class SelectYourReasonController @Inject()(
     for {
       session <- EitherT(sessionService.getMongo)
       poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-    } yield {
-      (session, poa) match {
+      result <- (session, poa) match {
         case (Some(s), Some(p)) =>
           block(s, p)
         case (None, _) =>
           Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] session missing")
-          errorHandler.showInternalServerError()
+          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+          x
         case (_, None) =>
           Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] POA missing")
-          errorHandler.showInternalServerError()
+          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
+          x
       }
-    }
+    } yield result
   }
 
   private def saveValueAndRedirect(isChange: Boolean, isAgent: Boolean, value: SelectYourReason)
                                   (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
       _ <- EitherT(sessionService.setAdjustmentReason(value))
-      redirect <- withSessionAndPoa(isAgent) { (session, _) =>
-        (isChange, session.newPoAAmount) match {
-          // TODO: direct to CYA
-          case (false, Some(_)) => Redirect(controllers.routes.HomeController.show())
-          // TODO: direct to amount page
-          case (false, None) => Redirect(controllers.routes.HomeController.show())
-          // TODO: direct to CYA
-          case (true, _) => Redirect(controllers.routes.HomeController.show())
+      redirect <- withSessionAndPoa(isAgent) { (session, poa) =>
+        (isChange, poa.totalAmountLessThanPoa) match {
+          case (false, false) => EitherT.rightT(Redirect(controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)))
+          // TODO: direct to CYA when page is created
+          case (_,_) => EitherT.rightT(Redirect(controllers.routes.HomeController.show()))
         }
       }
     } yield {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels.adjustPoa.checkAnswers
+package models.claimToAdjustPoa
 
+import models.claimToAdjustPoa.SelectYourReason._
 import play.api.libs.json.{JsError, JsString, Json}
 import testUtils.UnitSpec
-import viewmodels.adjustPoa.checkAnswers.SelectYourReason._
 
 
 class SelectYourReasonSpec extends UnitSpec {

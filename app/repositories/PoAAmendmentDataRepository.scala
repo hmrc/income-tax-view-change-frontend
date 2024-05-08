@@ -17,7 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.paymentOnAccount.PoASessionData
+import models.claimToAdjustPoa.PoASessionData
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import uk.gov.hmrc.mongo.MongoComponent

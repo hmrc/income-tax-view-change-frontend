@@ -19,7 +19,8 @@ package mocks.services
 import connectors.CalculationListConnector
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
-import models.paymentOnAccount.PaymentOnAccount
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -34,14 +35,17 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   val calculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
 
-  def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccount] = Some(
-    PaymentOnAccount(
+  def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccountViewModel] = Some(
+    PaymentOnAccountViewModel(
       poaOneTransactionId = "poaOne-Id",
       poaTwoTransactionId = "poaTwo-Id",
       taxYear = TaxYear.makeTaxYearWithEndYear(2024),
       paymentOnAccountOne = 5000.00,
-      paymentOnAccountTwo = 5000.00
-    ))): Unit =
+      paymentOnAccountTwo = 5000.00,
+      poARelevantAmountOne = 5000.00,
+      poARelevantAmountTwo = 5000.00
+    )
+  )): Unit =
     when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
       .thenReturn(Future.successful(Right(data)))
 
@@ -64,4 +68,10 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
           )
         )
       )
+
+  def setupMockGetPoaTaxYearForEntryPointCall(response: Either[Throwable, Option[TaxYear]]): Unit = {
+    when(claimToAdjustService
+      .getPoaTaxYearForEntryPoint(Nino(any()))(any))
+      .thenReturn(Future.successful(response))
+  }
 }

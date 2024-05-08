@@ -178,6 +178,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentsDue: WSResponse = get("/payments-owed")
 
+    def getAdjustPaymentsOnAccount(clientDetails: Map[String, String] = Map.empty): WSResponse = get(s"/adjust-poa/start", clientDetails)
+
     def getClientRelationshipFailure: WSResponse = get("/not-authorised-to-view-client")
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/cannot-view-client", clientUTR)
@@ -233,6 +235,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getTaxYears(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/tax-years", additionalCookies)
+
+    def getPOAWhatYouNeedToKnow(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/adjust-poa/what-you-need-to-know", clientDetails)
 
     def getCeaseUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/manage-your-businesses/cease/uk-property-confirm-cease", additionalCookies)
