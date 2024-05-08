@@ -23,7 +23,7 @@ import config.featureswitch.{FeatureSwitching, OptOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates._
-import models.optOut.OptOutMessageResponse
+import models.optOut.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -76,8 +76,8 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
             optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
-              optOutService.displayOptOutMessage() map { optOutMessage =>
-                Ok(nextUpdatesOptOutView(viewModel, optOutMessage, checks, backUrl.url, isAgent, origin))
+              optOutService.displayOptOutMessage().map { optOutOneYearViewModel =>
+                Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
               }
             } recover {
               case ex =>

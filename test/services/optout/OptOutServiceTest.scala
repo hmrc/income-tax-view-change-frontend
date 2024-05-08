@@ -85,10 +85,12 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.oneYearOptOutTaxYear.startYear == 2022)
-              assert(r.oneYearOptOutTaxYear.endYear == 2023)
+            case Success(r) => r match {
+              case Some(oneYearViewModel) =>
+                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
+                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
+              case None => fail("cant opt out")
+            }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -120,9 +122,11 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(!r.oneYearOptOut, "canOptOut should be true")
-              assert(r.taxYears.isEmpty)
+            case Success(r) => r match {
+              case None => //no opt out expected
+              case Some(oneYearViewModel) =>
+                fail("One Year Opt Out offered when illegal")
+              }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -154,10 +158,14 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.oneYearOptOutTaxYear.startYear == 2023)
-              assert(r.oneYearOptOutTaxYear.endYear == 2024)
+            case Success(r) => r match {
+              case Some(oneYearViewModel) =>
+                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2023)
+                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2024)
+
+              case None => fail("No opt out offered")
+            }
+
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -189,10 +197,12 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.oneYearOptOutTaxYear.startYear == 2024)
-              assert(r.oneYearOptOutTaxYear.endYear == 2025)
+            case Success(r) => r match {
+              case Some(oneYearViewModel) =>
+                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2024)
+                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2025)
+              case None => fail("No opt out offered")
+            }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -219,8 +229,11 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(!r.oneYearOptOut, "canOptOut should be false")
+            case Success(r) => r match {
+              case None => //No opt out expected
+              case Some(oneYearViewModel) =>
+                fail("Opt Out Offered with API failure no allowed")
+            }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -251,8 +264,11 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(!r.oneYearOptOut, "canOptOut should be false")
+            case Success(r) => r match {
+              case None => //No opt out expected
+              case Some(oneYearViewModel) =>
+                fail("Opt out offered when isCrystallised API failed not allowed")
+            }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>
@@ -284,10 +300,12 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         response.value match {
           case Some(t) => t match {
-            case Success(r) =>
-              assert(r.oneYearOptOut, "canOptOut should be true")
-              assert(r.oneYearOptOutTaxYear.startYear == 2022)
-              assert(r.oneYearOptOutTaxYear.endYear == 2023)
+            case Success(r) => r match {
+              case Some(oneYearViewModel) =>
+                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
+                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
+              case None => fail("no oo")
+            }
             case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
           }
           case _ =>

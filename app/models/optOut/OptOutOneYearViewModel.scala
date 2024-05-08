@@ -17,11 +17,13 @@
 package models.optOut
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class YearStatusDetail(taxYear: TaxYear, statusDetail: StatusDetail)
-case class OptOutMessageResponse(taxYears: Array[TaxYear] = Array()) {
+case class TaxYearITSAStatus(taxYear: TaxYear, status: ITSAStatus) {}
+
+case class OptOutOneYearViewModel(taxYears: Array[TaxYear] = Array()) {
   def oneYearOptOutTaxYear: TaxYear = taxYears(0)
-  def oneYearOptOut: Boolean = taxYears.length == 1
 
+  def startYear: String = oneYearOptOutTaxYear.startYear.toString
+  def endYear: String = oneYearOptOutTaxYear.endYear.toString
 }

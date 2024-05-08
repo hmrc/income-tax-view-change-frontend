@@ -19,7 +19,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optOut.NextUpdatesQuarterlyReportingContentChecks
-@import models.optOut.OptOutMessageResponse
+@import models.optOut.OptOutOneYearViewModel
 
 
 @this(
@@ -33,7 +33,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, optOut: OptOutMessageResponse,
+@(currentObligations: NextUpdatesViewModel, oneYearOptOut: Option[OptOutOneYearViewModel],
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,
@@ -54,10 +54,10 @@
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
-	@if(optOut.oneYearOptOut){
+	@oneYearOptOut.map { optOut =>
 		@p(){
 			<span id="optout-message">
-				@messages("nextUpdates.optOutOneYear-1", optOut.oneYearOptOutTaxYear.startYear.toString, optOut.oneYearOptOutTaxYear.endYear.toString)
+				@messages("nextUpdates.optOutOneYear-1", optOut.startYear, optOut.endYear)
 				@link(link = controllers.optOut.routes.OptOutCheckpointController.show.url, messageKey = "nextUpdates.optOutOneYear-2")
 			</span>
 		}
