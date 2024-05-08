@@ -16,7 +16,7 @@
 
 package services
 
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockOptOutConnector}
 import models.incomeSourceDetails.TaxYear
 import models.optOut.NextUpdatesQuarterlyReportingContentChecks
 import services.optout.OptOutService
@@ -28,7 +28,8 @@ import scala.concurrent.Future
 class OptOutServiceSpec extends TestSupport
   with MockITSAStatusService
   with MockCalculationListService
-  with MockDateService {
+  with MockDateService
+  with MockOptOutConnector {
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.addYears(-1)
@@ -36,7 +37,7 @@ class OptOutServiceSpec extends TestSupport
 
   val error = new RuntimeException("Some Error")
 
-  object TestOptOutService extends OptOutService(mockITSAStatusService, mockCalculationListService, mockDateService)
+  object TestOptOutService extends OptOutService(mockOptOutConnector, mockITSAStatusService, mockCalculationListService, mockDateService)
 
   "GetNextUpdatesQuarterlyReportingContentChecks" when {
     "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {

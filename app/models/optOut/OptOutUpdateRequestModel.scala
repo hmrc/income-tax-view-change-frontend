@@ -30,7 +30,7 @@ object OptOutUpdateRequestModel {
   }
   case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = successfulStatusCode) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
-  case class OptOutUpdateResponseFailure(statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseFailure(correlationId: String, statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
 
   implicit val formatSuccess: Format[OptOutUpdateResponseSuccess] = Json.format[OptOutUpdateResponseSuccess]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]

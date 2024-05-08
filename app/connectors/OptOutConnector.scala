@@ -37,6 +37,7 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
 
   private val log = Logger("application")
 
+  private val defaultErrors = List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response"))
 
   def getUrl(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
@@ -54,12 +55,12 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
           response.json.validate[OptOutUpdateResponseSuccess].fold(
           invalid => {
             log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+            OptOutUpdateResponseFailure(getCorrelationId(response), response.status, defaultErrors)
           },
           valid => {
             valid.copy(
               statusCode = response.status,
-              correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+              correlationId = getCorrelationId(response)
             )
           }
         )
@@ -67,11 +68,21 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+              OptOutUpdateResponseFailure(getCorrelationId(response), response.status, defaultErrors)
             },
-            valid => valid
+            valid => {
+              valid.copy(
+                statusCode = response.status,
+                correlationId = getCorrelationId(response)
+              )
+            }
+
           )
       }
     }
   }
+
+  private def getCorrelationId(response: HttpResponse) = response.headers(CorrelationIdHeader)
+    .headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+
 }

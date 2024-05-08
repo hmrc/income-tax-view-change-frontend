@@ -47,7 +47,6 @@ import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 
 class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
@@ -88,21 +87,21 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
     "unhappy case" should {
 
       "return failure response" in {
-
+        val correlationId = "123"
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
         val apiRequest = OptOutUpdateRequest(taxYear.toString)
-        val apiFailResponse = OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
-        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq(correlationId)))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
+        result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
 
       }
     }
