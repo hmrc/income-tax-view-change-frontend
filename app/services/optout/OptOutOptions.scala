@@ -31,9 +31,9 @@ case class CurrentTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus) extends 
   def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary
 }
 
-case class NextTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, currentTaxYear: TaxYearITSAStatus) extends OptOut {
+case class NextTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, currentTaxYear: CurrentTaxYearOptOut) extends OptOut {
   def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary ||
-    (currentTaxYear.status == Voluntary && taxYearStatusDetail.status == NoStatus)
+    (currentTaxYear.taxYearStatusDetail.status == Voluntary && taxYearStatusDetail.status == NoStatus)
 }
 
 case class PreviousTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, crystallised: Boolean) extends OptOut {
