@@ -20,11 +20,11 @@ GET         /agents/next-updates                                          contro
 GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
 
 #OptOut
-GET         /optout/review-confirm-taxyear                                controllers.optout.ConfirmOptOutController.show()
-GET         /agents/optout/review-confirm-taxyear                         controllers.optout.ConfirmOptOutController.showAgent()
+GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show()
+GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.showAgent()
 
-GET         /optout/confirmed                                             controllers.optout.ConfirmedOptOutController.show()
-GET         /agents/optout/confirmed                                      controllers.optout.ConfirmedOptOutController.showAgent()
+GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
+GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optout
+package controllers.optOut
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
@@ -26,21 +26,21 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
-import views.html.optout.ConfirmOptOut
+import views.html.optOut.ConfirmOptOut
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val confirmOptOut: ConfirmOptOut,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val retrieveBtaNavBar: NavBarPredicate,
-                                          val retrieveNino: NinoPredicate,
-                                          val customNotFoundErrorView: CustomNotFoundError,
-                                          val auth: AuthenticatorPredicate)
-                                         (implicit val appConfig: FrontendAppConfig,
+class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicate,
+                                        val authorisedFunctions: FrontendAuthorisedFunctions,
+                                        val confirmOptOut: ConfirmOptOut,
+                                        val checkSessionTimeout: SessionTimeoutPredicate,
+                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                        val retrieveBtaNavBar: NavBarPredicate,
+                                        val retrieveNino: NinoPredicate,
+                                        val customNotFoundErrorView: CustomNotFoundError,
+                                        val auth: AuthenticatorPredicate)
+                                       (implicit val appConfig: FrontendAppConfig,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -50,12 +50,12 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      Future.successful(Ok(""))
+      Future.successful(Ok(confirmOptOut(false)))
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Ok(""))
+      Future.successful(Ok(confirmOptOut(true)))
   }
 
 }
