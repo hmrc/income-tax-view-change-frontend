@@ -1861,3 +1861,9 @@ claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Yn e
 claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gweler yr arweiniad ynghylch
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canslo
+
+# opt out confirm
+optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
+optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
+optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.cancel             = Canslo
