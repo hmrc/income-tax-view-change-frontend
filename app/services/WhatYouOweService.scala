@@ -128,10 +128,4 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
   }
 
-  def getWYOClaimToAdjustViewModel(isAdjustPaymentsOnAccountFSEnabled: Boolean, poaTaxYear: Option[TaxYear]): WYOClaimToAdjustViewModel = {
-    WYOClaimToAdjustViewModel(
-      adjustPaymentsOnAccountFSEnabled = isAdjustPaymentsOnAccountFSEnabled,
-      poaTaxYear = poaTaxYear
-    )
-  }
 }

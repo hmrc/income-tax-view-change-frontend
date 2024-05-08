@@ -21,8 +21,7 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class TaxYearITSAStatus(taxYear: TaxYear, status: ITSAStatus) {}
 
-case class OptOutOneYearViewModel(taxYears: Array[TaxYear] = Array()) {
-  def oneYearOptOutTaxYear: TaxYear = taxYears(0)
+case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear) {
 
   def startYear: String = oneYearOptOutTaxYear.startYear.toString
   def endYear: String = oneYearOptOutTaxYear.endYear.toString

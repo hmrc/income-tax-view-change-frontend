@@ -352,7 +352,7 @@ object IncomeSourceIntegrationTestConstants {
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                          interestLocks: List[String] = noInterestLock,
                                          latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                         isClass2Nic: Boolean = false
+                                         isClass2Nic: Boolean = false, poaRelevantAmount: Option[BigDecimal] = None
                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -373,7 +373,8 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "interestOutstandingAmount" -> 80.0,
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -383,7 +384,8 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -393,7 +395,8 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       ),
       Json.obj(
         "taxYear" -> 9999,
@@ -406,7 +409,8 @@ object IncomeSourceIntegrationTestConstants {
         "paymentLotItem" -> "000001",
         "latePaymentInterestId" -> "latePaymentInterestId",
         "effectiveDateOfPayment" -> dueDate,
-        "documentDueDate" -> dueDate
+        "documentDueDate" -> dueDate,
+        "poaRelevantAmount" -> poaRelevantAmount
       )
     ),
     "financialDetails" -> Json.arr(
@@ -752,6 +756,47 @@ object IncomeSourceIntegrationTestConstants {
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"))
+      )
+    )
+  )
+
+  def testFinancialDetailsModelWithMissingOriginalAmountJson(): JsValue = Json.obj(
+    "balanceDetails" -> Json.obj(
+      "balanceDueWithin30Days" -> 1.00,
+      "overDueAmount" -> 2.00,
+      "totalBalance" -> 3.00
+    ),
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> "2018".toInt,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "TRM New Charge",
+        "documentText" -> documentText(false, "TRM New Charge"),
+        "outstandingAmount" -> 1.2,
+        "originalAmount-added-this-text-to-exclude-it" -> 10.34,
+        "documentDate" -> "2018-03-29",
+        "interestFromDate" -> "2018-03-29",
+        "interestEndDate" -> "2018-03-29",
+        "latePaymentInterestAmount" -> Some(100),
+        "interestOutstandingAmount" -> 80.0,
+        "effectiveDateOfPayment" -> "2018-02-14",
+        "documentDueDate" -> "2018-02-14"
+      )
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> "2018",
+        "mainType" -> "SA Balancing Charge",
+        "mainTransaction" -> "4910",
+        "transactionId" -> "1040000123",
+        "chargeType" -> ITSA_NI,
+        "originalAmount" -> 10.34,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 10000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> "2018-02-14",
             "paymentLot" -> "081203010024",
             "paymentLotItem" -> "000001"))
       )

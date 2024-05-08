@@ -20,10 +20,10 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Vol
 import models.optOut.{OptOutOneYearViewModel, TaxYearITSAStatus}
 
 trait OptOutOptions {
-  def getOptOutOptionsFor(finalisedStatus: Boolean,
+  def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
                           previousYearState: TaxYearITSAStatus,
                           currentYearState: TaxYearITSAStatus,
-                          nextYearState: TaxYearITSAStatus): OptOutOneYearViewModel
+                          nextYearState: TaxYearITSAStatus): Option[OptOutOneYearViewModel]
 }
 
 trait OptOut {
@@ -43,26 +43,7 @@ case class PreviousTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, crystal
   def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary && !crystallised
 }
 
-//todo-MISUV-7349: to be replaced, this is a tactical implementation only for one year optout scenario
-class OptOutOptionsTacticalSolution extends OptOutOptions {
-
-  def getOptOutOptionsFor(finalisedStatus: Boolean,
-                          previousYearState: TaxYearITSAStatus,
-                          currentYearState: TaxYearITSAStatus,
-                          nextYearState: TaxYearITSAStatus): OptOutOneYearViewModel = {
-
-    val isPY_V = previousYearState.status == Voluntary
-    val isCY_V = currentYearState.status == Voluntary
-    val isNY_V = nextYearState.status == Voluntary
-
-    (finalisedStatus, isPY_V, isCY_V, isNY_V) match {
-      case (false, true, false, false) => OptOutOneYearViewModel(taxYears = Array(previousYearState.taxYear))
-      case (false, false, true, false) => OptOutOneYearViewModel(taxYears = Array(currentYearState.taxYear))
-      case (false, false, false, true) => OptOutOneYearViewModel(taxYears = Array(nextYearState.taxYear))
-      case _ => OptOutOneYearViewModel()
-    }
-  }
-
+class OptOutOptionsSingleYear extends OptOutOptions {
   def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
                                     previousYearState: TaxYearITSAStatus,
                                     currentYearState: TaxYearITSAStatus,
@@ -76,7 +57,7 @@ class OptOutOptionsTacticalSolution extends OptOutOptions {
     )
 
     if (voluntaryOptOutYearsAvailable.size == 1) {
-      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.map(_.taxYearStatusDetail.taxYear).toArray))
+      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.head.taxYearStatusDetail.taxYear))
     } else {
       None
     }
