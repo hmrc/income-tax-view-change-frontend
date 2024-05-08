@@ -254,7 +254,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
-
       "have a form with the correct attributes" in new TestSetup(true, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
