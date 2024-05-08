@@ -22,7 +22,7 @@ import play.api.data.Forms.{boolean, mapping}
 case class ConfirmOptOutSingleTaxYearForm(confirmOptOut: Boolean)
 
 object ConfirmOptOutSingleTaxYearForm {
-  val confirmOptOutField: String = "confirm.opt.out"
+  val confirmOptOutField: String = "confirm-opt-out"
   val noResponseErrorMessageKey: String = "error.boolean"
 
   def apply(): Form[ConfirmOptOutSingleTaxYearForm] = {

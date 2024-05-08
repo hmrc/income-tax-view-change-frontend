@@ -1833,3 +1833,10 @@ paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.lin                          = Canslo
+
+optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
+optOut.confirmSingleYearOptOut.detail.text                  = Gallwch ond optio allan a chyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
+optOut.confirmSingleYearOptOut.inset.text                   = O 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
+optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
+optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
+optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.

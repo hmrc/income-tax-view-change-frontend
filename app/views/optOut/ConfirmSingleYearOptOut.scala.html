@@ -1,0 +1,114 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels._
+@import play.twirl.api.Html
+@import play.api.data.Form
+@import forms.optOut.ConfirmOptOutSingleTaxYearForm
+@import models.incomeSourceDetails.TaxYear
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukRadios: GovukRadios,
+        errorSummary: ErrorSummary,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
+        p: p
+)
+
+
+@(  taxYear: TaxYear,
+    form: Form[_],
+    submitAction: Call,
+    backUrl: String,
+    isAgent: Boolean)(implicit messages: Messages,user: auth.MtdItUser[_])
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"optOut.confirmSingleYearOptOut.$key", args: _*)
+}
+
+@title = @{ getMessage("title") }
+
+@detailBlock = {
+    @p(id=Some("detail-text"))(content = Html(getMessage("detail.text", taxYear.startYear.toString, taxYear.endYear.toString)))
+}
+
+@insetBlock = {
+    @govukInsetText(InsetText(id=Some("warning-inset"),content = HtmlContent(getMessage("inset.text",taxYear.endYear.toString))))
+}
+
+@headingContent = {
+    <h1 id="heading" class="govuk-heading-l">
+        @title
+    </h1>
+}
+
+@formBlock = {
+
+    @formWithCSRF(action = submitAction, Symbol("id") -> "confirm-single-year-opt-out-form") {
+
+        @errorSummary(form = form)
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("form.title",taxYear.startYear.toString, taxYear.endYear.toString)),
+                    classes = "govuk-fieldset__legend--m"
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    id = Some("yes-response"),
+                    value = Some("yes"),
+                    content = Text(messages("radioForm.yes")),
+                    hint = Some(Hint(content = Text(getMessage("form.answer.one.hint"))))
+                ),
+                RadioItem(
+                    id = Some("no-response"),
+                    value = Some("no"),
+                    content = Text(messages("radioForm.no")),
+                    hint = Some(Hint(content = Text(getMessage("form.answer.two.hint"))))
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form(ConfirmOptOutSingleTaxYearForm.confirmOptOutField)))
+
+        @govukButton(Button(
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
+        ))
+    }
+
+}
+
+@mainTemplate(
+    pageTitle = title,
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial
+) {
+    @headingContent
+    @detailBlock
+    @insetBlock
+    @formBlock
+}
