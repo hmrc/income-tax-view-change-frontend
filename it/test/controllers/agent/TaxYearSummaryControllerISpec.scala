@@ -22,13 +22,13 @@ import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
@@ -37,7 +37,9 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
+import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponseWoMigration, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -47,6 +49,9 @@ import java.time.LocalDate
 class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 11, 29)
+
+  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
+
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -360,7 +365,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-            allObligations, codingOutEnabled = true, showForecastData = true)))
+            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -434,7 +439,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
             allObligations,
-            codingOutEnabled = true, showForecastData = true)))
+            codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -641,6 +646,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
     "MFA Debits" when {
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
+        disable(AdjustPaymentsOnAccount)
         if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
         stubAuthorisedAgentUser(authorised = true)
         setupMFADebitsTests()
@@ -696,7 +702,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
             auditDD,
-            allObligations, codingOutEnabled = true, showForecastData = true)))
+            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
 
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
@@ -732,8 +738,84 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         testMFADebits(false)
       }
     }
-  }
+    "Claim to adjust POA section" should {
+      "show" when {
+        "The user has amendable POAs for the given tax year and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+          stubAuthorisedAgentUser(authorised = true)
 
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = true))
+        }
+      }
+      "not show" when {
+        "The user has amendable POAs for the given tax year but the FS is Disabled" in {
+          disable(AdjustPaymentsOnAccount)
+          stubAuthorisedAgentUser(authorised = true)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+        "The user has no amendable POAs and the FS is Enabled" in {
+          enable(AdjustPaymentsOnAccount)
+          stubAuthorisedAgentUser(authorised = true)
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $getCurrentTaxYearEnd is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK, testEmptyFinancialDetailsModelJson)
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("tax-year-summary.heading"),
+            isElementVisibleById("adjust-poa-link")(expectedValue = false))
+        }
+      }
+    }
+  }
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {

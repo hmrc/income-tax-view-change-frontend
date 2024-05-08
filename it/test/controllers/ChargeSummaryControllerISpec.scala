@@ -435,6 +435,21 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         pageTitleIndividual(titleInternalServer, isErrorPage = true)
       )
     }
+
+    "When Original Amount value is missing from financial details / document details" in {
+
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
+
+      result should have(
+        httpStatus(INTERNAL_SERVER_ERROR),
+        pageTitleIndividual(titleInternalServer, isErrorPage = true)
+      )
+    }
   }
 
   "MFADebits feature on Charge Summary Page" should {

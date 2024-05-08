@@ -272,6 +272,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentsDue: WSResponse = get("/what-you-owe?origin=PTA")
 
+    def getAdjustPaymentsOnAccount: WSResponse = get(s"/adjust-poa/start")
+
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
     def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
@@ -287,6 +289,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCreditsSummary(calendarYear: String): WSResponse = get(s"/credits-from-hmrc/$calendarYear")
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
+
+    def getPOAWhatYouNeedToKnow: WSResponse = get("/adjust-poa/what-you-need-to-know")
 
     def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
 

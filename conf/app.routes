@@ -151,3 +151,4 @@ GET          /agents/how-to-claim-refund-external                         contro
 
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
+->          /                                                             claimToAdjustPOA.Routes

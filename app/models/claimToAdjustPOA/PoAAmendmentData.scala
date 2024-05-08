@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.paymentOnAccount
+package models.claimToAdjustPOA
 
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Json, OFormat, __}
