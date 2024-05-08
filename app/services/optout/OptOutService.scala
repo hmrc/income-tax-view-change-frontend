@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 object OptOutService {
-  val optOutOptions = new OptOutOptionsTacticalSolution
+  val optOutOptions = new OptOutOptionsSingleYear
   implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
     def toF: Future[Boolean] = opl
       .map(v => Future.successful(v))
