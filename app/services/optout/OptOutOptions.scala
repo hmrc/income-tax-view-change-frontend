@@ -52,6 +52,6 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   def optOutForSingleYear[T](function: (OptOutData, OptOut) => T): Option[T] = {
     if (countVoluntaryOptOutYears == 1) Some(function(this, availableOptOutYears.head)) else
       None
-    }
+  }
 }
 
