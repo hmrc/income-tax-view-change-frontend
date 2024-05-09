@@ -38,7 +38,7 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
   private val log = Logger("application")
 
 
-  def getUrl(taxableEntityId: String): String =
+  def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
 
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
@@ -47,29 +47,18 @@ class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendApp
     val body = OptOutUpdateRequest(taxYear = taxYear.toString)
 
     http.PUT[OptOutUpdateRequest, HttpResponse](
-      getUrl(taxableEntityId), body, Seq[(String, String)]()
+      buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
+      val correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
-        case Status.NO_CONTENT =>
-          response.json.validate[OptOutUpdateResponseSuccess].fold(
-          invalid => {
-            log.error(s"Json validation error parsing update income source response, error $invalid")
-            OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
-          },
-          valid => {
-            valid.copy(
-              statusCode = response.status,
-              correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
-            )
-          }
-        )
+        case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
               log.error(s"Json validation error parsing update income source response, error $invalid")
-              OptOutUpdateResponseFailure(response.status, List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response")))
+              OptOutUpdateResponseFailure.defaultFailure(correlationId)
             },
-            valid => valid
+            valid => valid.copy(correlationId = correlationId, statusCode = response.status)
           )
       }
     }

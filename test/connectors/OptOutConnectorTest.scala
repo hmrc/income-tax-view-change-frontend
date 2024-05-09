@@ -47,7 +47,6 @@ import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 
 class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
@@ -76,7 +75,7 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         val apiResponse = OptOutUpdateResponseSuccess("123", NO_CONTENT)
         val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
-        setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
@@ -93,16 +92,16 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
-
+        val correlationId = "123"
         val apiRequest = OptOutUpdateRequest(taxYear.toString)
-        val apiFailResponse = OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
+        val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
-        setupHttpClientMock[OptOutUpdateRequest](connector.getUrl(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(BAD_REQUEST, errorItems)
+        result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
 
       }
     }
