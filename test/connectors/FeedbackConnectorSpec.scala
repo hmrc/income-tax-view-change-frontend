@@ -52,13 +52,13 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
   val successResponse = HttpResponse(status = Status.OK, json = feedbackFormData, headers = Map.empty)
   val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "RESPONSE status: BAD_REQUEST")
 
-  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(mockHttpGet, appConfig, mockItvcHeaderCarrierForPartialsConverter)
+  val TestFeedbackConnector: FeedbackConnector = new FeedbackConnector(httpClientMock, appConfig, mockItvcHeaderCarrierForPartialsConverter)
 
   "FeedbackConnector" should {
     "return OK response" when {
       "when form is successful" in {
 
-        when(mockHttpGet.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(successResponse))
+        when(httpClientMock.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(successResponse))
 
         when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
           .thenReturn(HeaderCarrierForPartials(headerCarrier))
@@ -75,7 +75,7 @@ class FeedbackConnectorSpec extends TestSupport with MockHttp with MockSessionSe
       "return a BAD_REQUEST response" when {
         "when form unsuccessfully completed" in {
 
-          when(mockHttpGet.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(badResponse))
+          when(httpClientMock.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(badResponse))
 
           when(mockItvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest)
             .thenReturn(HeaderCarrierForPartials(headerCarrier))

@@ -33,49 +33,48 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockHttp extends UnitSpec with BeforeAndAfterEach {
 
-  //todo: refactor: rename mockHttpGet to mockHttp
-  val mockHttpGet: HttpClient = mock(classOf[HttpClient])
+  val httpClientMock: HttpClient = mock(classOf[HttpClient])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockHttpGet)
+    reset(httpClientMock)
   }
 
   def setupMockHttpPost(url: String, body: JsValue)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.POST[JsValue, HttpResponse](matches(url), ArgumentMatchers.eq(body), ArgumentMatchers.any())
+    when(httpClientMock.POST[JsValue, HttpResponse](matches(url), ArgumentMatchers.eq(body), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
   def setupMockHttpGet(url: String)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
+    when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
   def setupMockHttpPutWithHeaderCarrier[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit =
-    when(mockHttpGet.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
+    when(httpClientMock.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
   def setupMockHttpPutFailed[R](url: String, headers: Seq[(String, String)] = Seq())(body: R): Unit =
-    when(mockHttpGet.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
+    when(httpClientMock.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("error")))
 
   def setupAgentMockHttpGet(url: Option[String] = None)(status: Int, response: JsValue): Unit = {
     lazy val urlMatcher = url.fold(ArgumentMatchers.any[String]())(x => matches(x))
-    when(mockHttpGet.GET[HttpResponse](urlMatcher)
+    when(httpClientMock.GET[HttpResponse](urlMatcher)
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(
       status = status, json = response, headers = Map.empty)))
   }
 
   def setupMockHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.eq(params), ArgumentMatchers.any())
+    when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.eq(params), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
   def setupMockFailedHttpGet(url: String): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
+    when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 
   def setupMockFailedHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.eq(params), ArgumentMatchers.any())
+    when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.eq(params), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 
   def setupMockHttpGetPartial(url: String)(response: HtmlPartial): OngoingStubbing[Future[HtmlPartial]] =
-    when(mockHttpGet.GET[HtmlPartial](matches(url))
+    when(httpClientMock.GET[HtmlPartial](matches(url))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 }

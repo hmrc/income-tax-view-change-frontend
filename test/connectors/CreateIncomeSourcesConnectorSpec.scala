@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
 
-  object UnderTestConnector extends CreateIncomeSourceConnector(mockHttpGet, appConfig)
+  object UnderTestConnector extends CreateIncomeSourceConnector(httpClientMock, appConfig)
 
   "call create business" should {
 

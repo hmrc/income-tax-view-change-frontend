@@ -56,7 +56,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAu
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new CalculationListConnector(mockHttpGet, getAppConfig())
+    val connector = new CalculationListConnector(httpClientMock, getAppConfig())
   }
 
   "getLegacyCalculationListUrl" should {
