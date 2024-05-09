@@ -18,7 +18,6 @@ package models.itsaStatus
 
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import play.api.libs.json.{Format, Json, Reads, Writes}
-import play.api.libs.json.{Format, Json, Reads}
 
 case class StatusDetail(submittedOn: String,
                         status: ITSAStatus,

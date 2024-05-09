@@ -76,8 +76,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-        val finalised: Option[Boolean] = Some(false)
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
         val response = service.displayOptOutMessage()
 
@@ -113,8 +112,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-        val finalised: Option[Boolean] = Some(true)
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
 
         val response = service.displayOptOutMessage()
 
@@ -149,8 +147,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-        val finalised: Option[Boolean] = Some(false)
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
         val response = service.displayOptOutMessage()
 
@@ -188,8 +185,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-        val finalised: Option[Boolean] = Some(false)
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
         val response = service.displayOptOutMessage()
 
@@ -220,8 +216,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-        val finalised: Option[Boolean] = Some(false)
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
         val response = service.displayOptOutMessage()
 
@@ -256,7 +251,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         )
         when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
+        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
         val response = service.displayOptOutMessage()
 
@@ -275,43 +270,5 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         }
       }
     }
-
-    "PY is V, CY is U, NY is U and finalised is missing from api call response" should {
-
-      "assume finalised as false and offer PY as OptOut Option" in {
-
-        val currentYear = 2024
-        val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-        )
-        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-        val finalised: Option[Boolean] = None
-        when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
-
-        val response = service.displayOptOutMessage()
-
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
-                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
-              case None => fail("no oo")
-            }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
-      }
-    }
-
   }
 }

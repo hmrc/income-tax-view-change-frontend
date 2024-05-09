@@ -19,8 +19,7 @@ package services.optout
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
-import services.optout.OptOutService.BooleanOptionToFuture
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import OptOutService._
 import play.api.Logger
@@ -32,11 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object OptOutService {
   val optOutOptions = new OptOutOptionsSingleYear
-  implicit class BooleanOptionToFuture(opl: Option[Boolean]) {
-    def toF: Future[Boolean] = opl
-      .map(v => Future.successful(v))
-      .getOrElse(Future.successful(false))
-  }
   implicit class TypeToFuture[T](t: T) {
     def toF: Future[T] = Future.successful(t)
   }
@@ -73,14 +67,13 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       currentYear <- dateService.getCurrentTaxYear.toF
       previousYear <- currentYear.previousYear.toF
       nextYear <- currentYear.nextYear.toF
-      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear.endYear)
+      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      finalisedStatusBool <- finalisedStatus.toF
-      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(finalisedStatusBool,
-        TaxYearITSAStatus(previousYear, statusMap(previousYear).status),
-        TaxYearITSAStatus(currentYear, statusMap(currentYear).status),
-        TaxYearITSAStatus(nextYear, statusMap(nextYear).status)
-      ).toF
+      previousYearOptOut <- PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus).toF
+      currentTaxYearOptOut <- CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear).toF
+      nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
+      optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
+      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
     } yield outcomeOptionsResponse
 
     processSteps recover {
