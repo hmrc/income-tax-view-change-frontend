@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -59,6 +60,10 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
       case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
+  }
+
+  def isTaxYearCrystallised(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    isTaxYearCrystallised(taxYear.endYear).map(_.getOrElse(false))
   }
 
   def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[Boolean]] = {
