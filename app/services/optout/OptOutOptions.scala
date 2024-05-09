@@ -21,8 +21,6 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
 import models.optOut.OptOutOneYearViewModel
 
 trait OptOutOptions {
-  def getOptOutOptionsForSingleYear[T](optOutData: OptOutData, function: (OptOutData, OptOut) => T): Option[T]
-
   def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel
 }
 
@@ -56,9 +54,6 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
 
   lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
 
-}
-
-class OptOutOptionsSingleYear extends OptOutOptions {
   def getOptOutOptionsForSingleYear[T](optOutData: OptOutData, function: (OptOutData, OptOut) => T): Option[T] = {
 
     if (optOutData.countVoluntaryOptOutYears == 1) {
@@ -67,6 +62,9 @@ class OptOutOptionsSingleYear extends OptOutOptions {
       None
     }
   }
+}
+
+class OptOutOptionsSingleYear extends OptOutOptions {
 
   def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
     OptOutOneYearViewModel(optOutYear.taxYear)
