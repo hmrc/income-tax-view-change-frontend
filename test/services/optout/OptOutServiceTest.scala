@@ -79,7 +79,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(false)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -116,7 +116,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(true)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -152,7 +152,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(false)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -191,7 +191,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(false)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -223,7 +223,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = Some(false)
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -258,7 +258,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 
@@ -294,7 +294,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val finalised: Option[Boolean] = None
         when(calculationListService.isTaxYearCrystallised(previousYear.endYear)).thenReturn(Future.successful(finalised))
 
-        val response = service.displayOptOutMessage()
+        val response = service.getOneYearOptOutViewModel()
 
         Await.result(response, 10.seconds)
 

@@ -16,11 +16,14 @@
 
 package controllers.optOut
 
-import config.ItvcErrorHandler
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.services.MockOptOutService
+import models.incomeSourceDetails.TaxYear
+import models.optOut.OptOutOneYearViewModel
 import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -30,68 +33,122 @@ import views.html.optOut.ConfirmSingleYearOptOut
 import scala.concurrent.Future
 
 class SingleYearOptOutConfirmationControllerSpec extends TestSupport
-  with MockAuthenticationPredicate {
+  with MockAuthenticationPredicate with MockOptOutService {
 
   object TestSingleYearOptOutConfirmationController extends SingleYearOptOutConfirmationController(
     auth = testAuthenticator,
-    view = app.injector.instanceOf[ConfirmSingleYearOptOut])(
+    view = app.injector.instanceOf[ConfirmSingleYearOptOut],
+    optOutService = mockOptOutService)(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = mockItvcErrorHandler,
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     authorisedFunctions = mockAuthService) {
   }
 
   def tests(isAgent: Boolean): Unit = {
-    val request = if (isAgent) fakeRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+    val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
     val previousPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val taxYear = TaxYear.forYearEnd(2024)
+    val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear)))
+    val noEligibleTaxYearResponse = Future.successful(None)
+    val failedResponse = Future.failed(new Exception("some error"))
+
     "show method is invoked" should {
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(request)
+        mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
+
+        val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
         status(result) shouldBe Status.OK
+      }
+
+      s"return result with $INTERNAL_SERVER_ERROR status" when {
+        "there is no tax year eligible for opt out" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(noEligibleTaxYearResponse)
+
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "opt out service fails" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(failedResponse)
+
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
     }
 
-    "submit method is invoked" when {
-      "Yes response is submitted" should {
-        s"return result with $SEE_OTHER status with redirect to ${"checkpoint page"}" in {
+    "submit method is invoked" should {
+      s"return result with $SEE_OTHER status with redirect to ${controllers.optOut.routes.OptOutCheckpointController.show.url}" when {
+        "Yes response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
+
           val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
-            request.withFormUrlEncodedBody(
+            requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe controllers.optOut.routes.OptOutCheckpointController.show.url
+          redirectLocation(result) shouldBe Some(controllers.optOut.routes.OptOutCheckpointController.show.url)
         }
       }
-      "No response is submitted" should {
-        s"return result with $SEE_OTHER status with redirect to ${"Next update page"}" in {
+      s"return result with $SEE_OTHER status with redirect to $previousPage" when {
+        "No response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
+
           val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
-            request.withFormUrlEncodedBody(
+            requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe previousPage
+          redirectLocation(result) shouldBe Some(previousPage)
         }
       }
-      "invalid response is submitted" should {
-        s"return result with $BAD_REQUEST status" in {
+      s"return result with $BAD_REQUEST status" when {
+        "invalid response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
+
           val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
-            request.withFormUrlEncodedBody(
+            requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+      s"return result with $INTERNAL_SERVER_ERROR status" when {
+        "there is no tax year eligible for opt out" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(noEligibleTaxYearResponse)
+
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestPOST)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "opt out service fails" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockGetOneYearOptOutViewModel(failedResponse)
+
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestPOST)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
     }

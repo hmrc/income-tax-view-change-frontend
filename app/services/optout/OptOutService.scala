@@ -20,10 +20,9 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
-import services.optout.OptOutService.BooleanOptionToFuture
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
-import OptOutService._
 import play.api.Logger
+import services.optout.OptOutService.{BooleanOptionToFuture, _}
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -67,7 +66,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield optOutChecks
   }
 
-  def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
+  def getOneYearOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
     val processSteps = for {
       currentYear <- dateService.getCurrentTaxYear.toF

@@ -22,8 +22,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import models.incomeSourceDetails.TaxYear
+import models.optOut.OptOutOneYearViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.optout.OptOutService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.optOut.ConfirmSingleYearOptOut
@@ -32,7 +35,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredicate,
-                                                       view: ConfirmSingleYearOptOut)
+                                                       view: ConfirmSingleYearOptOut,
+                                                       optOutService: OptOutService)
                                                       (implicit val appConfig: FrontendAppConfig,
                                                        val ec: ExecutionContext,
                                                        val authorisedFunctions: AuthorisedFunctions,
@@ -48,45 +52,67 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
   private val backUrl = previousPage
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => handleRequest(isAgent)
+    implicit user => withRecover(isAgent)(handleRequest(isAgent))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => handleSubmitRequest(isAgent)
+    implicit user => withRecover(isAgent)(handleSubmitRequest(isAgent))
   }
 
-  private def handleRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    val taxYear = TaxYear.forYearEnd(2024)
-    val form = ConfirmOptOutSingleTaxYearForm(taxYear)
+  private def handleRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] =
+    withOptOutQualifiedTaxYear(isAgent) {
+      taxYear =>
 
-    Future(Ok(view(
-      taxYear = taxYear,
-      form = form,
-      submitAction = submitAction(isAgent),
-      isAgent = isAgent,
-      backUrl = backUrl(isAgent).url)))
-  }
-
-  private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-
-    val taxYear = TaxYear.forYearEnd(2024)
-
-    ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
-      formWithError => {
-        Future.successful(BadRequest(view(
+        Ok(view(
           taxYear = taxYear,
-          form = formWithError,
+          form = ConfirmOptOutSingleTaxYearForm(taxYear),
           submitAction = submitAction(isAgent),
-          backUrl = backUrl(isAgent).url,
-          isAgent = isAgent
-        )))
-      },
-      {
-        case ConfirmOptOutSingleTaxYearForm(Some(true), _) => Future.successful(Redirect(nextPage))
-        case ConfirmOptOutSingleTaxYearForm(Some(false), _) => Future.successful(Redirect(previousPage(isAgent)))
-        case _ => Future.successful(errorHandler(isAgent).showInternalServerError())
-      }
-    )
+          isAgent = isAgent,
+          backUrl = backUrl(isAgent).url))
+
+    }
+
+  private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] =
+    withOptOutQualifiedTaxYear(isAgent) {
+      taxYear =>
+
+        ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
+          formWithError => {
+            BadRequest(view(
+              taxYear = taxYear,
+              form = formWithError,
+              submitAction = submitAction(isAgent),
+              backUrl = backUrl(isAgent).url,
+              isAgent = isAgent
+            ))
+          },
+          {
+            case ConfirmOptOutSingleTaxYearForm(Some(true), _) => Redirect(nextPage)
+            case ConfirmOptOutSingleTaxYearForm(Some(false), _) => Redirect(previousPage(isAgent))
+            case _ => errorHandler(isAgent).showInternalServerError()
+          })
+
+    }
+
+  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    code.recover {
+      case ex: Exception =>
+        Logger("application").error(s"request failed :: $ex")
+        errorHandler(isAgent).showInternalServerError()
+    }
   }
+
+  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(code: TaxYear => Result)
+                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    optOutService.getOneYearOptOutViewModel().map {
+      case Some(OptOutOneYearViewModel(taxYear)) => code(taxYear)
+      case None =>
+        Logger("application").error("No qualified tax year available for opt out")
+        errorHandler(isAgent).showInternalServerError()
+    }
+
+  }
+
 
 }
