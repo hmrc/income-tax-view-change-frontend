@@ -30,7 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 object OptOutService {
-  private val optOutOptions = new OptOutOptionsSingleYear
   implicit class TypeToFuture[T](t: T) {
     def toF: Future[T] = Future.successful(t)
   }
@@ -61,11 +60,15 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield optOutChecks
   }
 
+  private def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
+    OptOutOneYearViewModel(optOutYear.taxYear)
+  }
+
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
     val processSteps = for {
       optOutData <- setupOptOutData()
-      outcomeOptionsResponse <- optOutData.getOptOutOptionsForSingleYear(optOutOptions.nextUpdatesPageOneYear).toF
+      outcomeOptionsResponse <- optOutData.getOptOutOptionsForSingleYear(nextUpdatesPageOneYear).toF
     } yield outcomeOptionsResponse
 
     processSteps recover {

@@ -18,11 +18,6 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
-import models.optOut.OptOutOneYearViewModel
-
-trait OptOutOptions {
-  def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel
-}
 
 trait OptOut {
   def canOptOut: Boolean
@@ -61,13 +56,6 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
     } else {
       None
     }
-  }
-}
-
-class OptOutOptionsSingleYear extends OptOutOptions {
-
-  def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
-    OptOutOneYearViewModel(optOutYear.taxYear)
   }
 }
 
