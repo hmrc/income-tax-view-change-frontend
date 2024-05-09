@@ -17,20 +17,27 @@
 package models.optOut
 
 import play.api.libs.json.{Format, Json}
-import play.mvc.Http.Status.NO_CONTENT
+import play.mvc.Http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 
 object OptOutUpdateRequestModel {
 
   private val defaultUpdateReason: Int = 10
-  private val successfulStatusCode: Int = NO_CONTENT
 
   case class OptOutUpdateRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
   sealed trait OptOutUpdateResponse {
     val statusCode: Int
   }
-  case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = successfulStatusCode) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
   case class OptOutUpdateResponseFailure(correlationId: String, statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
+
+  object OptOutUpdateResponseFailure {
+    def defaultFailure(correlationId: String = "unknown"): OptOutUpdateResponseFailure =
+      OptOutUpdateResponseFailure(correlationId,
+        INTERNAL_SERVER_ERROR,
+        List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response"))
+      )
+  }
 
   implicit val formatSuccess: Format[OptOutUpdateResponseSuccess] = Json.format[OptOutUpdateResponseSuccess]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]
