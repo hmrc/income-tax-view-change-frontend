@@ -54,6 +54,8 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 
     override def getCurrentDate: LocalDate = currentDate
 
+    override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(currentDate.getYear)
+
     override def getCurrentTaxYearEnd: Int = currentDate.getYear
 
     override def getCurrentTaxYearStart: LocalDate = currentDate

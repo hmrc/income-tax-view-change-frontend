@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges._
 import org.jsoup.Jsoup
@@ -87,10 +87,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
-  val ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(
-    adjustPaymentsOnAccountFSEnabled = false,
-    poaTaxYear = None
-  )
+
+  def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
+    if (isFSEnabled) {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = true,
+        poaTaxYear = Some(TaxYear(
+          startYear = 2024,
+          endYear = 2025)
+        )
+      )
+    } else {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = false,
+        poaTaxYear = None)
+    }
+  }
+
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
 
@@ -106,7 +119,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   whatYouOweCreditAmountEnabled: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
-                  MFADebitsEnabled: Boolean = false
+                  MFADebitsEnabled: Boolean = false,
+                  adjustPaymentsOnAccountFSEnabled: Boolean = false
                  ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -123,7 +137,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val html: HtmlFormat.Appendable = whatYouOweView(
       dateService.getCurrentDate,
       creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true, claimToAdjustViewModel = ctaViewModel)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true, claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled))(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -146,7 +160,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        MFADebitsEnabled: Boolean = false,
                        whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
-                       hasLpiWithDunningLock: Boolean = false) {
+                       hasLpiWithDunningLock: Boolean = false,
+                       adjustPaymentsOnAccountFSEnabled: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       nino = "AA111111A",
@@ -181,7 +196,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
-      claimToAdjustViewModel = ctaViewModel
+      claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
     )(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -248,14 +263,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def whatYouOweDataWithOverdueLPIDunningLock(latePaymentInterest: Option[BigDecimal],
-                                               lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+                                              lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpiDunningLock(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueLPIDunningLockZero(latePaymentInterest: Option[BigDecimal],
-                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+                                                  lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest, lpiWithDunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
@@ -379,6 +394,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+
+  def claimToAdjustLink(isAgent: Boolean): String = {
+    if (isAgent) {
+      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+    } else {
+      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    }
+  }
 
   "individual" when {
     "The What you owe view with financial details model" when {
@@ -1058,6 +1081,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
+    "AdjustPaymentsOnAccount is enabled" should {
+      "display the claim to adjust payments on account link" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
+        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
+      }
+    }
+
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
@@ -1223,6 +1253,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
+      }
+    }
+
+    "AdjustPaymentsOnAccount is enabled" should {
+      "display the claim to adjust payments on account link" in new AgentTestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
+        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
       }
     }
   }

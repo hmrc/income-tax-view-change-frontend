@@ -26,6 +26,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
+import models.incomeSourceDetails.TaxYear
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -71,6 +72,8 @@ class TestDateService extends DateServiceInterface {
   override def getCurrentTaxYearEnd: Int = 2023
 
   override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2022, 4, 6)
+
+  override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
 
   override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
@@ -269,6 +272,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentsDue: WSResponse = get("/what-you-owe?origin=PTA")
 
+    def getAdjustPaymentsOnAccount: WSResponse = get(s"/adjust-poa/start")
+
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
     def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
@@ -284,6 +289,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCreditsSummary(calendarYear: String): WSResponse = get(s"/credits-from-hmrc/$calendarYear")
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
+
+    def getPOAWhatYouNeedToKnow: WSResponse = get("/adjust-poa/what-you-need-to-know")
 
     def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
 
@@ -606,6 +613,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getDeductionsSummary(year: String): WSResponse = get(s"/$year/allowances-and-deductions")
 
     def getNextUpdates: WSResponse = get(s"/next-updates")
+
+    def getOptOutCheckpoint: WSResponse =
+      get("optout/confirm-opt-out-from-quarterly-reporting/checkpoint")
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 

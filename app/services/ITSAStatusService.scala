@@ -52,7 +52,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
 
   def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val yearEnd = dateService.getCurrentTaxYearEnd
-    val taxYear = TaxYear(yearEnd)
+    val taxYear = TaxYear.forYearEnd(yearEnd)
 
     getITSAStatusDetail(taxYear, futureYears = false, history = false)
       .map(statusDetail =>
@@ -60,15 +60,20 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
 
-  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_],
+                                                          hc: HeaderCarrier,
+                                                          ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
     getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
-      //item.taxYear has string format as 2021-22
-      _.map(item => TaxYear(item.taxYear.split("-")(0).toInt + 1) -> getStatusDetail(item)).flatMap {
+      _.map(responseModel => parseTaxYear(responseModel.taxYear) -> getStatusDetail(responseModel)).flatMap {
         case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
         case _ => None
       }.toMap
     }
   }
 
+  private def parseTaxYear(taxYear: String) = {
+    //item.taxYear has string format as 2021-22
+    TaxYear.forYearEnd(taxYear.split("-")(0).toInt + 1)
+  }
 }
 

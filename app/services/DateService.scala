@@ -19,6 +19,7 @@ package services
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
@@ -83,12 +84,18 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     }
   }
 
+  def getCurrentTaxYear: TaxYear = {
+    val yearEnd = getCurrentTaxYearEnd
+    TaxYear.forYearEnd(yearEnd)
+  }
+
 }
 
 @ImplementedBy(classOf[DateService])
 trait DateServiceInterface {
   def getCurrentDate: LocalDate
 
+  def getCurrentTaxYear: TaxYear
   def getCurrentTaxYearEnd: Int
 
   def getCurrentTaxYearStart: LocalDate

@@ -374,6 +374,9 @@ tax-year-summary.agent.message.C559105                             = the amount 
 tax-year-summary.agent.message.C559113                             = for your client’s foreign property, they need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
 
+tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
+tax-year-summary.adjust-poa                                        = Adjust payments on account
+
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -784,6 +787,8 @@ nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
 nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
+nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
@@ -887,6 +892,7 @@ whatYouOwe.moneyOnAccount-2                                        = in your acc
 whatYouOwe.moneyOnAccount-3                                        = claim a refund
 whatYouOwe.moneyOnAccount-agent                                    = Money in your client’s account
 whatYouOwe.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
+whatYouOwe.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -1844,10 +1850,33 @@ manageBusinesses.check-answers.reporting.annually                        = Annua
 manageBusinesses.check-answers.confirm                                   = Confirm and continue
 manageBusinesses.check-answers.change                                    = Change
 
+#######################################################################################################################
+## Claim to Adjust POA - Add ##
+#######################################################################################################################
+
+# what you need to know
+claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	What you need to know
+claimToAdjustPoa.whatYouNeedToKnow.h1                                   = 	What you need to know
+claimToAdjustPoa.whatYouNeedToKnow.caption                              =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.whatYouNeedToKnow.p1                                   =   You can adjust your payments on account at any point before submitting your tax return for {0} to {1}, and no later than
+claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
+claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
+claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
+claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   If your next tax bill is lower than you’d expected and you’ve overpaid through your payments on account, we’ll credit your account.
+claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Interest charges
+claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   If you reduce your payments on account by too much, and your final tax bill shows you owe more tax than you’ve paid through your payments on account, we’ll add the difference to your account as an overdue charge.
+claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Like with other late payments, HMRC will charge you interest on that amount, from the date each payment on account was due, until it is paid.
+claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   To avoid paying interest, you can increase your payments on account again, up to the initial amount created by HMRC, before each payment is due.
+claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Continue
+claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
+claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
+claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
+
+
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
-paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions
+paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
 paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.inset-text                          = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.
@@ -1859,6 +1888,12 @@ paymentOnAccount.p3                                  = Both payments on account 
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 
+# opt out confirm
+optout.confirmOptOut.heading            = Confirm and opt out for the 2022 to 2023 tax year
+optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.cancel             = Cancel
+
 optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
 optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out and report annually for the {0} to {1} tax year.
 optOut.confirmSingleYearOptOut.inset.text                   = From 6 April {0}, you’ll be required to send quarterly updates again through software.
@@ -1866,4 +1901,3 @@ optOut.confirmSingleYearOptOut.form.title                   = Do you still want 
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
-

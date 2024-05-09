@@ -20,8 +20,10 @@ import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import config.featureswitch.OptOut
 import helpers.ComponentSpecBase
+import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
@@ -260,12 +262,77 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
     }
 
+    "one year opt-out scenarios" when {
+
+      "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
+        enable(OptOut)
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#optout-message")(expectedValue = "You are currently reporting quarterly on a " +
+            "voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and " +
+            "report annually instead.")
+        )
+
+      }
+
+      "don't show opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as NoStatus" in {
+        enable(OptOut)
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.NoStatus)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyNextUpdatesCall(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#optout-message")(expectedValue = "")
+        )
+      }
+
+    }
+
     "show Internal Server Error page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           enable(OptOut)
 
-          val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd)
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
 
 

@@ -17,9 +17,9 @@
 package models.incomeSourceDetails
 
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 
-class TaxYearModelSpec extends UnitSpec {
+class TaxYearModelSpec extends UnitSpec with TestSupport {
 
   "currentTaxYearMinusOne method" when {
     "invoked on a TaxYear object" should {
@@ -135,6 +135,31 @@ class TaxYearModelSpec extends UnitSpec {
 
         result.startYear shouldBe 2023
         result shouldBe TaxYear(2023, 2024)
+      }
+    }
+  }
+
+  "isCurrentOrFutureTaxYear method" should {
+    "return true" when {
+      "the TaxYear object is the current tax year" in {
+        val taxYear: TaxYear = TaxYear(2023, 2024)
+        val result = taxYear.isFutureTaxYear
+
+        result shouldBe true
+      }
+      "the TaxYear object is in a future tax year" in {
+        val taxYear: TaxYear = TaxYear(2024, 2025)
+        val result = taxYear.isFutureTaxYear
+
+        result shouldBe true
+      }
+    }
+    "return false" when {
+      "the TaxYear object is in a past tax year" in {
+        val taxYear: TaxYear = TaxYear(2022, 2023)
+        val result = taxYear.isFutureTaxYear
+
+        result shouldBe false
       }
     }
   }

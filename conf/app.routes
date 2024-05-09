@@ -17,6 +17,20 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
+GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
+
+#OptOut
+GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show()
+GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.showAgent()
+
+GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
+GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
+
+GET         /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = false)
+GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = true)
+POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = false)
+POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = true)
+
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)
@@ -147,19 +161,6 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-# amend POAs
-
-GET         /adjust-poa/start                                             controllers.AmendablePOAController.show(isAgent: Boolean = false)
-GET         /agents/adjust-poa/start                                      controllers.AmendablePOAController.show(isAgent: Boolean = true)
-
-GET         /adjust-poa/what-you-need-to-know                             controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
-GET         /agents/adjust-poa/what-you-need-to-know                      controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = true)
-
-#OptOut
-GET         /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = false)
-GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = true)
-POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = false)
-POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = true)
-
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
+->          /                                                             claimToAdjustPOA.Routes
