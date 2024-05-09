@@ -41,11 +41,11 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
                                                        override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val backUrl = ""
   private val nextPage = controllers.optOut.routes.OptOutCheckpointController.show
   private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
   private val previousPage = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  private val backUrl = previousPage
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user => handleRequest(isAgent)
@@ -64,7 +64,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
       form = form,
       submitAction = submitAction(isAgent),
       isAgent = isAgent,
-      backUrl = backUrl)))
+      backUrl = backUrl(isAgent).url)))
   }
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
@@ -77,7 +77,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
           taxYear = taxYear,
           form = formWithError,
           submitAction = submitAction(isAgent),
-          backUrl = backUrl,
+          backUrl = backUrl(isAgent).url,
           isAgent = isAgent
         )))
       },
