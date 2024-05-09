@@ -58,8 +58,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
           controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
         }
       } else {
-        if (isAgent) controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url else
-          controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
       }
     }
 
@@ -128,10 +127,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new TestSetup(false, false, false) {
-        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
-      }
       "have a form with the correct attributes" in new TestSetup(false, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
@@ -175,11 +170,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new TestSetup(false, false, true) {
-
-        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
-      }
       "have a form with the correct attributes" in new TestSetup(false, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
@@ -220,10 +210,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
       "have the correct heading" in new TestSetup(true, false, false) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
-      }
-      "render the back link with the correct URL" in new TestSetup(true, false, false) {
-        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
       "have a form with the correct attributes" in new TestSetup(true, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
@@ -267,10 +253,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
       "have the correct heading" in new TestSetup(true, false, true) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
-      }
-      "render the back link with the correct URL" in new TestSetup(true, false, true) {
-        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
       "have a form with the correct attributes" in new TestSetup(true, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
