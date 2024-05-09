@@ -29,6 +29,8 @@ GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       contro
 POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = false)
 POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = true)
 
+GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
+
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)

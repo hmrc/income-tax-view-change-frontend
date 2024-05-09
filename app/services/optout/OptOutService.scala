@@ -20,11 +20,8 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
-import OptOutService._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
 import play.api.Logger
-import services.optout.OptOutService.{BooleanOptionToFuture, _}
+import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
