@@ -58,7 +58,11 @@
 		@p(){
 			<span id="optout-message">
 				@messages("nextUpdates.optOutOneYear-1", oneYearOptOut.startYear, oneYearOptOut.endYear)
-				@link(link = controllers.optOut.routes.OptOutCheckpointController.show.url, messageKey = "nextUpdates.optOutOneYear-2")
+				@if(isAgent){
+					@link(link = controllers.optOut.routes.ConfirmOptOutController.showAgent().url, messageKey = "nextUpdates.optOutOneYear-2")
+				}else {
+					@link(link = controllers.optOut.routes.ConfirmOptOutController.show().url, messageKey = "nextUpdates.optOutOneYear-2")
+				}
 			</span>
 		}
 	}
