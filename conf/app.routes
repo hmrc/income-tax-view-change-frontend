@@ -155,5 +155,11 @@ GET         /agents/adjust-poa/start                                      contro
 GET         /adjust-poa/what-you-need-to-know                             controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = false)
 GET         /agents/adjust-poa/what-you-need-to-know                      controllers.WhatYouNeedToKnowController.show(isAgent: Boolean = true)
 
+#OptOut
+GET         /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = false)
+GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = true)
+POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = false)
+POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = true)
+
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes

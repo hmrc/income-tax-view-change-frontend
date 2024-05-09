@@ -16,17 +16,24 @@
 
 package controllers.optOut
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import forms.optOut.ConfirmOptOutSingleTaxYearForm
+import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.AuthenticatorPredicate
+import views.html.optOut.ConfirmSingleYearOptOut
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class SingleYearOptOutConfirmationController @Inject()(implicit val appConfig: FrontendAppConfig,
+class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredicate,
+                                                       view: ConfirmSingleYearOptOut)
+                                                      (implicit val appConfig: FrontendAppConfig,
                                                        val ec: ExecutionContext,
                                                        val authorisedFunctions: AuthorisedFunctions,
                                                        val itvcErrorHandler: ItvcErrorHandler,
@@ -34,8 +41,52 @@ class SingleYearOptOutConfirmationController @Inject()(implicit val appConfig: F
                                                        override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(isAgent: Boolean): Action[AnyContent] = {
-    Action(Ok(""))
+  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
+  private val backUrl = ""
+  private val previousPage = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+  private val nextPage = controllers.routes.HomeController.show()
+  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user => handleRequest(isAgent)
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user => handleSubmitRequest(isAgent)
+  }
+
+  private def handleRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    val taxYear = TaxYear(2024)
+    val form = ConfirmOptOutSingleTaxYearForm(taxYear)
+
+    Future(Ok(view(
+      taxYear = taxYear,
+      form = form,
+      submitAction = submitAction(isAgent),
+      isAgent = isAgent,
+      backUrl = backUrl)))
+  }
+
+  private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    val taxYear = TaxYear(2024)
+
+    ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
+      formWithError => {
+        Future.successful(BadRequest(view(
+          taxYear = taxYear,
+          form = formWithError,
+          submitAction = submitAction(isAgent),
+          backUrl = backUrl,
+          isAgent = isAgent
+        )))
+      },
+      {
+        case ConfirmOptOutSingleTaxYearForm(Some(true), _) => Future.successful(Redirect(nextPage))
+        case ConfirmOptOutSingleTaxYearForm(Some(false), _) => Future.successful(Redirect(previousPage(isAgent)))
+        case _ => Future.successful(errorHandler(isAgent).showInternalServerError())
+      }
+    )
   }
 
 }

@@ -17,19 +17,24 @@
 package controllers.optOut
 
 import config.ItvcErrorHandler
+import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import views.html.optOut.ConfirmSingleYearOptOut
 
 import scala.concurrent.Future
 
 class SingleYearOptOutConfirmationControllerSpec extends TestSupport
   with MockAuthenticationPredicate {
 
-  object TestSingleYearOptOutConfirmationController extends SingleYearOptOutConfirmationController()(
+  object TestSingleYearOptOutConfirmationController extends SingleYearOptOutConfirmationController(
+    auth = testAuthenticator,
+    view = app.injector.instanceOf[ConfirmSingleYearOptOut])(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -38,12 +43,65 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
     authorisedFunctions = mockAuthService) {
   }
 
-  "SingleYearOptOutConfirmationController" when {
+  def tests(isAgent: Boolean): Unit = {
+    val request = if (isAgent) fakeRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+
     "show method is invoked" should {
       s"return result with $OK status" in {
-        val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = false)(fakeRequestWithTestSession)
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(request)
         status(result) shouldBe Status.OK
       }
     }
+
+    "submit method is invoked" when {
+      "Yes response is submitted" should {
+        s"return result with $SEE_OTHER status with redirect to ${"checkpoint page"}" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+            request.withFormUrlEncodedBody(
+              ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
+              ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
+            ))
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe ""
+        }
+      }
+      "No response is submitted" should {
+        s"return result with $SEE_OTHER status with redirect to ${"Next update page"}" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+            request.withFormUrlEncodedBody(
+              ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
+              ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
+            ))
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe ""
+        }
+      }
+      "invalid response is submitted" should {
+        s"return result with $BAD_REQUEST status" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+            request.withFormUrlEncodedBody(
+              ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
+              ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
+            ))
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+    }
+  }
+
+
+  "SingleYearOptOutConfirmationController - Individual" when {
+    tests(isAgent = false)
+  }
+  "SingleYearOptOutConfirmationController - Agent" when {
+    tests(isAgent = true)
   }
 }
