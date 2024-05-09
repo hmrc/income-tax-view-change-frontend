@@ -168,7 +168,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testBalancingPaymentChargeWithZeroValue: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some("document Text"), originalAmount = Some(BigDecimal(0))), codingOutEnabled = true))
+      documentDescription = Some("TRM New Charge"), documentText = Some("document Text"), originalAmount = BigDecimal(0)), codingOutEnabled = true))
 
 
   val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(

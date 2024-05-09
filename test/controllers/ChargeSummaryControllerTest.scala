@@ -82,7 +82,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -135,7 +135,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -160,7 +160,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -184,7 +184,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -209,7 +209,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(None)
 
@@ -238,7 +238,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 

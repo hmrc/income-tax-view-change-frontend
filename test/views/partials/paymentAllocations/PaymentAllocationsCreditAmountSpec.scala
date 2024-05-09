@@ -21,8 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.testMtdItUser
-import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModel, paymentAllocationChargesModelWithCredit, paymentAllocationViewModel}
+import testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
 import testUtils.TestSupport
 import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 
@@ -36,7 +35,7 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
   class Setup(isAgent: Boolean = false, creditsRefundsFSEnabled: Boolean = true) {
     val paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargesModelWithCredit, Seq())
     val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)
-    val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+    val outstandingAmount: BigDecimal = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
 
     val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsFSEnabled, isAgent)
     val pageDocument: Document = Jsoup.parse("<table>" + contentAsString(html) + "</table>")

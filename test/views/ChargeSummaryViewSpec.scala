@@ -234,7 +234,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
+    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
       subItemWithClearingSapDocument("123456789012"),
       subItemWithClearingSapDocument("223456789012"),
@@ -380,21 +380,21 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
         "shows the same remaining amount and a due date as in the charge summary list" which {
           "display a remaining amount" in new TestSetup(documentDetailModel(
-            outstandingAmount = Some(1600)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
+            outstandingAmount = 1600), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
               .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,600.00", "15 May 2019")
           }
 
           "display 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(
-            documentDetailModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
+            documentDetailModel(outstandingAmount = 0), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
               .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£0.00", "15 May 2019")
           }
 
           "display the original amount if no cleared or outstanding amount is present" in new TestSetup(
-            documentDetailModel(outstandingAmount = None, originalAmount = Some(1700)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
+            documentDetailModel(outstandingAmount = None, originalAmount = 1700), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
               .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,700.00", "15 May 2019")
@@ -414,31 +414,31 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
       }
 
-      "display an interest period for a late interest charge" in new TestSetup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
+      "display an interest period for a late interest charge" in new TestSetup(documentDetailModel(originalAmount = 1500), latePaymentInterestCharge = true) {
         verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
       }
 
-      "display a charge amount" in new TestSetup(documentDetailModel(originalAmount = Some(1500))) {
+      "display a charge amount" in new TestSetup(documentDetailModel(originalAmount = 1500)) {
         verifySummaryListRowNumeric(2, fullPaymentAmount, "£1,500.00")
       }
 
-      "display a charge amount for a late interest charge" in new TestSetup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
+      "display a charge amount for a late interest charge" in new TestSetup(documentDetailModel(originalAmount = 1500), latePaymentInterestCharge = true) {
         verifySummaryListRowNumeric(3, fullPaymentAmount, "£100.00")
       }
 
-      "display a remaining amount" in new TestSetup(documentDetailModel(outstandingAmount = Some(1600))) {
+      "display a remaining amount" in new TestSetup(documentDetailModel(outstandingAmount = 1600)) {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,600.00")
       }
 
-      "display a remaining amount for a late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(1600)), latePaymentInterestCharge = true) {
+      "display a remaining amount for a late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 1600), latePaymentInterestCharge = true) {
         verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
       }
 
-      "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(documentDetailModel(outstandingAmount = Some(0))) {
+      "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         verifySummaryListRowNumeric(3, remainingToPay, "£0.00")
       }
 
-      "display the original amount if no cleared or outstanding amount is present" in new TestSetup(documentDetailModel(outstandingAmount = None, originalAmount = Some(1700))) {
+      "display the original amount if no cleared or outstanding amount is present" in new TestSetup(documentDetailModel(outstandingAmount = None, originalAmount = 1700)) {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,700.00")
       }
 
@@ -530,12 +530,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
-      "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = Some(0))) {
+      "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
-        documentDetailModel(lpiWithDunningLock = None, outstandingAmount = Some(0))) {
+        documentDetailModel(lpiWithDunningLock = None, outstandingAmount = 0)) {
         document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
@@ -544,19 +544,19 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("main h3").text shouldBe chargeHistoryHeading
       }
 
-      "display only the charge creation item when no history found for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0))) {
+      "display only the charge creation item when no history found for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
-      "display only the charge creation item when no history found for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2"))) {
+      "display only the charge creation item when no history found for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2"))) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountCreated(2)
       }
 
-      "display only the charge creation item when no history found for a new balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge"))) {
+      "display only the charge creation item when no history found for a new balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM New Charge"))) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeCreated
       }
@@ -566,24 +566,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("tbody tr td:nth-child(2)").text() shouldBe class2NicChargeCreated
       }
 
-      "display only the charge creation item for a payment on account 1 of 2 late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), latePaymentInterestCharge = true) {
+      "display only the charge creation item for a payment on account 1 of 2 late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 0), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(1)
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
       }
 
-      "display only the charge creation item for a payment on account 2 of 2 late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
+      "display only the charge creation item for a payment on account 2 of 2 late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
       }
 
-      "display only the charge creation item for a new balancing charge late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
+      "display only the charge creation item for a new balancing charge late interest charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeInterestCreated
       }
 
-      "display the charge creation item when history is found and allocations are disabled" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)),
+      "display the charge creation item when history is found and allocations are disabled" in new TestSetup(documentDetailModel(outstandingAmount = 0),
         chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
@@ -591,34 +591,34 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
-      "display the correct message for an amended charge for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(1)").text() shouldBe "6 Jul 2018"
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(1)
         document.select("tbody tr:nth-child(2) td:nth-child(3)").text() shouldBe "£1,500.00"
       }
 
-      "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(2)
       }
 
-      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge")), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
       }
 
-      "display the correct message for a customer requested change for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(1)
       }
 
-      "display the correct message for a customer requested change for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(2)
       }
 
-      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
       }
@@ -689,8 +689,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the coded out details" when {
         val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
-          documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = Some(2500.00),
-          originalAmount = Some(2500.00))
+          documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 2500.00,
+          originalAmount = 2500.00)
 
         "Coding Out is Enabled" in new TestSetup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
@@ -707,8 +707,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "Scenario were Class2 NICs has been paid and only coding out information needs to be displayed" when {
         val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
-          documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = Some(2500.00),
-          originalAmount = Some(2500.00))
+          documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 2500.00,
+          originalAmount = 2500.00)
 
         "Coding Out is Enabled" in new TestSetup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
@@ -758,7 +758,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
         "Display a paid MFA Credit" in new TestSetup(
           documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
-            outstandingAmount = Some(0.00)), isMFADebit = true,
+            outstandingAmount = 0.00), isMFADebit = true,
           paymentAllocationEnabled = true,
           paymentAllocations = paymentAllocations) {
           val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
@@ -785,7 +785,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display balancing charge due date as N/A and hide sections - Payment Breakdown ,Make a payment button ,Any payments you make, Payment History" when {
-        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
+        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = BigDecimal(0), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
           document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."
@@ -845,7 +845,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), isAgent = true) {
+      "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = 0), isAgent = true) {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
@@ -884,7 +884,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "Display a paid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
-          outstandingAmount = Some(0.00)), isMFADebit = true, isAgent = true,
+          outstandingAmount = 0.00), isMFADebit = true, isAgent = true,
           paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")

@@ -37,8 +37,6 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
   })
 
-  require(charges.forall(_.documentDetail.originalAmount.isDefined), "missing originalAmount on charges")
-
 }
 
 case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,

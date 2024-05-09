@@ -209,7 +209,7 @@
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
                         <div id="paymentTypeText-@{index}">
-                            @if(documentDetailWithDueDate.documentDetail.originalAmount.get == 0) {
+                            @if(documentDetailWithDueDate.documentDetail.originalAmount == 0) {
                                 @getChargeSummaryMessage(documentDetailWithDueDate)
                             } else {
                                 <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@getChargeSummaryMessage(documentDetailWithDueDate)</a>
@@ -225,15 +225,15 @@
                         }
                     } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment) {
                         <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
                     } else if(documentDetailWithDueDate.documentDetail.isBalancingCharge(codingOutEnabled)) {
                          <td class="govuk-table__cell">
                             @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
                          </td>
-                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
                     } else {
                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
                     }
                 </tr>
             }

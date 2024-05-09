@@ -28,8 +28,8 @@ case class DocumentDetail(taxYear: Int,
                           transactionId: String,
                           documentDescription: Option[String],
                           documentText: Option[String],
-                          outstandingAmount: Option[BigDecimal],
-                          originalAmount: Option[BigDecimal],
+                          outstandingAmount: BigDecimal,
+                          originalAmount: BigDecimal,
                           documentDate: LocalDate,
                           interestOutstandingAmount: Option[BigDecimal] = None,
                           interestRate: Option[BigDecimal] = None,
@@ -47,23 +47,21 @@ case class DocumentDetail(taxYear: Int,
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
-    case None => None
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case Some(_) if (originalAmount.get == 0) => None
-    case Some(_) if (originalAmount.get > 0) => None
-    case Some(credit) => Some(credit * -1)
+    case _ if (originalAmount == 0) => None
+    case _ if (originalAmount > 0) => None
+    case credit => Some(credit * -1)
   }
 
   def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case None => None
-    case Some(_) if (outstandingAmount.get == 0) => None
-    case Some(_) if (outstandingAmount.get > 0) => None
-    case Some(credit) => Some(credit * -1)
+    case _ if (outstandingAmount == 0) => None
+    case _ if (outstandingAmount > 0) => None
+    case credit => Some(credit * -1)
   }
 
 
   def outstandingAmountZero: Boolean =
-    outstandingAmount.getOrElse[BigDecimal](0) == 0
+    outstandingAmount == 0
 
   def hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
@@ -72,12 +70,12 @@ case class DocumentDetail(taxYear: Int,
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def originalAmountIsNotNegative: Boolean = originalAmount match {
-    case Some(amount) if amount < 0 => false
+    case amount if amount < 0 => false
     case _ => true
   }
 
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
-    case Some(amount) if amount <= 0 => false
+    case amount if amount <= 0 => false
     case _ => true
   }
 
@@ -88,7 +86,7 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isPaid: Boolean = outstandingAmount match {
-    case Some(amount) if amount == 0 => true
+    case amount if amount == 0 => true
     case _ => false
   }
 
@@ -110,11 +108,11 @@ case class DocumentDetail(taxYear: Int,
     else isPaid
   }
 
-  val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0) != originalAmount.getOrElse[BigDecimal](0)
+  val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
-    else outstandingAmount.getOrElse(originalAmount.get)
+    else outstandingAmount
   }
 
   def remainingToPayByChargeOrLpi: BigDecimal = {
@@ -168,7 +166,7 @@ case class DocumentDetail(taxYear: Int,
 
   def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
     (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
-      case (true, Some(value)) => value == BigDecimal(0.0)
+      case (true, value) => value == BigDecimal(0.0)
       case _ => false
     }
   }
@@ -220,8 +218,8 @@ object DocumentDetail {
       (__ \ "transactionId").read[String] and
       (__ \ "documentDescription").readNullable[String] and
       (__ \ "documentText").readNullable[String] and
-      (__ \ "outstandingAmount").readNullable[BigDecimal] and
-      (__ \ "originalAmount").readNullable[BigDecimal] and
+      (__ \ "outstandingAmount").read[BigDecimal] and
+      (__ \ "originalAmount").read[BigDecimal] and
       (__ \ "documentDate").read[LocalDate] and
       (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
       (__ \ "interestRate").readNullable[BigDecimal] and

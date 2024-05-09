@@ -197,15 +197,16 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val viewSection3 = isEnabled(ChargeHistory) && (isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
 
     val values = List(
-      (viewSection1, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount"),
+      (viewSection1, documentDetailWithDueDate.documentDetail.originalAmount, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
       (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined, "Late Payment Interest Amount"),
-      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount")
+      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount, "Original Amount")
     )
 
     val undefinedOptions = values.filter(_._1).flatMap {
       case (_, true, _) => None
       case (_, false, name) => Some(name)
+      case (_, _, _) => None
     }
 
     if (undefinedOptions.isEmpty) Right(true)

@@ -32,7 +32,7 @@
         @messages("chargeSummary.paymentAmountCodingOut")
     </strong>
     @{
-        documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+        documentDetail.originalAmount.toCurrency
     }
 </p>
 

@@ -47,12 +47,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some(Individual), None)(FakeRequest())
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(outstandingAmount = Some(0))),
+    List(documentDetail.copy(outstandingAmount = 0)),
     List(financialDetail)
   )
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZeroCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetailNoPaymentCredit.copy(outstandingAmount = Some(0))),
+    List(documentDetailNoPaymentCredit.copy(outstandingAmount = 0)),
     List(financialDetailNoPaymentCredit)
   )
 
@@ -80,13 +80,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationViewModelDueDate: Option[LocalDate] = paymentAllocationViewModel.paymentAllocationChargeModel
     .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   val paymentAllocationViewModelOutstandingAmount: Option[BigDecimal] = paymentAllocationViewModel
-    .paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
+    .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
   val paymentAllocationViewModelWithCreditZeroOutstandingDueDate: Option[LocalDate] =
     paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel
       .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   val paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount: Option[BigDecimal] =
     paymentAllocationViewModelWithCreditZeroOutstanding
-      .paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
+      .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,
