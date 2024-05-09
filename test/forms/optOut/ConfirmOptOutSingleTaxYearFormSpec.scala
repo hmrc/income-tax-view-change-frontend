@@ -27,7 +27,7 @@ class ConfirmOptOutSingleTaxYearFormSpec extends UnitSpec {
 
   val validFormData: Map[String, String] = Map(confirmOptOutField -> "true", csrfToken -> "")
   val invalidFormData: Map[String, String] = Map(confirmOptOutField -> "", csrfToken -> "")
-  val taxYear: TaxYear = TaxYear(2024)
+  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
   val errorMessage: String = s"Select yes to opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year"
   implicit val mockMessages: Messages = mock(classOf[play.api.i18n.Messages])
 

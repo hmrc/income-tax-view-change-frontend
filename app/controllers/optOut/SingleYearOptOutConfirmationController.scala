@@ -41,10 +41,10 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
                                                        override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
   private val backUrl = ""
+  private val nextPage = controllers.optOut.routes.OptOutCheckpointController.show
+  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
   private val previousPage = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
-  private val nextPage = controllers.routes.HomeController.show()
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -56,7 +56,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
   }
 
   private def handleRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    val taxYear = TaxYear(2024)
+    val taxYear = TaxYear.forYearEnd(2024)
     val form = ConfirmOptOutSingleTaxYearForm(taxYear)
 
     Future(Ok(view(
@@ -69,7 +69,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    val taxYear = TaxYear(2024)
+    val taxYear = TaxYear.forYearEnd(2024)
 
     ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
       formWithError => {

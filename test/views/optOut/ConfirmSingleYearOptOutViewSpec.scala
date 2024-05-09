@@ -29,7 +29,7 @@ import views.html.optOut.ConfirmSingleYearOptOut
 class ConfirmSingleYearOptOutViewSpec extends ViewSpec {
 
   val confirmSingleYearOptOutView: ConfirmSingleYearOptOut = app.injector.instanceOf[ConfirmSingleYearOptOut]
-  val taxYear: TaxYear = TaxYear(2024)
+  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
 
   val form: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear)
 

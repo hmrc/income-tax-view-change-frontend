@@ -45,7 +45,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
 
   def tests(isAgent: Boolean): Unit = {
     val request = if (isAgent) fakeRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-
+    val previousPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
     "show method is invoked" should {
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
@@ -66,7 +66,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe ""
+          redirectLocation(result) shouldBe controllers.optOut.routes.OptOutCheckpointController.show.url
         }
       }
       "No response is submitted" should {
@@ -79,7 +79,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe ""
+          redirectLocation(result) shouldBe previousPage
         }
       }
       "invalid response is submitted" should {
