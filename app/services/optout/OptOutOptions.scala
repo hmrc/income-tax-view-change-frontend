@@ -21,9 +21,9 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
 import models.optOut.OptOutOneYearViewModel
 
 trait OptOutOptions {
-  def getOptOutOptionsForSingleYear(optOutData: OptOutData, function: OptOutData => OptOutOneYearViewModel): Option[OptOutOneYearViewModel]
+  def getOptOutOptionsForSingleYear(optOutData: OptOutData, function: (OptOutData, OptOut) => OptOutOneYearViewModel): Option[OptOutOneYearViewModel]
 
-  def nextUpdatesPageOneYear(optOutData: OptOutData): OptOutOneYearViewModel
+  def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel
 }
 
 trait OptOut {
@@ -59,17 +59,17 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
 }
 
 class OptOutOptionsSingleYear extends OptOutOptions {
-  def getOptOutOptionsForSingleYear(optOutData: OptOutData, function: OptOutData => OptOutOneYearViewModel): Option[OptOutOneYearViewModel] = {
+  def getOptOutOptionsForSingleYear(optOutData: OptOutData, function: (OptOutData, OptOut) => OptOutOneYearViewModel): Option[OptOutOneYearViewModel] = {
 
     if (optOutData.countVoluntaryOptOutYears == 1) {
-      Some(function(optOutData))
+      Some(function(optOutData, optOutData.availableOptOutYears.head))
     } else {
       None
     }
   }
 
-  def nextUpdatesPageOneYear(optOutData: OptOutData): OptOutOneYearViewModel = {
-    OptOutOneYearViewModel(optOutData.availableOptOutYears.head.taxYear)
+  def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
+    OptOutOneYearViewModel(optOutYear.taxYear)
   }
 }
 
