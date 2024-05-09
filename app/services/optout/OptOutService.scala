@@ -68,7 +68,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
 
     val processSteps = for {
       optOutData <- setupOptOutData()
-      outcomeOptionsResponse <- optOutData.getOptOutOptionsForSingleYear(nextUpdatesPageOneYear).toF
+      outcomeOptionsResponse <- optOutData.optOutForSingleYear(nextUpdatesPageOneYear).toF
     } yield outcomeOptionsResponse
 
     processSteps recover {
