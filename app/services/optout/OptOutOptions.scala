@@ -54,10 +54,10 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
 
   lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
 
-  def getOptOutOptionsForSingleYear[T](optOutData: OptOutData, function: (OptOutData, OptOut) => T): Option[T] = {
+  def getOptOutOptionsForSingleYear[T](function: (OptOutData, OptOut) => T): Option[T] = {
 
-    if (optOutData.countVoluntaryOptOutYears == 1) {
-      Some(function(optOutData, optOutData.availableOptOutYears.head))
+    if (countVoluntaryOptOutYears == 1) {
+      Some(function(this, availableOptOutYears.head))
     } else {
       None
     }
