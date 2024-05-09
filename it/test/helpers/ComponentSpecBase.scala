@@ -23,6 +23,7 @@ import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
+import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -616,6 +617,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getOptOutCheckpoint: WSResponse =
       get("optout/confirm-opt-out-from-quarterly-reporting/checkpoint")
+
+    def getSingleYearOptOutConfirmation(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/optout/confirm-opt-out-from-quarterly-reporting", additionalCookies)
+    }
+
+    def postSingleYearOptOutConfirmation(additionalCookies: Map[String, String] = Map.empty)(form: ConfirmOptOutSingleTaxYearForm): WSResponse = {
+      val formData: Map[String, Seq[String]] = Map(
+        ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
+        ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
+      post(s"/optout/confirm-opt-out-from-quarterly-reporting", additionalCookies)(formData)
+    }
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 

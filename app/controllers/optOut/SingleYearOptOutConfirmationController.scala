@@ -45,7 +45,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
                                                        override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val nextPage = controllers.optOut.routes.OptOutCheckpointController.show
+
   private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
   private val previousPage = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -87,9 +87,16 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
             ))
           },
           {
-            case ConfirmOptOutSingleTaxYearForm(Some(true), _) => Redirect(nextPage)
-            case ConfirmOptOutSingleTaxYearForm(Some(false), _) => Redirect(previousPage(isAgent))
-            case _ => errorHandler(isAgent).showInternalServerError()
+            case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
+              val nextPage = controllers.optOut.routes.OptOutCheckpointController.show
+              Logger("application").info(s"redirecting to : $nextPage")
+              Redirect(nextPage)
+            case ConfirmOptOutSingleTaxYearForm(Some(false), _) =>
+              Logger("application").info(s"redirecting to : ${previousPage(isAgent)}")
+              Redirect(previousPage(isAgent))
+            case _ =>
+              Logger("application").error("bad request")
+              errorHandler(isAgent).showInternalServerError()
           })
 
     }
