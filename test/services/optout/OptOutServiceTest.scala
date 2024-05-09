@@ -66,6 +66,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
   }
 
+  val noOptOutOptionAvailable = None
+
   "OptOutService.makeOptOutUpdateRequestForYear" when {
 
     "make opt-out update request for tax-year 2023-2024 and can opt-out of this year" should {
@@ -156,8 +158,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val response = service.displayOptOutMessage()
 
         val actualOptOutOption = response.futureValue
-        val expectedOptOutOption = None
-        assert(actualOptOutOption == expectedOptOutOption)
+        assert(actualOptOutOption == noOptOutOptionAvailable)
 
       }
     }
@@ -227,8 +228,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val response = service.displayOptOutMessage()
 
         val actualOptOutOption = response.futureValue
-        val expectedOptOutOption = None
-        assert(actualOptOutOption == expectedOptOutOption)
+        assert(actualOptOutOption == noOptOutOptionAvailable)
       }
     }
 
@@ -252,8 +252,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val response = service.displayOptOutMessage()
 
         val actualOptOutOption = response.futureValue
-        val expectedOptOutOption = None
-        assert(actualOptOutOption == expectedOptOutOption)
+        assert(actualOptOutOption == noOptOutOptionAvailable)
       }
     }
   }
