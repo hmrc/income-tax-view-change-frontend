@@ -16,51 +16,42 @@
 
 package services.optout
 
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
-import models.optOut.{OptOutOneYearViewModel, TaxYearITSAStatus}
-
-trait OptOutOptions {
-  def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
-                          previousYearState: TaxYearITSAStatus,
-                          currentYearState: TaxYearITSAStatus,
-                          nextYearState: TaxYearITSAStatus): Option[OptOutOneYearViewModel]
-}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
 
 trait OptOut {
   def canOptOut: Boolean
-  val taxYearStatusDetail: TaxYearITSAStatus
+  val taxYear: TaxYear
 }
-case class CurrentTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary
-}
-
-case class NextTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, currentTaxYear: TaxYearITSAStatus) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary ||
-    (currentTaxYear.status == Voluntary && taxYearStatusDetail.status == NoStatus)
+case class CurrentTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary
 }
 
-case class PreviousTaxYearOptOut(taxYearStatusDetail: TaxYearITSAStatus, crystallised: Boolean) extends OptOut {
-  def canOptOut: Boolean = taxYearStatusDetail.status == Voluntary && !crystallised
+case class NextTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, currentTaxYear: CurrentTaxYearOptOut) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary ||
+    (currentTaxYear.status == Voluntary && status == NoStatus)
 }
 
-class OptOutOptionsSingleYear extends OptOutOptions {
-  def getOptOutOptionsForSingleYear(finalisedStatus: Boolean,
-                                    previousYearState: TaxYearITSAStatus,
-                                    currentYearState: TaxYearITSAStatus,
-                                    nextYearState: TaxYearITSAStatus): Option[OptOutOneYearViewModel] = {
+case class PreviousTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, crystallised: Boolean) extends OptOut {
+  def canOptOut: Boolean = status == Voluntary && !crystallised
+}
 
-    val voluntaryOptOutYearsAvailable: Seq[OptOut] = Seq[OptOut](
-      PreviousTaxYearOptOut(previousYearState, finalisedStatus),
-      CurrentTaxYearOptOut(currentYearState),
-      NextTaxYearOptOut(nextYearState, currentYearState)).filter(
-      _.canOptOut
-    )
+case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
+                      currentTaxYear: CurrentTaxYearOptOut,
+                      nextTaxYear: NextTaxYearOptOut) {
 
-    if (voluntaryOptOutYearsAvailable.size == 1) {
-      Some(OptOutOneYearViewModel(voluntaryOptOutYearsAvailable.head.taxYearStatusDetail.taxYear))
-    } else {
+  private val optOutYears: Seq[OptOut] = Seq[OptOut](
+    previousTaxYear,
+    currentTaxYear,
+    nextTaxYear)
+
+  def availableOptOutYears: Seq[OptOut] = optOutYears.filter(_.canOptOut)
+
+  lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
+
+  def optOutForSingleYear[T](function: (OptOutData, OptOut) => T): Option[T] = {
+    if (countVoluntaryOptOutYears == 1) Some(function(this, availableOptOutYears.head)) else
       None
-    }
   }
 }
 
