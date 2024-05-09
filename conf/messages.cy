@@ -1865,5 +1865,5 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cans
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
 optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
-optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.confirm            = Cadarnhau
 optout.confirmOptOut.cancel             = Canslo
