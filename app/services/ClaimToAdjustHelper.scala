@@ -49,39 +49,34 @@ trait ClaimToAdjustHelper {
     documentDetail.documentDescription.contains(POA2) &&
       !documentDetail.outstandingAmount.contains(BigDecimal(0))
 
-  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
-    isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
+  private val taxReturnDeadlineOf: LocalDate => LocalDate = date =>
+    LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
+      .plusYears(1)
 
-  private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] =
-    _.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
+  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
+    _.sortBy(_.taxYear).reverse
 
-  private def arePoAsBeforeTaxReturnDeadline(poaTwoDate: Option[LocalDate]): Option[Boolean] =
+  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
     for {
-      poaTwoDeadline             <- taxReturnDeadlineOf(poaTwoDate)
-      poaTwoDateIsBeforeDeadline <- poaTwoDate.map(_.isBefore(poaTwoDeadline))
-    } yield {
-      Logger("application").debug(s"PoA 1 - documentDueDate: $poaTwoDate, TaxReturnDeadline: $poaTwoDeadline")
-      poaTwoDateIsBeforeDeadline
-    }
-
-  protected def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
-    for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
-      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
-      poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
+      poaOneDocDetail        <- documentDetails.find(isUnpaidPoAOne)
+      poaTwoDocDetail        <- documentDetails.find(isUnpaidPoATwo)
+      latestDocumentDetail    = poaTwoDocDetail
+      poaTwoDueDate          <- poaTwoDocDetail.documentDueDate
+      poaDeadline             = taxReturnDeadlineOf(poaTwoDueDate)
+      poasAreBeforeDeadline   = poaTwoDueDate isBefore poaDeadline
+      if poasAreBeforeDeadline
     } yield {
 
       Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
       Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
+      Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeDeadline")
 
       PaymentOnAccountViewModel(
-        poaOneTransactionId = poaOneDocDetail.transactionId,
-        poaTwoTransactionId = poaTwoDocDetail.transactionId,
-        taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
+        poaOneTransactionId  = poaOneDocDetail.transactionId,
+        poaTwoTransactionId  = poaTwoDocDetail.transactionId,
+        taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+        paymentOnAccountOne  = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
+        paymentOnAccountTwo  = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
         poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
         poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )
