@@ -23,7 +23,6 @@ import config.featureswitch.{FeatureSwitching, OptOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates._
-import models.optOut.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
