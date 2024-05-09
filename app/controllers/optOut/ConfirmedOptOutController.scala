@@ -26,14 +26,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
-import views.html.optOut.ConfirmOptOut
+import views.html.optOut.ConfirmedOptOut
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val confirmOptOut: ConfirmOptOut,
+                                          val confirmedOptOut: ConfirmedOptOut,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate,
@@ -41,21 +41,21 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
                                           val customNotFoundErrorView: CustomNotFoundError,
                                           val auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
-                                        mcc: MessagesControllerComponents,
-                                        val ec: ExecutionContext,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                       )
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      Future.successful(Ok(""))
+      Future.successful(Ok(confirmedOptOut(false)))
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Ok(""))
+      Future.successful(Ok(confirmedOptOut(true)))
   }
 
 }
