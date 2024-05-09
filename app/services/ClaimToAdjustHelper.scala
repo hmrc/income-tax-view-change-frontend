@@ -67,9 +67,9 @@ trait ClaimToAdjustHelper {
       if poasAreBeforeDeadline
     } yield {
 
-      Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeDeadline")
+      Logger("application").info(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
+      Logger("application").info(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
+      Logger("application").info(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeDeadline")
 
       PaymentOnAccountViewModel(
         poaOneTransactionId  = poaOneDocDetail.transactionId,
