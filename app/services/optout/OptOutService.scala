@@ -30,7 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 object OptOutService {
-  val optOutOptions = new OptOutOptionsSingleYear
   implicit class TypeToFuture[T](t: T) {
     def toF: Future[T] = Future.successful(t)
   }
@@ -61,9 +60,27 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
     } yield optOutChecks
   }
 
+  private def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
+    OptOutOneYearViewModel(optOutYear.taxYear)
+  }
+
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
     val processSteps = for {
+      optOutData <- setupOptOutData()
+      outcomeOptionsResponse <- optOutData.optOutForSingleYear(nextUpdatesPageOneYear).toF
+    } yield outcomeOptionsResponse
+
+    processSteps recover {
+      case e =>
+        Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
+        None
+    }
+  }
+
+
+  private def setupOptOutData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutData] = {
+    for {
       currentYear <- dateService.getCurrentTaxYear.toF
       previousYear <- currentYear.previousYear.toF
       nextYear <- currentYear.nextYear.toF
@@ -73,14 +90,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       currentTaxYearOptOut <- CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear).toF
       nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
       optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
-      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
-    } yield outcomeOptionsResponse
-
-    processSteps recover {
-      case e =>
-        Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
-        None
-    }
+    } yield optOutData
   }
 }
 
