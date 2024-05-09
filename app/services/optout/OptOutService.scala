@@ -64,6 +64,20 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
     val processSteps = for {
+      optOutData <- setupOptOutData()
+      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
+    } yield outcomeOptionsResponse
+
+    processSteps recover {
+      case e =>
+        Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
+        None
+    }
+  }
+
+
+  private def setupOptOutData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutData] = {
+    for {
       currentYear <- dateService.getCurrentTaxYear.toF
       previousYear <- currentYear.previousYear.toF
       nextYear <- currentYear.nextYear.toF
@@ -73,14 +87,7 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       currentTaxYearOptOut <- CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear).toF
       nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
       optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
-      outcomeOptionsResponse <- optOutOptions.getOptOutOptionsForSingleYear(optOutData).toF
-    } yield outcomeOptionsResponse
-
-    processSteps recover {
-      case e =>
-        Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
-        None
-    }
+    } yield optOutData
   }
 }
 
