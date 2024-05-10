@@ -17,13 +17,12 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import models.admin.{CalendarQuarterTypes, TimeMachineAddYear}
+import models.admin.CalendarQuarterTypes
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -116,8 +115,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection])
-                            (implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
+  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection])(implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
     if (isEnabled(CalendarQuarterTypes)) {
       quarterTypeElection.flatMap(quarterTypeElection => {
         latencyDetails match {
@@ -151,8 +149,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])
-                                         (implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -170,9 +167,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
+                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
+      incomeSource = None,
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
@@ -307,7 +305,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 ))
               case Left(error) =>
                 Logger("application")
-                  .error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
+                  .error(s"unable to find income source: $error. isAgent = $isAgent")
                 if (isAgent) {
                   itvcErrorHandlerAgent.showInternalServerError()
                 } else {

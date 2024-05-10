@@ -18,9 +18,10 @@ package controllers.predicates
 
 import audit.mocks.MockAuditingService
 import auth.FrontEndHeaderExtractor
-import config.featureswitch.{FeatureSwitching, IvUplift}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.admin.IvUplift
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

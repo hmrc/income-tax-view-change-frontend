@@ -17,11 +17,12 @@
 package testUtils
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
+import controllers.predicates.FeatureSwitchPredicate
 import implicits.ImplicitDateFormatterImpl
+import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
@@ -73,6 +74,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   def messagesApi: MessagesApi = inject[MessagesApi]
+
+  def featureSwitchingPredicate: FeatureSwitchPredicate = inject[FeatureSwitchPredicate]
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
@@ -308,7 +311,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   }
 
   def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
+    allFeatureSwitches.foreach(switch => disable(switch))
   }
 
 }

@@ -17,12 +17,12 @@
 package controllers.claimToAdjustPOA
 
 import cats.data.EitherT
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes.HomeController
-import models.core.Nino
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -76,8 +76,8 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       } else {
         Future.successful(
           Redirect(
-            if (isAgent) HomeController.showAgent
-            else HomeController.show()
+            if (isAgent) controllers.routes.HomeController.showAgent
+            else controllers.routes.HomeController.show()
           )
         )
       }.recover {

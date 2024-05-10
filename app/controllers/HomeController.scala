@@ -20,14 +20,12 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.admin._
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
-import models.admin.{CodingOut, CreditsRefundsRepay, ITSASubmissionIntegration, IncomeSources, IncomeSourcesNewJourney, MFACreditsAndDebits, PaymentHistoryRefunds, TimeMachineAddYear}
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
-import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger

@@ -16,9 +16,11 @@
 
 package services
 
+import auth.MtdItUser
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
+import models.admin.TimeMachineAddYear
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
@@ -26,7 +28,8 @@ import java.time.Month.{APRIL, JANUARY}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig,
+                            implicit val user: MtdItUser[_]) extends DateServiceInterface with FeatureSwitching {
   val appConfig: FrontendAppConfig = frontendAppConfig
 
   def getCurrentDate: LocalDate = {

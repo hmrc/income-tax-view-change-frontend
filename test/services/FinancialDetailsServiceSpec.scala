@@ -17,10 +17,11 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import mocks.connectors.MockFinancialDetailsConnector
+import models.admin.CodingOut
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

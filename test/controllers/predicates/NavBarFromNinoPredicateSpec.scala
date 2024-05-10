@@ -18,9 +18,10 @@ package controllers.predicates
 
 import auth.MtdItUserWithNino
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, NavBarFs}
+import config.featureswitch.FeatureSwitching
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
+import models.admin.NavBarFs
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status

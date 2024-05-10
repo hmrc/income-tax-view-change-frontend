@@ -17,13 +17,13 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.FeatureSwitch.switches
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
+import models.admin.ForecastCalculation
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, defaultAwaitTimeout, status}

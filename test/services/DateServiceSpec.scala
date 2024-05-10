@@ -16,8 +16,12 @@
 
 package services
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import auth.MtdItUser
+import config.featureswitch.FeatureSwitching
+import models.admin.TimeMachineAddYear
+import play.api.test.FakeRequest
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time._
 import scala.language.reflectiveCalls
@@ -30,7 +34,7 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
 
   def fixture(date: String) = new {
     val mockedTestDateService = new DateService() {
-      override def getCurrentDate: LocalDate = {
+      override def getCurrentDate(): LocalDate = {
         val timeMachineIsOn: Boolean = isEnabled(TimeMachineAddYear)
 
         if (timeMachineIsOn) {

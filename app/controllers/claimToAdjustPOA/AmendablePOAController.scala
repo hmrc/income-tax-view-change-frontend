@@ -16,11 +16,12 @@
 
 package controllers.claimToAdjustPOA
 
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import models.core.Nino
 import play.api.Logger
