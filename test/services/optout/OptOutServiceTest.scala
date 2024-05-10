@@ -17,19 +17,22 @@
 package services.optout
 
 import auth.MtdItUser
+import connectors.OptOutConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpecLike
+import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 /*
 * Keys:
@@ -44,8 +47,12 @@ import scala.util.{Failure, Success}
 * NY: Next Year
 *
 * */
-class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
+class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
+  implicit val defaultPatience: PatienceConfig =
+    PatienceConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
+
+  val optOutConnector: OptOutConnector = mock(classOf[OptOutConnector])
   val itsaStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   val calculationListService: CalculationListService = mock(classOf[CalculationListService])
   val dateService: DateServiceInterface = mock(classOf[DateServiceInterface])
@@ -53,10 +60,55 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
-  val service = new OptOutService(itsaStatusService, calculationListService, dateService)
+  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
 
   before {
-    reset(itsaStatusService, calculationListService, dateService, user, hc)
+    reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
+  }
+
+  val noOptOutOptionAvailable = None
+
+  "OptOutService.makeOptOutUpdateRequestForYear" when {
+
+    "make opt-out update request for tax-year 2023-2024 and can opt-out of this year" should {
+
+      "successful update request was made" in {
+
+        val correlationId = "123"
+        val taxableEntityId = "456"
+        val currentYear = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
+
+        when(user.nino).thenReturn(taxableEntityId)
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          OptOutUpdateResponseSuccess(correlationId)
+        ))
+        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
+      }
+    }
+
+    "make opt-out update request for tax-year 2023-2024 and can not opt-out of this year" should {
+
+      "return failure response for made update request" in {
+
+        val correlationId = "123"
+        val taxableEntityId = "456"
+        val currentYear = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
+        val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+          "Submission has not passed validation. Invalid parameter taxableEntityId."))
+
+        when(user.nino).thenReturn(taxableEntityId)
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+        ))
+        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+
+        result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+      }
+    }
   }
 
   "OptOutService.displayOptOutMessage" when {
@@ -80,20 +132,9 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2022)
-                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2023)
-              case None => fail("cant opt out")
-            }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
+        val model = response.futureValue.get
+        assert(model.oneYearOptOutTaxYear.startYear == 2022)
+        assert(model.oneYearOptOutTaxYear.endYear == 2023)
       }
     }
 
@@ -116,19 +157,9 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
+        val actualOptOutOption = response.futureValue
+        assert(actualOptOutOption == noOptOutOptionAvailable)
 
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case None => //no opt out expected
-              case Some(oneYearViewModel) =>
-                fail("One Year Opt Out offered when illegal")
-              }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
       }
     }
 
@@ -151,22 +182,9 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2023)
-                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2024)
-
-              case None => fail("No opt out offered")
-            }
-
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
+        val model = response.futureValue.get
+        assert(model.oneYearOptOutTaxYear.startYear == 2023)
+        assert(model.oneYearOptOutTaxYear.endYear == 2024)
       }
     }
 
@@ -189,20 +207,9 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case Some(oneYearViewModel) =>
-                assert(oneYearViewModel.oneYearOptOutTaxYear.startYear == 2024)
-                assert(oneYearViewModel.oneYearOptOutTaxYear.endYear == 2025)
-              case None => fail("No opt out offered")
-            }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
+        val model = response.futureValue.get
+        assert(model.oneYearOptOutTaxYear.startYear == 2024)
+        assert(model.oneYearOptOutTaxYear.endYear == 2025)
       }
     }
 
@@ -220,19 +227,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case None => //No opt out expected
-              case Some(oneYearViewModel) =>
-                fail("Opt Out Offered with API failure no allowed")
-            }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
+        val actualOptOutOption = response.futureValue
+        assert(actualOptOutOption == noOptOutOptionAvailable)
       }
     }
 
@@ -255,19 +251,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val response = service.displayOptOutMessage()
 
-        Await.result(response, 10.seconds)
-
-        response.value match {
-          case Some(t) => t match {
-            case Success(r) => r match {
-              case None => //No opt out expected
-              case Some(oneYearViewModel) =>
-                fail("Opt out offered when isCrystallised API failed not allowed")
-            }
-            case Failure(e) => fail(s"future should have succeeded, but failed with error: ${e.getMessage}")
-          }
-          case _ =>
-        }
+        val actualOptOutOption = response.futureValue
+        assert(actualOptOutOption == noOptOutOptionAvailable)
       }
     }
   }
