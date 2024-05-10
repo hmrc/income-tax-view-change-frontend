@@ -66,7 +66,7 @@ class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockA
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new FinancialDetailsConnector(mockHttpGet, getAppConfig())
+    val connector = new FinancialDetailsConnector(httpClientMock, getAppConfig())
   }
 
   "getOutstandingChargesUrl" should {

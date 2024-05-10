@@ -51,7 +51,7 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttp with MockAuditin
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ITSAStatusConnector(mockHttpGet, getAppConfig())
+    val connector = new ITSAStatusConnector(httpClientMock, getAppConfig())
   }
 
   "getITSAStatusDetail" should {

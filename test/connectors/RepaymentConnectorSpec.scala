@@ -48,7 +48,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
     body = "Unauthorized Error Message"
   )
 
-  object TestPayApiConnector extends RepaymentConnector(mockHttpGet, appConfig)
+  object TestPayApiConnector extends RepaymentConnector(httpClientMock, appConfig)
 
   "Calling .startRepayment" should {
     val testStartUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
