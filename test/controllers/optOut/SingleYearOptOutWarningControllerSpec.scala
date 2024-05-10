@@ -28,7 +28,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optOut.ConfirmSingleYearOptOut
+import views.html.optOut.SingleYearOptOutWarning
 
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
 
   object TestSingleYearOptOutWarningController$ extends SingleYearOptOutWarningController(
     auth = testAuthenticator,
-    view = app.injector.instanceOf[ConfirmSingleYearOptOut],
+    view = app.injector.instanceOf[SingleYearOptOutWarning],
     optOutService = mockOptOutService)(
     appConfig = appConfig,
     ec = ec,

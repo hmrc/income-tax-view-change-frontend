@@ -24,11 +24,11 @@ import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import uk.gov.hmrc.http.HttpVerbs
-import views.html.optOut.ConfirmSingleYearOptOut
+import views.html.optOut.SingleYearOptOutWarning
 
-class ConfirmSingleYearOptOutViewSpec extends ViewSpec {
+class SingleYearOptOutWarningViewSpec extends ViewSpec {
 
-  val confirmSingleYearOptOutView: ConfirmSingleYearOptOut = app.injector.instanceOf[ConfirmSingleYearOptOut]
+  val singleYearOptOutWarningView: SingleYearOptOutWarning = app.injector.instanceOf[SingleYearOptOutWarning]
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
 
   val form: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear)
@@ -38,10 +38,10 @@ class ConfirmSingleYearOptOutViewSpec extends ViewSpec {
 
   val submitAction: Call = Call(HttpVerbs.POST, "/some/url")
   val backUrl = "/some/back/url"
-  val renderedView: HtmlFormat.Appendable = confirmSingleYearOptOutView(taxYear, form, submitAction, backUrl, isAgent = false)
-  val renderedErrorView: HtmlFormat.Appendable = confirmSingleYearOptOutView(taxYear, formWithError, submitAction, backUrl, isAgent = false)
+  val renderedView: HtmlFormat.Appendable = singleYearOptOutWarningView(taxYear, form, submitAction, backUrl, isAgent = false)
+  val renderedErrorView: HtmlFormat.Appendable = singleYearOptOutWarningView(taxYear, formWithError, submitAction, backUrl, isAgent = false)
 
-  "ConfirmSingleYearOptOutView" when {
+  "SingleYearOptOutWarningView" when {
     "called" should {
       "have the correct title" in new Setup(renderedView) {
         document.title() shouldBe messages("htmlTitle", "Opt out of quarterly reporting for a single tax year")
