@@ -113,7 +113,7 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     optOutService.getOneYearOptOutViewModel().map {
-      case Some(OptOutOneYearViewModel(taxYear)) => code(taxYear)
+      case Some(OptOutOneYearViewModel(taxYear, _)) => code(taxYear)
       case None =>
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()

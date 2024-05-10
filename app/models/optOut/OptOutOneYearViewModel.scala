@@ -17,9 +17,23 @@
 package models.optOut
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import play.api.mvc.Call
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear) {
+case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Boolean = false) {
   def startYear: String = oneYearOptOutTaxYear.startYear.toString
+
   def endYear: String = oneYearOptOutTaxYear.endYear.toString
+
+  def optOutConfirmationLink(isAgent: Boolean): Call = {
+    if (showWarning) {
+      return controllers.optOut.routes.SingleYearOptOutConfirmationController.show(isAgent)
+    }
+
+    if (isAgent) {
+      controllers.optOut.routes.ConfirmOptOutController.showAgent()
+    } else {
+      controllers.optOut.routes.ConfirmOptOutController.show()
+    }
+
+  }
 }

@@ -17,14 +17,15 @@
 package services.optout
 
 import auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.StatusDetail
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
-import OptOutService._
 import connectors.OptOutConnector
-import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponse}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.Mandated
+import models.itsaStatus.StatusDetail
+import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponse
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
+import services.optout.OptOutService._
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -66,7 +67,12 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
   }
 
   private def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
-    OptOutOneYearViewModel(optOutYear.taxYear)
+    val showWarning = optOutData match {
+      case OptOutData(previousTaxYear, currentTaxYear, _) if previousTaxYear == optOutYear && currentTaxYear.status == Mandated => true
+      case OptOutData(_, currentTaxYear, nextTaxYear) if currentTaxYear == optOutYear && nextTaxYear.status == Mandated => true
+      case _ => false
+    }
+    OptOutOneYearViewModel(optOutYear.taxYear, showWarning)
   }
 
   def getOneYearOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
