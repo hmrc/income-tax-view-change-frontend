@@ -119,9 +119,6 @@ class DocumentDetailSpec extends UnitSpec {
         }
       }
       "return true" when {
-//        "original amount is not present" in {
-//          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe true
-//        }
         "original amount is positive" in {
           fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
         }
@@ -225,10 +222,6 @@ class DocumentDetailSpec extends UnitSpec {
       }
 
       "produce no value" when {
-//        "there is no original amount" in {
-//          fullDocumentDetailModel.copy(originalAmount = None, paymentLot = None,
-//            paymentLotItem = None).credit shouldBe None
-//        }
 
         "there is a payment Id and lot Item" in {
           fullDocumentDetailModel.copy(originalAmount = BigDecimal(-10.00), paymentLot = Some("1"),
@@ -250,10 +243,6 @@ class DocumentDetailSpec extends UnitSpec {
       }
 
       "produce no value" when {
-//        "there is no outstanding amount" in {
-//          fullDocumentDetailModel.copy(outstandingAmount = None, paymentLot = None,
-//            paymentLotItem = None).paymentOrChargeCredit shouldBe None
-//        }
 
         "the outstanding amount is not negative" in {
           fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(10.00), paymentLot = None,

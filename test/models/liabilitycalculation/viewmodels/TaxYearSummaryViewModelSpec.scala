@@ -78,19 +78,6 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"
       }
     }
-
-//    "originalAmount is not defined in Charge list" should {
-//      "throw IllegalArgumentException" in {
-//        val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
-//          Some(testCalculationSummary),
-//          testWithMissingOriginalAmountChargesList,
-//          testObligationsModel,
-//          codingOutEnabled = true, ctaViewModel = testCTAViewModel
-//        )
-//
-//        thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"
-//      }
-//    }
   }
 
   "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" when {
