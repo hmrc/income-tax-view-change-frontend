@@ -71,6 +71,10 @@ object FeatureSwitchName {
       JsSuccess(IncomeSourcesNewJourney)
     case name if name == JsString(IncomeSources.name) =>
       JsSuccess(IncomeSources)
+    case name if name == JsString(OptOut.name) =>
+      JsSuccess(OptOut)
+    case name if name == JsString(AdjustPaymentsOnAccount.name) =>
+      JsSuccess(AdjustPaymentsOnAccount)
     case _ => JsError("Invalid feature switch name")
   }
 
@@ -190,6 +194,16 @@ case object IncomeSourcesNewJourney extends FeatureSwitchName {
 case object IncomeSources extends FeatureSwitchName {
   override val name = "enable-income-sources"
   override val toString = "Income Sources"
+}
+
+case object OptOut extends FeatureSwitchName {
+  override val name = s"enable-opt-out"
+  override val toString = "Opt Out"
+}
+
+case object AdjustPaymentsOnAccount extends FeatureSwitchName {
+  override val name: String = s"enable-adjust-payments-on-account"
+  override val toString: String = "Adjust Payments On Account"
 }
 
 object FeatureSwitchMongoFormats {

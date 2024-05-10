@@ -16,8 +16,10 @@
 
 package connectors
 
+import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
+import config.featureswitch.FeatureSwitching
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logger
@@ -31,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClient,
-                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends FeatureSwitching {
+                                       val messagesApi: MessagesApi,
+                                       implicit val user: MtdItUser[_])(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val baseUrl: String = appConfig.addressLookupService
 
