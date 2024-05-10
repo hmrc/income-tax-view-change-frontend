@@ -36,45 +36,45 @@
 }
 
 @mainTemplate(
-    pageTitle = messages("optout.confirmOptOut.heading"),
+    pageTitle = messages("optout.chooseOptOutTaxYear.heading"),
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
     ) {
 
-@h1(messages("Confirm you want to opt out of quarterly reporting"), classes = "govuk-heading-l")
+@h1(messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
 @p(id=Some("description1")) {
-    @messages("You can opt out from any of the tax years available and report annually from that tax year onwards.")
+    @messages("optout.chooseOptOutTaxYear.desc1")
 }
 
 @p(id=Some("description2")) {
-    @messages("You can then choose to submit your tax return through:")
+    @messages("optout.chooseOptOutTaxYear.desc2")
 }
 
 <ul class="govuk-list govuk-list--bullet">
-    <li>your HMRC online account</li>
-    <li>compatible record-keeping software</li>
+    <li>@messages("optout.chooseOptOutTaxYear.desc2.p1")</li>
+    <li>@messages("optout.chooseOptOutTaxYear.desc2.p2")</li>
 </ul>
 
 <div class="govuk-form-group ">
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            Which tax year do you want to opt out from?
+        <legend id="whichTaxYear" class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            @messages("optout.chooseOptOutTaxYear.whichTaxYear")
         </legend>
 
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio1" name="optoutYear" type="radio" value="2023&nbsp;to&nbsp;2024">
+                <input class="govuk-radios__input" id="radio1" name="optoutYear" type="radio" value="2023">
                 <label class="govuk-label govuk-radios__label" for="radio1">
-                    2023&nbsp;to&nbsp;2024 onwards
+                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards1")
                 </label>
             </div>
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio2" name="optoutYear" type="radio" value=" 2024&nbsp;to&nbsp;2025">
+                <input class="govuk-radios__input" id="radio2" name="optoutYear" type="radio" value="2024">
                 <label class="govuk-label govuk-radios__label" for="radio2">
-                    2024&nbsp;to&nbsp;2025 onwards
+                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards2")
                 </label>
             </div>
         </div>
@@ -82,11 +82,11 @@
 </div>
 
 <div class="govuk-button-group">
-    <a class="govuk-button" role="button" data-module="govuk-button" id="confirm-button" href="@confirmOptOutURL" data-module="govuk-button">
-        @messages("Continue")
+    <a class="govuk-button" role="button" data-module="govuk-button" id="continue-button" href="@confirmOptOutURL" data-module="govuk-button">
+        @messages("optout.chooseOptOutTaxYear.continue")
     </a>
     <a class="govuk-link" id="cancel-button" href="#">
-        @messages("optout.confirmOptOut.cancel")
+        @messages("optout.chooseOptOutTaxYear.cancel")
     </a>
 </div>
 

@@ -1909,3 +1909,15 @@ optout.confirmedOptOut.reportQuarterly.p2       = you report an increase in your
 optout.confirmedOptOut.reportQuarterly.example  = For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025.
 optout.confirmedOptOut.reportQuarterly.desc2    = If this happens, we will write to you to let you know.
 optout.confirmedOptOut.reportQuarterly.desc3    = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab).
+
+# opt out choose tax year
+optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting
+optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards.
+optout.chooseOptOutTaxYear.desc2                     = You can then choose to submit your tax return through:
+optout.chooseOptOutTaxYear.desc2.p1                  = your HMRC online account
+optout.chooseOptOutTaxYear.desc2.p2                  = compatible record-keeping software
+optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
+optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 to 2024 onwards
+optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 to 2025 onwards
+optout.chooseOptOutTaxYear.cancel                    = Cancel
+optout.chooseOptOutTaxYear.continue                  = Continue

@@ -1883,3 +1883,15 @@ optout.confirmedOptOut.reportQuarterly.p2       = Ddigidol rydych yn rhoi gwybod
 optout.confirmedOptOut.reportQuarterly.example  = Er enghraifft, os yw’ch incwm cymwys yn uwch na’r trothwy ym mlwyddyn dreth 2023 i 2024, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill 2025 ymlaen.
 optout.confirmedOptOut.reportQuarterly.desc2    = Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
 optout.confirmedOptOut.reportQuarterly.desc3    = Gallwch wirio’r trothwy ar gyfer incwm cymwys yn y meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol (yn agor tab newydd).
+
+# opt out choose tax year
+optout.chooseOptOutTaxYear.heading                   = Cadarnhau eich bod am optio allan o gyflwyno adroddiadau yn chwarterol
+optout.chooseOptOutTaxYear.desc1                     = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn dreth honno ymlaen.
+optout.chooseOptOutTaxYear.desc2                     = Gallwch wedyn dewis cyflwyno’ch Ffurflen Dreth drwy’r canlynol:
+optout.chooseOptOutTaxYear.desc2.p1                  = eich cyfrif ar-lein CThEF meddalwedd cadw
+optout.chooseOptOutTaxYear.desc2.p2                  = cofnodion sy’n cydweddu
+optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
+optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 i 2024 ymlaen
+optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 i 2025 ymlaen
+optout.chooseOptOutTaxYear.cancel                    = Canslo
+optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
