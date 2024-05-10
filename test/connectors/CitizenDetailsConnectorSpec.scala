@@ -35,7 +35,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
   val serviceUnavailabeResponse = HttpResponse(status = Status.SERVICE_UNAVAILABLE, body = "Error Message")
 
 
-  object TestCitizenDetailsConnector extends CitizenDetailsConnector(mockHttpGet, appConfig)
+  object TestCitizenDetailsConnector extends CitizenDetailsConnector(httpClientMock, appConfig)
 
   "CitizenDetailsConnector.getCitizenDetailsBySaUtrUrl" should {
 
