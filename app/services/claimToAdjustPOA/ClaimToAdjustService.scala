@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package services
+package services.claimToAdjustPOA
 
 import connectors.{CalculationListConnector, FinancialDetailsConnector}
-import exceptions.MissingFieldException
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.incomeSourceDetails.TaxYear
-import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.core.Nino
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import services.DateServiceInterface
+import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                                      val calculationListConnector: CalculationListConnector,
                                      implicit val dateService: DateServiceInterface)
-                                    (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
+                                    (implicit ec: ExecutionContext) extends ClaimToAdjustHelper with ClaimToAdjustCalculationListHelper {
 
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
     for {

@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.ClaimToAdjustService
+import services.claimToAdjustPOA.ClaimToAdjustService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

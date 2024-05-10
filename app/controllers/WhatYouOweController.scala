@@ -29,7 +29,8 @@ import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
+import services.claimToAdjustPOA.ClaimToAdjustService
+import services.{DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.WhatYouOwe
