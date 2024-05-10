@@ -98,7 +98,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear => response
       }
-
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
