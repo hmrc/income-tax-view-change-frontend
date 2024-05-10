@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.agent.optOut
 
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.ComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class SingleYearOptOutConfirmationControllerISpec extends ComponentSpecBase {
-  val isAgent: Boolean = false
-  val singleYearOptOutConfirmationPageGETUrl = controllers.optOut.routes.SingleYearOptOutConfirmationController.show(isAgent).url
-  val singleYearOptOutConfirmationPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent).url
+class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
+  val isAgent: Boolean = true
+  val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
+  val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
   val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
   val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
-  val checkPointPageUrl = controllers.optOut.routes.OptOutCheckpointController.show.url
-  val nextUpdatePageUrl = controllers.routes.NextUpdatesController.show().url
+  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.showAgent().url
+  val homePageUrl = controllers.routes.HomeController.showAgent.url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -45,10 +45,10 @@ class SingleYearOptOutConfirmationControllerISpec extends ComponentSpecBase {
   val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
   val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 
-  s"calling GET $singleYearOptOutConfirmationPageGETUrl" should {
+  s"calling GET $singleYearOptOutWarningPageGETUrl" should {
     "render single tax year opt out confirmation pager" when {
       "User is authorised" in {
-
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
@@ -56,12 +56,11 @@ class SingleYearOptOutConfirmationControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getSingleYearOptOutConfirmation()
-        verifyIncomeSourceDetailsCall(testMtditid)
+        val result = IncomeTaxViewChangeFrontend.getSingleYearOptOutWarning(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("optOut.confirmSingleYearOptOut.title"),
+          pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
           elementTextByID("detail-text")(expectedDetailText),
           elementTextByID("warning-inset")(expectedInsetText),
           elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle)
@@ -71,23 +70,23 @@ class SingleYearOptOutConfirmationControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST $singleYearOptOutConfirmationPagePOSTUrl" should {
+  s"calling POST $singleYearOptOutWarningPagePOSTUrl" should {
     s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
       "invalid data is sent" in {
-
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postSingleYearOptOutConfirmation()(inValidForm)
+        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(inValidForm)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleIndividual("optOut.confirmSingleYearOptOut.title"),
+          pageTitleAgent("optOut.confirmSingleYearOptOut.title"),
           elementTextByID("detail-text")(expectedDetailText),
           elementTextByID("warning-inset")(expectedInsetText),
           elementTextBySelector(".govuk-fieldset__legend--m")(expectedFormTitle),
@@ -96,43 +95,43 @@ class SingleYearOptOutConfirmationControllerISpec extends ComponentSpecBase {
 
       }
     }
-    s"return status $SEE_OTHER with location $checkPointPageUrl" when {
+    s"return status $SEE_OTHER with location $confirmOptOutPageUrl" when {
       "Yes response is sent" in {
-
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postSingleYearOptOutConfirmation()(validYesForm)
+        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validYesForm)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(checkPointPageUrl)
+          redirectURI(confirmOptOutPageUrl)
         )
 
       }
     }
 
-    s"return status $SEE_OTHER with location $nextUpdatePageUrl" when {
+    s"return status $SEE_OTHER with location $homePageUrl" when {
       "Yes response is sent" in {
-
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postSingleYearOptOutConfirmation()(validNoForm)
+        val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validNoForm)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(nextUpdatePageUrl)
+          redirectURI(homePageUrl)
         )
       }
     }

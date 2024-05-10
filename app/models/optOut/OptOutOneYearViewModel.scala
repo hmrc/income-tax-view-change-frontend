@@ -26,7 +26,7 @@ case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Bo
 
   def optOutConfirmationLink(isAgent: Boolean): Call = {
     if (showWarning) {
-      return controllers.optOut.routes.SingleYearOptOutConfirmationController.show(isAgent)
+      return controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
     }
 
     if (isAgent) {

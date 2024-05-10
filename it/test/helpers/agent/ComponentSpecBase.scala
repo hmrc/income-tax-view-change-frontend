@@ -228,11 +228,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
 
-    def getSingleYearOptOutConfirmation(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def getSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(s"/optout/confirm-opt-out-from-quarterly-reporting", additionalCookies)
     }
 
-    def postSingleYearOptOutConfirmation(additionalCookies: Map[String, String] = Map.empty)(form: ConfirmOptOutSingleTaxYearForm): WSResponse = {
+    def postSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty)(form: ConfirmOptOutSingleTaxYearForm): WSResponse = {
       val formData: Map[String, Seq[String]] = Map(
         ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
         ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))

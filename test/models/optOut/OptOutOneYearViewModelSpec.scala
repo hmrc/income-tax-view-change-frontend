@@ -22,8 +22,8 @@ import testUtils.UnitSpec
 
 class OptOutOneYearViewModelSpec extends UnitSpec {
 
-  val singleYearOptOutConfirmationIndividual: Call = controllers.optOut.routes.SingleYearOptOutConfirmationController.show(isAgent = false)
-  val singleYearOptOutConfirmationAgent: Call = controllers.optOut.routes.SingleYearOptOutConfirmationController.show(isAgent = true)
+  val singleYearOptOutConfirmationIndividual: Call = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent = false)
+  val singleYearOptOutConfirmationAgent: Call = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent = true)
   val confirmOptOutIndividual: Call = controllers.optOut.routes.ConfirmOptOutController.show()
   val confirmOptOutAgent: Call = controllers.optOut.routes.ConfirmOptOutController.showAgent()
 

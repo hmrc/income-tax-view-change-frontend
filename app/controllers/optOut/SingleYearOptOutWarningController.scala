@@ -34,10 +34,10 @@ import views.html.optOut.ConfirmSingleYearOptOut
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredicate,
-                                                       view: ConfirmSingleYearOptOut,
-                                                       optOutService: OptOutService)
-                                                      (implicit val appConfig: FrontendAppConfig,
+class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
+                                                  view: ConfirmSingleYearOptOut,
+                                                  optOutService: OptOutService)
+                                                 (implicit val appConfig: FrontendAppConfig,
                                                        val ec: ExecutionContext,
                                                        val authorisedFunctions: AuthorisedFunctions,
                                                        val itvcErrorHandler: ItvcErrorHandler,
@@ -46,10 +46,10 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 
-  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutConfirmationController.submit(isAgent)
-  private val previousPage = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
+  private val homePage = (isAgent: Boolean) => if (isAgent) controllers.routes.HomeController.showAgent else controllers.routes.HomeController.show()
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-  private val backUrl = previousPage
+  private val backUrl = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user => withRecover(isAgent)(handleRequest(isAgent))
@@ -88,12 +88,15 @@ class SingleYearOptOutConfirmationController @Inject()(auth: AuthenticatorPredic
           },
           {
             case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
-              val nextPage = controllers.optOut.routes.OptOutCheckpointController.show
+              val nextPage = if (isAgent)
+                controllers.optOut.routes.ConfirmOptOutController.showAgent()
+              else controllers.optOut.routes.ConfirmOptOutController.show()
+
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)
             case ConfirmOptOutSingleTaxYearForm(Some(false), _) =>
-              Logger("application").info(s"redirecting to : ${previousPage(isAgent)}")
-              Redirect(previousPage(isAgent))
+              Logger("application").info(s"redirecting to : ${homePage(isAgent)}")
+              Redirect(homePage(isAgent))
             case _ =>
               Logger("application").error("bad request")
               errorHandler(isAgent).showInternalServerError()

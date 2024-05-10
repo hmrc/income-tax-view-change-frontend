@@ -24,10 +24,10 @@ GET         /agents/optout/review-confirm-taxyear                         contro
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
 
-GET         /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = false)
-GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.show(isAgent: Boolean = true)
-POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = false)
-POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutConfirmationController.submit(isAgent: Boolean = true)
+GET         /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
+GET         /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
+POST        /optout/confirm-opt-out-from-quarterly-reporting              controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = false)
+POST        /agents/optout/confirm-opt-out-from-quarterly-reporting       controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = true)
 
 GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
 

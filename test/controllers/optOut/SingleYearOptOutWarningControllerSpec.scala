@@ -32,10 +32,10 @@ import views.html.optOut.ConfirmSingleYearOptOut
 
 import scala.concurrent.Future
 
-class SingleYearOptOutConfirmationControllerSpec extends TestSupport
+class SingleYearOptOutWarningControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService {
 
-  object TestSingleYearOptOutConfirmationController extends SingleYearOptOutConfirmationController(
+  object TestSingleYearOptOutWarningController$ extends SingleYearOptOutWarningController(
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmSingleYearOptOut],
     optOutService = mockOptOutService)(
@@ -50,7 +50,8 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
   def tests(isAgent: Boolean): Unit = {
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-    val previousPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val confirmOptOutPage = if (isAgent) Some(controllers.optOut.routes.ConfirmOptOutController.showAgent().url) else Some(controllers.optOut.routes.ConfirmOptOutController.show().url)
+    val homePage = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear)))
     val noEligibleTaxYearResponse = Future.successful(None)
@@ -62,7 +63,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-        val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
+        val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
         status(result) shouldBe Status.OK
       }
 
@@ -72,7 +73,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -81,7 +82,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(failedResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestGET)
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -94,28 +95,29 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.routes.OptOutCheckpointController.show.url)
+
+          redirectLocation(result) shouldBe confirmOptOutPage
         }
       }
-      s"return result with $SEE_OTHER status with redirect to $previousPage" when {
+      s"return result with $SEE_OTHER status with redirect to $homePage" when {
         "No response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(previousPage)
+          redirectLocation(result) shouldBe Some(homePage)
         }
       }
       s"return result with $BAD_REQUEST status" when {
@@ -124,7 +126,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
@@ -138,7 +140,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestPOST)
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -147,7 +149,7 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockGetOneYearOptOutViewModel(failedResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutConfirmationController.show(isAgent = isAgent)(requestPOST)
+          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -155,10 +157,10 @@ class SingleYearOptOutConfirmationControllerSpec extends TestSupport
   }
 
 
-  "SingleYearOptOutConfirmationController - Individual" when {
+  "SingleYearOptOutWarningController - Individual" when {
     tests(isAgent = false)
   }
-  "SingleYearOptOutConfirmationController - Agent" when {
+  "SingleYearOptOutWarningController - Agent" when {
     tests(isAgent = true)
   }
 }
