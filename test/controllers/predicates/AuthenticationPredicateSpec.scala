@@ -18,7 +18,7 @@ package controllers.predicates
 
 import audit.mocks.MockAuditingService
 import auth.FrontEndHeaderExtractor
-import config.featureswitch.{FeatureSwitching, IvUplift}
+import config.featureswitch.{FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
@@ -68,7 +68,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
       "a HMRC-MTD-IT enrolment exists" when {
 
         "return Ok (200)" in {
-          enable(IvUplift)
           status(result) shouldBe Status.OK
         }
       }
@@ -128,7 +127,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         val ivUpliftRelativeUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/cannot-view-page"
 
         "the feature switch is enabled for an individual" in {
-          enable(IvUplift)
           setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L200))
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
@@ -137,7 +135,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         }
 
         "the feature switch is enabled for an organisation with a nino" in {
-          enable(IvUplift)
           setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50, AffinityGroup.Organisation))
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
@@ -147,7 +144,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
 
         "the feature switch is enabled for an organisation without a nino" in {
-          enable(IvUplift)
           setupMockAuthRetrievalSuccess(testAuthSuccessResponseOrgNoNino(ConfidenceLevel.L50))
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
@@ -156,7 +152,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         }
 
         "relative URL is enabled" in {
-          enable(IvUplift)
 
           setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L200))
 
@@ -167,21 +162,8 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         }
       }
 
-      "return Ok (200)" when {
-
-        "the feature switch is disabled" in {
-          disable(IvUplift)
-          setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50))
-
-          def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.OK
-        }
-      }
-
       "expect exception to be raised" when {
         "affinity group set to Agent" in {
-          enable(IvUplift)
           setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50, AffinityGroup.Agent))
 
           intercept[UnsupportedAuthProvider] {
@@ -194,7 +176,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
     "called with a confidence level of 250" should {
       "return Ok (200)" in {
-        enable(IvUplift)
         setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L250))
 
         def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
