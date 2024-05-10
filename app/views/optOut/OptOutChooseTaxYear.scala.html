@@ -1,0 +1,93 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+
+@this(
+        mainTemplate: unifiedLayout,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+)
+
+@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@confirmOptOutURL = @{
+    if(isAgent) controllers.optOut.routes.ConfirmOptOutController.showAgent().url
+    else controllers.optOut.routes.ConfirmOptOutController.show().url
+}
+
+@mainTemplate(
+    pageTitle = messages("optout.confirmOptOut.heading"),
+    backUrl = Some("#"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+    ) {
+
+@h1(messages("Confirm you want to opt out of quarterly reporting"), classes = "govuk-heading-l")
+
+@p(id=Some("description1")) {
+    @messages("You can opt out from any of the tax years available and report annually from that tax year onwards.")
+}
+
+@p(id=Some("description2")) {
+    @messages("You can then choose to submit your tax return through:")
+}
+
+<ul class="govuk-list govuk-list--bullet">
+    <li>your HMRC online account</li>
+    <li>compatible record-keeping software</li>
+</ul>
+
+<div class="govuk-form-group ">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            Which tax year do you want to opt out from?
+        </legend>
+
+        <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="radio1" name="optoutYear" type="radio" value="2023&nbsp;to&nbsp;2024">
+                <label class="govuk-label govuk-radios__label" for="radio1">
+                    2023&nbsp;to&nbsp;2024 onwards
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="radio2" name="optoutYear" type="radio" value=" 2024&nbsp;to&nbsp;2025">
+                <label class="govuk-label govuk-radios__label" for="radio2">
+                    2024&nbsp;to&nbsp;2025 onwards
+                </label>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<div class="govuk-button-group">
+    <a class="govuk-button" role="button" data-module="govuk-button" id="confirm-button" href="@confirmOptOutURL" data-module="govuk-button">
+        @messages("Continue")
+    </a>
+    <a class="govuk-link" id="cancel-button" href="#">
+        @messages("optout.confirmOptOut.cancel")
+    </a>
+</div>
+
+}

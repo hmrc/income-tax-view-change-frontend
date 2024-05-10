@@ -24,6 +24,9 @@ GET         /agents/optout/review-confirm-taxyear                         contro
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
 
+GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show()
+GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.showAgent()
+
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)
