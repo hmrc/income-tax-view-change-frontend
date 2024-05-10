@@ -28,13 +28,13 @@ import scala.concurrent.Future
 class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
   class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse) {
-    val connector = new IncomeTaxCalculationConnector(mockHttpGet, appConfig)
+    val connector = new IncomeTaxCalculationConnector(httpClientMock, appConfig)
 
     setupMockHttpGetWithParams(connector.getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(response)
   }
 
   class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse) {
-    val connector = new IncomeTaxCalculationConnector(mockHttpGet, appConfig)
+    val connector = new IncomeTaxCalculationConnector(httpClientMock, appConfig)
 
     setupMockHttpGet(connector.getCalculationResponseByCalcIdUrl(nino, calcId))(response)
   }

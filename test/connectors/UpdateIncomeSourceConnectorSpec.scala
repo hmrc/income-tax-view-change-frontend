@@ -50,7 +50,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
-  val http: HttpClient = mockHttpGet
+  val http: HttpClient = httpClientMock
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
@@ -59,7 +59,7 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new UpdateIncomeSourceConnector(mockHttpGet, getAppConfig())
+    val connector = new UpdateIncomeSourceConnector(httpClientMock, getAppConfig())
   }
 
   "updateCessationDate" should {

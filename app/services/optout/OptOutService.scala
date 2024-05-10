@@ -20,9 +20,11 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
-import play.api.Logger
-import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import OptOutService._
+import connectors.OptOutConnector
+import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponse}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +38,10 @@ object OptOutService {
 }
 
 @Singleton
-class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationListService: CalculationListService, dateService: DateServiceInterface) {
+class OptOutService @Inject()(optOutConnector: OptOutConnector,
+                              itsaStatusService: ITSAStatusService,
+                              calculationListService: CalculationListService,
+                              dateService: DateServiceInterface) {
 
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
                                                     hc: HeaderCarrier,
@@ -91,6 +96,10 @@ class OptOutService @Inject()(itsaStatusService: ITSAStatusService, calculationL
       nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
       optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
     } yield optOutData
+  }
+
+  def makeOptOutUpdateRequestForYear(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+    optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)
   }
 }
 

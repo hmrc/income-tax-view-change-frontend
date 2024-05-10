@@ -62,7 +62,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ObligationsConnector(mockHttpGet, mockAuditingService, getAppConfig())
+    val connector = new ObligationsConnector(httpClientMock, mockAuditingService, getAppConfig())
   }
 
   "getNextUpdatesUrl" should {
