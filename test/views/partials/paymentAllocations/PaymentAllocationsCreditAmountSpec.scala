@@ -37,7 +37,7 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
     val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)
     val outstandingAmount: BigDecimal = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
 
-    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsFSEnabled, isAgent)
+    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(Option(outstandingAmount), dueDate, creditsRefundsFSEnabled, isAgent)
     val pageDocument: Document = Jsoup.parse("<table>" + contentAsString(html) + "</table>")
   }
 

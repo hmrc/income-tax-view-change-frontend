@@ -392,13 +392,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
             document.selectById("dunningLocksBanner")
               .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£0.00", "15 May 2019")
           }
-
-          "display the original amount if no cleared or outstanding amount is present" in new TestSetup(
-            documentDetailModel(outstandingAmount = None, originalAmount = 1700), paymentBreakdown = paymentBreakdownWithDunningLocks) {
-
-            document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,700.00", "15 May 2019")
-          }
         }
       }
 
@@ -436,10 +429,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         verifySummaryListRowNumeric(3, remainingToPay, "£0.00")
-      }
-
-      "display the original amount if no cleared or outstanding amount is present" in new TestSetup(documentDetailModel(outstandingAmount = None, originalAmount = 1700)) {
-        verifySummaryListRowNumeric(3, remainingToPay, "£1,700.00")
       }
 
       "not display the Payment breakdown list when payments breakdown is empty" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
@@ -785,7 +774,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display balancing charge due date as N/A and hide sections - Payment Breakdown ,Make a payment button ,Any payments you make, Payment History" when {
-        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = BigDecimal(0), documentDate = LocalDate.of(2018, 3, 29))
+        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = 0, originalAmount = BigDecimal(0), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
           document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."

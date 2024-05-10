@@ -354,11 +354,6 @@ mainTransaction = Some("4920"),
 
   val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoPayment)
 
-  val financialDetailsWithNoOriginalAmount: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(originalAmount = None)),
-    List(financialDetail)
-  )
-
 
   val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetailNoPaymentCredit),
@@ -369,17 +364,6 @@ mainTransaction = Some("4920"),
     List(documentDetail3),
     List(financialDetail3)
   )
-
-  val paymentAllocationViewModelWithNoOriginalAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithNoOriginalAmount,
-    Seq(
-      AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2021-01-31"))),
-      AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
-        Some(LocalDate.parse("2021-01-31"))
-      )
-    ))
 
   val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithCreditZeroOutstanding,
     Seq(

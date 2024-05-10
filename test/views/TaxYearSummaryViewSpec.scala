@@ -210,7 +210,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   )
 
   val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = None))
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = 1000.00))
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))

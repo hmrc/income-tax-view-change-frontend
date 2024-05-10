@@ -426,16 +426,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       findElementById("money-on-account") shouldBe None
     }
 
-    "The payments allocation view has NO payment allocation amount" should {
-      "throw a MissingFieldException" in {
-        val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr = None, CutOverCreditsEnabled = false, dueDate = None,
-            outstandingAmount = None)
-        }
-        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
-      }
-    }
-
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {

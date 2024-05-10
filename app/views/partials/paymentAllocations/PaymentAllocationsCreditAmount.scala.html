@@ -24,7 +24,7 @@
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
 
-@(outstandingAmount: BigDecimal, dueDate: Option[LocalDate], creditsRefundsRepayEnabled: Boolean,
+@(outstandingAmount: Option[BigDecimal], dueDate: Option[LocalDate], creditsRefundsRepayEnabled: Boolean,
     isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
@@ -55,16 +55,22 @@
 
 
 
-    @if(outstandingAmount != 0) {
-         <tbody class="govuk-table__body">
-               <tr id="money-on-account">
-                   <td class="govuk-table__cell">
-                       @getLink
-                   </td>
-                   <td class="govuk-table__cell">
-                       @{dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort}
-                   </td>
-                   <td class="govuk-table__cell govuk-table__cell--numeric">@{outstandingAmount.abs.toCurrencyString}</td>
-               </tr>
-         </tbody>
+@outstandingAmount.map { amount =>
+    @if(amount != 0) {
+            <tbody class="govuk-table__body">
+                <tr id="money-on-account">
+                    <td class="govuk-table__cell">
+                    @getLink
+                    </td>
+                    <td class="govuk-table__cell">
+                    @{
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort
+                    }
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.abs.toCurrencyString
+                    }</td>
+                </tr>
+            </tbody>
     }
+}

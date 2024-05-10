@@ -39,7 +39,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
       documentDescription = None,
       documentText = None,
       outstandingAmount = BigDecimal("0"),
-      originalAmount = None,
+      originalAmount = 0,
       documentDate = LocalDate.of(2018, 1, 2)
     ),
     creditType = MfaCreditType,
