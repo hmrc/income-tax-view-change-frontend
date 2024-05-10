@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package services.claimToAdjustPOA
 
-import connectors.CalculationListConnector
 import exceptions.MissingFieldException
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.claimToAdjustPOA.PaymentOnAccountViewModel
-import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import services.DateServiceInterface
 
 import java.time.{LocalDate, Month}
-import scala.concurrent.{ExecutionContext, Future}
 
 // TODO: This part of the logic expected to be moved within BE
 // TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
@@ -85,34 +81,6 @@ trait ClaimToAdjustHelper {
         poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
         poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )
-    }
-  }
-
-  protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
-                                      (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                       calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
-    if (taxYear.isFutureTaxYear(dateService)) {
-      Future.successful(true)
-    } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
-        case err: CalculationListErrorModel if err.code == 204 => Future.successful(false)
-        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-      }.map(!_)
-    }
-  }
-
-  protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
-                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                     calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
-    taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
-      acc.flatMap {
-        case Some(_) => acc
-        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {
-          case true => Some(item)
-          case false => None
-        }
-      }
     }
   }
 

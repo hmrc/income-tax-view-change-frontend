@@ -26,7 +26,8 @@ import models.claimToAdjustPOA.PaymentOnAccountViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPOA.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
