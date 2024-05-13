@@ -17,25 +17,17 @@
 package services.optout
 
 import auth.MtdItUser
+import connectors.OptOutConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.StatusDetail
+import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponse
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
-import OptOutService._
-import connectors.OptOutConnector
-import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponse}
 import play.api.Logger
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
-
-object OptOutService {
-  implicit class TypeToFuture[T](t: T) {
-    def toF: Future[T] = Future.successful(t)
-  }
-}
 
 @Singleton
 class OptOutService @Inject()(optOutConnector: OptOutConnector,
@@ -82,7 +74,6 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
         None
     }
   }
-
 
   private def setupOptOutData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutData] = {
 
