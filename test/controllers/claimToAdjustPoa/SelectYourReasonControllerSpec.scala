@@ -94,9 +94,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
       val result = TestSelectYourReasonController.show(isAgent = true, isChange = true)(fakeRequestConfirmedClient())
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
-      // TODO: Update when CYA is done
-//      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
     }
 
     s"return status: $OK when PoA tax year crystallized" when {
@@ -200,7 +198,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
           val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
-            .withFormUrlEncodedBody("value" -> "a")
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
           val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
@@ -217,15 +215,13 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
           val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
-            .withFormUrlEncodedBody("value" -> "a")
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
           val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
-          // TODO: Update when CYA is done
-//          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
         }
       }
 

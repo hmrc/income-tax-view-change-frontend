@@ -17,10 +17,9 @@
 package repositories
 
 import helpers.ComponentSpecBase
-import models.claimToAdjustPoa.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import viewmodels.adjustPoa.checkAnswers.MainIncomeLower
 
 class PoAAmendmentDataRepositoryISpec extends ComponentSpecBase{
 

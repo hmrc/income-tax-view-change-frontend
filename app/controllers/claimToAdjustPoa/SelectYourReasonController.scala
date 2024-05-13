@@ -19,9 +19,10 @@ package controllers.claimToAdjustPoa
 import auth.MtdItUser
 import cats.data.EitherT
 import com.google.inject.Singleton
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
@@ -54,45 +55,43 @@ class SelectYourReasonController @Inject()(
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
-      withSessionAndPoa(isAgent) { (session, poa) =>
-        (session.newPoAAmount) match {
-          case Some(amount) if amount >= poa.totalAmount =>
-            saveValueAndRedirect(isChange, isAgent, Increase)
-          case _ =>
-            val form = formProvider.apply()
-            EitherT.rightT(Ok(view(
-              selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
-              taxYear = poa.taxYear,
-              isAgent = isAgent,
-              isChange = isChange,
-              backUrl = "TODO",
-              useFallbackLink = true)))
-        }
-      } fold (
-        logAndShowErrorPage(isAgent, "show"),
-        view => view
-      )
-    }
+      ifAdjustPoaIsEnabled(isAgent) {
+        withSessionAndPoa(isAgent) { (session, poa) =>
+          (session.newPoAAmount) match {
+            case Some(amount) if amount >= poa.totalAmount =>
+              saveValueAndRedirect(isChange, isAgent, Increase)
+            case _ =>
+              val form = formProvider.apply()
+              EitherT.rightT(Ok(view(
+                selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
+                taxYear = poa.taxYear,
+                isAgent = isAgent,
+                isChange = isChange,
+                backUrl = "TODO",
+                useFallbackLink = true)))
+          }
+        } fold(
+          logAndShowErrorPage(isAgent, "show"),
+          view => view
+        )
+      }
+  }
 
   def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit request =>
-      formProvider.apply()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
-            EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true)))
-          },
-          value => saveValueAndRedirect(isChange, isAgent, value))
-        .fold(
-          logAndShowErrorPage(isAgent, "submit"),
-          result => result
-      )
-  }
-
-  private def logAndShowErrorPage(isAgent: Boolean, source: String)(ex: Throwable)(implicit request: Request[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    Logger("application").error(s"[SelectYourReasonController][$source]: ${ex.getMessage} - ${ex.getCause}")
-    errorHandler.showInternalServerError()
+      ifAdjustPoaIsEnabled(isAgent) {
+        formProvider.apply()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true)))
+            },
+            value => saveValueAndRedirect(isChange, isAgent, value))
+          .fold(
+            logAndShowErrorPage(isAgent, "submit"),
+            result => result
+          )
+      }
   }
 
   private def withSessionAndPoa (isAgent: Boolean)
@@ -119,6 +118,7 @@ class SelectYourReasonController @Inject()(
     } yield result
   }
 
+
   private def saveValueAndRedirect(isChange: Boolean, isAgent: Boolean, value: SelectYourReason)
                                   (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
@@ -126,12 +126,33 @@ class SelectYourReasonController @Inject()(
       redirect <- withSessionAndPoa(isAgent) { (session, poa) =>
         (isChange, poa.totalAmountLessThanPoa) match {
           case (false, false) => EitherT.rightT(Redirect(controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)))
-          // TODO: direct to CYA when page is created
-          case (_,_) => EitherT.rightT(Redirect(controllers.routes.HomeController.show()))
+          case (_,_) => EitherT.rightT(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
         }
       }
     } yield {
       redirect
     }
   }
+
+  private def ifAdjustPoaIsEnabled(isAgent: Boolean)
+                                  (block: Future[Result])
+                                  (implicit user: MtdItUser[_]): Future[Result] = {
+    if(isEnabled(AdjustPaymentsOnAccount)) {
+      block
+    } else {
+      Future.successful(
+        Redirect(
+          if (isAgent) routes.HomeController.showAgent
+          else         routes.HomeController.show()
+        )
+      )
+    }
+  }
+
+  private def logAndShowErrorPage(isAgent: Boolean, source: String)(ex: Throwable)(implicit request: Request[_]): Result = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    Logger("application").error(s"[SelectYourReasonController][$source]: ${ex.getMessage} - ${ex.getCause}")
+    errorHandler.showInternalServerError()
+  }
+
 }

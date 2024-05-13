@@ -24,10 +24,10 @@ class SelectYourReasonFormProvider extends Mappings {
   def apply(): Form[SelectYourReason] = {
 
     implicit val enumerableAddress: Enumerable[SelectYourReason] =
-      Enumerable(Seq(("a" -> MainIncomeLower),
-        ("b" -> OtherIncomeLower),
-        ("c" -> AllowanceOrReliefHigher),
-        ("d" -> MoreTaxedAtSource)): _*)
+      Enumerable(Seq(("MainIncomeLower" -> MainIncomeLower),
+        ("OtherIncomeLower" -> OtherIncomeLower),
+        ("AllowanceOrReliefHigher" -> AllowanceOrReliefHigher),
+        ("MoreTaxedAtSource" -> MoreTaxedAtSource)): _*)
 
     Form(
       "value" -> enumerable[SelectYourReason](s"adjust-poa.select-your-reason.error.required")
