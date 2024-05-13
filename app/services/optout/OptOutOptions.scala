@@ -18,6 +18,7 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
+import play.api.Logger
 
 trait OptOut {
   def canOptOut: Boolean
@@ -57,6 +58,16 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
+
+  def optOutFromSelectedTaxYear[T](selectedTaxYear: TaxYear, apiCall: TaxYear => T)(failResult: String => T): T = {
+    if(isOneYearOptOut && availableOptOutYears.nonEmpty && selectedTaxYear == availableOptOutYears.head.taxYear) {
+      apiCall(selectedTaxYear)
+    } else {
+      val msg = s"unable to opt-out of selected tax-year $selectedTaxYear due to illegal opt-out state: $this"
+      Logger("application").error(msg)
+      failResult("No opt-out options available!")
+    }
+  }
 
 }
 
