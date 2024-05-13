@@ -88,11 +88,15 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     yield createOptOutData(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
-  private def createOptOutData(previousYear: TaxYear, currentYear: TaxYear, nextYear: TaxYear, finalisedStatus: Boolean, statusMap: Map[TaxYear, StatusDetail]) = {
+  private def createOptOutData(previousYear: TaxYear,
+                               currentYear: TaxYear,
+                               nextYear: TaxYear,
+                               finalisedStatus: Boolean,
+                               statusMap: Map[TaxYear, StatusDetail]) = {
 
-    val previousYearOptOut = PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus)
+    val previousYearOptOut   = PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus)
     val currentTaxYearOptOut = CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear)
-    val nextTaxYearOptOut = NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut    = NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
 
     OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
