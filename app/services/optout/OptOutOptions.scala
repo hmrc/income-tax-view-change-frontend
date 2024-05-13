@@ -65,7 +65,7 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
     } else {
       val msg = s"unable to opt-out of selected tax-year $selectedTaxYear due to illegal opt-out state: $this"
       Logger("application").error(msg)
-      failResult("No opt-out options available!")
+      failResult(msg)
     }
   }
 
