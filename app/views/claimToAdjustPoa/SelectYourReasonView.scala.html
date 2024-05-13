@@ -88,19 +88,19 @@
             items = Seq(
                 RadioItem(
                     content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.main-lower")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.main-lower.hint")}</span>"""),
-                    value = Some("a")
+                    value = Some("MainIncomeLower")
                 ),
                 RadioItem(
                     content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.other-lower")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.other-lower.hint")}</span>"""),
-                    value = Some("b")
+                    value = Some("OtherIncomeLower")
                 ),
                 RadioItem(
                     content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.relief-higher")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.relief-higher.hint")}</span>"""),
-                    value = Some("c")
+                    value = Some("AllowanceOrReliefHigher")
                 ),
                 RadioItem(
                     content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.taxed-at-source")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint")}</span>"""),
-                    value = Some("d")
+                    value = Some("MoreTaxedAtSource")
                 ),
 
             )).withFormField(selectYourReasonForm("value"))
