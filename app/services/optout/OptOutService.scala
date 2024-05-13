@@ -85,10 +85,12 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
 
 
   private def setupOptOutData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutData] = {
+
+    val currentYear  = dateService.getCurrentTaxYear
+    val previousYear = currentYear.previousYear
+    val nextYear     = currentYear.nextYear
+
     for {
-      currentYear <- dateService.getCurrentTaxYear.toF
-      previousYear <- currentYear.previousYear.toF
-      nextYear <- currentYear.nextYear.toF
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
       previousYearOptOut <- PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus).toF
