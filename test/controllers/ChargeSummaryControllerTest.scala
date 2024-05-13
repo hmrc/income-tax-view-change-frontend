@@ -82,7 +82,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -94,31 +94,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         }
 
       }
-
-      "error when original amount is missing" in {
-
-        val isLatePaymentCharge: Boolean = false
-        val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-
-        controller.enable(ChargeHistory)
-        controller.disable(CodingOut)
-
-        val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
-        when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
-        when(documentDetail.isPayeSelfAssessment).thenReturn(false)
-
-        when(documentDetail.originalAmount).thenReturn(None)
-        when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
-
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
-
-        outcome match {
-          case Right(_) => fail(s"should have failed due to missing original value")
-          case Left(_) =>
-        }
-      }
-
     }
 
     "viewing view-section-2" should {
@@ -135,7 +110,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -160,7 +135,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -184,7 +159,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -209,7 +184,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(None)
 
@@ -238,7 +213,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(Some(10))
+        when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -249,30 +224,6 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
           case Left(e) => fail(s"should have passed but got error: $e")
         }
 
-      }
-
-      "error when original amount is missing" in {
-
-        val isLatePaymentCharge: Boolean = false
-        val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-
-        controller.enable(ChargeHistory)
-        controller.enable(CodingOut)
-
-        val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
-        when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
-        when(documentDetail.isPayeSelfAssessment).thenReturn(true)
-
-        when(documentDetail.originalAmount).thenReturn(None)
-        when(documentDetail.interestEndDate).thenReturn(None)
-        when(documentDetail.latePaymentInterestAmount).thenReturn(None)
-
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
-
-        outcome match {
-          case Right(_) => fail(s"should have failed due to missing original amount")
-          case Left(_) =>
-        }
       }
     }
   }

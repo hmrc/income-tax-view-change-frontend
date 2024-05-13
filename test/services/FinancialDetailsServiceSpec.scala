@@ -138,8 +138,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 200.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
@@ -150,8 +150,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", None, None, 100.00, 0, LocalDate.of(2018, 3, 29)),
+              DocumentDetail(2018, "testTransactionId2", None, None, 0, 0, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
               FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
@@ -171,8 +171,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(7))),
-              DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
+              DocumentDetail(2018, "testTransactionId1", None, None, 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(7))),
+              DocumentDetail(2018, "testTransactionId2", None, None, 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
@@ -183,8 +183,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(3)), documentDueDate = Some(fixedDate.plusDays(3))),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
+              DocumentDetail(2018, "testTransactionId1", None, None, 0, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(3)), documentDueDate = Some(fixedDate.plusDays(3))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
@@ -204,8 +204,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.minusDays(1))),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.minusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
@@ -216,8 +216,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1))),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
@@ -396,8 +396,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailLastYear = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), interestOutstandingAmount = Some(0)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(200.00), interestOutstandingAmount = Some(0))
+            fullDocumentDetailModel.copy(outstandingAmount = 100.00, interestOutstandingAmount = Some(0)),
+            fullDocumentDetailModel.copy(outstandingAmount = 200.00, interestOutstandingAmount = Some(0))
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -407,8 +407,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(300.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(400.00))
+            fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 400.00)
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -433,8 +433,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           getFinancialDetailSuccess(
             taxYear = getTaxEndYear(fixedDate.minusYears(1)),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(50.0)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
+              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+              fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -443,8 +443,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           getFinancialDetailSuccess(
             taxYear = getTaxEndYear(fixedDate),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(25.0))
+              fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
+              fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -455,9 +455,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(50.0)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0), originalAmount = Some(-200.00), latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+            fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel
@@ -466,9 +466,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), originalAmount = Some(-400.00), latePaymentInterestAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(25.0))
+            fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
           ),
           financialDetails = List(
             fullFinancialDetailModel
@@ -484,8 +484,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -495,8 +495,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None)
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None),
+            fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None)
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -515,7 +515,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           getFinancialDetailSuccess(
             taxYear = getTaxEndYear(fixedDate.minusYears(1)),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(100.00))
+              fullDocumentDetailModel.copy(outstandingAmount = 100.00)
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -527,8 +527,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(100.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
+            fullDocumentDetailModel.copy(outstandingAmount = 100.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
           ),
           financialDetails = List(
             fullFinancialDetailModel
@@ -547,11 +547,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
-            documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00)).copy(
+            documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
-            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = Some(0)).copy(
+            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
-            documentDetailModel(transactionId = "transid3", outstandingAmount = Some(0)).copy(
+            documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
           ),
           financialDetails = List(
@@ -562,8 +562,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate),
           documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = Some(300.00)),
-            fullDocumentDetailModel.copy(outstandingAmount = Some(400.00))
+            fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+            fullDocumentDetailModel.copy(outstandingAmount = 400.00)
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -588,13 +588,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         "class 2 nics exists" in {
           disable(CodingOut)
           val ddNics = documentDetailModel(
-            transactionId = "transid1", outstandingAmount = Some(200.00), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS))
+            transactionId = "transid1", outstandingAmount = 200.00, latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS))
           val ddCodedOut = documentDetailModel(
-            taxYear = getTaxEndYear(fixedDate.minusYears(1)), transactionId = "transid2", outstandingAmount = Some(2500.00),
+            taxYear = getTaxEndYear(fixedDate.minusYears(1)), transactionId = "transid2", outstandingAmount = 2500.00,
             latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"),
             documentText = Some(CODING_OUT_ACCEPTED))
           val ddCancelledCodedOut = documentDetailModel(
-            transactionId = "transid3", outstandingAmount = Some(2500.00), latePaymentInterestAmount = None).copy(
+            transactionId = "transid3", outstandingAmount = 2500.00, latePaymentInterestAmount = None).copy(
             interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED))
           val financialDetailCodingOut = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(fixedDate.minusYears(1)),
@@ -608,8 +608,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetail = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(fixedDate),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(300.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(400.00))
+              fullDocumentDetailModel.copy(outstandingAmount = 300.00),
+              fullDocumentDetailModel.copy(outstandingAmount = 400.00)
             ),
             financialDetails = List(
               fullFinancialDetailModel,

@@ -141,7 +141,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "interestLock" -> paymentBreakdown.interestLockExists)
 
   private val fullPaymentAmount = if (isLatePaymentCharge)
-    docDateDetail.documentDetail.latePaymentInterestAmount else docDateDetail.documentDetail.originalAmount
+    docDateDetail.documentDetail.latePaymentInterestAmount else Option(docDateDetail.documentDetail.originalAmount)
 
   private val remainingToPay = if (isLatePaymentCharge)
     docDateDetail.documentDetail.interestRemainingToPay else docDateDetail.documentDetail.remainingToPay

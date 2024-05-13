@@ -115,8 +115,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       transactionId = "transid1",
       documentDescription = Some("ITSA- POA 1"),
       documentText = Some("documentText"),
-      outstandingAmount = None,
-      originalAmount = None,
+      outstandingAmount = 0,
+      originalAmount = 0,
       documentDate = LocalDate.parse("2018-03-21"),
       effectiveDateOfPayment = Some(LocalDate.parse("2017-01-31")),
       documentDueDate = Some(LocalDate.parse("2017-01-31")))
@@ -125,8 +125,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       transactionId = "transid2",
       documentDescription = Some("ITSA - POA 2"),
       documentText = Some("documentText2"),
-      outstandingAmount = None,
-      originalAmount = None,
+      outstandingAmount = 0,
+      originalAmount = 0,
       documentDate = LocalDate.parse("2018-03-21"),
       effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
       documentDueDate = Some(LocalDate.parse("2021-12-01")))

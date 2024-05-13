@@ -37,7 +37,7 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
     "find a correspond document detail amount to financial detail" in {
       val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson)
 
-      result.get.filteredDocumentDetails.head.originalAmount shouldBe Some(-300)
+      result.get.filteredDocumentDetails.head.originalAmount shouldBe -300
     }
 
     "contain only payments" in {

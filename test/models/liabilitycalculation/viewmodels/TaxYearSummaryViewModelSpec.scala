@@ -30,7 +30,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
 
 
   val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = None))
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = 0))
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -76,19 +76,6 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"
-      }
-    }
-
-    "originalAmount is not defined in Charge list" should {
-      "throw IllegalArgumentException" in {
-        val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
-          Some(testCalculationSummary),
-          testWithMissingOriginalAmountChargesList,
-          testObligationsModel,
-          codingOutEnabled = true, ctaViewModel = testCTAViewModel
-        )
-
-        thrown.getMessage shouldBe "requirement failed: missing originalAmount on charges"
       }
     }
   }
