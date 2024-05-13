@@ -28,7 +28,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
-import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
+import services.optout.OptOutTestSupport.{buildMultiYearOptOutData, buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -107,6 +107,23 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         when(user.nino).thenReturn(taxableEntityId)
         service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForNextYear(currentYear))
         verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId)
+      }
+    }
+
+    "make opt-out update request for one-year opt-out" should {
+
+      "return failed response" in {
+
+        val taxableEntityId = "456"
+        val currentYear = 2024
+
+        when(user.nino).thenReturn(taxableEntityId)
+        val result = service.makeOptOutUpdateRequestForOneYear(buildMultiYearOptOutData(currentYear))
+        verify(optOutConnector, times(0)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId)
+
+        val ex = result.failed.futureValue.asInstanceOf[RuntimeException]
+        ex.getMessage shouldBe "one-year opt-out update call doesn't match the " +
+          "opt-out availability(oneYear:false, multiYear: true, noOptOut: false), user.nino: 456"
       }
     }
   }

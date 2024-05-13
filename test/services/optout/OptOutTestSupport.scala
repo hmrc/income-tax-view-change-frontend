@@ -56,4 +56,21 @@ object OptOutTestSupport {
     )
   }
 
+  def buildMultiYearOptOutData(chosenCurrentYear: Int = 2024): OptOutData = {
+
+    val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
+    val previousYear = currentYear.previousYear
+    val nextYear = currentYear.nextYear
+
+    val previousTaxYearOptOut = PreviousTaxYearOptOut(Voluntary, previousYear,  crystallised = false)
+    val currentTaxYearOptOut = CurrentTaxYearOptOut(Voluntary, currentYear)
+    val extTaxYearOptOut = NextTaxYearOptOut(Voluntary, nextYear, currentTaxYearOptOut)
+
+    OptOutData(
+      previousTaxYearOptOut,
+      currentTaxYearOptOut,
+      extTaxYearOptOut
+    )
+  }
+
 }
