@@ -57,14 +57,10 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     } yield optOutChecks
   }
 
-  private def nextUpdatesPageOneYear(optOutData: OptOutData, optOutYear: OptOut): OptOutOneYearViewModel = {
-    OptOutOneYearViewModel(optOutYear.taxYear)
-  }
-
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
     val oneYearViewModel = setupOptOutData()
-      .map(optOutData => optOutData.optOutForSingleYear(nextUpdatesPageOneYear))
+      .map(optOutData => optOutData.optOutForSingleYear((_, optOutYear) => OptOutOneYearViewModel(optOutYear.taxYear)))
 
     oneYearViewModel recover {
       case e =>
