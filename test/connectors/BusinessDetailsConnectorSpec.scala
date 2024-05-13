@@ -61,7 +61,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
         override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
       }
 
-    val connector = new BusinessDetailsConnector(mockHttpGet, mockAuditingService, getAppConfig())
+    val connector = new BusinessDetailsConnector(httpClientMock, mockAuditingService, getAppConfig())
 
   }
 

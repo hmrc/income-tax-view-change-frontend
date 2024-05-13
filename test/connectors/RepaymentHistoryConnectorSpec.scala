@@ -57,7 +57,7 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttp with MockA
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new RepaymentHistoryConnector(mockHttpGet, getAppConfig())
+    val connector = new RepaymentHistoryConnector(httpClientMock, getAppConfig())
   }
 
   "getRepaymentHistoryByIdUrl" should {
