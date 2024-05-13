@@ -54,17 +54,9 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
       None
   }
 
-  def optOutCallsShouldBeMadeForYears(): Seq[TaxYear] = {
-    val isSingleYearOptOutScenario = availableOptOutYears.size == 1
-    val isMultiYearOptOutScenario = availableOptOutYears.size > 1
-    val isNoOptOutScenario = availableOptOutYears.isEmpty
-
-    (isSingleYearOptOutScenario, isMultiYearOptOutScenario, isNoOptOutScenario) match {
-      case (true, _, _) => optOutYears.filter(_.canOptOut).map(_.taxYear)
-      case (_, true, _) => /* TBD */ Seq()
-      case (_, _, true) => Seq()
-    }
-  }
+  val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
+  val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
+  val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
 }
 

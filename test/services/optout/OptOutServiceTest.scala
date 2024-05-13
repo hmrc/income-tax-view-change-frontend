@@ -28,6 +28,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -70,6 +71,48 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
   "OptOutService.makeOptOutUpdateRequestForYear" when {
 
+    "make opt-out update request for previous tax-year" should {
+
+      "opt-out update request made for correct year" in {
+
+        val taxableEntityId = "456"
+        val currentYear = 2024
+
+        when(user.nino).thenReturn(taxableEntityId)
+        service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForPreviousYear(currentYear))
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId)
+      }
+    }
+
+    "make opt-out update request for current tax-year" should {
+
+      "opt-out update request made for correct year" in {
+
+        val taxableEntityId = "456"
+        val currentYear = 2024
+
+        when(user.nino).thenReturn(taxableEntityId)
+        service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForCurrentYear(currentYear))
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear), taxableEntityId)
+      }
+    }
+
+    "make opt-out update request for next tax-year" should {
+
+      "opt-out update request made for correct year" in {
+
+        val taxableEntityId = "456"
+        val currentYear = 2024
+
+        when(user.nino).thenReturn(taxableEntityId)
+        service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForNextYear(currentYear))
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId)
+      }
+    }
+  }
+
+  "OptOutService.makeOptOutUpdateRequestForYear" when {
+
     "make opt-out update request for tax-year 2023-2024 and can opt-out of this year" should {
 
       "successful update request was made" in {
@@ -83,7 +126,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+
+        val result = service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForCurrentYear(currentYear))
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -104,7 +148,8 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
-        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+
+        val result = service.makeOptOutUpdateRequestForOneYear(buildOneYearOptOutDataForCurrentYear(currentYear))
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

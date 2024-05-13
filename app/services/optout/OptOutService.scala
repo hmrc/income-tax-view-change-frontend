@@ -93,7 +93,21 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
 
-  def makeOptOutUpdateRequestForYear(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)
+  def makeOptOutUpdateRequestForOneYear(optOutData: OptOutData)(implicit user: MtdItUser[_],
+                                                                shc: HeaderCarrier,
+                                                                ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+    if(optOutData.isOneYearOptOut) {
+      optOutConnector.requestOptOutForTaxYear(optOutData.availableOptOutYears.head.taxYear, user.nino)
+    } else {
+
+      val msg = s"one-year opt-out update call doesn't match the opt-out " +
+        s"availability(oneYear:${optOutData.isOneYearOptOut}, " +
+        s"multiYear: ${optOutData.isMultiYearOptOut}, " +
+        s"noOptOut: ${optOutData.isNoOptOutAvailable}), " +
+        s"user.nino: ${user.nino}"
+
+      Logger("application").error(msg)
+      Future.failed(new RuntimeException(msg))
+    }
   }
 }
