@@ -47,7 +47,6 @@
     taxYear: TaxYear,
     isAgent: Boolean,
     isChange: Boolean,
-    backUrl: String,
     useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @formContent = {
@@ -64,7 +63,7 @@
 @mainTemplate( pageTitle = messages("claimToAdjustPoa.selectYourReason.title"),
                isAgent = isAgent,
                useFallbackBackLink = useFallbackLink,
-               backUrl = Some(backUrl),
+               backUrl = Some("/"),
                btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(

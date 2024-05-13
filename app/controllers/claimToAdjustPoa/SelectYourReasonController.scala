@@ -67,7 +67,6 @@ class SelectYourReasonController @Inject()(
                 taxYear = poa.taxYear,
                 isAgent = isAgent,
                 isChange = isChange,
-                backUrl = "TODO",
                 useFallbackLink = true)))
           }
         } fold(
@@ -84,7 +83,7 @@ class SelectYourReasonController @Inject()(
           .bindFromRequest()
           .fold(
             formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, "TODO", true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, true)))
             },
             value => saveValueAndRedirect(isChange, isAgent, value))
           .fold(
