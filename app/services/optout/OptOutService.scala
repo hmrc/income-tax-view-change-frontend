@@ -93,8 +93,8 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     for {
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      optOutData <- createOptOutData(previousYear, currentYear, nextYear, finalisedStatus, statusMap).toF
-    } yield optOutData
+    }
+    yield createOptOutData(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
   private def createOptOutData(previousYear: TaxYear, currentYear: TaxYear, nextYear: TaxYear, finalisedStatus: Boolean, statusMap: Map[TaxYear, StatusDetail]) = {
