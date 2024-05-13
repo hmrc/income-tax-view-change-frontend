@@ -124,7 +124,7 @@ class OptOutServiceSpec extends UnitSpec
     }
   }
 
-  "OptOutService.getOneYearOptOutViewModel" when {
+  "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
 
     s"PY is $Voluntary, CY is $NoStatus, NY is $NoStatus and PY is NOT finalised" should {
 
@@ -143,7 +143,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.getOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), showWarning = false))
 
@@ -167,7 +167,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
 
-        val response = service.getOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
         response.futureValue shouldBe noOptOutOptionAvailable
       }
@@ -190,7 +190,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.getOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), showWarning = true))
       }
@@ -213,7 +213,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.getOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), showWarning = false))
       }
@@ -236,119 +236,119 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.getOneYearOptOutViewModel()
+          val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
           val model = response.futureValue.get
           model.oneYearOptOutTaxYear shouldBe previousYear
           model.showWarning shouldBe true
         }
+        s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
+          s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
+
+            val currentYear = 2024
+            val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
+            when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
+
+            val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+              TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Mandated, ""),
+              TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.Voluntary, ""),
+              TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Mandated, ""),
+            )
+            when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+            when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+
+            val response = service.nextUpdatesPageOneYearOptOutViewModel()
+
+            val model = response.futureValue.get
+            model.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
+            model.showWarning shouldBe true
+          }
+        }
       }
-      s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
-        s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
+
+
+      "getStatusTillAvailableFutureYears api call fail" should {
+
+        "return default response" in {
+
+          val currentYear = 2024
+          val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
+          when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
+
+          when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
+
+          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+
+          val response = service.nextUpdatesPageOneYearOptOutViewModel()
+
+          response.futureValue shouldBe noOptOutOptionAvailable
+        }
+      }
+
+      "isTaxYearCrystallised api call fail" should {
+
+        "return default response" in {
 
           val currentYear = 2024
           val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
           when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
           val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-            TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Mandated, ""),
-            TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-            TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Mandated, ""),
+            TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+            TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
+            TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
           )
           when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.getOneYearOptOutViewModel()
+          val response = service.nextUpdatesPageOneYearOptOutViewModel()
 
-          val model = response.futureValue.get
-          model.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
-          model.showWarning shouldBe true
+          response.futureValue shouldBe noOptOutOptionAvailable
         }
       }
     }
 
+    "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
+      "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
+        "return NextUpdatesQuarterlyReportingContentCheck" in {
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
+          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
+          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
 
-    "getStatusTillAvailableFutureYears api call fail" should {
+          val expected = NextUpdatesQuarterlyReportingContentChecks(
+            currentYearItsaStatus = true,
+            previousYearItsaStatus = false,
+            previousYearCrystallisedStatus = Some(crystallised))
 
-      "return default response" in {
-
-        val currentYear = 2024
-        val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-
-        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
-
-        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
-
-        val response = service.getOneYearOptOutViewModel()
-
-        response.futureValue shouldBe noOptOutOptionAvailable
-      }
-    }
-
-    "isTaxYearCrystallised api call fail" should {
-
-      "return default response" in {
-
-        val currentYear = 2024
-        val previousYear: TaxYear = TaxYear.forYearEnd(currentYear - 1)
-        when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-          TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-        when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
-
-        val response = service.getOneYearOptOutViewModel()
-
-        response.futureValue shouldBe noOptOutOptionAvailable
-      }
-    }
-  }
-
-  "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
-    "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
-      "return NextUpdatesQuarterlyReportingContentCheck" in {
-        setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
-        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-        setupMockGetCurrentTaxYearEnd(taxYear.endYear)
-
-        val expected = NextUpdatesQuarterlyReportingContentChecks(
-          currentYearItsaStatus = true,
-          previousYearItsaStatus = false,
-          previousYearCrystallisedStatus = Some(crystallised))
-
-        service.getNextUpdatesQuarterlyReportingContentChecks.futureValue shouldBe expected
-      }
-    }
-
-    "Calculation State for CY-1 is unavailable" should {
-      "return NextUpdatesQuarterlyReportingContentCheck" in {
-        setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.failed(error))
-        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-        setupMockGetCurrentTaxYearEnd(taxYear.endYear)
-
-        service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
-          ex shouldBe a[RuntimeException]
-          ex.getMessage shouldBe error.getMessage
+          service.getNextUpdatesQuarterlyReportingContentChecks.futureValue shouldBe expected
         }
       }
-    }
 
-    "ITSA Status from CY-1 till future years is unavailable" should {
-      "return NextUpdatesQuarterlyReportingContentCheck" in {
-        setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
-        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-        setupMockGetCurrentTaxYearEnd(taxYear.endYear)
+      "Calculation State for CY-1 is unavailable" should {
+        "return NextUpdatesQuarterlyReportingContentCheck" in {
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.failed(error))
+          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
+          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
 
-        service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
-          ex shouldBe a[RuntimeException]
-          ex.getMessage shouldBe error.getMessage
+          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
+            ex shouldBe a[RuntimeException]
+            ex.getMessage shouldBe error.getMessage
+          }
+        }
+      }
+
+      "ITSA Status from CY-1 till future years is unavailable" should {
+        "return NextUpdatesQuarterlyReportingContentCheck" in {
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
+          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
+          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
+
+          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
+            ex shouldBe a[RuntimeException]
+            ex.getMessage shouldBe error.getMessage
+          }
         }
       }
     }
