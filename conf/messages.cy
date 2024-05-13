@@ -1883,3 +1883,11 @@ optout.confirmedOptOut.reportQuarterly.p2       = Ddigidol rydych yn rhoi gwybod
 optout.confirmedOptOut.reportQuarterly.example  = Er enghraifft, os yw’ch incwm cymwys yn uwch na’r trothwy ym mlwyddyn dreth 2023 i 2024, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill 2025 ymlaen.
 optout.confirmedOptOut.reportQuarterly.desc2    = Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
 optout.confirmedOptOut.reportQuarterly.desc3    = Gallwch wirio’r trothwy ar gyfer incwm cymwys yn y meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol (yn agor tab newydd).
+
+optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
+optOut.confirmSingleYearOptOut.detail.text                  = Gallwch ond optio allan a chyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}.
+optOut.confirmSingleYearOptOut.inset.text                   = O 6 Ebrill {0} ymlaen, bydd angen i chi anfon diweddariadau chwarterol eto drwy feddalwedd.
+optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
+optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
+optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
+optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}

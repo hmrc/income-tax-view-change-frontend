@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
+import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
 import org.scalatest._
@@ -226,6 +227,18 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
+
+    def getSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/optout/single-taxyear-warning", additionalCookies)
+    }
+
+    def postSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty)(form: ConfirmOptOutSingleTaxYearForm): WSResponse = {
+      val formData: Map[String, Seq[String]] = Map(
+        ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
+        ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
+      post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
+    }
+
 
     def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)
