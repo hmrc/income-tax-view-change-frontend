@@ -1883,6 +1883,7 @@ claimToAdjustPoa.selectYourReason.radios.taxed-at-source                =   Bydd
 claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   Er enghraifft, o dan TWE.
 claimToAdjustPoa.selectYourReason.continue                              =   Yn eich blaen
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
+claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
 
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023

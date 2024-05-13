@@ -30,7 +30,7 @@ class SelectYourReasonFormProvider extends Mappings {
         ("MoreTaxedAtSource" -> MoreTaxedAtSource)): _*)
 
     Form(
-      "value" -> enumerable[SelectYourReason](s"adjust-poa.select-your-reason.error.required")
+      "value" -> enumerable[SelectYourReason](s"claimToAdjustPoa.selectYourReason.error.required")
     )
   }
 }

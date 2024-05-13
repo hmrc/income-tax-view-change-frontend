@@ -1893,6 +1893,7 @@ claimToAdjustPoa.selectYourReason.radios.taxed-at-source                =   More
 claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   For example, under PAYE.
 claimToAdjustPoa.selectYourReason.continue                              =   Continue
 claimToAdjustPoa.selectYourReason.cancel                                =   Cancel
+claimToAdjustPoa.selectYourReason.error.required                        =   Select the main reason you're reducing your payments on account
 
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
