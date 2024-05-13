@@ -44,7 +44,7 @@ class SelectYourReasonFormProviderTest extends TestSupport {
       "with no response" in {
         val completedForm = form.bind(Map.empty[String, String])
         completedForm.value shouldBe None
-        completedForm.errors shouldBe List(FormError("value", List("adjust-poa.select-your-reason.error.required"), List()))
+        completedForm.errors shouldBe List(FormError("value", List("claimToAdjustPoa.selectYourReason.error.required"), List()))
       }
     }
 
@@ -64,9 +64,5 @@ class SelectYourReasonFormProviderTest extends TestSupport {
         completedForm.errors shouldBe List.empty
       }
     }
-
-
-
-
   }
 }
