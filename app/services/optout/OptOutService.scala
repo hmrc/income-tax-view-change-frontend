@@ -93,11 +93,17 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     for {
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
       statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-      previousYearOptOut <- PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus).toF
-      currentTaxYearOptOut <- CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear).toF
-      nextTaxYearOptOut <- NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut).toF
-      optOutData <- OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut).toF
+      optOutData <- createOptOutData(previousYear, currentYear, nextYear, finalisedStatus, statusMap).toF
     } yield optOutData
+  }
+
+  private def createOptOutData(previousYear: TaxYear, currentYear: TaxYear, nextYear: TaxYear, finalisedStatus: Boolean, statusMap: Map[TaxYear, StatusDetail]) = {
+
+    val previousYearOptOut = PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus)
+    val currentTaxYearOptOut = CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear)
+    val nextTaxYearOptOut = NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
+
+    OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
 
   def makeOptOutUpdateRequestForYear(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
