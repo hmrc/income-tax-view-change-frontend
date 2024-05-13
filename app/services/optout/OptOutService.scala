@@ -73,8 +73,8 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
 
     val processSteps = for {
       optOutData <- setupOptOutData()
-      outcomeOptionsResponse <- optOutData.optOutForSingleYear(nextUpdatesPageOneYear).toF
-    } yield outcomeOptionsResponse
+    }
+    yield optOutData.optOutForSingleYear(nextUpdatesPageOneYear)
 
     processSteps recover {
       case e =>
@@ -110,4 +110,3 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)
   }
 }
-
