@@ -18,9 +18,10 @@ package controllers.agent
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay}
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

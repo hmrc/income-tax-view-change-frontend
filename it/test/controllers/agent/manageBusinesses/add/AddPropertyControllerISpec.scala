@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.add
 
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.agent.ComponentSpecBase

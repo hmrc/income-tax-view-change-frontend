@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.cease
 
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase

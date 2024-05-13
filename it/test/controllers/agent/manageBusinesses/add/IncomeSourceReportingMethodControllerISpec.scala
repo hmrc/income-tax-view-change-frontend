@@ -18,12 +18,12 @@ package controllers.agent.manageBusinesses.add
 
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
-import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSources, TimeMachineAddYear}
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsError, LatencyDetails, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion

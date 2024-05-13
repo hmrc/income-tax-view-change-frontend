@@ -24,6 +24,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import models.admin.{IncomeSources, IncomeSourcesNewJourney}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

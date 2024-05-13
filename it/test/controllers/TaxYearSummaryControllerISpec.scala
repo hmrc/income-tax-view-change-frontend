@@ -23,6 +23,7 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
@@ -1106,7 +1107,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       def verifyMFADebitsResults(result: WSResponse): Any = {
-        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+        val auditDD = if (isEnabled(MFACreditsAndDebits)(csbTestUser)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1129,7 +1130,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
 
-        if (isEnabled(MFACreditsAndDebits)) {
+        if (isEnabled(MFACreditsAndDebits)(csbTestUser)) {
           result should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),

@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

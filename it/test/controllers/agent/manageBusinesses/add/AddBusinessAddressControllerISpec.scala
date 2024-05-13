@@ -16,7 +16,7 @@
 
 package controllers.agent.manageBusinesses.add
 
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.{OK, SEE_OTHER}

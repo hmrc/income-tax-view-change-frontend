@@ -16,11 +16,11 @@
 
 package controllers.agent.manageBusinesses.manage
 
-import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSources, TimeMachineAddYear}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}

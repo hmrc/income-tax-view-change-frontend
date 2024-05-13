@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.PaymentAllocation
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel

@@ -19,9 +19,9 @@ package controllers
 import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.MtdItUserOptionNino
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
+import models.admin.{CutOverCredits, MFACreditsAndDebits}
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
