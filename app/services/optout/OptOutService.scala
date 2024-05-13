@@ -63,10 +63,10 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
 
   def displayOptOutMessage()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
 
-    val processSteps = setupOptOutData()
+    val oneYearViewModel = setupOptOutData()
       .map(optOutData => optOutData.optOutForSingleYear(nextUpdatesPageOneYear))
 
-    processSteps recover {
+    oneYearViewModel recover {
       case e =>
         Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
         None
