@@ -16,8 +16,9 @@
 
 package connectors
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import mocks.MockHttp
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import org.scalactic.Fail
@@ -36,7 +37,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
 
 
-  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesApi)
+  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesApi, tsTestUser)
 
   "AddressLookupConnector" should {
     "addressLookupInitializeUrl" should {

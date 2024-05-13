@@ -18,11 +18,11 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
-import config.featureswitch.OptOut
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
+import models.admin.OptOut
 import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}

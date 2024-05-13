@@ -20,16 +20,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
-
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, FiniteDuration, SECONDS => Seconds}
-import scala.concurrent.{ExecutionContext, Future}
-import play.api.cache.AsyncCacheApi
-import repositories.admin.FeatureSwitchRepository
-import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
+import repositories.admin.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchService @Inject()(
