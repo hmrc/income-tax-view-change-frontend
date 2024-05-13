@@ -1945,3 +1945,11 @@ optout.confirmedOptOut.reportQuarterly.p2       = you report an increase in your
 optout.confirmedOptOut.reportQuarterly.example  = For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025.
 optout.confirmedOptOut.reportQuarterly.desc2    = If this happens, we will write to you to let you know.
 optout.confirmedOptOut.reportQuarterly.desc3    = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab).
+
+optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
+optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out and report annually for the {0} to {1} tax year.
+optOut.confirmSingleYearOptOut.inset.text                   = From 6 April {0}, you’ll be required to send quarterly updates again through software.
+optOut.confirmSingleYearOptOut.form.title                   = Do you still want to opt out for the {0} to {1} tax year?
+optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
+optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
+optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year

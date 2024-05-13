@@ -32,8 +32,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
-    originalAmount = Some(-300.00),
-    outstandingAmount = Some(-200.00),
+    originalAmount = -300.00,
+    outstandingAmount = -200.00,
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLot = Some("paymentLot"),
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
@@ -45,8 +45,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
-    originalAmount = Some(-300.00),
-    outstandingAmount = Some(-200.00),
+    originalAmount = -300.00,
+    outstandingAmount = -200.00,
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLot = None,
     paymentLotItem = None
@@ -57,8 +57,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
-    originalAmount = Some(-300.00),
-    outstandingAmount = Some(-200.00),
+    originalAmount = -300.00,
+    outstandingAmount = -200.00,
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     documentDate = LocalDate.of(2018, 3, 29)
   )
@@ -68,8 +68,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
-    originalAmount = Some(-300.00),
-    outstandingAmount = Some(0),
+    originalAmount = -300.00,
+    outstandingAmount = 0,
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     documentDate = LocalDate.of(2018, 3, 29)
   )
@@ -79,8 +79,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "id2",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
-    originalAmount = Some(-100.00),
-    outstandingAmount = Some(-50.00),
+    originalAmount = -100.00,
+    outstandingAmount = -50.00,
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLot = Some("paymentLot2"),
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
@@ -92,8 +92,8 @@ object PaymentAllocationsTestConstants {
     transactionId = "chargeReference3",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
-    originalAmount = Some(-300),
-    outstandingAmount = Some(0.00),
+    originalAmount = -300,
+    outstandingAmount = 0.00,
     documentDate = LocalDate.of(2022, 4, 6),
     paymentLot = Some("paymentLot3"),
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
@@ -354,11 +354,6 @@ mainTransaction = Some("4920"),
 
   val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoPayment)
 
-  val financialDetailsWithNoOriginalAmount: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(originalAmount = None)),
-    List(financialDetail)
-  )
-
 
   val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetailNoPaymentCredit),
@@ -369,17 +364,6 @@ mainTransaction = Some("4920"),
     List(documentDetail3),
     List(financialDetail3)
   )
-
-  val paymentAllocationViewModelWithNoOriginalAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithNoOriginalAmount,
-    Seq(
-      AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2021-01-31"))),
-      AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
-        Some(LocalDate.parse("2021-01-31"))
-      )
-    ))
 
   val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithCreditZeroOutstanding,
     Seq(
@@ -411,8 +395,8 @@ mainTransaction = Some("4920"),
     transactionId = "transactionId",
     documentDescription = Some("TRM New Charge"),
     documentText = Some("documentText"),
-    outstandingAmount = Some(100.00),
-    originalAmount = Some(100.00),
+    outstandingAmount = 100.00,
+    originalAmount = 100.00,
     documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = Some(100),
     interestRate = Some(100),
@@ -427,8 +411,8 @@ mainTransaction = Some("4920"),
     transactionId = "transactionId",
     documentDescription = Some("TRM New Charge"),
     documentText = Some("documentText"),
-    outstandingAmount = Some(100.00),
-    originalAmount = Some(-300.00),
+    outstandingAmount = 100.00,
+    originalAmount = -300.00,
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLotItem = Some("paymentLotItem"),
     effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
@@ -451,7 +435,7 @@ mainTransaction = Some("4920"),
   )
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(outstandingAmount = Some(0))),
+    List(documentDetail.copy(outstandingAmount = 0)),
     List(financialDetail)
   )
 

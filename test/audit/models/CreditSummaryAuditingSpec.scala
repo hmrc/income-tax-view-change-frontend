@@ -38,8 +38,8 @@ class CreditSummaryAuditingSpec extends TestSupport {
       transactionId = "1001",
       documentDescription = None,
       documentText = None,
-      outstandingAmount = Some(BigDecimal("0")),
-      originalAmount = None,
+      outstandingAmount = BigDecimal("0"),
+      originalAmount = 0,
       documentDate = LocalDate.of(2018, 1, 2)
     ),
     creditType = MfaCreditType,
@@ -48,15 +48,15 @@ class CreditSummaryAuditingSpec extends TestSupport {
 
   val creditDetailsModelPartiallyPaid = creditDetailsModelPaid
     .copy(documentDetail = creditDetailsModelPaid.documentDetail
-      .copy(outstandingAmount = Some(BigDecimal("-150.00"))),
+      .copy(outstandingAmount = BigDecimal("-150.00")),
       date = LocalDate.of(2019, 11, 12)
     )
 
   val creditDetailsModelUnPaid = creditDetailsModelPaid
     .copy(documentDetail = creditDetailsModelPaid.documentDetail
       .copy(
-        originalAmount = Some(BigDecimal("1.5")),
-        outstandingAmount = Some(BigDecimal("1.5"))
+        originalAmount = BigDecimal("1.5"),
+        outstandingAmount = BigDecimal("1.5")
       ),
       creditType = CutOverCreditType,
       date = LocalDate.of(2021, 3, 7)
@@ -104,8 +104,8 @@ class CreditSummaryAuditingSpec extends TestSupport {
             transactionId = "transId",
             documentDescription = Some("docId"),
             documentText = Some("text"),
-            outstandingAmount = Some(BigDecimal("1400")),
-            originalAmount = Some(BigDecimal("1400")),
+            outstandingAmount = BigDecimal("1400"),
+            originalAmount = BigDecimal("1400"),
             documentDate = LocalDate.of(2023, 12, 23)
           ),
           creditType = MfaCreditType,

@@ -33,13 +33,13 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     availableCredit = None, allocatedCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-100)), originalAmount = Some(BigDecimal(-100)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1000)), originalAmount = Some(BigDecimal(-1000)), mainType = "ITSA Infml Dschrg Cntrct Sett", mainTransaction = "4018"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1100)), originalAmount = Some(BigDecimal(-1100)), mainType = "ITSA NPS Overpayment", mainTransaction = "4012"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1200)), originalAmount = Some(BigDecimal(-1200)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1300)), originalAmount = Some(BigDecimal(-1300)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1400)), originalAmount = Some(BigDecimal(-1400)), paymentLot = Some("paymentLot")),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1500)), originalAmount = Some(BigDecimal(-1500)), paymentLot = Some("paymentLot"))
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-100), originalAmount = BigDecimal(-100), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1000), originalAmount = BigDecimal(-1000), mainType = "ITSA Infml Dschrg Cntrct Sett", mainTransaction = "4018"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1100), originalAmount = BigDecimal(-1100), mainType = "ITSA NPS Overpayment", mainTransaction = "4012"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1200), originalAmount = BigDecimal(-1200), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1300), originalAmount = BigDecimal(-1300), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1400), originalAmount = BigDecimal(-1400), paymentLot = Some("paymentLot")),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1500), originalAmount = BigDecimal(-1500), paymentLot = Some("paymentLot"))
   )
 
   def claimARefundAuditFull(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(

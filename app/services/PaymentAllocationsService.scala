@@ -90,7 +90,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
           financialDetails.documentDetails.find(_.latePaymentInterestId == paymentCharge.allocations.head.chargeReference).map {
             documentDetailsWithLpiId =>
               LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
-                documentDetailsWithFinancialDetails.documentDetails.head.originalAmount.get)
+                documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
           }
         case _ => None
       }.headOption
