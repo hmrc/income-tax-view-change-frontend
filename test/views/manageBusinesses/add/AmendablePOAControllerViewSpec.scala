@@ -39,7 +39,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
               PaymentOnAccountViewModel(
                 poaOneTransactionId = "poa-one-id",
                 poaTwoTransactionId = "poa-two-id",
-                taxYear = TaxYear(2024),
+                taxYear = TaxYear.makeTaxYearWithEndYear(2024),
                 paymentOnAccountOne = BigDecimal(5000),
                 paymentOnAccountTwo = BigDecimal(5000),
                 poARelevantAmountOne = BigDecimal(5000),

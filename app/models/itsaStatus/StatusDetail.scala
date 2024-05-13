@@ -16,7 +16,7 @@
 
 package models.itsaStatus
 
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,
@@ -24,7 +24,12 @@ case class StatusDetail(submittedOn: String,
                         statusReason: String,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 
-  def isMandatedOrVoluntary: Boolean = status == Mandated || status == Voluntary
+  def isVoluntary: Boolean = status == Voluntary
+  def isMandated: Boolean = status == Mandated
+  def isAnnual: Boolean = status == Annual
+  def isUnknown: Boolean = status == NoStatus
+
+  def isMandatedOrVoluntary: Boolean = isMandated || isVoluntary
 
 }
 

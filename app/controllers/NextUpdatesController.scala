@@ -26,7 +26,8 @@ import models.nextUpdates._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService, OptOutService}
+import services.optout.OptOutService
+import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -73,9 +74,11 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             Future.successful(errorHandler.showInternalServerError())
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
-            optOutService.getNextUpdatesQuarterlyReportingContentChecks.map { checks =>
-              Ok(nextUpdatesOptOutView(viewModel, checks, backUrl.url, isAgent, origin))
-            }.recover {
+            optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
+              optOutService.displayOptOutMessage().map { optOutOneYearViewModel =>
+                Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
+              }
+            } recover {
               case ex =>
                 Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
                 errorHandler.showInternalServerError()

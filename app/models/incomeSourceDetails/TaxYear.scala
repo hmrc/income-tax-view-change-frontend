@@ -35,6 +35,12 @@ case class TaxYear(startYear: Int, endYear: Int) {
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     endYear >= currentTaxYearEnd
   }
+
+  def previousYear: TaxYear = addYears(-1)
+
+  def nextYear: TaxYear = addYears( +1)
+
+
 }
 
 object TaxYear {
@@ -68,7 +74,7 @@ object TaxYear {
     TaxYear(startYear = (endYear - 1), endYear = endYear)
   }
 
-  def apply(endYear: Int): TaxYear = {
+  def forYearEnd(endYear: Int): TaxYear = {
     require(isValidYear(endYear.toString), "invalid year")
     TaxYear(startYear = endYear - 1, endYear = endYear)
   }

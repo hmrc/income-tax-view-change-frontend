@@ -787,6 +787,8 @@ nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
 nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
+nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
@@ -1920,3 +1922,25 @@ paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
+
+# opt out confirm
+optout.confirmOptOut.heading            = Confirm and opt out for the 2022 to 2023 tax year
+optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.confirmOptOut.confirm            = Confirm
+optout.confirmOptOut.cancel             = Cancel
+
+# opt out confirmed
+optout.confirmedOptOut.heading                  = Opt out completed
+optout.confirmedOptOut.taxYear                  = You are reporting annually from the 2024 to 2025 tax year onwards
+optout.confirmedOptOut.submitTax                = Submit your tax return
+optout.confirmedOptOut.submitTax.desc1          = For any tax years where you chose to opt out and report annually, you can submit your tax return directly through your HMRC online account or software.
+optout.confirmedOptOut.submitTax.desc2          = If you are still reporting quarterly for certain tax years, you are required to send those quarterly updates through compatible software.
+optout.confirmedOptOut.updatesDue               = Your next updates due
+optout.confirmedOptOut.updatesDue.desc          = Check the next updates page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
+optout.confirmedOptOut.reportQuarterly          = Reporting quarterly again in the future
+optout.confirmedOptOut.reportQuarterly.desc1    = You could be required to report quarterly again in the future if:
+optout.confirmedOptOut.reportQuarterly.p1       = HMRC lowers the income threshold for Making Tax Digital
+optout.confirmedOptOut.reportQuarterly.p2       = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.reportQuarterly.example  = For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025.
+optout.confirmedOptOut.reportQuarterly.desc2    = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.reportQuarterly.desc3    = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab).

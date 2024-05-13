@@ -17,9 +17,11 @@
 package views
 
 import config.FrontendAppConfig
+import forms.IncomeSourcesFormsSpec.currentDate
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
@@ -41,6 +43,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   implicit val dateServiceInterface: DateServiceInterface = new DateServiceInterface {
 
     override def getCurrentDate: LocalDate = fixedDate
+
+    override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(fixedDate.getYear)
 
     override def getCurrentTaxYearEnd: Int = fixedDate.getYear + 1
 

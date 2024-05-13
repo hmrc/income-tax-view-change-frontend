@@ -17,8 +17,9 @@
 package views.nextUpdates
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
 import models.nextUpdates._
-import models.optOut.NextUpdatesQuarterlyReportingContentChecks
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -46,7 +47,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, checks, "testBackURL")))
+    val optOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024))
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
   }
 
   object obligationsMessages {
@@ -61,6 +63,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
     val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
+    val optOutMessage: String = messages("nextUpdates.optOutOneYear")
   }
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
@@ -112,8 +115,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     }
 
     s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
-      pageDocument.select("p:nth-child(5)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(5) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+      pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {

@@ -22,6 +22,7 @@ import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsR
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
@@ -92,6 +93,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
 
     override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
+
+    override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {
