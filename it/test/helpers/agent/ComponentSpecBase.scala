@@ -229,14 +229,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
 
     def getSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get(s"/optout/confirm-opt-out-from-quarterly-reporting", additionalCookies)
+      get(s"/optout/single-taxyear-warning", additionalCookies)
     }
 
     def postSingleYearOptOutWarning(additionalCookies: Map[String, String] = Map.empty)(form: ConfirmOptOutSingleTaxYearForm): WSResponse = {
       val formData: Map[String, Seq[String]] = Map(
         ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
         ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
-      post(s"/optout/confirm-opt-out-from-quarterly-reporting", additionalCookies)(formData)
+      post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
     }
 
 

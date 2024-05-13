@@ -89,7 +89,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
     }
 
     "submit method is invoked" should {
-      s"return result with $SEE_OTHER status with redirect to ${controllers.optOut.routes.OptOutCheckpointController.show.url}" when {
+      s"return result with $SEE_OTHER status with redirect to $confirmOptOutPage" when {
         "Yes response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
