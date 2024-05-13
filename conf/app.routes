@@ -24,6 +24,11 @@ GET         /agents/optout/review-confirm-taxyear                         contro
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
 
+GET         /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
+GET         /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
+POST        /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = false)
+POST        /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = true)
+
 GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show()
 GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.showAgent()
 

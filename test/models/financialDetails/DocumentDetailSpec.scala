@@ -67,8 +67,8 @@ class DocumentDetailSpec extends UnitSpec {
         transactionId = "transid2",
         documentDescription = Some("ITSA- POA 1"),
         documentText = Some("documentText"),
-        outstandingAmount = None,
-        originalAmount = None,
+        outstandingAmount = 0,
+        originalAmount = 0,
         documentDate = LocalDate.parse("2018-03-21"),
         effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
         documentDueDate = Some(LocalDate.parse("2021-12-01")))
@@ -77,8 +77,8 @@ class DocumentDetailSpec extends UnitSpec {
         transactionId = "transid2",
         documentDescription = Some("ITSA- POA 1"),
         documentText = Some("documentText"),
-        outstandingAmount = None,
-        originalAmount = None,
+        outstandingAmount = 0,
+        originalAmount = 0,
         documentDate = LocalDate.parse("2018-03-21"),
         effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
         documentDueDate = Some(LocalDate.parse("2021-12-01")),
@@ -96,18 +96,15 @@ class DocumentDetailSpec extends UnitSpec {
     "originalAmountIsNotZeroOrNegative" should {
       "return false" when {
         "original amount is zero" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(0)).originalAmountIsNotZeroOrNegative shouldBe false
+          fullDocumentDetailModel.copy(originalAmount = 0).originalAmountIsNotZeroOrNegative shouldBe false
         }
         "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(-20)).originalAmountIsNotZeroOrNegative shouldBe false
+          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
         }
       }
       "return true" when {
-        "original amount is not present" in {
-          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe true
-        }
         "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(20)).originalAmountIsNotZeroOrNegative shouldBe true
+          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
         }
       }
     }
@@ -115,15 +112,12 @@ class DocumentDetailSpec extends UnitSpec {
     "originalAmountIsNotNegative" should {
       "return false" when {
         "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(-20)).originalAmountIsNotZeroOrNegative shouldBe false
+          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
         }
       }
       "return true" when {
-        "original amount is not present" in {
-          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe true
-        }
         "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(20)).originalAmountIsNotZeroOrNegative shouldBe true
+          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
         }
       }
     }
@@ -219,24 +213,20 @@ class DocumentDetailSpec extends UnitSpec {
     "deriving the credit value" should {
       "produce a credit value" when {
         "there is an original amount, it is negative and there is no payment Id or lot item" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(-10.00)), paymentLot = None,
+          fullDocumentDetailModel.copy(originalAmount = BigDecimal(-10.00), paymentLot = None,
             paymentLotItem = None).credit shouldBe Some(BigDecimal(10.00))
         }
       }
 
       "produce no value" when {
-        "there is no original amount" in {
-          fullDocumentDetailModel.copy(originalAmount = None, paymentLot = None,
-            paymentLotItem = None).credit shouldBe None
-        }
 
         "there is a payment Id and lot Item" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(-10.00)), paymentLot = Some("1"),
+          fullDocumentDetailModel.copy(originalAmount = BigDecimal(-10.00), paymentLot = Some("1"),
             paymentLotItem = Some("1")).credit shouldBe None
         }
 
         "the outstanding amount is not negative" in {
-          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(10.00)), paymentLot = None,
+          fullDocumentDetailModel.copy(originalAmount = BigDecimal(10.00), paymentLot = None,
             paymentLotItem = None).credit shouldBe None
         }
       }
@@ -245,18 +235,14 @@ class DocumentDetailSpec extends UnitSpec {
     "deriving the paymentOrChargeCredit value" should {
       "produce a credit value" when {
         "there is an outstanding amount and it is negative" in {
-          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(-10.00))).paymentOrChargeCredit shouldBe Some(BigDecimal(10.00))
+          fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(-10.00)).paymentOrChargeCredit shouldBe Some(BigDecimal(10.00))
         }
       }
 
       "produce no value" when {
-        "there is no outstanding amount" in {
-          fullDocumentDetailModel.copy(outstandingAmount = None, paymentLot = None,
-            paymentLotItem = None).paymentOrChargeCredit shouldBe None
-        }
 
         "the outstanding amount is not negative" in {
-          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(10.00)), paymentLot = None,
+          fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(10.00), paymentLot = None,
             paymentLotItem = None).paymentOrChargeCredit shouldBe None
         }
       }
@@ -264,13 +250,13 @@ class DocumentDetailSpec extends UnitSpec {
 
     "getChargePaidStatus" should {
       "return correct charge paid status paid for various outstandingAmount" in {
-        fullDocumentDetailModel.copy(outstandingAmount = Some(0)).getChargePaidStatus shouldBe "paid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(-100)).getChargePaidStatus shouldBe "part-paid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(50)).getChargePaidStatus shouldBe "part-paid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(300), originalAmount = Some(300)).getChargePaidStatus shouldBe "unpaid"
-        fullDocumentDetailModel.copy(outstandingAmount = Some(-300), originalAmount = Some(-300)).getChargePaidStatus shouldBe "unpaid"
+        fullDocumentDetailModel.copy(outstandingAmount = 0).getChargePaidStatus shouldBe "paid"
+        fullDocumentDetailModel.copy(outstandingAmount = 50, originalAmount = 100).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = -50, originalAmount = 100).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = -50, originalAmount = -100).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = -50, originalAmount = 50).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = 300, originalAmount = 300).getChargePaidStatus shouldBe "unpaid"
+        fullDocumentDetailModel.copy(outstandingAmount = -300, originalAmount = -300).getChargePaidStatus shouldBe "unpaid"
       }
     }
 
@@ -296,11 +282,11 @@ class DocumentDetailSpec extends UnitSpec {
     "isBalancingChargeZero" should {
       "return true" when {
         "the charge is balancing charge and the original amount is zero" in {
-          documentDetailBalancingCharge.documentDetail.copy(originalAmount = Some(BigDecimal(0))).isBalancingChargeZero() shouldBe true
+          documentDetailBalancingCharge.documentDetail.copy(originalAmount = BigDecimal(0)).isBalancingChargeZero() shouldBe true
         }
         "the charge is balancing charge and the original amount is zero and coding out is enabled" in {
           documentDetailBalancingCharge.documentDetail
-            .copy(originalAmount = Some(BigDecimal(0))).isBalancingChargeZero(codedOutEnabled = true) shouldBe true
+            .copy(originalAmount = BigDecimal(0)).isBalancingChargeZero(codedOutEnabled = true) shouldBe true
         }
       }
 
@@ -323,7 +309,7 @@ class DocumentDetailSpec extends UnitSpec {
       "return None" when {
         "the originalAmount is zero" in {
           documentDetailBalancingCharge.documentDetail
-            .copy(originalAmount = Some(BigDecimal(0))).getBalancingChargeDueDate() shouldBe None
+            .copy(originalAmount = BigDecimal(0)).getBalancingChargeDueDate() shouldBe None
         }
       }
     }

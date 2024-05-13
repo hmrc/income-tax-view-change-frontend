@@ -43,7 +43,7 @@ object CreditSummaryAuditing {
       date = charge.date.toString,
       description = toDescription(charge.creditType)(messages),
       status = toStatus(charge),
-      amount = charge.documentDetail.originalAmount.map(_.abs).getOrElse(BigDecimal(0.0)).toString())
+      amount = charge.documentDetail.originalAmount.abs.toString())
   }
 
   implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])
