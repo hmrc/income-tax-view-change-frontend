@@ -39,7 +39,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       override def getCurrentDate: LocalDate = date
 
       override def isBeforeLastDayOfTaxYear: Boolean = {
-        val currentDate = getCurrentDate
+        val currentDate: LocalDate = getCurrentDate
         val lastDayOfTaxYear = LocalDate.of(date.getYear, 4, 5)
         currentDate.isBefore(lastDayOfTaxYear)
       }

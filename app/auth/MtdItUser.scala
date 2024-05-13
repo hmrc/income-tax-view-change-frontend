@@ -24,6 +24,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
+import javax.inject.Inject
+
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
   def mtditid: String
 
@@ -58,7 +60,7 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 userType: Option[AffinityGroup],
                                 arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
 
-case class MtdItUser[A](mtditid: String,
+case class MtdItUser[A]@Inject()(mtditid: String,
                         nino: String,
                         userName: Option[Name],
                         incomeSources: IncomeSourceDetailsModel,

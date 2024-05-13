@@ -16,9 +16,10 @@
 
 package services.admin
 
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.{FeatureSwitch, FeatureSwitchName, TimeMachineAddYear}
 import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
 import repositories.admin.FeatureSwitchRepository
@@ -35,13 +36,23 @@ class FeatureSwitchService @Inject()(
                                     (implicit val ec: ExecutionContext,
                                      mcc: MessagesControllerComponents,
                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController {
+                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with FeatureSwitching {
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
-      featureSwitchRepository
-        .getFeatureSwitch(featureSwitchName)
-        .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+    featureSwitchRepository
+      .getFeatureSwitch(featureSwitchName)
+      .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
 
+  def getTimeMachineAddYearValue: Future[Boolean] = {
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      featureSwitchRepository.getFeatureSwitch(TimeMachineAddYear) map {
+        case Some(value) => value.isEnabled
+        case None => false
+      }
+    } else {
+      Future.successful(isEnabledFromConfig(TimeMachineAddYear))
+    }
+  }
 
   def getAll: Future[List[FeatureSwitch]] = {
 
@@ -60,7 +71,7 @@ class FeatureSwitchService @Inject()(
           .reverse
       }
     } else {
-      Future.successful( List[FeatureSwitch]())
+      Future.successful(List[FeatureSwitch]())
     }
   }
 
