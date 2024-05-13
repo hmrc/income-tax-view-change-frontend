@@ -24,12 +24,10 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddBusinessTrade
@@ -53,18 +51,18 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (_,    false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
-      case (false,    _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,        _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
   private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessAddressController.show(isChange = false)
-      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,     false) => routes.AddBusinessAddressController.showAgent(isChange = false)
-      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, false) => routes.AddBusinessAddressController.show(isChange)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, false) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
@@ -73,37 +71,21 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       handleRequest(isAgent, isChange)
   }
 
-  private def getBusinessTrade(journeyType: JourneyType, isChange: Boolean)
-                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
-
-    if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
-        case Left(err) => Future.failed(err)
-      }
-    } else {
-      Future(None)
-    }
-  }
-
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, SelfEmployment), journeyState = BeforeSubmissionPage) { _ =>
+    withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+      val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
+      val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
+        BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
+      val backURL = getBackURL(isAgent, isChange)
+      val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
 
-      val journeyType = JourneyType(Add, SelfEmployment)
-      getBusinessTrade(journeyType, isChange).flatMap {
-        tradeOpt =>
-          val filledForm = tradeOpt.fold(BusinessTradeForm.form)(trade =>
-            BusinessTradeForm.form.fill(BusinessTradeForm(trade)))
-
-          val backURL = getBackURL(isAgent, isChange)
-          val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
-          Future.successful(Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL)))
+      Future.successful {
+        Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
       }
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -114,42 +96,42 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withIncomeSourcesFS {
-      val journeyType = JourneyType(Add, SelfEmployment)
+    withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+      val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(businessName) =>
-          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
-            formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
-            formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
-          )
-        case Left(exception) => Future.failed(exception)
-      }
-    }.recover {
-      case ex =>
-        Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        errorHandler.showInternalServerError()
+      BusinessTradeForm
+        .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
+          formWithErrors =>
+            Future.successful {
+              BadRequest(
+                addBusinessTradeView(
+                  businessTradeForm = formWithErrors,
+                  postAction = routes.AddBusinessTradeController.submit(isAgent, isChange),
+                  isAgent = isAgent,
+                  backURL = getBackURL(isAgent, isChange)
+                )
+              )
+            },
+          validForm =>
+            sessionService.setMongoData(
+              sessionData.copy(
+                addIncomeSourceData =
+                  sessionData.addIncomeSourceData.map(
+                    _.copy(
+                      businessTrade = Some(validForm.trade)
+                    )
+                  )
+              )
+            ) flatMap {
+              case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))
+              case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+            }
+        )
     }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
   }
-
-  def handleFormErrors(form: Form[BusinessTradeForm], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val postAction = routes.AddBusinessTradeController.submit(isAgent, isChange)
-    val backURL = getBackURL(isAgent, isChange)
-
-    Future {
-      BadRequest(addBusinessTradeView(form, postAction, isAgent = isAgent, backURL))
-    }
-  }
-
-  def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
-    val successURL = Redirect(getSuccessURL(isAgent, isChange))
-
-    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
-      case Right(result) if result => Future.successful(successURL)
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
-    }
-  }
-
 }

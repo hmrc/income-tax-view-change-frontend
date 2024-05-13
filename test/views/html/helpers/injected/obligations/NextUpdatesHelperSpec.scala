@@ -19,36 +19,35 @@ package views.html.helpers.injected.obligations
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{DeadlineViewModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
+import java.time.LocalDate
+
 class  NextUpdatesHelperSpec extends TestSupport {
 
-  class Setup(currentObligations: ObligationsModel) {
+  class Setup(currentObligations: NextUpdatesViewModel) {
     val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
     val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
-  lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  )))
+  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
-  lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+  lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
-  )))
-
-  object Messages {
-    val quarterlyUpdateDue: String = messages("nextUpdates.section.heading.updates", "1 July 2017", "30 September 2017")
-    val nonQuarterlyUpdateDue: String = messages("nextUpdates.section.heading.taxYear", "1 October 2017", "30 October 2018")
-  }
+  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {
 
@@ -62,10 +61,17 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
     "display the updates under the first deadline" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
+      val heading = section.select(".govuk-accordion__section-summary")
 
-      section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe "Quarterly update"
-      section.select("dl dd").text() shouldBe messages(testTradeName)
+      heading.text() shouldBe "Quarterly update"
+
+      val table = section.select(".govuk-table")
+      table.select(".govuk-table__caption").text() shouldBe "Quarterly period from 1 Jul 2017 to 30 Sep 2017"
+
+      table.select(".govuk-table__head").text() shouldBe "Update type Income source"
+
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe "Quarterly update"
+      table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 
     "display the later due date" in new Setup(obligationsModel) {
@@ -74,18 +80,26 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
     "display the updates under the second deadline" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
+      val heading = section.select(".govuk-accordion__section-summary")
 
-      section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe messages("nextUpdates.eops")
-      section.select("dl dd").text() shouldBe messages(testTradeName)
+      heading.text() shouldBe messages("nextUpdates.quarterly")
+
+      val table = section.select(".govuk-table")
+
+      table.select(".govuk-table__caption").text() shouldBe "Quarterly period from 6 Apr 2017 to 5 Apr 2018"
+
+      table.select(".govuk-table__head").text() shouldBe "Update type Income source"
+
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
+      table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
 
     "display the correct due date text for a quarterly date" in new Setup(obligationsModel) {
-      pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.quarterlyUpdateDue
+      pageDocument.getElementById("accordion-with-summary-sections-heading-1").text() shouldBe "30 October 2017"
     }
 
     "display the correct due date text for a non-quarterly date" in new Setup(crystallisedObligationsModel) {
-      pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.nonQuarterlyUpdateDue
+      pageDocument.getElementById("accordion-with-summary-sections-heading-1").text() shouldBe "31 October 2017"
     }
   }
 }

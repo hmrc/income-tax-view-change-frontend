@@ -19,19 +19,17 @@ package services
 import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
 import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
-import org.mockito.ArgumentMatchers
+import models.nextUpdates._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.libs.json.{JsValue, Json}
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
+
 import java.time.LocalDate
 import scala.concurrent.Future
-import scala.io.{BufferedSource, Source}
 
 class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector with FeatureSwitching {
 
@@ -110,33 +108,43 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
   }
 
-  "getNextDeadlineDueDate" should {
+  "getNextDeadlineDueDateAndOverdueObligations" should {
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getDueDates().futureValue shouldBe
+          Right(Seq(LocalDate.of(2017, 10, 30),
+            LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 1),
+            LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 31)))
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getDueDates().futureValue shouldBe
+          Right(Seq(LocalDate.of(2017, 10, 1), LocalDate.of(2017, 10, 31)))
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
+        getDueDates().futureValue shouldBe Right(Seq(LocalDate.of(2017, 10, 31)))
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations.failed.futureValue
-        result shouldBe an[Exception]
-        result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
+        val result: Either[Exception, Seq[LocalDate]] = getDueDates().futureValue
+        result.isRight shouldBe true
+        result shouldBe Right(Seq.empty)
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations.failed.futureValue
-        result shouldBe an[Exception]
-        result.getMessage shouldBe "Dummy Error Message"
+        val result: Either[Exception, Seq[LocalDate]] = getDueDates().futureValue
+        result.isLeft shouldBe true
+        result.left.map(_.getMessage) shouldBe Left("Dummy Error Message")
+      }
+    }
+    "return None" when {
+      "404 response from getNextUpdates" in new Setup {
+        setupMockNextUpdates(ObligationsModel(Seq.empty))
+        getDueDates().futureValue shouldBe Right(Seq())
       }
     }
   }
@@ -151,7 +159,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
 
       "return a valid list of previous Next Updates" in {
-        setupMockPreviousObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
+        setupMockFulfilledObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
         TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
@@ -164,7 +172,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
 
       "return the error for previous deadlines" in {
-        setupMockPreviousObligations(obligationsDataErrorModel)
+        setupMockFulfilledObligations(obligationsDataErrorModel)
         TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe obligationsDataErrorModel
       }
     }
@@ -175,15 +183,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     "it receives a fromDate and toDate" should {
       "valid current and previous obligations are returned" should {
         "return all obligations" in {
-          setupMockPreviousObligationsWithDates(
+
+          setupMockAllObligationsWithDates(
             from = fixedDate.minusDays(1),
             to = fixedDate.plusDays(2)
           )(ObligationsModel(Seq(
             NextUpdatesModel("idOne", List(previousObligation))
           )))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
 
           val result = TestNextUpdatesService.getNextUpdates(
             fromDate = fixedDate.minusDays(1),
@@ -191,35 +197,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           ).futureValue
 
           result shouldBe ObligationsModel(Seq(
-            NextUpdatesModel("idOne", List(previousObligation)),
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          ))
-        }
-      }
-
-      "valid current obligations are returned but there are no previous obligations" should {
-        "return the current obligations" in {
-          setupMockPreviousObligationsWithDates(
-            from = fixedDate.minusDays(1),
-            to = fixedDate.plusDays(2)
-          )(NextUpdatesErrorModel(NOT_FOUND, "not found"))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
-
-          val result = TestNextUpdatesService.getNextUpdates(
-            fromDate = fixedDate.minusDays(1),
-            toDate = fixedDate.plusDays(2)
-          ).futureValue
-
-          result shouldBe ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
+            NextUpdatesModel("idOne", List(previousObligation))
           ))
         }
       }
 
       "valid obligations are returned but current obligations are not in the correct time period" in {
-        setupMockPreviousObligationsWithDates(
+        setupMockAllObligationsWithDates(
           from = fixedDate.minusDays(1),
           to = fixedDate.plusDays(1)
         )(ObligationsModel(Seq(
@@ -235,36 +219,16 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         ).futureValue
 
         result shouldBe ObligationsModel(Seq(
-          NextUpdatesModel("idOne", List(previousObligation)),
+          NextUpdatesModel("idOne", List(previousObligation))
         ))
       }
 
       "return an error" when {
-        "an error is returned from current obligations" in {
-          setupMockPreviousObligationsWithDates(
-            from = fixedDate.minusDays(1),
-            to = fixedDate.plusDays(1)
-          )(ObligationsModel(Seq(
-            NextUpdatesModel("idOne", List(previousObligation))
-          )))
-          setupMockNextUpdates(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error"))
-
-          val result = TestNextUpdatesService.getNextUpdates(
-            fromDate = fixedDate.minusDays(1),
-            toDate = fixedDate.plusDays(1)
-          ).futureValue
-
-          result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error")
-        }
-
-        "an error is returned from the previous obligations" in {
-          setupMockPreviousObligationsWithDates(
+        "an error is returned from  getAllObligations" in {
+          setupMockAllObligationsWithDates(
             from = fixedDate.minusDays(1),
             to = fixedDate.plusDays(2)
           )(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found"))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
 
           val result = TestNextUpdatesService.getNextUpdates(
             fromDate = fixedDate.minusDays(1),
@@ -299,13 +263,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       disableAllSwitches()
       enable(IncomeSources)
 
-      val day = LocalDate.of(2023, 1, 1)
+      val day: LocalDate = LocalDate.of(2023, 1, 1)
       val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS")))
+      result.futureValue shouldBe Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
@@ -322,22 +286,19 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
   "getObligationsViewModel" should {
 
-    "return a valid view model with EOPS and quarterly obligations and final declaration(s)" in {
+    "return a valid view model with quarterly obligations and final declaration(s)" in {
       disableAllSwitches()
       enable(IncomeSources)
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001"),
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
         )),
         NextUpdatesModel("123", List(
           NextUpdateModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "Quarterly", None, "#001")
         )
         ),
-        NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")
-        )),
         NextUpdatesModel("123", List(
           NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
         ))
@@ -351,11 +312,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1),
               day.minusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly"),
             DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
-          ),
+          )
         ),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
-        dateService.getCurrentTaxYearEnd(),
+        dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
 
@@ -363,22 +323,25 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       result.futureValue shouldBe expectedResult
     }
 
-    "return a valid view model if no EOPS obligations" in {
+    "return a valid view model if no final declaration" in {
       disableAllSwitches()
       enable(IncomeSources)
 
       val day = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "#001")
+      val nextModel: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+        ))
+      ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
-              Seq.empty,
-              Seq.empty,
-              Seq.empty,
-              dateService.getCurrentTaxYearEnd(),
-              showPrevTaxYears = true
-            )
+        Seq.empty,
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+        dateService.getCurrentTaxYearEnd,
+        showPrevTaxYears = true
+      )
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
       result.futureValue shouldBe expectedResult
     }
@@ -388,16 +351,20 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       enable(IncomeSources)
 
       val day = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")
+      val nextModel: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+        ))
+      ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
+
       result.futureValue shouldBe ObligationsViewModel(
         Seq.empty,
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
-        Seq.empty,
-        dateService.getCurrentTaxYearEnd(),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+        dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
     }

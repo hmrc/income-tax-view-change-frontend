@@ -24,7 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
+import models.creditsandrefunds.CreditAndRefundViewModel
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -84,68 +84,18 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetailsModel => sortCreditsByTypeAndMonetaryValue(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
+          financialDetailsModel => financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails()
         )
 
+        val viewModel = CreditAndRefundViewModel(credits)
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
-
         auditClaimARefund(balance, credits)
 
-
-        Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
+        Ok(view(viewModel, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
+        s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
     }
-  }
-
-  private val balancingChargeCredit = "BCC"
-  private val mfaCredit = "MFA"
-  private val cutOverCredit = "CutOver"
-  private val payment = "Payment"
-
-  def sortCreditsByTypeAndMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
-  : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-
-    val creditTypeSortingOrder = Map(
-      balancingChargeCredit -> 1,
-      mfaCredit -> 2,
-      cutOverCredit -> 3,
-      payment -> 4
-    )
-
-    val sortedCredits = credits.groupBy[String] {
-      credits => {
-        getCreditType(credits)
-      }
-    }.toList.sortWith((p1, p2) => creditTypeSortingOrder(p1._1) < creditTypeSortingOrder(p2._1))
-      .map {
-        case (documentDetailWithDueDate, financialDetail) => (documentDetailWithDueDate, sortCreditsByMonetaryValue(financialDetail))
-      }.flatMap {
-      case (_, credits) => credits
-    }
-    sortedCredits
-  }
-
-  def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val creditType: Option[CreditType] = credit._2.getCreditType
-    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-
-    (creditType, isPayment) match {
-      case (Some(BalancingChargeCreditType), false) => balancingChargeCredit
-      case (Some(MfaCreditType), false) => mfaCredit
-      case (Some(CutOverCreditType), false) => cutOverCredit
-      case (None, true) => payment
-      case (_,_) =>
-        Logger("application").warn("[CreditAndRefundController][getCreditType] - Unknown credit")
-        "unknownCredit"
-    }
-  }
-
-  def sortCreditsByMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
-  : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-    credits
-      .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
   }
 
   def showAgent(): Action[AnyContent] = {
@@ -176,23 +126,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         }
     }
 
-  def refundStatus(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        user.userType match {
-          case _ if isDisabled(CreditsRefundsRepay) =>
-            Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-          case _ =>
-            handleStatusRefundRequest(
-              backUrl = "", // TODO: do we need a backUrl
-              itvcErrorHandler = itvcErrorHandler,
-              isAgent = false
-            )
-        }
-    }
-
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) flatMap {
@@ -207,22 +140,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
           case Left(_) =>
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
-      case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
+      case _ => Logger("application").error("")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
-  }
-
-  private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    repaymentService.view(user.nino).flatMap {
-      case _ if isDisabled(CreditsRefundsRepay) =>
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-      case Right(nextUrl) =>
-        Future.successful(Redirect(nextUrl))
-      case Left(_) =>
-        Future.successful(itvcErrorHandler.showInternalServerError())
-    }
-
   }
 
   private def auditClaimARefund(balanceDetails: Option[BalanceDetails], creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])

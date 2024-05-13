@@ -17,6 +17,7 @@
 package models
 
 import implicits.ImplicitDateFormatter
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import models.nextUpdates._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -96,64 +97,6 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
     }
 
-    "for the 1st EOPS Obligation" should {
-
-      val obligation = obligationsEOPSDataSuccessModel.obligations.head
-
-      "have the start date as 6th April 2017" in {
-        obligation.start shouldBe "2017-4-6".toLocalDate
-      }
-
-      "have the end date as 5th April 2018" in {
-        obligation.end shouldBe "2018-4-5".toLocalDate
-      }
-
-      "have the due date as 1st Oct 2018" in {
-        obligation.due shouldBe "2017-10-1".toLocalDate
-      }
-
-      "have the periodKey as '#002'" in {
-        obligation.periodKey shouldBe "#002"
-      }
-
-      "return 'Open' with getObligationStatus" in {
-        getNextUpdateStatus(obligation) shouldBe Overdue("2017-10-1")
-      }
-
-      "have the obligation type 'Eops'" in {
-        obligation.obligationType shouldBe "EOPS"
-      }
-    }
-
-    "for the 2nd EOPS Obligation" should {
-
-      val obligation = obligationsEOPSDataSuccessModel.obligations(1)
-
-      "have the start date as 6th April 2017" in {
-        obligation.start shouldBe "2017-4-6".toLocalDate
-      }
-
-      "have the end date as 5th April 2018" in {
-        obligation.end shouldBe "2018-4-5".toLocalDate
-      }
-
-      "have the due date as 31st Oct 2018" in {
-        obligation.due shouldBe "2017-10-31".toLocalDate
-      }
-
-      "have the periodKey as '#003'" in {
-        obligation.periodKey shouldBe "#003"
-      }
-
-      "return 'Open' with getObligationStatus" in {
-        getNextUpdateStatus(obligation) shouldBe Open("2017-10-31")
-      }
-
-      "have the obligation type 'Eops'" in {
-        obligation.obligationType shouldBe "EOPS"
-      }
-    }
-
     "be formatted to JSON correctly" in {
       Json.toJson[NextUpdatesModel](nextUpdatesDataSelfEmploymentSuccessModel) shouldBe obligationsDataSuccessJson
     }
@@ -198,10 +141,10 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       "calling .allDeadlinesWithSource" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation),
           NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
           NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openQuarterlyObligation),
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
@@ -213,7 +156,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           NextUpdateModelWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
         )
       }
@@ -232,16 +175,10 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       "calling .allQuarterly" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
           BaseTestConstants.testMtdItUser) shouldBe List(
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation),
           NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation)
-        )
-      }
-
-      "calling .allEops" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openQuarterlyObligation)
         )
       }
 
@@ -249,6 +186,28 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
           BaseTestConstants.testMtdItUser) shouldBe List(
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
+        )
+      }
+
+      "calling .groupByQuarterPeriod" in {
+        val nextUpdateModelWithIncomeTypeList: Seq[NextUpdateModelWithIncomeType] = List(
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openQuarterlyObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
+        )
+
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
+          nextUpdateModelWithIncomeTypeList) shouldBe Map(
+          None -> List(
+            NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll",NextUpdateModel("2017-10-01","2018-10-30","2017-10-31","Crystallised",None,""))),
+          Some(QuarterTypeCalendar) -> List(
+            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002")),
+            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003"))),
+          Some(QuarterTypeStandard) -> List (
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-01", "Quarterly", None, "#002")),
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003")))
         )
       }
     }

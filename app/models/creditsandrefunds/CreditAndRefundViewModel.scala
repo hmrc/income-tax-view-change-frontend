@@ -16,12 +16,45 @@
 
 package models.creditsandrefunds
 
-import models.financialDetails.BalanceDetails
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.financialDetails._
+import play.api.i18n.Messages
+
+import java.time.LocalDate
+
+sealed trait CreditRow {
+  val amount: BigDecimal
+  val creditType: CreditType
+}
+case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
+case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: LocalDate) extends CreditRow
+
+case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
+
+  val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
+    val (documentDetails, financialDetail) = cc
+    val maybeCreditRow = for {
+      creditType <- financialDetail.getCreditType
+      amount <- documentDetails.documentDetail.paymentOrChargeCredit
+    } yield {
+      creditType match {
+        case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = documentDetails.dueDate.get)
+        case _ => CreditViewRow(amount = amount, creditType = creditType, taxYear = financialDetail.taxYear)
+      }
+    }
+    maybeCreditRow
+  })
+
+  def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+    val sortedCredits = creditCharges.sortBy {
+      case (_, financialDetails) => financialDetails.taxYear
+    }
+    sortedCredits.reverse
+  }
+
+  val sortedCreditCharges = sortCreditsByYear
+
+
+}
 
 
 
-case class CreditAndRefundViewModel(balance: BalanceDetails,
-                                    creditCharges: List[(Option[String], Option[FinancialDetailsWithDocumentDetailsModel])])
-
-case class CreditAndRefundError(status: Option[Int] = None)

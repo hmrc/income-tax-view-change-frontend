@@ -26,44 +26,47 @@
 )
 
 @(taxYears: List[Int],
-    backUrl: String,
-    utr: Option[String] = None,
-    itsaSubmissionIntegrationEnabled: Boolean,
-    isAgent: Boolean = false,
-    btaNavPartial: Option[Html] = None,
+        backUrl: String,
+        utr: Option[String] = None,
+        itsaSubmissionIntegrationEnabled: Boolean,
+        earliestSubmissionTaxYear: Int,
+        isAgent: Boolean = false,
+        btaNavPartial: Option[Html] = None,
         origin: Option[String] = None
 )(implicit request: Request[_], messages: Messages)
 
 @getReturnHref(year: Int) = @{
-    if (isAgent) {
+    if(isAgent) {
         controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
     } else {
         controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
     }
 }
 
-@viewReturnLink(year: Int) = {
-    <a class="govuk-link" id="viewSummary-link-@year"
-    href="@getReturnHref(year)">
+@viewReturnLink(taxYear: Int) = {
+    <a class="govuk-link" id="viewSummary-link-@taxYear"
+    href="@getReturnHref(taxYear)">
         @messages("taxYears.viewSummary")
-        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
     </a>
 }
 
-@updateReturnLink(year: Int) = {
-    <a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
+@updateReturnLink(taxYear: Int) = {
+@if(taxYear >= earliestSubmissionTaxYear) {
+    <a class="govuk-link" id="updateReturn-link-@taxYear" href="@appConfig.submissionFrontendTaxYearsPage(taxYear)">
         @messages("taxYears.updateReturn")
-        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
     </a>
 }
+}
 
-@taxYearRow(year: Int) = {
+@taxYearRow(taxYear: Int) = {
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__value">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</dt>
+        <dt class="govuk-summary-list__value">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</dt>
         @if(itsaSubmissionIntegrationEnabled) {
-            <dd class="govuk-summary-list__actions">@updateReturnLink(year)</dd>
+            <dd class="govuk-summary-list__actions">@updateReturnLink(taxYear)</dd>
         }
-        <dd class="govuk-summary-list__actions">@viewReturnLink(year)</dd>
+        <dd class="govuk-summary-list__actions">@viewReturnLink(taxYear)</dd>
     </div>
 }
 
@@ -75,13 +78,13 @@
     useFallbackBackLink = true
 ) {
 
-    @h1(msg = "taxYears.heading", id=Some("heading"))
+    @h1(msg = "taxYears.heading", id = Some("heading"))
 
-    @if(taxYears.isEmpty){
+    @if(taxYears.isEmpty) {
         <p id="no-taxYears">@messages("taxYears.noEstimates")</p>
     } else {
         <dl class="govuk-summary-list">
-            @taxYears.map(taxYearRow)
+        @taxYears.map(taxYearRow)
         </dl>
     }
 
@@ -91,19 +94,19 @@
                 @messages("taxYears.oldSa.content.text")
                 @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link",
                     id = Some("self-assessment-online-account-link"),
-                   outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+                    outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
             }
         }
     }
 
     @if(isAgent) {
-        @p(id=Some("oldSa-para-agent")){
+        @p(id = Some("oldSa-para-agent")) {
             @messages("taxYears.oldSa.agent.content.1")
             @link(link = appConfig.saForAgents,
 
                 messageKey = "taxYears.oldSa.agent.content.2",
-                id=Some("self-assessment-for-agents-link"),
-                outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+                id = Some("self-assessment-for-agents-link"),
+                outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
             @messages("taxYears.oldSa.agent.content.3")
         }
     }

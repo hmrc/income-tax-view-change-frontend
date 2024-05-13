@@ -1,0 +1,266 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
+@import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.UkProperty
+@import enums.IncomeSourceJourney.ForeignProperty
+@import enums.IncomeSourceJourney.SelfEmployment
+
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        ceasedBusinesses: CeasedBusinesses
+)
+
+
+@(
+        sources: ViewIncomeSourcesViewModel,
+        isAgent: Boolean,
+        backUrl: String
+)( implicit messages: Messages, user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"manage.your.businesses.$key", args: _*)
+}
+
+@incomeSourceDetailsURL(incomeSourceType: IncomeSourceType, incomeSourceIdHash: Option[String]) = @{
+    controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, incomeSourceIdHash).url
+}
+
+@ukProperty = @{
+    sources.viewUkProperty
+}
+@foreignProperty = @{
+    sources.viewForeignProperty
+}
+@soleTraderBusinesses = @{
+    sources.viewSoleTraderBusinesses
+}
+
+@ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment).url
+}
+
+@ceaseUkPropertyURL = @{
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, UkProperty).url
+}
+
+@ceaseForeignPropertyURL = @{
+    if(isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty).url
+}
+
+@addBusinessNameURL = @{
+    controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = false).url
+}
+
+@viewAllCeasedBusinessesControllerURL = @{
+    controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent).url
+}
+
+@addUKPropertyStartDateURL = @{
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = false, UkProperty).url
+}
+
+@addForeignPropertyBusinessStartDateURL = @{
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = false, ForeignProperty).url
+}
+
+@addPropertyBusinessURL = @{
+    if(isAgent)
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(true).url
+    else
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(false).url
+}
+
+@addPropertyLink(IsUKPropertyAvailable: Boolean, IsForeignPropertyAvailable: Boolean) = @{
+    (IsUKPropertyAvailable, IsForeignPropertyAvailable) match {
+        case (true, false)     => link(link = addForeignPropertyBusinessStartDateURL, messageKey = getMessage("addIncomeSources.foreignProperty.link"), id = Some("foreign-property-link"))
+        case (false, true)     => link(link = addUKPropertyStartDateURL, messageKey = getMessage("addIncomeSources.ukProperty.link"), id = Some("uk-property-link"))
+        case (false, false)    => link(link = addPropertyBusinessURL, messageKey = getMessage("addIncomeSources.property.link"), id = Some("property-link"))
+        case (true, true)      =>
+    }
+}
+
+
+@mainTemplate(pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @h1(msg = getMessage("heading"), id = Some("manage-your-businesses-h1"))
+
+    <div class="govuk-!-margin-bottom-7">
+
+        @h2(msg = getMessage("self-employed-h2"), optId = Some("self-employed-h1"))
+
+        <p class="govuk-body">@getMessage("self-employed-desc")</p>
+
+        @if(soleTraderBusinesses.nonEmpty) {
+
+            @for((business, index) <- soleTraderBusinesses.zipWithIndex) {
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title" id="@{s"business-type-$index"}"> @business.incomeSource.getOrElse(getMessage("unknown-field"))</h2>
+                        <ul class="govuk-summary-card__actions">
+                            <li class="govuk-summary-card__action" id="@{s"view-manage-link-$index"}"> <a class="govuk-link" href=@incomeSourceDetailsURL(SelfEmployment, Some(business.incomeSourceId.toHash.hash))>
+                                @getMessage("view.manage")
+                            </a>
+                            </li>
+                            <li class="govuk-summary-card__action" id="@{s"cease-link-$index"}"> <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>
+                                @getMessage("cease")
+                            </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @getMessage("datestarted")
+                                </dt>
+                                <dd class="govuk-summary-list__value" id="@{s"business-date-$index"}">
+                                    @business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key no-border">
+                                    @getMessage("name")
+                                </dt>
+                                <dd class="govuk-summary-list__value no-border" id="@{s"business-trade-name-$index"}">
+                                    @business.tradingName.getOrElse(getMessage("unknown-field"))
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            }
+
+        }
+
+        @link(link = addBusinessNameURL, messageKey = getMessage("addIncomeSources.selfEmployment.link"), id = Some("self-employment-link"))
+
+    </div>
+
+
+    <div class="govuk-!-margin-bottom-7">
+
+        @h2(msg = getMessage("property-h2"), optId = Some("property-h2"))
+
+        <p class="govuk-body">@getMessage("property-desc")</p>
+
+        @if(ukProperty.nonEmpty) {
+
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">@getMessage("UK")</h2>
+                    <ul class="govuk-summary-card__actions">
+                        <li class="govuk-summary-card__action" id="uk-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(UkProperty, None)>
+                            @getMessage("view.manage")
+                        </a>
+                        </li>
+                        <li class="govuk-summary-card__action" id="uk-cease-link"> <a class="govuk-link" href=@ceaseUkPropertyURL>
+                            @getMessage("cease")
+                        </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key no-border">
+                                @getMessage("startdate")
+                            </dt>
+                            <dd class="govuk-summary-list__value no-border" id="uk-date">
+                                @ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+        }
+
+        @if(foreignProperty.nonEmpty) {
+
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">@getMessage("Foreign")</h2>
+                    <ul class="govuk-summary-card__actions">
+                        <li class="govuk-summary-card__action" id="foreign-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(ForeignProperty, None)>
+                            @getMessage("view.manage")
+                        </a>
+                        </li>
+                        <li class="govuk-summary-card__action" id="foreign-cease-link"> <a class="govuk-link" href=@ceaseForeignPropertyURL>
+                            @getMessage("cease")
+                        </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key no-border">
+                                @getMessage("startdate")
+                            </dt>
+                            <dd class="govuk-summary-list__value no-border" id="foreign-date">
+                                @foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        }
+
+        @addPropertyLink(ukProperty.nonEmpty, foreignProperty.nonEmpty)
+
+    </div>
+
+
+    <div class="govuk-!-margin-bottom-7">
+
+        @if(sources.viewCeasedBusinesses.nonEmpty) {
+
+            @h2(msg = getMessage("ceasedBusinesses.heading"), optId = Some("ceasedBusinesses-heading"))
+
+            @if(sources.viewCeasedBusinesses.length == 1) {
+                <p class="govuk-body">@getMessage("ceasedBusinesses.single")</p>
+            } else {
+                <p class="govuk-body">@getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)</p>
+            }
+            @link(link = viewAllCeasedBusinessesControllerURL, messageKey = getMessage("ceasedBusinesses.viewall"), id = Some("ceasedBusinesses-viewall"))
+        }
+    </div>
+
+
+}

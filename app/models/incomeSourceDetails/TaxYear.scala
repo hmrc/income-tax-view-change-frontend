@@ -16,21 +16,41 @@
 
 package models.incomeSourceDetails
 
+import services.DateServiceInterface
+
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
   override def toString: String = s"$startYear-$endYear"
+
+  def addYears(delta: Int): TaxYear = {
+    TaxYear(startYear = startYear + delta, endYear = endYear + delta)
+  }
+
+  def formatTaxYearRange: String = {
+    s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
+  }
+
+  def isFutureTaxYear(implicit dateService: DateServiceInterface): Boolean = {
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    endYear >= currentTaxYearEnd
+  }
+
+  def previousYear: TaxYear = addYears(-1)
+
+  def nextYear: TaxYear = addYears( +1)
+
+
 }
 
 object TaxYear {
 
+  private def isValidYear(year: String): Boolean =
+    year.length == 4 &&
+      year.forall(_.isDigit) &&
+      Try(year.toInt).toOption.isDefined
+
   private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
-
-    def isValidYear(year: String): Boolean =
-      year.length == 4 &&
-        year.forall(_.isDigit) &&
-        Try(year.toInt).toOption.isDefined
-
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
       yearOne.toInt + 1 == yearTwo.toInt
 
@@ -49,5 +69,15 @@ object TaxYear {
       case _ => None
     }
   }
+
+  def makeTaxYearWithEndYear(endYear: Int): TaxYear = {
+    TaxYear(startYear = (endYear - 1), endYear = endYear)
+  }
+
+  def forYearEnd(endYear: Int): TaxYear = {
+    require(isValidYear(endYear.toString), "invalid year")
+    TaxYear(startYear = endYear - 1, endYear = endYear)
+  }
+
 }
 

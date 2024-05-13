@@ -21,14 +21,14 @@ import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
-import testConstants.BusinessDetailsTestConstants.address
+import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -42,11 +42,12 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val auditType: String = "TaxYearOverviewResponse"
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
-  val updateTypeEops: String = messages("updateTab.updateType.eops")
+  val updateTypeQuarterly: String = "Quarterly Update"
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
 
-  def taxYearSummaryViewModel(forecastIncome: Option[Int] = None,
-                              forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                              forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+  def calculationSummary(forecastIncome: Option[Int] = None,
+                         forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                         forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = false,
@@ -59,9 +60,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
-  def taxYearSummaryViewModelUnattendedCalc(forecastIncome: Option[Int] = None,
-                                            forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+  def unattendedCalcSummary(forecastIncome: Option[Int] = None,
+                            forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = true,
@@ -93,11 +94,11 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
+    val currentDate: LocalDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
@@ -110,9 +111,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
-          dateReceived = Some(LocalDate.now),
-          periodKey = "EOPS"
+          obligationType = "Quarterly",
+          dateReceived = Some(fixedDate),
+          periodKey = "Quarterly"
         )
       )
     )
@@ -120,7 +121,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   val business = List(BusinessDetailsModel(
     "testId",
-    Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+    incomeSource = Some(testIncomeSource),
+    Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
     Some("Test Trading Name"),
     None,
     Some(getCurrentTaxYearEnd),
@@ -195,8 +197,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
-      "dateSubmitted" -> LocalDate.now.toString,
-      "updateType" -> updateTypeEops
+      "dateSubmitted" -> fixedDate.toString,
+      "updateType" -> updateTypeQuarterly
     ))
   )
 
@@ -217,7 +219,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "taxableIncome" -> None,
       "taxDue" -> None,
       "totalAllowancesAndDeductions" -> None
-  ),
+    ),
     "calculation" -> Json.obj(
       "income" -> 199505,
       "allowancesAndDeductions" -> 500,
@@ -240,8 +242,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
-      "dateSubmitted" -> LocalDate.now.toString,
-      "updateType" -> updateTypeEops
+      "dateSubmitted" -> fixedDate.toString,
+      "updateType" -> updateTypeQuarterly
     ))
   )
 
@@ -264,14 +266,15 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      payments = payments(paymentHasADunningLock),
-      updates = updates,
       messagesApi = messagesApi,
-      taxYearSummaryViewModel = Some(taxYearSummaryViewModel(
-        forecastIncome = forecastIncome,
-        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-        forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ),
+      taxYearSummaryViewModel = TaxYearSummaryViewModel(
+        calculationSummary = Some(calculationSummary(
+          forecastIncome = forecastIncome,
+          forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+          forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
+        ), charges = payments(paymentHasADunningLock),
+        obligations = updates, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+        ),
       messages
     )
 
@@ -293,14 +296,14 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      payments = payments(paymentHasADunningLock),
-      updates = updates,
       messagesApi = messagesApi,
-      taxYearSummaryViewModel = Some(taxYearSummaryViewModelUnattendedCalc(
+      taxYearSummaryViewModel = TaxYearSummaryViewModel(Some(unattendedCalcSummary(
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ),
+      ), charges = payments(paymentHasADunningLock),
+        obligations = updates, showForecastData = true, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+      )
     )
 
   def errorAuditResponseJson(auditResponse: JsObject, messages: Option[Messages]): JsObject = {

@@ -19,9 +19,10 @@ package views.agent
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.routes
 import exceptions.MissingFieldException
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.homePage._
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -29,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -44,7 +45,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val currentTaxYear: Int = {
-    val currentDate = LocalDate.now
+    val currentDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, Month.APRIL, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
@@ -76,43 +77,57 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val year2018: Int = 2018
   val year2019: Int = 2019
 
-  val nextUpdateDue: LocalDate = LocalDate.of(year2018, Month.JANUARY, 1)
+  val nextUpdateDue: LocalDate = LocalDate.of(2100, Month.JANUARY, 1)
 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
+  val currentDate = dateService.getCurrentDate
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
+  private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
+    LocalDate.of(2018, 2, 1)), currentDate, false)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
+
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-              nextUpdate: LocalDate = nextUpdateDue,
-              overduePaymentExists: Boolean = true,
-              overDuePaymentsCount: Option[Int] = None,
-              overDueUpdatesCount: Option[Int] = None,
-              utr: Option[String] = None,
-              paymentHistoryEnabled: Boolean = true,
-              ITSASubmissionIntegrationEnabled: Boolean = true,
-              dunningLockExists: Boolean = false,
-              currentTaxYear: Int = currentTaxYear,
-              isAgent: Boolean = true,
-              displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false,
-              user: MtdItUser[_] = testMtdItUserNotMigrated
-             ) {
+                  overduePaymentExists: Boolean = true,
+                  overDuePaymentsCount: Int = 0,
+                  nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
+                  utr: Option[String] = None,
+                  paymentHistoryEnabled: Boolean = true,
+                  ITSASubmissionIntegrationEnabled: Boolean = true,
+                  dunningLockExists: Boolean = false,
+                  currentTaxYear: Int = currentTaxYear,
+                  isAgent: Boolean = true,
+                  displayCeaseAnIncome: Boolean = false,
+                  incomeSourcesEnabled: Boolean = false,
+                  incomeSourcesNewJourneyEnabled: Boolean = false,
+                  creditAndRefundEnabled: Boolean = false,
+                  user: MtdItUser[_] = testMtdItUserNotMigrated
+                 ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+
+    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount)
+
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
+
+    val homePageViewModel = HomePageViewModel(
+      utr = utr,
+      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+      returnsTileViewModel = returnsTileViewModel,
+      nextPaymentsTileViewModel = nextPaymentsTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+      yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+      dunningLockExists = dunningLockExists
+    )
     val view: HtmlFormat.Appendable = agentHome(
-      nextPaymentDueDate,
-      nextUpdate,
-      overDuePaymentsCount,
-      overDueUpdatesCount,
-      utr,
-      ITSASubmissionIntegrationEnabled,
-      dunningLockExists,
-      currentTaxYear,
-      displayCeaseAnIncome = displayCeaseAnIncome,
-      isAgent,
-      creditAndRefundEnabled = false,
-      paymentHistoryEnabled = paymentHistoryEnabled,
-      isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-      incomeSourcesEnabled = incomeSourcesEnabled
+      homePageViewModel,
+      isAgent
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -152,13 +167,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(messages("home.payments.heading"))
         }
         "has content of the next payment due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(1)) {
+          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January $year2019")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
           }
-          "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(2)) {
+          "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 2) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
           }
           "has no next payment" in new TestSetup(nextPaymentDueDate = None) {
@@ -180,12 +195,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = Some(1)) {
+      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = 1) {
         val overdueMessageWithoutDunningLock = "! Warning Your client has overdue payments. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock exists" in new TestSetup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
+      "display an overdue warning message when a payment is overdue and dunning lock exists" in new TestSetup(overDuePaymentsCount = 1, dunningLockExists = true) {
         val overdueMessageWithDunningLock = "! Warning Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
@@ -195,13 +210,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
         "has content of the next update due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(1)) {
+          "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January $year2018")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2100")
           }
-          "is a count of overdue updates" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(2)) {
+          "is a count of overdue updates" in new TestSetup(nextUpdatesTileViewModel = viewModelTwoOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
           }
         }
@@ -209,6 +224,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
+        }
+        "is empty except for the title" when {
+          "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
+            getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+          }
+        }
+        "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
+          val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
         }
       }
 
@@ -266,18 +291,30 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
 
-        "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {
+        "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
         }
-
-        "has a link to the payment history page when payment history feature switch is disabled" in new TestSetup(paymentHistoryEnabled = false) {
+        "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditHistory.view"))
+        }
+        "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditRefundHistory.view"))
+        }
+        "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new TestSetup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
 
+        s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
+          getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
+        }
       }
 
       s"have a change client link" in new TestSetup {
@@ -331,15 +368,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
         }
       }
-    }
-
-    "the home view with an empty next payment due date and one overDuePaymentsCount" should {
-      "throw a MissingFieldException" in {
-        val expectedException: MissingFieldException = intercept[MissingFieldException] {
-          new TestSetup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = Some(1))
+      "have a Your Businesses tile" when {
+        "the new income sources journey FS is enabled" which {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
+          }
+          "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(true).url)
+          }
         }
-
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Next Payment Due Date"
       }
     }
   }

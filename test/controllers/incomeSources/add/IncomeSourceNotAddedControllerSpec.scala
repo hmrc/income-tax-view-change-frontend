@@ -19,7 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
@@ -30,6 +30,7 @@ import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.add.IncomeSourceNotAddedError
 
@@ -69,148 +70,78 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
   lazy val addIncomeSource: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val addIncomeSourceAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
+  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
-  "IncomeSourceNotAddedController.show - Individual" should {
-    "return 200 and render Income Source Not Added Error Page" when {
-      "user is trying to add SE business" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment)(fakeRequestWithActiveSession)
-
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleIndividual
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textSelfEmployment
-      }
-      "user is trying to add UK property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = UkProperty)(fakeRequestWithActiveSession)
-
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleIndividual
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textUkProperty
-      }
-      "user is trying to add Foreign property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty)(fakeRequestWithActiveSession)
-
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleIndividual
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textForeignProperty
-      }
-    }
-
-    "return 303 and show home page" when {
-      "when feature switch is disabled" in {
-        disableAllSwitches()
-
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(ForeignProperty)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-    }
-
-    "return 303 and redirect to the sign in" when {
-      "the user is not authenticated" in {
-        setupMockAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-      }
-    }
-    "redirect to the session timeout page" when {
-      "the user has timed out" in {
-        setupMockAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithTimeoutSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
+  def mockIncomeSource(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => mockBusinessIncomeSource()
+      case UkProperty => mockUKPropertyIncomeSource()
+      case ForeignProperty => mockForeignPropertyIncomeSource()
     }
   }
 
-  "IncomeSourceNotAddedController.showAgent - Agent" should {
-    "return 200 OK" when {
-      "business type is self employment" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleAgent
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textSelfEmployment
-        document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe addIncomeSourceAgent
-      }
-
-      "business type is UK property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleAgent
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textUkProperty
-        document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe addIncomeSourceAgent
-      }
-
-      "business type is foreign property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceNotAddedController.titleAgent
-        document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textForeignProperty
-        document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe addIncomeSourceAgent
-      }
+  def paragraphText(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => TestIncomeSourceNotAddedController.textSelfEmployment
+      case UkProperty => TestIncomeSourceNotAddedController.textUkProperty
+      case ForeignProperty => TestIncomeSourceNotAddedController.textForeignProperty
     }
+  }
 
-    "return 303 and show home page" when {
-      "when feature switch is disabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+  for (incomeSourceType <- incomeSourceTypes) yield {
+    for (isAgent <- Seq(true, false)) yield {
+      s"IncomeSourceNotAddedController.show (${incomeSourceType.key}, ${if (isAgent) "Agent" else "Individual"})" should {
+        "return 200 and render Income Source Not Added Error Page" when {
+          "user is trying to add SE business" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            mockIncomeSource(incomeSourceType)
+            setupMockAuthorisationSuccess(isAgent)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-    }
-    "return 303 and redirect to the sign in" when {
-      "the user is not authenticated" in {
-        setupMockAgentAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+            val result: Future[Result] = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+
+            val document = Jsoup.parse(contentAsString(result))
+
+            status(result) shouldBe OK
+            document.title shouldBe {if (isAgent) TestIncomeSourceNotAddedController.titleAgent else TestIncomeSourceNotAddedController.titleIndividual}
+            document.getElementById("paragraph-1").text() shouldBe paragraphText(incomeSourceType)
+          }
+        }
+
+        "return 303 and show home page" when {
+          "when feature switch is disabled" in {
+            disableAllSwitches()
+
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+            val result: Future[Result] = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl =if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
+        "return 303 and redirect to the sign in" when {
+          "the user is not authenticated" in {
+            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            val result = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          }
+        }
+        "redirect to the session timeout page" when {
+          "the user has timed out" in {
+            if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired()) else setupMockAuthorisationException()
+            val result =  if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithTimeoutSession)
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          }
+        }
       }
     }
   }

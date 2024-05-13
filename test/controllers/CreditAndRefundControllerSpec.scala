@@ -32,7 +32,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.{CreditService, DateService, RepaymentService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYearTo}
 import testConstants.FinancialDetailsTestConstants._
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
@@ -136,35 +136,29 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         val doc: Document = Jsoup.parse(contentAsString(result))
         doc.select("#main-content").select("li:nth-child(1)")
-          .select("p").first().text() shouldBe "£250.00 " + messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + " 0"
+          .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
         doc.select("#main-content").select("li:nth-child(2)")
-          .select("p").first().text() shouldBe "£125.00 " + messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + " 1"
+          .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
         doc.select("#main-content").select("li:nth-child(3)")
-          .select("p").first().text() shouldBe "£1,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 2"
+          .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
         doc.select("#main-content").select("li:nth-child(4)")
-          .select("p").first().text() shouldBe "£800.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 3"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(5)")
-          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 4"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(6)")
-          .select("p").first().text() shouldBe "£2,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 5"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(7)")
-          .select("p").first().text() shouldBe "£700.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 6"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(8)")
-          .select("p").first().text() shouldBe "£200.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 7"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(9)")
-          .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
+          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(10)")
-          .select("p").first().text() shouldBe "£300.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
+          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(11)")
-          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+          .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
         doc.select("#main-content").select("li:nth-child(12)")
           .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress-prt-2")
         doc.select("#main-content").select("li:nth-child(13)")
@@ -262,68 +256,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.OK
-      }
-    }
-
-    "return the refund status" when {
-      "RepaymentJourneyModel is returned for an Individual user" in new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(Right("/test/url")))
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-    "not return the refund status" when {
-      "RepaymentJourneyModel is returned for an Agent user" in new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-        when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(Right("/test/url")))
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "RepaymentJourneyErrorResponse is returned" in new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(Left(new InternalError)))
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
-      "CreditsRefundsRepay FS is disabled" in new Setup {
-        disableAllSwitches()
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }

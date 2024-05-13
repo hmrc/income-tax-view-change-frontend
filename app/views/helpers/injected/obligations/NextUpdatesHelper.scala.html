@@ -19,57 +19,104 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.nextUpdates._
 @import java.time.LocalDate
+@import play.twirl.api.HtmlFormat
 
-@this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion : GovukAccordion)
-@(obligations: ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
+@(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
-@deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
-	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">
-			@{if(deadline.obligation.obligationType == "Quarterly")  messages("nextUpdates.quarterly")}
-			@{if(deadline.obligation.obligationType == "EOPS")  messages("nextUpdates.eops")}
-			@{if(deadline.obligation.obligationType == "Crystallised")  messages("nextUpdates.crystallised")}
-		</dt>
-		<dd class="govuk-summary-list__value">@{messages(deadline.incomeType)}</dd>
-	</div>
+@deadlineRow(deadline: NextUpdateModelWithIncomeType) = @{
+    Seq(
+        TableRow(
+            content = Text(getObligationTypeText(deadline.obligation.obligationType)),
+            classes = "govuk-!-width-two-third"
+        ),
+        TableRow(
+            content = Text(messages(deadline.incomeType)),
+            classes = "govuk-!-width-one-third"
+        )
+    )
 }
 
-@getHeadingMessage(obligation: NextUpdateModel) = @{
-	val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
-		else "nextUpdates.section.heading.taxYear"
-	messages(key, obligation.start.toLongDate, obligation.end.toLongDate)
+@getObligationTypeText(obligation: String) = @{
+    obligation match {
+        case "Quarterly" => messages("nextUpdates.quarterly")
+        case _ => messages("nextUpdates.crystallised")
+    }
 }
 
-@headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<span class="govuk-!-font-size-24">
-		@{collectedObligations._1._1.toLongDate}
-	</span>
+@getSectionHeadingMessage(obligationType: ObligationType) = @{
+    val key = if(obligationType == QuarterlyObligation) "nextUpdates.section.heading.quarterly"
+    else "nextUpdates.section.heading.end-of-year"
+    messages(key)
 }
 
-@summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	@getHeadingMessage(collectedObligations._1._2.head.obligation)
+@getTableHeadingMessage(obligation: NextUpdateModel) = @{
+    val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
+    else "nextUpdates.section.heading.taxYear"
+    messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
 }
 
-@bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<dl class="govuk-summary-list govuk-!-margin-bottom-3">
-		@for(obligation <- collectedObligations._1._2) {
-			@deadlineRow(obligation)
-		}
-	</dl>
+@headingContent(date: LocalDate) = {
+    <span class="govuk-!-font-size-24">
+    @{
+        date.toLongDate
+    }
+    </span>
+}
+
+@summaryContent(obligationType: ObligationType) = {
+@getSectionHeadingMessage(obligationType)
+}
+
+@makeTable(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
+    collectedObligations match {
+        case validObligations: Seq[NextUpdateModelWithIncomeType] if validObligations.nonEmpty =>
+            govukTable(Table(
+                classes = "govuk-body govuk-!-margin-bottom-8",
+                rows = {
+                    for(obligation <- validObligations) yield deadlineRow(obligation)
+                },
+                head = Some(Seq(
+                    HeadCell(
+                        content = Text(messages("nextUpdates.table.header.type"))
+                    ),
+                    HeadCell(
+                        content = Text(messages("nextUpdates.table.header.source"))
+                    )
+                )),
+                caption = {
+                    validObligations.headOption.map(x => x.obligation.obligationType) match {
+                        case Some("Quarterly") =>
+                            validObligations.headOption.map(x => getTableHeadingMessage(x.obligation))
+                        case _ => None
+                    }
+                },
+                captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
+            )
+            )
+        case _ => HtmlFormat.empty
+    }
+}
+
+@bodyContent(bothQuarters: Boolean, standardObligations: Seq[NextUpdateModelWithIncomeType], calendarObligations: Seq[NextUpdateModelWithIncomeType]) = @{
+        if (bothQuarters) {
+            Html(makeTable(calendarObligations).toString() + makeTable(standardObligations).toString())
+        }
+        else if (standardObligations.nonEmpty) makeTable(standardObligations) else makeTable(calendarObligations)
 }
 
 @getItems = @{
-	obligations.obligationsByDate.zipWithIndex.map( collectedObligations =>
-		Section(
-			headingContent = HtmlContent(headingContent(collectedObligations)),
-			summaryContent = HtmlContent(summaryContent(collectedObligations)),
-			content = HtmlContent(bodyContent(collectedObligations))
-		)
-	)
+    obligations.allDeadlines map { case DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, date: LocalDate, standardObligations: Seq[NextUpdateModelWithIncomeType], calendarObligations: Seq[NextUpdateModelWithIncomeType]) =>
+        Section(
+            headingContent = HtmlContent(headingContent(date)),
+            summaryContent = HtmlContent(summaryContent(obligationType)),
+            content = HtmlContent(bodyContent(bothQuarters, standardObligations, calendarObligations))
+        )
+    }
 }
 
 @govukAccordion(Accordion(
-	id = "accordion-with-summary-sections",
-	items = getItems
+    id = "accordion-with-summary-sections",
+    items = getItems
 ))

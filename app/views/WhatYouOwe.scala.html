@@ -25,6 +25,7 @@
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -41,7 +42,7 @@
 @(currentDate: LocalDate,
     creditCharges: List[DocumentDetail],
     whatYouOweChargesList: WhatYouOweChargesList,
-    hasLpiWithDunningBlock: Boolean,
+    hasLpiWithDunningLock: Boolean,
     currentTaxYear: Int,
     backUrl: String,
     utr: Option[String],
@@ -53,6 +54,7 @@
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
+        claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -68,9 +70,13 @@
 @saNoteParagraphContent(utr: String) = {
     @if(isAgent) {
         @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
-                link(link = appConfig.saForAgents, outerMessage = ". " + getMessage("sa-note-agent-3"),
-                    messageKey = getPrefix("sa-link-agent"), id = Some("sa-note-migrated-link"),
-                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
+                link(link = appConfig.saForAgents,
+                    outerMessage = ". " + getMessage("sa-note-agent-3"),
+                    messageKey = getPrefix("sa-link-agent"),
+                    id = Some("sa-note-migrated-link"),
+                    rel = Some("noreferrer noopener"),
+                    target = Some("_blank")
+                ).toString())
         )
     } else {
         @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
@@ -184,7 +190,7 @@
 }
 
 @dunningLockParagraph = {
-    @if(dunningLock || hasLpiWithDunningBlock) {
+    @if(dunningLock || hasLpiWithDunningLock) {
         <div id="payment-under-review-info">
         @p(){
             @getMessage("dunningLock.text", "")
@@ -284,8 +290,8 @@
             @if(documentDetailWithDueDate.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
             }
-            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){
-                <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @getMessage("paymentUnderReview") </div>
+            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningLock){
+                <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
@@ -317,6 +323,16 @@
 
 @getPaymentsMadeText = @{
     if(isAgent) messages("whatYouOwe.payments-made-agent") else messages("whatYouOwe.payments-made")
+}
+
+@getClaimToAdjustPoaSection = @{
+    claimToAdjustViewModel.claimToAdjustTaxYear match {
+        case Some(value) =>
+            link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
+                id = Some("adjust-poa-link"))
+        case None => Html("")
+    }
 }
 
 @mainTemplate(
@@ -414,6 +430,9 @@
                 @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
                 @dunningLockParagraph
             }
+
+            @getClaimToAdjustPoaSection
+
             @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
                     <div id="coding-out-wrapper">

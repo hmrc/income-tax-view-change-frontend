@@ -32,7 +32,7 @@ class SessionStorageController @Inject()
 
 
   val show: Action[AnyContent] = Action.async { implicit request =>
-    // we really don't need to show thesed
+    // we really don't need to show these
     val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
     val sessionDataStr: String = request.session
       .data

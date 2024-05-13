@@ -45,16 +45,16 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
               Logger("application").error(
-                s"[IncomeTaxCalculationConnector][getCalculationResponse] - Json validation error parsing calculation response, error $invalid")
+                s"Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status},body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status},body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxCalculationConnector][getCalculationResponse] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }
@@ -71,7 +71,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
           response.json.validate[LiabilityCalculationResponse].fold(
             invalid => {
               Logger("application").error(
-                s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Json validation error parsing calculation response, error $invalid")
+                s"Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
@@ -79,10 +79,10 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(
-              s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status},body: ${response.body}")
+              s"Response status: ${response.status},body: ${response.body}")
           } else {
             Logger("application").warn(
-              s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status}, body: ${response.body}")
+              s"Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }

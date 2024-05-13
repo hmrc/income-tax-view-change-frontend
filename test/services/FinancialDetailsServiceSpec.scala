@@ -29,7 +29,7 @@ import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
+import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import testUtils.TestSupport
@@ -57,7 +57,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   private def getFinancialDetailSuccess(taxYear: Int,
                                         documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
                                         financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
   private def mtdUser(numYears: Int): MtdItUser[_] = MtdItUser(
@@ -71,6 +71,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
           incomeSourceId = s"income-id-$count",
+          incomeSource = Some(testIncomeSource),
           accountingPeriod = Some(AccountingPeriodModel(
             start = LocalDate.of(getTaxEndYear(fixedDate.minusYears(count)), april, sixth),
             end = LocalDate.of(getTaxEndYear(fixedDate.minusYears(count - 1)), april, fifth)
@@ -102,6 +103,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     businesses = List(
       BusinessDetailsModel(
         "testId",
+        incomeSource = Some(testIncomeSource),
         Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),
@@ -134,31 +136,31 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return a single overdue date" when {
         "there is only one overdue date" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
               DocumentDetail(2018, "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.minusDays(1) -> true))
@@ -167,31 +169,31 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return a single non-overdue date" when {
         "there are no overdue dates, but there are dates upcoming" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(7))),
               DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
-              FinancialDetail("2018", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(3)), documentDueDate = Some(fixedDate.plusDays(3))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.plusDays(5) -> false))
@@ -200,31 +202,31 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return the count of overdue dates" when {
         "there are more than one overdue dates" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.minusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
             )
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Right(2))
@@ -232,12 +234,12 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "return none" when {
         "there are no upcoming or overdue dates" in {
-          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
+          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
-          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
+          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe None
@@ -271,7 +273,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
 
         result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+        result.failed.futureValue.getMessage shouldBe "Failed to retrieve successful charge history"
       }
     }
 

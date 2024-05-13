@@ -52,6 +52,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     override def getInt(key: String): Int = key match {
       case "calculation-polling.interval" => interval
       case "calculation-polling.timeout" => timeout
+      case "calculation-polling.attempts" => 10
+      case "calculation-polling.delayBetweenAttemptInMilliseconds" => 500
     }
   }
 
@@ -63,7 +65,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
   object TestCalculationPollingService extends CalculationPollingService(
     frontendAppConfig,
     mockMongoLockRepository,
-    mockCalculationService
+    mockCalculationService,
+    actorSystem
   )
 
   "The CalculationPollingService.initiateCalculationPollingSchedulerWithMongoLock method" when {
@@ -137,7 +140,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         object TestCalculationPollingServiceWithFailedMongoLock extends CalculationPollingService(
           frontendAppConfig,
           mockMongoLockRepository,
-          mockCalculationService
+          mockCalculationService,
+          actorSystem
         ) {
           override lazy val lockService: LockService =
             new LockServiceDidNotAcquireMongoLock

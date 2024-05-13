@@ -21,6 +21,7 @@ import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
@@ -73,7 +74,7 @@ class UIJourneySessionDataRepository @Inject()(
         update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
     val data = UIJourneySessionData(sessionId, journeyType)
@@ -96,7 +97,7 @@ class UIJourneySessionDataRepository @Inject()(
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
   }
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
@@ -110,11 +111,16 @@ class UIJourneySessionDataRepository @Inject()(
     collection
       .deleteOne(dataFilter(data))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
       .deleteOne(sessionFilter(sessionId, operation))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
+
+  def clearSession(sessionId: String): Future[Boolean] = {
+    collection.deleteMany(equal("sessionId", sessionId)).toFuture()
+      .map(_.wasAcknowledged())
+  }
 }

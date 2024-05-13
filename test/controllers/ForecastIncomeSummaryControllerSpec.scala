@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, ForecastCalculation}
+import config.featureswitch.{FeatureSwitching, ForecastCalculation, NavBarFs}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -58,6 +58,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disable(NavBarFs)
   }
 
   "individual user" when {

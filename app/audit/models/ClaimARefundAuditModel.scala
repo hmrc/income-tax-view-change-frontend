@@ -20,12 +20,10 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
-import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails._
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-import java.time
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -51,12 +49,13 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
+      case (Some(RepaymentInterest), _) => "Credit from repayment interest"
       case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if isPayment =>
-        Logger("application").error("[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
+        Logger("application").error("Missing or non-matching credit: not a valid payment date")
         "unknownDate"
       case (_, _) =>
-        Logger("application").error("[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
+        Logger("application").error("Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
     }
   }

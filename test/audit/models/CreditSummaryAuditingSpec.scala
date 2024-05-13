@@ -16,11 +16,11 @@
 
 package audit.models
 
-import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-import models.financialDetails.DocumentDetail
+import models.creditDetailModel.CreditDetailModel
+import models.financialDetails.{CutOverCreditType, DocumentDetail, MfaCreditType}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType, testUserTypeIndividual}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserTypeIndividual}
 import testUtils.TestSupport
 
 import java.time.LocalDate

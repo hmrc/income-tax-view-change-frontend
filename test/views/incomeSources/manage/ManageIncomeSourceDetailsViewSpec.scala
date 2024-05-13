@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{Calendar, Standard}
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -69,6 +69,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val cashBasisAccounting = "Cash basis accounting"
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
@@ -78,11 +79,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(Standard)
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -97,6 +99,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -106,11 +109,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(Calendar)
+    quarterReportingType = Some(QuarterTypeCalendar)
   )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -125,6 +129,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
@@ -134,11 +139,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    quarterReportingType = Some(Calendar)
+    quarterReportingType = Some(QuarterTypeCalendar)
   )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
@@ -260,8 +266,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new Setup(false) {
 
@@ -312,8 +318,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new Setup(true) {
 
@@ -352,8 +358,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new ukSetup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new ukSetup(false) {
 
@@ -395,8 +401,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new ukSetup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new ukSetup(true) {
 
@@ -439,8 +445,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new foreignSetup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new foreignSetup(false) {
 
@@ -482,8 +488,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new foreignSetup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new foreignSetup(true) {
 

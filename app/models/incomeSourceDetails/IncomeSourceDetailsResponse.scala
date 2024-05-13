@@ -20,7 +20,7 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import play.api.Logging
+import play.api.{Logger, Logging}
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
 
@@ -48,14 +48,16 @@ case class IncomeSourceDetailsModel(nino: String,
   }
 
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
-    (startingTaxYear to dateService.getCurrentTaxYearEnd()).toList
+    (startingTaxYear to dateService.getCurrentTaxYearEnd).toList
   }
 
   def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd()).toList).getOrElse(List.empty[Int])
+    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
+    Logger("application").debug(s"Tax years list = $taxYears")
+    taxYears
   }
 
   def getForeignProperty: Option[PropertyDetailsModel] = {

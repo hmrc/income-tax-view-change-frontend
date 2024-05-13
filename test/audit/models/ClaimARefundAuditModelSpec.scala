@@ -28,16 +28,16 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
   val transactionName: String = "claim-a-refund"
   val auditType: String = "ClaimARefundResponse"
   val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = Some(-7600.00), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
+    availableCredit = Some(-7600.00), allocatedCredit = Some(0), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
   val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
+    availableCredit = None, allocatedCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-100)), originalAmount = Some(BigDecimal(-100)), mainType = "SA Balancing Charge Credit"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1000)), originalAmount = Some(BigDecimal(-1000)), mainType = "ITSA Infml Dschrg Cntrct Sett"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1100)), originalAmount = Some(BigDecimal(-1100)), mainType = "ITSA NPS Overpayment"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1200)), originalAmount = Some(BigDecimal(-1200)), mainType = "ITSA Cutover Credits"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1300)), originalAmount = Some(BigDecimal(-1300)), mainType = "ITSA Cutover Credits"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-100)), originalAmount = Some(BigDecimal(-100)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1000)), originalAmount = Some(BigDecimal(-1000)), mainType = "ITSA Infml Dschrg Cntrct Sett", mainTransaction = "4018"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1100)), originalAmount = Some(BigDecimal(-1100)), mainType = "ITSA NPS Overpayment", mainTransaction = "4012"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1200)), originalAmount = Some(BigDecimal(-1200)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1300)), originalAmount = Some(BigDecimal(-1300)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1400)), originalAmount = Some(BigDecimal(-1400)), paymentLot = Some("paymentLot")),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1500)), originalAmount = Some(BigDecimal(-1500)), paymentLot = Some("paymentLot"))
   )

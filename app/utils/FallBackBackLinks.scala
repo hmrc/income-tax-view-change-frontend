@@ -16,37 +16,50 @@
 
 package utils
 
+import controllers.routes._
 import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 
 trait FallBackBackLinks {
 
-  def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String = (gatewayPageOpt, taxYearOpt) match {
-    case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-      if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
-      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case (Some(TaxYearSummaryPage), None) =>
-      if (isAgent) controllers.routes.HomeController.showAgent.url
-      else controllers.routes.HomeController.show(origin).url
-    case (Some(WhatYouOwePage), _) =>
-      if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
-      else controllers.routes.WhatYouOweController.show(origin).url
-    case (Some(PaymentHistoryPage), _) =>
-      if (isAgent) controllers.routes.PaymentHistoryController.showAgent.url
-      else controllers.routes.PaymentHistoryController.show(origin).url
-    case _ =>
-      if (isAgent) controllers.routes.HomeController.showAgent.url
-      else controllers.routes.HomeController.show(origin).url
-  }
+  def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String =
+    if (isAgent) getAgentPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt)
+    else         getIndividualPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt, origin)
 
-  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = gatewayPageOpt match {
-    case Some(TaxYearSummaryPage) => if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
-    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some(WhatYouOwePage) => if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
-    else controllers.routes.WhatYouOweController.show(origin).url
-    case Some(PaymentHistoryPage) => if (isAgent) controllers.routes.PaymentHistoryController.showAgent.url
-    else controllers.routes.PaymentHistoryController.show(origin).url
-    case _ => if (isAgent) controllers.routes.HomeController.showAgent.url
-    else controllers.routes.HomeController.show(origin).url
-  }
+  def getIndividualPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String]): String =
+    ((gatewayPageOpt, taxYearOpt) match {
+      case (Some(TaxYearSummaryPage), Some(taxYear))  => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
+      case (Some(TaxYearSummaryPage), None)           => HomeController.show(origin)
+      case (Some(WhatYouOwePage),     _)              => WhatYouOweController.show(origin)
+      case (Some(PaymentHistoryPage), _)              => PaymentHistoryController.show(origin)
+      case _                                          => HomeController.show(origin)
+    }).path
 
+  def getAgentPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int]): String =
+    ((gatewayPageOpt, taxYearOpt) match {
+      case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
+      case (Some(TaxYearSummaryPage), None)          => HomeController.showAgent
+      case (Some(WhatYouOwePage),     _)             => WhatYouOweController.showAgent
+      case (Some(PaymentHistoryPage), _)             => PaymentHistoryController.showAgent
+      case _                                         => HomeController.showAgent
+    }).path
+
+  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
+    if (isAgent) getChargeSummaryBackUrlAgent(gatewayPageOpt, taxYear)
+    else         getChargeSummaryBackUrlIndividual(gatewayPageOpt, taxYear, origin)
+
+  private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int) =
+    (gatewayPageOpt match {
+      case Some(TaxYearSummaryPage)   => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
+      case Some(WhatYouOwePage)       => WhatYouOweController.showAgent
+      case Some(PaymentHistoryPage)   => PaymentHistoryController.showAgent
+      case _                          => HomeController.showAgent
+    }).path
+
+  private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]) =
+    (gatewayPageOpt match {
+      case Some(TaxYearSummaryPage)   => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
+      case Some(WhatYouOwePage)       => WhatYouOweController.show(origin)
+      case Some(PaymentHistoryPage)   => PaymentHistoryController.show(origin)
+      case _                          => HomeController.show(origin)
+    }).path
 }

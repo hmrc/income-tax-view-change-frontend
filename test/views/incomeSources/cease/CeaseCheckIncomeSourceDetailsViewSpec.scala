@@ -35,19 +35,19 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetails = app.injector.instanceOf[CeaseCheckIncomeSourceDetails]
 
   val viewModelSE: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testBizAddress), testEndDate, SelfEmployment)
+    mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), None, Some(testBizAddress), testEndDate, SelfEmployment)
 
   val viewModelUK: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, UkProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, UkProperty)
 
   val viewModelFP: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, ForeignProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, ForeignProperty)
 
   val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
 

@@ -71,10 +71,10 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
         case Right(Some(location)) =>
           Redirect(location)
         case Right(None) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
+          Logger("application").error("No redirect location returned from connector")
           itvcErrorHandler.showInternalServerError()
         case Left(_) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - Unexpected response")
+          Logger("application").error("Unexpected response")
           itvcErrorHandler.showInternalServerError()
       }
     }
@@ -82,10 +82,9 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
   def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (false, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment)
-      case (true, false)  => routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment)
-      case (false, true)  => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, true)   => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
+      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
@@ -109,8 +108,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)(implicit user: MtdItUser[_],
-                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)
+                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val redirect = Redirect(redirectUrl)
 
@@ -123,7 +122,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application")
-        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 

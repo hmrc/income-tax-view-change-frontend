@@ -23,6 +23,7 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
@@ -47,10 +48,12 @@ import java.time.LocalDate
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with Injecting with FeatureSwitching {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
   this: Suite =>
 
   import play.twirl.api.Html
+
+  implicit val actorSystem: ActorSystem = app.actorSystem
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
@@ -84,13 +87,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   implicit val dateService: DateService = new DateService {
 
-    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
+    override def getCurrentDate: LocalDate = fixedDate
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = fixedDate.getYear + 1
+    override def getCurrentTaxYearEnd: Int = fixedDate.getYear + 1
 
-    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2023, 4, 6)
+    override def getCurrentTaxYearStart: LocalDate = LocalDate.of(2023, 4, 6)
 
-    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  LocalDate.of(2024, 4, 5)
   }
@@ -196,6 +199,16 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
+    )
+
+  def fakeRequestConfirmedClientTimeout(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithTimeoutSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",
       utils.SessionKeys.clientLastName -> "User",
       utils.SessionKeys.clientUTR -> "1234567890",

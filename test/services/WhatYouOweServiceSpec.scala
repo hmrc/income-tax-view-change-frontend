@@ -58,13 +58,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val currentYearAsInt: Int = 2022
-  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
   object mockDateService extends DateService() {
-    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
+    override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = currentYearAsInt
+    override def getCurrentTaxYearEnd: Int = currentYearAsInt
   }
 
   object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockDateService)
@@ -130,7 +129,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           val ex = res.failed.futureValue
           ex shouldBe an[Exception]
-          ex.getMessage shouldBe "[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges"
+          ex.getMessage shouldBe "Error response while getting outstanding charges"
         }
       }
       "when both financial details return error and outstanding charges return success" should {
@@ -144,7 +143,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           val ex = res.failed.futureValue
           ex shouldBe an[Exception]
-          ex.getMessage shouldBe "[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
+          ex.getMessage shouldBe "Error response while getting Unpaid financial details"
         }
       }
       "when both financial details return success and outstanding charges return 404" should {
@@ -155,7 +154,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(100)),
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(100)),
             chargesList = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates()
           )
         }
@@ -169,7 +168,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates()
           )
         }
@@ -183,7 +182,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
         "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
@@ -194,7 +193,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               latePaymentInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
         "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
@@ -205,7 +204,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               latePaymentInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(
               DocumentDetail(currentYear.toInt, "1040000124", Some("ITSA - POA 2"), Some("documentText"),
                 Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
@@ -240,19 +239,19 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
               )
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
             outstandingChargesModel = None,
@@ -285,20 +284,20 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
               )
             ))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
             outstandingChargesModel = None,
@@ -333,14 +332,14 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       "a successful response is received in all tax year calls" in {
         when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = creditDocumentDetailList,
             financialDetails = List(
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
             )
           ))))
@@ -356,7 +355,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         val result = TestWhatYouOweService.getCreditCharges().failed.futureValue
 
         result shouldBe an[Exception]
-        result.getMessage shouldBe "[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details"
+        result.getMessage shouldBe "Error response while getting Unpaid financial details"
       }
     }
   }

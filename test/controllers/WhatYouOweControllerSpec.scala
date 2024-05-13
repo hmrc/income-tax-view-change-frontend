@@ -16,13 +16,14 @@
 
 package controllers
 
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.{AdjustPaymentsOnAccount, CreditsRefundsRepay, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.MockClaimToAdjustService
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
-import services.WhatYouOweService
+import services.{ClaimToAdjustService, WhatYouOweService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
@@ -42,14 +43,22 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with TestSupport with FeatureSwitching{
+  with MockFrontendAuthorisedFunctions with MockClaimToAdjustService with TestSupport with FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    super.beforeEach()
+  }
 
   trait Setup {
 
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
+    disable(AdjustPaymentsOnAccount)
+
     val controller = new WhatYouOweController(
       whatYouOweService,
+      claimToAdjustService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       mockAuthService,
@@ -66,7 +75,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(documentDetailWithDueDateModel(2019))
       ++ List(documentDetailWithDueDateModel(2020))
       ++ List(documentDetailWithDueDateModel(2021)),
@@ -75,7 +84,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
@@ -88,7 +97,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -109,7 +118,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -130,7 +139,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -149,7 +158,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
       }
 
-      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None), List.empty)
+      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
 
       "show money in your account if the user has available credit in his account" in new Setup {
         enable(CreditsRefundsRepay)
@@ -158,7 +167,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -170,7 +179,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         status(result) shouldBe Status.OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
         val doc: Document = Jsoup.parse(contentAsString(result))
-        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe(true)
+        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
         doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
 
         status(resultAgent) shouldBe Status.OK
@@ -180,7 +189,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         docAgent.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount-agent")
       }
 
-      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None), List.empty)
+      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
 
       "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
         disable(CreditsRefundsRepay)
@@ -188,7 +197,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -209,5 +218,90 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       }
     }
 
+    "AdjustPaymentsOnAccount FS is disabled" should {
+      "Render the page without the POA journey entry point" in new Setup {
+        disable(AdjustPaymentsOnAccount)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        contentAsString(result).contains("Adjust payments on account for the") shouldBe false
+        status(resultAgent) shouldBe Status.OK
+        contentAsString(resultAgent).contains("Adjust payments on account for the") shouldBe false
+      }
+    }
+    "AdjustPaymentsOnAccount FS is enabled" should {
+      "render the page with the POA journey entry point when there is an adjustable POA" in new Setup {
+        enable(AdjustPaymentsOnAccount)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
+        status(resultAgent) shouldBe Status.OK
+        contentAsString(resultAgent).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
+      }
+      "render the page without the POA journey entry point when there are no adjustable POAs" in new Setup {
+        enable(AdjustPaymentsOnAccount)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        contentAsString(result).contains("Adjust payments on account for the") shouldBe false
+        status(resultAgent) shouldBe Status.OK
+        contentAsString(resultAgent).contains("Adjust payments on account for the") shouldBe false
+      }
+      "redirect to the internal server error page when there is an exception returned when fetching the POA entry point" in new Setup {
+        enable(AdjustPaymentsOnAccount)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }

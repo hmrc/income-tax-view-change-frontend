@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     ITSASubmissionIntegration,
-    IvUplift,
     ChargeHistory,
     PaymentAllocation,
     CodingOut,
@@ -41,7 +40,10 @@ object FeatureSwitch {
     PaymentHistoryRefunds,
     TimeMachineAddYear,
     IncomeSources,
-    CalendarQuarterTypes
+    CalendarQuarterTypes,
+    IncomeSourcesNewJourney,
+    OptOut,
+    AdjustPaymentsOnAccount
   )
 
   def apply(str: String): FeatureSwitch =
@@ -127,4 +129,20 @@ case object IncomeSources extends FeatureSwitch {
 case object CalendarQuarterTypes extends FeatureSwitch {
   override val name = s"$prefix.enable-calendar-quarter-types"
   override val displayText = "Calendar Quarter Types"
+}
+
+
+case object IncomeSourcesNewJourney extends FeatureSwitch {
+  override val name = s"$prefix.enable-income-sources-new-journey"
+  override val displayText = "Income Sources New Journey"
+}
+
+case object OptOut extends FeatureSwitch {
+  override val name = s"$prefix.enable-opt-out"
+  override val displayText = "Opt Out"
+}
+
+case object AdjustPaymentsOnAccount extends FeatureSwitch {
+  override val name: String = s"$prefix.enable-adjust-payments-on-account"
+  override val displayText: String = "Adjust Payments On Account"
 }

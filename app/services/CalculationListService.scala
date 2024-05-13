@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -32,14 +33,14 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
-    Logger("application").debug("[CalculationService][getLatestCalculation] - " +
+    Logger("application").debug("" +
       s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: ${nino.value} - $taxYearEnd")
     calculationListConnector.getLegacyCalculationList(nino, taxYearEnd)
   }
 
   def getCalculationList(nino: Nino, taxYearRange: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
-    Logger("application").debug("[CalculationService][getLatestCalculation] - " +
+    Logger("application").debug("" +
       s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
     calculationListConnector.getCalculationList(nino, taxYearRange)
   }
@@ -61,18 +62,25 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     }
   }
 
-  def isTaxYearCrystallised(taxYear: Int, isEnabledTimeMachineAddYear: Boolean = false)(
-    implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
+  def isTaxYearCrystallised(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    isTaxYearCrystallised(taxYear.endYear).map(_.getOrElse(false))
+  }
 
-    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabledTimeMachineAddYear)
+  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[Boolean]] = {
+
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear >= currentTaxYearEnd
     val legacyTaxYear = taxYear <= 2023
-    (futureTaxYear, legacyTaxYear) match {
-      case (true, _) =>
-        // tax year cannot be crystallised unless it is in the past
-        Future.successful(Some(false))
+    val isCrystallised = (futureTaxYear, legacyTaxYear) match {
+      case (true, _) => Future.successful(Some(false)) /* tax year cannot be crystallised unless it is in the past */
       case (_, true) => getLegacyCrystallisationResult(user, taxYear)
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
     }
+
+    isCrystallised.map {
+      case None => Some(false)//when the flag is not present then default to false i.e not-crystallised
+      case Some(b) => Some(b)
+    }
   }
+
 }

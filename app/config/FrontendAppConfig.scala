@@ -132,6 +132,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
+  lazy val calcPollNumberOfAttempts: Int = servicesConfig.getInt("calculation-polling.attempts")
+  lazy val calcPollDelayBetweenAttempts: Int = servicesConfig.getInt("calculation-polling.delayBetweenAttemptInMilliseconds")
 
   // Submission service
   // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
@@ -151,6 +153,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Tax account router url
   lazy val taxAccountRouterUrl: String = servicesConfig.getString("tax-account-router.url")
 
+  // income-tax-session-data url
+  lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
+
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -168,4 +173,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def incomeSourceOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterIncomeSourceCreated")
 
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
+
+  val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 }

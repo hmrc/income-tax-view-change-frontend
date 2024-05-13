@@ -100,7 +100,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
               incomeSourceType = incomeSourceType))
           }
         case incomeSourceD@(Right(None), _) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}${incomeSourceD._1}- =${incomeSourceD._2}=")
           Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
         case (Left(exception), _) => Future.failed(exception)
       }
@@ -108,7 +108,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
   }.recover {
     case ex: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: - ${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 
@@ -125,7 +125,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(JourneyType(Cease, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
-        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceasePropertyDeclare = None, journeyIsComplete = None))
+        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceaseIncomeSourceDeclare = None, journeyIsComplete = None))
         val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(ceaseIncomeSourceData = Some(updatedCeaseIncomeSourceSessionData))
 

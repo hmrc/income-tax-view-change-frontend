@@ -32,6 +32,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "itsa-home-page"
   val auditType: String = "ItsaHomePage"
+  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
 
   def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
@@ -105,8 +106,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
         "there is are payments and updates due which are not overdue" in {
           homeAuditFull(
             userType = Some(Individual),
-            nextPaymentOrOverdue = Left(LocalDate.now -> false),
-            nextUpdateOrOverdue = Left(LocalDate.now -> false)
+            nextPaymentOrOverdue = Left(fixedDate -> false),
+            nextUpdateOrOverdue = Left(fixedDate -> false)
           ).detail mustBe Json.obj(
             "agentReferenceNumber" -> "agentReferenceNumber",
             "nino" -> "nino",
@@ -114,8 +115,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             "userType" -> "Individual",
             "credId" -> "credId",
             "mtditid" -> "mtditid",
-            "nextPaymentDeadline" -> LocalDate.now.toString,
-            "nextUpdateDeadline" -> LocalDate.now.toString,
+            "nextPaymentDeadline" -> fixedDate.toString,
+            "nextUpdateDeadline" -> fixedDate.toString,
             "agentReferenceNumber" -> "agentReferenceNumber"
           )
         }

@@ -16,12 +16,13 @@
 
 package testConstants
 
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
+import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate
@@ -39,9 +40,10 @@ object PropertyDetailsTestConstants {
   val testPropertyCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
   val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
   val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
-
+  val testCeaseDate = Some(LocalDate.of(2022, 1, 1))
   val testStartDate = LocalDate.of(2022, 1, 1)
   val testStartDate2 = LocalDate.of(2021, 1, 1)
+  val testStartDateBeforeEarliestStartDate = LocalDate.of(2013, 1, 1)
   val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
   val testIncomeType = "property-unspecified"
@@ -219,8 +221,23 @@ object PropertyDetailsTestConstants {
     taxYear2 = year2024.toString,
     latencyIndicator2 = "Q")
 
+  val ceasedPropertyDetailsModel: IncomeSourceType => PropertyDetailsModel = (incomeSourceType: IncomeSourceType) => {
+    require(incomeSourceType == UkProperty || incomeSourceType == ForeignProperty)
+    PropertyDetailsModel(
+      incomeSourceId = testPropertyIncomeId,
+      accountingPeriod = Some(testPropertyAccountingPeriod),
+      firstAccountingPeriodEndDate = None,
+      incomeSourceType = if (incomeSourceType == UkProperty) Some(ukIncomeType) else Some(foreignIncomeType),
+      tradingStartDate = Some(testStartDate),
+      cessation = Some(CessationModel(date = testCeaseDate, reason = Some("01"))),
+      latencyDetails = None,
+      quarterTypeElection = Some(quarterTypeElectionStandard),
+      cashOrAccruals = true
+    )
+  }
+
   val ukPropertyDetails = PropertyDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
+    incomeSourceId = testPropertyIncomeId,
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
@@ -237,6 +254,17 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = None,
+    cashOrAccruals = true
+  )
+
+  val ukPropertyDetails3BeforeEarliest = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
     cessation = None,
     latencyDetails = None,
     cashOrAccruals = true
@@ -273,6 +301,17 @@ object PropertyDetailsTestConstants {
     tradingStartDate = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
+    cashOrAccruals = true
+  )
+
+  val foreignPropertyDetailsBeforeEarliest = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
+    cessation = None,
+    latencyDetails = None,
     cashOrAccruals = true
   )
 

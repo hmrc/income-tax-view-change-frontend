@@ -72,6 +72,17 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
+        "return a list of all credits" in {
+          enable(MFACreditsAndDebits)
+          enable(CutOverCredits)
+          setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetailsAllCredits)
+          setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetailsAllCreditsPlusOneYear)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, true, true)
+          whenReady(futureResult) { result =>
+            result shouldBe Right(List(
+              creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
+          }
+        }
       }
       "feature switch of MFACreditsAndDebits is enabled and CutOverCredits is disabled" should {
         "return a list of MFA and BC credits" in {

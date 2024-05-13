@@ -40,7 +40,7 @@ class TaxYearsViewSpec extends ViewSpec {
               itsaSubmissionFeatureSwitch: Boolean = false,
               utr: Option[String] = None, isAgent: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, isAgent = isAgent)(FakeRequest(), implicitly)
+      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, 2023, isAgent = isAgent)(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -137,24 +137,16 @@ class TaxYearsViewSpec extends ViewSpec {
             s"$taxYearsViewSummary ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
-        "display two update return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
-          document.getElementById("updateReturn-link-2018").text() shouldBe
-            s"${messages("taxYears.updateReturn")} ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
-          document.getElementById("updateReturn-link-2019").text() shouldBe
-            s"${messages("taxYears.updateReturn")} ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
+        "display two update return links for the correct tax year" in new TestSetup(List(testYearPlusSix, testYearPlusFive), true) {
+          document.getElementById("updateReturn-link-2023").text() shouldBe
+            s"${messages("taxYears.updateReturn")} ${taxYear((testYearPlusFive - 1).toString, testYearPlusFive.toString)}"
+          document.getElementById("updateReturn-link-2024").text() shouldBe
+            s"${messages("taxYears.updateReturn")} ${taxYear(testYearPlusFive.toString, testYearPlusSix.toString)}"
         }
 
         s"display the update return link for the $testYearPlusThree tax year and go to correct link" in new TestSetup(
-          List(testYearPlusFour, testYearPlusThree), true) {
-          document.getElementById(s"updateReturn-link-$testYearPlusThree").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusThree)
-        }
-
-        "display the update return link for the 2020 tax year and go to correct link" in new TestSetup(List(testYearPlusThree, testYearPlusTwo), true) {
-          document.getElementById(s"updateReturn-link-$testYearPlusTwo").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusTwo)
-        }
-
-        "display the update return link for the 2019 tax year and go to correct link" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
-          document.getElementById(s"updateReturn-link-$testYearPlusOne").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusOne)
+          List(testYearPlusSix, testYearPlusFive), true) {
+          document.getElementById(s"updateReturn-link-$testYearPlusFive").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusFive)
         }
       }
     }

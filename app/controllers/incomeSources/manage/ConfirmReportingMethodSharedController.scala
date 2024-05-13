@@ -22,20 +22,18 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -64,19 +62,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { _ =>
-      if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, Some(mkIncomeSourceId(incomeSourceId)))
-          case Right(None) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
-          case Left(exception) => Future.failed(exception)
-        }
-      }
-      else handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
-    }.recover {
-      case ex =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][show] - ${ex.getMessage} - ${ex.getCause}")
-        showInternalServerError(isAgent)
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
     }
   }
 
@@ -86,19 +75,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
-    withIncomeSourcesFS {
-      if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleSubmitRequest(taxYear, changeTo, isAgent, Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType)
-          case Right(None) => handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
-          case Left(exception) => Future.failed(exception)
-        }
-      }
-      else handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
-    }.recover {
-      case ex =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] - ${ex.getMessage} - ${ex.getCause}")
-        showInternalServerError(isAgent)
+    withSessionData(JourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -111,32 +91,38 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
-    withIncomeSourcesFS {
-      Future.successful(
-        (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
-          case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+    Future.successful(
+      (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
+        case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
+              case Some(latencyDetails) =>
+                if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
+          val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
 
-            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
-
-            Ok(
-              confirmReportingMethod(
-                isAgent = isAgent,
-                backUrl = backCall.url,
-                newReportingMethod = reportingMethod,
-                form = ConfirmReportingMethodForm(changeTo),
-                taxYearEndYear = taxYearModel.endYear.toString,
-                taxYearStartYear = taxYearModel.startYear.toString,
-                postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
-              )
-            )
-          case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-          case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
-          case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
-        }
-      )
-    }
+          Ok(
+            confirmReportingMethod(
+              isAgent = isAgent,
+              backUrl = backCall.url,
+              newReportingMethod = reportingMethod,
+              form = ConfirmReportingMethodForm(changeTo),
+              taxYearEndYear = taxYearModel.endYear.toString,
+              taxYearStartYear = taxYearModel.startYear.toString,
+              postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
+            ))
+                }
+                else {
+                  logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+                }
+              case None => logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details")
+          }
+        case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+        case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
+        case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
+      }
+    )
   }
+
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
@@ -166,7 +152,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
               )
@@ -233,7 +219,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYear.endYear), Some(true))))
             }
             sessionService.setMongoData(newUIJourneySessionData)
-            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
+            Logger("application").debug("Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
                 IncomeSourceReportingMethodAuditModel(
@@ -265,26 +251,23 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val (backCall, successCall) = (isAgent, incomeSourceType, incomeSourceId) match {
-      case (false, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.toHash.hash) ->
-          routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-      case (_, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.toHash.hash) ->
-          routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-      case (false, UkProperty, _) =>
-        routes.ManageIncomeSourceDetailsController.showUkProperty() ->
-          routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (_, UkProperty, _) =>
-        routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
-          routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, _, _) =>
-        routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
-          routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (_, _, _) =>
-        routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
-          routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+    val successCall = (isAgent, incomeSourceType) match {
+      case (false, SelfEmployment) =>
+        routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
+      case (_, SelfEmployment) =>
+        routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
+      case (false, UkProperty) =>
+        routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
+      case (_, UkProperty) =>
+        routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
+      case (false, _) =>
+        routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
+      case (_, _) =>
+        routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
+
+    val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
+    val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)
 
     (backCall, successCall)
   }

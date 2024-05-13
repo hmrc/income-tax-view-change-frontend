@@ -19,7 +19,7 @@ package controllers.predicates
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import config.featureswitch.{FeatureSwitching, IvUplift}
+import config.featureswitch.{FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import models.OriginEnum
@@ -53,16 +53,13 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   override val executionContext: ExecutionContext = mcc.executionContext
   val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
-
     implicit val hc: HeaderCarrier = headerExtractor.extractHeader(request, request.session)
-
     implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-      case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
-        if (confidenceLevel.level < requiredConfidenceLevel && isEnabled(IvUplift)) {
+      case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
+        if (confidenceLevel.level < requiredConfidenceLevel) {
           affinityGroup match {
             case Some(Organisation) => {
               auditingService.audit(IvUpliftRequiredAuditModel("organisation", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
@@ -75,19 +72,18 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
             case _ => throw UnsupportedAuthProvider()
           }
         } else f(buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup))
-      }
     } recover {
       case _: InsufficientEnrolments =>
-        Logger("application").info("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
+        Logger("application").info("No HMRC-MTD-IT Enrolment and/or No NINO.")
         Redirect(controllers.errors.routes.NotEnrolledController.show)
       case _: BearerTokenExpired =>
-        Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+        Logger("application").info("Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
       case _: AuthorisationException =>
-        Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+        Logger("application").info("Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
-        Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)
+        Logger("application").error(s"Unexpected Error Caught. Show ISE.\n$s\n", s)
         itvcErrorHandler.showInternalServerError()
     }
   }

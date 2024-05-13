@@ -16,20 +16,22 @@
 
 package services
 
-import controllers.agent.utils
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
-  object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
+  object TestSessionService extends SessionService(
+    mockUIJourneySessionDataRepository,
+    mockSensitiveUIJourneySessionDataRepository,
+    mockFrontendAppConfig
+  )
 
   "sessionService " when {
     "mongo" when {
@@ -94,6 +96,22 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           mockDeleteSession()
           val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
           result shouldBe true
+        }
+      }
+
+      "clearSession method" should {
+        "return a future unit value" in {
+          mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(true))
+          val result: Unit = TestSessionService.clearSession(headerCarrier.sessionId.get.value).futureValue
+          result shouldBe()
+        }
+        "return a failed future value" in {
+          mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(false))
+          val result: Future[Unit] = TestSessionService.clearSession(headerCarrier.sessionId.get.value)
+
+          whenReady(result.failed) { exception =>
+            exception.getMessage shouldBe "failed to clear session"
+          }
         }
       }
     }

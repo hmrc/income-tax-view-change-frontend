@@ -20,6 +20,7 @@ import auth.MtdItUser
 import enums.ChargeType._
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import models.chargeHistory.ChargeHistoryModel
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.matchers.must.Matchers
@@ -45,6 +46,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "charge-summary"
   val auditType: String = "ChargeSummary"
+  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
 
   val docDetail: DocumentDetail = DocumentDetail(
     taxYear = taxYear,
@@ -89,14 +91,14 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
   )
-  val paymentAllocation: List[PaymentsWithChargeType] = List(
+  val paymentAllocation: List[PaymentHistoryAllocations] = List(
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("003"))
 
   paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("004"))
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
     chargeHistoryModel2)
@@ -107,19 +109,19 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     financialDetail(originalAmount = 9876.54, chargeType = CGT))
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutAccepted: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutAccepted,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutRejected: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutRejected,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
@@ -141,11 +143,15 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     taxYear = taxYear
   )
 
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)),
-        documentDate = LocalDate.parse(date), transactionId = None)), mainType = Some(mainType), chargeType = Some(chargeType))
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
+    PaymentHistoryAllocations(
+      allocations = List(
+        PaymentHistoryAllocation(
+          amount = Some(amount),
+          dueDate = Some(LocalDate.parse(date)),
+          clearingSAPDocument = None,
+          clearingId = None
+        )), chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   def getChargeType(latePayment: Boolean, documentDetail: DocumentDetail): String =
     (documentDetail.documentDescription, documentDetail.documentText) match {
@@ -161,14 +167,14 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
       if (latePayment) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application")
-        .error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+        .error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
     }
   }
 
   def chargeSummaryAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                              docDateDetails: DocumentDetailWithDueDate, paymentBreakdown: List[FinancialDetail],
-                             chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+                             chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
                              agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), isLateInterestCharge: Boolean = true): ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
       mtditid = "mtditid",

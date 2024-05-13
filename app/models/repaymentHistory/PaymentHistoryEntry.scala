@@ -16,11 +16,25 @@
 
 package models.repaymentHistory
 
+import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, RepaymentInterest}
+import models.incomeSourceDetails.TaxYear
+import services.DateServiceInterface
+
 import java.time.LocalDate
 
 case class PaymentHistoryEntry(date: LocalDate,
-                               description: String,
+                               creditType: CreditType,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,
                                linkUrl: String,
-                               visuallyHiddenText: String)
+                               visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
+
+  def getTaxYear: TaxYear = {
+    val endYear = dateService.getAccountingPeriodEndDate(date).getYear
+    TaxYear(endYear-1, endYear)
+  }
+
+  private val creditTypes: Seq[CreditType] = Seq(BalancingChargeCreditType,  CutOverCreditType,  MfaCreditType, RepaymentInterest)
+
+  def isCredit: Boolean = creditTypes.contains(creditType)
+}

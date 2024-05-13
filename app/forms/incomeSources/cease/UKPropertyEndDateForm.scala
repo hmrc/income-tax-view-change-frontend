@@ -37,7 +37,7 @@ class UKPropertyEndDateForm @Inject()(val dateService: DateServiceInterface) ext
 
 
   def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-    val currentDate: LocalDate = dateService.getCurrentDate()
+    val currentDate: LocalDate = dateService.getCurrentDate
     val UKPropertyStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
 
     Form(

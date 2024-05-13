@@ -40,6 +40,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
   val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
   val emptyIncomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("").toHash
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 4)
+
   "The IncomeSourceDetailsModel" when {
 
     "the user has both businesses and property income sources" should {
@@ -117,10 +119,11 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         val expected = IncomeSourceDetailsModel(
           testNino,
           "XIAT0000000000A",
-          Some((LocalDate.now.getYear - 1).toString),
+          Some((fixedDate.getYear - 1).toString),
           List(
             BusinessDetailsModel(
               incomeSourceId = "",
+              incomeSource = Some(testIncomeSource),
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               firstAccountingPeriodEndDate = None,
@@ -132,6 +135,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             ),
             BusinessDetailsModel(
               incomeSourceId = "",
+              incomeSource = Some(testIncomeSource),
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),

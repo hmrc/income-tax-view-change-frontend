@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import auth.MtdItUser
+import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -133,8 +134,43 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     )
   }
 
-  def findMatchingPaymentDocument(paymentLot: String, paymentLotItem: String): Option[DocumentDetail] = {
-    documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
+  // TODO: Update to support allocated credits
+  def getAllocationsToCharge(charge: FinancialDetail): Option[PaymentHistoryAllocations] = {
+
+    def hasDocumentDetailForPayment(transactionId: String): Boolean = {
+        documentDetails
+          .find(_.transactionId == transactionId)
+          .exists(documentDetail => {
+            documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
+          })
+    }
+
+    def findIdOfClearingPayment(clearingSAPDocument: Option[String]): Option[String] = {
+
+      def hasMatchingSapCode(subItem: SubItem): Boolean = clearingSAPDocument.exists(id => subItem.clearingSAPDocument.contains(id))
+
+      financialDetails
+        .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
+        .find(_.items.exists(_.exists(hasMatchingSapCode)))
+        .flatMap(_.transactionId)
+    }
+
+    charge.items
+      .map { subItems =>
+        subItems.collect {
+          case subItem if subItem.clearingSAPDocument.isDefined =>
+            PaymentHistoryAllocation(
+              dueDate = subItem.dueDate,
+              amount = subItem.amount,
+              clearingSAPDocument = subItem.clearingSAPDocument,
+              clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+        }
+        // only return payments for now
+        .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))
+      }
+      .collect {
+        case payments if payments.nonEmpty => PaymentHistoryAllocations(payments, charge.mainType, charge.chargeType)
+      }
   }
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {

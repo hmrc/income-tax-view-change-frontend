@@ -85,13 +85,9 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
   }
 
   def getManageIncomeSourceDetailsUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
-    ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
-      case (true,  SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
-      case (false, UkProperty)      => manageIncomeSourceDetailsController.showUkProperty()
-      case (true,  UkProperty)      => manageIncomeSourceDetailsController.showUkPropertyAgent()
-      case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
-      case (true,  ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
+    (incomeSourceType match {
+      case SelfEmployment  => manageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(testBusinessId))
+      case _      => manageIncomeSourceDetailsController.show(isAgent, incomeSourceType, None)
     }).url
   }
 

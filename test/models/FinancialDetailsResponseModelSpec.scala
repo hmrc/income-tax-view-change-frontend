@@ -73,7 +73,17 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
   }
 
+"getAllocationsToCharge" should {
+  val chargesWithPayments = chargesWithAllocatedPaymentModel()
+  val chargeFinancialDetail = chargesWithPayments.financialDetails.find(_.transactionId.contains(id1040000123)).head
+  val allocationsToCharge = chargesWithPayments.getAllocationsToCharge(chargeFinancialDetail).head
 
+  "only return allocations from Payments" in {
+    allocationsToCharge.allocations.size shouldBe 1
+    val allocation = allocationsToCharge.allocations.head
+    allocation.dueDate shouldBe Some(LocalDate.parse("2018-09-07"))
+  }
+}
   "getAllDueDates" should {
 
     val fd1 = FinancialDetail(
@@ -121,7 +131,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
       documentDueDate = Some(LocalDate.parse("2021-12-01")))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None, None), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 
     "return a list of due dates" in {
       fdm.getAllDueDates shouldBe List(LocalDate.parse("2017-01-31"), LocalDate.parse("2021-12-01"))

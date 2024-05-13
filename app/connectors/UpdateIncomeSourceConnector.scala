@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.core.IncomeSourceId
 import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
@@ -46,7 +45,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
       response.status match {
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
           invalid => {
-            Logger("application").error("[IncomeTaxViewChangeConnector][updateCessationDate] - " +
+            Logger("application").error("" +
               s"Json validation error parsing update income source response, error $invalid")
             UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
           },
@@ -55,7 +54,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
         case _ =>
           response.json.validate[UpdateIncomeSourceResponseError].fold(
             invalid => {
-              Logger("application").error("[IncomeTaxViewChangeConnector][updateCessationDate] - " +
+              Logger("application").error("" +
                 s"Json validation error parsing update income source response, error $invalid")
               UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
             },
@@ -75,7 +74,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
       response.status match {
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
           invalid => {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateIncomeSourceTaxYearSpecific] - Json validation error parsing repayment response, error $invalid")
+            Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
             UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
           },
           valid => valid
@@ -83,7 +82,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
         case _ =>
           response.json.validate[UpdateIncomeSourceResponseError].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][updateIncomeSourceTaxYearSpecific] - Json validation error parsing repayment response, error $invalid")
+              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
               UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
             },
             valid => valid

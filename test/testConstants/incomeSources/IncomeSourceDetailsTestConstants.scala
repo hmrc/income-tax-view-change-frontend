@@ -16,20 +16,14 @@
 
 package testConstants.incomeSources
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.JourneyType
-import models.core.AddressModel
-import models.core.IncomeSourceId.mkIncomeSourceId
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
+import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
-import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, CeaseIncomeSourceData, IncomeSourceDetailsError, IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
-import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 
 import java.time.LocalDate
 
@@ -44,7 +38,7 @@ object IncomeSourceDetailsTestConstants {
   val singleBusinessIncome2023WithUnknowns = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2023"), List(businessWithLatencyAndUnknowns), Nil)
   val singleBusinessIncome2024 = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2024"), List(businessWithLatency4), Nil)
   val singleBusinessIncomeNotMigrated = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business1), Nil)
-  val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testNino, testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), Nil)
+  val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testNino, testMtdItId, Some(fixedDate.getYear.toString), List(business1), Nil)
   val businessIncome2018and2019 = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018, business2019), Nil)
   val propertyIncomeOnly = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(), List(propertyDetails))
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testNino, testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
@@ -55,7 +49,7 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018, business2019), List(propertyDetails))
   val oldUserDetails = IncomeSourceDetailsModel(testNino, testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), List(propertyDetails))
-  val preSanitised = IncomeSourceDetailsModel(testNino, testMtdItId, Some((LocalDate.now.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
+  val preSanitised = IncomeSourceDetailsModel(testNino, testMtdItId, Some((fixedDate.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
 
   val businessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness), List())
   val businessIncome2 = IncomeSourceDetailsModel(testNino, testMtditid2, Some("2018"), List(soleTraderBusiness2), List())
@@ -65,6 +59,7 @@ object IncomeSourceDetailsTestConstants {
   val ukPropertyIncomeWithCeasedUkPropertyIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
   val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018), List(ukPropertyDetails, ceasedUKPropertyDetailsCessation2020))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
+  val ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness3), List(ukPropertyDetails3BeforeEarliest, foreignPropertyDetailsBeforeEarliest))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncomeNoTradingName = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingName), List(ukPropertyDetails))
@@ -110,26 +105,29 @@ object IncomeSourceDetailsTestConstants {
     ceasedBusinesses = Nil)
 
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
+    trade = Some(testIncomeSource),
     address = Some(address),
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     SelfEmployment
   )
 
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     UkProperty
   )
 
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId2),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
+    trade = None,
     address = None,
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     ForeignProperty
   )
 
@@ -194,19 +192,23 @@ object IncomeSourceDetailsTestConstants {
           sessionId = testSessionId,
           journeyType = journeyType.toString,
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
-            incomeSourceId = Some(testSelfEmploymentId),
-            endDate = Some(LocalDate.now().toString),
-            ceasePropertyDeclare = Some("true"),
+            incomeSourceId = if(journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
+            endDate = Some(LocalDate.of(2022, 10, 10)),
+            ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None
           ))
         )
     }
   }
 
+  val addedIncomeSourceUIJourneySessionData: IncomeSourceType => UIJourneySessionData = (incomeSourceType: IncomeSourceType) =>
+    UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
+      addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
+
   val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
     journeyType.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
-        addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+        addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(journeyIsComplete = Some(true))))
       case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
           taxYear = Some(2023), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))

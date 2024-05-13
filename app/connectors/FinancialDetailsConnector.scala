@@ -68,30 +68,30 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
                            (implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
 
     val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
           response.json.validate[PaymentAllocations].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Json Validation Error: $invalid")
+              Logger("application").error(s"Json Validation Error: $invalid")
               PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
             },
             valid => valid
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
           }
           PaymentAllocationsError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Unexpected failure, ${ex.getMessage}", ex)
+        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
@@ -105,30 +105,30 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     val dateTo: String = taxYear.toString + "-04-05"
 
     val url = getChargesUrl(nino, dateFrom, dateTo)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
           response.json.validate[FinancialDetailsModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Json Validation Error: $invalid")
+              Logger("application").error(s"Json Validation Error: $invalid")
               FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
             },
             valid => valid
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
           }
           FinancialDetailsErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Unexpected failure, ${ex.getMessage}", ex)
+        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
@@ -140,30 +140,30 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
 
     val url = getOutstandingChargesUrl(idType, idNumber, s"$taxYear-04-05")
 
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
           response.json.validate[OutstandingChargesModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Json Validation Error: $invalid")
+              Logger("application").error(s"Json Validation Error: $invalid")
               OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
             },
             valid => valid
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
           }
           OutstandingChargesErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Unexpected failure, ${ex.getMessage}", ex)
+        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
@@ -172,35 +172,35 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
   def getChargeHistory(mtdBsa: String, docNumber: String)
                       (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
     val url = getChargeHistoryUrl(mtdBsa, docNumber)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getChargeHistory] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
           response.json.validate[ChargesHistoryModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Json Validation Error: $invalid")
+              Logger("application").error(s"Json Validation Error: $invalid")
               ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
             },
             valid => valid
           )
         case status =>
           if (status == 404 || status == 403) {
-            Logger("application").info(s"[IncomeTaxViewChangeConnector][getChargeHistory] - No charge history found for $docNumber - Status: ${response.status}, body: ${response.body}")
+            Logger("application").info(s"No charge history found for $docNumber - Status: ${response.status}, body: ${response.body}")
             ChargesHistoryModel("", "", "", None)
           } else {
             if (status >= 500) {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+              Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             } else {
-              Logger("application").warn(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+              Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
             }
             ChargesHistoryErrorModel(response.status, response.body)
           }
       }
     } recover {
       case ex =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Unexpected failure, ${ex.getMessage}", ex)
+        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
@@ -212,24 +212,24 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     val dateTo: String = s"$taxYear-04-05"
 
     val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
-    Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPayments] - GET $url")
+    Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger("application").info(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
           response.json.validate[Seq[Payment]].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getPayments] - Json validation error: $invalid")
+              Logger("application").error(s"Json validation error: $invalid")
               PaymentsError(response.status, "Json validation error")
             },
             valid => Payments(valid)
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").info(s"[IncomeTaxViewChangeConnector][getPayments] - Status ${response.status}, body: ${response.body}")
+            Logger("application").info(s"Status ${response.status}, body: ${response.body}")
           }
           PaymentsError(status, response.body)
       }
@@ -248,16 +248,16 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Json validation error parsing calculation response, error $invalid")
+              Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
               FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
       }

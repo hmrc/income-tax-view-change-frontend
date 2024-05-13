@@ -32,8 +32,8 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
   object TestCalculationListService extends CalculationListService(mockCalculationListConnector, mockDateService)
 
   val taxYearEnd = 2024
-  when(mockDateService.getCurrentTaxYearEnd(false)).thenReturn(taxYearEnd)
-  when(mockDateService.getCurrentTaxYearEnd(true)).thenReturn(taxYearEnd + 1)
+  when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+  when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd + 1)
   val notFoundText = "The remote endpoint has indicated that the requested resource could not be found."
 
   "getLegacyCalculationList (API 1404)" should {
@@ -85,7 +85,7 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       }
       "returns None" in {
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe None
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
       }
       "returns Some(false) given 204 response from 1404" in {
         val error = CalculationListErrorModel(NO_CONTENT, "not found")
@@ -104,7 +104,7 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       val testTaxYearRange = "23-24"
       "returns Some(true)" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).futureValue shouldBe Some(true)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(true)
       }
       "returns Some(false)" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFalseFull)
@@ -112,17 +112,17 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       }
       "returns None" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).futureValue shouldBe None
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
       }
       "returns Some(false) given 204 response from 1896" in {
         val error = CalculationListErrorModel(NO_CONTENT, "not found")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).failed.futureValue.getMessage shouldBe error.message
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
       }
     }
     "for year 2024-25" should {
