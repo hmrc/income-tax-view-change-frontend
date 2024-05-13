@@ -48,14 +48,12 @@ case class DocumentDetail(taxYear: Int,
 
   def credit: Option[BigDecimal] = originalAmount match {
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case _ if (originalAmount == 0) => None
-    case _ if (originalAmount > 0) => None
+    case _ if (originalAmount >= 0) => None
     case credit => Some(credit * -1)
   }
 
   def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case _ if (outstandingAmount == 0) => None
-    case _ if (outstandingAmount > 0) => None
+    case _ if (outstandingAmount >= 0) => None
     case credit => Some(credit * -1)
   }
 
