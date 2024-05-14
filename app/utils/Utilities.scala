@@ -18,12 +18,18 @@ package utils
 
 import play.api.libs.json.{JsObject, Json, Writes}
 
+import scala.concurrent.Future
+
 object Utilities {
 
   implicit class JsonUtil[A](json: JsObject) {
     def ++(key: String, optValue: Option[A])(implicit writes: Writes[A]): JsObject = {
       json ++ optValue.fold(Json.obj())(value => Json.obj(key -> value))
     }
+  }
+
+  implicit class ToFutureSuccessful[T](obj: T) {
+    def asFuture: Future[T] = Future.successful(obj)
   }
 
 }
