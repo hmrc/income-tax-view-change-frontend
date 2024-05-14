@@ -96,9 +96,9 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
   def makeOptOutUpdateRequestFor(optOutData: OptOutData, selectedTaxYear: TaxYear)(implicit user: MtdItUser[_],
                                                                 shc: HeaderCarrier,
                                                                 ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    optOutData.optOutFromSelectedTaxYear(
-      selectedTaxYear,
-      taxYear => optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)) { msg =>
+
+    val apiCall = taxYear => optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)
+    optOutData.optOutFromSelectedTaxYear(selectedTaxYear, apiCall) { msg =>
       Future.failed(new RuntimeException(s"for user.nino: ${user.nino}, $msg"))
     }
   }
