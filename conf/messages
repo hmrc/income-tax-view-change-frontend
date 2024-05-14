@@ -1917,3 +1917,16 @@ optOut.confirmSingleYearOptOut.form.title                   = Do you still want 
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
+
+
+# opt out choose tax year
+optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting
+optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards.
+optout.chooseOptOutTaxYear.desc2                     = You can then choose to submit your tax return through:
+optout.chooseOptOutTaxYear.desc2.p1                  = your HMRC online account
+optout.chooseOptOutTaxYear.desc2.p2                  = compatible record-keeping software
+optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
+optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 to 2024 onwards
+optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 to 2025 onwards
+optout.chooseOptOutTaxYear.cancel                    = Cancel
+optout.chooseOptOutTaxYear.continue                  = Continue
