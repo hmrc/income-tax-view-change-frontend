@@ -1914,3 +1914,15 @@ optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio a
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
+
+# opt out choose tax year
+optout.chooseOptOutTaxYear.heading                   = Cadarnhau eich bod am optio allan o gyflwyno adroddiadau yn chwarterol
+optout.chooseOptOutTaxYear.desc1                     = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn dreth honno ymlaen.
+optout.chooseOptOutTaxYear.desc2                     = Gallwch wedyn dewis cyflwyno’ch Ffurflen Dreth drwy’r canlynol:
+optout.chooseOptOutTaxYear.desc2.p1                  = eich cyfrif ar-lein CThEF meddalwedd cadw
+optout.chooseOptOutTaxYear.desc2.p2                  = cofnodion sy’n cydweddu
+optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
+optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 i 2024 ymlaen
+optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 i 2025 ymlaen
+optout.chooseOptOutTaxYear.cancel                    = Canslo
+optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
