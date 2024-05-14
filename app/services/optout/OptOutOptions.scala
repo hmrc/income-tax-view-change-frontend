@@ -18,7 +18,8 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
-import play.api.Logger
+import org.jsoup.internal.StringUtil
+import services.optout.OptOutData.NO_MESSAGE
 
 trait OptOut {
   def canOptOut: Boolean
@@ -35,6 +36,10 @@ case class NextTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, currentTaxYea
 
 case class PreviousTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, crystallised: Boolean) extends OptOut {
   def canOptOut: Boolean = status == Voluntary && !crystallised
+}
+
+object OptOutData {
+  val NO_MESSAGE: String = ""
 }
 
 case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
@@ -59,13 +64,12 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
-  def optOutFromSelectedTaxYear[T](selectedTaxYear: TaxYear, taxYearFun: TaxYear => T)(failResult: String => T): T = {
+  def optOutFromSelectedTaxYear[T](selectedTaxYear: TaxYear, taxYearFun: TaxYear => T)
+                                  (failResult: String => T): T = {
     if(isOneYearOptOut && availableOptOutYears.nonEmpty && selectedTaxYear == availableOptOutYears.head.taxYear) {
       taxYearFun(selectedTaxYear)
     } else {
-      val msg = s"unable to opt-out of selected tax-year $selectedTaxYear due to illegal opt-out state: $this"
-      Logger("application").error(msg)
-      failResult(msg)
+      failResult(NO_MESSAGE)
     }
   }
 
