@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.claimToAdjustPOA.PaymentOnAccountViewModel
+@import models.claimToAdjustPoa.PaymentOnAccountViewModel
 
 @this(
     p: p,
@@ -58,7 +58,7 @@
 }
 
 @getWhatYouNeedToKnowUrl = @{
-    controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(isAgent).url
+    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
 @mainTemplate(

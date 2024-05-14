@@ -19,7 +19,7 @@ package services
 import connectors.CalculationListConnector
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear

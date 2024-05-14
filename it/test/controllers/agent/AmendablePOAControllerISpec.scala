@@ -25,7 +25,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 class AmendablePOAControllerISpec extends ComponentSpecBase {
 
-  private val amendPoaUrl = controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = true).url
+  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = true).url
   private val testTaxYear = 2024
 
   s"calling GET $amendPoaUrl" should {

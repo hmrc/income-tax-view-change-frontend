@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPOA
+package testConstants.claimToAdjustPoa
 
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 

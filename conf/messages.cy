@@ -1862,6 +1862,29 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gwel
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canslo
 
+# select your reason
+
+claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
+claimToAdjustPoa.selectYourReason.h1                                    =   Dewiswch eich rheswm
+claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhesymau hyn yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
+claimToAdjustPoa.selectYourReason.p2.a                                  =   Os oes angen help arnoch i dalu’ch taliadau ar gyfrif,
+claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF (yn agor tab newydd)
+claimToAdjustPoa.selectYourReason.p2.b                                  =   .
+claimToAdjustPoa.selectYourReason.h2                                    =   Pam ydych yn gostwng eich taliadau ar gyfrif?
+claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   Yr adran hon yw
+claimToAdjustPoa.selectYourReason.h2.caption                            =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.selectYourReason.radios.main-lower                     =   Bydd fy mhrif incwm yn is
+claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   Er enghraifft, elw busnes eiddo neu unig fasnachwr.
+claimToAdjustPoa.selectYourReason.radios.other-lower                    =   Bydd fy incwm arall yn is
+claimToAdjustPoa.selectYourReason.radios.other-lower.hint               =   Er enghraifft, taliadau difidend neu incwm o bensiwn.
+claimToAdjustPoa.selectYourReason.radios.relief-higher                  =   Bydd fy lwfansau treth neu fy rhyddhadau treth yn uwch
+claimToAdjustPoa.selectYourReason.radios.relief-higher.hint             =   Er enghraifft, lwfans priodasol, rhyddhad treth ar eich pensiwn, neu daliadau i elusen.
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source                =   Bydd mwy o’m hincwm yn cael ei drethu wrth y ffynhonnell
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   Er enghraifft, o dan TWE.
+claimToAdjustPoa.selectYourReason.continue                              =   Yn eich blaen
+claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
+claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
+
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
 optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.

@@ -14,27 +14,11 @@
  * limitations under the License.
  */
 
-package models.nextPayments.viewmodels
+package controllers.agent.claimToAdjustPoa
 
-import models.incomeSourceDetails.TaxYear
+class SelectYourReasonControllerISpec extends controllers.claimToAdjustPoa.SelectYourReasonControllerISpec {
 
-case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+  override val isAgent = true
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
-    }
-  }
-
-}
-
-object WYOClaimToAdjustViewModel {
-
-  def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = isAgent).url
-  }
 
 }

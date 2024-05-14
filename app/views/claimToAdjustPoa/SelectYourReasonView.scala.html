@@ -1,0 +1,128 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import exceptions.MissingFieldException
+@import helper._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.helpers.injected.InputHelper
+@import play.twirl.api.HtmlFormat
+@import models.claimToAdjustPoa.SelectYourReason
+@import models.incomeSourceDetails.TaxYear
+
+@this(
+    mainTemplate: unifiedLayout,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    formWithCSRF: FormWithCSRF,
+    govukInsetText : GovukInsetText,
+    govukRadios: GovukRadios,
+    govukButton : GovukButton,
+    inputHelper: InputHelper,
+    errorSummary: ErrorSummary,
+    govukInput : GovukInput
+)
+
+@(  selectYourReasonForm: Form[SelectYourReason],
+    taxYear: TaxYear,
+    isAgent: Boolean,
+    isChange: Boolean,
+    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@formContent = {
+    <p class="form-hint govuk-body-m">@messages("claimToAdjustPoa.selectYourReason.p1")</p>
+    <p class="form-hint govuk-body-m">@messages("claimToAdjustPoa.selectYourReason.p2.a") <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/business-payment-support-service">@messages("claimToAdjustPoa.selectYourReason.p2.link")</a>@messages("claimToAdjustPoa.selectYourReason.p2.b")</p>
+    <h2 class="govuk-heading-m">@messages("claimToAdjustPoa.selectYourReason.h2")</h2>
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@mainTemplate( pageTitle = messages("claimToAdjustPoa.selectYourReason.title"),
+               isAgent = isAgent,
+               useFallbackBackLink = useFallbackLink,
+               backUrl = Some("/"),
+               btaNavPartial = user.btaNavPartial) {
+
+    @errorSummary(
+        form = selectYourReasonForm
+    )
+
+    <h2 class="govuk-caption-l hmrc-caption-l"><span class="govuk-visually-hidden">@messages("claimToAdjustPoa.selectYourReason.h2.caption.hidden") </span>@messages("claimToAdjustPoa.selectYourReason.h2.caption", taxYear.startYear.toString, taxYear.endYear.toString)</h2>
+
+    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, isChange), Symbol("id") -> "select-your-reason-form") {
+        @govukRadios(
+            Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = HtmlContent(s"""<h1 class="govuk-heading-l">${messages("claimToAdjustPoa.selectYourReason.h1")}</h1>"""),
+                    isPageHeading = true
+                ))),
+            ),
+            hint = Some(Hint(
+                id = Some("hint-text"),
+                content = HtmlContent(formContent)
+            )),
+            items = Seq(
+                RadioItem(
+                    content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.main-lower")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.main-lower.hint")}</span>"""),
+                    value = Some("MainIncomeLower")
+                ),
+                RadioItem(
+                    content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.other-lower")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.other-lower.hint")}</span>"""),
+                    value = Some("OtherIncomeLower")
+                ),
+                RadioItem(
+                    content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.relief-higher")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.relief-higher.hint")}</span>"""),
+                    value = Some("AllowanceOrReliefHigher")
+                ),
+                RadioItem(
+                    content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.taxed-at-source")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint")}</span>"""),
+                    value = Some("MoreTaxedAtSource")
+                ),
+
+            )).withFormField(selectYourReasonForm("value"))
+        )
+
+        <div class="govuk-button-group">
+            @govukButton(
+                Button(
+                    element = Some("button"),
+                    content = HtmlContent(messages("claimToAdjustPoa.selectYourReason.continue"))
+                )
+            )
+
+            @link(
+                id = Some("cancel-link"),
+                link = getHomePageUrl,
+                messageKey = "claimToAdjustPoa.selectYourReason.cancel"
+            )
+        </div>
+    }
+}
+
+
+
+

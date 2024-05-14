@@ -1872,6 +1872,42 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See 
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
 
+# select your reason
+
+claimToAdjustPoa.selectYourReason.title                                 =   Select Your Reason
+claimToAdjustPoa.selectYourReason.h1                                    =   Select your reason
+claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to proceed.
+claimToAdjustPoa.selectYourReason.p2.a                                  =   If you need help paying for your payments on account,
+claimToAdjustPoa.selectYourReason.p2.link                               =   you can contact HMRC instead (opens in new tab)
+claimToAdjustPoa.selectYourReason.p2.b                                  =   .
+claimToAdjustPoa.selectYourReason.h2                                    =   Why are you reducing your payments on account?
+claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   This section is
+claimToAdjustPoa.selectYourReason.h2.caption                            =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.selectYourReason.radios.main-lower                     =   My main income will be lower
+claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   For example, sole trader or property business profits.
+claimToAdjustPoa.selectYourReason.radios.other-lower                    =   My other income will be lower
+claimToAdjustPoa.selectYourReason.radios.other-lower.hint               =   For example, dividend payments or pension income.
+claimToAdjustPoa.selectYourReason.radios.relief-higher                  =   My tax allowances or reliefs will be higher
+claimToAdjustPoa.selectYourReason.radios.relief-higher.hint             =   For example, marriage allowance, pension relief or payments to charity.
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source                =   More of my income will be taxed at source
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   For example, under PAYE.
+claimToAdjustPoa.selectYourReason.continue                              =   Continue
+claimToAdjustPoa.selectYourReason.cancel                                =   Cancel
+claimToAdjustPoa.selectYourReason.error.required                        =   Select the main reason you’re reducing your payments on account
+
+claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
+claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
+claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
+claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   If your next tax bill is lower than you’d expected and you’ve overpaid through your payments on account, we’ll credit your account.
+claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Interest charges
+claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   If you reduce your payments on account by too much, and your final tax bill shows you owe more tax than you’ve paid through your payments on account, we’ll add the difference to your account as an overdue charge.
+claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Like with other late payments, HMRC will charge you interest on that amount, from the date each payment on account was due, until it is paid.
+claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   To avoid paying interest, you can increase your payments on account again, up to the initial amount created by HMRC, before each payment is due.
+claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Continue
+claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
+claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
+claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
+
 
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
