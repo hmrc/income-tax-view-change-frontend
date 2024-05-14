@@ -19,6 +19,7 @@ package services.optout
 import auth.MtdItUser
 import connectors.OptOutConnector
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.Mandated
 import models.itsaStatus.StatusDetail
 import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponse
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
@@ -59,7 +60,14 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
 
   def nextUpdatesPageOneYearOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
     setupOptOutData()
-      .map(optOutData => optOutData.optOutForSingleYear((_, optOutYear) => OptOutOneYearViewModel(optOutYear.taxYear)))
+      .map(optOutData => optOutData.optOutForSingleYear((optOutData, optOutYear) => {
+        val showWarning = optOutData match {
+          case OptOutData(previousTaxYear, currentTaxYear, _) if previousTaxYear == optOutYear && currentTaxYear.status == Mandated => true
+          case OptOutData(_, currentTaxYear, nextTaxYear) if currentTaxYear == optOutYear && nextTaxYear.status == Mandated => true
+          case _ => false
+        }
+        OptOutOneYearViewModel(optOutYear.taxYear, showWarning)
+      }))
       .recover({
         case e =>
           Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
@@ -69,9 +77,9 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
 
   private def setupOptOutData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutData] = {
 
-    val currentYear  = dateService.getCurrentTaxYear
+    val currentYear = dateService.getCurrentTaxYear
     val previousYear = currentYear.previousYear
-    val nextYear     = currentYear.nextYear
+    val nextYear = currentYear.nextYear
 
     for {
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
@@ -86,9 +94,9 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
                                finalisedStatus: Boolean,
                                statusMap: Map[TaxYear, StatusDetail]) = {
 
-    val previousYearOptOut   = PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus)
+    val previousYearOptOut = PreviousTaxYearOptOut(statusMap(previousYear).status, previousYear, finalisedStatus)
     val currentTaxYearOptOut = CurrentTaxYearOptOut(statusMap(currentYear).status, currentYear)
-    val nextTaxYearOptOut    = NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
+    val nextTaxYearOptOut = NextTaxYearOptOut(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
 
     OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }

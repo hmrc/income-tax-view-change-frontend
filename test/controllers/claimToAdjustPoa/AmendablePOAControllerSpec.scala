@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.claimToAdjustPOA.AmendablePOAController
+import controllers.claimToAdjustPoa.AmendablePOAController
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}

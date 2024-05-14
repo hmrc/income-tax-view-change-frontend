@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import models.incomeSourceDetails.TaxYear
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
@@ -102,7 +102,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
   }.url
 
   def getWhatYouNeedToKnowUrl(isAgent: Boolean): String =
-    controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(isAgent).url
+    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.routes.HomeController.showAgent

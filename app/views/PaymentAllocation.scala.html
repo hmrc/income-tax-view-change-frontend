@@ -84,7 +84,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
-            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.getOrElse(throw MissingFieldException("Payment Allocation Amount")).abs.toCurrencyString}</dd>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString}</dd>
         </div>
     </dl>
 

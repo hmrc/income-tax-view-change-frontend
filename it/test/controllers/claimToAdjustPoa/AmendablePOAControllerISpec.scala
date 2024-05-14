@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPOA
+package controllers.claimToAdjustPoa
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
@@ -25,7 +25,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 class AmendablePOAControllerISpec extends ComponentSpecBase {
 
-  private val amendPoaUrl = controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = false).url
+  private val amendPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = false).url
   private val testTaxYear = 2024
 
   s"calling GET $amendPoaUrl" should {

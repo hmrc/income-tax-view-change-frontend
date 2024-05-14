@@ -54,18 +54,23 @@
 
 
 
+
 @outstandingAmount.map { amount =>
     @if(amount != 0) {
-         <tbody class="govuk-table__body">
-               <tr id="money-on-account">
-                   <td class="govuk-table__cell">
-                       @getLink
-                   </td>
-                   <td class="govuk-table__cell">
-                       @{dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort}
-                   </td>
-                   <td class="govuk-table__cell govuk-table__cell--numeric">@{amount.abs.toCurrencyString}</td>
-               </tr>
-         </tbody>
+            <tbody class="govuk-table__body">
+                <tr id="money-on-account">
+                    <td class="govuk-table__cell">
+                    @getLink
+                    </td>
+                    <td class="govuk-table__cell">
+                    @{
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort
+                    }
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.abs.toCurrencyString
+                    }</td>
+                </tr>
+            </tbody>
     }
 }

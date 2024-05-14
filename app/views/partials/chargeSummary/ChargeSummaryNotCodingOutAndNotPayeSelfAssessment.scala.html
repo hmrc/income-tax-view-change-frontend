@@ -75,7 +75,7 @@
         <span>
         @{
             if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-            else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+            else documentDetail.originalAmount.toCurrency
         }
         </span>
     </dd>

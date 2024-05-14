@@ -37,8 +37,6 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
   })
 
-  require(charges.forall(_.documentDetail.originalAmount.isDefined), "missing originalAmount on charges")
-
 }
 
 case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
@@ -57,7 +55,7 @@ case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
 object TYSClaimToAdjustViewModel {
 
   def ctaLink(isAgent: Boolean): String = {
-    controllers.claimToAdjustPOA.routes.AmendablePOAController.show(isAgent = isAgent).url
+    controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent = isAgent).url
   }
 
 }

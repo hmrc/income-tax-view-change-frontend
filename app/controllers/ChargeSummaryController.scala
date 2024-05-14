@@ -98,7 +98,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear => response
       }
-
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
@@ -197,10 +196,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val viewSection3 = isEnabled(ChargeHistory) && (isEnabled(CodingOut) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
 
     val values = List(
-      (viewSection1, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount"),
+      (viewSection1, true, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
       (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined, "Late Payment Interest Amount"),
-      (viewSection3, documentDetailWithDueDate.documentDetail.originalAmount.isDefined, "Original Amount")
+      (viewSection3, true, "Original Amount")
     )
 
     val undefinedOptions = values.filter(_._1).flatMap {

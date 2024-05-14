@@ -55,16 +55,16 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     transactionId = "transid2",
     documentDescription = Some("ITSA- POA 1"),
     documentText = Some("documentText"),
-    outstandingAmount = Some(543.32),
-    originalAmount = Some(23456.78),
+    outstandingAmount = 543.32,
+    originalAmount = 23456.78,
     documentDate = LocalDate.parse("2018-03-21"))
 
   private val dd2 = DocumentDetail(taxYear = 2017,
     transactionId = "transid2",
     documentDescription = Some("New Charge"),
     documentText = Some("documentText"),
-    outstandingAmount = Some(-543.32),
-    originalAmount = Some(-23456.78),
+    outstandingAmount = -543.32,
+    originalAmount = -23456.78,
     documentDate = LocalDate.parse("2018-03-21"))
   private val paymentAllocationChargeModel = FinancialDetailsWithDocumentDetailsModel(List(dd1), List(fd1))
   private val paymentAllocationChargeModelCredit = FinancialDetailsWithDocumentDetailsModel(List(dd2), List(fd2))

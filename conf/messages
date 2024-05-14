@@ -1872,6 +1872,42 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See 
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
 
+# select your reason
+
+claimToAdjustPoa.selectYourReason.title                                 =   Select Your Reason
+claimToAdjustPoa.selectYourReason.h1                                    =   Select your reason
+claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to proceed.
+claimToAdjustPoa.selectYourReason.p2.a                                  =   If you need help paying for your payments on account,
+claimToAdjustPoa.selectYourReason.p2.link                               =   you can contact HMRC instead (opens in new tab)
+claimToAdjustPoa.selectYourReason.p2.b                                  =   .
+claimToAdjustPoa.selectYourReason.h2                                    =   Why are you reducing your payments on account?
+claimToAdjustPoa.selectYourReason.h2.caption.hidden                     =   This section is
+claimToAdjustPoa.selectYourReason.h2.caption                            =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.selectYourReason.radios.main-lower                     =   My main income will be lower
+claimToAdjustPoa.selectYourReason.radios.main-lower.hint                =   For example, sole trader or property business profits.
+claimToAdjustPoa.selectYourReason.radios.other-lower                    =   My other income will be lower
+claimToAdjustPoa.selectYourReason.radios.other-lower.hint               =   For example, dividend payments or pension income.
+claimToAdjustPoa.selectYourReason.radios.relief-higher                  =   My tax allowances or reliefs will be higher
+claimToAdjustPoa.selectYourReason.radios.relief-higher.hint             =   For example, marriage allowance, pension relief or payments to charity.
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source                =   More of my income will be taxed at source
+claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   For example, under PAYE.
+claimToAdjustPoa.selectYourReason.continue                              =   Continue
+claimToAdjustPoa.selectYourReason.cancel                                =   Cancel
+claimToAdjustPoa.selectYourReason.error.required                        =   Select the main reason you’re reducing your payments on account
+
+claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
+claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
+claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
+claimToAdjustPoa.whatYouNeedToKnow.p2                                   =   If your next tax bill is lower than you’d expected and you’ve overpaid through your payments on account, we’ll credit your account.
+claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Interest charges
+claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   If you reduce your payments on account by too much, and your final tax bill shows you owe more tax than you’ve paid through your payments on account, we’ll add the difference to your account as an overdue charge.
+claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Like with other late payments, HMRC will charge you interest on that amount, from the date each payment on account was due, until it is paid.
+claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   To avoid paying interest, you can increase your payments on account again, up to the initial amount created by HMRC, before each payment is due.
+claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Continue
+claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
+claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
+claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
+
 
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
@@ -1909,3 +1945,24 @@ optout.confirmedOptOut.reportQuarterly.p2       = you report an increase in your
 optout.confirmedOptOut.reportQuarterly.example  = For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025.
 optout.confirmedOptOut.reportQuarterly.desc2    = If this happens, we will write to you to let you know.
 optout.confirmedOptOut.reportQuarterly.desc3    = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab).
+
+optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
+optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out and report annually for the {0} to {1} tax year.
+optOut.confirmSingleYearOptOut.inset.text                   = From 6 April {0}, you’ll be required to send quarterly updates again through software.
+optOut.confirmSingleYearOptOut.form.title                   = Do you still want to opt out for the {0} to {1} tax year?
+optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
+optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
+optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
+
+
+# opt out choose tax year
+optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting
+optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards.
+optout.chooseOptOutTaxYear.desc2                     = You can then choose to submit your tax return through:
+optout.chooseOptOutTaxYear.desc2.p1                  = your HMRC online account
+optout.chooseOptOutTaxYear.desc2.p2                  = compatible record-keeping software
+optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
+optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 to 2024 onwards
+optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 to 2025 onwards
+optout.chooseOptOutTaxYear.cancel                    = Cancel
+optout.chooseOptOutTaxYear.continue                  = Continue

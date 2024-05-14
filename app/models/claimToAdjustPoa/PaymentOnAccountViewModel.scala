@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPOA
+package models.claimToAdjustPoa
 
 import models.incomeSourceDetails.TaxYear
 
@@ -28,7 +28,7 @@ case class PaymentOnAccountViewModel(
                              poARelevantAmountTwo: BigDecimal
                            ) {
 
-  private val totalAmount = paymentOnAccountOne + paymentOnAccountTwo
+  val totalAmount: BigDecimal = paymentOnAccountOne + paymentOnAccountTwo
   private val poaRelevantAmount = poARelevantAmountOne + poARelevantAmountTwo
 
   def totalAmountLessThanPoa: Boolean = {

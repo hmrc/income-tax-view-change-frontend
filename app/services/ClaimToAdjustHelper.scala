@@ -19,7 +19,7 @@ package services
 import connectors.CalculationListConnector
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
@@ -43,11 +43,11 @@ trait ClaimToAdjustHelper {
 
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA1) &&
-      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      (documentDetail.outstandingAmount != 0)
 
   private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2) &&
-      !documentDetail.outstandingAmount.contains(BigDecimal(0))
+      (documentDetail.outstandingAmount != 0)
 
   private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
     isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
@@ -80,8 +80,8 @@ trait ClaimToAdjustHelper {
         poaOneTransactionId = poaOneDocDetail.transactionId,
         poaTwoTransactionId = poaTwoDocDetail.transactionId,
         taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
+        paymentOnAccountOne = poaOneDocDetail.originalAmount,
+        paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
         poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
         poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )

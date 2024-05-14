@@ -16,7 +16,7 @@
 
 package services
 
-import models.claimToAdjustPOA.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{PoAAmendmentData, PoASessionData, SelectYourReason}
 import repositories.PoAAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    setMongoData(None).flatMap{ res =>
+    setMongoData(Some(PoAAmendmentData())).flatMap{ res =>
       if (res)
         Future.successful(Right(()))
       else
@@ -46,7 +46,7 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     poAAmmendmentDataRepository.set(PoASessionData(hc.sessionId.get.value, poAAmmendmentData))
   }
 
-  def setAdjustmentReason(poaAdjustmentReason: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+  def setAdjustmentReason(poaAdjustmentReason: SelectYourReason)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoASessionData) =>
         val newData: PoAAmendmentData = data.poaAmendmentData match {

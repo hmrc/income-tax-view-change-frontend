@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPOA
+package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
 import models.core.Nino
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -49,9 +49,9 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
-      controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(isAgent)
+      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
     } else {
-      controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent)
+      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, false)
     }).url
   }
 

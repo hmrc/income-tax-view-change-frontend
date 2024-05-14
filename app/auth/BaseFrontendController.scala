@@ -81,7 +81,9 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
           case _ => request.headers
         }
 
-        authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
+        authorisedFunctions
+          .authorised(authPredicate)
+          .retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
           case enrolments ~ affinity ~ confidence ~ credentials =>
             implicit val user: User = userApply(enrolments, affinity, confidence, credentials)
             predicate.apply(request)(user) match {
