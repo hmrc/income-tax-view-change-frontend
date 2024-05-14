@@ -101,11 +101,11 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
       "in change mode must pre-populate the answer" when {
         "user is agent" in {
-          // TODO
+          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
         }
 
         "user is not agent" in {
-          // TODO
+          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
         }
       }
 
@@ -219,14 +219,13 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
       "in check mode" when {
         "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
-          // TODO
+          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
         }
 
         "if 'totalAmount' is less than 'poaRelevantAmount'" in {
-          // TODO
+          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
         }
       }
     }
-
   }
 }

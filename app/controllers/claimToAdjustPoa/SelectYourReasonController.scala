@@ -70,7 +70,7 @@ class SelectYourReasonController @Inject()(
                 useFallbackLink = true)))
           }
         } fold(
-          logAndShowErrorPage(isAgent, "show"),
+          logAndShowErrorPage(isAgent),
           view => view
         )
       }
@@ -87,7 +87,7 @@ class SelectYourReasonController @Inject()(
             },
             value => saveValueAndRedirect(isChange, isAgent, value))
           .fold(
-            logAndShowErrorPage(isAgent, "submit"),
+            logAndShowErrorPage(isAgent),
             result => result
           )
       }
@@ -106,11 +106,11 @@ class SelectYourReasonController @Inject()(
         case (Some(s), Some(p)) =>
           block(s, p)
         case (None, _) =>
-          Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] session missing")
+          Logger("application").error(s"Session missing")
           val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
           x
         case (_, None) =>
-          Logger("application").error(s"[SelectYourReasonController][withSessionAndPoa] POA missing")
+          Logger("application").error(s"POA missing")
           val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
           x
       }
@@ -148,9 +148,9 @@ class SelectYourReasonController @Inject()(
     }
   }
 
-  private def logAndShowErrorPage(isAgent: Boolean, source: String)(ex: Throwable)(implicit request: Request[_]): Result = {
+  private def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    Logger("application").error(s"[SelectYourReasonController][$source]: ${ex.getMessage} - ${ex.getCause}")
+    Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
     errorHandler.showInternalServerError()
   }
 
