@@ -25,8 +25,10 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
-import models.admin.IncomeSources
+import models.admin.{FeatureSwitch, FeatureSwitchName, IncomeSources}
+import models.incomeSourceDetails.UIJourneySessionData
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -58,12 +60,61 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     app.injector.instanceOf[FrontendAppConfig]
   )
 
+  def enableTheseFeatureSwitches(fsNames: List[FeatureSwitchName]): List[FeatureSwitch] = {
+    fsNames.foreach { fsName =>
+      getBaseFSList.map {
+        case x: FeatureSwitch if x.name == fsName => FeatureSwitch(fsName, isEnabled = true)
+        case x => x
+      }
+    }
+    getBaseFSList
+  }
+
+  def setupMockGetMongoFeatureSwitchesWithTheseFSEnabled(fsNames: List[FeatureSwitchName]): Unit = {
+    when(
+      mockFeatureSwitchService.getAll
+    ).thenReturn(Future.successful(enableTheseFeatureSwitches(fsNames)))
+  }
+
+  def getBaseFSList: List[FeatureSwitch] = {
+    val fsSize = FeatureSwitchName.allFeatureSwitches.size
+    FeatureSwitchName.allFeatureSwitches.foldLeft[List[FeatureSwitch]](List.empty) { (acc, current) =>
+      if (acc.size == fsSize) {
+        acc :+ FeatureSwitch(current, isEnabled = false)
+      } else {
+        acc
+      }
+    }
+  }
+
+
+//  These are previous iterations
+//  def mockFSDisabledExceptIncomeSources: List[FeatureSwitch] = {
+//    getBaseFSList.map {
+//      case x: FeatureSwitch if x.name == IncomeSources => FeatureSwitch(IncomeSources, isEnabled = true)
+//      case x => x
+//    }
+//  }
+//
+//  def setupMockGetMongoFeatureSwitchesEmpty(): Unit = {
+//    when(
+//      mockFeatureSwitchService.getAll
+//    ).thenReturn(Future.successful(getBaseFSList))
+//  }
+//
+//  def setupMockGetMongoFeatureSwitchesWithIncomeSourcesEnabled(): Unit = {
+//    when(
+//      mockFeatureSwitchService.getAll
+//    ).thenReturn(Future.successful(mockFSDisabledExceptIncomeSources))
+//  }
+
   "The CeaseIncomeSourcesController" should {
 
     "redirect user back to the home page" when {
       def testFSDisabled(isAgent: Boolean): Unit = {
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockGetMongoFeatureSwitchesWithTheseFSEnabled(List.empty)
 
         if (isAgent) {
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -92,6 +143,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         setupMockCreateSession(true)
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
         setupMockDeleteSession(true)
+        setupMockGetMongoFeatureSwitchesWithTheseFSEnabled(List(IncomeSources))
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Right(CeaseIncomeSourcesViewModel(
@@ -126,6 +178,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
+        setupMockGetMongoFeatureSwitchesWithTheseFSEnabled(List(IncomeSources))
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))
