@@ -59,8 +59,8 @@ object FeatureSwitchName {
       JsSuccess(MFACreditsAndDebits)
     case name if name == JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case name if name == JsString(TimeMachineAddYear.name) =>
-      JsSuccess(TimeMachineAddYear)
+//    case name if name == JsString(TimeMachineAddYear.name) =>
+//      JsSuccess(TimeMachineAddYear)
     case name if name == JsString(R7cTxmEvents.name) =>
       JsSuccess(R7cTxmEvents)
     case name if name == JsString(R7cViewerCodingOutTxmEvents.name) =>
@@ -99,7 +99,9 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, IvUplift, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
-      PaymentHistoryRefunds, TimeMachineAddYear, R7cTxmEvents, R7cViewerCodingOutTxmEvents, CalendarQuarterTypes,
+      PaymentHistoryRefunds,
+//      TimeMachineAddYear,
+      R7cTxmEvents, R7cViewerCodingOutTxmEvents, CalendarQuarterTypes,
       IncomeSourcesNewJourney, IncomeSources)
 
 
@@ -166,10 +168,10 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override def toString: String = "Payment History Refunds"
 }
 
-case object TimeMachineAddYear extends FeatureSwitchName {
-  override val name = "time-machine-add-year"
-  override def toString: String = "Time Machine Add Year"
-}
+//case object TimeMachineAddYear extends FeatureSwitchName {
+//  override val name = "time-machine-add-year"
+//  override def toString: String = "Time Machine Add Year"
+//}
 
 case object R7cTxmEvents extends FeatureSwitchName {
   override val name = "r7c-txm-events"

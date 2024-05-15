@@ -18,7 +18,7 @@ package services
 
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
-import models.admin.{IncomeSources, TimeMachineAddYear}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates._
 import org.mockito.ArgumentMatchers.any
@@ -39,7 +39,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   class Setup extends NextUpdatesService(mockObligationsConnector)
 
   val previousObligation: NextUpdateModel = NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001")
-  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+//  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
 
   def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001")
 

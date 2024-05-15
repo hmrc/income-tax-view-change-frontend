@@ -23,7 +23,7 @@ import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSources, TimeMachineAddYear}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsError, LatencyDetails, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion
@@ -140,7 +140,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
-    disable(TimeMachineAddYear)
+    //disable(TimeMachineAddYear)
     enable(IncomeSources)
     stubAuthorisedAgentUser(authorised = true)
 
@@ -182,7 +182,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   def setupStubErrorCall(scenario: APIErrorScenario, incomeSourceType: IncomeSourceType): Unit = {
     Given("Income Sources FS is enabled")
     enable(IncomeSources)
-    enable(TimeMachineAddYear)
+    //enable(TimeMachineAddYear)
     stubAuthorisedAgentUser(authorised = true)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))

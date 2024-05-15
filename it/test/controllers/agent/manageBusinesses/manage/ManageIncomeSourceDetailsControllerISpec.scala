@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSources, TimeMachineAddYear}
+import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
@@ -84,7 +84,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        disable(TimeMachineAddYear)
+        //disable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -115,7 +115,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        enable(TimeMachineAddYear)
+        //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
@@ -156,7 +156,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        disable(TimeMachineAddYear)
+        //disable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -258,7 +258,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        enable(TimeMachineAddYear)
+        //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
@@ -289,7 +289,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        disable(TimeMachineAddYear)
+        //disable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -375,7 +375,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        enable(TimeMachineAddYear)
+        //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
@@ -408,7 +408,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        disable(TimeMachineAddYear)
+        //disable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))

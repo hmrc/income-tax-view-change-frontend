@@ -18,9 +18,7 @@ package testOnly.controllers
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.TimeMachineAddYear
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
