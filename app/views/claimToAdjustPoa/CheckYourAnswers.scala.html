@@ -36,6 +36,7 @@
 
 @(
         isAgent: Boolean,
+        redirectUrl: String,
         startYear: String = "2024",
         endYear: String = "2025",
 )(
@@ -96,6 +97,6 @@
     @govukButton(Button(
         content = Text(messages("base.confirm-and-continue")),
         attributes = Map("id" -> "confirm-button"),
-        href = Some(controllers.claimToAdjustPoa.routes.ConfirmationController.show(isAgent).url)
+        href = Some(redirectUrl)
     ))
 }

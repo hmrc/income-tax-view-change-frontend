@@ -42,7 +42,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
       implicit user =>
         Future successful Ok(
           checkYourAnswers(
-            isAgent = isAgent
+            isAgent = isAgent,
+            redirectUrl = routes.ConfirmationController.show(isAgent).url
           )
         )
     }
