@@ -58,12 +58,12 @@ trait ClaimToAdjustHelper {
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
     for {
-      poaOneDocDetail        <- documentDetails.find(isUnpaidPoAOne)
-      poaTwoDocDetail        <- documentDetails.find(isUnpaidPoATwo)
-      latestDocumentDetail    = poaTwoDocDetail
-      poaTwoDueDate          <- poaTwoDocDetail.documentDueDate
-      poaDeadline             = taxReturnDeadlineOf(poaTwoDueDate)
-      poasAreBeforeDeadline   = poaTwoDueDate isBefore poaDeadline
+      poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
+      poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
+      latestDocumentDetail       = poaTwoDocDetail
+      poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
+      poaDeadline                = taxReturnDeadlineOf(poaTwoDueDate)
+      poasAreBeforeDeadline      = poaTwoDueDate isBefore poaDeadline
       if poasAreBeforeDeadline
     } yield {
 
