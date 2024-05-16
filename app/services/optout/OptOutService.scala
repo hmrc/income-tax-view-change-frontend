@@ -21,9 +21,10 @@ import connectors.OptOutConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Mandated
 import models.itsaStatus.StatusDetail
-import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponse
+import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
+import play.mvc.Http.Status.NO_CONTENT
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -102,11 +103,15 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
   }
 
   def makeOptOutUpdateRequestFor(optOutData: OptOutData)(implicit user: MtdItUser[_],
-                                                         shc: HeaderCarrier): Future[OptOutUpdateResponse] = {
+                                                         shc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OptOutUpdateResponse]] = {
+    
+    val optOutYears: Seq[OptOut] = optOutData.availableOptOutYears.size match {
+      case 0 => Seq()
+      case 1 => optOutData.availableOptOutYears
+      case _ => Seq() // TODO use customer selection for multi year
+    }
 
-    optOutData.optOutForSingleYear((_, singleYear) => {
-      optOutConnector.requestOptOutForTaxYear(singleYear.taxYear, user.nino)
-    }).get
-
+    val responses: Seq[Future[OptOutUpdateResponse]] = optOutYears.map(optOutYear => optOutConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino))
+    Future.sequence(responses)
   }
 }
