@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.claimToAdjustPoa.PaymentOnAccountViewModel
 
 @this(
         p: p,
@@ -39,8 +38,11 @@
         redirectUrl: String,
         changePoaAmountUrl: String,
         changePoaReasonUrl: String,
-        startYear: String = "2024",
-        endYear: String = "2025",
+        adjustedFirstPoaAmount: BigDecimal,
+        adjustedSecondPoaAmount: BigDecimal,
+        startYear: String,
+        endYear: String,
+        poaReason: String
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -71,7 +73,7 @@
         rows = Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-1.key"))),
-                value = Value(Text(getMessage("summary-list-1.value"))),
+                value = Value(Text(poaReason)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = changePoaReasonUrl,
@@ -82,7 +84,12 @@
             ),
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-2.key"))),
-                value = Value(Text(getMessage("summary-list-2.value"))),
+                value = Value(HtmlContent(
+                    s"""
+                      |<a>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</a><br><br>
+                      |<a>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</a>
+                    |""".stripMargin
+                )),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = changePoaAmountUrl,
