@@ -17,14 +17,20 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
-GET         /optout/confirm-opt-out-from-quarterly-reporting/checkpoint   controllers.optOut.OptOutCheckpointController.show
-
 #OptOut
 GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show()
 GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.showAgent()
 
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show()
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.showAgent()
+
+GET         /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
+GET         /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
+POST        /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = false)
+POST        /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = true)
+
+GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show()
+GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.showAgent()
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
@@ -158,4 +164,4 @@ GET          /agents/how-to-claim-refund-external                         contro
 
 ->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
-->          /                                                             claimToAdjustPOA.Routes
+->          /                                                             claimToAdjustPoa.Routes

@@ -42,14 +42,13 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
   }
 
   private def getPaymentMadeAmount: Option[BigDecimal] = {
-    paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.map(_.abs)
+    Option(paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs)
   }
 
   private def getCreditOnAccount: Option[BigDecimal] = {
-    paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.flatMap {
-      outstandingAmount => if (outstandingAmount != 0) Some(outstandingAmount.abs) else None
+    val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount
+      if (outstandingAmount != 0) Option(outstandingAmount.abs) else None
     }
-  }
 
   private def getAllocationDescriptionFromKey(key: String): String = key match {
     case "paymentAllocation.paymentAllocations.poa1.incomeTax" => "Income Tax for payment on account 1 of 2"

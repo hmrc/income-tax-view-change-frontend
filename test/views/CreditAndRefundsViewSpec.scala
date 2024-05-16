@@ -109,7 +109,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       }
 
       "a user has a Refund claimed for full amount and claim is in a pending state" in
-        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(Some(-6.00))),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(-6.00)),
           balance = Some(balanceDetailsModel(
             availableCredit = Some(0),
             firstPendingAmountRequested = Some(6.00),
@@ -164,7 +164,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has a Multiple Credit from HMRC adjustment sorted in tax year" in
         new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
-          documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.0))),
+          documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = -1000.0)),
           balance = Some(balanceDetailsModel(
             firstPendingAmountRequested = Some(4.50),
             secondPendingAmountRequested = None,
@@ -183,7 +183,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has a multiple Refund claimed for full amount" in
         new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
-          documentDetailWithDueDateFinancialDetailListModel(Some(-1000.0))),
+          documentDetailWithDueDateFinancialDetailListModel(-1000.0)),
           balance = Some(balanceDetailsModel(availableCredit = Some(0))),
           isCutOverCreditsEnabled = true
         ) {
@@ -200,7 +200,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has an unallocated credits from exactly one payment" in
         new TestSetup(creditCharges = List(
-          documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
+          documentDetailWithDueDateFinancialDetailListModel(-500.00, dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = -1000)),
           balance = Some(
             balanceDetailsModel(
               availableCredit = Some(500.00),
@@ -222,9 +222,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "a user has an unallocated credits from exactly a single credit item (MFA Credit)" in
         new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
-            Some(-500.00),
+            -500.00,
             dueDate = Some(LocalDate.of(2022, 1, 12)),
-            originalAmount = Some(-1000),
+            originalAmount = -1000,
             mainType = "ITSA Overpayment Relief",
             mainTransaction = "4004"
           )
@@ -251,9 +251,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "a user has an unallocated credits from exactly a single credit item (cut over credit)" in
         new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
-            Some(-500.00),
+            -500.00,
             dueDate = Some(LocalDate.of(2022, 1, 12)),
-            originalAmount = Some(-1000),
+            originalAmount = -1000,
             mainType = "ITSA Cutover Credits",
             mainTransaction = "6110"
           )
@@ -281,9 +281,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "a user has an unallocated credits from exactly a single credit item (Balancing Charge Credit)" in
         new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
-            Some(-500.00),
+            -500.00,
             dueDate = Some(LocalDate.of(2022, 1, 12)),
-            originalAmount = Some(-1000),
+            originalAmount = -1000,
             mainType = "SA Balancing Charge Credit",
             mainTransaction = "4905"
           )
@@ -392,10 +392,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "language is English" in
         new TestSetup(creditCharges = List(
-          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = Some(BigDecimal(-100)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = Some(BigDecimal(-200)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = Some(BigDecimal(-400)), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = Some(BigDecimal(-500)), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = BigDecimal(-100), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = BigDecimal(-200), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = BigDecimal(-400), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = BigDecimal(-500), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
         ),
           isMFACreditsAndDebitsEnabled = true,
           isCutOverCreditsEnabled = true,
@@ -414,10 +414,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "language is Welsh" in
         new TestSetup(creditCharges = List(
-          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = Some(BigDecimal(-100)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = Some(BigDecimal(-200)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = Some(BigDecimal(-400)), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
-          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = Some(BigDecimal(-500)), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = BigDecimal(-100), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = BigDecimal(-200), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = BigDecimal(-400), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = BigDecimal(-500), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
         ),
           isMFACreditsAndDebitsEnabled = true,
           isCutOverCreditsEnabled = true,

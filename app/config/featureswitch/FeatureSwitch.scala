@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     ITSASubmissionIntegration,
-    IvUplift,
     ChargeHistory,
     PaymentAllocation,
     CodingOut,

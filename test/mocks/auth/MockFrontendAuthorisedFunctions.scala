@@ -17,21 +17,15 @@
 package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
-import config.FrontendAppConfig
-import controllers.predicates.SessionTimeoutPredicate
-import mocks.MockItvcErrorHandler
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import play.api.mvc.MessagesControllerComponents
 import testConstants.BaseTestConstants._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.AuthenticatorPredicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -79,7 +73,7 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
 
   def setupMockAgentAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y, withClientPredicate: Boolean = true): Unit = {
     {
-      if (withClientPredicate) when(mockAuthService.authorised(any(Enrolment.apply("").getClass)))
+      if (withClientPredicate) when(mockAuthService.authorised(any(classOf[Enrolment])))
       else when(mockAuthService.authorised(any))
     }
       .thenReturn(

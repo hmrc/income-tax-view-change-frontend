@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPOA
+package models.claimToAdjustPoa
 
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Json, OFormat, __}
@@ -39,7 +39,7 @@ object PoASessionData {
 }
 
 case class PoAAmendmentData(
-                              poaAdjustmentReason: Option[String] = None,
+                              poaAdjustmentReason: Option[SelectYourReason] = None,
                               newPoAAmount: Option[BigDecimal] = None
                             )
 

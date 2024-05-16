@@ -36,7 +36,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
   class Setup(isAgent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(isAgent).url)
+    val view: Html = whatYouNeedToKnowView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, false).url)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()

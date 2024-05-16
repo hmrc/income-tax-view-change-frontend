@@ -52,26 +52,26 @@ trait CreditHistoryDataHelper {
   val documentDetailsWhichIsCutOverCredit = DocumentDetail(
     taxYear = 2022, transactionId = "testTransactionId1",
     documentDescription = Some("ITSA Cutover Credits"),
-    documentText = None, outstandingAmount = Some(100.00), originalAmount = Some(-120.00),
+    documentText = None, outstandingAmount = 100.00, originalAmount = -120.00,
     documentDate = LocalDate.of(taxYear, 3, 29)
   )
   val documentDetailsWhichIsMfaCredit = DocumentDetail(taxYear = 2022,
     transactionId = "testTransactionId2",
     documentDescription = Some("TRM New Charge"), documentText = None,
-    outstandingAmount = Some(-150.00), originalAmount = Some(-150.00),
+    outstandingAmount = -150.00, originalAmount = -150.00,
     documentDate = LocalDate.of(taxYear, 3, 29))
 
   val documentDetailsWhichIsBCCredit = DocumentDetail(taxYear = 2022,
     transactionId = "testTransactionId3",
     documentDescription = Some("ITSA- Bal Charge"), documentText = None,
-    outstandingAmount = Some(120.00), originalAmount = Some(-150.00),
+    outstandingAmount = 120.00, originalAmount = -150.00,
     documentDate = LocalDate.of(taxYear, 3, 29))
 
 
   val documentDetailsWhichIsRepaymentInterestCredit = DocumentDetail(taxYear = 2022,
     transactionId = "testTransactionId5",
     documentDescription = Some("SA Repayment Supplement Credit"), documentText = None,
-    outstandingAmount = Some(-250.00), originalAmount = Some(-250.00),
+    outstandingAmount = -250.00, originalAmount = -250.00,
     documentDate = LocalDate.of(taxYear, 3, 29))
 
 
@@ -79,8 +79,8 @@ trait CreditHistoryDataHelper {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
-      DocumentDetail(2022, "testTransactionId6", None, None, None, None, LocalDate.of(taxYear, 3, 29)),
-      DocumentDetail(2022, "testTransactionId7", None, None, None, None, LocalDate.of(taxYear, 3, 31))
+      DocumentDetail(2022, "testTransactionId6", None, None, 0, 0, LocalDate.of(taxYear, 3, 29)),
+      DocumentDetail(2022, "testTransactionId7", None, None, 0, 0, LocalDate.of(taxYear, 3, 31))
     ),
     financialDetails = List(
       FinancialDetail(taxYear = "2022", mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110"), transactionId = Some(documentDetailsWhichIsCutOverCredit.transactionId),
@@ -173,7 +173,7 @@ trait CreditHistoryDataHelper {
     documentDetails = List(
       documentDetailsWhichIsMfaCredit,
       DocumentDetail(taxYear = 2022, transactionId = "testTransactionId8", documentDescription = None,
-        documentText = None, outstandingAmount = None, originalAmount = None, documentDate = LocalDate.of(taxYear, 3, 29)),
+        documentText = None, outstandingAmount = 0, originalAmount = 0, documentDate = LocalDate.of(taxYear, 3, 29)),
       documentDetailsWhichIsBCCredit
     ),
     financialDetails = List(
@@ -233,8 +233,8 @@ trait CreditHistoryDataHelper {
         transactionId = "id",
         documentDescription = Some("documentDescription"),
         documentText = Some("documentText"),
-        originalAmount = Some(-300.00),
-        outstandingAmount = Some(-200.00),
+        originalAmount = -300.00,
+        outstandingAmount = -200.00,
         documentDate = LocalDate.of(2018, 3, 29)
       )
     ),
@@ -250,8 +250,8 @@ trait CreditHistoryDataHelper {
         transactionId = "id",
         documentDescription = Some("documentDescription"),
         documentText = Some("documentText"),
-        originalAmount = Some(-300.00),
-        outstandingAmount = Some(-200.00),
+        originalAmount = -300.00,
+        outstandingAmount = -200.00,
         documentDate = LocalDate.of(2018, 3, 29)
       )
     ),

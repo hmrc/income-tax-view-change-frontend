@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPOA
+package controllers.claimToAdjustPoa
 
 import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.claimToAdjustPoa.PoAAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -28,11 +29,11 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
-  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPOA.routes.WhatYouNeedToKnowController.show(false).url
+  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(false).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPOA.routes.EnterPoAAmountController.show(false).url
-  val selectReasonUrl = controllers.claimToAdjustPOA.routes.SelectYourReasonController.show(false).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(false).url
+  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, false).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
@@ -63,7 +64,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe Right(None)
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe selectReasonUrl
       }
       "User is authorised and has originalAmount < relevantAmount" in {
@@ -91,7 +92,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        sessionService.getMongo.futureValue shouldBe Right(None)
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe enterPOAAmountUrl
       }
     }

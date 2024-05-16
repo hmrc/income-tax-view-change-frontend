@@ -17,7 +17,7 @@
 package repositories
 
 import helpers.ComponentSpecBase
-import models.claimToAdjustPOA.{PoAAmendmentData, PoASessionData}
+import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoASessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
@@ -29,7 +29,7 @@ class PoAAmendmentDataRepositoryISpec extends ComponentSpecBase{
     await(repository.collection.deleteMany(BsonDocument()).toFuture())
   }
 
-  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some("reason X"), newPoAAmount = None)
+  val ammendmentData: PoAAmendmentData = PoAAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = None)
 
   val sessionData: PoASessionData = PoASessionData(
     sessionId = "session-123456",

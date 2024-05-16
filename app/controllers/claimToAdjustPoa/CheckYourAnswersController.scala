@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.claimToAdjustPOA
+package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitCurrencyFormatter
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
@@ -28,7 +26,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val auth: AuthenticatorPredicate,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -41,7 +39,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     auth.authenticatedAction(isAgent) {
       implicit user =>
         Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount")
+          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/check-your-answers")
     }
 
 }

@@ -42,7 +42,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
   }
 
-  "Next Updates page" should {
+  "Opt-out confirm page" should {
 
     "have the correct title" in new Setup(false) {
       pageDocument.title() shouldBe confirmOptOutMessages.title

@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.agent.claimToAdjustPoa
 
-import config.FrontendAppConfig
-import play.api.mvc.Results.Ok
-import play.api.mvc.{Action, AnyContent, Result}
-import utils.AuthenticatorPredicate
+class SelectYourReasonControllerISpec extends controllers.claimToAdjustPoa.SelectYourReasonControllerISpec {
 
-import javax.inject.Inject
-import scala.concurrent.Future
-class OptOutCheckpointController @Inject()(auth: AuthenticatorPredicate) {
+  override val isAgent = true
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest()
-  }
-
-  def handleRequest(): Future[Result] = {
-      Future.successful {
-        Ok("")
-      }
-    }
 
 }
