@@ -49,15 +49,13 @@ trait ClaimToAdjustHelper {
     documentDetail.documentDescription.contains(POA2) &&
       (documentDetail.outstandingAmount != 0)
 
-  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
-    isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
-
   private val taxReturnDeadlineOf: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
+
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
     for {
       poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
@@ -77,8 +75,8 @@ trait ClaimToAdjustHelper {
         poaOneTransactionId  = poaOneDocDetail.transactionId,
         poaTwoTransactionId  = poaTwoDocDetail.transactionId,
         taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne  = poaOneDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")), // TODO: Change field to mandatory MISUV-7556
-        paymentOnAccountTwo  = poaTwoDocDetail.originalAmount.getOrElse(throw MissingFieldException("DocumentDetail.totalAmount")),
+        paymentOnAccountOne  = poaOneDocDetail.originalAmount,
+        paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
         poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
         poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
       )
