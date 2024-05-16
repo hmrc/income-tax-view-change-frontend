@@ -37,6 +37,8 @@
 @(
         isAgent: Boolean,
         redirectUrl: String,
+        changePoaAmountUrl: String,
+        changePoaReasonUrl: String,
         startYear: String = "2024",
         endYear: String = "2025",
 )(
@@ -59,9 +61,9 @@
 
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
-        headingClasses = Some("govuk-heading-xl"),
+        headingClasses = Some("govuk-heading-l"),
         section = Some(getMessage("caption", startYear, endYear)),
-        captionClasses = Some("govuk-caption-xl")
+        captionClasses = Some("govuk-caption-l")
     ))
 
     @govukSummaryList(SummaryList(
@@ -72,8 +74,7 @@
                 value = Value(Text(getMessage("summary-list-1.value"))),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
-                        href = "/",
-                        classes = "govuk-link govuk-body",
+                        href = changePoaReasonUrl,
                         content = HtmlContent(getMessage("summary-list.change")),
                         attributes = Map("id" -> "change")
                     ))
@@ -84,8 +85,7 @@
                 value = Value(Text(getMessage("summary-list-2.value"))),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
-                        href = "/",
-                        classes = "govuk-link govuk-body",
+                        href = changePoaAmountUrl,
                         content = HtmlContent(getMessage("summary-list.change")),
                         attributes = Map("id" -> "change")
                     ))

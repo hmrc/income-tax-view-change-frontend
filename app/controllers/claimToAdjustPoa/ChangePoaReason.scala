@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,26 +27,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                           val auth: AuthenticatorPredicate,
-                                           val checkYourAnswers: CheckYourAnswers,
-                                           implicit val itvcErrorHandler: ItvcErrorHandler,
-                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
+class ChangePoaReason @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                val auth: AuthenticatorPredicate,
+                                implicit val itvcErrorHandler: ItvcErrorHandler,
+                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                               (implicit val appConfig: FrontendAppConfig,
+                                implicit override val mcc: MessagesControllerComponents,
+                                val ec: ExecutionContext)
   extends ClientConfirmedController {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
         Future successful Ok(
-          checkYourAnswers(
-            isAgent = isAgent,
-            redirectUrl = routes.ConfirmationController.show(isAgent).url,
-            changePoaReasonUrl = routes.ChangePoaReason.show(isAgent).url,
-            changePoaAmountUrl = routes.ChangePoaAmount.show(isAgent).url
-          )
+          "TO BE IMPLEMENTED: " +
+            (if (isAgent) "/agents/adjust-poa/change-your-reason"
+            else          "/adjust-poa/change-your-reason")
         )
     }
 }
