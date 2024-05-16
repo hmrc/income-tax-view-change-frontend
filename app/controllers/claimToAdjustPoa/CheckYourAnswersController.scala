@@ -21,6 +21,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,6 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val auth: AuthenticatorPredicate,
+                                           val checkYourAnswers: CheckYourAnswers,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -39,7 +41,9 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
     auth.authenticatedAction(isAgent) {
       implicit user =>
         Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/check-your-answers")
+          checkYourAnswers(
+            isAgent = isAgent
+          )
+        )
     }
-
 }
