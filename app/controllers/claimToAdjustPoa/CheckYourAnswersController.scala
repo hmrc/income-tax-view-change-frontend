@@ -45,12 +45,12 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
             isAgent = isAgent,
             startYear = "2024",
             endYear = "2025",
-            redirectUrl = routes.ConfirmationController.show(isAgent).url,
             adjustedFirstPoaAmount = 3000.00,
             adjustedSecondPoaAmount = 3000.00,
+            poaReason = "My other income will be lower",
+            redirectUrl = routes.ConfirmationController.show(isAgent).url,
             changePoaReasonUrl = routes.ChangePoaReason.show(isAgent).url,
-            changePoaAmountUrl = routes.ChangePoaAmount.show(isAgent).url,
-            poaReason = "My other income will be lower"
+            changePoaAmountUrl = routes.ChangePoaAmount.show(isAgent).url
           )
         )
     }
