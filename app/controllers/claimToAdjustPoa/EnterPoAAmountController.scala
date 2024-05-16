@@ -16,11 +16,14 @@
 
 package controllers.claimToAdjustPoa
 
+import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitCurrencyFormatter
-import play.api.i18n.I18nSupport
+import controllers.routes.HomeController
+import models.core.Nino
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 
@@ -30,18 +33,36 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val auth: AuthenticatorPredicate,
+                                         claimToAdjustService: ClaimToAdjustService,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController {
+  extends ClientConfirmedController with FeatureSwitching {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount")
+        if (isEnabled(AdjustPaymentsOnAccount)) {
+          //need to get docNumber then call FinancialDetailsService.getChargeHistoryDetails
+          //EitherT for API response
+          //viewModel including result of API query
+          val reason = claimToAdjustService.getPoaAdjustmentReason(Nino(user.nino))
+          Future successful Ok(
+            s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount")
+        } else {
+          Future.successful(
+            Redirect(
+              if (isAgent) HomeController.showAgent
+              else HomeController.show()
+            )
+          )
+        }.recover {
+          case ex: Exception =>
+            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
+        }
     }
 
 }

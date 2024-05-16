@@ -16,9 +16,11 @@
 
 package services
 
-import connectors.CalculationListConnector
+import auth.MtdItUser
+import connectors.{CalculationListConnector, FinancialDetailsConnector}
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.DocumentDetail
@@ -87,6 +89,21 @@ trait ClaimToAdjustHelper {
       )
     }
   }
+
+  protected def getChargeHistory(documentDetails: List[DocumentDetail], financialDetailsConnector: FinancialDetailsConnector)
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
+    for {
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
+    } yield {
+      financialDetailsConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
+        case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
+          case Some(detailsList) => Right(detailsList.headOption)
+          case None => Right(None)
+        }
+        case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
+      }
+    }
+  }.getOrElse(Future(Left(new Exception("No document data found for PoA1"))))
 
   protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
                                       (implicit hc: HeaderCarrier, dateService: DateServiceInterface,

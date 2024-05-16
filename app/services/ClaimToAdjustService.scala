@@ -16,19 +16,16 @@
 
 package services
 
+import auth.MtdItUser
 import connectors.{CalculationListConnector, FinancialDetailsConnector}
-import exceptions.MissingFieldException
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.incomeSourceDetails.TaxYear
-import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.core.Nino
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,6 +61,30 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       case Left(ex) => Left(ex)
     }
   }
+
+  def getPoaAdjustmentReason(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+    getPoaForNonCrystallisedFinancialDetails(nino).flatMap {
+      case Right(Some(financialDetails)) =>
+        getChargeHistory(financialDetails.documentDetails, financialDetailsConnector) map {
+          case Right(Some(chargeHistory)) => Right(chargeHistory.poaAdjustmentReason)
+          case Right(None) => Right(None)
+          case Left(ex) => Left(ex)
+        }
+      case Right(None) => Future.successful(Right(None))
+      case Left(ex) => Future.successful(Left(ex))
+    }
+  }
+
+//  def getChargeHistoryModel(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
+//    for {
+//      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+//    } yield res match {
+//      case Right(Some(financialDetails)) =>
+//        val docDeets = financialDetails.documentDetails
+//      case Right(None) => Right(None)
+//      case Left(ex) => Left(ex)
+//    }
+//  }
 
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
