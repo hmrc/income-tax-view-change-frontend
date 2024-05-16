@@ -1,0 +1,66 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.incomeSourceDetails.TaxYear
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukBackLink : GovukBackLink,
+        govukButton : GovukButton
+)
+
+@(isAgent: Boolean, poaTaxYear: TaxYear)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@getMessage(key: String, args: String*) = @{
+ messages(s"claimToAdjustPoa.confirmation.$key", args: _*)
+}
+
+@mainTemplate(pageTitle = getMessage("heading"),
+     backUrl = Some("/"),
+     isAgent = isAgent,
+     btaNavPartial = user.btaNavPartial,
+     useFallbackBackLink = true) {
+
+    <span class="govuk-caption-l" id="caption">@getMessage("caption", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)</span>
+
+    <h1 class="govuk-heading-l" id = Some("h1")>@getMessage("h1")</h1>
+
+    <div class="govuk-button-group">
+
+        @govukButton(Button(
+            id = Some("continue"),
+            content = Text(getMessage("continue")),
+            href = Some("")
+        ))
+        <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
+    </div>
+
+
+}

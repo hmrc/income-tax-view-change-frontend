@@ -1862,6 +1862,14 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gwel
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canslo
 
+# confirmation
+
+claimToAdjustPoa.confirmation.caption                                   =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.h1                                        =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chyflwyno
+claimToAdjustPoa.confirmation.cancel                                    =   Canslo
+
 # select your reason
 
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm

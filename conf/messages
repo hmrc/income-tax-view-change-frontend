@@ -1895,6 +1895,8 @@ claimToAdjustPoa.selectYourReason.continue                              =   Cont
 claimToAdjustPoa.selectYourReason.cancel                                =   Cancel
 claimToAdjustPoa.selectYourReason.error.required                        =   Select the main reason you’re reducing your payments on account
 
+# what you need to know
+
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
 claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
@@ -1907,6 +1909,14 @@ claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Cont
 claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
+
+# confirmation for adjusting poa
+
+claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
+claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 
 
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
