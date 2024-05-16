@@ -64,14 +64,5 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
-  def optOutFromSelectedTaxYear[T](selectedTaxYear: TaxYear, taxYearFun: TaxYear => T)
-                                  (failResult: String => T): T = {
-    if(isOneYearOptOut && availableOptOutYears.nonEmpty && selectedTaxYear == availableOptOutYears.head.taxYear) {
-      taxYearFun(selectedTaxYear)
-    } else {
-      failResult(NO_MESSAGE)
-    }
-  }
-
 }
 

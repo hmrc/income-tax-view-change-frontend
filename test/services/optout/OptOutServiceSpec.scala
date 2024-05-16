@@ -96,7 +96,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear(), currentTaxYear)
+        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear())
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -117,7 +117,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
-        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear(), currentTaxYear)
+        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear())
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

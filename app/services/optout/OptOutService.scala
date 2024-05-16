@@ -101,16 +101,12 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     OptOutData(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
 
-  def makeOptOutUpdateRequestFor(optOutData: OptOutData, selectedTaxYear: TaxYear)(implicit user: MtdItUser[_],
-                                                                shc: HeaderCarrier,
-                                                                ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  def makeOptOutUpdateRequestFor(optOutData: OptOutData)(implicit user: MtdItUser[_],
+                                                         shc: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val apiCall = taxYear => optOutConnector.requestOptOutForTaxYear(taxYear, user.nino)
-    val failMessage = s"for user.nino: ${user.nino}, unable to opt-out of selected tax-year $selectedTaxYear " +
-      s"due to illegal opt-out state: $optOutData"
-    optOutData.optOutFromSelectedTaxYear(selectedTaxYear, apiCall) { _ =>
-      Logger("application").error(failMessage)
-      Future.failed(new RuntimeException(failMessage))
-    }
+    optOutData.optOutForSingleYear((_, singleYear) => {
+      optOutConnector.requestOptOutForTaxYear(singleYear.taxYear, user.nino)
+    }).get
+
   }
 }
