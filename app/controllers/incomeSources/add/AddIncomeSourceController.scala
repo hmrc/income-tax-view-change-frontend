@@ -33,6 +33,7 @@ import views.html.incomeSources.add.AddIncomeSources
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
@@ -78,7 +79,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                     backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(homePageCall))
+      ( (Redirect(homePageCall)) ).asFuture 
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>

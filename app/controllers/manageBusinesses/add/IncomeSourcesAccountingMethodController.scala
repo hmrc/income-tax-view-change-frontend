@@ -35,6 +35,7 @@ import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -75,7 +76,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                 )
             )
           ) flatMap {
-            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+            case true => ( (Redirect(successCall(isAgent, incomeSourceType))) ).asFuture 
             case false => throw new Exception("Failed to set mongo data")
           }
         case None =>
@@ -165,7 +166,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                 )
             )
           ) flatMap {
-            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+            case true => ( (Redirect(successCall(isAgent, incomeSourceType))) ).asFuture 
             case false => throw new Exception("Failed to set mongo data")
           }
         }

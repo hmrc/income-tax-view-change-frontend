@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
@@ -49,7 +50,7 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
             case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
           }
         }
-      case None => Future.successful(Left(new Exception(s"User had no saUtr!")))
+      case None => ( (Left(new Exception(s"User had no saUtr!"))) ).asFuture 
     }
   }
 

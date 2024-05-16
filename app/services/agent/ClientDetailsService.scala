@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector,
@@ -38,17 +39,17 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(_, mtdbsa, _, _, _) =>
-            Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
-          case IncomeSourceDetailsError(NOT_FOUND, _) => Future.successful(Left(BusinessDetailsNotFound))
+            ( (Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa))) ).asFuture 
+          case IncomeSourceDetailsError(NOT_FOUND, _) => ( (Left(BusinessDetailsNotFound)) ).asFuture 
           case _ =>
             Logger("application").error(s"error response from Income Source Details")
-            Future.successful(Left(APIError))
+            ( (Left(APIError)) ).asFuture 
         }
-      case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
-      case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
+      case CitizenDetailsModel(_, _, None) => ( (Left(CitizenDetailsNotFound)) ).asFuture 
+      case CitizenDetailsErrorModel(NOT_FOUND, _) => ( (Left(CitizenDetailsNotFound)) ).asFuture 
       case _=>
         Logger("application").error("error response from Citizen Details")
-        Future.successful(Left(APIError))
+        ( (Left(APIError)) ).asFuture 
     }
 }
 

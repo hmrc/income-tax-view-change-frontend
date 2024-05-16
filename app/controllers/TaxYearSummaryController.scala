@@ -45,6 +45,7 @@ import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
@@ -189,10 +190,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
       case _ =>
         Logger("application").error(s"Could not retrieve financial details for year: $taxYear")
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
+        ( (agentItvcErrorHandler.showInternalServerError()) ).asFuture 
     }
   }
 
@@ -206,10 +207,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case _ =>
         if (isAgent) {
           Logger("application").error(s"Could not retrieve obligations for year: $taxYear")
-          Future.successful(agentItvcErrorHandler.showInternalServerError())
+          ( (agentItvcErrorHandler.showInternalServerError()) ).asFuture 
         } else {
           Logger("application").error(s"[Agent]Could not retrieve obligations for year: $taxYear")
-          Future.successful(itvcErrorHandler.showInternalServerError())
+          ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
         }
     }
   }
@@ -263,7 +264,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       if (taxYear.toString.matches("[0-9]{4}")) {
         handleRequest(taxYear, origin, isAgent = false)
       } else {
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
       }
   }
 
@@ -274,7 +275,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           handleRequest(taxYear, None, isAgent = true)
         }
       } else {
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
+        ( (agentItvcErrorHandler.showInternalServerError()) ).asFuture 
       }
   }
 
@@ -309,8 +310,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => value match {
-          case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value)))
-          case _ => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+          case Some(value) if value.endYear == taxYear => ( (TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value))) ).asFuture 
+          case _ => ( (TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None)) ).asFuture 
         }
         case Left(ex: Throwable) =>
           Logger("application").error(s"[TaxYearSummaryController][claimToAdjustViewModel] There was an error when getting the POA Entry point" +
@@ -318,7 +319,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           Future.failed(ex)
       }
     } else {
-      Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+      ( (TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None)) ).asFuture 
     }
   }
 }

@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
@@ -63,11 +64,11 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
           affinityGroup match {
             case Some(Organisation) => {
               auditingService.audit(IvUpliftRequiredAuditModel("organisation", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
-              Future.successful(Redirect(ivUpliftRedirectUrl))
+              ( (Redirect(ivUpliftRedirectUrl)) ).asFuture 
             }
             case Some(Individual) => {
               auditingService.audit(IvUpliftRequiredAuditModel("individual", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
-              Future.successful(Redirect(ivUpliftRedirectUrl))
+              ( (Redirect(ivUpliftRedirectUrl)) ).asFuture 
             }
             case _ => throw UnsupportedAuthProvider()
           }

@@ -38,6 +38,7 @@ import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeS
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
                                                        val authorisedFunctions: AuthorisedFunctions,
@@ -91,7 +92,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
       case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
         validateTaxYearAndReportingMethod(taxYearModel, ReportingMethod(reportingMethod), id, isAgent, changeTo, incomeSourceType)
-      case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
+      case (_, _, _) => ( (logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId")) ).asFuture 
     }
   }
 
@@ -107,9 +108,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
           handleValidTaxYearAndReportingMethod(taxYearModel, reportingMethod, id, isAgent, changeTo, incomeSourceType)
         } else {
-          Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYearModel"))
+          ( (logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYearModel")) ).asFuture 
         }
-      case None => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details"))
+      case None => ( (logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details")) ).asFuture 
     }
   }
 
@@ -163,7 +164,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         case (Some(taxYearModel), Some(reportingMethod)) =>
           ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
             formWithErrors => {
-              Future.successful(
+              ( (
                 BadRequest(
                   confirmReportingMethod(
                     isAgent = isAgent,
@@ -176,12 +177,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
-              )
+              ) ).asFuture 
             },
-            _ => Future.successful(Redirect(successCall))
+            _ => ( (Redirect(successCall)) ).asFuture 
           )
-        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
-        case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
+        case (None, _) => ( (logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear")) ).asFuture 
+        case (_, None) => ( (logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo")) ).asFuture 
       }
     }
   }

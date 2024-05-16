@@ -38,6 +38,7 @@ import utils.AuthenticatorPredicate
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
@@ -71,7 +72,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, origin)
       case Left(ex) =>
         Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(handleErrorGettingDueDates(isAgent))
+        ( (handleErrorGettingDueDates(isAgent)) ).asFuture 
     } recover {
       case ex =>
         Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")

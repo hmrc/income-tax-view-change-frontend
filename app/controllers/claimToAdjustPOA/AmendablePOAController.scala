@@ -33,6 +33,7 @@ import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -60,18 +61,18 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
               )
             case Right(None) =>
               Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
+              ( (showInternalServerError(isAgent)) ).asFuture 
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)
           }
         } else {
-          Future.successful(
+          ( (
             Redirect(
               if (isAgent) routes.HomeController.showAgent
               else         routes.HomeController.show()
             )
-          )
+          ) ).asFuture 
         } recover {
           case ex: Exception =>
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")

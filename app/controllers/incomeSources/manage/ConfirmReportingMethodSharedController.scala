@@ -41,6 +41,7 @@ import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSour
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
                                                        val authorisedFunctions: AuthorisedFunctions,
@@ -142,7 +143,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
         case (Some(taxYearModel), Some(reportingMethod)) =>
           ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
             formWithErrors => {
-              Future.successful(
+              ( (
                 BadRequest(
                   confirmReportingMethod(
                     isAgent = isAgent,
@@ -155,12 +156,12 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
-              )
+              ) ).asFuture 
             },
             _ => handleValidForm(errorCall, isAgent, successCall, taxYearModel, incomeSourceId, reportingMethod, incomeSourceBusinessName, incomeSourceType)
           )
-        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
-        case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
+        case (None, _) => ( (logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear")) ).asFuture 
+        case (_, None) => ( (logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo")) ).asFuture 
       }
     }
   }
@@ -210,7 +211,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               businessName = incomeSourceBusinessName.getOrElse("Unknown")
             )
           )
-        Future.successful(Redirect(errorCall))
+        ( (Redirect(errorCall)) ).asFuture 
       case _: UpdateIncomeSourceResponseModel =>
         withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
           uiJourneySessionData =>
@@ -231,7 +232,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                   businessName = incomeSourceBusinessName.getOrElse("Unknown")
                 )
               )
-            Future.successful(Redirect(successCall))
+            ( (Redirect(successCall)) ).asFuture 
         }
     }
   } recover {

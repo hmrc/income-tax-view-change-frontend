@@ -34,6 +34,7 @@ import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val itvcErrorHandler: ItvcErrorHandler,
@@ -77,9 +78,9 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       }) getOrElse {
         Logger("application").error(
           s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
       }
     } recover {
       case ex: Exception =>
@@ -110,15 +111,15 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
     }
   }
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
-    Future.successful(Redirect(redirectUrl))
+    ( (Redirect(redirectUrl)) ).asFuture 
   }
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

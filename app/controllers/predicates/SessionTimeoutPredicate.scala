@@ -24,6 +24,7 @@ import controllers.BaseController
 
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponents, val ec: ExecutionContext)
@@ -45,7 +46,7 @@ class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponen
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger("application").warn("Session Time Out.")
-        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout))
+        ( (Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)) ).asFuture 
       case (_, _) => f(Request(request.withHeaders(updatedHeaders), request.body))
     }
   }

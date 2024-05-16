@@ -37,6 +37,7 @@ import views.html.manageBusinesses.add.AddIncomeSourceStartDate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -134,7 +135,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     withIncomeSourcesFS {
       form(messagesPrefix).bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(
+          ( (BadRequest(
             addIncomeSourceStartDate(
               isAgent = isAgent,
               form = formWithErrors,
@@ -143,7 +144,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
               messagesPrefix = messagesPrefix,
               incomeSourceType = incomeSourceType
             )
-          )),
+          )) ).asFuture ,
         formData => handleValidFormData(formData, incomeSourceType, isAgent, isChange)
       )
     }
@@ -185,7 +186,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
             )
         }
       ) flatMap {
-        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
+        case true => ( (Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange))) ).asFuture 
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
       }
     }

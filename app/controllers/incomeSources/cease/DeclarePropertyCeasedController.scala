@@ -35,6 +35,7 @@ import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val view: DeclarePropertyCeased,
@@ -117,7 +118,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-            case Right(_) => Future.successful(result)
+            case Right(_) => ( (result) ).asFuture 
             case Left(exception) => Future.failed(exception)
           }
       }

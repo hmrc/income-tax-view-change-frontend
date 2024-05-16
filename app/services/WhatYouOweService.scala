@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
@@ -104,7 +105,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         case _ => throw new Exception("Error response while getting outstanding charges")
       }
     } else {
-      Future.successful(None)
+      ( (None) ).asFuture 
     }
   }
 

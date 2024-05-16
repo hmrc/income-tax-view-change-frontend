@@ -36,6 +36,7 @@ import views.html.ForecastIncomeSummary
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: ForecastIncomeSummary,
@@ -69,7 +70,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
 
     if (isDisabled(ForecastCalculation)) {
       val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
-      Future.successful(NotFound(errorTemplate))
+      ( (NotFound(errorTemplate)) ).asFuture 
     } else {
       calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
         case liabilityCalc: LiabilityCalculationResponse =>

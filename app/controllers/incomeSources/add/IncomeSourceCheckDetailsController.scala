@@ -36,6 +36,7 @@ import views.html.incomeSources.add.IncomeSourceCheckDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
                                                    val authorisedFunctions: AuthorisedFunctions,
@@ -96,9 +97,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix +
           s"Unable to construct view model for $incomeSourceType")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
     }
   }.recover {
     case ex: Throwable =>
@@ -193,7 +194,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                     )
                 )
               ) flatMap {
-                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case true => ( (Redirect(redirectUrl(isAgent, incomeSourceType))) ).asFuture 
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
@@ -206,9 +207,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Unable to construct view model for $incomeSourceType")
-          Future.successful {
+          (  {
             Redirect(errorRedirectUrl(isAgent, incomeSourceType))
-          }
+          } ).asFuture 
       }
     }
   }.recover {

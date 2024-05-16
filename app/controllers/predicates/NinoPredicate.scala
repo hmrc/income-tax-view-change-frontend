@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton()
 class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
@@ -49,10 +50,10 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>
         Logger("application").debug("NINO retrieved from request")
-        Future.successful(Right(buildMtdUserWithNino(nino)))
+        ( (Right(buildMtdUserWithNino(nino))) ).asFuture 
       case (_, Some(nino)) =>
         Logger("application").debug("NINO retrieved from stored session")
-        Future.successful(Right(buildMtdUserWithNino(nino)))
+        ( (Right(buildMtdUserWithNino(nino))) ).asFuture 
       case (_, _) =>
         Logger("application").debug("NINO not found for user.  Requesting from NinoLookupService")
         ninoLookupService.getNino(request.mtditid).map {

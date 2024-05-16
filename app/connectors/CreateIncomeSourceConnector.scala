@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
@@ -65,13 +66,13 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
       response.json.validate[List[CreateIncomeSourceResponse]].fold(
         errors => {
           Logger("application").error(s"Json validation error parsing business income sources response, error ${JsError.toJson(errors)}")
-          Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}")))
+          ( (Left(CreateIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}"))) ).asFuture 
         },
-        valid => Future.successful(Right(valid))
+        valid => ( (Right(valid)) ).asFuture 
       )
     } else {
       Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
-      Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")))
+      ( (Left(CreateIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))) ).asFuture 
     }
   }
 }

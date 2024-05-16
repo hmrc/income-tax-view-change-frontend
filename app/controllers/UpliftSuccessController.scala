@@ -25,6 +25,7 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfig,
                                         mcc: MessagesControllerComponents,
@@ -36,6 +37,6 @@ class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfi
   def success(origin: String): Action[AnyContent] = (authenticate andThen retrieveNino).async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
-      Future.successful(Redirect(controllers.routes.HomeController.show().url).addingToSession("origin" -> origin))
+      ( (Redirect(controllers.routes.HomeController.show().url).addingToSession("origin" -> origin)) ).asFuture 
   }
 }

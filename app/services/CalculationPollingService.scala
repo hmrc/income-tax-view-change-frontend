@@ -28,6 +28,7 @@ import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, DurationInt, MILLISECONDS}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 
 @Singleton
@@ -55,7 +56,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     } flatMap {
       case Some(statusCode) =>
         Logger("application").debug(s"[CalculationPollingService] - Response received from Calculation service: $statusCode")
-        if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
+        if (!retryableStatusCodes.contains(statusCode)) ( (statusCode) ).asFuture 
         else {
           // V0: Original version
           //pollCalcInIntervals(calcId, nino, taxYear, mtditid, endTimeInMillis)
@@ -72,7 +73,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         }
       case None =>
         Logger("application").info(s"[CalculationPollingService] - Failed to acquire Mongo lock")
-        Future.successful(Status.INTERNAL_SERVER_ERROR)
+        ( (Status.INTERNAL_SERVER_ERROR) ).asFuture 
     }
   }
 
@@ -109,9 +110,9 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {
         if (!retryableStatusCodes.contains(statusCode))
-          Future.successful {
+          (  {
             statusCode
-          }
+          } ).asFuture 
         else // fail future in order to trigger retry
           Future.failed {
             new RuntimeException(s"Fail to evaluate calc response: $statusCode")

@@ -41,6 +41,7 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
@@ -116,7 +117,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
           case _ if isDisabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some(Agent) =>
-            Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+            ( (itvcErrorHandlerAgent.showInternalServerError()) ).asFuture 
           case _ =>
             handleRefundRequest(
               backUrl = "", // TODO: do we need a backUrl
@@ -136,12 +137,12 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
         repaymentService.start(user.nino, balance.flatMap(_.availableCredit)).flatMap {
           case Right(nextUrl) =>
-            Future.successful(Redirect(nextUrl))
+            ( (Redirect(nextUrl)) ).asFuture 
           case Left(_) =>
-            Future.successful(itvcErrorHandler.showInternalServerError())
+            ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
         }
       case _ => Logger("application").error("")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
     }
   }
 

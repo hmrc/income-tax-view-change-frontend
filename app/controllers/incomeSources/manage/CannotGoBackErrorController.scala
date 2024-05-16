@@ -33,6 +33,7 @@ import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val cannotGoBackError: YouCannotGoBackError,
@@ -63,9 +64,9 @@ class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedF
         val errorPrefix = if (isAgent) "[Agent]"
         else ""
         Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
     }
   }
 

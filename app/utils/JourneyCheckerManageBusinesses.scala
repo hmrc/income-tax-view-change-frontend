@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   self =>
@@ -42,41 +43,41 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     (journeyType: JourneyType, useDefault: Boolean) => user => {
       (journeyType.operation, isAgent(user), useDefault) match {
         case (Add, true, true) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType))
-          }
+          } ).asFuture 
         case (Add, true, false) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType))
-          }
+          } ).asFuture 
         case (Add, false, true) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType))
-          }
+          } ).asFuture 
         case (Add, false, false) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
-          }
+          } ).asFuture 
         case (Manage, _, _) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
-          }
+          } ).asFuture 
         case (Cease, true, _) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType))
-          }
+          } ).asFuture 
         case (Cease, false, _) =>
-          Future.successful {
+          (  {
             Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType))
-          }
+          } ).asFuture 
       }
     }
 
   private lazy val journeyRestartUrl: MtdItUser[_] => Future[Result] =
     user => {
-      Future.successful {
+      (  {
         Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent(user)))
-      }
+      } ).asFuture 
     }
 
   private def useDefaultRedirect(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {

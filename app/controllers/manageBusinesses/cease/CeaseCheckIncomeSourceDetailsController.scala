@@ -36,6 +36,7 @@ import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                          val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -79,9 +80,9 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             messagesPrefix = messagesPrefix))
         }
       case None =>
-        Future.successful {
+        (  {
           Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
-        }
+        } ).asFuture 
     }
   }.recover {
     case ex: Exception =>
@@ -150,10 +151,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                                  (implicit user: MtdItUser[_]): Future[Result] = {
     (incomeSourceIdOpt, endDateOpt) match {
       case (Some(incomeSourceId), Some(endDate)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent)
-      case _ => Future.successful {
+      case _ => (  {
         Logger("application").error(s"Missing income source id or end date")
         errorHandler(isAgent).showInternalServerError()
-      }
+      } ).asFuture 
     }
   }
 
@@ -167,15 +168,15 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             updateCessationDate(endDate, incomeSourceType, incomeSourceId, isAgent)
           case None =>
             Logger("application").error(s"Unable to retrieve property income source.")
-            Future.successful {
+            (  {
               errorHandler(isAgent).showInternalServerError()
-            }
+            } ).asFuture 
         }
       case None =>
         Logger("application").error(s"Missing end date")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
     }
   }
 
@@ -192,7 +193,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
           incomeSourceId = incomeSourceId,
           updateIncomeSourceErrorResponse = None))
 
-        Future.successful(Redirect(redirectCall))
+        ( (Redirect(redirectCall)) ).asFuture 
 
       case Left(error) =>
         Logger("application").error("" +
@@ -204,9 +205,9 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
           incomeSourceId = incomeSourceId,
           updateIncomeSourceErrorResponse = Some(error)))
 
-        Future.successful {
+        (  {
           Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
-        }
+        } ).asFuture 
     }
   }
 

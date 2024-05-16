@@ -35,6 +35,7 @@ import views.html.manageBusinesses.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -80,9 +81,9 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
               )
             case (_, _, _, _) =>
               Logger("application").error(s"Missing session values")
-              Future.successful {
+              (  {
                 errorHandler(isAgent).showInternalServerError()
-              }
+              } ).asFuture 
           }
         }
       }
@@ -116,9 +117,9 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
       s"${if (isAgent) "[Agent]"}$message")
-    Future.successful {
+    (  {
       errorHandler(isAgent).showInternalServerError()
-    }
+    } ).asFuture 
   }
 
   def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[IncomeSourceId])(implicit user: MtdItUser[_]): String = {
@@ -155,6 +156,6 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
+    ( (Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent))) ).asFuture 
   }
 }

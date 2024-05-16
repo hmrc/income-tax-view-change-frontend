@@ -36,6 +36,7 @@ import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                     val view: DeclareIncomeSourceCeased,
@@ -80,7 +81,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
           Logger("application").error("IncomeSourceId not found for SelfEmployment")
-          Future.successful { showInternalServerError() }
+          (  { showInternalServerError() } ).asFuture 
         case (_, _, maybeBusinessName) =>
           Future.successful(
             Ok(
@@ -120,7 +121,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
       _ => {
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-            case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, incomeSourceType)))
+            case Right(_) => ( (Redirect(redirectAction(id, isAgent, incomeSourceType))) ).asFuture 
             case Left(exception) => Future.failed(exception)
           }
       }

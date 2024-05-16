@@ -31,6 +31,7 @@ import testOnly.models.Nino
 import testOnly.utils.FileUtil._
 import testOnly.utils.LoginUtil._
 import testOnly.utils.UserRepository
+import utils.Utilities.ToFutureSuccessful
 
 case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
 
@@ -76,7 +77,7 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
           (response.json \ "gatewayToken").asOpt[String]
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
-            Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
+            ( ((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken))) ).asFuture 
           case (token, sessionUri, gatewayToken) =>
             Logger("application").info("HEADERS: " + headers)
             Logger("application").info("response json:" + response.json)

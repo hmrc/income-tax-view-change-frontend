@@ -25,6 +25,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 import scala.concurrent.Future
+import utils.Utilities.ToFutureSuccessful
 
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
@@ -33,17 +34,17 @@ trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
     val redirectToOriginalCall: Result = Redirect(request.path)
 
     if (navBarFsDisabled) {
-      Future.successful(redirectToOriginalCall)
+      ( (redirectToOriginalCall) ).asFuture 
     } else {
-      originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
+      originStringOpt.fold[Future[Result]](ifEmpty = ( (redirectToOriginalCall) ).asFuture )(originString =>
         (OriginEnum(originString), request.session.get(SessionKeys.origin)) match {
           case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
-            Future.successful(
+            ( (
               redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)
-            )
+            ) ).asFuture 
           case (Some(originStringEnum), None) =>
-            Future.successful(redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request))
-          case _ => Future.successful(redirectToOriginalCall)
+            ( (redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request)) ).asFuture 
+          case _ => ( (redirectToOriginalCall) ).asFuture 
         }
       )
     }

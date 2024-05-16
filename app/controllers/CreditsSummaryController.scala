@@ -36,6 +36,7 @@ import views.html.CreditsSummary
 import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
@@ -110,11 +111,11 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       case Left(_) => {
         if (isAgent) {
           Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
-          Future.successful(agentItvcErrorHandler.showInternalServerError())
+          ( (agentItvcErrorHandler.showInternalServerError()) ).asFuture 
         }
         else {
           Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
-          Future.successful(itvcErrorHandler.showInternalServerError())
+          ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
         }
       }
     }

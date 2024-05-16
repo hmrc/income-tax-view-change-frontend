@@ -33,6 +33,7 @@ import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -68,18 +69,18 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
             Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, poa))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-            Future.successful(showInternalServerError(isAgent))
+            ( (showInternalServerError(isAgent)) ).asFuture 
           case Right(None) =>
             Logger("application").error(s"No payment on account data found")
-            Future.successful(showInternalServerError(isAgent))
+            ( (showInternalServerError(isAgent)) ).asFuture 
         }
       } else {
-        Future.successful(
+        ( (
           Redirect(
             if (isAgent) HomeController.showAgent
             else HomeController.show()
           )
-        )
+        ) ).asFuture 
       }.recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")

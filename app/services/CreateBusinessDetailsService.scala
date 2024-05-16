@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
+import utils.Utilities.ToFutureSuccessful
 
 class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
@@ -53,13 +54,13 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     response match {
       case Right(List(incomeSourceId)) =>
         Logger("application").info(s"New income source created successfully: $incomeSourceId")
-        Future.successful(Right(incomeSourceId))
+        ( (Right(incomeSourceId)) ).asFuture 
       case Right(_) =>
         Logger("application").error("failed to create, unexpected response")
-        Future.successful(Left(new Error("Failed to create incomeSources")))
+        ( (Left(new Error("Failed to create incomeSources"))) ).asFuture 
       case Left(incomeSourceError) =>
         Logger("application").error("failed to create")
-        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
+        ( (Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}"))) ).asFuture }
   }
 
   def createRequest(viewModel: CheckDetailsViewModel)(implicit
@@ -108,7 +109,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         createBusiness(requestObject)
       case Left(ex) =>
         Logger("application").error("unable to create request object")
-        Future.successful(Left(ex))
+        ( (Left(ex)) ).asFuture 
     }
   }
 
@@ -133,7 +134,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         createForeignProperty(requestObject)
       case Left(ex) =>
         Logger("application").error("unable to create request object")
-        Future.successful(Left(ex))
+        ( (Left(ex)) ).asFuture 
     }
   }
 
@@ -159,7 +160,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         createUKProperty(requestObject)
       case Left(ex) =>
         Logger("application").error("unable to create request object")
-        Future.successful(Left(ex))
+        ( (Left(ex)) ).asFuture 
     }
   }
 }

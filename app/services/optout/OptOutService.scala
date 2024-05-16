@@ -29,11 +29,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 
 object OptOutService {
   implicit class TypeToFuture[T](t: T) {
-    def toF: Future[T] = Future.successful(t)
+    def toF: Future[T] = ( (t) ).asFuture 
   }
 }
 

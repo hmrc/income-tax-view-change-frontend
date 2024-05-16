@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class CalculationListService @Inject()(calculationListConnector: CalculationListConnector, dateService: DateService)
@@ -47,8 +48,8 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
 
   private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
     calculationListConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+      case res: CalculationListModel => ( (res.crystallised) ).asFuture 
+      case err: CalculationListErrorModel if err.code == 204 => ( (Some(false)) ).asFuture 
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
   }
@@ -56,8 +57,8 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   private def getTYSCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
     val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
     calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
+      case res: CalculationListModel => ( (res.crystallised) ).asFuture 
+      case err: CalculationListErrorModel if err.code == 204 => ( (Some(false)) ).asFuture 
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
   }
@@ -72,7 +73,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     val futureTaxYear = taxYear >= currentTaxYearEnd
     val legacyTaxYear = taxYear <= 2023
     val isCrystallised = (futureTaxYear, legacyTaxYear) match {
-      case (true, _) => Future.successful(Some(false)) /* tax year cannot be crystallised unless it is in the past */
+      case (true, _) => ( (Some(false)) ).asFuture  /* tax year cannot be crystallised unless it is in the past */
       case (_, true) => getLegacyCrystallisationResult(user, taxYear)
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
     }

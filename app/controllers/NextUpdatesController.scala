@@ -34,6 +34,7 @@ import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
@@ -71,7 +72,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
         viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
         result <- (nextUpdates.obligations, isEnabled(OptOut)) match {
           case (Nil, _) =>
-            Future.successful(errorHandler.showInternalServerError())
+            ( (errorHandler.showInternalServerError()) ).asFuture 
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
             optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>

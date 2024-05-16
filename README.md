@@ -95,3 +95,11 @@ Staging:
 Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/session-storage
 Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
 
+
+------------------------------------------------------------------------------------------------------------------------
+ScalaFix re-write rule:
+1. Future.successful(args) => args.asFuture
+2. Add required import to each document impacted;
+
+How to run:
+sbt scalafix --rules=file:/Users/hmrc/devcore/itvc/income-tax-view-change-frontend/rules/FutureSuccessfulRule.scala

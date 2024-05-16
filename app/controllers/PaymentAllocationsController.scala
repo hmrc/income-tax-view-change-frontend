@@ -41,6 +41,7 @@ import views.html.PaymentAllocation
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
@@ -70,7 +71,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             isAgent = false,
             origin = origin
           )
-        } else Future.successful(Redirect(redirectUrlIndividual))
+        } else ( (Redirect(redirectUrlIndividual)) ).asFuture 
     }
 
   def handleRequest(itvcErrorHandler: ShowInternalServerError,
@@ -118,7 +119,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
               isAgent = true
             )
           }
-        } else Future.successful(Redirect(redirectUrlAgent))
+        } else ( (Redirect(redirectUrlAgent)) ).asFuture 
     }
   }
 

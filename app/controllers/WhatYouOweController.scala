@@ -36,6 +36,7 @@ import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                                      val claimToAdjustService: ClaimToAdjustService,
@@ -95,11 +96,11 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
   private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier): Future[WYOClaimToAdjustViewModel] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
-        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
+        case Right(value) => ( (WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value)) ).asFuture 
         case Left(ex: Throwable) => Future.failed(ex)
       }
     } else {
-      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+      ( (WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None)) ).asFuture 
     }
   }
 

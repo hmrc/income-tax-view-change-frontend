@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
@@ -67,7 +68,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(None))
+      case None => ( (Right(None)) ).asFuture 
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))

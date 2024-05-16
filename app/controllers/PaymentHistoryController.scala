@@ -41,6 +41,7 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
@@ -129,9 +130,9 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       case _ if isDisabled(PaymentHistoryRefunds) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case Right(nextUrl) =>
-        Future.successful(Redirect(nextUrl))
+        ( (Redirect(nextUrl)) ).asFuture 
       case Left(_) =>
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
     }
 
   }
@@ -142,7 +143,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         user.userType match {
           case _ if isDisabled(PaymentHistoryRefunds) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+          case Some(Agent) => ( (itvcErrorHandlerAgent.showInternalServerError()) ).asFuture 
           case _ =>
             handleStatusRefundRequest(
               backUrl = "",

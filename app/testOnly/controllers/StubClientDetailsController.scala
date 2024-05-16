@@ -29,6 +29,7 @@ import testOnly.views.html.StubClientDetails
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails,
                                             matchingStubConnector: MatchingStubConnector)
@@ -61,10 +62,10 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
 
   def submit: Action[AnyContent] = Action.async { implicit request =>
     StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(stubClientDetails(
+      hasErrors => ( (BadRequest(stubClientDetails(
         clientDetailsForm = hasErrors,
         postAction = testOnly.controllers.routes.StubClientDetailsController.submit
-      ))), { data =>
+      ))) ).asFuture , { data =>
         matchingStubConnector.stubClient(data) map { response =>
           Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
           Redirect(controllers.agent.routes.EnterClientsUTRController.show)

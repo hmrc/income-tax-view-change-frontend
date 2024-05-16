@@ -40,6 +40,7 @@ import views.html.manageBusinesses.manage.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswers,
@@ -114,7 +115,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
             val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
             handleSubmitRequest(errorCall, isAgent, successCall, TaxYear(startYear = taxYear - 1, endYear = taxYear), incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
-          case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
+          case _ => ( (logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values")) ).asFuture 
         }
       }
     }
@@ -167,7 +168,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           businessName = incomeSourceBusinessName.getOrElse("Unknown")
         )
       )
-    Future.successful(Redirect(errorCall))
+    ( (Redirect(errorCall)) ).asFuture 
   }
 
   private def handleSuccessfulUpdate(errorCall: Call,

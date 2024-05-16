@@ -33,6 +33,7 @@ import views.html.navBar.PtaPartial
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
@@ -48,7 +49,7 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     if (isDisabled(NavBarFs)) {
-      Future.successful(Right(request))
+      ( (Right(request)) ).asFuture 
     } else {
       request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
         saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
@@ -59,11 +60,11 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
-        Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
+        ( (Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig)))) ).asFuture 
       case Some(origin) if OriginEnum(origin) == Some(BTA) =>
         handleBtaNavBar(request)
       case _ =>
-        Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
+        ( (Left(Redirect(appConfig.taxAccountRouterUrl))) ).asFuture 
     }
   }
 

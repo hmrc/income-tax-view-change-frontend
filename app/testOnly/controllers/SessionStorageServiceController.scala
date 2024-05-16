@@ -28,6 +28,7 @@ import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContext,
                                                 implicit override val mcc: MessagesControllerComponents,
@@ -53,14 +54,14 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       case Some(sessionId: SessionId) => post(isAgent = isAgent, sessionId) flatMap {
         case Left(ex) =>
           Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-          Future.successful(handleError(isAgent))
+          ( (handleError(isAgent)) ).asFuture 
         case Right(id: String) =>
           handlePostSuccess(id, isAgent)
       }
       case None =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - HeaderCarrier contained no sessionId!")
-        Future.successful(handleError(isAgent))
+        ( (handleError(isAgent)) ).asFuture 
     }
   }.recover {
     case ex: Throwable =>

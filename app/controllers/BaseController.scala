@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
@@ -37,5 +38,5 @@ abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponen
 
   def redirectToHome: Result = Redirect(controllers.routes.HomeController.show())
 
-  def fRedirectToHome: Future[Result] = Future.successful(redirectToHome)
+  def fRedirectToHome: Future[Result] = ( (redirectToHome) ).asFuture 
 }

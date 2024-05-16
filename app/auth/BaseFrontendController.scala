@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 abstract class BaseFrontendController(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: AgentItvcErrorHandler)
   extends FrontendController(mcc) with I18nSupport {
@@ -86,7 +87,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
             implicit val user: User = userApply(enrolments, affinity, confidence, credentials)
             predicate.apply(request)(user) match {
               case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
-                Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show))
+                ( (Redirect(controllers.agent.routes.EnterClientsUTRController.show)) ).asFuture 
               case Right(AuthPredicateSuccess) =>
                 action(request.withHeaders(updatedHeaders))(user)
               case Left(failureResult) => failureResult

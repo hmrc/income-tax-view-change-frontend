@@ -35,6 +35,7 @@ import views.html.manageBusinesses.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -107,12 +108,12 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
       BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
         formWithErrors =>
-          Future.successful {
+          (  {
             BadRequest(addBusinessView(formWithErrors,
               isAgent,
               getPostAction(isAgent, isChange),
               getBackUrl(isAgent, isChange)))
-          },
+          } ).asFuture ,
         formData => {
           sessionService.setMongoData(
             sessionData.addIncomeSourceData match {
@@ -136,7 +137,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                 )
             }
           ) flatMap {
-            case true  => Future.successful(Redirect(getRedirect(isAgent, isChange)))
+            case true  => ( (Redirect(getRedirect(isAgent, isChange))) ).asFuture 
             case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
         }

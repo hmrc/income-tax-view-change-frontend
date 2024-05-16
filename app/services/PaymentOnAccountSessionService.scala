@@ -22,15 +22,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAAmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
     setMongoData(None).flatMap{ res =>
       if (res)
-        Future.successful(Right(()))
+        ( (Right(())) ).asFuture 
       else
-        Future.successful(Left(new Error("Unable to create mongo session")))
+        ( (Left(new Error("Unable to create mongo session"))) ).asFuture 
     }
   }
 
@@ -58,13 +59,13 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
         setMongoData(Some(newData))
           .flatMap(v => {
             if (v)
-              Future.successful(Right(()))
+              ( (Right(())) ).asFuture 
             else {
-              Future.successful(Left(new Error("Unable to save records")))
+              ( (Left(new Error("Unable to save records"))) ).asFuture 
             }
           })
       case None =>
-        Future.successful(Left(new Error("No active mongo session found")))
+        ( (Left(new Error("No active mongo session found"))) ).asFuture 
     }
   }
 
@@ -80,13 +81,13 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
         setMongoData(Some(newData))
           .flatMap(v => {
             if (v)
-              Future.successful(Right(()))
+              ( (Right(())) ).asFuture 
             else {
-              Future.successful(Left(new Error("Unable to save records")))
+              ( (Left(new Error("Unable to save records"))) ).asFuture 
             }
           })
       case None =>
-        Future.successful(Left(new Error("No active mongo session found")))
+        ( (Left(new Error("No active mongo session found"))) ).asFuture 
     }
   }
 

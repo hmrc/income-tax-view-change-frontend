@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class SignOutController @Inject()(config: FrontendAppConfig,
@@ -36,8 +37,8 @@ class SignOutController @Inject()(config: FrontendAppConfig,
 
   val signOut: Action[AnyContent] = Action.async { implicit request =>
     enrolmentsAuthService.authorised().retrieve(Retrievals.affinityGroup) {
-      case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
-      case _ => Future.successful(config.contactFormServiceIdentifier)
+      case Some(AffinityGroup.Agent) => ( (s"${config.contactFormServiceIdentifier}A") ).asFuture 
+      case _ => ( (config.contactFormServiceIdentifier) ).asFuture 
     }
       .map(contactFormIdentifier => Redirect(config.ggSignOutUrl(contactFormIdentifier)))
       .recover {

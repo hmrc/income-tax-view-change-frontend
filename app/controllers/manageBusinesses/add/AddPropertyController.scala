@@ -29,6 +29,7 @@ import views.html.manageBusinesses.add.AddProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 
 class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
@@ -63,7 +64,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
     val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
     form.apply.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful {
+        (  {
           BadRequest(
             addProperty(
               isAgent = isAgent,
@@ -72,7 +73,7 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
               postAction = postAction
             )
           )
-        },
+        } ).asFuture ,
       formData =>
         handleValidForm(formData, isAgent)
     )
@@ -87,11 +88,11 @@ class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
     val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
 
     formResponse match {
-      case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
-      case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
+      case Some(form.responseUK) => ( (Redirect(ukPropertyUrl)) ).asFuture 
+      case Some(form.responseForeign) => ( (Redirect(foreignPropertyUrl)) ).asFuture 
       case _ =>
         Logger("application").error(s"Unexpected response, isAgent = $isAgent")
-        Future.successful(showInternalServerError(isAgent))
+        ( (showInternalServerError(isAgent)) ).asFuture 
     }
   }
 }

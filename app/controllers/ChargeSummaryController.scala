@@ -42,6 +42,7 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 object ChargeSummaryController {
   case class ErrorCode(message: String)
@@ -105,11 +106,11 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
-          Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
+          ( (onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false)) ).asFuture 
         case Some(error: FinancialDetailsErrorModel) =>
-          Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
+          ( (onError(s"Financial details error :: $error", isAgent, showInternalServerError = true)) ).asFuture 
         case None =>
-          Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
+          ( (onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true)) ).asFuture 
       }
     }
   }
@@ -225,7 +226,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case errorResponse => Left(errorResponse)
       }
     } else {
-      Future.successful(Right(Nil))
+      ( (Right(Nil)) ).asFuture 
     }
   }
 

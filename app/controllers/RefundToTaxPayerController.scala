@@ -37,6 +37,7 @@ import views.html.RefundToTaxPayer
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
@@ -81,7 +82,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      ( (Redirect(controllers.routes.HomeController.show().url)) ).asFuture 
     }
   }
 

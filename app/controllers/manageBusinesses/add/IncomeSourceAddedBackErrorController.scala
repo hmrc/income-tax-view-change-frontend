@@ -30,6 +30,7 @@ import views.html.manageBusinesses.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                      val cannotGoBackError: IncomeSourceAddedBackError,
@@ -47,7 +48,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     val cannotGoBackRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
     else controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
     if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
-      Future.successful(Redirect(cannotGoBackRedirectUrl))
+      ( (Redirect(cannotGoBackRedirectUrl)) ).asFuture 
     }
     else {
       val postAction = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
@@ -87,14 +88,14 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     withSessionData(JourneyType(Add, incomeSourceType), CannotGoBackPage) {
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
-          Future.successful {
+          (  {
             Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
-          }
+          } ).asFuture 
         case None => Logger("application").error(
           "Error: Unable to find id in session")
-          Future.successful {
+          (  {
             (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
-          }
+          } ).asFuture 
       }
     }
 }

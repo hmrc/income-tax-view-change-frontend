@@ -38,6 +38,7 @@ import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -65,7 +66,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
         case SelfEmployment =>
           sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
-          Future.successful(
+          ( (
             (user.incomeSources.properties
               .filter(_.isUkProperty)
               .map(incomeSource => incomeSource.incomeSourceId).headOption match {
@@ -74,9 +75,9 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
               case None =>
                 Left(new Error("IncomeSourceId not found for UK property"))
             }, UkProperty)
-          )
+          ) ).asFuture 
         case ForeignProperty =>
-          Future.successful(
+          ( (
             (user.incomeSources.properties
               .filter(_.isForeignProperty)
               .map(incomeSource => incomeSource.incomeSourceId).headOption match {
@@ -85,7 +86,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
               case None =>
                 Left(new Error("IncomeSourceId not found for Foreign Property"))
             }, ForeignProperty)
-          )
+          ) ).asFuture 
       }
 
       incomeSourceDetails.flatMap {

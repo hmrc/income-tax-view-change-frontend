@@ -26,14 +26,15 @@ import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import scala.concurrent.Future
+import utils.Utilities.ToFutureSuccessful
 
 trait IncomeSourcesUtils extends FeatureSwitching {
 
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+        case Some(Agent) => ( (Redirect(controllers.routes.HomeController.showAgent)) ).asFuture 
+        case _ => ( (Redirect(controllers.routes.HomeController.show())) ).asFuture 
       }
     } else {
       codeBlock

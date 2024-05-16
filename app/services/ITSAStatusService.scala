@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
@@ -39,7 +40,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       taxYear = taxYear.formatTaxYearRange,
       futureYears = futureYears,
       history = history).flatMap {
-      case Right(itsaStatus) => Future.successful(itsaStatus)
+      case Right(itsaStatus) => ( (itsaStatus) ).asFuture 
       case Left(error) =>
         Logger("application").error(s"$error")
         Future.failed(new Exception("Failed to retrieve ITSAStatus"))

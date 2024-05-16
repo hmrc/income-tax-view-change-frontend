@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class CalculationPollingController @Inject()(authenticate: AuthenticationPredicate,
@@ -58,10 +59,10 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
         pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, taxYear, mtditid) flatMap {
           case OK =>
             Logger("application").info(s"Received OK response for calcId: $calculationId")
-            Future.successful(Redirect(successfulPollRedirect))
+            ( (Redirect(successfulPollRedirect)) ).asFuture 
           case _ =>
             Logger("application").info(s"No calculation found for calcId: $calculationId")
-            Future.successful(itvcErrorHandler.showInternalServerError())
+            ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
         } recover {
           case ex: Exception =>
             Logger("application").error(s"Polling failed with exception: ${ex.getMessage} - ${ex.getCause}")
@@ -70,7 +71,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
 
       case _ =>
         Logger("application").error("calculationId and nino not found in session")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        ( (itvcErrorHandler.showInternalServerError()) ).asFuture 
     }
   }
 

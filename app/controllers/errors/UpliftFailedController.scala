@@ -24,6 +24,7 @@ import views.html.errorPages.UpliftFailed
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
                                        mcc: MessagesControllerComponents,
@@ -34,6 +35,6 @@ class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
     if (journeyId.isDefined) {
       auditingService.audit(IvOutcomeFailureAuditModel(journeyId.get))
     }
-    Future.successful(Forbidden(upliftFailedView()))
+    ( (Forbidden(upliftFailedView())) ).asFuture 
   }
 }

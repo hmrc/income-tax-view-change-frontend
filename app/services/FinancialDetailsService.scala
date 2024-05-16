@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class FinancialDetailsService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
@@ -58,7 +59,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
   def getChargeHistoryDetails(mtdBsa: String, docNumber: String)
                              (implicit hc: HeaderCarrier): Future[Option[List[ChargeHistoryModel]]] = {
     financialDetailsConnector.getChargeHistory(mtdBsa, docNumber) flatMap {
-      case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
+      case ok: ChargesHistoryModel => ( (ok.chargeHistoryDetails) ).asFuture 
 
       case error: ChargesHistoryErrorModel =>
         Logger("application").error(s"$error")

@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, implicit val ec: ExecutionContext) {
@@ -48,7 +49,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
         }
       case None =>
         Logger("application").error("Amount is none")
-        Future.successful(Left(RepaymentStartJourneyAmountIsNoneException))
+        ( (Left(RepaymentStartJourneyAmountIsNoneException)) ).asFuture 
 
     }
   }

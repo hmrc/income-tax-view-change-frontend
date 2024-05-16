@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 // TODO: This part of the logic expected to be moved within BE
 // TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
@@ -92,11 +93,11 @@ trait ClaimToAdjustHelper {
                                       (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
                                        calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
     if (taxYear.isFutureTaxYear(dateService)) {
-      Future.successful(true)
+      ( (true) ).asFuture 
     } else {
       calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
-        case err: CalculationListErrorModel if err.code == 204 => Future.successful(false)
+        case res: CalculationListModel => ( (res.crystallised.getOrElse(false)) ).asFuture 
+        case err: CalculationListErrorModel if err.code == 204 => ( (false) ).asFuture 
         case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       }.map(!_)
     }
@@ -105,7 +106,7 @@ trait ClaimToAdjustHelper {
   protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
                                     (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
                                      calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
-    taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
+    taxYearList.foldLeft(( (Option.empty[TaxYear]) ).asFuture ) { (acc, item) =>
       acc.flatMap {
         case Some(_) => acc
         case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {

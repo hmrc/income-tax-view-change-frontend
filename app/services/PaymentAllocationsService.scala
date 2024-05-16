@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
@@ -42,7 +43,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
       case docDetailsWithFDModel: FinancialDetailsWithDocumentDetailsModel
         if docDetailsWithFDModel.documentDetails.head.paymentLot.isEmpty &&
           docDetailsWithFDModel.documentDetails.head.paymentLotItem.isEmpty =>
-        Future.successful(Right(PaymentAllocationViewModel(docDetailsWithFDModel, Seq.empty)))
+        ( (Right(PaymentAllocationViewModel(docDetailsWithFDModel, Seq.empty))) ).asFuture 
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
         financialDetailsConnector.getPaymentAllocations(nino,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
@@ -51,14 +52,14 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
             handlePaymentAllocations(paymentAllocations, documentDetailsWithFinancialDetailsModel)
           case _ =>
             Logger("application").error(s"$functionName Could not retrieve payment allocations with document details")
-            Future.successful(Left(PaymentAllocationError()))
+            ( (Left(PaymentAllocationError())) ).asFuture 
         }
       case paymentAllocation: FinancialDetailsWithDocumentDetailsErrorModel if paymentAllocation.code == 404 =>
         Logger("application").error(s"$functionName payment allocation could not be found")
-        Future.successful(Left(PaymentAllocationError(Some(paymentAllocation.code))))
+        ( (Left(PaymentAllocationError(Some(paymentAllocation.code)))) ).asFuture 
       case _ =>
         Logger("application").error(s"$functionName Could not retrieve document with financial details for payment charge model")
-        Future.successful(Left(PaymentAllocationError()))
+        ( (Left(PaymentAllocationError())) ).asFuture 
     }
   }
 
@@ -76,8 +77,8 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
       val paymentAllocationWithClearingDate = paymentAllocations.allocations map { allocation =>
         AllocationDetailWithClearingDate(Some(allocation), paymentAllocations.transactionDate)
       }
-      Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
-        paymentAllocationWithClearingDate)))
+      ( (Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
+        paymentAllocationWithClearingDate))) ).asFuture 
     }
   }
 

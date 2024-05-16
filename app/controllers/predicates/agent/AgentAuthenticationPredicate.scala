@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 import scala.concurrent.Future
+import utils.Utilities.ToFutureSuccessful
 
 object AgentAuthenticationPredicate extends Results {
 
@@ -37,7 +38,7 @@ object AgentAuthenticationPredicate extends Results {
 
   val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(lastRequestTimestamp).nonEmpty && request.session.get(authToken).isEmpty) {
-      Left(Future.successful(timeoutRoute))
+      Left(( (timeoutRoute) ).asFuture )
     }
     else Right(AuthPredicateSuccess)
 
@@ -51,12 +52,12 @@ object AgentAuthenticationPredicate extends Results {
       && request.session.get(SessionKeys.clientLastName).nonEmpty
       && request.session.get(SessionKeys.clientUTR).nonEmpty) {
       Right(AuthPredicateSuccess)
-    } else Left(Future.successful(noClientDetailsRoute))
+    } else Left(( (noClientDetailsRoute) ).asFuture )
 
   // Redirects to Select Client Page if the agent hasn't confirmed the client
   val selectedClientPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(SessionKeys.confirmedClient).nonEmpty) Right(AuthPredicateSuccess)
-    else Left(Future.successful(noClientDetailsRoute))
+    else Left(( (noClientDetailsRoute) ).asFuture )
 
   def defaultAgentPredicates(onMissingARN: Future[Result] = missingARNFailure): AuthPredicate[IncomeTaxAgentUser] =
     timeoutPredicate |+| arnPredicate(onMissingARN)

@@ -36,6 +36,7 @@ import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
@@ -67,7 +68,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
     PostedUser.form.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
+        ( (BadRequest(s"Invalid form submission: $formWithErrors")) ).asFuture ,
       (postedUser: PostedUser) => {
 
         userRepository.findUser(postedUser.nino).flatMap(
@@ -99,11 +100,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                       errorHandler.showInternalServerError()
                   }
                 } else {
-                  Future.successful(successRedirect(bearer, auth, homePage))
+                  ( (successRedirect(bearer, auth, homePage)) ).asFuture 
                 }
 
               case code =>
-                Future.successful(InternalServerError("something went wrong.." + code))
+                ( (InternalServerError("something went wrong.." + code)) ).asFuture 
             }
         )
       }

@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class SessionService @Inject()(
@@ -133,7 +134,7 @@ class SessionService @Inject()(
 
   def clearSession(sessionId: String)(implicit ec: ExecutionContext): Future[Unit] = {
     uiJourneySessionDataRepository.clearSession(sessionId).flatMap {
-      case true => Future.successful(())
+      case true => ( (()) ).asFuture 
       case false => Future.failed(new Exception("failed to clear session"))
     }
   }

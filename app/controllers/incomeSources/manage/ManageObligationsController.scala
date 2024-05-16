@@ -36,6 +36,7 @@ import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -67,9 +68,9 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
             )
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage}")
-            Future.successful {
+            (  {
               errorHandler(false).showInternalServerError()
-            }
+            } ).asFuture 
         }
       }
   }
@@ -89,9 +90,9 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
             )
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-            Future.successful {
+            (  {
               errorHandler(true).showInternalServerError()
-            }
+            } ).asFuture 
         }
       }
   }
@@ -169,9 +170,9 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
       s"${if (isAgent) "[Agent]"}$message")
-    Future.successful {
+    (  {
       errorHandler(isAgent).showInternalServerError()
-    }
+    } ).asFuture 
   }
 
   def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[IncomeSourceId])(implicit user: MtdItUser[_]): String = {
@@ -209,11 +210,11 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
-      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
+      ( (Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false))) ).asFuture 
   }
 
   def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
+      ( (Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true))) ).asFuture 
   }
 }

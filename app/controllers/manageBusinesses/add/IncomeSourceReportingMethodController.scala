@@ -40,6 +40,7 @@ import views.html.manageBusinesses.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
@@ -92,9 +93,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
-          Future.successful {
+          (  {
             errorHandler(isAgent).showInternalServerError()
-          }
+          } ).asFuture 
       }
     }.recover {
       case ex: Exception =>
@@ -112,9 +113,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
-        Future.successful {
+        (  {
           errorHandler(isAgent).showInternalServerError()
-        }
+        } ).asFuture 
       case true =>
         itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
           case true =>
@@ -129,9 +130,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                 Redirect(redirectUrl(isAgent, incomeSourceType))
             }
           case false =>
-            Future.successful {
+            (  {
               Redirect(redirectUrl(isAgent, incomeSourceType))
-            }
+            } ).asFuture 
         }
     }
   }
@@ -157,22 +158,22 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
     latencyDetails match {
       case Some(LatencyDetails(_, _, _, taxYear2, _)) if taxYear2.toInt < currentTaxYear =>
-        Future.successful(None)
+        ( (None) ).asFuture 
       case Some(LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator)) =>
         calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
           case Some(true) =>
-            Future.successful {
+            (  {
               Some(IncomeSourceReportingMethodViewModel(latencyYear1 = None, latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
-            }
+            } ).asFuture 
           case _ =>
-            Future.successful {
+            (  {
               Some(IncomeSourceReportingMethodViewModel(latencyYear1 = Some(LatencyYear(taxYear1, taxYear1LatencyIndicator)),
                 latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
-            }
+            } ).asFuture 
         }
       case _ =>
         Logger("application").info("Latency details not available")
-        Future.successful(None)
+        ( (None) ).asFuture 
     }
   }
 
@@ -192,9 +193,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Could not find an incomeSourceId in session data for $incomeSourceType")
-          Future.successful {
+          (  {
             errorHandler(isAgent).showInternalServerError()
-          }
+          } ).asFuture 
       }
     }
   }
@@ -244,7 +245,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private def updateReportingMethod(isAgent: Boolean, id: IncomeSourceId, incomeSourceType: IncomeSourceType, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
-    val results = newReportingMethods.foldLeft(Future.successful(Seq.empty[UpdateIncomeSourceResponse])) { (prevFutRes, taxYearSpec) =>
+    val results = newReportingMethods.foldLeft(( (Seq.empty[UpdateIncomeSourceResponse]) ).asFuture ) { (prevFutRes, taxYearSpec) =>
       prevFutRes.flatMap { prevRes =>
         updateIncomeSourceService.updateTaxYearSpecific(user.nino, id.value, taxYearSpec).map { currRes =>
           val isSuccessful = currRes.isInstanceOf[UpdateIncomeSourceResponseModel]

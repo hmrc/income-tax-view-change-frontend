@@ -37,6 +37,7 @@ import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
@@ -62,11 +63,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             case Some(realId) => handleSoleTrader(realId, isAgent)
             case None => Logger("application")
               .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
-              Future.successful(if (isAgent) {
+              ( (if (isAgent) {
                 itvcErrorHandlerAgent.showInternalServerError()
               } else {
                 itvcErrorHandler.showInternalServerError()
-              })
+              }) ).asFuture 
           }
           case _ => handleRequest(
             sources = user.incomeSources,
@@ -143,7 +144,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           Some(List(isTY1Crystallised.get, isTY2Crystallised.get))
         }
       case _ =>
-        Future.successful(None)
+        ( (None) ).asFuture 
     }
   }
 

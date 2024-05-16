@@ -37,6 +37,7 @@ import views.html.manageBusinesses.cease.IncomeSourceEndDate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -218,7 +219,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
             sessionService.setMongoKey(
               CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
             ).flatMap {
-              case Right(_) => Future.successful(result)
+              case Right(_) => ( (result) ).asFuture 
               case Left(_) => Future.failed(new Error(
                 s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
             }
@@ -232,7 +233,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
           journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-          case Right(_) => Future.successful(result)
+          case Right(_) => ( (result) ).asFuture 
           case Left(exception) => Future.failed(exception)
         }
     }
@@ -254,13 +255,13 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           case _ =>
             incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
               hasErrors => {
-                Future.successful(BadRequest(incomeSourceEndDate(
+                ( (BadRequest(incomeSourceEndDate(
                   incomeSourceEndDateForm = hasErrors,
                   postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
                   backUrl = getBackCall(isAgent).url,
                   isAgent = isAgent,
                   incomeSourceType = incomeSourceType
-                )))
+                ))) ).asFuture 
               },
               validatedInput =>
                 handleValidatedInput(

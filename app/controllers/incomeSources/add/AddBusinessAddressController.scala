@@ -36,6 +36,7 @@ import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import utils.Utilities.ToFutureSuccessful
 
 @Singleton
 class AddBusinessAddressController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -114,7 +115,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     val redirect = Redirect(redirectUrl)
 
     addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
-      case true => Future.successful(redirect)
+      case true => ( (redirect) ).asFuture 
       case false => Future.failed(new Exception("failed to set session data"))
     })
 
