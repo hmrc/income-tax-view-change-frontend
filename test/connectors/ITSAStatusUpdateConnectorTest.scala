@@ -33,7 +33,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.OptOutConnector.CorrelationIdHeader
+import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
 import models.optOut.OptOutUpdateRequestModel._
 import org.mockito.ArgumentMatchers
@@ -49,12 +49,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
+class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   implicit val headerCarrier: HeaderCarrier = mock(classOf[HeaderCarrier])
-  val connector = new OptOutConnector(httpClient, appConfig)
+  val connector = new ITSAStatusUpdateConnector(httpClient, appConfig)
 
   val taxYear = TaxYear.forYearEnd(2024)
   val taxableEntityId: String = "AB123456A"
@@ -71,13 +71,13 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutUpdateRequest(taxYear.toString)
+        val apiRequest = OptOutUpdateRequest(taxYear.toString, itsaOptOutUpdateReason)
         val apiResponse = OptOutUpdateResponseSuccess("123", NO_CONTENT)
         val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, itsaOptOutUpdateReason)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess("123", NO_CONTENT)
 
@@ -93,13 +93,13 @@ class OptOutConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAf
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         val correlationId = "123"
-        val apiRequest = OptOutUpdateRequest(taxYear.toString)
+        val apiRequest = OptOutUpdateRequest(taxYear.toString, itsaOptOutUpdateReason)
         val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId)
+        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, itsaOptOutUpdateReason)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
 

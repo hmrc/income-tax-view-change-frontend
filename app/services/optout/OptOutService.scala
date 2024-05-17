@@ -17,14 +17,15 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.OptOutConnector
+import connectors.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Mandated
 import models.itsaStatus.StatusDetail
-import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, itsaOptOutUpdateReason}
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
-import play.mvc.Http.Status.NO_CONTENT
+import play.mvc.Http
+import services.optout.OptOutService.combineByReturningAnyFailureFirstOrAnySuccess
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutService @Inject()(optOutConnector: OptOutConnector,
+class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                               itsaStatusService: ITSAStatusService,
                               calculationListService: CalculationListService,
                               dateService: DateServiceInterface) {
@@ -103,15 +104,36 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
   }
 
   def makeOptOutUpdateRequestFor(optOutData: OptOutData)(implicit user: MtdItUser[_],
-                                                         shc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OptOutUpdateResponse]] = {
-    
+                                                         shc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+
     val optOutYears: Seq[OptOut] = optOutData.availableOptOutYears.size match {
       case 0 => Seq()
       case 1 => optOutData.availableOptOutYears
       case _ => Seq() // TODO use customer selection for multi year
     }
 
-    val responses: Seq[Future[OptOutUpdateResponse]] = optOutYears.map(optOutYear => optOutConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino))
-    Future.sequence(responses)
+    val responses: Seq[Future[OptOutUpdateResponse]] = optOutYears.map(optOutYear =>
+      itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, itsaOptOutUpdateReason))
+    combineByReturningAnyFailureFirstOrAnySuccess(responses)
+  }
+}
+
+object OptOutService {
+  def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+    Some(responses)
+      .filter(isItsaStatusUpdateAttempted)
+      .map(reduceByReturningAnyFailureFirstOrAnySuccess)
+      .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
+        List(ErrorItem("Illegal State","ITSA Status updated requested but no API call was made"))
+      )))
+  }
+
+  private val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
+  private def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+    items.reduce((f1, f2) => f1.flatMap(r1 => f2.map {
+      case r2 if r2.isInstanceOf[OptOutUpdateResponseFailure] => r2
+      case _ if r1.isInstanceOf[OptOutUpdateResponseFailure] => r1
+      case r => r
+    }))
   }
 }

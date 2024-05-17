@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.OptOutConnector.CorrelationIdHeader
+import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
 import models.optOut.OptOutUpdateRequestModel._
 import play.api.Logger
@@ -27,24 +27,23 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object OptOutConnector {
+object ITSAStatusUpdateConnector {
   val CorrelationIdHeader = "CorrelationId"
 }
 
 @Singleton
-class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
-                               (implicit val ec: ExecutionContext) extends RawResponseReads {
+class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
+                                         (implicit val ec: ExecutionContext) extends RawResponseReads {
 
   private val log = Logger("application")
-
 
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
 
-  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
+  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val body = OptOutUpdateRequest(taxYear = taxYear.toString)
+    val body = OptOutUpdateRequest(taxYear = taxYear.toString, updateReason = updateReason)
 
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()

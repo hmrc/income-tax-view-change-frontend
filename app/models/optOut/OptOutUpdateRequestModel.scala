@@ -21,9 +21,9 @@ import play.mvc.Http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 
 object OptOutUpdateRequestModel {
 
-  private val defaultUpdateReason: Int = 10
+  val itsaOptOutUpdateReason: Int = 10
 
-  case class OptOutUpdateRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
+  case class OptOutUpdateRequest(taxYear: String, updateReason: Int)
   sealed trait OptOutUpdateResponse {
     val statusCode: Int
   }
