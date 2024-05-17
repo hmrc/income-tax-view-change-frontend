@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, FinancialDetailsConnector}
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
@@ -75,16 +75,24 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-//  def getChargeHistoryModel(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
-//    for {
-//      res <- getPoaForNonCrystallisedFinancialDetails(nino)
-//    } yield res match {
-//      case Right(Some(financialDetails)) =>
-//        val docDeets = financialDetails.documentDetails
-//      case Right(None) => Right(None)
-//      case Left(ex) => Left(ex)
-//    }
-//  }
+  def getEnterPoAAmountViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PoAAmountViewModel]] = {
+    for {
+      adjustmentReasonMaybe <- getPoaAdjustmentReason(nino)
+      poaModelMaybe <- getPoaForNonCrystallisedTaxYear(nino)
+    } yield (adjustmentReasonMaybe, poaModelMaybe) match {
+      case (Right(reason), Right(Some(model))) =>
+        Right(PoAAmountViewModel(
+          poaPreviouslyAdjusted = reason.isDefined,
+          taxYear = model.taxYear,
+          initialAmountOne = model.poARelevantAmountOne,
+          initialAmountTwo = model.poARelevantAmountTwo,
+          adjustedAmountOne = model.paymentOnAccountOne,
+          adjustedAmountTwo = model.poARelevantAmountTwo))
+      case (Left(ex), _) => Left(ex)
+      case (_, Left(ex)) => Left(ex)
+      case _ => Left(new Exception("Unexpected error when creating Enter PoA Amount view model"))
+    }
+  }
 
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {

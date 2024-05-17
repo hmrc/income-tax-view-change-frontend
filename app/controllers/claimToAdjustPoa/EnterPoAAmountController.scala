@@ -32,13 +32,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                           val auth: AuthenticatorPredicate,
+                                         val auth: AuthenticatorPredicate,
                                          claimToAdjustService: ClaimToAdjustService,
-                                           implicit val itvcErrorHandler: ItvcErrorHandler,
-                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
+                                         implicit val itvcErrorHandler: ItvcErrorHandler,
+                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                        (implicit val appConfig: FrontendAppConfig,
+                                         implicit override val mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching {
 
   def show(isAgent: Boolean): Action[AnyContent] =
@@ -48,9 +48,18 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
           //need to get docNumber then call FinancialDetailsService.getChargeHistoryDetails
           //EitherT for API response
           //viewModel including result of API query
-          val reason = claimToAdjustService.getPoaAdjustmentReason(Nino(user.nino))
-          Future successful Ok(
-            s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount")
+
+          claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
+            case Right(viewModel) =>
+              //val poaPreviouslyAdjusted: Boolean = poaAdjustmentReason.isDefined
+
+              Ok(s"to be implemented: /report-quarterly/income-and-expenses/view/" +
+                s"${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount " +
+                s"poaPreviouslyAdjusted = ${viewModel.poaPreviouslyAdjusted}")
+            case Left(ex) =>
+              Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
+              showInternalServerError(isAgent)
+          }
         } else {
           Future.successful(
             Redirect(
