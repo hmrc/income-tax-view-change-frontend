@@ -48,7 +48,6 @@ class FeatureSwitchService @Inject()(
 
     Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS - ${appConfig.readFeatureSwitchesFromMongo}")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      println("XXXXXXXXXXXXX")
       // TODO: do we need to apply fallback in case can not connect to mongoDb?
       featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
         Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS: ${mongoSwitches}")
