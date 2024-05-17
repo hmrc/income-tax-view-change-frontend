@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
-import views.html.optOut.ConfirmOptOut
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val confirmOptOut: ConfirmOptOut,
+                                        val checkOptOutAnswers: CheckOptOutAnswers,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val retrieveBtaNavBar: NavBarPredicate,
@@ -50,12 +51,12 @@ class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicat
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      Future.successful(Ok(confirmOptOut(false)))
+      Future.successful(Ok(checkOptOutAnswers(false)))
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Ok(confirmOptOut(true)))
+      Future.successful(Ok(checkOptOutAnswers(true)))
   }
 
 }
