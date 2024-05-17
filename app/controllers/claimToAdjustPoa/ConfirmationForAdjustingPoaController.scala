@@ -45,11 +45,13 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                       val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def amountIsZero(poa: PaymentOnAccountViewModel): String = {
+  def amountIsZero(poa: PaymentOnAccountViewModel): Boolean = {
     if (poa.totalAmount > 0) {
-      "val isAmountZero: Boolean = true"
+      val isAmountZero: Boolean = true
+      isAmountZero
     } else {
-      "val isAmountZero: Boolean = false"
+      val isAmountZero: Boolean = false
+      isAmountZero
     }
   }
 
