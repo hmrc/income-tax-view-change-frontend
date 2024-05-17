@@ -22,20 +22,33 @@ import org.jsoup.internal.StringUtil
 import services.optout.OptOutData.NO_MESSAGE
 
 trait OptOut {
-  def canOptOut: Boolean
   val taxYear: TaxYear
+  def canOptOut: Boolean
+  def isValidForUpdate(intent: OptOut): Boolean
 }
 case class CurrentTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear) extends OptOut {
   def canOptOut: Boolean = status == Voluntary
+
+  def isValidForUpdate(intent: OptOut): Boolean = {
+    ???
+  }
 }
 
 case class NextTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, currentTaxYear: CurrentTaxYearOptOut) extends OptOut {
   def canOptOut: Boolean = status == Voluntary ||
     (currentTaxYear.status == Voluntary && status == NoStatus)
+
+  def isValidForUpdate(intent: OptOut): Boolean = {
+    ???
+  }
 }
 
 case class PreviousTaxYearOptOut(status: ITSAStatus, taxYear: TaxYear, crystallised: Boolean) extends OptOut {
   def canOptOut: Boolean = status == Voluntary && !crystallised
+
+  def isValidForUpdate(intent: OptOut): Boolean = {
+    ???
+  }
 }
 
 object OptOutData {
@@ -63,6 +76,10 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
+
+  def optOutYearsToUpdate(intent: OptOut) : Seq[OptOut] = {
+    availableOptOutYears.filter(x => x.isValidForUpdate(intent))
+  }
 
 }
 
