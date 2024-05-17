@@ -65,8 +65,11 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                     changePoaAmountUrl = controllers.claimToAdjustPoa.routes.ChangePoaAmount.show(isAgent).url
                   )
                 ))
-              case _ =>
-                EitherT.rightT(InternalServerError)
+              case _ => EitherT.rightT {
+                Logger("application").error(s"Unexpected Error")
+                val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                errorHandler.showInternalServerError()
+              }
             }
           } fold(
             logAndShowErrorPage(isAgent),
