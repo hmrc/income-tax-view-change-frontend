@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.incomeSourceDetails.TaxYear
 
 @this(
         p: p,
@@ -40,8 +41,7 @@
         changePoaReasonUrl: String,
         adjustedFirstPoaAmount: BigDecimal,
         adjustedSecondPoaAmount: BigDecimal,
-        startYear: String,
-        endYear: String,
+        taxYear: TaxYear,
         poaReason: String
 )(
         implicit request: Request[_],
@@ -64,7 +64,7 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("caption", startYear, endYear)),
+        section = Some(getMessage("caption", taxYear.startYear.toString, taxYear.endYear.toString)),
         captionClasses = Some("govuk-caption-l")
     ))
 
@@ -73,7 +73,7 @@
         rows = Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-1.key"))),
-                value = Value(Text(poaReason)),
+                value = Value(Text(messages(poaReason))),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = changePoaReasonUrl,

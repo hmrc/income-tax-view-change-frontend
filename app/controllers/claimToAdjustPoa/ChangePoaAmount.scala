@@ -42,7 +42,7 @@ class ChangePoaAmount @Inject()(val authorisedFunctions: AuthorisedFunctions,
         Future successful Ok(
           "TO BE IMPLEMENTED: " +
             (if (isAgent) "/agents/adjust-poa/change-poa-amount"
-            else         "/adjust-poa/change-poa-amount")
+            else          "/adjust-poa/change-poa-amount")
         )
     }
 }
