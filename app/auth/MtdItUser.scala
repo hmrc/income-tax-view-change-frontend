@@ -60,7 +60,7 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 userType: Option[AffinityGroup],
                                 arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
 
-case class MtdItUser[A]@Inject()(mtditid: String,
+case class MtdItUser[A](mtditid: String,
                         nino: String,
                         userName: Option[Name],
                         incomeSources: IncomeSourceDetailsModel,
