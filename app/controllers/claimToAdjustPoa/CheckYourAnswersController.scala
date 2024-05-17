@@ -21,7 +21,7 @@ import cats.data.EitherT
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
@@ -51,25 +51,19 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
           withSessionAndPoa(isAgent) { (session, poa) =>
-            (session.poaAdjustmentReason, session.newPoAAmount, poa) match {
-              case (Some(adjustmentReason), Some(newAmount), viewModel) =>
-                EitherT.rightT(Ok(
-                  checkYourAnswers(
-                    isAgent = isAgent,
-                    taxYear = viewModel.taxYear,
-                    adjustedFirstPoaAmount = newAmount,
-                    adjustedSecondPoaAmount = newAmount,
-                    poaReason = adjustmentReason.messagesKey,
-                    redirectUrl = controllers.claimToAdjustPoa.routes.ConfirmationController.show(isAgent).url,
-                    changePoaReasonUrl = controllers.claimToAdjustPoa.routes.ChangePoaReason.show(isAgent).url,
-                    changePoaAmountUrl = controllers.claimToAdjustPoa.routes.ChangePoaAmount.show(isAgent).url
-                  )
-                ))
-              case _ => EitherT.rightT {
-                Logger("application").error(s"Unexpected Error")
-                val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                errorHandler.showInternalServerError()
-              }
+            withValidSession(isAgent, session) { (reason, amount) =>
+              EitherT.rightT(Ok(
+                checkYourAnswers(
+                  isAgent = isAgent,
+                  taxYear = poa.taxYear,
+                  adjustedFirstPoaAmount = amount,
+                  adjustedSecondPoaAmount = amount,
+                  poaReason = reason.messagesKey,
+                  redirectUrl = controllers.claimToAdjustPoa.routes.ConfirmationController.show(isAgent).url,
+                  changePoaReasonUrl = controllers.claimToAdjustPoa.routes.ChangePoaReason.show(isAgent).url,
+                  changePoaAmountUrl = controllers.claimToAdjustPoa.routes.ChangePoaAmount.show(isAgent).url
+                )
+              ))
             }
           } fold(
             logAndShowErrorPage(isAgent),
@@ -90,6 +84,24 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
           else controllers.routes.HomeController.show()
         )
       )
+    }
+  }
+
+  private def withValidSession(isAgent: Boolean, session: PoAAmendmentData)
+                              (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
+                              (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    (session.poaAdjustmentReason, session.newPoAAmount) match {
+      case (Some(reason), Some(amount)) =>
+        block(reason, amount)
+      case (None, _) =>
+        Logger("application").error(s"Payment On Account Adjustment reason missing from session")
+        EitherT.rightT(errorHandler.showInternalServerError())
+      case (_, None) =>
+        Logger("application").error(s"New Payment on Account missing from session")
+        EitherT.rightT(errorHandler.showInternalServerError())
     }
   }
 
