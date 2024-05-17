@@ -76,8 +76,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   def messagesApi: MessagesApi = inject[MessagesApi]
 
-  def featureSwitchingPredicate: FeatureSwitchPredicate = inject[FeatureSwitchPredicate]
-
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)

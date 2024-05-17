@@ -16,15 +16,14 @@
 
 package mocks.services.admin
 
-import org.mockito.Mockito.mock
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import services.IncomeSourceDetailsService
 import services.admin.FeatureSwitchService
+import testUtils.TestSupport
 
 
-trait MockFeatureSwitchService extends BeforeAndAfterEach {
+trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockFeatureSwitchService: FeatureSwitchService = mock(classOf[FeatureSwitchService])
+  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
 
  }

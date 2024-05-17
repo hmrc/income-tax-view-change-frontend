@@ -34,7 +34,7 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
 
   val testAuthenticator = new AuthenticatorPredicate(checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
-    featureSwitchService = mockFeatureSwitchService,
+    featureSwitchService = featureSwitchService,
     authorisedFunctions = mockAuthService,
     retrieveBtaNavBar = MockNavBarPredicate,
     featureSwitchPredicate = MockFeatureSwitchPredicate,

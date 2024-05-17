@@ -110,7 +110,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig, user = csbTestUser) {
+  implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
     override def getCurrentTaxYearEnd: Int = 2023

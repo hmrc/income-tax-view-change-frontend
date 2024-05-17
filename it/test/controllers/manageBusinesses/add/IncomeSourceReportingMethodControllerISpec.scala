@@ -23,7 +23,7 @@ import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSources, TimeMachineAddYear}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsError, LatencyDetails, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion

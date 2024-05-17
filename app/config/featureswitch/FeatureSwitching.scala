@@ -18,7 +18,7 @@ package config.featureswitch
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin.FeatureSwitchName
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 
 trait FeatureSwitching {
 
@@ -55,5 +55,18 @@ trait FeatureSwitching {
       if (isEnabled(feature)) ifEnabled
       else ifDisabled
     }
+  }
+
+  def getFSList: List[FeatureSwitch] = {
+    val fsSize = FeatureSwitchName.allFeatureSwitches.size
+    val a = FeatureSwitchName.allFeatureSwitches.foldLeft[List[FeatureSwitch]](List.empty) { (acc, current) =>
+      if (acc.size != fsSize) {
+        acc :+ FeatureSwitch(current, isEnabled = isEnabledFromConfig(current))
+      } else {
+        acc
+      }
+    }
+//    println("RRRRRRRRRRRR" + a)
+    a
   }
 }
