@@ -20,5 +20,4 @@ class SelectYourReasonControllerISpec extends controllers.claimToAdjustPoa.Selec
 
   override val isAgent = true
 
-
 }

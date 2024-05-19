@@ -37,7 +37,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
 
 
-  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, httpClientMock, messagesApi)
+  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, httpClientMock, messagesApi
 //    , tsTestUser
   )
 

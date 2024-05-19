@@ -20,11 +20,8 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes.HomeController
-import models.core.Nino
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport

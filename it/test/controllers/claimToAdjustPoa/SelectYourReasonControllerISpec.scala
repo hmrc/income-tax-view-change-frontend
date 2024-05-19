@@ -16,10 +16,10 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.AdjustPaymentsOnAccount
 import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, SelectYourReason}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
