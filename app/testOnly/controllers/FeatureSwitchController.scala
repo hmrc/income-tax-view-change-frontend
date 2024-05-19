@@ -21,21 +21,20 @@ import config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import play.twirl.api.Html
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
                                         featureSwitchService: FeatureSwitchService)
                                        (implicit mcc: MessagesControllerComponents,
-                                        val appConfig: FrontendAppConfig)
+                                        val appConfig: FrontendAppConfig,
+                                        ec: ExecutionContext)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"

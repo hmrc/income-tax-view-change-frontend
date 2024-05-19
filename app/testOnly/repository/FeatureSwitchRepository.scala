@@ -16,7 +16,6 @@
 
 package repositories.admin
 
-import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model._
@@ -24,7 +23,6 @@ import play.api.Configuration
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 import uk.gov.hmrc.mongo.transaction.{TransactionConfiguration, Transactions}
-import uk.gov.hmrc.play.http.logging.Mdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
