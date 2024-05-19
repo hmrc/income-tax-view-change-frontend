@@ -4,7 +4,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import testUtils.UnitSpec
 
-class OptOutOptOutPropositionYearsToUpdateSpec extends UnitSpec {
+class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
 
   val currentTaxYear = TaxYear.forYearEnd(2024)
   val previousTaxYear = currentTaxYear.previousYear
