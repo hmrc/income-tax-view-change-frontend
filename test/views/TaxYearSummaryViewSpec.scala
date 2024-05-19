@@ -273,7 +273,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  // TODO: Test TYS page using this and adding a poa view model
   def poaView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = testCTAModel), "testBackURL", isAgent)
 

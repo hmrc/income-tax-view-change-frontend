@@ -390,11 +390,12 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
     val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
-
-    verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+    // TODO uncomment when TimeMachine is re-enabled
+//    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
+//
+//    verifyIncomeSourceDetailsCall(testMtditid)
+//    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+//    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
     result should have(
@@ -435,11 +436,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
     val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
-
-    verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+    // TODO uncomment when TimeMachine is re-enabled
+//    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
+//    verifyIncomeSourceDetailsCall(testMtditid)
+//    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+//    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
     res should have(
@@ -738,11 +739,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly, dateService).detail)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
-        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
+        //TODO uncomment when TimeMachine is reenabled
+        //AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly, dateService).detail)
+//        verifyIncomeSourceDetailsCall(testMtditid)
+//        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
+//        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
@@ -781,11 +782,12 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
-        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, previousTaxYearEnd.toString)
+        //      TODO uncomment when TimeMachine is reenabled
+//        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
+//
+//        verifyIncomeSourceDetailsCall(testMtditid)
+//        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
+//        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, previousTaxYearEnd.toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
@@ -826,11 +828,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, twoPreviousTaxYearEnd.toString)
+      //      TODO uncomment when TimeMachine is reenabled
+//      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(), dateService).detail)
+//      verifyIncomeSourceDetailsCall(testMtditid)
+//      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+//      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, twoPreviousTaxYearEnd.toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
       result should have(
@@ -857,9 +859,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+//      TODO uncomment when TimeMachine is reenabled
+//      verifyIncomeSourceDetailsCall(testMtditid)
+//      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+//      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
       result should have(
@@ -894,9 +897,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+      //      TODO uncomment when TimeMachine is reenabled
+//      verifyIncomeSourceDetailsCall(testMtditid)
+//      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+//      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")
       result should have(

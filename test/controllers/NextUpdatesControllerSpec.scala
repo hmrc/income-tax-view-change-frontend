@@ -397,6 +397,8 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     "the user has all correct details" should {
       "return Status OK (200) when we have obligations" in new AgentTestsSetup {
         disableAllSwitches()
+        disable(OptOut)
+
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()

@@ -103,7 +103,9 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
+  val taxYear1YYtoYYForTimeMachineRemoval: String = s"${(taxYear1).toString.takeRight(2)}-${(taxYear1 + 1).toString.takeRight(2)}"
   val taxYear1YYYYtoYY: String = "20" + taxYear1YYtoYY
+  val taxYear1YYYYtoYYForTimeMachineRemoval: String = "20" + taxYear1YYtoYYForTimeMachineRemoval
   val taxYearYYYYtoYYYY = s"${taxYear1 - 1}-$taxYear1"
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
@@ -195,17 +197,17 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       stubGetITSAStatusDetailsError()
     } else {
       And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
+      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
     }
 
     if (scenario.equals(API1404)) {
       And("API 1404 getListOfCalculationResults returns an error response")
-      CalculationListStub.stubGetLegacyCalculationListError(testNino, taxYear1.toString)
+      CalculationListStub.stubGetLegacyCalculationListError(testNino, (taxYear1 + 1).toString)
     }
 
     if (scenario.equals(API1896)) {
       And("API 1896 getCalculationList returns an error response")
-      CalculationListStub.stubGetCalculationListError(testNino, taxYear1YYtoYY)
+      CalculationListStub.stubGetCalculationListError(testNino, taxYear1YYtoYYForTimeMachineRemoval)
     }
 
     if (scenario.equals(API1776)) {

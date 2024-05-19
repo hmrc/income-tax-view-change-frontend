@@ -80,6 +80,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
     "behave appropriately when the feature switch is on" when {
       "Successfully retrieving a user's payment allocation" in new Setup {
+        disableAllSwitches()
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
@@ -217,6 +218,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     "the PaymentAllocation feature switch is disabled" should {
       "return Not Found" in new Setup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
         mockNotFound()
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())

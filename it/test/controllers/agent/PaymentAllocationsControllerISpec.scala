@@ -145,6 +145,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     s"return $NOT_FOUND" when {
       "the PaymentAllocation feature switch is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        disable(PaymentAllocation)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 

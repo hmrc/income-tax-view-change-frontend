@@ -100,9 +100,10 @@ object FeatureSwitchName {
     Set(ITSASubmissionIntegration, IvUplift, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
       PaymentHistoryRefunds,
+      // TODO: reenable when time machine is re-enabled
 //      TimeMachineAddYear,
       R7cTxmEvents, R7cViewerCodingOutTxmEvents, CalendarQuarterTypes,
-      IncomeSourcesNewJourney, IncomeSources)
+      IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
 
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
