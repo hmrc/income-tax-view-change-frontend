@@ -17,9 +17,8 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, NoStatus, Voluntary}
-import org.jsoup.internal.StringUtil
-import services.optout.OptOutData.NO_MESSAGE
 
 trait OptOut {
   val taxYear: TaxYear
@@ -78,7 +77,18 @@ case class OptOutData(previousTaxYear: PreviousTaxYearOptOut,
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def optOutYearsToUpdate(intent: OptOut) : Seq[OptOut] = {
-    availableOptOutYears.filter(x => x.isValidForUpdate(intent))
+
+    val intentYearAndOnwards = availableOptOutYears.filter(offered => offered.taxYear.isSameAs(intent.taxYear) ||
+      offered.taxYear.isAfter(intent.taxYear))
+
+    val nextYearIsOffered = nextTaxYear.canOptOut
+    val nextYearIsNoStatus = nextTaxYear.status == ITSAStatus.NoStatus
+    val nextYearIsNotIntent = !intent.taxYear.isSameAs(nextTaxYear.taxYear)
+
+    val nextYearShouldBeExcludedFromUpdate = nextYearIsOffered && nextYearIsNoStatus && nextYearIsNotIntent
+    if(nextYearShouldBeExcludedFromUpdate) {
+      intentYearAndOnwards.filter(offered => offered.taxYear.isBefore(nextTaxYear.taxYear))
+    } else intentYearAndOnwards
   }
 
 }
