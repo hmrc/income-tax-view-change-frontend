@@ -37,8 +37,6 @@ object FeatureSwitchName {
   implicit val reads: Reads[FeatureSwitchName] = {
     case name if name == JsString(ITSASubmissionIntegration.name) =>
       JsSuccess(ITSASubmissionIntegration)
-    case name if name == JsString(IvUplift.name) =>
-      JsSuccess(IvUplift)
     case name if name == JsString(ChargeHistory.name) =>
       JsSuccess(ChargeHistory)
     case name if name == JsString(PaymentAllocation.name) =>
@@ -97,7 +95,7 @@ object FeatureSwitchName {
   }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
-    Set(ITSASubmissionIntegration, IvUplift, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
+    Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
       PaymentHistoryRefunds,
       // TODO: reenable when time machine is re-enabled
@@ -112,11 +110,6 @@ object FeatureSwitchName {
 case object ITSASubmissionIntegration extends FeatureSwitchName {
   override val name: String = "itsa-submission-integration"
   override def toString: String = "ITSA Submission Integration"
-}
-
-case object IvUplift extends FeatureSwitchName {
-  override val name = "iv-uplift"
-  override def toString: String = "IV Uplift"
 }
 
 case object ChargeHistory extends FeatureSwitchName {
