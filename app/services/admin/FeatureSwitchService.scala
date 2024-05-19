@@ -66,7 +66,12 @@ class FeatureSwitchService @Inject()(
   }
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] =
-    featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
+    } else {
+      setFS(featureSwitchName, enabled)
+      Future.successful(true)
+    }
 
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] =
     featureSwitchRepository.setFeatureSwitches(featureSwitches)

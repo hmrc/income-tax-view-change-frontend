@@ -63,7 +63,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         )
       )
     }
-
   }
 
   // TODO: refactor next method

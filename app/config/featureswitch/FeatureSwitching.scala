@@ -50,6 +50,13 @@ trait FeatureSwitching {
   def disable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 
+  def setFS(featureSwitchName: FeatureSwitchName, enabled: Boolean): Unit = {
+    if (enabled) {
+      enable(featureSwitchName)
+    } else {
+      disable(featureSwitchName)
+    }
+  }
   protected implicit class FeatureOps(feature: FeatureSwitchName)(implicit user: MtdItUser[_]) {
     def fold[T](ifEnabled: => T, ifDisabled: => T): T = {
       if (isEnabled(feature)) ifEnabled
