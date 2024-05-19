@@ -4,7 +4,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class OptOutDataTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
+class OptOutPropositionTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
 
   "OptOutData" when {
 

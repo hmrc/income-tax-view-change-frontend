@@ -4,7 +4,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import testUtils.UnitSpec
 
-class OptOutDataYearsToUpdateSpec extends UnitSpec {
+class OptOutOptOutPropositionYearsToUpdateSpec extends UnitSpec {
 
   val currentTaxYear = TaxYear.forYearEnd(2024)
   val previousTaxYear = currentTaxYear.previousYear
@@ -17,9 +17,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is PY" when {
           "NY is known i.e. one of A,V" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -42,9 +42,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is CY" when {
           "NY is known i.e. one of A,V" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -68,9 +68,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is NY" when {
           "NY is known i.e. one of A,V" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -94,9 +94,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is PY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -120,9 +120,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is CY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -146,9 +146,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is NY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -172,9 +172,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is CY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -197,9 +197,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is NY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -222,9 +222,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is PY" when {
           s"NY is ${ITSAStatus.Voluntary}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -247,9 +247,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is PY" when {
           s"NY is ${ITSAStatus.NoStatus}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -272,9 +272,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is PY" when {
           s"NY is ${ITSAStatus.Mandated}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -297,9 +297,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is CY" when {
           s"NY is ${ITSAStatus.Mandated}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
@@ -322,9 +322,9 @@ class OptOutDataYearsToUpdateSpec extends UnitSpec {
         "customer intent is NY" when {
           s"NY is ${ITSAStatus.Voluntary}" in {
 
-            val previousTaxYearOptOut = PreviousTaxYearOptOut(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentTaxYearOptOut(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextTaxYearOptOut(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
+            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
+            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
 
             val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 

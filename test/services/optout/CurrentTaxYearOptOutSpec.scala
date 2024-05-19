@@ -9,21 +9,21 @@ class CurrentTaxYearOptOutSpec extends UnitSpec {
   "CurrentTaxYearOptOut" should {
     "offer opt-out" when {
       s"current year is ${ITSAStatus.Voluntary}" in {
-        CurrentTaxYearOptOut(ITSAStatus.Voluntary, TaxYear.forYearEnd(2024)).canOptOut shouldBe true
+        CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2024)).canOptOut shouldBe true
       }
     }
 
     "not offer opt-out" when {
       s"current year is ${ITSAStatus.Mandated}" in {
-        CurrentTaxYearOptOut(ITSAStatus.Mandated, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
+        CurrentOptOutTaxYear(ITSAStatus.Mandated, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
       }
 
       s"current year is ${ITSAStatus.Annual}" in {
-        CurrentTaxYearOptOut(ITSAStatus.Annual, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
+        CurrentOptOutTaxYear(ITSAStatus.Annual, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
       }
 
       s"current year is ${ITSAStatus.NoStatus}" in {
-        CurrentTaxYearOptOut(ITSAStatus.NoStatus, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
+        CurrentOptOutTaxYear(ITSAStatus.NoStatus, TaxYear.forYearEnd(2024)).canOptOut shouldBe false
       }
     }
   }

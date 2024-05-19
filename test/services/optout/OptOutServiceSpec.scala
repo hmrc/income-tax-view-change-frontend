@@ -73,7 +73,7 @@ class OptOutServiceSpec extends UnitSpec
 
   val error = new RuntimeException("Some Error")
 
-  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
+  val service = new OptOutPropositionService(optOutConnector, itsaStatusService, calculationListService, dateService)
 
   before {
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
@@ -96,7 +96,9 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear())
+        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val intent = proposition.availableOptOutYears.head
+        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -117,7 +119,9 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
-        val result = service.makeOptOutUpdateRequestFor(OptOutTestSupport.buildOneYearOptOutDataForCurrentYear())
+        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val intent = proposition.availableOptOutYears.head
+        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

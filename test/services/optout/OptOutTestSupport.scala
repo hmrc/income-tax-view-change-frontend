@@ -5,68 +5,68 @@ import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 
 object OptOutTestSupport {
 
-  def buildOneYearOptOutDataForPreviousYear(chosenCurrentYear: Int = 2024): OptOutData = {
+  def buildOneYearOptOutDataForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
-    val previousTaxYearOptOut = PreviousTaxYearOptOut(Voluntary, previousYear,  crystallised = false)
-    val currentTaxYearOptOut = CurrentTaxYearOptOut(Mandated, currentYear)
-    val extTaxYearOptOut = NextTaxYearOptOut(Mandated, nextYear, currentTaxYearOptOut)
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Mandated, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
 
-    OptOutData(
+    OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
       extTaxYearOptOut
     )
   }
 
-  def buildOneYearOptOutDataForCurrentYear(chosenCurrentYear: Int = 2024): OptOutData = {
+  def buildOneYearOptOutDataForCurrentYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
-    val previousTaxYearOptOut = PreviousTaxYearOptOut(Voluntary, previousYear,  crystallised = true)
-    val currentTaxYearOptOut = CurrentTaxYearOptOut(Voluntary, currentYear)
-    val extTaxYearOptOut = NextTaxYearOptOut(Mandated, nextYear, currentTaxYearOptOut)
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = true)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
 
-    OptOutData(
+    OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
       extTaxYearOptOut
     )
   }
 
-  def buildOneYearOptOutDataForNextYear(chosenCurrentYear: Int = 2024): OptOutData = {
+  def buildOneYearOptOutDataForNextYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
-    val previousTaxYearOptOut = PreviousTaxYearOptOut(Voluntary, previousYear,  crystallised = true)
-    val currentTaxYearOptOut = CurrentTaxYearOptOut(Mandated, currentYear)
-    val extTaxYearOptOut = NextTaxYearOptOut(Voluntary, nextYear, currentTaxYearOptOut)
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = true)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Mandated, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
 
-    OptOutData(
+    OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
       extTaxYearOptOut
     )
   }
 
-  def buildMultiYearOptOutData(chosenCurrentYear: Int = 2024): OptOutData = {
+  def buildMultiYearOptOutData(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
-    val previousTaxYearOptOut = PreviousTaxYearOptOut(Voluntary, previousYear,  crystallised = false)
-    val currentTaxYearOptOut = CurrentTaxYearOptOut(Voluntary, currentYear)
-    val extTaxYearOptOut = NextTaxYearOptOut(Voluntary, nextYear, currentTaxYearOptOut)
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
 
-    OptOutData(
+    OptOutProposition(
       previousTaxYearOptOut,
       currentTaxYearOptOut,
       extTaxYearOptOut
