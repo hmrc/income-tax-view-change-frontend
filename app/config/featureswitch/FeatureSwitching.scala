@@ -58,13 +58,8 @@ trait FeatureSwitching {
   }
 
   def getFSList: List[FeatureSwitch] = {
-    val fsSize = FeatureSwitchName.allFeatureSwitches.size
-    FeatureSwitchName.allFeatureSwitches.foldLeft[List[FeatureSwitch]](List.empty) { (acc, current) =>
-      if (acc.size != fsSize) {
-        acc :+ FeatureSwitch(current, isEnabled = isEnabledFromConfig(current))
-      } else {
-        acc
-      }
+    FeatureSwitchName.allFeatureSwitches.toList.map { currentFS =>
+      FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
 }

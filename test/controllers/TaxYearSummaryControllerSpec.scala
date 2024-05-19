@@ -79,7 +79,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     auditingService = mockAuditingService,
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
-    featureSwitchPredicate = MockFeatureSwitchPredicate
+    featureSwitchPredicate = FeatureSwitchPredicate
   )(appConfig,
     app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],
@@ -873,7 +873,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "calls to retrieve data were successful with No Obligations and Referer was a Home page" should {
       "show the Tax Year Summary Page and back link to the Home page" in {
         enable(CodingOut)
-        disable(AdjustPaymentsOnAccount)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()

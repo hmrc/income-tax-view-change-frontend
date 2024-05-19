@@ -37,7 +37,7 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     featureSwitchService = featureSwitchService,
     authorisedFunctions = mockAuthService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    featureSwitchPredicate = MockFeatureSwitchPredicate,
+    featureSwitchPredicate = FeatureSwitchPredicate,
     retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService)(
     app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)

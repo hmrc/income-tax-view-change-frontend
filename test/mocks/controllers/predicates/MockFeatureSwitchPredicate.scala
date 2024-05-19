@@ -23,6 +23,6 @@ import testUtils.TestSupport
 
 trait MockFeatureSwitchPredicate extends TestSupport with MockFeatureSwitchService with MockAsyncCacheApi {
 
-  object MockFeatureSwitchPredicate extends FeatureSwitchPredicate(featureSwitchService)(appConfig, ec, messagesApi)
+  object FeatureSwitchPredicate extends FeatureSwitchPredicate(featureSwitchService)(appConfig, ec, messagesApi)
 
 }
