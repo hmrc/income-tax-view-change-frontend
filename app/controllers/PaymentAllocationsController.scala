@@ -22,7 +22,6 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
@@ -93,7 +92,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
           val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
             .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-          val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
+          val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
               CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
               isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,

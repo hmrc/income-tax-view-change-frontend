@@ -508,11 +508,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 0,
+          "originalAmount" -> 1200.00,
           "documentText" -> "documentText",
           "documentDueDate" -> "2021-04-15",
           "formBundleNumber" -> "88888888",
-          "totalAmount" -> 1200,
-          "documentOutstandingAmount" -> 1200,
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
           "paymentLotItem" -> "5",
@@ -574,13 +574,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       transactionId = "1040000124",
       documentDescription = Some("TRM New Charge"),
       documentText = Some("documentText"),
-      originalAmount = Some(1200),
-      outstandingAmount = Some(1200),
+      originalAmount = 1200,
+      outstandingAmount = 1200,
       documentDate = LocalDate.of(2018, 3, 29),
       effectiveDateOfPayment = Some(LocalDate.parse("2018-03-30")),
       documentDueDate = Some(LocalDate.parse("2018-03-30"))
     )
-    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
+    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = 0)
 
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")

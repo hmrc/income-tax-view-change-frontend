@@ -18,14 +18,12 @@ package views.nextUpdates
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.nextUpdates._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel, TaxYearITSAStatus}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.FinancialDetailsTestConstants.{currentYear, currentYearMinusOne}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
 import views.html.nextUpdates.NextUpdatesOptOut

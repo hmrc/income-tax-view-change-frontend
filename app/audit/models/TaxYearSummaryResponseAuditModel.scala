@@ -99,7 +99,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail),
       "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
-      ("amount", docDateDetail.documentDetail.originalAmount) ++
+      ("amount", Option(docDateDetail.documentDetail.originalAmount)) ++
       ("dueDate", docDateDetail.dueDate)
   }
 

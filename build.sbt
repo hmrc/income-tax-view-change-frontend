@@ -3,9 +3,9 @@ import play.sbt.routes.RoutesKeys
 import sbt.*
 import sbt.Keys.libraryDependencySchemes
 import uk.gov.hmrc.DefaultBuildSettings.*
-import uk.gov.hmrc.{DefaultBuildSettings, SbtAutoBuildPlugin}
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+import uk.gov.hmrc.{DefaultBuildSettings, SbtAutoBuildPlugin}
 
 val appName = "income-tax-view-change-frontend"
 
@@ -45,6 +45,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
+  "org.scalatestplus"      %% "scalacheck-1-15"         % "3.2.11.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion"  % bootstrapPlayVersion % "test",
   caffeine,
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0"

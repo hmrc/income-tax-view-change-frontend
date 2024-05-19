@@ -23,6 +23,8 @@ import forms.incomeSources.add.BusinessNameForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
@@ -51,6 +53,18 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
+  def backUrl(isChange: Boolean, isAgent: Boolean): String = {
+    if (isChange) {
+      if (isAgent) {
+        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+      } else {
+        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      }
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+    }
+  }
+
 
   s"calling GET $addBusinessNameShowUrl" should {
     "render the Add Business Name page" when {
@@ -63,6 +77,9 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $addBusinessNameShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessName(clientDetailsWithConfirmation)
+
+        lazy val document: Document = Jsoup.parse(result.body)
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false, isAgent = true)
 
         result should have(
           httpStatus(OK),
@@ -149,6 +166,9 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $changeBusinessNameShowUrl")
         val result = IncomeTaxViewChangeFrontend.getChangeBusinessName(clientDetailsWithConfirmation)
+
+        lazy val document: Document = Jsoup.parse(result.body)
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true, isAgent = true)
 
         result should have(
           httpStatus(OK),

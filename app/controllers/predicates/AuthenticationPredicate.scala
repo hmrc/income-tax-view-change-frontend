@@ -19,11 +19,10 @@ package controllers.predicates
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import models.OriginEnum
-import models.admin.IvUplift
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
@@ -54,16 +53,13 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   override val executionContext: ExecutionContext = mcc.executionContext
   val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
-
     implicit val hc: HeaderCarrier = headerExtractor.extractHeader(request, request.session)
-
     implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-      case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
-        if (confidenceLevel.level < requiredConfidenceLevel && isEnabledFromConfig(IvUplift)) {
+      case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
+        if (confidenceLevel.level < requiredConfidenceLevel) {
           affinityGroup match {
             case Some(Organisation) => {
               auditingService.audit(IvUpliftRequiredAuditModel("organisation", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
@@ -76,7 +72,6 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
             case _ => throw UnsupportedAuthProvider()
           }
         } else f(buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup))
-      }
     } recover {
       case _: InsufficientEnrolments =>
         Logger("application").info("No HMRC-MTD-IT Enrolment and/or No NINO.")

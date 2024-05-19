@@ -64,7 +64,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   val testCharges: List[DocumentDetail] = List(
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
-      outstandingAmount = Some(-1400.00),
+      outstandingAmount = -1400.00,
       paymentLotItem = None,
       paymentLot = None
     )

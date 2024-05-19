@@ -25,12 +25,12 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
+import testConstants.claimToAdjustPoa.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import scala.language.reflectiveCalls
 import java.time.LocalDate
-import models.claimToAdjustPOA.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector {
 
