@@ -21,7 +21,7 @@ import connectors.{CalculationListConnector, FinancialDetailsConnector}
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoADataWithPaymentStatus}
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
@@ -86,29 +86,6 @@ trait ClaimToAdjustHelper {
         paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
         poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
         poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
-      )
-    }
-  }
-
-  protected def getPoADataWithPaymentStatus(documentDetails: List[DocumentDetail]): Option[PoADataWithPaymentStatus] = {
-    for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
-      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
-    } yield {
-
-      Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
-
-      PoADataWithPaymentStatus(
-        poaOneTransactionId = poaOneDocDetail.transactionId,
-        poaTwoTransactionId = poaTwoDocDetail.transactionId,
-        taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne = poaOneDocDetail.originalAmount,
-        paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
-        poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-        poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-        //eitherPoAIsPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
       )
     }
   }

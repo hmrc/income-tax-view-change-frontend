@@ -17,10 +17,9 @@
 package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes.HomeController
 import forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.{Increase, PoAAmountViewModel}
 import models.core.Nino
@@ -28,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.EnterPoAAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -45,12 +44,13 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                                         (implicit val appConfig: FrontendAppConfig,
                                          implicit override val mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching {
+  extends ClientConfirmedController with FeatureSwitching with ClaimToAdjustUtils{
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        if (isEnabled(AdjustPaymentsOnAccount)) {
+        ifAdjustPoaIsEnabled(isAgent) {
+          //TODO: Add check for valid mongo
           claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
             case Right(viewModel) =>
               Ok(view(EnterPoaAmountForm.form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))
@@ -58,13 +58,6 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
               Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
               showInternalServerError(isAgent)
           }
-        } else {
-          Future.successful(
-            Redirect(
-              if (isAgent) HomeController.showAgent
-              else HomeController.show()
-            )
-          )
         }.recover {
           case ex: Exception =>
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
@@ -74,10 +67,12 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
-      handleSubmitRequest(isAgent)
+      ifAdjustPoaIsEnabled(isAgent) {
+        handleSubmitRequest(isAgent)
+      }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] =
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
       claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).flatMap {
         case Right(viewModel) =>
           EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.adjustedAmountOne, viewModel.initialAmountOne).fold(
@@ -93,8 +88,9 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
           Future.successful(showInternalServerError(isAgent))
       }
+  }
 
-  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+      def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.adjustedAmountOne) match {
       case (true, true) => sessionService.setAdjustmentReason(Increase).map{
         case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")

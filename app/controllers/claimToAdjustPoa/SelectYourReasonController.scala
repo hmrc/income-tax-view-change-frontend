@@ -19,10 +19,8 @@ package controllers.claimToAdjustPoa
 import auth.MtdItUser
 import cats.data.EitherT
 import com.google.inject.Singleton
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
@@ -31,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
@@ -51,7 +49,7 @@ class SelectYourReasonController @Inject()(
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching  {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils{
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
@@ -130,21 +128,6 @@ class SelectYourReasonController @Inject()(
       }
     } yield {
       redirect
-    }
-  }
-
-  private def ifAdjustPoaIsEnabled(isAgent: Boolean)
-                                  (block: Future[Result])
-                                  (implicit user: MtdItUser[_]): Future[Result] = {
-    if(isEnabled(AdjustPaymentsOnAccount)) {
-      block
-    } else {
-      Future.successful(
-        Redirect(
-          if (isAgent) routes.HomeController.showAgent
-          else         routes.HomeController.show()
-        )
-      )
     }
   }
 

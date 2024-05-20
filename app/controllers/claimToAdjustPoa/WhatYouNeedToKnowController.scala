@@ -17,18 +17,16 @@
 package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes.HomeController
-import models.core.Nino
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +43,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils {
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
@@ -57,7 +55,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      if (isEnabled(AdjustPaymentsOnAccount)) {
+      ifAdjustPoaIsEnabled(isAgent) {
         {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
@@ -73,13 +71,6 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
             Logger("application").error(s"No payment on account data found")
             Future.successful(showInternalServerError(isAgent))
         }
-      } else {
-        Future.successful(
-          Redirect(
-            if (isAgent) HomeController.showAgent
-            else HomeController.show()
-          )
-        )
       }.recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
