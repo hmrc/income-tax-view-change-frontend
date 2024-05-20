@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import connectors.OptOutConnector
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.Mandated
+import models.itsaStatus.ITSAStatus.{Annual, Mandated}
 import models.itsaStatus.StatusDetail
 import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponse
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
@@ -58,20 +58,37 @@ class OptOutService @Inject()(optOutConnector: OptOutConnector,
     } yield optOutChecks
   }
 
-  def nextUpdatesPageOneYearOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
+
+  private def optOutOneYearViewModel[T](function: (OptOutData, OptOut) => T)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[T]] = {
     setupOptOutData()
-      .map(optOutData => optOutData.optOutForSingleYear((optOutData, optOutYear) => {
+      .map(optOutData => optOutData.optOutForSingleYear(function))
+      .recover({
+        case e =>
+          Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
+          None
+      })
+  }
+
+  def nextUpdatesPageOneYearOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
+    optOutOneYearViewModel((optOutData, optOutYear) => {
         val showWarning = optOutData match {
           case OptOutData(previousTaxYear, currentTaxYear, _) if previousTaxYear == optOutYear && currentTaxYear.status == Mandated => true
           case OptOutData(_, currentTaxYear, nextTaxYear) if currentTaxYear == optOutYear && nextTaxYear.status == Mandated => true
           case _ => false
         }
         OptOutOneYearViewModel(optOutYear.taxYear, showWarning)
-      }))
-      .recover({
-        case e =>
-          Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
-          None
+    })
+  }
+
+  def optOutCheckPointPageViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutOneYearViewModel]] = {
+    optOutOneYearViewModel((optOutData, optOutYear) => {
+      val showWarning = optOutData match {
+        case OptOutData(previousTaxYear, currentTaxYear, _) if previousTaxYear == optOutYear && currentTaxYear.status == Annual => true
+        case OptOutData(_, currentTaxYear, nextTaxYear) if currentTaxYear == optOutYear && nextTaxYear.status == Annual => true
+        case OptOutData(_, _, nextTaxYear) if nextTaxYear == optOutYear => true
+        case _ => false
+      }
+      OptOutOneYearViewModel(optOutYear.taxYear, showWarning)
       })
   }
 
