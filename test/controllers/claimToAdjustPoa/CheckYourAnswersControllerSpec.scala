@@ -84,18 +84,7 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
   "SelectYourReasonController.show" should {
 
     s"return status $SEE_OTHER and redirect to the home page" when {
-      "AdjustPaymentsOnAccount FS is disabled when user is an agent" in {
-        setupTest(
-          enablePaymentsOnAccountFS = false,
-          sessionResponse = Right(Some(validSession)),
-          claimToAdjustResponse = poa
-        )
-
-        val result = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-      "AdjustPaymentsOnAccount FS is disabled when user is not an agent" in {
+      "AdjustPaymentsOnAccount FS is disabled" in {
         setupTest(
           enablePaymentsOnAccountFS = false,
           sessionResponse = Right(Some(validSession)),
@@ -103,30 +92,24 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
         )
 
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
+        status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
 
     s"return status: $OK when PoA tax year crystallized" when {
-      s"in normal mode" when {
-        "user is an agent" in {
-          setupTest(
-            sessionResponse = Right(Some(validSession)),
-            claimToAdjustResponse = poa
-          )
-          val result = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
-          status(result) shouldBe OK
-        }
-
-        "user is not an agent" in {
-          setupTest(
-            sessionResponse = Right(Some(validSession)),
-            claimToAdjustResponse = poa
-          )
-          val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-          status(result) shouldBe OK
-        }
+      "the session contains the new POA Amount and reason" in {
+        setupTest(
+          sessionResponse = Right(Some(validSession)),
+          claimToAdjustResponse = poa
+        )
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
       }
     }
 
@@ -137,7 +120,9 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
           claimToAdjustResponse = poa
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "POA data is missing" in {
         setupTest(
@@ -145,7 +130,9 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
           claimToAdjustResponse = None
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "POA adjustment reason is missing from the session" in {
         setupTest(
@@ -153,7 +140,9 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
           claimToAdjustResponse = None
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "the new POA amount is missing from the session" in {
         setupTest(
@@ -161,7 +150,9 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
           claimToAdjustResponse = None
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
       "Something goes wrong in payment on account session Service" in {
         setupTest(
@@ -170,8 +161,10 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
         )
 
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
