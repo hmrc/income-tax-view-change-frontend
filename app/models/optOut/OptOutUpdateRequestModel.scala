@@ -29,8 +29,6 @@ object OptOutUpdateRequestModel {
   }
   case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
-
-  //todo check error page to user states at least some updates have failed
   case class OptOutUpdateResponseFailure(correlationId: String, statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
 
   object OptOutUpdateResponseFailure {
