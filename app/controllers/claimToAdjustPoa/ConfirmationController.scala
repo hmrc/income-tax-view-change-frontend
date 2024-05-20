@@ -38,10 +38,10 @@ class ConfirmationController @Inject()(val authorisedFunctions: AuthorisedFuncti
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future successful Ok(
+        Future.successful(Ok(
           "TO BE IMPLEMENTED: " +
             (if (isAgent) "/agents/adjust-poa/confirmation"
             else         "/adjust-poa/confirmation")
-        )
+        ))
     }
 }

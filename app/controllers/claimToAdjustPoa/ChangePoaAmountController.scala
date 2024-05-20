@@ -27,22 +27,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChangePoaReason @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                val auth: AuthenticatorPredicate,
-                                implicit val itvcErrorHandler: ItvcErrorHandler,
-                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                               (implicit val appConfig: FrontendAppConfig,
-                                implicit override val mcc: MessagesControllerComponents,
-                                val ec: ExecutionContext)
+class ChangePoaAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                          val auth: AuthenticatorPredicate,
+                                          implicit val itvcErrorHandler: ItvcErrorHandler,
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                         (implicit val appConfig: FrontendAppConfig,
+                                           implicit override val mcc: MessagesControllerComponents,
+                                           val ec: ExecutionContext)
   extends ClientConfirmedController {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future successful Ok(
+        Future.successful(Ok(
           "TO BE IMPLEMENTED: " +
-            (if (isAgent) "/agents/adjust-poa/change-your-reason"
-            else          "/adjust-poa/change-your-reason")
-        )
+            (if (isAgent) "/agents/adjust-poa/change-poa-amount"
+            else          "/adjust-poa/change-poa-amount")
+        ))
     }
 }
