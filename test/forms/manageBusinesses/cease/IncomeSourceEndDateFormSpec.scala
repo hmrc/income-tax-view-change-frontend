@@ -17,9 +17,9 @@
 package forms.manageBusinesses.cease
 
 import auth.MtdItUser
-import config.featureswitch.IncomeSourcesNewJourney
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
+import models.admin.IncomeSourcesNewJourney
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

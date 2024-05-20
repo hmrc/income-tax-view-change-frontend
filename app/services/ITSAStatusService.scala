@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

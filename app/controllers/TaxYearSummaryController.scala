@@ -20,12 +20,14 @@ import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits}
 import models.core.Nino
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
@@ -39,6 +41,7 @@ import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.TaxYearSummary
 
 import java.net.URI
@@ -53,14 +56,15 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          checkSessionTimeout: SessionTimeoutPredicate,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         incomeSourceDetailsService: IncomeSourceDetailsService,
                                          retrieveNinoWithIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                          nextUpdatesService: NextUpdatesService,
+                                         auth: AuthenticatorPredicate,
                                          messagesApi: MessagesApi,
                                          val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService,
+                                         val featureSwitchPredicate: FeatureSwitchPredicate,
                                          claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
@@ -70,9 +74,9 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar
+    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar andThen featureSwitchPredicate
 
-  private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
+  private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
     val forecastDataPresent = calculationSummary.flatMap(_.forecastIncome).isDefined
     isEnabled(ForecastCalculation) && calculationSummary.isDefined && !isCrystallised && forecastDataPresent
@@ -154,7 +158,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[DocumentDetailWithDueDate] => Future[Result])
-                                   (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+                                   (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
@@ -197,7 +201,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   private def withObligationsModel(taxYear: Int, isAgent: Boolean)(f: ObligationsModel => Future[Result])
-                                  (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+                                  (implicit user: MtdItUser[_]): Future[Result] = {
     nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
@@ -231,7 +235,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   private def handleRequest(taxYear: Int, origin: Option[String], isAgent: Boolean)
-                           (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
+                           (implicit user: MtdItUser[_], hc: HeaderCarrier,
                             ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     withTaxYearFinancials(taxYear, isAgent) { charges =>
@@ -267,15 +271,9 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       }
   }
 
-  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
-      if (taxYear.toString.matches("[0-9]{4}")) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(taxYear, None, isAgent = true)
-        }
-      } else {
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
-      }
+  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(true) { implicit user =>
+    // TODO: restore taxYear validation
+    handleRequest(taxYear, None, isAgent = true)
   }
 
   // Individual back urls
@@ -305,7 +303,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
-  private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier): Future[TYSClaimToAdjustViewModel] = {
+  private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => value match {

@@ -26,6 +26,7 @@ import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.core.Nino
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, WhatYouOweCreditAmount}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -92,7 +93,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     }
   }
 
-  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier): Future[WYOClaimToAdjustViewModel] = {
+  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))

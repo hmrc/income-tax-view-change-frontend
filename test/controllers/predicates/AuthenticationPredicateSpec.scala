@@ -18,7 +18,7 @@ package controllers.predicates
 
 import audit.mocks.MockAuditingService
 import auth.FrontEndHeaderExtractor
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status

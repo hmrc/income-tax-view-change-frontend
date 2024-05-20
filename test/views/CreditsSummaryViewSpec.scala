@@ -18,8 +18,9 @@ package views
 
 import _root_.implicits.ImplicitCurrencyFormatter._
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
+import models.admin.MFACreditsAndDebits
 import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

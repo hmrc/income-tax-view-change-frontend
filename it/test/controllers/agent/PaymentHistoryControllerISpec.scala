@@ -19,10 +19,10 @@ package controllers.agent
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.core.AccountingPeriodModel
 import models.financialDetails.Payment
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -34,7 +34,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
-
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 

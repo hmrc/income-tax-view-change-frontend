@@ -49,12 +49,12 @@
 package controllers.predicates
 
 import auth.MtdItUserWithNino
-import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
+import models.admin.NavBarFs
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
