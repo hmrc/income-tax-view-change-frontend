@@ -58,7 +58,7 @@ class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicat
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     optOutService.optOutCheckPointPageViewModel().map {
-      case Some(optOutOneYearViewModel) => function(optOutOneYearViewModel)
+      case Some(optOutOneYearCheckpointViewModel) => function(optOutOneYearCheckpointViewModel)
       case None =>
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()

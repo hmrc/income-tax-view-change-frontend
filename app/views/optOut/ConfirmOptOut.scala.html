@@ -36,18 +36,29 @@
     else controllers.optOut.routes.ConfirmedOptOutController.show().url
 }
 
+@title = @{
+    messages("optout.confirmOptOut.heading",
+              viewModel.oneYearOptOutTaxYear.startYear.toString,
+              viewModel.oneYearOptOutTaxYear.endYear.toString)
+}
 @mainTemplate(
-    pageTitle = messages("optout.confirmOptOut.heading"),
+    pageTitle = title,
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
     ) {
 
-@h1(messages("optout.confirmOptOut.heading"), classes = "govuk-heading-l")
+@h1( title, classes = "govuk-heading-l")
 
 @p(id=Some("summary")) {
     @messages("optout.confirmOptOut.desc")
+}
+
+@if(viewModel.showFutureChangeInfo){
+    @p(id=Some("info-message")) {
+        @messages("optout.confirmOptOut.info-message")
+    }
 }
 
 <div class="govuk-button-group">

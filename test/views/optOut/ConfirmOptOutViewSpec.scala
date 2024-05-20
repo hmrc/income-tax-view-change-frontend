@@ -30,14 +30,15 @@ class ConfirmOptOutViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
 
-  class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(confirmOptOutView(OptOutOneYearCheckpointViewModel(TaxYear.forYearEnd(2022), showFutureChangeInfo = false), isAgent = isAgent)))
+  class Setup(isAgent: Boolean = true, infoMessage: Boolean = false) {
+    val pageDocument: Document = Jsoup.parse(contentAsString(confirmOptOutView(OptOutOneYearCheckpointViewModel(TaxYear.forYearEnd(2022), showFutureChangeInfo = infoMessage), isAgent = isAgent)))
   }
 
   object confirmOptOutMessages {
-    val heading: String = messages("optout.confirmOptOut.heading")
+    val heading: String = "Confirm and opt out for the 2021 to 2022 tax year"
     val title: String = messages("htmlTitle", heading)
     val summary: String = messages("optout.confirmOptOut.desc")
+    val infoMessage: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
     val confirmButton: String = messages("optout.confirmOptOut.confirm")
     val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show().url
     val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
@@ -68,5 +69,21 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
 
+
+    "have the correct summary heading and page contents with info message" in new Setup(isAgent = false, infoMessage = true) {
+      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
+      pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
+      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
+      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURL
+    }
+
+    "have the correct summary heading and page contents for Agents with info message" in new Setup(isAgent = true, infoMessage = true) {
+      pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
+      pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
+      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
+      pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
+    }
   }
 }
