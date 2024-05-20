@@ -18,7 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase

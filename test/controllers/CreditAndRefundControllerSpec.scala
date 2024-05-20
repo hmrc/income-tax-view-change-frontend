@@ -16,12 +16,12 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

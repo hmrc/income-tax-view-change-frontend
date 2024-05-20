@@ -18,10 +18,11 @@ package controllers
 
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
-import config.featureswitch.{ChargeHistory, CodingOut}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FinancialDetailsConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
+import forms.IncomeSourcesFormsSpec.tsTestUser
+import models.admin.{ChargeHistory, CodingOut}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import org.mockito.Mockito
 import org.mockito.Mockito.{mock, spy, when}
@@ -86,7 +87,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
@@ -114,7 +115,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
@@ -139,7 +140,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(_) => fail(s"should have failed due to missing interest end date")
@@ -163,7 +164,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
@@ -188,7 +189,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(None)
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(_) => fail(s"should have failed due to missing latePaymentInterestAmount")
@@ -217,7 +218,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
         when(documentDetail.interestEndDate).thenReturn(Some(LocalDate.now()))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)
+        val outcome = controller.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")

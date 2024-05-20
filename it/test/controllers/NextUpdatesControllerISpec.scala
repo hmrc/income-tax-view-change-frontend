@@ -18,10 +18,10 @@ package controllers
 
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
-import config.featureswitch.OptOut
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.OptOut
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.nextUpdates.ObligationsModel

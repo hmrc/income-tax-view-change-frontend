@@ -19,11 +19,12 @@ package controllers.claimToAdjustPoa
 import auth.MtdItUser
 import cats.data.EitherT
 import com.google.inject.Singleton
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import forms.adjustPoa.SelectYourReasonFormProvider
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
 import play.api.Logger
