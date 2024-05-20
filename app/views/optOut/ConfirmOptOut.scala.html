@@ -49,7 +49,7 @@
     useFallbackBackLink = true
     ) {
 
-@h1( title, classes = "govuk-heading-l")
+@h1(id = Some("heading"), msg = title, classes = "govuk-heading-l")
 
 @p(id=Some("summary")) {
     @messages("optout.confirmOptOut.desc")

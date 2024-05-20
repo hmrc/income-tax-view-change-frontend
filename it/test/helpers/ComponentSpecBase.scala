@@ -629,6 +629,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
     }
 
+    def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/review-confirm-taxyear", additionalCookies)
+    }
+
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 
     def getBtaPartial: WSResponse = get(s"/partial")
