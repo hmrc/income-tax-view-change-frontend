@@ -86,5 +86,5 @@ PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches 
 +nocsrf
 PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
 
-GET        /report-quarterly/income-and-expenses/view/test-only/allfeatureSwitches                                                testOnly.controllers.FeatureSwitchController.show
-POST       /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchController.submit
+#GET        /report-quarterly/income-and-expenses/view/test-only/allfeatureSwitches                                                testOnly.controllers.FeatureSwitchController.show
+#POST       /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchController.submit
