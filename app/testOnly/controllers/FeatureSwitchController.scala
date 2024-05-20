@@ -40,7 +40,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
 
-
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { request =>
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true => Ok(s"Flag $featureFlagName set to $isEnabled")
@@ -57,7 +56,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         Ok(
           featureSwitchView(
             switchNames = fss,
-            testOnly.controllers.routes.FeatureSwitchController.submit()
+            testOnly.controllers.routes.FeatureSwitchController.submit
           )
         )
       )
@@ -103,7 +102,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
           (fs, enableState) <- (disabledFeatureSwitchers ++ enabledFeatureSwitchers)
         } yield featureSwitchService.set(fs, enableState)
       )
-    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
 
   }
 
