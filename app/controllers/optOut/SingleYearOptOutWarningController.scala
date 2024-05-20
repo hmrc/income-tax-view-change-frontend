@@ -26,7 +26,7 @@ import models.optOut.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.optout.OptOutPropositionService
+import services.optout.OptOutService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.optOut.SingleYearOptOutWarning
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
                                                   view: SingleYearOptOutWarning,
-                                                  optOutService: OptOutPropositionService)
+                                                  optOutService: OptOutService)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                        val ec: ExecutionContext,
                                                        val authorisedFunctions: AuthorisedFunctions,

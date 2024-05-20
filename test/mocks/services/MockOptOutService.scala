@@ -20,14 +20,14 @@ import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearV
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optout.OptOutPropositionService
+import services.optout.OptOutService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
 trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockOptOutService: OptOutPropositionService = mock(classOf[OptOutPropositionService])
+  val mockOptOutService: OptOutService = mock(classOf[OptOutService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

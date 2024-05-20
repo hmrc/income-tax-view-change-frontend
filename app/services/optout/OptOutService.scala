@@ -25,7 +25,7 @@ import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, 
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
 import play.mvc.Http
-import services.optout.OptOutPropositionService.combineByReturningAnyFailureFirstOrAnySuccess
+import services.optout.OptOutService.combineByReturningAnyFailureFirstOrAnySuccess
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,10 +33,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutPropositionService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                         itsaStatusService: ITSAStatusService,
-                                         calculationListService: CalculationListService,
-                                         dateService: DateServiceInterface) {
+class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                              itsaStatusService: ITSAStatusService,
+                              calculationListService: CalculationListService,
+                              dateService: DateServiceInterface) {
 
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
                                                     hc: HeaderCarrier,
@@ -134,7 +134,7 @@ class OptOutPropositionService @Inject()(itsaStatusUpdateConnector: ITSAStatusUp
   }
 }
 
-object OptOutPropositionService {
+object OptOutService {
   def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     Some(responses)
       .filter(isItsaStatusUpdateAttempted)

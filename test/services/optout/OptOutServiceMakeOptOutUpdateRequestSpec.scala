@@ -29,7 +29,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
   val calculationListService: CalculationListService = mockCalculationListService
   val dateService: DateServiceInterface = mockDateService
 
-  val service = new OptOutPropositionService(optOutConnector, itsaStatusService, calculationListService, dateService)
+  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])

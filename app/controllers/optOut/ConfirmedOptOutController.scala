@@ -21,12 +21,14 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmedOptOut
+import services.optout.OptOutService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val confirmedOptOut: ConfirmedOptOut,
+                                          val optOutService: OptOutService,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate,
@@ -50,12 +53,18 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      Future.successful(Ok(confirmedOptOut(false)))
+      optOutService.makeOptOutUpdateRequest().map {
+        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(false))
+        case _ => itvcErrorHandler.showInternalServerError()//todo is that the correct error page
+      }
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Ok(confirmedOptOut(true)))
+      optOutService.makeOptOutUpdateRequest().map {
+        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(false))//todo is that the same for agant?
+        case _ => itvcErrorHandler.showInternalServerError()//todo is that the correct error page
+      }
   }
 
 }

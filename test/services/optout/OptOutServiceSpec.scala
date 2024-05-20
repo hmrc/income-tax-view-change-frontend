@@ -73,7 +73,7 @@ class OptOutServiceSpec extends UnitSpec
 
   val error = new RuntimeException("Some Error")
 
-  val service = new OptOutPropositionService(optOutConnector, itsaStatusService, calculationListService, dateService)
+  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
 
   before {
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)

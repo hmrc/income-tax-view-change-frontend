@@ -48,9 +48,12 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
-      val correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+      //todo fix this
+      val correlationId = "123"//response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
+        //todo keep this 'case' until this endpoint is implemented in the BE
+        case Status.NOT_FOUND if response.body.contains("URI not found") => OptOutUpdateResponseSuccess(correlationId)//OptOutUpdateResponseFailure.defaultFailure()
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {

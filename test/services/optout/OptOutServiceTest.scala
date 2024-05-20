@@ -61,7 +61,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
-  val service = new OptOutPropositionService(optOutConnector, itsaStatusService, calculationListService, dateService)
+  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
 
   before {
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
