@@ -56,28 +56,24 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
-  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
-    for {
-      poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
-      poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
-      latestDocumentDetail       = poaTwoDocDetail
-      poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
-      poaDeadline                = taxReturnDeadlineOf(poaTwoDueDate)
-      poasAreBeforeDeadline      = poaTwoDueDate isBefore poaDeadline
-      if poasAreBeforeDeadline
-    } yield {
-
-      PaymentOnAccountViewModel(
-        poaOneTransactionId  = poaOneDocDetail.transactionId,
-        poaTwoTransactionId  = poaTwoDocDetail.transactionId,
-        taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne  = poaOneDocDetail.originalAmount,
-        paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
-        poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-        poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
-      )
-    }
-  }
+  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
+    poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
+    poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
+    latestDocumentDetail       = poaTwoDocDetail
+    poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
+    poaDeadline                = taxReturnDeadlineOf(poaTwoDueDate)
+    poasAreBeforeDeadline      = poaTwoDueDate isBefore poaDeadline
+    if poasAreBeforeDeadline
+  } yield
+    PaymentOnAccountViewModel(
+      poaOneTransactionId  = poaOneDocDetail.transactionId,
+      poaTwoTransactionId  = poaTwoDocDetail.transactionId,
+      taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+      paymentOnAccountOne  = poaOneDocDetail.originalAmount,
+      paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
+      poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+      poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
+    )
 
   protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
                                       (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
