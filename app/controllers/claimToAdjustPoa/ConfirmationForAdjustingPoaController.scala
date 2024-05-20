@@ -16,10 +16,11 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoAAmendmentData
 import models.core.Nino
 import play.api.Logger
@@ -82,41 +83,4 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
           showInternalServerError(isAgent)
       }
   }
-
-  //  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-  //    implicit user =>
-  //      if (isEnabled(AdjustPaymentsOnAccount)) {
-  //        {
-  //          for {
-  //            poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
-  //            poaSessionData <- sessionService.getMongo.flatMap {
-  //              case Right(Some(newPoaData: PoAAmendmentData)) =>
-  //                val newPoaAmount = newPoaData.newPoAAmount
-  //                Future.successful(newPoaAmount.contains(BigDecimal(0)))
-  //              case _ => Future.failed(new Exception(s"failed to retrieve session data."))
-  //            }
-  //          } yield poaMaybe
-  //        }.value.flatMap {
-  //          case Right(Some(poa: PaymentOnAccountViewModel)) =>
-  //            Future.successful(Ok(view(isAgent, poa.taxYear)))
-  //          case Right(None) =>
-  //            Logger("application").error(s"Failed to create PaymentOnAccount model")
-  //            Future.successful(showInternalServerError(isAgent))
-  //          case Left(ex) =>
-  //            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
-  //            Future.failed(ex)
-  //        }
-  //      } else {
-  //        Future.successful(
-  //          Redirect(
-  //            if (isAgent) HomeController.showAgent
-  //            else HomeController.show()
-  //          )
-  //        )
-  //      }.recover {
-  //        case ex: Exception =>
-  //          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-  //          showInternalServerError(isAgent)
-  //      }
-  //  }
 }

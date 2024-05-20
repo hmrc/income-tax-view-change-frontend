@@ -32,38 +32,111 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   implicit val lang: Lang = Lang("GB")
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
+  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
-  class Setup(isAgent: Boolean) {
-    val view: Html = confirmationForAdjustingPoaView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1))
+  class Setup(isAgent: Boolean, isAmountZero: Boolean) {
+    val view: Html = confirmationForAdjustingPoaView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero = isAmountZero)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
   }
 
-  "The ConfirmationForAdjustingPoa page" should {
-    "render the page heading" when {
-      "a user loads the page" in new Setup(isAgent = false) {
+  "The ConfirmationForAdjustingPoa page" when {
+    "a user loads the page and newPoAAmount is zero" should {
+      "render the page heading" in new Setup(isAgent = false, isAmountZero = true) {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
       }
+
+      "render the caption" in new Setup(isAgent = false, isAmountZero = true) {
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      }
+
+      "render the  heading" in new Setup(isAgent = false, isAmountZero = true) {
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+      }
+
+      "have a 'Accept and submit' button" in new Setup(isAgent = false, isAmountZero = true) {
+        elements.get(0).text shouldBe msgs("claimToAdjustPoa.confirmation.continue")
+      }
+
+      "have a 'Cancel' button with backUrl" in new Setup(isAgent = false, isAmountZero = true) {
+        elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
+        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+      }
+
     }
 
-    "render the caption" in new Setup(isAgent = false) {
-      document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+    "a user loads the page and newPoAAmount is greater than zero" should {
+      "render the page heading" in new Setup(isAgent = false, isAmountZero = false) {
+        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
+      }
+
+      "render the caption" in new Setup(isAgent = false, isAmountZero = false) {
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      }
+
+      "render the  heading" in new Setup(isAgent = false, isAmountZero = false) {
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+      }
+
+      "have a 'Accept and submit' button" in new Setup(isAgent = false, isAmountZero = false) {
+        elements.get(0).text shouldBe msgs("claimToAdjustPoa.confirmation.continue")
+      }
+
+      "have a 'Cancel' button with backUrl" in new Setup(isAgent = false, isAmountZero = false) {
+        elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
+        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+      }
+
     }
 
-    "render the  heading" in new Setup(isAgent = false) {
-      document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+    "an agent loads the page and newPoAAmount is greater than zero" should {
+//      "render the page heading" in new Setup(isAgent = true, isAmountZero = false) {
+//        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
+//      }
+
+      "render the caption" in new Setup(isAgent = true, isAmountZero = false) {
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      }
+
+      "render the  heading" in new Setup(isAgent = true, isAmountZero = false) {
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+      }
+
+      "have a 'Accept and submit' button" in new Setup(isAgent = true, isAmountZero = false) {
+        elements.get(0).text shouldBe msgs("claimToAdjustPoa.confirmation.continue")
+      }
+
+      "have a 'Cancel' button with backUrl" in new Setup(isAgent = true, isAmountZero = false) {
+        elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
+        document.getElementById("cancel").attr("href") shouldBe testCancelUrlAgent
+      }
+
     }
 
-    "have a 'Accept and submit' button" in new Setup(isAgent = false) {
-      elements.get(0).text shouldBe msgs("claimToAdjustPoa.confirmation.continue")
-    }
+    "an agent loads the page and newPoAAmount is zero" should {
+//      "render the page heading" in new Setup(isAgent = true, isAmountZero = true) {
+//        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
+//      }
 
-    "have a 'Cancel' button with backUrl" in new Setup(isAgent = false) {
-      elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
-      document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+      "render the caption" in new Setup(isAgent = true, isAmountZero = true) {
+        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      }
+
+      "render the  heading" in new Setup(isAgent = true, isAmountZero = true) {
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+      }
+
+      "have a 'Accept and submit' button" in new Setup(isAgent = true, isAmountZero = true) {
+        elements.get(0).text shouldBe msgs("claimToAdjustPoa.confirmation.continue")
+      }
+
+      "have a 'Cancel' button with backUrl" in new Setup(isAgent = true, isAmountZero = true) {
+        elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
+        document.getElementById("cancel").attr("href") shouldBe testCancelUrlAgent
+      }
+
     }
 
   }
-
 }
