@@ -1,5 +1,7 @@
 package controllers.optOut
 
+import connectors.ITSAStatusUpdateConnector
+import controllers.optOut.ConfirmedOptOutControllerSpec.emptyBodyString
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -14,6 +16,9 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
+object ConfirmedOptOutControllerSpec {
+  val emptyBodyString = ""
+}
 class ConfirmedOptOutControllerSpec extends ComponentSpecBase {
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -28,7 +33,32 @@ class ConfirmedOptOutControllerSpec extends ComponentSpecBase {
       val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
       ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
       CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-      ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino, Status.NO_CONTENT, "")
+      ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        Status.NO_CONTENT, emptyBodyString,
+        Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+      )
+
+      val result = IncomeTaxViewChangeFrontend.confirmOneYearOptOut()
+
+      result should have(
+        httpStatus(OK),
+      )
+
+    }
+  }
+
+  s"user confirms opt-out for one-year scenario and missing header" should {
+    "show opt-out complete page" in {
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+      val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+      ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+      CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+      ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        Status.NO_CONTENT, emptyBodyString,
+        Map("missing-header-name" -> "missing-header-value")
+      )
 
       val result = IncomeTaxViewChangeFrontend.confirmOneYearOptOut()
 
@@ -48,7 +78,9 @@ class ConfirmedOptOutControllerSpec extends ComponentSpecBase {
       ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
       CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
       ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-        BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString())
+        BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
+        Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+      )
 
       val result = IncomeTaxViewChangeFrontend.confirmOneYearOptOut()
 

@@ -20,6 +20,7 @@ import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.optOut.ConfirmedOptOutController.IsAgent.{IsAgentNo, IsAgentYes}
 import controllers.predicates._
 import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import play.api.i18n.I18nSupport
@@ -31,7 +32,14 @@ import views.html.optOut.ConfirmedOptOut
 import services.optout.OptOutService
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+
+object ConfirmedOptOutController {
+  object IsAgent {
+    val IsAgentYes: Boolean = true
+    val IsAgentNo: Boolean = false
+  }
+}
 
 class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -51,18 +59,18 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = auth.authenticatedAction(IsAgentNo) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(false))
+        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(IsAgentNo))
         case _ => itvcErrorHandler.showInternalServerError()//todo is that the correct error page
       }
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(IsAgentYes) {
     implicit mtdItUser =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(false))//todo is that the same for agant?
+        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(IsAgentYes))//todo is that the same for agant?
         case _ => itvcErrorHandler.showInternalServerError()//todo is that the correct error page
       }
   }
