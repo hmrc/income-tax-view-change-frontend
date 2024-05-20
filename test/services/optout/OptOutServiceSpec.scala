@@ -23,7 +23,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
+import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -382,7 +382,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val response = service.optOutCheckPointPageViewModel()
 
-          response.futureValue shouldBe Some(OptOutOneYearViewModel(taxYear, showWarning))
+          response.futureValue shouldBe Some(OptOutOneYearCheckpointViewModel(taxYear, showWarning))
 
         }
       }
