@@ -18,9 +18,9 @@ package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.PaymentHistoryRefunds
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.repaymentHistory._
 import play.api.http.Status._

@@ -16,10 +16,10 @@
 
 package helpers
 
-import auth.HeaderExtractor
+import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
@@ -27,7 +27,8 @@ import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.TaxYear
+import models.admin.FeatureSwitchName
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -40,9 +41,11 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -108,7 +111,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val dateService: DateService = new DateService() {
+  implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
     override def getCurrentTaxYearEnd: Int = 2023
@@ -122,7 +125,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
-
+  val csbTestUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
+    Some("1234567890"), Some("12345-credId"), Some(Individual), None
+  )(FakeRequest())
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -151,7 +157,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,
-    "microservice.services.contact-frontend.port" -> mockPort
+    "microservice.services.contact-frontend.port" -> mockPort,
+    "feature-switches.read-from-mongo" -> "false"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -185,13 +192,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     stubUserDetails()
     AuditStub.stubAuditing()
     cache.removeAll()
-    FeatureSwitch.switches foreach disable
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
-    FeatureSwitch.switches foreach disable
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {

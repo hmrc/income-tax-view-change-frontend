@@ -16,7 +16,9 @@
 
 package config.featureswitch
 
+import auth.MtdItUser
 import config.FrontendAppConfig
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 
 trait FeatureSwitching {
 
@@ -25,22 +27,48 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  def isEnabled(featureSwitch: FeatureSwitch): Boolean =
-    (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_ON
+  def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
+    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
+  }
 
-  def isDisabled(featureSwitch: FeatureSwitch): Boolean =
-    (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_OFF
+  def isEnabled(featureSwitch: FeatureSwitchName)
+                 (implicit user: MtdItUser[_]): Boolean = {
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+    } else {
+      isEnabledFromConfig(featureSwitch)
+    }
+  }
 
-  def enable(featureSwitch: FeatureSwitch): Unit =
+  // TODO replace this function, or all uses of it, with the inverse of isEnabled
+  // It is currently used in NavBarFromNinoPredicate.scala, ForecastIncomeSummaryController.scala, ForecastTaxCalcSummaryController.scala
+  def isDisabled(featureSwitch: FeatureSwitchName): Boolean = {
+    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_OFF
+  }
+
+  def enable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 
-  def disable(featureSwitch: FeatureSwitch): Unit =
+  def disable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 
-  protected implicit class FeatureOps(feature: FeatureSwitch) {
+  def setFS(featureSwitchName: FeatureSwitchName, enabled: Boolean): Unit = {
+    if (enabled) {
+      enable(featureSwitchName)
+    } else {
+      disable(featureSwitchName)
+    }
+  }
+  protected implicit class FeatureOps(feature: FeatureSwitchName)(implicit user: MtdItUser[_]) {
     def fold[T](ifEnabled: => T, ifDisabled: => T): T = {
       if (isEnabled(feature)) ifEnabled
       else ifDisabled
+    }
+  }
+
+  def getFSList: List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.toList.map { currentFS =>
+      FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
 }

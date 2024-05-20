@@ -87,7 +87,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "auditing.consumer.baseUri.port" -> mockPort,
     "auditing.enabled" -> "true",
     "microservice.services.contact-frontend.host" -> mockHost,
-    "microservice.services.contact-frontend.port" -> mockPort
+    "microservice.services.contact-frontend.port" -> mockPort,
+    "feature-switches.read-from-mongo" -> "false"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"

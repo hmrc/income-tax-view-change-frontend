@@ -19,7 +19,7 @@ package controllers.predicates
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import models.OriginEnum

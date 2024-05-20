@@ -17,13 +17,14 @@
 package controllers.incomeSources.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.admin.IncomeSources
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.Jsoup
