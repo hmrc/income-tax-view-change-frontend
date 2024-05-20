@@ -17,8 +17,9 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockFinancialDetailsConnector
+import models.admin.{CutOverCredits, MFACreditsAndDebits}
 import models.financialDetails.FinancialDetailsErrorModel
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError

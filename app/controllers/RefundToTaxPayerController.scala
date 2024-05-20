@@ -19,11 +19,12 @@ package controllers
 import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.featureswitch.{FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.RepaymentHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.repaymentHistory.RepaymentHistoryModel
 import play.api.Logger

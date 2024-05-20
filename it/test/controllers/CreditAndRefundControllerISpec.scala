@@ -18,9 +18,9 @@ package controllers
 
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.financialDetails.BalanceDetails
 import play.api.http.Status.OK
 import play.api.test.FakeRequest

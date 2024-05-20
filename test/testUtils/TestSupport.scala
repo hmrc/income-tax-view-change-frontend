@@ -17,11 +17,12 @@
 package testUtils
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
+import controllers.predicates.FeatureSwitchPredicate
 import implicits.ImplicitDateFormatterImpl
+import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
@@ -39,6 +40,7 @@ import play.api.{Configuration, Environment}
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -97,6 +99,11 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  LocalDate.of(2024, 4, 5)
   }
+
+  val tsTestUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
+    Some("1234567890"), Some("12345-credId"), Some(Individual), None
+  )(FakeRequest())
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 
@@ -308,7 +315,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   }
 
   def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
+    allFeatureSwitches.foreach(switch => disable(switch))
   }
 
 }

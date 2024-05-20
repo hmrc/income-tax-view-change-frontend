@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK

@@ -25,6 +25,7 @@ import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
 import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
@@ -63,21 +64,22 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   }
 
   object TestTaxYearSummaryController extends TaxYearSummaryController(
-    taxYearSummaryView,
-    MockAuthenticationPredicate,
-    mockCalculationService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockFinancialDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler],
-    mockIncomeSourceDetailsService,
-    MockIncomeSourceDetailsPredicateNoCache,
-    mockNextUpdatesService,
-    messagesApi,
-    languageUtils,
-    mockAuthService,
-    app.injector.instanceOf[NavBarPredicate],
-    mockAuditingService,
-    claimToAdjustService
+    taxYearSummaryView = taxYearSummaryView,
+    authenticate = MockAuthenticationPredicate,
+    calculationService = mockCalculationService,
+    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
+    financialDetailsService = mockFinancialDetailsService,
+    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    retrieveNinoWithIncomeSourcesNoCache = MockIncomeSourceDetailsPredicateNoCache,
+    nextUpdatesService = mockNextUpdatesService,
+    messagesApi = messagesApi,
+    languageUtils = languageUtils,
+    authorisedFunctions = mockAuthService,
+    retrieveBtaNavBar = app.injector.instanceOf[NavBarPredicate],
+    auditingService = mockAuditingService,
+    claimToAdjustService = claimToAdjustService,
+    auth = testAuthenticator,
+    featureSwitchPredicate = FeatureSwitchPredicate
   )(appConfig,
     app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],

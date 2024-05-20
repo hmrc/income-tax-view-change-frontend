@@ -19,11 +19,12 @@ package controllers
 import audit.AuditingService
 import audit.models.ForecastTaxCalculationAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUserWithNino}
-import config.featureswitch.{FeatureSwitching, ForecastCalculation}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
+import models.admin.ForecastCalculation
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport

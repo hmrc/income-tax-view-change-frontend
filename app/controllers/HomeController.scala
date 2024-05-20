@@ -20,8 +20,9 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.admin._
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear

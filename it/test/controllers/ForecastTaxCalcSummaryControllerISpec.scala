@@ -18,9 +18,9 @@ package controllers
 
 import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUserWithNino
-import config.featureswitch.ForecastCalculation
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
+import models.admin.ForecastCalculation
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.test.FakeRequest

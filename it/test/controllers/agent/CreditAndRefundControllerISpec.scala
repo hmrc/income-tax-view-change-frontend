@@ -18,9 +18,9 @@ package controllers.agent
 
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.core.AccountingPeriodModel
 import models.financialDetails.BalanceDetails
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

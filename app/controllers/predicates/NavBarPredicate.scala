@@ -17,12 +17,12 @@
 package controllers.predicates
 
 import auth.MtdItUser
-import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
+import models.admin.NavBarFs
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -47,11 +47,11 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
 
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-    if (isDisabled(NavBarFs)) {
+    if (!isEnabled(NavBarFs)(request)) {
       Future.successful(Right(request))
     } else {
       request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
+        saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabled(NavBarFs)(request)).map(Left(_))
       })
     }
   }
