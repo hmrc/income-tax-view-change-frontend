@@ -78,7 +78,6 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
       s"redirect an ${if (isAgent) "agent" else "individual"} back to the home page" when {
         "the IncomeSources FS is disabled" in {
           disableAllSwitches()
-          isDisabled(IncomeSources)
           mockSingleBISWithCurrentYearAsMigrationYear()
           authenticate(isAgent)
           val result: Future[Result] = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient()) else controller.show()(fakeRequestWithActiveSession)

@@ -100,7 +100,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
+        case Some(fdm: FinancialDetailsModel) if (!isEnabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
@@ -152,7 +152,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
-        if (isDisabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
+        if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)

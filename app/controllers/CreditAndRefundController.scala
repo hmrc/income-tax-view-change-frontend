@@ -77,7 +77,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) map {
-      case _ if isDisabled(CreditsRefundsRepay) =>
+      case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
@@ -114,7 +114,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     auth.authenticatedAction(isAgent = false) {
       implicit user =>
         user.userType match {
-          case _ if isDisabled(CreditsRefundsRepay) =>
+          case _ if !isEnabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some(Agent) =>
             Future.successful(itvcErrorHandlerAgent.showInternalServerError())
@@ -130,7 +130,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) flatMap {
-      case _ if isDisabled(CreditsRefundsRepay) =>
+      case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
 
       case financialDetailsModel: List[FinancialDetailsModel] =>

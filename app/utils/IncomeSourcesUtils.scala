@@ -31,7 +31,7 @@ import scala.concurrent.Future
 trait IncomeSourcesUtils extends FeatureSwitching {
 
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
+    if (!isEnabled(IncomeSources)) {
       user.userType match {
         case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent))
         case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))

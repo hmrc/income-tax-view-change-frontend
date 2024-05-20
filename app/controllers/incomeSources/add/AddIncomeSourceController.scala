@@ -78,7 +78,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                     isAgent: Boolean,
                     backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
+    if (!isEnabled(IncomeSources)) {
       Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
