@@ -1924,6 +1924,27 @@ paymentOnAccount.p3                                  = Both payments on account 
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 
+
+claimToAdjustPoa.enterPoaAmount.caption                 = Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.enterPoaAmount.heading                 = Enter a new amount
+claimToAdjustPoa.enterPoaAmount.p1                      = Each payment on account should be half the amount of your expected tax bill. Your tax bill is made up of:
+claimToAdjustPoa.enterPoaAmount.bullet1                 = Income Tax
+claimToAdjustPoa.enterPoaAmount.bullet2                 = Class 4 National Insurance contributions (opens in new tab)
+claimToAdjustPoa.enterPoaAmount.initialAmount           = Initial amount
+claimToAdjustPoa.enterPoaAmount.adjustedAmount          = Adjusted amount
+claimToAdjustPoa.enterPoaAmount.firstPayment            = First payment on account
+claimToAdjustPoa.enterPoaAmount.secondPayment           = Second payment on account
+claimToAdjustPoa.enterPoaAmount.insetText               = If you've already made a payment and the adjusted amount is less than what you've paid, HMRC will add a credit to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.warning                 = You may have to pay interest if you reduce your payments on account too much and underpay
+claimToAdjustPoa.enterPoaAmount.howMuch                 = How much should each payment on account be?
+claimToAdjustPoa.enterPoaAmount.howMuchHint             = Enter half the amount you think your final tax bill will be
+claimToAdjustPoa.enterPoaAmount.cancel                  = Cancel
+claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for each payment on account
+claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
+claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
+claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number like 1000 or 1000.00
+
+
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the 2022 to 2023 tax year
 optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or software.

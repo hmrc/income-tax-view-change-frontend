@@ -20,6 +20,7 @@ import models.incomeSourceDetails.TaxYear
 
 case class PoAAmountViewModel(
                                poaPreviouslyAdjusted: Boolean,
+                               eitherPoaPaid: Boolean = true,
                                taxYear: TaxYear,
                                initialAmountOne: BigDecimal,
                                initialAmountTwo: BigDecimal,

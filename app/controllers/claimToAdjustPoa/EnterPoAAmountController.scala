@@ -16,16 +16,20 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes
 import controllers.routes.HomeController
+import forms.adjustPoa.EnterPoaAmountForm
 import models.core.Nino
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import views.html.claimToAdjustPoa.EnterPoAAmountView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                          val auth: AuthenticatorPredicate,
+                                         view: EnterPoAAmountView,
                                          claimToAdjustService: ClaimToAdjustService,
                                          implicit val itvcErrorHandler: ItvcErrorHandler,
                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -45,17 +50,9 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     auth.authenticatedAction(isAgent) {
       implicit user =>
         if (isEnabled(AdjustPaymentsOnAccount)) {
-          //need to get docNumber then call FinancialDetailsService.getChargeHistoryDetails
-          //EitherT for API response
-          //viewModel including result of API query
-
           claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
             case Right(viewModel) =>
-              //val poaPreviouslyAdjusted: Boolean = poaAdjustmentReason.isDefined
-
-              Ok(s"to be implemented: /report-quarterly/income-and-expenses/view/" +
-                s"${if (isAgent) "agents" else ""}adjust-poa/enter-poa-amount " +
-                s"poaPreviouslyAdjusted = ${viewModel.poaPreviouslyAdjusted}")
+              Ok(view(EnterPoaAmountForm.form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))
             case Left(ex) =>
               Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
               showInternalServerError(isAgent)
@@ -73,5 +70,28 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
             showInternalServerError(isAgent)
         }
     }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit request =>
+      handleSubmitRequest(isAgent)
+  }
+
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] =
+      claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
+        case Right(viewModel) =>
+          EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.adjustedAmountOne, viewModel.initialAmountOne).fold(
+            formWithErrors =>
+              BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent))),
+            validForm =>
+                Redirect(
+                  if (isAgent) routes.HomeController.showAgent
+                  else         routes.HomeController.show()
+                )
+          )        case Left(ex) =>
+        Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError(isAgent)
+      }
+      //TODO: Redirect logic, see SelectYourReasonController
+
 
 }

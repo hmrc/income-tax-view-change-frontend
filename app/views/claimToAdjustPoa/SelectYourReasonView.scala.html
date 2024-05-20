@@ -14,18 +14,13 @@
  * limitations under the License.
  *@
 
-@import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import exceptions.MissingFieldException
 @import helper._
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.helpers.injected.InputHelper
-@import play.twirl.api.HtmlFormat
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.incomeSourceDetails.TaxYear
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components._
+@import views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import views.html.layouts.unifiedLayout
 
 @this(
     mainTemplate: unifiedLayout,
