@@ -17,9 +17,9 @@
 package controllers.claimToAdjustPoa
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import config.featureswitch.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
