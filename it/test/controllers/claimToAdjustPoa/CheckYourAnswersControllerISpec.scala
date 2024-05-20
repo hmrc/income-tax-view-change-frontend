@@ -17,15 +17,14 @@
 package controllers.claimToAdjustPoa
 
 import config.featureswitch.AdjustPaymentsOnAccount
-import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, SelectYourReason}
-import play.api.http.Status.OK
+import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
@@ -35,6 +34,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     else         controllers.routes.HomeController.show().url
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
+  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -47,26 +47,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     IncomeTaxViewChangeFrontend.get(s"""${if (isAgent) {"/agents" } else ""}$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
-  def postSelectYourReason(isAgent: Boolean, answer: Option[SelectYourReason])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-    val formProvider = app.injector.instanceOf[SelectYourReasonFormProvider]
-    IncomeTaxViewChangeFrontend.post(
-      uri = s"""${if(isAgent) {"/agents"} else {""}}/adjust-poa/check-your-answers""",
-      additionalCookies = additionalCookies
-    )(
-      answer.fold(Map.empty[String, Seq[String]])(
-        selection =>
-          formProvider()
-            .fill(selection)
-            .data
-            .map { case (k, v) => (k, Seq(v)) }
-      )
-    )
-  }
-
   s"calling GET" should {
-
     s"return status $OK" when {
-
       "user has successfully entered a new POA amount" in {
 
         enable(AdjustPaymentsOnAccount)
@@ -85,13 +67,153 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
 
         And("A session exists which contains the new Payment On Account amount and reason")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))))
+        sessionService.setMongoData(Some(validSession))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
 
         res should have(
           httpStatus(OK)
+        )
+      }
+    }
+
+    s"return status $SEE_OTHER" when {
+      "AdjustPaymentsOnAccount FS is disabled" in {
+
+        disable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(homeUrl)
+        )
+      }
+    }
+
+    s"return $INTERNAL_SERVER_ERROR" when {
+      "the Payment On Account Adjustment reason is missing from the session" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session exists which is missing the Payment On Account adjustment reason")
+        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None)))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+      "the New Payment On Account Amount is missing from the session" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session exists which is missing the New Payment On Account amount")
+        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None)))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+      "both the New Payment On Account Amount and adjustment reason are missing from the session" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session exists which is missing the New Payment On Account amount")
+        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoAAmount = None)))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+      "no adjust POA session is found" in {
+        enable(AdjustPaymentsOnAccount)
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+      "no non-crystallised financial details are found" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Empty financial details response")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testEmptyFinancialDetailsModelJson
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testEmptyFinancialDetailsModelJson
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(validSession))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }
