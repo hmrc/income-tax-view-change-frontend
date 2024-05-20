@@ -150,12 +150,6 @@
         firstCellIsHeader = true
     ))
 
-@*//    @if(viewModel.eitherPoaPaid) {*@
-        @govukInsetText(InsetText(
-            content = Text(getMessage("insetText"))
-        ))
-@*//    }*@
-
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
         content = Text(getMessage("warning"))

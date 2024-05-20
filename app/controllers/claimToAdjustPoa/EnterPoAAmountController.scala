@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.{Increase, PoAAmountViewModel}
+import models.claimToAdjustPoa.{Increase, PoAAmendmentData, PoAAmountViewModel}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -50,13 +50,14 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          //TODO: Add check for valid mongo
-          claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
-            case Right(viewModel) =>
-              Ok(view(EnterPoaAmountForm.form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))
-            case Left(ex) =>
-              Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
+          withvalidSession(isAgent) { _ =>
+            claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
+              case Right(viewModel) =>
+                Ok(view(EnterPoaAmountForm.form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))
+              case Left(ex) =>
+                Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
+                showInternalServerError(isAgent)
+            }
           }
         }.recover {
           case ex: Exception =>
@@ -100,6 +101,16 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
       case (true, _) => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, isChange = false)))
       case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
+    }
+  }
+
+  def withvalidSession(isAgent:Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]) = {
+    sessionService.getMongo.flatMap {
+      case Right(Some(data)) => block(data)
+      case Right(None) => Logger("application").error(s"No mongo data found")
+        Future.successful(showInternalServerError(isAgent))
+      case Left(ex) => Logger("application").error(s"Error while retrieving mongo data : ${ex.getMessage} - ${ex.getCause}")
+        Future.successful(showInternalServerError(isAgent))
     }
   }
 

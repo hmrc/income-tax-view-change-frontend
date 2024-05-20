@@ -1885,6 +1885,24 @@ claimToAdjustPoa.selectYourReason.continue                              =   Yn e
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
 claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
 
+claimToAdjustPoa.enterPoaAmount.caption                 = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.enterPoaAmount.heading                 = Nodwch swm newydd
+claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hafal i hanner swm disgwyliedig eich bil treth. Mae’ch bil treth yn cynnwys y canlynol:
+claimToAdjustPoa.enterPoaAmount.bullet1                 = Treth Incwm
+claimToAdjustPoa.enterPoaAmount.bullet2                 = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+claimToAdjustPoa.enterPoaAmount.initialAmount           = Swm cychwynnol
+claimToAdjustPoa.enterPoaAmount.adjustedAmount          = Swm wedi’i addasu
+claimToAdjustPoa.enterPoaAmount.firstPayment            = Taliad cyntaf ar gyfrif
+claimToAdjustPoa.enterPoaAmount.secondPayment           = Ail daliad ar gyfrif
+claimToAdjustPoa.enterPoaAmount.warning                 = Mae’n bosibl y bydd yn rhaid i chi dalu llog os byddwch yn gostwng eich taliadau ar gyfrif gormod, ac yn gwneud tandaliad
+claimToAdjustPoa.enterPoaAmount.howMuch                 = Faint a ddylai bob taliad ar gyfrif fod?
+claimToAdjustPoa.enterPoaAmount.howMuchHint             = Nodwch hanner y swm rydych yn disgwyl i’ch bil treth terfynol i fod
+claimToAdjustPoa.enterPoaAmount.cancel                  = Canslo
+claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar gyfer pob taliad ar gyfrif
+claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
+claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
+claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
+
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth 2022 i 2023
 optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
