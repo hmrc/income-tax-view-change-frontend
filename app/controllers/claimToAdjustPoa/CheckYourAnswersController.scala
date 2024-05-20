@@ -18,7 +18,7 @@ package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
 import cats.data.EitherT
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
@@ -30,6 +30,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.CheckYourAnswers
 import controllers.claimToAdjustPoa.routes._
+import models.admin.AdjustPaymentsOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
