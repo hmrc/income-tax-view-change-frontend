@@ -37,7 +37,7 @@ object OptOutUpdateRequestModel {
     def defaultFailure(correlationId: String = "unknown"): OptOutUpdateResponseFailure =
       OptOutUpdateResponseFailure(correlationId,
         INTERNAL_SERVER_ERROR,
-        List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response"))
+        List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown error"))
       )
   }
 

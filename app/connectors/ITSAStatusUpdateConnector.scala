@@ -49,7 +49,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
       //todo fix this
-      val correlationId = "123"//response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+      val correlationId = "123" //response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
         //todo keep this 'case' until this endpoint is implemented in the BE
