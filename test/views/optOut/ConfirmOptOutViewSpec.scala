@@ -17,6 +17,8 @@
 package views.optOut
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
+import models.optOut.OptOutOneYearCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -29,7 +31,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(confirmOptOutView(isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(confirmOptOutView(OptOutOneYearCheckpointViewModel(TaxYear.forYearEnd(2022), showFutureChangeInfo = false), isAgent = isAgent)))
   }
 
   object confirmOptOutMessages {
