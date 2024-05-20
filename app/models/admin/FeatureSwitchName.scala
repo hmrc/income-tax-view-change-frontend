@@ -178,27 +178,27 @@ case object R7cViewerCodingOutTxmEvents extends FeatureSwitchName {
 }
 
 case object CalendarQuarterTypes extends FeatureSwitchName {
-  override val name = "enable-calendar-quarter-types"
+  override val name = "calendar-quarter-types"
   override val toString = "Calendar Quarter Types"
 }
 
 case object IncomeSourcesNewJourney extends FeatureSwitchName {
-  override val name = "enable-income-sources-new-journey"
+  override val name = "income-sources-new-journey"
   override val toString = "Income Sources New Journey"
 }
 
 case object IncomeSources extends FeatureSwitchName {
-  override val name = "enable-income-sources"
+  override val name = "income-sources"
   override val toString = "Income Sources"
 }
 
 case object OptOut extends FeatureSwitchName {
-  override val name = s"enable-opt-out"
+  override val name = s"opt-out"
   override val toString = "Opt Out"
 }
 
 case object AdjustPaymentsOnAccount extends FeatureSwitchName {
-  override val name: String = s"enable-adjust-payments-on-account"
+  override val name: String = s"adjust-payments-on-account"
   override val toString: String = "Adjust Payments On Account"
 }
 
