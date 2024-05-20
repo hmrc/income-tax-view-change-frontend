@@ -16,11 +16,12 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
