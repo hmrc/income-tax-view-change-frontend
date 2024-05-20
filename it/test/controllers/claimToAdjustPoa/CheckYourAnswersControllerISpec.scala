@@ -20,7 +20,7 @@ import config.featureswitch.AdjustPaymentsOnAccount
 import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, SelectYourReason}
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import services.PaymentOnAccountSessionService
@@ -84,11 +84,11 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
         )
 
-        And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        And("A session exists which contains the new Payment On Account amount and reason")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))))
 
         When(s"I call GET")
-        val res = get("/adjust-poa/select-your-reason")
+        val res = get("/adjust-poa/check-your-answers")
 
         res should have(
           httpStatus(OK)
