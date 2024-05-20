@@ -31,7 +31,7 @@ object EnterPoaAmountForm extends CustomConstraints{
 
   val amount: String = "poa-amount"
 
-  private val emptyError = "claimToAdjustPoa.enterPoaAmount.emptyError"
+  //private val emptyError = "claimToAdjustPoa.enterPoaAmount.emptyError"
   private val sameError = "claimToAdjustPoa.enterPoaAmount.sameError"
   private val higherError = "claimToAdjustPoa.enterPoaAmount.higherError"
   private val invalidError = "claimToAdjustPoa.enterPoaAmount.invalidError"
