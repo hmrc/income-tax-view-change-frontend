@@ -21,7 +21,7 @@ import cats.data.EitherT
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
@@ -93,8 +93,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
 
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-    (session.poaAdjustmentReason, session.newPoAAmount) match {
+    val sess = session.copy(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = Some(BigDecimal(3000.00)))
+    (sess.poaAdjustmentReason, sess.newPoAAmount) match {
       case (Some(reason), Some(amount)) =>
         block(reason, amount)
       case (None, _) =>
