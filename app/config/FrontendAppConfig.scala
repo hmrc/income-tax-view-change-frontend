@@ -19,7 +19,6 @@ package config
 import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.Lang
-import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
@@ -155,6 +154,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // income-tax-session-data url
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
+
+  // API timeout
+
+  lazy val claimToAdjustTimeout: Int = servicesConfig.getInt("claim-to-adjust.timeout")
 
   //Translation
   def languageMap: Map[String, Lang] = Map(

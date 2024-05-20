@@ -16,6 +16,7 @@
 
 package models.claimToAdjustPoa
 
+import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.{JsObject, Json}
 import testUtils.UnitSpec
@@ -47,12 +48,12 @@ class ClaimToAdjustPoaResponseSpec extends UnitSpec {
       "parse CREATED status and valid json data" when {
         "json is valid" in {
           val httpResponse = HttpResponse(CREATED, json = testValidRequest, headers = Map.empty)
-          lazy val result = ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
+          lazy val result = ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
           result shouldBe Right(ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z"))
         }
         "json is invalid" in {
           val httpResponse = HttpResponse(CREATED, json = testInvalidRequest, headers = Map.empty)
-          lazy val result = ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
+          lazy val result = ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
           result shouldBe Left(ClaimToAdjustPoaInvalidJson)
         }
       }
@@ -60,13 +61,13 @@ class ClaimToAdjustPoaResponseSpec extends UnitSpec {
       "parse error status and valid json data" when {
         "json is valid" in {
           val httpResponse = HttpResponse(BAD_REQUEST, json = testFailureJson, headers = Map.empty)
-          lazy val result = ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
+          lazy val result = ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
           result shouldBe Left(ClaimToAdjustPoaError("INVALID_PAYLOAD, INVALID_CORRELATION_ID"))
         }
 
         "json is invalid" in {
           val httpResponse = HttpResponse(BAD_REQUEST, json = testInvalidFailureJson, headers = Map.empty)
-          lazy val result = ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
+          lazy val result = ClaimToAdjustPoaResponseReads.read(testHttpVerb, testUri, httpResponse)
           result shouldBe Left(ClaimToAdjustPoaInvalidJson)
         }
       }

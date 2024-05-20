@@ -21,19 +21,22 @@ import play.api.http.Status.CREATED
 import play.api.libs.json.{Format, JsSuccess, Json}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-
-case class ClaimToAdjustPoaSuccess(processingDate: String)
-
-trait ClaimToAdjustPoaFailure {
-  val message: String
-}
-case class ClaimToAdjustPoaError(message: String) extends ClaimToAdjustPoaFailure
-
-object ClaimToAdjustPoaInvalidJson extends ClaimToAdjustPoaFailure {
-  val message = "Invalid JSON"
-}
-
 object ClaimToAdjustPoaResponse {
+
+  case class ClaimToAdjustPoaSuccess(processingDate: String)
+
+  trait ClaimToAdjustPoaFailure {
+    val message: String
+  }
+  case class ClaimToAdjustPoaError(message: String) extends ClaimToAdjustPoaFailure
+
+  object ClaimToAdjustPoaInvalidJson extends ClaimToAdjustPoaFailure {
+    val message = "Invalid JSON"
+  }
+
+  object UnexpectedError extends ClaimToAdjustPoaFailure {
+    val message = "Unexpected error"
+  }
 
   type ClaimToAdjustPoaResponse = Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess]
 
