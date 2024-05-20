@@ -93,8 +93,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
 
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val sess = session.copy(poaAdjustmentReason = Some(MainIncomeLower), newPoAAmount = Some(BigDecimal(3000.00)))
-    (sess.poaAdjustmentReason, sess.newPoAAmount) match {
+    (session.poaAdjustmentReason, session.newPoAAmount) match {
       case (Some(reason), Some(amount)) =>
         block(reason, amount)
       case (None, _) =>
