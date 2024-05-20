@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                   poaReason = reason.messagesKey,
                   redirectUrl = ConfirmationController.show(isAgent).url,
                   changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
-                  changePoaAmountUrl = ChangePoaReasonController.show(isAgent).url
+                  changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
                 )
               ))
             }
