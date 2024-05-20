@@ -29,11 +29,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchPredicate @Inject()
-(val featureSwitchService: FeatureSwitchService)
-(implicit val appConfig: FrontendAppConfig,
- val executionContext: ExecutionContext,
- val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
+class FeatureSwitchPredicate @Inject()(val featureSwitchService: FeatureSwitchService)
+                                      (implicit val appConfig: FrontendAppConfig,
+                                       val executionContext: ExecutionContext,
+                                       val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
     featureSwitchService.getAll.flatMap(fs => {
