@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, FinancialDetailsConnector}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel, PoADataWithPaymentStatus}
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
@@ -62,6 +62,18 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
+  def getPoaDataWithPaymentStatusForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PoADataWithPaymentStatus]]] = {
+    for {
+      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+    } yield res match {
+      case Right(Some(financialDetails)) =>
+        val x = getPoADataWithPaymentStatus(financialDetails.documentDetails)
+        Right(x)
+      case Right(None) => Right(None)
+      case Left(ex) => Left(ex)
+    }
+  }
+
   def getPoaAdjustmentReason(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     getPoaForNonCrystallisedFinancialDetails(nino).flatMap {
       case Right(Some(financialDetails)) =>
@@ -78,12 +90,13 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   def getEnterPoAAmountViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PoAAmountViewModel]] = {
     for {
       adjustmentReasonMaybe <- getPoaAdjustmentReason(nino)
-      poaModelMaybe <- getPoaForNonCrystallisedTaxYear(nino)
+      poaModelMaybe <- getPoaDataWithPaymentStatusForNonCrystallisedTaxYear(nino)
     } yield (adjustmentReasonMaybe, poaModelMaybe) match {
       case (Right(reason), Right(Some(model))) =>
         Right(PoAAmountViewModel(
           poaPreviouslyAdjusted = reason.isDefined,
           taxYear = model.taxYear,
+          //eitherPoaPaid = model.eitherPoAIsPaid,
           initialAmountOne = model.poARelevantAmountOne,
           initialAmountTwo = model.poARelevantAmountTwo,
           adjustedAmountOne = model.paymentOnAccountOne,

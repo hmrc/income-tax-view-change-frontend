@@ -20,13 +20,13 @@ import auth.MtdItUser
 import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes
 import controllers.routes.HomeController
 import forms.adjustPoa.EnterPoaAmountForm
+import models.claimToAdjustPoa.{Increase, PoAAmountViewModel}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.EnterPoAAmountView
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                          val auth: AuthenticatorPredicate,
+                                         val sessionService: PaymentOnAccountSessionService,
                                          view: EnterPoAAmountView,
                                          claimToAdjustService: ClaimToAdjustService,
                                          implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -77,21 +78,33 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   }
 
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] =
-      claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
+      claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).flatMap {
         case Right(viewModel) =>
           EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.adjustedAmountOne, viewModel.initialAmountOne).fold(
             formWithErrors =>
-              BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent))),
+              Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
             validForm =>
-                Redirect(
-                  if (isAgent) routes.HomeController.showAgent
-                  else         routes.HomeController.show()
-                )
+              sessionService.setNewPoAAmount(validForm.amount).flatMap {
+                case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
+                  Future.successful(showInternalServerError(isAgent))
+                case Right(_) => getRedirect(viewModel, validForm.amount, isAgent)
+              }
           )        case Left(ex) =>
         Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
-        showInternalServerError(isAgent)
+          Future.successful(showInternalServerError(isAgent))
       }
-      //TODO: Redirect logic, see SelectYourReasonController
 
+  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.adjustedAmountOne) match {
+      case (true, true) => sessionService.setAdjustmentReason(Increase).map{
+        case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
+        case Right(_) =>
+          Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+      }
+      case (true, _) => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, isChange = false)))
+      case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
+    }
+  }
 
 }

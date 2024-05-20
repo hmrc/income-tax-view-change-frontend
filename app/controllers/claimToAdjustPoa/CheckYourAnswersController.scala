@@ -19,15 +19,17 @@ package controllers.claimToAdjustPoa
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PaymentOnAccountSessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val auth: AuthenticatorPredicate,
+                                           val sessionService: PaymentOnAccountSessionService,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -38,8 +40,14 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/check-your-answers")
+        sessionService.getMongo.map {
+          case Left(value) => Ok(
+            s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/check-your-answers")
+          case Right(mongo) => Ok(
+            s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/check-your-answers" +
+              s"" +
+              s"$mongo")
+        }
     }
 
 }

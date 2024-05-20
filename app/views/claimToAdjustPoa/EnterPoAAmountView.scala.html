@@ -149,10 +149,12 @@
         head = getTableHeading,
         firstCellIsHeader = true
     ))
-    @* IF EITHER POA IS PAID*@
-    @govukInsetText(InsetText(
-        content = Text(getMessage("insetText"))
-    ))
+
+@*//    @if(viewModel.eitherPoaPaid) {*@
+        @govukInsetText(InsetText(
+            content = Text(getMessage("insetText"))
+        ))
+@*//    }*@
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
