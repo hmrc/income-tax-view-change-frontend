@@ -105,6 +105,28 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
 
       }
     }
+
+    "unhappy case, missing header" should {
+
+      "return failure response" in {
+
+        when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
+
+        val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+          "Submission has not passed validation. Invalid parameter taxableEntityId."))
+        val correlationId = "123"
+        val apiRequest = OptOutUpdateRequest(taxYear.toString, itsaOptOutUpdateReason)
+        val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
+
+        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
+
+        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, itsaOptOutUpdateReason)
+
+        result.futureValue shouldBe OptOutUpdateResponseFailure("Unknown_CorrelationId", BAD_REQUEST, errorItems)
+
+      }
+    }
   }
 
   def setupHttpClientMock[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit = {
