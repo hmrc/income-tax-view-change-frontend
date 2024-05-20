@@ -29,6 +29,7 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.CheckYourAnswers
+import controllers.claimToAdjustPoa.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,9 +60,9 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                   adjustedFirstPoaAmount = amount,
                   adjustedSecondPoaAmount = amount,
                   poaReason = reason.messagesKey,
-                  redirectUrl = controllers.claimToAdjustPoa.routes.ConfirmationController.show(isAgent).url,
-                  changePoaReasonUrl = controllers.claimToAdjustPoa.routes.ChangePoaReasonController.show(isAgent).url,
-                  changePoaAmountUrl = controllers.claimToAdjustPoa.routes.ChangePoaReasonController.show(isAgent).url
+                  redirectUrl = ConfirmationController.show(isAgent).url,
+                  changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
+                  changePoaAmountUrl = ChangePoaReasonController.show(isAgent).url
                 )
               ))
             }
