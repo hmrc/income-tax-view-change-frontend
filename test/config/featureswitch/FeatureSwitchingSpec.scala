@@ -16,16 +16,16 @@
 
 package config.featureswitch
 
-import config.featureswitch.FeatureSwitch.switches
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import testUtils.TestSupport
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
-  val expectedDisabledFeatures: Set[FeatureSwitch] = FeatureSwitch.switches
+  val expectedDisabledFeatures: Set[FeatureSwitchName] = FeatureSwitchName.allFeatureSwitches
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    FeatureSwitch.switches.map(_.name).foreach(sys.props.remove)
+    FeatureSwitchName.allFeatureSwitches.map(_.name).foreach(sys.props.remove)
   }
 
   "Features" should {
@@ -42,7 +42,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
       }
 
       "a feature is disabled" in new FoldSetup {
-        switches.forall{ featureSwitch =>
+        FeatureSwitchName.allFeatureSwitches.forall{ featureSwitch =>
           disable(featureSwitch)
           val result = expectedDisabledFeatures.headOption match {
             case Some(fs) =>

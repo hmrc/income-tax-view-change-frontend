@@ -17,6 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel

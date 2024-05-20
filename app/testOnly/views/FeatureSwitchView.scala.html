@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  *@
 
 @import helper._
-@import config.featureswitch.FeatureSwitch
+@import models.admin.FeatureSwitchName
 @import views.html.layouts.unifiedLayout
 
 @this( unifiedLayout: unifiedLayout)
 
-@(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages)
+@(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
 
 @unifiedLayout(pageTitle = Messages("Feature switch")) {
     <form class="govuk-form-group" method="@action.method" action="@action.url">
@@ -33,13 +33,13 @@
             </legend>
             <h3 class="govuk-heading-m">Frontend features</h3>
             <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                @for((switch, state) <- switchNames) {
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" type="checkbox" id="@switch.name" name="@switch.name"
-                               value="true" @{if(state){"Checked"}}>
-                        <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.displayText</label>
-                    </div>
-                }
+            @for((switch, state) <- switchNames) {
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name"
+                    value="true" @{if(state){"Checked"}}>
+                    <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.toString</label>
+                </div>
+            }
             </div>
         </fieldset>
         <button class="govuk-button" type="submit">Update global settings</button>

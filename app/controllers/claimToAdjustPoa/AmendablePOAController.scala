@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.AdjustPaymentsOnAccount
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes

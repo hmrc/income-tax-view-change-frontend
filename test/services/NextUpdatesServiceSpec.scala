@@ -16,13 +16,14 @@
 
 package services
 
-import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
@@ -38,7 +39,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   class Setup extends NextUpdatesService(mockObligationsConnector)
 
   val previousObligation: NextUpdateModel = NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001")
-  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+//  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
 
   def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001")
 

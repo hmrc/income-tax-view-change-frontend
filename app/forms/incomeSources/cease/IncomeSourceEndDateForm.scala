@@ -18,7 +18,7 @@ package forms.incomeSources.cease
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
+import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import forms.validation.CustomConstraints

@@ -22,16 +22,24 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth._
-import play.api.i18n.MessagesApi
+import mocks.services.admin.MockFeatureSwitchService
 import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
 import utils.AuthenticatorPredicate
 
 trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions
-  with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler{
+  with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler
+  with MockFeatureSwitchService with MockFeatureSwitchPredicate {
 
-  val testAuthenticator = new AuthenticatorPredicate(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+  val testAuthenticator = new AuthenticatorPredicate(checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
+    authenticate = MockAuthenticationPredicate,
+    featureSwitchService = featureSwitchService,
+    authorisedFunctions = mockAuthService,
+    retrieveBtaNavBar = MockNavBarPredicate,
+    featureSwitchPredicate = FeatureSwitchPredicate,
+    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
+    incomeSourceDetailsService = mockIncomeSourceDetailsService)(
     app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(

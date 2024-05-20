@@ -16,12 +16,13 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.{AdjustPaymentsOnAccount, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.AmendablePOAController
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import models.admin.AdjustPaymentsOnAccount
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants

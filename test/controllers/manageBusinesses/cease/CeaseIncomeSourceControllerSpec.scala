@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, JourneyType}
@@ -25,6 +25,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -56,7 +57,6 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[FrontendAppConfig]
   )
-
   "The CeaseIncomeSourcesController" should {
 
     "redirect user back to the home page" when {

@@ -25,6 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
+import models.admin.{CreditsRefundsRepay, CutOverCredits, PaymentAllocation}
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.Logger
@@ -108,16 +109,17 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit agent =>
-        if (isEnabled(PaymentAllocation)) {
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+          if (isEnabled(PaymentAllocation)(mtdItUser)) {
             handleRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = redirectUrlAgent,
               isAgent = true
             )
-          }
-        } else Future.successful(Redirect(redirectUrlAgent))
+          } else
+            Future.successful(Redirect(redirectUrlAgent))
+        }
     }
   }
 

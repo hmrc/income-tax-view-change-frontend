@@ -18,9 +18,9 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._

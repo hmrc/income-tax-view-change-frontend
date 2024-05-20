@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.PaymentAllocation
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -144,6 +145,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     s"return $NOT_FOUND" when {
       "the PaymentAllocation feature switch is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        disable(PaymentAllocation)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 
