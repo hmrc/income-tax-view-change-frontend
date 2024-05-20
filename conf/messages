@@ -1915,6 +1915,8 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canc
 claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
 claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
 claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
+claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
 claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
 claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 

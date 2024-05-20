@@ -31,7 +31,12 @@
         govukButton : GovukButton
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, isAmountZero: Boolean)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+
+@getCorrectBody = @{
+    if (isAmountZero)   getMessage("p1")
+    else                getMessage("p2")
+}
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -51,6 +56,8 @@
     <span class="govuk-caption-l" id="caption">@getMessage("caption", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)</span>
 
     <h1 class="govuk-heading-l" id ="h1">@getMessage("h1")</h1>
+
+    <p class="govuk-body">@getCorrectBody</p>
 
     <div class="govuk-button-group">
 
