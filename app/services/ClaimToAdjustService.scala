@@ -84,10 +84,10 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         Right(PoAAmountViewModel(
           poaPreviouslyAdjusted = reason.isDefined,
           taxYear = model.taxYear,
-          initialAmountOne = model.poARelevantAmountOne,
-          initialAmountTwo = model.poARelevantAmountTwo,
-          adjustedAmountOne = model.paymentOnAccountOne,
-          adjustedAmountTwo = model.paymentOnAccountTwo))
+          relevantAmountOne = model.poARelevantAmountOne,
+          relevantAmountTwo = model.poARelevantAmountTwo,
+          totalAmountOne = model.paymentOnAccountOne,
+          totalAmountTwo = model.paymentOnAccountTwo))
       case (Left(ex), _) => Left(ex)
       case (_, Left(ex)) => Left(ex)
       case _ => Left(new Exception("Unexpected error when creating Enter PoA Amount view model"))

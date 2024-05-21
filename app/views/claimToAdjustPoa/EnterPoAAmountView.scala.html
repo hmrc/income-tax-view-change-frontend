@@ -83,7 +83,7 @@
 @getRow1 = @{
     if(viewModel.poaPreviouslyAdjusted) {
         Seq(TableRow(
-            content = Text(viewModel.adjustedAmountOne.toCurrencyString),
+            content = Text(viewModel.relevantAmountOne.toCurrencyString),
             format = Some("numeric")
         ))
     }
@@ -94,7 +94,7 @@
 @getRow2 = @{
     if(viewModel.poaPreviouslyAdjusted) {
         Seq(TableRow(
-            content = Text(viewModel.adjustedAmountTwo.toCurrencyString),
+            content = Text(viewModel.relevantAmountTwo.toCurrencyString),
             format = Some("numeric")
         ))
     }
@@ -130,21 +130,26 @@
             Seq(
                 TableRow(
                     content = Text(getMessage("firstPayment"))
-                ),
+                )
+            ) ++ getRow1 ++ 
+            Seq(
                 TableRow(
-                    content = Text(viewModel.initialAmountOne.toCurrencyString),
+                    content = Text(viewModel.totalAmountOne.toCurrencyString),
                     format = Some("numeric")
                 )
-            ) ++ getRow1,
+            ),
             Seq(
                 TableRow(
                     content = Text(getMessage("secondPayment"))
-                ),
+                )
+            )
+            ++ getRow2 ++
+            Seq(
                 TableRow(
-                    content = Text(viewModel.initialAmountTwo.toCurrencyString),
+                    content = Text(viewModel.totalAmountOne.toCurrencyString),
                     format = Some("numeric")
                 )
-            ) ++ getRow2
+            )
         ),
         head = getTableHeading,
         firstCellIsHeader = true

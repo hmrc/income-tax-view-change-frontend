@@ -76,7 +76,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
       claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).flatMap {
         case Right(viewModel) =>
-          EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.adjustedAmountOne, viewModel.initialAmountOne).fold(
+          EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
             validForm =>
@@ -91,8 +91,8 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
   }
 
-      def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.adjustedAmountOne) match {
+  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
       case (true, true) => sessionService.setAdjustmentReason(Increase).map{
         case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)

@@ -20,15 +20,14 @@ import models.incomeSourceDetails.TaxYear
 
 case class PoAAmountViewModel(
                                poaPreviouslyAdjusted: Boolean,
-                               //eitherPoaPaid: Boolean,
                                taxYear: TaxYear,
-                               initialAmountOne: BigDecimal,
-                               initialAmountTwo: BigDecimal,
-                               adjustedAmountOne: BigDecimal,
-                               adjustedAmountTwo: BigDecimal
+                               totalAmountOne: BigDecimal,
+                               totalAmountTwo: BigDecimal,
+                               relevantAmountOne: BigDecimal,
+                               relevantAmountTwo: BigDecimal
                              ) {
-  val totalAmount: BigDecimal = adjustedAmountOne + adjustedAmountTwo
-  private val poaRelevantAmount = initialAmountOne + initialAmountTwo
+  val totalAmount: BigDecimal = totalAmountOne + totalAmountTwo
+  private val poaRelevantAmount = relevantAmountOne + relevantAmountTwo
 
   def totalAmountLessThanPoa: Boolean = {
     totalAmount < poaRelevantAmount
