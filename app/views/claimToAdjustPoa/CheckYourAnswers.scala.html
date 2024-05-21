@@ -83,11 +83,10 @@
         } ++ Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-2.key"))),
-                value = Value(HtmlContent(
-                    s"""
-                  |<a>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</a><br><br>
-                  |<a>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</a>
-                |""".stripMargin
+                value = Value(HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</p>
+                    |<p class=govuk-body>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</p>
+                    |""".stripMargin
                 )),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
