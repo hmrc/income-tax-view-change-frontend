@@ -37,8 +37,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val title: String = messages("htmlTitle", heading)
     val summary: String = messages("optout.confirmOptOut.desc")
     val confirmButton: String = messages("optout.confirmOptOut.confirm")
-    val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show().url
-    val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
+    val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show(false).url
+    val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.show(true).url
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
   }
 

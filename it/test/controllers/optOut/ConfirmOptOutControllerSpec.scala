@@ -11,7 +11,7 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
+import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -41,7 +41,7 @@ class ConfirmedOptOutControllerSpec extends ComponentSpecBase {
       val result = IncomeTaxViewChangeFrontend.confirmOneYearOptOut()
 
       result should have(
-        httpStatus(OK),
+        httpStatus(SEE_OTHER),
       )
 
     }
@@ -63,7 +63,7 @@ class ConfirmedOptOutControllerSpec extends ComponentSpecBase {
       val result = IncomeTaxViewChangeFrontend.confirmOneYearOptOut()
 
       result should have(
-        httpStatus(OK),
+        httpStatus(Status.SEE_OTHER),
       )
 
     }

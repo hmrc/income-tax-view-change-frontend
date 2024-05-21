@@ -49,7 +49,7 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user => Future.successful(Ok(confirmedOptOut(isAgent)))
   }
 
