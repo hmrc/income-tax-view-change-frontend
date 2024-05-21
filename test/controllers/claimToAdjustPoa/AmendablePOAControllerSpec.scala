@@ -16,9 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.claimToAdjustPoa.AmendablePOAController
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
@@ -35,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendablePOAControllerSpec
   extends MockAuthenticationPredicate
     with TestSupport
-    with FeatureSwitching
     with MockClaimToAdjustService
     with MockCalculationListService
     with MockCalculationListConnector

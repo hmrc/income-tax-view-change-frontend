@@ -16,7 +16,6 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -37,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
   with TestSupport
-  with FeatureSwitching
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
@@ -60,22 +58,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
   )
 
   "WhatYouNeedToKnowController.show" should {
-    "redirect to the home page" when {
-      "FS is disabled" in {
-        disable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-        status(resultAgent) shouldBe SEE_OTHER
-        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-    }
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
         enable(AdjustPaymentsOnAccount)
@@ -94,6 +76,23 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
+      }
+    }
+    "redirect to the home page" when {
+      "FS is disabled" in {
+        disable(AdjustPaymentsOnAccount)
+        println("BOOP" + isEnabled(AdjustPaymentsOnAccount))
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
     "return an error 500" when {
@@ -145,5 +144,4 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
       }
     }
   }
-
 }

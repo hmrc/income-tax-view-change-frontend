@@ -28,7 +28,7 @@ import scala.concurrent.Future
 trait ClaimToAdjustUtils extends FeatureSwitching{
 
   def ifAdjustPoaIsEnabled(isAgent: Boolean)
-                                  (block: Future[Result])
+                                  (block: => Future[Result])
                                   (implicit user: MtdItUser[_]): Future[Result] = {
     if(isEnabled(AdjustPaymentsOnAccount)) {
       block
