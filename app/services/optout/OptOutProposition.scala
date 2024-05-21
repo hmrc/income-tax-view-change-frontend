@@ -30,7 +30,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
   def availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
 
-  lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
+  private lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
 
   def optOutForSingleYear[T](function: (OptOutProposition, OptOutTaxYear) => T): Option[T] = {
     if (countVoluntaryOptOutYears == 1) Some(function(this, availableOptOutYears.head)) else
@@ -56,6 +56,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     } else intentYearAndOnwards
   }
 
-  def optOutTaxYearFor(taxYear: TaxYear): OptOutTaxYear = availableOptOutYears.filter(v => v.taxYear.isSameAs(taxYear)).head
+  def optOutTaxYearFor(taxYear: TaxYear): Option[OptOutTaxYear] =
+    availableOptOutYears.find(offered => offered.taxYear.isSameAs(taxYear))
 
 }

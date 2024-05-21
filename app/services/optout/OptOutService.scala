@@ -103,13 +103,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     OptOutProposition(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
 
-  def makeOptOutUpdateRequest(intent: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  def makeOptOutUpdateRequest(taxPayerIntent: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     setupOptOutProposition().flatMap { proposition =>
       if(proposition.isOneYearOptOut)
         makeOptOutUpdateRequestForOneYear(proposition)
+
       else {
-        intent.map(ty => makeOptOutUpdateRequest(proposition, proposition.optOutTaxYearFor(ty)))
+        taxPayerIntent.flatMap(intent => proposition.optOutTaxYearFor(intent))
+          .map(optOutTaxYearIntent => makeOptOutUpdateRequest(proposition, optOutTaxYearIntent))
           .getOrElse(Future.successful(OptOutUpdateResponseFailure.defaultFailure()))
       }
     }
