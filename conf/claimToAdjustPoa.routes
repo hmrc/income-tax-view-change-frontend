@@ -26,3 +26,12 @@ GET          /agents/adjust-poa/enter-poa-amount                            cont
 
 GET          /adjust-poa/check-your-answers                                 controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/check-your-answers                          controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/confirmation                                       controllers.claimToAdjustPoa.ConfirmationController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/confirmation                                controllers.claimToAdjustPoa.ConfirmationController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/change-your-reason                                 controllers.claimToAdjustPoa.ChangePoaReasonController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/change-your-reason                          controllers.claimToAdjustPoa.ChangePoaReasonController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/change-poa-amount                                  controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/change-poa-amount                           controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = true)
