@@ -16,13 +16,14 @@
 
 package controllers.manageBusinesses.add
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.admin.IncomeSources
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status

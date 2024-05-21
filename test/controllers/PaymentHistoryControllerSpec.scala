@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
 import forms.utils.SessionKeys.gatewayPage
@@ -24,6 +24,7 @@ import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

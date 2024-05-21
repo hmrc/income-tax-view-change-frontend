@@ -24,6 +24,7 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -688,7 +689,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       def verifyMFADebitsResults(result: WSResponse): Any = {
-        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+        val auditDD = if (isEnabled(MFACreditsAndDebits)(testUser)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -709,7 +710,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         }
 
 
-        if (isEnabled(MFACreditsAndDebits)) {
+        if (isEnabled(MFACreditsAndDebits)(testUser)) {
           result should have(
             httpStatus(OK),
             pageTitleAgent("tax-year-summary.heading"),

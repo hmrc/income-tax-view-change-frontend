@@ -17,7 +17,7 @@
 package views
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
