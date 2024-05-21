@@ -86,7 +86,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         ))
         val proposition = buildOneYearOptOutDataForPreviousYear(currentYear)
         val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequestFor(proposition, intent)
+        service.makeOptOutUpdateRequest(proposition, intent)
         verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, itsaOptOutUpdateReason)
       }
     }
@@ -106,7 +106,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         ))
         val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
         val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequestFor(proposition, intent)
+        service.makeOptOutUpdateRequest(proposition, intent)
         verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear), taxableEntityId, itsaOptOutUpdateReason)
       }
     }
@@ -126,7 +126,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         ))
         val proposition = buildOneYearOptOutDataForNextYear(currentYear)
         val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequestFor(proposition, intent)
+        service.makeOptOutUpdateRequest(proposition, intent)
         verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId, itsaOptOutUpdateReason)
       }
     }
@@ -150,7 +150,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
         val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -174,7 +174,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
 
         val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
         val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

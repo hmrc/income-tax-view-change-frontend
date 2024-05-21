@@ -98,7 +98,7 @@ class OptOutServiceSpec extends UnitSpec
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
         val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -121,7 +121,7 @@ class OptOutServiceSpec extends UnitSpec
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
         val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequestFor(proposition, intent)
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

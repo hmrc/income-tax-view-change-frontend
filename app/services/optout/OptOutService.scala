@@ -109,22 +109,22 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       if(proposition.isOneYearOptOut)
         makeOptOutUpdateRequestForOneYear(proposition)
       else {
-        intent.map(ty => makeOptOutUpdateRequestFor(proposition, proposition.optOutTaxYearFor(ty)))
+        intent.map(ty => makeOptOutUpdateRequest(proposition, proposition.optOutTaxYearFor(ty)))
           .getOrElse(Future.successful(OptOutUpdateResponseFailure.defaultFailure()))
       }
     }
   }
 
-  def makeOptOutUpdateRequestForOneYear(optOutProposition: OptOutProposition)(implicit
+  private def makeOptOutUpdateRequestForOneYear(optOutProposition: OptOutProposition)(implicit
                                                                               user: MtdItUser[_],
                                                                               shc: HeaderCarrier,
                                                                               ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     val intent = optOutProposition.availableOptOutYears.head
-    makeOptOutUpdateRequestFor(optOutProposition, intent)
+    makeOptOutUpdateRequest(optOutProposition, intent)
   }
 
-  def makeOptOutUpdateRequestFor(optOutProposition: OptOutProposition, intent: OptOutTaxYear)(implicit user: MtdItUser[_],
-                                                                                              shc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intent: OptOutTaxYear)(implicit user: MtdItUser[_],
+                                                                                           shc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     val optOutYearsToUpdate = optOutProposition.optOutYearsToUpdate(intent)
 
