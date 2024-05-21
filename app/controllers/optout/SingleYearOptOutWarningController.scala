@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optout
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
@@ -46,7 +46,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 
-  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
+  private val submitAction = (isAgent: Boolean) => controllers.optout.routes.SingleYearOptOutWarningController.submit(isAgent)
   private val homePage = (isAgent: Boolean) => if (isAgent) controllers.routes.HomeController.showAgent else controllers.routes.HomeController.show()
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
   private val backUrl = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
@@ -89,8 +89,8 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
           {
             case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
               val nextPage = if (isAgent)
-                controllers.optOut.routes.ConfirmOptOutController.showAgent()
-              else controllers.optOut.routes.ConfirmOptOutController.show()
+                controllers.optout.routes.ConfirmOptOutController.showAgent()
+              else controllers.optout.routes.ConfirmOptOutController.show()
 
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)

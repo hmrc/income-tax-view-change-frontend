@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optout
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optOut.ConfirmedOptOutController.IsAgent.{IsAgentNo, IsAgentYes}
+import controllers.optout.ConfirmedOptOutController.IsAgent.{IsAgentNo, IsAgentYes}
 import controllers.predicates._
 import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import play.api.i18n.I18nSupport

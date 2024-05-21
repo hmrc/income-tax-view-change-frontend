@@ -1,7 +1,7 @@
-package controllers.optOut
+package controllers.optout
 
 import connectors.ITSAStatusUpdateConnector
-import controllers.optOut.ConfirmedOptOutControllerSpec.emptyBodyString
+import controllers.optout.ConfirmedOptOutControllerSpec.emptyBodyString
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}

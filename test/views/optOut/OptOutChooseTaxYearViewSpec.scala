@@ -38,8 +38,8 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val summary1: String = messages("optout.chooseOptOutTaxYear.desc1")
     val summary2: String = messages("optout.chooseOptOutTaxYear.desc2")
     val whichTaxYear: String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
-    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.show().url
-    val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.showAgent().url
+    val confirmOptOutURL: String = controllers.optout.routes.ConfirmOptOutController.show().url
+    val confirmOptOutURLAgent: String = controllers.optout.routes.ConfirmOptOutController.showAgent().url
     val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
   }
