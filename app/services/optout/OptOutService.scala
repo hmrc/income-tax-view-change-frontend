@@ -17,11 +17,11 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Mandated
 import models.itsaStatus.StatusDetail
-import models.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, itsaOptOutUpdateReason}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, itsaOptOutUpdateReason}
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
 import play.mvc.Http

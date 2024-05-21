@@ -17,10 +17,10 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optout.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.concurrent.ScalaFutures

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
+import connectors.RawResponseReads
+import connectors.optout.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
-import models.optout.OptOutUpdateRequestModel._
+import OptOutUpdateRequestModel._
 import play.api.Logger
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}

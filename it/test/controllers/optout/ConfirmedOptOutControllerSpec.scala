@@ -1,13 +1,13 @@
 package controllers.optout
 
-import connectors.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnector
 import controllers.optout.ConfirmedOptOutControllerSpec.emptyBodyString
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
-import models.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status

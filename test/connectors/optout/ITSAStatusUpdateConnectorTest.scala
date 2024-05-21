@@ -30,12 +30,12 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
+import connectors.optout.ITSAStatusUpdateConnector.CorrelationIdHeader
+import connectors.optout.OptOutUpdateRequestModel._
 import models.incomeSourceDetails.TaxYear
-import models.optout.OptOutUpdateRequestModel._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
