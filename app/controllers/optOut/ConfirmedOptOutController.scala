@@ -21,22 +21,19 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmedOptOut
-import services.optout.OptOutService
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val confirmedOptOut: ConfirmedOptOut,
-                                          val optOutService: OptOutService,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate,
@@ -51,20 +48,9 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(isAgent = false))
-        case _ => itvcErrorHandler.showInternalServerError()
-      }
-  }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Ok(confirmedOptOut(isAgent = true))
-        case _ => itvcErrorHandler.showInternalServerError()
-      }
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user => Future.successful(Ok(confirmedOptOut(isAgent)))
   }
 
 }
