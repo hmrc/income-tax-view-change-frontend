@@ -15,21 +15,18 @@
  *@
 
 @import auth.MtdItUser
-@import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.incomeSourceDetails.TaxYear
+@import models.claimToAdjustPoa.SelectYourReason
+@import models.claimToAdjustPoa.Increase
 
 @this(
-        p: p,
-        link: link,
         govukButton : GovukButton,
         mainTemplate: unifiedLayout,
-        continueButton: ContinueButton,
-        govukInsetText : GovukInsetText,
         hmrcPageHeading: HmrcPageHeading,
         govukSummaryList : GovukSummaryList
 )
@@ -42,7 +39,7 @@
         adjustedFirstPoaAmount: BigDecimal,
         adjustedSecondPoaAmount: BigDecimal,
         taxYear: TaxYear,
-        poaReason: String
+        poaReason: SelectYourReason
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -70,10 +67,11 @@
 
     @govukSummaryList(SummaryList(
         classes = "govuk-!-margin-bottom-9",
-        rows = Seq(
-            SummaryListRow(
+        rows = {
+            if(poaReason.code == Increase.code) Nil
+            else Seq(SummaryListRow(
                 key = Key(Text(getMessage("summary-list-1.key"))),
-                value = Value(Text(messages(poaReason))),
+                value = Value(Text(messages(poaReason.messagesKey))),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = changePoaReasonUrl,
@@ -81,14 +79,15 @@
                         attributes = Map("id" -> "change-1")
                     ))
                 ))
-            ),
+            ))
+        } ++ Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-2.key"))),
                 value = Value(HtmlContent(
                     s"""
-                      |<a>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</a><br><br>
-                      |<a>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</a>
-                    |""".stripMargin
+                  |<a>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</a><br><br>
+                  |<a>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</a>
+                |""".stripMargin
                 )),
                 actions = Some(Actions(
                     items = Seq(ActionItem(

@@ -39,7 +39,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             taxYear = TaxYear(2023, 2024),
             adjustedFirstPoaAmount = BigDecimal(3000.00),
             adjustedSecondPoaAmount = BigDecimal(3000.00),
-            poaReason = MainIncomeLower.messagesKey,
+            poaReason = MainIncomeLower,
             redirectUrl = ConfirmationController.show(isAgent).url,
             changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
             changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
