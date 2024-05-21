@@ -43,8 +43,10 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
   def optOutYearsToUpdate(intent: OptOutTaxYear) : Seq[OptOutTaxYear] = {
 
-    val intentYearAndOnwards = availableOptOutYears.filter(offered => offered.taxYear.isSameAs(intent.taxYear) ||
-      offered.taxYear.isAfter(intent.taxYear))
+    def offeredYearIsOnOrAfterIntentYear(intent: OptOutTaxYear)(offered: OptOutTaxYear): Boolean  =
+      offered.taxYear.isSameAs(intent.taxYear) || offered.taxYear.isAfter(intent.taxYear)
+
+    val intentYearAndOnwards = availableOptOutYears.filter(offeredYearIsOnOrAfterIntentYear(intent))
 
     val nextYearIsOffered = nextTaxYear.canOptOut
     val nextYearIsNoStatus = nextTaxYear.status == ITSAStatus.NoStatus
