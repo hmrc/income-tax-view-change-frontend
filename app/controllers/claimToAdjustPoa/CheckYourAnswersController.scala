@@ -54,18 +54,20 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
         ifAdjustPoaIsEnabled(isAgent) {
           withSessionAndPoa(isAgent) { (session, poa) =>
             withValidSession(isAgent, session) { (reason, amount) =>
-              EitherT.rightT(Ok(
-                checkYourAnswers(
-                  isAgent = isAgent,
-                  taxYear = poa.taxYear,
-                  adjustedFirstPoaAmount = amount,
-                  adjustedSecondPoaAmount = amount,
-                  poaReason = reason,
-                  redirectUrl = ConfirmationController.show(isAgent).url,
-                  changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
-                  changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
+              EitherT.rightT(
+                Ok(
+                  checkYourAnswers(
+                    isAgent = isAgent,
+                    poaReason = reason,
+                    taxYear = poa.taxYear,
+                    adjustedFirstPoaAmount = amount,
+                    adjustedSecondPoaAmount = amount,
+                    redirectUrl = ConfirmationController.show(isAgent).url,
+                    changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url,
+                    changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url
+                  )
                 )
-              ))
+              )
             }
           } fold(
             logAndShowErrorPage(isAgent),
@@ -83,7 +85,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
       Future.successful(
         Redirect(
           if (isAgent) controllers.routes.HomeController.showAgent
-          else controllers.routes.HomeController.show()
+          else         controllers.routes.HomeController.show()
         )
       )
     }
