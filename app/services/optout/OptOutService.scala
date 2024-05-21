@@ -149,10 +149,6 @@ object OptOutService {
   private val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
 
   private def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    items.reduce((f1, f2) => f1.flatMap(r1 => f2.map {
-      case r2 if r2.isInstanceOf[OptOutUpdateResponseFailure] => r2
-      case _ if r1.isInstanceOf[OptOutUpdateResponseFailure] => r1
-      case r => r
-    }))
+    Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) }
   }
 }
