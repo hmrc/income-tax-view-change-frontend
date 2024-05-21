@@ -18,7 +18,7 @@ package services.optout.optoutproposition
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, itsaOptOutUpdateReason}
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
@@ -76,7 +76,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
@@ -108,13 +108,13 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
@@ -146,13 +146,13 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure.defaultFailure()
         ))
-        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 

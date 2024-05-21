@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, optOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.concurrent.ScalaFutures
@@ -81,13 +81,13 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val correlationId = "123"
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = buildOneYearOptOutDataForPreviousYear(currentYear)
         val intent = proposition.availableOptOutYears.head
         service.makeOptOutUpdateRequest(proposition, intent)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, itsaOptOutUpdateReason)
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, optOutUpdateReason)
       }
     }
 
@@ -101,13 +101,13 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val correlationId = "123"
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
         val intent = proposition.availableOptOutYears.head
         service.makeOptOutUpdateRequest(proposition, intent)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear), taxableEntityId, itsaOptOutUpdateReason)
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear), taxableEntityId, optOutUpdateReason)
       }
     }
 
@@ -121,13 +121,13 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val correlationId = "123"
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = buildOneYearOptOutDataForNextYear(currentYear)
         val intent = proposition.availableOptOutYears.head
         service.makeOptOutUpdateRequest(proposition, intent)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId, itsaOptOutUpdateReason)
+        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId, optOutUpdateReason)
       }
     }
   }
@@ -144,7 +144,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
@@ -168,7 +168,7 @@ class OptOutServiceTest extends AnyWordSpecLike with Matchers with BeforeAndAfte
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
 

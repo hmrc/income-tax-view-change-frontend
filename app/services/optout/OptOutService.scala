@@ -21,7 +21,7 @@ import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Mandated
 import models.itsaStatus.StatusDetail
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, itsaOptOutUpdateReason}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import play.api.Logger
 import play.mvc.Http
@@ -131,7 +131,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val optOutYearsToUpdate = optOutProposition.optOutYearsToUpdate(intent)
 
     val responses: Seq[Future[OptOutUpdateResponse]] = optOutYearsToUpdate.map(optOutYear =>
-      itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, itsaOptOutUpdateReason))
+      itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
     combineByReturningAnyFailureFirstOrAnySuccess(responses)
   }
 }

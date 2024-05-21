@@ -22,7 +22,7 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, optOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
@@ -93,7 +93,7 @@ class OptOutServiceSpec extends UnitSpec
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
@@ -116,7 +116,7 @@ class OptOutServiceSpec extends UnitSpec
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, itsaOptOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()

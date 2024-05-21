@@ -28,7 +28,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     currentTaxYear,
     nextTaxYear)
 
-  def availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
+  lazy val availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
 
   private lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
 
