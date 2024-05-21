@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optout
+package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
@@ -50,7 +50,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
   def tests(isAgent: Boolean): Unit = {
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-    val confirmOptOutPage = if (isAgent) Some(controllers.optout.routes.ConfirmOptOutController.showAgent().url) else Some(controllers.optout.routes.ConfirmOptOutController.show().url)
+    val confirmOptOutPage = if (isAgent) Some(controllers.optOut.routes.ConfirmOptOutController.showAgent().url) else Some(controllers.optOut.routes.ConfirmOptOutController.show().url)
     val homePage = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear)))

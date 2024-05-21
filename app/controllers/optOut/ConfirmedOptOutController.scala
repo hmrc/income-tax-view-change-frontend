@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optout
+package controllers.optOut
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching

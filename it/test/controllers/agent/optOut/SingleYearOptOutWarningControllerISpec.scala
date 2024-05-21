@@ -29,12 +29,12 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = true
-  val singleYearOptOutWarningPageGETUrl = controllers.optout.routes.SingleYearOptOutWarningController.show(isAgent).url
-  val singleYearOptOutWarningPagePOSTUrl = controllers.optout.routes.SingleYearOptOutWarningController.submit(isAgent).url
+  val singleYearOptOutWarningPageGETUrl = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url
+  val singleYearOptOutWarningPagePOSTUrl = controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent).url
   val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
   val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
-  val confirmOptOutPageUrl = controllers.optout.routes.ConfirmOptOutController.showAgent().url
+  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.showAgent().url
   val homePageUrl = controllers.routes.HomeController.showAgent.url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
