@@ -29,6 +29,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.admin.FeatureSwitchService
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -47,7 +48,8 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                 val authorisedFunctions: FrontendAuthorisedFunctions)
+                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                 val featureSwitchService: FeatureSwitchService)
                                                 (implicit val ec: ExecutionContext,
                                                  val languageUtils: LanguageUtils,
                                                  val appConfig: FrontendAppConfig,
@@ -65,23 +67,25 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
 
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    if (isDisabled(ForecastCalculation)) {
-      val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
-      Future.successful(NotFound(errorTemplate))
-    } else {
-      calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
-        case liabilityCalc: LiabilityCalculationResponse =>
-          val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
-          viewModel match {
-            case Some(model) =>
-              auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
-              Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
-            case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
-          }
-        case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-          onError("No tax calculation data found.", isAgent, taxYear)
-        case _: LiabilityCalculationError =>
-          onError("No new tax calculation data found. Downstream error", isAgent, taxYear)
+    featureSwitchService.getAll.flatMap { fs =>
+      if (isDisabled(ForecastCalculation, fs)) {
+        val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
+        Future.successful(NotFound(errorTemplate))
+      } else {
+        calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+          case liabilityCalc: LiabilityCalculationResponse =>
+            val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
+            viewModel match {
+              case Some(model) =>
+                auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
+                Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
+              case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
+            }
+          case error: LiabilityCalculationError if error.status == NO_CONTENT =>
+            onError("No tax calculation data found.", isAgent, taxYear)
+          case _: LiabilityCalculationError =>
+            onError("No new tax calculation data found. Downstream error", isAgent, taxYear)
+        }
       }
     }
   }

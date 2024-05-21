@@ -40,10 +40,13 @@ trait FeatureSwitching {
     }
   }
 
-  // TODO replace this function, or all uses of it, with the inverse of isEnabled
-  // It is currently used in NavBarFromNinoPredicate.scala, ForecastIncomeSummaryController.scala, ForecastTaxCalcSummaryController.scala
-  def isDisabled(featureSwitch: FeatureSwitchName): Boolean = {
-    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_OFF
+  // TODO: replace this function, or all uses of it, with the inverse of isEnabled
+  def isDisabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
+    if (appConfig.readFeatureSwitchesFromMongo) {
+     !fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+    } else {
+      sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_OFF
+    }
   }
 
   def enable(featureSwitch: FeatureSwitchName): Unit =
