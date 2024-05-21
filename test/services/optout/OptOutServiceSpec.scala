@@ -22,8 +22,8 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optOut.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
+import models.optout.OptOutUpdateRequestModel.{ErrorItem, itsaOptOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.optOut
+package models.optout
 
 case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
 

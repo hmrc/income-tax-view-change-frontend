@@ -35,7 +35,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutUpdateRequestModel._
+import models.optout.OptOutUpdateRequestModel._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter

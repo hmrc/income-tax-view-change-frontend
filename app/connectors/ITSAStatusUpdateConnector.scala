@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutUpdateRequestModel._
+import models.optout.OptOutUpdateRequestModel._
 import play.api.Logger
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}

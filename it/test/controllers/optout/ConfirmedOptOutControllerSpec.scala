@@ -7,7 +7,7 @@ import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
-import models.optOut.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
+import models.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status

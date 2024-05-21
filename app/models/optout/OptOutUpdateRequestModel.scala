@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.optOut
+package models.optout
 
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}

@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearViewModel
+import models.optout.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

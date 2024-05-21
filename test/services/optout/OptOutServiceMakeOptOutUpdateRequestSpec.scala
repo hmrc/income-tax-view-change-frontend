@@ -21,7 +21,7 @@ import connectors.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optOut.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, itsaOptOutUpdateReason}
+import models.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, itsaOptOutUpdateReason}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, times, verify, when}
 import org.scalatest.BeforeAndAfter
