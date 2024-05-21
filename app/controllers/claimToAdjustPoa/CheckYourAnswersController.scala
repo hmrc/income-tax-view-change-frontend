@@ -21,8 +21,8 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
-import models.core.Nino
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.core.{CheckMode, Nino}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                   adjustedSecondPoaAmount = amount,
                   poaReason = reason,
                   redirectUrl = ConfirmationController.show(isAgent).url,
-                  changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
+                  changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
                   changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
                 )
               ))

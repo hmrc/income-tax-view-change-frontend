@@ -16,8 +16,9 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ChangePoaReasonController, ConfirmationController}
+import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ConfirmationController, SelectYourReasonController}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
+import models.core.CheckMode
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,7 +42,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             adjustedSecondPoaAmount = BigDecimal(3000.00),
             poaReason = poaReason,
             redirectUrl = ConfirmationController.show(isAgent).url,
-            changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
+            changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
             changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
           )
         )
@@ -73,7 +74,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
       "render the first change link" in new Setup(isAgent) {
         document.getElementById("change-1").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
-        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe ChangePoaReasonController.show(isAgent).url
+        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe SelectYourReasonController.show(isAgent, CheckMode).url
       }
       "render the second change link" in new Setup(isAgent) {
         document.getElementById("change-2").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
