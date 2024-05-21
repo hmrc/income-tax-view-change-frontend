@@ -91,9 +91,9 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
     }
 
     "an agent loads the page and newPoAAmount is greater than zero" should {
-//      "render the page heading" in new Setup(isAgent = true, isAmountZero = false) {
-//        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
-//      }
+      "render the page heading" in new Setup(isAgent = true, isAmountZero = false) {
+        document.title shouldBe msgs("htmlTitle.agent", msgs("claimToAdjustPoa.confirmation.heading"))
+      }
 
       "render the caption" in new Setup(isAgent = true, isAmountZero = false) {
         document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
@@ -115,9 +115,9 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
     }
 
     "an agent loads the page and newPoAAmount is zero" should {
-//      "render the page heading" in new Setup(isAgent = true, isAmountZero = true) {
-//        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.confirmation.heading"))
-//      }
+      "render the page heading" in new Setup(isAgent = true, isAmountZero = true) {
+        document.title shouldBe msgs("htmlTitle.agent", msgs("claimToAdjustPoa.confirmation.heading"))
+      }
 
       "render the caption" in new Setup(isAgent = true, isAmountZero = true) {
         document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)

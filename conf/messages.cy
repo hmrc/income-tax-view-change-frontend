@@ -1868,7 +1868,7 @@ claimToAdjustPoa.confirmation.caption                                   =   Adda
 claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
 claimToAdjustPoa.confirmation.h1                                        =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
 claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
-claimToAdjustPoa.confirmation.p2                                        =   Rwy'n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
+claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
 claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chyflwyno
 claimToAdjustPoa.confirmation.cancel                                    =   Canslo
 
