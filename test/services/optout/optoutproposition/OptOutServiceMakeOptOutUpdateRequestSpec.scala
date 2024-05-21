@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package services.optout
+package services.optout.optoutproposition
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, itsaOptOutUpdateReason}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, itsaOptOutUpdateReason}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, times, verify, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import play.mvc.Http.Status.NO_CONTENT
+import services.optout.OptOutService
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier

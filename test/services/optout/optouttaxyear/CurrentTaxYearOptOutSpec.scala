@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package services.optout
+package services.optout.optouttaxyear
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import services.optout.CurrentOptOutTaxYear
 import testUtils.UnitSpec
 
 class CurrentTaxYearOptOutSpec extends UnitSpec {
