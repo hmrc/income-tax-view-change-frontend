@@ -17,7 +17,7 @@
 package views.claimToAdjustPoa
 
 import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ChangePoaReasonController, ConfirmationController}
-import models.claimToAdjustPoa.MainIncomeLower
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,7 +27,7 @@ import views.html.claimToAdjustPoa.CheckYourAnswers
 
 class CheckYourAnswersControllerViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean) {
+  class Setup(isAgent: Boolean, poaReason: SelectYourReason = MainIncomeLower) {
 
     val checkYourAnswers: CheckYourAnswers = app.injector.instanceOf[CheckYourAnswers]
 
@@ -39,7 +39,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             taxYear = TaxYear(2023, 2024),
             adjustedFirstPoaAmount = BigDecimal(3000.00),
             adjustedSecondPoaAmount = BigDecimal(3000.00),
-            poaReason = MainIncomeLower,
+            poaReason = poaReason,
             redirectUrl = ConfirmationController.show(isAgent).url,
             changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
             changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
@@ -82,6 +82,14 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
         document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationController.show(isAgent).url
+      }
+      "hide the Payment On Account reason row when the user has increased the PoA after a prior adjustment" in new Setup(isAgent, poaReason = Increase) {
+          document.getElementsByClass("govuk-summary-list__key").size() shouldBe 1
+          document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list-2.key")
+          document.getElementsByClass("govuk-summary-list__value").size() shouldBe 1
+          document.getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe
+            messages("claimToAdjustPoa.checkYourAnswers.summary-list-1.value", "£3,000.00") + " " +
+              messages("claimToAdjustPoa.checkYourAnswers.summary-list-2.value", "£3,000.00")
       }
     }
   }
