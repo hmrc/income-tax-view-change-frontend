@@ -68,9 +68,9 @@ trait ClaimToAdjustHelper {
 
   protected def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
     for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
-      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption
-      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
+      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
+      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
       poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
     } yield {
 
@@ -93,7 +93,7 @@ trait ClaimToAdjustHelper {
   protected def getChargeHistory(documentDetails: List[DocumentDetail], financialDetailsConnector: FinancialDetailsConnector)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
     } yield {
       financialDetailsConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
         case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
