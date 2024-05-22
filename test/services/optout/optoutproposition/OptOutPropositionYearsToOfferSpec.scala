@@ -21,19 +21,56 @@ import models.itsaStatus.ITSAStatus._
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, OptOutTaxYear, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
-class OptOutPropositionYearsToOfferSpec extends UnitSpec {
+import OptOutPropositionYearsToOfferSpec._
 
-  val testCases = List(
-    ((false, Voluntary, Voluntary, Voluntary), (false, true), Seq("PY", "CY", "NY")),
-    ((true, Voluntary, Voluntary, Voluntary), (false, true), Seq("CY", "NY")),
-    ((true, Voluntary, Voluntary, NoStatus), (false, true), Seq("CY", "NY")),
-    ((false, Voluntary, Voluntary, Mandated), (false, true), Seq("PY", "CY")),
-    ((false, Voluntary, Mandated, Voluntary), (false, true), Seq("PY", "NY")),
-  )
-
+object OptOutPropositionYearsToOfferSpec {
   val currentTaxYear = TaxYear.forYearEnd(2024)
   val previousTaxYear = currentTaxYear.previousYear
   val nextTaxYear = currentTaxYear.nextYear
+
+  val Crystallised = true
+  val NotCrystallised = false
+
+  val OneYearOptOut = true
+  val NotOneYearOptOut = false
+
+  val MultiYearOptOut = true
+  val NotMultiYearOptOut = false
+
+  object ToBeOffered {
+
+    val PY = Seq("PY")
+    val CY = Seq("CY")
+    val NY = Seq("NY")
+
+    val PY_CY_NY = Seq("PY", "CY", "NY")
+
+    val PY_CY = Seq("PY", "CY")
+    val CY_NY = Seq("CY", "NY")
+    val PY_NY = Seq("PY", "NY")
+  }
+}
+
+class OptOutPropositionYearsToOfferSpec extends UnitSpec {
+
+  private val testCases = List(
+    ((NotCrystallised, Voluntary, Mandated, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.PY),
+    ((Crystallised, Voluntary, Voluntary, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.CY),
+    ((Crystallised, Voluntary, Mandated, Voluntary), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.NY),
+    ((Crystallised, Voluntary, Voluntary, NoStatus), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.CY_NY),
+
+    ((NotCrystallised, Voluntary, Voluntary, Voluntary), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_CY_NY),
+    ((Crystallised, Voluntary, Voluntary, Voluntary), (NotOneYearOptOut, MultiYearOptOut),ToBeOffered.CY_NY ),
+    ((Crystallised, Mandated, Voluntary, NoStatus), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.CY_NY),
+    ((NotCrystallised, Voluntary, Voluntary, Mandated), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_CY),
+    ((NotCrystallised, Voluntary, Mandated, Voluntary), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_NY),
+  )
+
+  testCases.foreach {
+    case (input, numberOfYearsFlags, output) =>
+      val test = optOutPropositionOffersTest _
+      test.tupled(input).tupled(numberOfYearsFlags)(output)
+  }
 
   def optOutPropositionOffersTest(crystallised: Boolean, pyStatus: ITSAStatus, cyStatus: ITSAStatus, nyStatus: ITSAStatus)
               (isOneYearOptOut: Boolean, isMultiYearOptOut: Boolean)
@@ -61,10 +98,6 @@ class OptOutPropositionYearsToOfferSpec extends UnitSpec {
     }
   }
 
-  testCases.foreach {
-    case (input, numberOfYearsFlags, output) =>
-      val test = optOutPropositionOffersTest _
-      test.tupled(input).tupled(numberOfYearsFlags)(output)
-  }
+
 
 }
