@@ -17,7 +17,6 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
                              currentTaxYear: CurrentOptOutTaxYear,
@@ -42,20 +41,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def optOutYearsToUpdate(intent: OptOutTaxYear) : Seq[OptOutTaxYear] = {
-
-    def offeredYearIsOnOrAfterIntentYear(intent: OptOutTaxYear)(offered: OptOutTaxYear): Boolean  =
-      offered.taxYear.isSameAs(intent.taxYear) || offered.taxYear.isAfter(intent.taxYear)
-
-    val intentYearAndOnwards = availableOptOutYears.filter(offeredYearIsOnOrAfterIntentYear(intent))
-
-    val nextYearIsOffered = nextTaxYear.canOptOut
-    val nextYearIsNoStatus = nextTaxYear.status == ITSAStatus.NoStatus
-    val nextYearIsNotIntent = !intent.taxYear.isSameAs(nextTaxYear.taxYear)
-
-    val nextYearShouldBeExcludedFromUpdate = nextYearIsOffered && nextYearIsNoStatus && nextYearIsNotIntent
-    if(nextYearShouldBeExcludedFromUpdate) {
-      intentYearAndOnwards.filter(offered => offered.taxYear.isBefore(nextTaxYear.taxYear))
-    } else intentYearAndOnwards
+    availableOptOutYears.filter(_.shouldBeUpdated(intent))
   }
 
   def optOutTaxYearFor(taxYear: TaxYear): Option[OptOutTaxYear] =
