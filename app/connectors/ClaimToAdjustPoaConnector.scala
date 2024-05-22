@@ -39,7 +39,8 @@ class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig
   def postClaimToAdjustPoa(request: ClaimToAdjustPoaRequest)(implicit hc: HeaderCarrier
   ): Future[ClaimToAdjustPoaResponse] = {
 
-    val correlationId = CorrelationId.getOrGenerate(hc)
+    val correlationId = CorrelationId.fromHeaderCarrier(hc)
+      .getOrElse(CorrelationId())
 
     http
       .post(url"$endpoint")

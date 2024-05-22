@@ -29,11 +29,9 @@ case class CorrelationId(id: UUID = randomUUID()) {
 object CorrelationId {
 
   val correlationId = "Correlation-Id"
-  def getOrGenerate(hc: HeaderCarrier): CorrelationId = {
-    val maybeHeader = hc.headers(Seq(correlationId)).headOption
-    maybeHeader match {
-      case Some(header) => CorrelationId(UUID.fromString(header._2))
-      case _ => CorrelationId()
-    }
+  def fromHeaderCarrier(hc: HeaderCarrier): Option[CorrelationId] = {
+    hc.headers(Seq(correlationId))
+      .headOption
+      .map(header => CorrelationId(UUID.fromString(header._2)))
   }
 }
