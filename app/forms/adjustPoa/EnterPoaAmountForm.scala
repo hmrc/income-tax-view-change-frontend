@@ -37,18 +37,20 @@ object EnterPoaAmountForm extends CustomConstraints{
   private val invalidError = "claimToAdjustPoa.enterPoaAmount.invalidError"
 
   private val isZeroOrMore: Constraint[BigDecimal] = min[BigDecimal](0, errorMessage = invalidError)
-  private val isNumber: Constraint[BigDecimal] = Constraint{value => if(value.isValidLong) Valid else Invalid(invalidError) } //NOPE
-  private val isValidNumber = isNumber andThen isZeroOrMore
+  //private val isNumber: Constraint[BigDecimal] = Constraint{value => if(value.isValidLong) Valid else Invalid(invalidError) } //NOPE
+  //private val isValidNumber = isNumber andThen isZeroOrMore
 
   val form: Form[EnterPoaAmountForm] = Form(
     mapping(
       amount -> bigDecimal
         .verifying(
-          firstError(isValidNumber))
+          firstError(isZeroOrMore))
     )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
   )
 
   def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)(implicit messages: Messages): Form[EnterPoaAmountForm] = {
+    println("BEEP " + form)
+
     if (form.get.amount == totalAmount) {
       form.withError(EnterPoaAmountForm.amount, messages(sameError, totalAmount.toCurrencyString))
     }
