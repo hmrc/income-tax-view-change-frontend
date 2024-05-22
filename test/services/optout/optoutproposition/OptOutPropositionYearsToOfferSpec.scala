@@ -39,6 +39,8 @@ object OptOutPropositionYearsToOfferSpec {
 
   object ToBeOffered {
 
+    val NoOffers = Seq()
+
     val PY = Seq("PY")
     val CY = Seq("CY")
     val NY = Seq("NY")
@@ -54,6 +56,8 @@ object OptOutPropositionYearsToOfferSpec {
 class OptOutPropositionYearsToOfferSpec extends UnitSpec {
 
   private val testCases = List(
+    ((Crystallised, Mandated, Mandated, Mandated), (NotOneYearOptOut, NotMultiYearOptOut), ToBeOffered.NoOffers),
+
     ((NotCrystallised, Voluntary, Mandated, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.PY),
     ((Crystallised, Voluntary, Voluntary, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.CY),
     ((Crystallised, Voluntary, Mandated, Voluntary), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.NY),
