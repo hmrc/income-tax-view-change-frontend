@@ -57,8 +57,6 @@ class OptOutPropositionYearsToOfferSpec extends UnitSpec {
           case _:CurrentOptOutTaxYear => "CY"
           case _ => "NY"
         }.sortBy(_.trim) shouldBe expectedOffered.sortBy(_.trim)
-
-        true shouldBe true
       }
     }
   }
