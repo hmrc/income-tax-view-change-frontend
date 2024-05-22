@@ -68,7 +68,7 @@ class OptOutServiceSpec extends UnitSpec
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
-  val previousTaxYear: TaxYear = taxYear.addYears(-1)
+  val previousTaxYear: TaxYear = taxYear.previousYear
   val crystallised: Boolean = true
 
   val error = new RuntimeException("Some Error")
@@ -359,26 +359,26 @@ class OptOutServiceSpec extends UnitSpec
   }
   "OptOutService.optOutCheckPointPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
-    val PY = CY.addYears(-1)
-    val NY = CY.addYears(1)
+    val PY = CY.previousYear
+    val NY = CY.nextYear
 
     def testOptOutCheckPointPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
                                          (taxYear: TaxYear, showWarning: Boolean): Unit = {
 
       def getTaxYearText(taxYear: TaxYear): String = {
-        if (taxYear == CY) "CY" else if (taxYear == CY.addYears(-1)) "PY" else if (taxYear == CY.addYears(1)) "NY" else ""
+        if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
       }
 
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"offer ${getTaxYearText(taxYear)} ${if (showWarning) "with  warning"}" in {
 
-          val previousYear: TaxYear = CY.addYears(-1)
+          val previousYear: TaxYear = PY
           when(dateService.getCurrentTaxYear).thenReturn(CY)
 
           val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-            CY.addYears(-1) -> StatusDetail("", statusPY, ""),
+            PY -> StatusDetail("", statusPY, ""),
             CY -> StatusDetail("", statusCY, ""),
-            CY.addYears(+1) -> StatusDetail("", statusNY, ""),
+            NY -> StatusDetail("", statusNY, ""),
           )
           when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
