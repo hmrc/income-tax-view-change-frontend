@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{ConfirmationForAdjustingPoaViewModel, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{ConfirmationForAdjustingPoaViewModel, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -71,8 +71,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             isAmountZero <- isAmountZeroFromSession
           } yield (poaMaybe, isAmountZero)
         } flatMap {
-          case (Right(Some(poa)), isAmountZero) =>
-            val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
+          case (Right(Some(poaModel)), isAmountZero) =>
+            val viewModel = ConfirmationForAdjustingPoaViewModel(poaModel.taxYear, isAmountZero)
             Future.successful(Ok(view(isAgent, viewModel)))
           case (Right(None), isAmountZero) => Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
             Future.successful(showInternalServerError(isAgent))
@@ -94,21 +94,22 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
       }
   }
 
-  private def getPoaAndOtherData(nino: String)(implicit user: MtdItUser[_]):
+  private def getPoaAndSessionData(nino: String)(implicit user: MtdItUser[_]):
   Future[(Either[Throwable, Option[PaymentOnAccountViewModel]], PoAAmendmentData)] = {
     for {
       poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(nino))
-      otherData <- dataFromSession
-    } yield (poaMaybe, otherData)
+      sessionData <- dataFromSession
+    } yield (poaMaybe, sessionData)
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel, otherData: PoAAmendmentData, isAgent: Boolean, nino: String)(implicit user: MtdItUser[_]):
   Future[Result] = {
-    val a: Option[(BigDecimal, SelectYourReason)] = for {
+    {
+    for {
       amount <- otherData.newPoAAmount
       reason <- otherData.poaAdjustmentReason
-    } yield (amount, reason)
-    a match {
+    } yield (amount, reason) }
+    match {
       case Some(x) =>
         calculationService.recalculate(nino, poa.taxYear, x._1, x._2) map {
           case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
@@ -122,7 +123,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
-        getPoaAndOtherData(user.nino) flatMap {
+        getPoaAndSessionData(user.nino) flatMap {
           case (Right(Some(poa)), otherData) => handlePoaAndOtherData(poa, otherData, isAgent, user.nino)
           case (Right(None), otherData) => Logger("application").error(s"Failed to create PaymentOnAccount model, otherData: $otherData")
             Future.successful(showInternalServerError(isAgent))
