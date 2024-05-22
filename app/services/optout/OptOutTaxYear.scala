@@ -29,7 +29,7 @@ case class CurrentOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear) extends Op
   def canOptOut: Boolean = status == Voluntary
 
   override def shouldBeUpdated(intent: OptOutTaxYear): Boolean =
-    canOptOut && taxYear.isSameAs(intent.taxYear) || taxYear.isAfter(intent.taxYear)
+    canOptOut && (taxYear.isSameAs(intent.taxYear) || taxYear.isAfter(intent.taxYear))
 }
 
 case class NextOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear, currentTaxYear: CurrentOptOutTaxYear) extends OptOutTaxYear {
