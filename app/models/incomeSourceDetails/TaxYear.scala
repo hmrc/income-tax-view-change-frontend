@@ -40,6 +40,11 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def nextYear: TaxYear = addYears( +1)
 
+  def isSameAs(taxYear: TaxYear): Boolean = this.startYear == taxYear.startYear && this.endYear == taxYear.endYear
+
+  def isAfter(taxYear: TaxYear): Boolean = this.startYear > taxYear.startYear
+
+  def isBefore(taxYear: TaxYear): Boolean = this.startYear < taxYear.startYear
 
 }
 
