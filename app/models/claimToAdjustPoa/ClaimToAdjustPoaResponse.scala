@@ -28,6 +28,7 @@ object ClaimToAdjustPoaResponse {
   trait ClaimToAdjustPoaFailure {
     val message: String
   }
+
   case class ClaimToAdjustPoaError(message: String) extends ClaimToAdjustPoaFailure
 
   object ClaimToAdjustPoaInvalidJson extends ClaimToAdjustPoaFailure {

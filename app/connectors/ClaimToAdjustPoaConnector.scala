@@ -19,6 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
+import models.core.CorrelationId
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -33,19 +34,24 @@ class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig
                                             val http: HttpClientV2)
                                           ( implicit val ec: ExecutionContext ) {
 
-  val endpoint = s"${frontendAppConfig.itvcProtectedService}/adjust-poa"
+  val endpoint = s"${frontendAppConfig.itvcProtectedService}/submit-claim-to-adjust-poa"
 
   def postClaimToAdjustPoa(request: ClaimToAdjustPoaRequest)(implicit hc: HeaderCarrier
-  ): Future[ClaimToAdjustPoaResponse] =
+  ): Future[ClaimToAdjustPoaResponse] = {
+
+    val correlationId = CorrelationId.getOrGenerate(hc)
+
     http
-        .post(url"$endpoint")
-        .withBody(Json.toJson(request))
-        .transform(_.withRequestTimeout(Duration(frontendAppConfig.claimToAdjustTimeout, SECONDS)))
-        .execute[ClaimToAdjustPoaResponse]
+      .post(url"$endpoint")
+      .setHeader(correlationId.asHeader())
+      .withBody(Json.toJson(request))
+      .transform(_.withRequestTimeout(Duration(frontendAppConfig.claimToAdjustTimeout, SECONDS)))
+      .execute[ClaimToAdjustPoaResponse]
       .recover {
         case e => {
           Logger("application").error(e.getMessage)
           Left(UnexpectedError)
         }
       }
+  }
 }

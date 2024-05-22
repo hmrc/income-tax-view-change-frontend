@@ -17,12 +17,14 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import com.github.tomakehurst.wiremock.client.WireMock.{post, serverError, stubFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
+import models.core.CorrelationId
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.libs.json.Json
 
 class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
@@ -33,7 +35,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
     MainIncomeLower
   )
 
-  val successResponseBody = """ {
+  val successRequestBody = """ {
               "nino": "AA0000A",
               "taxYear": "2024",
               "amount": 1000.02,
@@ -55,9 +57,59 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       val processingDate = "2024-01-31T09:27:17Z"
 
+      "use correlationID when provided in header" in {
+
+        val responseBody = s"""
+          {
+             "processingDate": "$processingDate"
+          }
+          """
+
+        WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", CREATED, responseBody)
+
+        val correlationId = CorrelationId()
+
+        val updatedHc = hc.copy(otherHeaders = hc.otherHeaders ++ Seq(correlationId.asHeader()))
+
+        val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
+          connector.postClaimToAdjustPoa(request)(updatedHc).futureValue
+
+        result shouldBe Right(ClaimToAdjustPoaSuccess(processingDate))
+
+        WiremockHelper.verifyPost(s"/submit-claim-to-adjust-poa",
+          Some(Json.stringify(Json.parse(successRequestBody))),
+          (CorrelationId.correlationId, correlationId.id.toString))
+      }
+
+
+      "generate correlationID when none provided" in {
+
+        val responseBody = s"""
+          {
+             "processingDate": "$processingDate"
+          }
+          """
+
+        WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", CREATED, responseBody)
+
+        val correlationId = CorrelationId()
+
+        val updatedHc = hc.copy(otherHeaders = hc.otherHeaders ++ Seq(correlationId.asHeader()))
+
+        val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
+          connector.postClaimToAdjustPoa(request)(updatedHc).futureValue
+
+        result shouldBe Right(ClaimToAdjustPoaSuccess(processingDate))
+
+        verify(postRequestedFor(
+          urlEqualTo(s"/submit-claim-to-adjust-poa"))
+          .withHeader(CorrelationId.correlationId, matching("[\\d\\w-]+")))
+      }
+
+
       "return a successful response" in {
 
-        WiremockHelper.stubPost(s"/adjust-poa", CREATED, s"""
+        WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", CREATED, s"""
           {
              "processingDate": "$processingDate"
           }
@@ -73,7 +125,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "successful response cannot be parsed" in {
 
-          WiremockHelper.stubPost(s"/adjust-poa", CREATED,
+          WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", CREATED,
             s"""
           {
              "invalid": "response"
@@ -88,7 +140,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "failure response cannot be parsed" in {
 
-          WiremockHelper.stubPost(s"/adjust-poa", BAD_REQUEST, s"""
+          WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", BAD_REQUEST, s"""
           {
              "invalid": "response"
           }
@@ -102,7 +154,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "an error response is received" in {
 
-          WiremockHelper.stubPost(s"/adjust-poa", BAD_REQUEST, s"""
+          WiremockHelper.stubPost(s"/submit-claim-to-adjust-poa", BAD_REQUEST, s"""
           {
              "message": "INVALID_REQUEST"
           }
@@ -116,7 +168,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "a server error is received" in {
 
-          stubFor(post(urlEqualTo(s"/adjust-poa"))
+          stubFor(post(urlEqualTo(s"/submit-claim-to-adjust-poa"))
             .willReturn(
               serverError()
             ))

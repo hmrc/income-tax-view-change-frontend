@@ -17,12 +17,11 @@
 package helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.JsValue
@@ -39,8 +38,21 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
       case None => uriMapping
     }
+
     verify(postRequest)
   }
+
+  def verifyPost(uri: String, optBody: Option[String], headers: (String, String)*): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(equalTo(body))
+      case None => uriMapping
+    }
+    val postRequestWithHeaders = headers.foldLeft(postRequest)(
+      (request, header) => request.withHeader(header._1, equalTo(header._2)))
+    verify(postRequestWithHeaders)
+  }
+
 
   def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
