@@ -16,13 +16,14 @@
 
 package forms.adjustPoa
 
-import forms.utils.ConstraintUtil.ConstraintUtil
 import forms.validation.CustomConstraints
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import play.api.data.Form
-import play.api.data.Forms.{bigDecimal, mapping}
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.Forms.{mapping, of}
+import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, Form, FormError}
 import play.api.i18n.Messages
+
+import scala.util.control.Exception.nonFatalCatch
 
 
 case class EnterPoaAmountForm(amount: BigDecimal)
@@ -31,32 +32,67 @@ object EnterPoaAmountForm extends CustomConstraints{
 
   val amount: String = "poa-amount"
 
-  //private val emptyError = "claimToAdjustPoa.enterPoaAmount.emptyError"
+  private val emptyError = "claimToAdjustPoa.enterPoaAmount.emptyError"
   private val sameError = "claimToAdjustPoa.enterPoaAmount.sameError"
   private val higherError = "claimToAdjustPoa.enterPoaAmount.higherError"
   private val invalidError = "claimToAdjustPoa.enterPoaAmount.invalidError"
 
-  private val isZeroOrMore: Constraint[BigDecimal] = min[BigDecimal](0, errorMessage = invalidError)
-  //private val isNumber: Constraint[BigDecimal] = Constraint{value => if(value.isValidLong) Valid else Invalid(invalidError) } //NOPE
-  //private val isValidNumber = isNumber andThen isZeroOrMore
-
   val form: Form[EnterPoaAmountForm] = Form(
     mapping(
-      amount -> bigDecimal
-        .verifying(
-          firstError(isZeroOrMore))
+      amount -> of(currencyFormatter())
+        //bigDecimal.verifying(firstError(isValidNumber))
     )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
   )
 
   def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)(implicit messages: Messages): Form[EnterPoaAmountForm] = {
-    println("BEEP " + form)
-
-    if (form.get.amount == totalAmount) {
-      form.withError(EnterPoaAmountForm.amount, messages(sameError, totalAmount.toCurrencyString))
+    if (form.hasErrors) form else {
+      if (form.get.amount == totalAmount) {
+        form.withError(EnterPoaAmountForm.amount, messages(sameError, totalAmount.toCurrencyString))
+      }
+      else if (form.get.amount >= relevantAmount) {
+        form.withError(EnterPoaAmountForm.amount, messages(higherError, relevantAmount.toCurrencyString))
+      } else form
     }
-    else if (form.get.amount > relevantAmount) {
-      form.withError(EnterPoaAmountForm.amount, messages(higherError, relevantAmount.toCurrencyString))
-    } else form
+  }
+
+  private def currencyFormatter(): Formatter[BigDecimal] =
+    new Formatter[BigDecimal] {
+
+      val is2dp = """\d+|\d*\.\d{1,2}"""
+      val validNumeric = """[0-9.]*"""
+
+      private val baseFormatter = stringFormatter(emptyError)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", ""))
+          .map(_.replace("£", ""))
+          .flatMap {
+            case s if s.isEmpty =>
+              Left(Seq(FormError(key, emptyError)))
+            case s if !s.matches(validNumeric) || !s.matches(is2dp) =>
+              Left(Seq(FormError(key, invalidError)))
+            case s =>
+                nonFatalCatch
+                  .either(BigDecimal(s))
+                  .left.map(_ => Seq(FormError(key, invalidError)))
+          }
+
+      override def unbind(key: String, value: BigDecimal): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
+
+  private def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      data.get(key) match {
+        case None => Left(Seq(FormError(key, errorKey)))
+        case Some(s) => Right(s.trim)
+      }
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value.trim)
   }
 
 }

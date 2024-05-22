@@ -73,7 +73,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
           case Right(viewModel) =>
             EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
               formWithErrors =>
-                Future.successful(Ok(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
+                Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
               validForm =>
                 sessionService.setNewPoAAmount(validForm.amount).flatMap {
                   case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
@@ -86,25 +86,6 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
             Future.successful(showInternalServerError(isAgent))
         }
       }
-  }
-
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).flatMap {
-      case Right(viewModel) =>
-        EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
-          validForm =>
-            sessionService.setNewPoAAmount(validForm.amount).flatMap {
-              case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
-                Future.successful(showInternalServerError(isAgent))
-              case Right(_) => getRedirect(viewModel, validForm.amount, isAgent)
-            }
-        )
-      case Left(ex) =>
-        Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(showInternalServerError(isAgent))
-    }
   }
 
   def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
