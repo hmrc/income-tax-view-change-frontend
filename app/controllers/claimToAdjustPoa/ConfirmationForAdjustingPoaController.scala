@@ -16,12 +16,13 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{ConfirmationForAdjustingPoaViewModel, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -71,7 +72,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
           } yield (poaMaybe, isAmountZero)
         } flatMap {
           case (Right(Some(poa)), isAmountZero) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, isAmountZero)))
+            val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
+            Future.successful(Ok(view(isAgent, viewModel)))
           case (Right(None), isAmountZero) => Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
             Future.successful(showInternalServerError(isAgent))
           case (Left(ex), isAmountZero) =>
@@ -92,31 +94,36 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
       }
   }
 
+  private def getPoaAndOtherData(nino: String)(implicit user: MtdItUser[_]):
+  Future[(Either[Throwable, Option[PaymentOnAccountViewModel]], PoAAmendmentData)] = {
+    for {
+      poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(nino))
+      otherData <- dataFromSession
+    } yield (poaMaybe, otherData)
+  }
+
+  private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel, otherData: PoAAmendmentData, isAgent: Boolean, nino: String)(implicit user: MtdItUser[_]):
+  Future[Result] = {
+    val a: Option[(BigDecimal, SelectYourReason)] = for {
+      amount <- otherData.newPoAAmount
+      reason <- otherData.poaAdjustmentReason
+    } yield (amount, reason)
+    a match {
+      case Some(x) =>
+        calculationService.recalculate(nino, poa.taxYear, x._1, x._2) map {
+          case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
+          case Right(_) => Redirect(controllers.routes.HomeController.show()) // to be changed
+        }
+      case None =>
+        Future.successful(showInternalServerError(isAgent))
+    }
+  }
+
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
-        {
-          for {
-            poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
-            otherData <- dataFromSession
-          } yield (poaMaybe, otherData)
-        } flatMap {
-          case (Right(Some(poa)), otherData) =>
-            val a: Option[(BigDecimal, SelectYourReason)] = {
-              for {
-                amount <- otherData.newPoAAmount
-                reason <- otherData.poaAdjustmentReason
-              } yield (amount, reason)
-            }
-            a match {
-              case Some(x) =>
-                calculationService.recalculate(user.nino, poa.taxYear, x._1, x._2) map {
-                  case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
-                  case Right(_) => Redirect(controllers.routes.HomeController.show()) // to be changed
-                }
-              case None =>
-                Future.successful(showInternalServerError(isAgent))
-            }
+        getPoaAndOtherData(user.nino) flatMap {
+          case (Right(Some(poa)), otherData) => handlePoaAndOtherData(poa, otherData, isAgent, user.nino)
           case (Right(None), otherData) => Logger("application").error(s"Failed to create PaymentOnAccount model, otherData: $otherData")
             Future.successful(showInternalServerError(isAgent))
           case (Left(ex), otherData) =>
