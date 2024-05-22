@@ -19,11 +19,13 @@ package controllers.optOut
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
+import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmOptOut
@@ -34,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicate,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val confirmOptOut: ConfirmOptOut,
+                                        val optOutService: OptOutService,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val retrieveBtaNavBar: NavBarPredicate,
@@ -58,4 +61,11 @@ class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicat
       Future.successful(Ok(confirmOptOut(true)))
   }
 
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+    implicit user =>
+      optOutService.makeOptOutUpdateRequest().map {
+          case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+          case _ => itvcErrorHandler.showInternalServerError()
+      }
+  }
 }

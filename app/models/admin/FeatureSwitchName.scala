@@ -59,10 +59,6 @@ object FeatureSwitchName {
       JsSuccess(PaymentHistoryRefunds)
 //    case name if name == JsString(TimeMachineAddYear.name) =>
 //      JsSuccess(TimeMachineAddYear)
-    case name if name == JsString(R7cTxmEvents.name) =>
-      JsSuccess(R7cTxmEvents)
-    case name if name == JsString(R7cViewerCodingOutTxmEvents.name) =>
-      JsSuccess(R7cViewerCodingOutTxmEvents)
     case name if name == JsString(CalendarQuarterTypes.name) =>
       JsSuccess(CalendarQuarterTypes)
     case name if name == JsString(IncomeSourcesNewJourney.name) =>
@@ -97,10 +93,10 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
-      PaymentHistoryRefunds,
+      PaymentHistoryRefunds
       // TODO: reenable when time machine is re-enabled
-//      TimeMachineAddYear,
-      R7cTxmEvents, R7cViewerCodingOutTxmEvents, CalendarQuarterTypes,
+//      TimeMachineAddYear
+      , CalendarQuarterTypes,
       IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
 
 
@@ -167,15 +163,6 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
 //  override def toString: String = "Time Machine Add Year"
 //}
 
-case object R7cTxmEvents extends FeatureSwitchName {
-  override val name = "r7c-txm-events"
-  override def toString: String = "R7C TXM Events"
-}
-
-case object R7cViewerCodingOutTxmEvents extends FeatureSwitchName {
-  override val name = "r7c-viewer-coding-out-txm-events"
-  override def toString: String = "R7C Viewer Coding Out TXM Events"
-}
 
 case object CalendarQuarterTypes extends FeatureSwitchName {
   override val name = "calendar-quarter-types"
