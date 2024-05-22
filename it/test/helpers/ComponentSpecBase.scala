@@ -565,6 +565,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
+
+    def confirmOneYearOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
   }
 
 

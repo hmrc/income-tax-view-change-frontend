@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.optOut
+package models.optout
 
 import models.incomeSourceDetails.TaxYear
 import play.api.mvc.Call

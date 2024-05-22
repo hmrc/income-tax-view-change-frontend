@@ -21,7 +21,7 @@ import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearViewModel
+import models.optout.OptOutOneYearViewModel
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
