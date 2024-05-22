@@ -1,0 +1,122 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.incomeSourceDetails.TaxYear
+@import models.claimToAdjustPoa.SelectYourReason
+@import models.claimToAdjustPoa.Increase
+@import views.html.components.link
+
+@this(
+        govukButton : GovukButton,
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        link: link,
+        govukSummaryList : GovukSummaryList
+)
+
+@(
+        isAgent: Boolean,
+        redirectUrl: String,
+        changePoaAmountUrl: String,
+        changePoaReasonUrl: String,
+        adjustedFirstPoaAmount: BigDecimal,
+        adjustedSecondPoaAmount: BigDecimal,
+        taxYear: TaxYear,
+        poaReason: SelectYourReason
+)(
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"claimToAdjustPoa.checkYourAnswers.$key", args: _*)
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some("/"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("caption", taxYear.startYear.toString, taxYear.endYear.toString)),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    @govukSummaryList(SummaryList(
+        classes = "govuk-!-margin-bottom-9",
+        rows = {
+            if(poaReason.code == Increase.code) Nil
+            else Seq(SummaryListRow(
+                key = Key(Text(getMessage("summary-list-1.key"))),
+                value = Value(Text(messages(poaReason.messagesKey))),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        href = changePoaReasonUrl,
+                        content = HtmlContent(getMessage("summary-list.change")),
+                        attributes = Map("id" -> "change-1")
+                    ))
+                ))
+            ))
+        } ++ Seq(
+            SummaryListRow(
+                key = Key(Text(getMessage("summary-list-2.key"))),
+                value = Value(HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</p>
+                    |<p class=govuk-body>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</p>
+                    |""".stripMargin
+                )),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        href = changePoaAmountUrl,
+                        content = HtmlContent(getMessage("summary-list.change")),
+                        attributes = Map("id" -> "change-2")
+                    ))
+                ))
+            )
+        )
+    ))
+
+    <div class="govuk-button-group">
+        @govukButton(Button(
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-button"),
+            href = Some(redirectUrl)
+        ))
+
+        @link(
+            id = Some("cancel-link"),
+            link = getHomePageUrl,
+            messageKey = "claimToAdjustPoa.checkYourAnswers.cancel"
+        )
+    </div>
+}

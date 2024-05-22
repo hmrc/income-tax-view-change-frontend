@@ -16,14 +16,15 @@
 
 package connectors
 
+import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
+import config.featureswitch.FeatureSwitching
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${baseUrl}/api/v2/confirmed?id=$id"
   }
 
-  def continueUrl(isAgent: Boolean, isChange: Boolean): String = (isAgent, isEnabled(IncomeSourcesNewJourney)) match {
+  def continueUrl(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): String = (isAgent, isEnabled(IncomeSourcesNewJourney)) match {
     case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = isChange).url
     case (_, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = isChange).url
     case (false, _) => controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, isChange = isChange).url
@@ -160,7 +161,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
 
-  def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
+  def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) {
       addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)

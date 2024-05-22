@@ -18,7 +18,8 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.featureswitch.FeatureSwitching
+import models.admin.PaymentHistoryRefunds
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.NextUpdatesTileViewModel

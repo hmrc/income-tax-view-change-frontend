@@ -18,10 +18,10 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.financialDetails.Payment
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse

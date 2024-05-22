@@ -163,4 +163,45 @@ class TaxYearModelSpec extends UnitSpec with TestSupport {
       }
     }
   }
+
+  "isSameAs method" should {
+    "return true" when {
+      "the TaxYear object isSameAs given tax year" in {
+        TaxYear.forYearEnd(2024).isSameAs(TaxYear.forYearEnd(2024)) shouldBe true
+      }
+    }
+    "return false" when {
+      "the TaxYear object is not same as given tax year" in {
+        TaxYear.forYearEnd(2024).isSameAs(TaxYear.forYearEnd(2023)) shouldBe false
+      }
+    }
+  }
+
+  "isBefore method" should {
+    "return true" when {
+      "the TaxYear object isSameAs given tax year" in {
+        TaxYear.forYearEnd(2023).isBefore(TaxYear.forYearEnd(2024)) shouldBe true
+      }
+    }
+    "return false" when {
+      "the TaxYear object is not before given tax year" in {
+        TaxYear.forYearEnd(2024).isBefore(TaxYear.forYearEnd(2023)) shouldBe false
+      }
+    }
+  }
+
+  "isAfter method" should {
+    "return true" when {
+      "the TaxYear object isAfter given tax year" in {
+        TaxYear.forYearEnd(2024).isAfter(TaxYear.forYearEnd(2023)) shouldBe true
+      }
+    }
+    "return false" when {
+      "the TaxYear object is not after given tax year" in {
+        TaxYear.forYearEnd(2024).isAfter(TaxYear.forYearEnd(2024)) shouldBe false
+      }
+    }
+  }
+
+
 }

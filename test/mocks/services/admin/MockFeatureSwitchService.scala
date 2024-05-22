@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package models.optOut
+package mocks.services.admin
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
+import org.scalatest.{BeforeAndAfterEach, Suite}
+import services.admin.FeatureSwitchService
+import testUtils.TestSupport
 
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
 
-  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
+  self: Suite =>
 
-  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
-}
+  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
+
+ }

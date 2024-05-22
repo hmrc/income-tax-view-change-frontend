@@ -16,6 +16,7 @@
 
 package services
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import models.core.IncomeSourceId
@@ -35,7 +36,7 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
   case class AddressError(status: String) extends RuntimeException
 
   def initialiseAddressJourney(isAgent: Boolean, isChange: Boolean)
-                              (implicit hc: HeaderCarrier, request: RequestHeader): Future[Either[Throwable, Option[String]]] = {
+                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
       isChange = isChange

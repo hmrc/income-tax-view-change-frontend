@@ -49,47 +49,58 @@
 package controllers.predicates
 
 import auth.MtdItUserWithNino
-import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
+import models.admin.NavBarFs
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.twirl.api.Html
+import services.admin.FeatureSwitchService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.navBar.PtaPartial
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarController,
                                         val ptaPartial: PtaPartial,
-                                        val itvcErrorHandler: ItvcErrorHandler)
+                                        val itvcErrorHandler: ItvcErrorHandler,
+                                        val featureSwitchService: FeatureSwitchService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val executionContext: ExecutionContext,
                                         val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with SaveOriginAndRedirect {
 
+  @nowarn
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
 
-    if (isDisabled(NavBarFs)) {
-      Future.successful(Right(request))
-    } else {
-      request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
-        ifEmpty = retrieveOriginFromSessionAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
-      })
+    val res = {
+      for {
+        fs <- featureSwitchService.getAll
+      } yield {
+        if (isDisabled(NavBarFs, fs)) {
+          Future.successful(Right(request))
+        } else {
+          request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
+            ifEmpty = retrieveOriginFromSessionAndHandleNavBar(request))(_ => {
+            saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs, fs)).map(Left(_))
+          })
+        }
+      }
     }
+    res.flatten
   }
 
   private def retrieveOriginFromSessionAndHandleNavBar[A](request: MtdItUserWithNino[A])
-                                     (implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
+                                                         (implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Future.successful(Right(returnMtdItUserWithNinoAndNavbar(request, ptaPartial()(request, request.messages, appConfig))))

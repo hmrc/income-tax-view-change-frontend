@@ -22,6 +22,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
+import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.JsValue
@@ -146,6 +148,24 @@ object WiremockHelper extends Eventually with IntegrationPatience {
           withBody(responseBody)
       )
     )
+
+  def stubPutWithHeaders(url: String, status: Integer, responseBody: String, headers: Map[String, String] = Map()): StubMapping = {
+    def toHttpHeaders(toConvert: Map[String, String]): HttpHeaders = {
+      val headersList = toConvert.map { case (key, value) =>
+        new HttpHeader(key, value)
+      }.toSeq
+      new HttpHeaders(headersList: _*)
+    }
+
+    stubFor(put(urlEqualTo(url))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody).
+          withHeaders(toHttpHeaders(headers))
+      )
+    )
+  }
 
   def stubPatch(url: String, status: Integer, responseBody: String): StubMapping =
     stubFor(patch(urlEqualTo(url))

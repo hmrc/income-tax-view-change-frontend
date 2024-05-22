@@ -18,15 +18,17 @@ package controllers.predicates
 
 import auth.MtdItUserWithNino
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, NavBarFs}
+import config.featureswitch.FeatureSwitching
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
+import models.admin.NavBarFs
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.Html
+import services.admin.FeatureSwitchService
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -39,9 +41,10 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
   val mockBtaNavBarController = mock(classOf[BtaNavBarController])
   val mockItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   val mockPtaPartial = mock(classOf[PtaPartial])
+  val mockFeatureSwitchService = mock(classOf[FeatureSwitchService])
 
   object NavBarFromNinoPredicate extends NavBarFromNinoPredicate(mockBtaNavBarController, mockPtaPartial,
-    mockItvcErrorHandler)(appConfig, ec, messagesApi)
+    mockItvcErrorHandler, mockFeatureSwitchService)(appConfig, ec, messagesApi)
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
@@ -65,6 +68,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
         "return the expected MtdItUserWithNino with a btaPartial when origin bta is present in session" in {
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
+          when(mockFeatureSwitchService.getAll ).thenReturn(  Future.successful(getFSList) )
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginBta)
           result.futureValue.toOption.value shouldBe userWithNinoAndOriginBta
@@ -76,6 +80,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
         "return the expected MtdItUserWithNino with a ptaPartial" in {
           enable(NavBarFs)
           when(mockPtaPartial.apply()(any(), any(), any())).thenReturn(Html(""))
+          when(mockFeatureSwitchService.getAll ).thenReturn(  Future.successful(getFSList) )
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginPta)
           result.futureValue.toOption.value shouldBe userWithNinoAndOriginPta
@@ -85,6 +90,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
       "Return a redirect to TaxAccountRouter when origin is not present in session which" should {
 
         "return the expected Redirect with a tax account router" in {
+          when(mockFeatureSwitchService.getAll ).thenReturn(  Future.successful(getFSList) )
           enable(NavBarFs)
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
@@ -98,6 +104,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
           when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
+          when(mockFeatureSwitchService.getAll ).thenReturn(  Future.successful(getFSList) )
 
           val result = NavBarFromNinoPredicate.refine(noAddedPartial)
           status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -107,6 +114,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
 
     "The Nav Bar Fs is disabled" should {
       "Always return to origin call with nav bar partial content" in {
+        when(mockFeatureSwitchService.getAll ).thenReturn(  Future.successful(getFSList) )
         disable(NavBarFs)
 
         val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)

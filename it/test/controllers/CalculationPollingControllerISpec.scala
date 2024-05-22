@@ -24,7 +24,6 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
 
-
 class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   unauthorisedTest(s"/calculation/$testYear/submitted")

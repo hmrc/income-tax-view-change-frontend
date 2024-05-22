@@ -18,10 +18,11 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NavBarFs, PaymentAllocation}
+import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.{NavBarFs, PaymentAllocation}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json

@@ -16,11 +16,11 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

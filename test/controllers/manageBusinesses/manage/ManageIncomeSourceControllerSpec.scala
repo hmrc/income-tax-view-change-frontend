@@ -16,13 +16,14 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
