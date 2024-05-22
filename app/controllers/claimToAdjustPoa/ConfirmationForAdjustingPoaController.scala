@@ -117,6 +117,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
               case None =>
                 Future.successful(showInternalServerError(isAgent))
             }
+          case (Right(None), otherData) => Logger("application").error(s"Failed to create PaymentOnAccount model, otherData: $otherData")
+            Future.successful(showInternalServerError(isAgent))
           case (Left(ex), otherData) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. otherData: $otherData")
             Future.failed(ex)
