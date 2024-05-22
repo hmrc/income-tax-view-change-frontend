@@ -65,6 +65,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.navBar.PtaPartial
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -76,6 +77,7 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
                                         val executionContext: ExecutionContext,
                                         val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with SaveOriginAndRedirect {
 
+  @nowarn
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))

@@ -37,6 +37,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ForecastIncomeSummary
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -67,6 +68,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
+  @nowarn
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     featureSwitchService.getAll.flatMap { fs =>

@@ -40,7 +40,7 @@ trait FeatureSwitching {
     }
   }
 
-  @deprecated("Please use isEnabled instead, this function to be removed in the next releases")
+  @deprecated("Please use isEnabled instead, this function to be removed in the next releases", "1.1602.0")
   def isDisabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
      !fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
