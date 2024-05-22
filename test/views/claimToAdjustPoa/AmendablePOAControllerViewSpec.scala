@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package views.manageBusinesses.add
+package views.claimToAdjustPoa
 
-import models.incomeSourceDetails.TaxYear
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString

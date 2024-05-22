@@ -23,11 +23,13 @@
 @import models.incomeSourceDetails.TaxYear
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.claimToAdjustPoa.Increase
+@import views.html.components.link
 
 @this(
         govukButton : GovukButton,
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
+        link: link,
         govukSummaryList : GovukSummaryList
 )
 
@@ -48,6 +50,11 @@
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.checkYourAnswers.$key", args: _*)
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(
@@ -99,9 +106,17 @@
         )
     ))
 
-    @govukButton(Button(
-        content = Text(messages("base.confirm-and-continue")),
-        attributes = Map("id" -> "confirm-button"),
-        href = Some(redirectUrl)
-    ))
+    <div class="govuk-button-group">
+        @govukButton(Button(
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-button"),
+            href = Some(redirectUrl)
+        ))
+
+        @link(
+            id = Some("cancel-link"),
+            link = getHomePageUrl,
+            messageKey = "cancel"
+        )
+    </div>
 }
