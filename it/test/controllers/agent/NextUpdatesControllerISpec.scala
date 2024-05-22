@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, OptOut}
+import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}

@@ -16,16 +16,33 @@
 
 package config.featureswitch
 
-import config.featureswitch.FeatureSwitch.switches
+import auth.MtdItUser
+import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.retrieve.Name
 
+import scala.annotation.nowarn
+
+@nowarn
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
-  val expectedDisabledFeatures: Set[FeatureSwitch] = FeatureSwitch.switches
+  val expectedDisabledFeatures: Set[FeatureSwitchName] = FeatureSwitchName.allFeatureSwitches
+  val mtdItUser = MtdItUser(
+    mtditid = "mtditid",
+    nino = "nino",
+    userName = Some(Name(Some("firstName"), Some("lastName"))),
+    incomeSources = IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil),
+    btaNavPartial = None,
+    saUtr = Some("saUtr"),
+    credId = Some("credId"),
+    userType = None,
+    arn = None
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    FeatureSwitch.switches.map(_.name).foreach(sys.props.remove)
+    FeatureSwitchName.allFeatureSwitches.map(_.name).foreach(sys.props.remove)
   }
 
   "Features" should {
@@ -42,8 +59,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
       }
 
       "a feature is disabled" in new FoldSetup {
-        switches.forall{ featureSwitch =>
-          disable(featureSwitch)
+        FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
+          disable(featureSwitchName)
           val result = expectedDisabledFeatures.headOption match {
             case Some(fs) =>
               fs.fold(ifEnabled = unexpectedBranch(), ifDisabled = expectedBranch())
@@ -52,7 +69,15 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
           result == aValue
         } shouldBe true
       }
-    }
 
+      "a feature is disabled v2" in new FoldSetup {
+        FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
+          isEnabled(featureSwitchName)(mtdItUser) || isDisabled(featureSwitchName,mtdItUser.featureSwitches)
+        } shouldBe true
+
+      }
+
+    }
   }
+
 }

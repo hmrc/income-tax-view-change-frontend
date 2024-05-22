@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
@@ -25,11 +25,9 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionService}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify}
+import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}

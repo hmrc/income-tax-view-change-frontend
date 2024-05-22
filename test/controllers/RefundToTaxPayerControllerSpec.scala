@@ -18,11 +18,12 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockRepaymentHistoryConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.admin.PaymentHistoryRefunds
 import models.repaymentHistory._
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}

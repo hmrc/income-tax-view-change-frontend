@@ -26,6 +26,7 @@ import controllers.predicates._
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
+import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.{I18nSupport, Messages}
@@ -126,7 +127,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap {
-      case _ if isDisabled(PaymentHistoryRefunds) =>
+      case _ if !isEnabled(PaymentHistoryRefunds) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case Right(nextUrl) =>
         Future.successful(Redirect(nextUrl))
@@ -140,7 +141,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     auth.authenticatedAction(isAgent) {
       implicit user =>
         user.userType match {
-          case _ if isDisabled(PaymentHistoryRefunds) =>
+          case _ if !isEnabled(PaymentHistoryRefunds) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
           case _ =>

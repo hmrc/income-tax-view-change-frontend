@@ -18,7 +18,7 @@ package controllers.incomeSources.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
 import helpers.ComponentSpecBase

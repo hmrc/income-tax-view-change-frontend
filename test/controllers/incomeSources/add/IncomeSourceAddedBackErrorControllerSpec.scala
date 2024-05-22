@@ -16,20 +16,19 @@
 
 package controllers.incomeSources.add
 
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport

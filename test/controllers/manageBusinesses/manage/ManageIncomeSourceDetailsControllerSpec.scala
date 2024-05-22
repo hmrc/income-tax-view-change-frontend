@@ -16,13 +16,14 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
+import models.admin.{CalendarQuarterTypes, IncomeSources}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.Jsoup

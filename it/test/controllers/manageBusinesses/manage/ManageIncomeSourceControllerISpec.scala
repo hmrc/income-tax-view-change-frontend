@@ -16,9 +16,9 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.IncomeSources
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.IncomeSources
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}

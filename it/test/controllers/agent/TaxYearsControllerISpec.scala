@@ -20,6 +20,7 @@ import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.ITSASubmissionIntegration
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

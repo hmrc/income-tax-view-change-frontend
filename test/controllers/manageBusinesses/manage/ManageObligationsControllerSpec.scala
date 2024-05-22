@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
@@ -24,6 +24,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
+import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel}

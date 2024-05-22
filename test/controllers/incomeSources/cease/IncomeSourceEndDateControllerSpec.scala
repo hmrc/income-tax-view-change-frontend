@@ -16,13 +16,14 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup

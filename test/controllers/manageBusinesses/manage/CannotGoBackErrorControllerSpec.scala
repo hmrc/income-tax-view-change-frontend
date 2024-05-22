@@ -16,12 +16,12 @@
 
 package controllers.manageBusinesses.manage
 
-import config.featureswitch.IncomeSources
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.admin.IncomeSources
 import org.scalatest.Assertion
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.MessagesControllerComponents

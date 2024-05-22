@@ -18,7 +18,7 @@ package controllers.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase

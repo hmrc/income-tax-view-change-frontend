@@ -16,14 +16,11 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.financialDetails.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import play.api.http.Status
 import play.api.i18n.MessagesApi

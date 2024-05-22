@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.AdjustPaymentsOnAccount
+import models.admin.AdjustPaymentsOnAccount
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoAAmendmentData

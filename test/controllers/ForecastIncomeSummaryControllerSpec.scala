@@ -17,25 +17,31 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, ForecastCalculation, NavBarFs}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
+import models.admin.{ForecastCalculation, NavBarFs}
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import services.IncomeSourceDetailsService
+import services.admin.FeatureSwitchService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import views.html.ForecastIncomeSummary
 
+import scala.concurrent.Future
+
 class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val forecastIncomeView: ForecastIncomeSummary = app.injector.instanceOf[ForecastIncomeSummary]
+  //val mockFeatureSwitchService = mock(classOf[FeatureSwitchService])
 
   object TestIncomeSummaryController extends ForecastIncomeSummaryController(
     app.injector.instanceOf[ForecastIncomeSummary],
@@ -49,6 +55,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,
+    app.injector.instanceOf[FeatureSwitchService]
   )(
     ec,
     languageUtils,

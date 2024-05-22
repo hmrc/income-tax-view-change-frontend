@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
-import config.featureswitch.IncomeSources
+import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
