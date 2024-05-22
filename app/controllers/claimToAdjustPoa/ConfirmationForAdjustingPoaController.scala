@@ -21,12 +21,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -39,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                       claimToAdjustService: ClaimToAdjustService,
                                                       val sessionService: PaymentOnAccountSessionService,
+                                                      val calculationService: ClaimToAdjustPoaCalculationService,
                                                       val view: ConfirmationForAdjustingPoa,
                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                                       auth: AuthenticatorPredicate,
@@ -54,6 +55,12 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
     case _ => Future.failed(new Exception(s"failed to retrieve session data."))
   }
 
+  def dataFromSession(implicit hc: HeaderCarrier): Future[PoAAmendmentData] = sessionService.getMongo(hc, ec).flatMap {
+    case Right(Some(newPoaData: PoAAmendmentData)) =>
+      Future.successful(newPoaData)
+    case _ => Future.failed(new Exception(s"failed to retrieve session data."))
+  }
+
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
@@ -63,7 +70,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             isAmountZero <- isAmountZeroFromSession
           } yield (poaMaybe, isAmountZero)
         } flatMap {
-          case (Right(Some(poa)), isAmountZero) => Future.successful(Ok(view(isAgent, poa.taxYear, isAmountZero)))
+          case (Right(Some(poa)), isAmountZero) =>
+            Future.successful(Ok(view(isAgent, poa.taxYear, isAmountZero)))
           case (Right(None), isAmountZero) => Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
             Future.successful(showInternalServerError(isAgent))
           case (Left(ex), isAmountZero) =>
@@ -81,6 +89,42 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
+      }
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      if (isEnabled(AdjustPaymentsOnAccount)) {
+        {
+          for {
+            poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
+            otherData <- dataFromSession
+          } yield (poaMaybe, otherData)
+        } flatMap {
+          case (Right(Some(poa)), otherData) =>
+            val a: Option[(BigDecimal, SelectYourReason)] = {
+              for {
+                amount <- otherData.newPoAAmount
+                reason <- otherData.poaAdjustmentReason
+              } yield (amount, reason)
+            }
+            a match {
+              case Some(x) =>
+                calculationService.recalculate(user.nino, poa.taxYear, x._1, x._2) map {
+                  case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
+                  case Right(_) => Redirect(controllers.routes.HomeController.show()) // to be changed
+                }
+              case None =>
+                Future.successful(showInternalServerError(isAgent))
+            }
+        }
+      } else {
+        Future.successful(
+          Redirect(
+            if (isAgent) HomeController.showAgent
+            else HomeController.show()
+          )
+        )
       }
   }
 }

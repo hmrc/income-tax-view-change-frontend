@@ -17,21 +17,34 @@
 package services
 
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponse
-import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
+import models.claimToAdjustPoa.{ClaimToAdjustPoaFailure, ClaimToAdjustPoaRequest, ClaimToAdjustPoaSuccess, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
+import play.api.Logger
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class ClaimToAdjustPoaCalculationService @Inject(){
+class ClaimToAdjustPoaCalculationService @Inject()(implicit ec: ExecutionContext) {
 
-  // To be repaced with actual connector
-//  private def connectorCall(request: ClaimToAdjustPoaRequest) : Future[ClaimToAdjustPoaResponse] = ???
+  // To be replaced with actual connector
+  private def connectorCall(request: ClaimToAdjustPoaRequest, success: Boolean): Future[ClaimToAdjustPoaResponse] =
+    Future.successful(Right(ClaimToAdjustPoaSuccess("time")))
 
-//  def recalculate(nino: String, taxYear: TaxYear, amount: BigDecimal, poaAdjustmentReason: SelectYourReason): Future[Either[Throwable, Unit]] = {
-//    // call connector
-//    val request : ClaimToAdjustPoaRequest = ??? // prepare required request
-//    connectorCallrequest() // Process response: log and transform to required type
-//  }
+  def recalculate(nino: String, taxYear: TaxYear, amount: BigDecimal, poaAdjustmentReason: SelectYourReason): Future[Either[Throwable, Unit]] = {
+
+    val request: ClaimToAdjustPoaRequest = ClaimToAdjustPoaRequest(
+      nino = nino,
+      taxYear = taxYear.endYear.toString,
+      amount = amount,
+      poaAdjustmentReason = poaAdjustmentReason
+    )
+    connectorCall(request, success = true) flatMap {
+      case Left(failure: ClaimToAdjustPoaFailure) =>
+        Logger("application").error(s"failed to get details for ")
+        Future.successful(Left(new Exception(failure.message)))
+      case Right(_: ClaimToAdjustPoaSuccess) => Future.successful(Right((): Unit))
+    }
+  }
+
 
 }
