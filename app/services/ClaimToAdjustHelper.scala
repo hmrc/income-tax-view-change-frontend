@@ -51,44 +51,31 @@ trait ClaimToAdjustHelper {
     documentDetail.documentDescription.contains(POA2) &&
       (documentDetail.outstandingAmount != 0)
 
-  private val isUnpaidPaymentOnAccount: DocumentDetail => Boolean = documentDetail =>
-    isUnpaidPoAOne(documentDetail) || isUnpaidPoATwo(documentDetail)
+  private val taxReturnDeadlineOf: LocalDate => LocalDate = date =>
+    LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
+      .plusYears(1)
 
-  private val taxReturnDeadlineOf: Option[LocalDate] => Option[LocalDate] =
-    _.map(d => LocalDate.of(d.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY).plusYears(1))
+  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
+    _.sortBy(_.taxYear).reverse
 
-  private def arePoAsBeforeTaxReturnDeadline(poaTwoDate: Option[LocalDate]): Option[Boolean] =
-    for {
-      poaTwoDeadline             <- taxReturnDeadlineOf(poaTwoDate)
-      poaTwoDateIsBeforeDeadline <- poaTwoDate.map(_.isBefore(poaTwoDeadline))
-    } yield {
-      Logger("application").debug(s"PoA 1 - documentDueDate: $poaTwoDate, TaxReturnDeadline: $poaTwoDeadline")
-      poaTwoDateIsBeforeDeadline
-    }
-
-  protected def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = {
-    for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
-      poaTwoDocDetail          <- documentDetails.filter(isUnpaidPoATwo).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
-      latestDocumentDetail     <- documentDetails.filter(isUnpaidPaymentOnAccount).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
-      poasAreBeforeTaxDeadline <- arePoAsBeforeTaxReturnDeadline(poaTwoDocDetail.documentDueDate)
-    } yield {
-
-      Logger("application").debug(s"PoA 1 - dueDate: ${poaOneDocDetail.documentDueDate}, outstandingAmount: ${poaOneDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 2 - dueDate: ${poaTwoDocDetail.documentDueDate}, outstandingAmount: ${poaTwoDocDetail.outstandingAmount}")
-      Logger("application").debug(s"PoA 1 & 2 are before Tax return deadline: $poasAreBeforeTaxDeadline")
-
-      PaymentOnAccountViewModel(
-        poaOneTransactionId = poaOneDocDetail.transactionId,
-        poaTwoTransactionId = poaTwoDocDetail.transactionId,
-        taxYear             = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-        paymentOnAccountOne = poaOneDocDetail.originalAmount,
-        paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
-        poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-        poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
-      )
-    }
-  }
+  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
+    poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
+    poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
+    latestDocumentDetail       = poaTwoDocDetail
+    poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
+    poaDeadline                = taxReturnDeadlineOf(poaTwoDueDate)
+    poasAreBeforeDeadline      = poaTwoDueDate isBefore poaDeadline
+    if poasAreBeforeDeadline
+  } yield
+    PaymentOnAccountViewModel(
+      poaOneTransactionId  = poaOneDocDetail.transactionId,
+      poaTwoTransactionId  = poaTwoDocDetail.transactionId,
+      taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+      paymentOnAccountOne  = poaOneDocDetail.originalAmount,
+      paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
+      poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+      poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
+    )
 
   protected def getChargeHistory(documentDetails: List[DocumentDetail], financialDetailsConnector: FinancialDetailsConnector)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {

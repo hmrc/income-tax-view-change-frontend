@@ -55,7 +55,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       res <- getPoaForNonCrystallisedFinancialDetails(nino)
     } yield res match {
       case Right(Some(financialDetails)) =>
-        val x = getPaymentOnAccountModel(financialDetails.documentDetails)
+        val x = getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))
         Right(x)
       case Right(None) => Right(None)
       case Left(ex) => Left(ex)
