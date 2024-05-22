@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package models.optOut
+package helpers
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
-
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
-
-  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
-
-  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+object ITSAStatusUpdateConnectorStub {
+  def stubPUTItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =
+    WiremockHelper.stubPutWithHeaders(s"/income-tax/itsa-status/update/$taxableEntityId", status = status, responseBody = responseBody, headers)
 }

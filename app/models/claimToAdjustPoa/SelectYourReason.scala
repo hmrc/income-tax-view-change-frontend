@@ -16,28 +16,35 @@
 
 package models.claimToAdjustPoa
 
+import play.api.i18n.MessagesApi
 import play.api.libs.json._
 
 import scala.util.Try
 
 sealed trait SelectYourReason {
   val code: String
+  val messagesKey: String
 }
 
 case object MainIncomeLower extends SelectYourReason {
   override val code: String = "001"
+  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.main-lower"
 }
 case object OtherIncomeLower extends SelectYourReason {
   override val code: String = "002"
+  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.other-lower"
 }
 case object AllowanceOrReliefHigher extends SelectYourReason {
   override val code: String = "003"
+  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.relief-higher"
 }
 case object MoreTaxedAtSource extends SelectYourReason {
   override val code: String = "004"
+  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.taxed-at-source"
 }
 case object Increase extends SelectYourReason {
   override val code: String = "005"
+  val messagesKey: String = ""
 }
 
 object SelectYourReason {

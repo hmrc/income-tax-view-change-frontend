@@ -17,13 +17,15 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.OptOutConnector
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockOptOutConnector}
+import connectors.optout.ITSAStatusUpdateConnector
+import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, optOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -54,12 +56,12 @@ class OptOutServiceSpec extends UnitSpec
   with MockITSAStatusService
   with MockCalculationListService
   with MockDateService
-  with MockOptOutConnector {
+  with MockITSAStatusUpdateConnector {
 
   implicit val defaultPatience: PatienceConfig =
     PatienceConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
 
-  val optOutConnector: OptOutConnector = mock(classOf[OptOutConnector])
+  val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val itsaStatusService: ITSAStatusService = mockITSAStatusService
   val calculationListService: CalculationListService = mockCalculationListService
   val dateService: DateServiceInterface = mockDateService
@@ -93,10 +95,12 @@ class OptOutServiceSpec extends UnitSpec
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val intent = proposition.availableOptOutYears.head
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -114,10 +118,12 @@ class OptOutServiceSpec extends UnitSpec
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
-        val result = service.makeOptOutUpdateRequestForYear(currentTaxYear)
+        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val intent = proposition.availableOptOutYears.head
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }

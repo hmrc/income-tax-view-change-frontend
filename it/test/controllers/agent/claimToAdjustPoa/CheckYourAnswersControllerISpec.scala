@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package models.optOut
+package controllers.agent.claimToAdjustPoa
 
-import models.incomeSourceDetails.TaxYear
-import play.api.mvc.Call
+class CheckYourAnswersControllerISpec extends controllers.claimToAdjustPoa.CheckYourAnswersControllerISpec {
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Boolean = false) {
-  def startYear: String = oneYearOptOutTaxYear.startYear.toString
+  override val isAgent = true
 
-  def endYear: String = oneYearOptOutTaxYear.endYear.toString
-
-  def optOutConfirmationLink(isAgent: Boolean): Call = {
-    if (showWarning) {
-      return controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
-    }
-
-    controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
-
-  }
 }

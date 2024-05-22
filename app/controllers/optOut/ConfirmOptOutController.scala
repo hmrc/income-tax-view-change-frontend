@@ -19,11 +19,15 @@ package controllers.optOut
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.optOut.OptOutOneYearCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.optout.OptOutService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.IncomeSourceDetailsService
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.ConfirmOptOut
@@ -70,6 +74,14 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         withOptOutQualifiedTaxYear(isAgent)(
           viewModel => Ok(view(viewModel, isAgent = isAgent))
         )
+      }
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+    implicit user =>
+      optOutService.makeOptOutUpdateRequest().map {
+          case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+          case _ => itvcErrorHandler.showInternalServerError()
       }
   }
 }

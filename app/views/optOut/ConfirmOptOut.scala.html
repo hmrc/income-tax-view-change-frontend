@@ -27,13 +27,14 @@
         link: link,
         hr: hr,
         govukTable: GovukTable,
+        formWithCSRF: FormWithCSRF,
+        govukButton: GovukButton,
 )
 
 @(viewModel:OptOutOneYearCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
-    if(isAgent) controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
-    else controllers.optOut.routes.ConfirmedOptOutController.show().url
+    controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
 }
 
 @title = @{
@@ -61,13 +62,16 @@
     }
 }
 
-<div class="govuk-button-group">
-    <a class="govuk-button" role="button" data-module="govuk-button" id="confirm-button" href="@confirmOptOutURL" data-module="govuk-button">
-        @messages("optout.confirmOptOut.confirm")
-    </a>
-    <a class="govuk-link" id="cancel-button" href="#">
-        @messages("optout.confirmOptOut.cancel")
-    </a>
-</div>
+@formWithCSRF(confirmOptOutURL) {
+    <div class="govuk-button-group">
+        @govukButton(Button(
+            content = Text(messages("optout.confirmOptOut.confirm")),
+            attributes = Map("id" -> "continue-button")
+        ))
+        <a class="govuk-link" id="cancel-button" href="#">
+            @messages("optout.confirmOptOut.cancel")
+        </a>
+    </div>
+}
 
 }

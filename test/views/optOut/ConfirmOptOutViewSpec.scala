@@ -40,8 +40,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val summary: String = messages("optout.confirmOptOut.desc")
     val infoMessage: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
     val confirmButton: String = messages("optout.confirmOptOut.confirm")
-    val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show().url
-    val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
+    val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.submit(false).url
+    val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.submit(true).url
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
   }
 
@@ -57,16 +57,12 @@ class ConfirmOptOutViewSpec extends TestSupport {
 
     "have the correct summary heading and page contents" in new Setup(false) {
       pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURL
     }
 
     "have the correct summary heading and page contents for Agents" in new Setup(true) {
       pageDocument.getElementById("summary").text() shouldBe confirmOptOutMessages.summary
-      pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
 
 

@@ -1908,7 +1908,7 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See 
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
 
-
+# Adjust payments on account
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
@@ -1923,6 +1923,16 @@ paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
+
+# Check your answers
+claimToAdjustPoa.checkYourAnswers.caption                    = Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.checkYourAnswers.heading                    = Check your answers
+claimToAdjustPoa.checkYourAnswers.summary-list-1.key         = Why are you reducing your payments on account?
+claimToAdjustPoa.checkYourAnswers.summary-list-2.key         = How much should each payment on account be?
+claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Adjusted first payment on account: {0}
+claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Adjusted second payment on account: {0}
+claimToAdjustPoa.checkYourAnswers.summary-list.change        = Change
+claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
 
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year
