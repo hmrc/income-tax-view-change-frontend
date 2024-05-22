@@ -117,6 +117,9 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
               case None =>
                 Future.successful(showInternalServerError(isAgent))
             }
+          case (Left(ex), otherData) =>
+            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. otherData: $otherData")
+            Future.failed(ex)
         }
       } else {
         Future.successful(
@@ -127,4 +130,5 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         )
       }
   }
+
 }
