@@ -119,7 +119,6 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
           case _ => "NY"
         }.sortBy(_.trim) shouldBe expectedToUpdate.sortBy(_.trim)
 
-        true shouldBe true
       }
     }
   }
