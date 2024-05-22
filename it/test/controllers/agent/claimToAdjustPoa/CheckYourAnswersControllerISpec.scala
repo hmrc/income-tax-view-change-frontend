@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package models.optOut
+package controllers.agent.claimToAdjustPoa
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
+class CheckYourAnswersControllerISpec extends controllers.claimToAdjustPoa.CheckYourAnswersControllerISpec {
 
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
+  override val isAgent = true
 
-  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
-
-  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
 }

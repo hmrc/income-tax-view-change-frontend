@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.OptOutConnector.CorrelationIdHeader
+import connectors.RawResponseReads
+import connectors.optout.ITSAStatusUpdateConnector.CorrelationIdHeader
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutUpdateRequestModel._
+import OptOutUpdateRequestModel._
 import play.api.Logger
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -27,31 +28,32 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object OptOutConnector {
+object ITSAStatusUpdateConnector {
   val CorrelationIdHeader = "CorrelationId"
 }
 
 @Singleton
-class OptOutConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
-                               (implicit val ec: ExecutionContext) extends RawResponseReads {
+class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
+                                         (implicit val ec: ExecutionContext) extends RawResponseReads {
 
   private val log = Logger("application")
-
 
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
 
-  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)
+  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val body = OptOutUpdateRequest(taxYear = taxYear.toString)
+    val body = OptOutUpdateRequest(taxYear = taxYear.toString, updateReason = updateReason)
 
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
-      val correlationId = response.headers(CorrelationIdHeader).headOption.getOrElse(s"Unknown_$CorrelationIdHeader")
+      val correlationId = response.headers.get(CorrelationIdHeader).map(_.head).getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
+        //todo keep this 'case' until this endpoint is implemented in the BE
+        case Status.NOT_FOUND if response.body.contains("URI not found") => OptOutUpdateResponseSuccess(correlationId)//OptOutUpdateResponseFailure.defaultFailure()
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {

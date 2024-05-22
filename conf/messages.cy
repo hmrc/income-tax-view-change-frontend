@@ -1829,6 +1829,7 @@ manageBusinesses.check-answers.change                                    = Newid
 ## Claim to Adjust POA - Add ##
 #######################################################################################################################
 
+# Adjust payments on account
 paymentOnAccount.caption                             = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
@@ -1843,6 +1844,16 @@ paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.link                         = Canslo
+
+# Check your answers
+claimToAdjustPoa.checkYourAnswers.caption                    = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.checkYourAnswers.heading                    = Gwiriwch eich atebion
+claimToAdjustPoa.checkYourAnswers.summary-list-1.key         = Pam ydych yn gostwng eich taliadau ar gyfrif?
+claimToAdjustPoa.checkYourAnswers.summary-list-2.key         = Faint a ddylai bob taliad ar gyfrif fod?
+claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Taliad ar gyfrif cyntaf, wedi’i addasu: {0}
+claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Ail daliad ar gyfrif, wedi’i addasu: {0}
+claimToAdjustPoa.checkYourAnswers.summary-list.change        = Newid
+claimToAdjustPoa.checkYourAnswers.cancel                     = Canslo
 
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
