@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
