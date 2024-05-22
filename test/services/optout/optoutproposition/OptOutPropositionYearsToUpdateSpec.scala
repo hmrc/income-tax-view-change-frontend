@@ -17,349 +17,111 @@
 package services.optout.optoutproposition
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
-class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
+import OptOutPropositionYearsToUpdateSpec._
+
+object OptOutPropositionYearsToUpdateSpec {
 
   val currentTaxYear = TaxYear.forYearEnd(2024)
   val previousTaxYear = currentTaxYear.previousYear
   val nextTaxYear = currentTaxYear.nextYear
 
-  "OptOutDataYearsToUpdate" should {
+  val Crystallised = true
+  val NotCrystallised = false
 
-    "update years PY, CY, NY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is PY" when {
-          "NY is known i.e. one of A,V" in {
+  val OneYearOptOut = true
+  val NotOneYearOptOut = false
 
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
+  val MultiYearOptOut = true
+  val NotMultiYearOptOut = false
 
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
+  object ToBeUpdated {
 
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
+    val PY = Seq("PY")
+    val CY = Seq("CY")
+    val NY = Seq("NY")
 
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
+    val PY_CY_NY = Seq("PY", "CY", "NY")
 
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = previousTaxYearOptOut
-            optOutData.optOutYearsToUpdate(intent) shouldBe expectedOffered
-          }
-        }
-      }
-    }
-
-    "update years CY, NY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is CY" when {
-          "NY is known i.e. one of A,V" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = currentTaxYearOptOut
-            val only_CY_and_NY = expectedOffered.drop(1)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_CY_and_NY
-          }
-        }
-      }
-    }
-
-    "update years NY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is NY" when {
-          "NY is known i.e. one of A,V" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = nextTaxYearOptOut
-            val only_NY = expectedOffered.drop(2)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-    "update years PY, CY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is PY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = previousTaxYearOptOut
-            val only_PY_and_CY = expectedOffered.dropRight(1)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_PY_and_CY
-          }
-        }
-      }
-    }
-
-    "update years CY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is CY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = currentTaxYearOptOut
-            val only_CY = expectedOffered.drop(1).dropRight(1)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_CY
-          }
-        }
-      }
-    }
-
-    "update years NY" when {
-      "PY, CY, NY are offered" when {
-        "customer intent is NY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = nextTaxYearOptOut
-            val only_NY = expectedOffered.drop(2)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-    "update years CY" when {
-      "CY, NY are offered" when {
-        "customer intent is CY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(currentTaxYearOptOut, nextTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = currentTaxYearOptOut
-            val only_CY = expectedOffered.dropRight(1)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_CY
-          }
-        }
-      }
-    }
-
-    "update years NY" when {
-      "CY, NY are offered" when {
-        "customer intent is NY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(currentTaxYearOptOut, nextTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = nextTaxYearOptOut
-            val only_NY = expectedOffered.drop(1)
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-    "update years PY, NY" when {
-      "PY, NY are offered" when {
-        "customer intent is PY" when {
-          s"NY is ${ITSAStatus.Voluntary}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe false
-            optOutData.isMultiYearOptOut shouldBe true
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut, nextTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = previousTaxYearOptOut
-            val only_NY = expectedOffered
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-    "update years PY" when {
-      "PY is offered" when {
-        "customer intent is PY" when {
-          s"NY is ${ITSAStatus.NoStatus}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.NoStatus, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe true
-            optOutData.isMultiYearOptOut shouldBe false
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = previousTaxYearOptOut
-            val only_PY = expectedOffered
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_PY
-          }
-        }
-      }
-    }
-
-    "update years PY" when {
-      "PY are offered" when {
-        "customer intent is PY" when {
-          s"NY is ${ITSAStatus.Mandated}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = false)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe true
-            optOutData.isMultiYearOptOut shouldBe false
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(previousTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = previousTaxYearOptOut
-            val only_PY = expectedOffered
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_PY
-          }
-        }
-      }
-    }
-
-    "update years CY" when {
-      "CY are offered" when {
-        "customer intent is CY" when {
-          s"NY is ${ITSAStatus.Mandated}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Mandated, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe true
-            optOutData.isMultiYearOptOut shouldBe false
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(currentTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = currentTaxYearOptOut
-            val only_NY = expectedOffered
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-    "update years NY" when {
-      "NY is offered" when {
-        "customer intent is NY" when {
-          s"NY is ${ITSAStatus.Voluntary}" in {
-
-            val previousTaxYearOptOut = PreviousOptOutTaxYear(ITSAStatus.Voluntary, previousTaxYear, crystallised = true)
-            val currentTaxYearOptOut = CurrentOptOutTaxYear(ITSAStatus.Mandated, currentTaxYear)
-            val nextTaxYearOptOut = NextOptOutTaxYear(ITSAStatus.Voluntary, nextTaxYear, currentTaxYearOptOut)
-
-            val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
-
-            optOutData.isOneYearOptOut shouldBe true
-            optOutData.isMultiYearOptOut shouldBe false
-            optOutData.isNoOptOutAvailable shouldBe false
-
-            val expectedOffered = Seq(nextTaxYearOptOut)
-            optOutData.availableOptOutYears shouldBe expectedOffered
-            val intent = nextTaxYearOptOut
-            val only_NY = expectedOffered
-            optOutData.optOutYearsToUpdate(intent) shouldBe only_NY
-          }
-        }
-      }
-    }
-
-
-
+    val PY_CY = Seq("PY", "CY")
+    val CY_NY = Seq("CY", "NY")
+    val PY_NY = Seq("PY", "NY")
   }
+
+  object Intent {
+    val PY = "PY"
+    val CY = "CY"
+    val NY = "NY"
+  }
+}
+
+class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
+
+  val testCases = List(
+
+    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_CY_NY),
+    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY_NY),
+    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+
+    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_CY),
+    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY),
+    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+
+    ((Crystallised, Voluntary, Voluntary, Voluntary), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY_NY),
+    ((Crystallised, Voluntary, Voluntary, Voluntary), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+    ((Crystallised, Voluntary, Voluntary, NoStatus), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+
+    ((NotCrystallised, Voluntary, Mandated, Voluntary), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_NY),
+    ((NotCrystallised, Voluntary, Mandated, NoStatus), Intent.PY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.PY),
+    ((NotCrystallised, Voluntary, Mandated, Mandated), Intent.PY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.PY),
+    ((Crystallised, Voluntary, Voluntary, Mandated), Intent.CY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.CY),
+
+    ((Crystallised, Voluntary, Mandated, Voluntary), Intent.NY, (OneYearOptOut, false), ToBeUpdated.NY),
+
+  )
+
+  testCases.foreach {
+    case (input, intent, numberOfYearsFlags, output) =>
+      val test = optOutPropositionUpdatesTest _
+      test.tupled(input)(intent).tupled(numberOfYearsFlags)(output)
+  }
+
+  def optOutPropositionUpdatesTest(crystallised: Boolean, pyStatus: ITSAStatus, cyStatus: ITSAStatus, nyStatus: ITSAStatus)
+                                  (intent: String)
+                                  (isOneYearOptOut: Boolean, isMultiYearOptOut: Boolean)
+                                  (expectedToUpdate: Seq[String]): Unit = {
+
+    s"update years ${expectedToUpdate.mkString(",")}" when {
+      s"proposition is ${(crystallised, pyStatus, cyStatus, nyStatus)}" in {
+
+        val previousTaxYearOptOut = PreviousOptOutTaxYear(pyStatus, previousTaxYear, crystallised = crystallised)
+        val currentTaxYearOptOut = CurrentOptOutTaxYear(cyStatus, currentTaxYear)
+        val nextTaxYearOptOut = NextOptOutTaxYear(nyStatus, nextTaxYear, currentTaxYearOptOut)
+
+        val intentYear = intent match {
+          case "PY" => previousTaxYearOptOut
+          case "CY" => currentTaxYearOptOut
+          case _ => nextTaxYearOptOut
+        }
+
+        val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
+
+        optOutData.isOneYearOptOut shouldBe isOneYearOptOut
+        optOutData.isMultiYearOptOut shouldBe isMultiYearOptOut
+        optOutData.isNoOptOutAvailable shouldBe !isOneYearOptOut && !isMultiYearOptOut
+
+        optOutData.optOutYearsToUpdate(intentYear).map {
+          case _:PreviousOptOutTaxYear => "PY"
+          case _:CurrentOptOutTaxYear => "CY"
+          case _ => "NY"
+        }.sortBy(_.trim) shouldBe expectedToUpdate.sortBy(_.trim)
+
+        true shouldBe true
+      }
+    }
+  }
+
 }

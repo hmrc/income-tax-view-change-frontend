@@ -35,7 +35,7 @@ class OptOutPropositionYearsToOfferSpec extends UnitSpec {
   val previousTaxYear = currentTaxYear.previousYear
   val nextTaxYear = currentTaxYear.nextYear
 
-  def optOutPropositionTest(crystallised: Boolean, pyStatus: ITSAStatus, cyStatus: ITSAStatus, nyStatus: ITSAStatus)
+  def optOutPropositionOffersTest(crystallised: Boolean, pyStatus: ITSAStatus, cyStatus: ITSAStatus, nyStatus: ITSAStatus)
               (isOneYearOptOut: Boolean, isMultiYearOptOut: Boolean)
               (expectedOffered: Seq[String]): Unit = {
 
@@ -65,7 +65,7 @@ class OptOutPropositionYearsToOfferSpec extends UnitSpec {
 
   testCases.foreach {
     case (input, numberOfYearsFlags, output) =>
-      val test = optOutPropositionTest _
+      val test = optOutPropositionOffersTest _
       test.tupled(input).tupled(numberOfYearsFlags)(output)
   }
 
