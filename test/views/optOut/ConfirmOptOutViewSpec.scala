@@ -18,7 +18,7 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearCheckpointViewModel
+import models.optout.OptOutOneYearCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -71,7 +71,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
       pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURL
+      pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURL
     }
 
     "have the correct summary heading and page contents for Agents with info message" in new Setup(isAgent = true, infoMessage = true) {
@@ -79,7 +79,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
       pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
-      pageDocument.getElementById("confirm-button").attr("href") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
+      pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
   }
 }

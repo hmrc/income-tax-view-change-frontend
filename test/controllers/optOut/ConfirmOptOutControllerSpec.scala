@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearCheckpointViewModel
+import models.optout.OptOutOneYearCheckpointViewModel
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}

@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optOut.OptOutOneYearCheckpointViewModel
+@import models.optout.OptOutOneYearCheckpointViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -62,11 +62,11 @@
     }
 }
 
-@formWithCSRF(confirmOptOutURL) {
+@formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {
     <div class="govuk-button-group">
         @govukButton(Button(
             content = Text(messages("optout.confirmOptOut.confirm")),
-            attributes = Map("id" -> "continue-button")
+            id = Some("confirm-button")
         ))
         <a class="govuk-link" id="cancel-button" href="#">
             @messages("optout.confirmOptOut.cancel")

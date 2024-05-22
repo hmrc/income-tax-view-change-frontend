@@ -18,14 +18,12 @@ package services.optout
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optOut.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, optOutUpdateReason, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
