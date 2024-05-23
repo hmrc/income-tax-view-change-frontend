@@ -44,7 +44,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val body = OptOutUpdateRequest(taxYear = taxYear.toString, updateReason = updateReason)
+    val body = OptOutUpdateRequest(taxYear = toFormat(taxYear), updateReason = updateReason)
 
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
@@ -64,5 +64,9 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
           )
       }
     }
+  }
+
+  def toFormat(taxYear: TaxYear): String = {
+    s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
   }
 }
