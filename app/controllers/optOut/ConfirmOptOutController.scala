@@ -49,17 +49,16 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutOneYearCheckpointViewModel => Result,
-                                                           multiYearFunction: OptOutMultiYearViewModel => Result)
+  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)
+                                        (function: OptOutOneYearCheckpointViewModel => Result, multiYearFunction: OptOutMultiYearViewModel => Result)
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    optOutService.optOutCheckPointPageViewModel(Some(TaxYear(2024, 2025))).map {
+    optOutService.optOutCheckPointPageViewModel(intent).map {
       case Some(viewModel: OptOutOneYearCheckpointViewModel) => function(viewModel)
-     // case Some(viewModel: OptOutMultiYearViewModel) => multiYearFunction(viewModel)
-      case None =>
+      case Some(viewModel: OptOutMultiYearViewModel) => multiYearFunction(viewModel)
+      case _ =>
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()
-      case _ => ???
     }
   }
 
@@ -72,12 +71,12 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     }
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(intentTaxYear: String = TaxYear(2024, 2025).toString, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        withOptOutQualifiedTaxYear(isAgent)(
-          viewModel => Ok(view(viewModel, isAgent = isAgent)),
-          multiYearViewModel => ???
+        withOptOutQualifiedTaxYear(TaxYear.getTaxYearModel(intentTaxYear), isAgent)(
+          viewModel => Ok(view(viewModel, isAgent)),
+          multiYearViewModel => Ok(checkOptOutAnswers(multiYearViewModel, isAgent)),
         )
       }
   }

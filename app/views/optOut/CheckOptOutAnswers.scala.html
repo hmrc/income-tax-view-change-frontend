@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optout.OptOutMultiYearViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -29,7 +30,7 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(model: OptOutMultiYearViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url

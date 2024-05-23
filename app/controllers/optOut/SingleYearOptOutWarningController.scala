@@ -88,7 +88,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
           },
           {
             case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
-              val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
+              val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(TaxYear.forYearEnd(2024).toString, isAgent)
 
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)

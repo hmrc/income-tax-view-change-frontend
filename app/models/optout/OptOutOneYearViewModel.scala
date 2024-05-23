@@ -29,7 +29,7 @@ case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Bo
       return controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
     }
 
-    controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
+    controllers.optOut.routes.ConfirmOptOutController.show(TaxYear.forYearEnd(2024).toString, isAgent)
 
   }
 }
