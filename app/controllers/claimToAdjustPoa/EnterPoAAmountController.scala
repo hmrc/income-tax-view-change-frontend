@@ -71,21 +71,25 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       ifAdjustPoaIsEnabled(isAgent) {
         claimToAdjustService.getEnterPoAAmountViewModel(Nino(request.nino)).flatMap {
           case Right(viewModel) =>
-            EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
-              formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
-              validForm =>
-                sessionService.setNewPoAAmount(validForm.amount).flatMap {
-                  case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
-                    Future.successful(showInternalServerError(isAgent))
-                  case Right(_) => getRedirect(viewModel, validForm.amount, isAgent)
-                }
-            )
+            handleForm(viewModel, isAgent)
           case Left(ex) =>
             Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
         }
       }
+  }
+
+  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+    EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
+      formWithErrors =>
+        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
+      validForm =>
+        sessionService.setNewPoAAmount(validForm.amount).flatMap {
+          case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
+            Future.successful(showInternalServerError(isAgent))
+          case Right(_) => getRedirect(viewModel, validForm.amount, isAgent)
+        }
+    )
   }
 
   def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {

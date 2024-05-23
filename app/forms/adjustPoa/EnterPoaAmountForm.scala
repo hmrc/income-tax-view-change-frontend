@@ -65,8 +65,6 @@ object EnterPoaAmountForm extends CustomConstraints{
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
         baseFormatter
           .bind(key, data)
-          .map(_.replace(",", ""))
-          .map(_.replace("£", ""))
           .flatMap {
             case s if s.isEmpty =>
               Left(Seq(FormError(key, emptyError)))

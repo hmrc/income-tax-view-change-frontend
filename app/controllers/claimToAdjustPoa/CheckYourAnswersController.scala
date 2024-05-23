@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.CheckYourAnswers
 import controllers.claimToAdjustPoa.routes._
 import models.admin.AdjustPaymentsOnAccount
@@ -46,7 +46,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching {
+  extends ClientConfirmedController with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
@@ -73,21 +73,6 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
           )
         }
     }
-
-  private def ifAdjustPoaIsEnabled(isAgent: Boolean)
-                                  (block: Future[Result])
-                                  (implicit user: MtdItUser[_]): Future[Result] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
-      block
-    } else {
-      Future.successful(
-        Redirect(
-          if (isAgent) controllers.routes.HomeController.showAgent
-          else controllers.routes.HomeController.show()
-        )
-      )
-    }
-  }
 
   private def withValidSession(isAgent: Boolean, session: PoAAmendmentData)
                               (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
