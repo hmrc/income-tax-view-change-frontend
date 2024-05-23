@@ -100,9 +100,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def optOutCheckPointPageViewModel(intent: Option[TaxYear])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
     optOutViewModel {
       optOutData =>
-
         if (optOutData.isOneYearOptOut) {
-
           Some {
             val optOutYear = optOutData.availableOptOutYears.head
             val showFutureChangeInfo = optOutData match {
@@ -113,17 +111,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
             }
             OptOutOneYearCheckpointViewModel(optOutYear.taxYear, showFutureChangeInfo)
           }
-
-        } else {
-
+        } else
           Some {
-            OptOutMultiYearViewModel(intent)
+            logAndReturn(OptOutMultiYearViewModel(intent))
           }
-
-        }
     }
   }
 
+  //todo remove after testing
+  def logAndReturn[T](viewModel: T): T = {
+    Logger("application").info(s"Returning view model in multiYear: $viewModel")
+    viewModel
+  }
 
   private def setupOptOutProposition()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutProposition] = {
 

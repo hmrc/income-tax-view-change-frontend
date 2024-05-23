@@ -17,10 +17,15 @@
 package models.optout
 
 import models.incomeSourceDetails.TaxYear
-import services.optout.OptOutTaxYear
 
 case class OptOutMultiYearViewModel(multiYearOptOutTaxYear: Option[TaxYear]) {
-//  def startYear: String = multiYearOptOutTaxYear.startYear.toString
-//
-//  def endYear: String = multiYearOptOutTaxYear.endYear.toString
+  def startYear: String = multiYearOptOutTaxYear match {
+    case Some(taxYear) => taxYear.startYear.toString
+    case None => throw new Exception("multiYearOptOutTaxYear start year is missing")
+  }
+
+  def endYear: String = multiYearOptOutTaxYear match {
+    case Some(taxYear) => taxYear.endYear.toString
+    case None => throw new Exception("multiYearOptOutTaxYear end year is missing")
+  }
 }
