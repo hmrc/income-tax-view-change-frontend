@@ -16,56 +16,69 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import models.optout.OptOutOneYearCheckpointViewModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.IncomeSourceDetailsService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
-import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmOptOut
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmOptOutController @Inject()(val authenticate: AuthenticationPredicate,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        val confirmOptOut: ConfirmOptOut,
-                                        val optOutService: OptOutService,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                        val retrieveBtaNavBar: NavBarPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val customNotFoundErrorView: CustomNotFoundError,
-                                        val auth: AuthenticatorPredicate)
+class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
+                                        optOutService: OptOutService,
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
-                                        mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
+                                        val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                       )
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                        override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      Future.successful(Ok(confirmOptOut(false)))
+  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutOneYearCheckpointViewModel => Result)
+                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    optOutService.optOutCheckPointPageViewModel().map {
+      case Some(optOutOneYearCheckpointViewModel) => function(optOutOneYearCheckpointViewModel)
+      case None =>
+        Logger("application").error("No qualified tax year available for opt out")
+        errorHandler(isAgent).showInternalServerError()
+    }
+
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      Future.successful(Ok(confirmOptOut(true)))
+  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    code.recover {
+      case ex: Exception =>
+        Logger("application").error(s"request failed :: $ex")
+        errorHandler(isAgent).showInternalServerError()
+    }
+  }
+
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withRecover(isAgent) {
+        withOptOutQualifiedTaxYear(isAgent)(
+          viewModel => Ok(view(viewModel, isAgent = isAgent))
+        )
+      }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-          case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-          case _ => itvcErrorHandler.showInternalServerError()
+        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case _ => itvcErrorHandler.showInternalServerError()
       }
   }
 }

@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optout.OptOutOneYearCheckpointViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,32 +31,42 @@
         govukButton: GovukButton,
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:OptOutOneYearCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
-    if(isAgent) controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
-    else controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+    controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
 }
 
+@title = @{
+    messages("optout.confirmOptOut.heading",
+              viewModel.oneYearOptOutTaxYear.startYear.toString,
+              viewModel.oneYearOptOutTaxYear.endYear.toString)
+}
 @mainTemplate(
-    pageTitle = messages("optout.confirmOptOut.heading"),
+    pageTitle = title,
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
     ) {
 
-@h1(messages("optout.confirmOptOut.heading"), classes = "govuk-heading-l")
+@h1(id = Some("heading"), msg = title, classes = "govuk-heading-l")
 
 @p(id=Some("summary")) {
     @messages("optout.confirmOptOut.desc")
 }
 
-@formWithCSRF(confirmOptOutURL) {
+@if(viewModel.showFutureChangeInfo){
+    @p(id=Some("info-message")) {
+        @messages("optout.confirmOptOut.info-message")
+    }
+}
+
+@formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {
     <div class="govuk-button-group">
         @govukButton(Button(
             content = Text(messages("optout.confirmOptOut.confirm")),
-            attributes = Map("id" -> "continue-button")
+            id = Some("confirm-button")
         ))
         <a class="govuk-link" id="cancel-button" href="#">
             @messages("optout.confirmOptOut.cancel")
