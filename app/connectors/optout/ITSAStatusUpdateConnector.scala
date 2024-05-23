@@ -18,7 +18,7 @@ package connectors.optout
 
 import config.FrontendAppConfig
 import connectors.RawResponseReads
-import connectors.optout.ITSAStatusUpdateConnector.CorrelationIdHeader
+import connectors.optout.ITSAStatusUpdateConnector._
 import models.incomeSourceDetails.TaxYear
 import OptOutUpdateRequestModel._
 import play.api.Logger
@@ -30,6 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object ITSAStatusUpdateConnector {
   val CorrelationIdHeader = "CorrelationId"
+  def toFormat(taxYear: TaxYear): String = {
+    s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
+  }
 }
 
 @Singleton
@@ -64,9 +67,5 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
           )
       }
     }
-  }
-
-  def toFormat(taxYear: TaxYear): String = {
-    s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
   }
 }
