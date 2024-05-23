@@ -51,9 +51,10 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = sessionService.getMongo(hc, ec).flatMap {
-    case Right(Some(newPoaData: PoAAmendmentData)) =>
-      Future.successful(newPoaData.newPoAAmount.contains(BigDecimal(0)))
-    case _ => Future.failed(new Exception(s"failed to retrieve session data."))
+    case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
+      Future.successful(newPoAAmount == BigDecimal(0))
+    case _ =>
+      Future.failed(new Exception(s"failed to retrieve session data."))
   }
 
   def dataFromSession(implicit hc: HeaderCarrier): Future[PoAAmendmentData] = sessionService.getMongo(hc, ec).flatMap {
@@ -74,19 +75,15 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
           case (Right(Some(poaModel)), isAmountZero) =>
             val viewModel = ConfirmationForAdjustingPoaViewModel(poaModel.taxYear, isAmountZero)
             Future.successful(Ok(view(isAgent, viewModel)))
-          case (Right(None), isAmountZero) => Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
+          case (Right(None), isAmountZero) =>
+            Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
             Future.successful(showInternalServerError(isAgent))
           case (Left(ex), isAmountZero) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
             Future.failed(ex)
         }
       } else {
-        Future.successful(
-          Redirect(
-            if (isAgent) HomeController.showAgent
-            else HomeController.show()
-          )
-        )
+        Future.successful(Redirect(if (isAgent) HomeController.showAgent else HomeController.show()))
       }.recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
@@ -105,19 +102,13 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
                                     otherData: PoAAmendmentData, isAgent: Boolean, nino: String)
                                    (implicit user: MtdItUser[_]): Future[Result] = {
-    {
-      for {
-        amount <- otherData.newPoAAmount
-        reason <- otherData.poaAdjustmentReason
-      } yield (amount, reason)
-    }
-    match {
-      case Some(x) =>
-        calculationService.recalculate(nino, poa.taxYear, x._1, x._2) map {
+    otherData match {
+      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount)) =>
+        calculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
           case Right(_) => Redirect(controllers.routes.HomeController.show()) // to be changed
         }
-      case None =>
+      case PoAAmendmentData(_, _) =>
         Future.successful(showInternalServerError(isAgent))
     }
   }
