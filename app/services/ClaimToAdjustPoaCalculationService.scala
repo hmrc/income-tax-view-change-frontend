@@ -16,21 +16,24 @@
 
 package services
 
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaFailure, ClaimToAdjustPoaResponse, ClaimToAdjustPoaSuccess}
+import connectors.ClaimToAdjustPoaConnector
+import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaFailure, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaResponse, ClaimToAdjustPoaSuccess, UnexpectedError}
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClaimToAdjustPoaCalculationService @Inject()(implicit ec: ExecutionContext) {
+class ClaimToAdjustPoaCalculationService @Inject()(
+                                                    claimToAdjustPoaConnector: ClaimToAdjustPoaConnector)
+                                                  (implicit ec: ExecutionContext) {
 
-  // To be replaced with actual connector
-  private def connectorCall(request: ClaimToAdjustPoaRequest, success: Boolean): Future[ClaimToAdjustPoaResponse] =
-    Future.successful(Right(ClaimToAdjustPoaSuccess("time")))
 
-  def recalculate(nino: String, taxYear: TaxYear, amount: BigDecimal, poaAdjustmentReason: SelectYourReason): Future[Either[Throwable, Unit]] = {
+  def recalculate(nino: String, taxYear: TaxYear,
+                  amount: BigDecimal, poaAdjustmentReason: SelectYourReason)
+                 (implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
 
     val request: ClaimToAdjustPoaRequest = ClaimToAdjustPoaRequest(
       nino = nino,
@@ -38,12 +41,23 @@ class ClaimToAdjustPoaCalculationService @Inject()(implicit ec: ExecutionContext
       amount = amount,
       poaAdjustmentReason = poaAdjustmentReason
     )
-    connectorCall(request, success = true) flatMap {
-      case Left(failure: ClaimToAdjustPoaFailure) =>
-        Logger("application").error(s"failed to get details for ")
-        Future.successful(Left(new Exception(failure.message)))
-      case Right(_: ClaimToAdjustPoaSuccess) => Future.successful(Right((): Unit))
-    }
+      for {
+        response <- claimToAdjustPoaConnector.postClaimToAdjustPoa(request)
+      } yield response match {
+        case Left(ClaimToAdjustPoaError(message)) =>
+          Logger("application").error(s"POA recalculation failure: $message")
+          Left(new Exception(message))
+        case Left(ClaimToAdjustPoaInvalidJson) =>
+          Logger("application").error(s"POA recalculation failure / json error: ${ClaimToAdjustPoaInvalidJson.message}")
+          Left(new Exception(ClaimToAdjustPoaInvalidJson.message))
+        case Left(UnexpectedError) =>
+          Logger("application").error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
+          Left(new Exception(UnexpectedError.message))
+        case Right(ClaimToAdjustPoaSuccess(_)) =>
+          Logger("application").info(s"POA recalculation success: ${UnexpectedError.message}")
+          Right(())
+      }
+
   }
 
 

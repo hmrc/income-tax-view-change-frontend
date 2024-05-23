@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ConfirmationController, SelectYourReasonController}
+import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ConfirmationForAdjustingPoaController, SelectYourReasonController}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import models.core.CheckMode
@@ -41,7 +41,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             adjustedFirstPoaAmount = BigDecimal(3000.00),
             adjustedSecondPoaAmount = BigDecimal(3000.00),
             poaReason = poaReason,
-            redirectUrl = ConfirmationController.show(isAgent).url,
+            redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
             changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
             changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
           )
@@ -82,7 +82,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
-        document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationController.show(isAgent).url
+        document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationForAdjustingPoaController.show(isAgent).url
       }
       "render the cancel link" in new Setup(isAgent) {
         document.getElementById("cancel-link").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.cancel")
