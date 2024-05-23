@@ -21,7 +21,7 @@ import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearViewModel
+import models.optout.OptOutOneYearViewModel
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class SingleYearOptOutWarningControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService {
 
-  object TestSingleYearOptOutWarningController$ extends SingleYearOptOutWarningController(
+  object TestSingleYearOptOutWarningController extends SingleYearOptOutWarningController(
     auth = testAuthenticator,
     view = app.injector.instanceOf[SingleYearOptOutWarning],
     optOutService = mockOptOutService)(
@@ -50,7 +50,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
   def tests(isAgent: Boolean): Unit = {
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
-    val confirmOptOutPage = if (isAgent) Some(controllers.optOut.routes.ConfirmOptOutController.showAgent().url) else Some(controllers.optOut.routes.ConfirmOptOutController.show().url)
+    val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
     val homePage = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear)))
@@ -63,7 +63,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-        val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
+        val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
         status(result) shouldBe Status.OK
       }
 
@@ -73,7 +73,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
+          val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -82,7 +82,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestGET)
+          val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -95,7 +95,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
@@ -111,7 +111,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
@@ -126,7 +126,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.submit(isAgent = isAgent)(
+          val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
               ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
@@ -140,7 +140,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestPOST)
+          val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -149,7 +149,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
-          val result: Future[Result] = TestSingleYearOptOutWarningController$.show(isAgent = isAgent)(requestPOST)
+          val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }

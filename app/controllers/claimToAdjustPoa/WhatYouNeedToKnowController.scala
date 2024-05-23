@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
-import models.core.Nino
+import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -50,7 +50,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
     (if (poa.totalAmountLessThanPoa) {
       controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
     } else {
-      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, false)
+      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)
     }).url
   }
 

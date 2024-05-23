@@ -16,9 +16,10 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ChangePoaReasonController, ConfirmationController}
+import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ConfirmationController, SelectYourReasonController}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
+import models.core.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
@@ -41,7 +42,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             adjustedSecondPoaAmount = BigDecimal(3000.00),
             poaReason = poaReason,
             redirectUrl = ConfirmationController.show(isAgent).url,
-            changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
+            changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
             changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
           )
         )
@@ -73,7 +74,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
       "render the first change link" in new Setup(isAgent) {
         document.getElementById("change-1").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
-        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe ChangePoaReasonController.show(isAgent).url
+        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe SelectYourReasonController.show(isAgent, CheckMode).url
       }
       "render the second change link" in new Setup(isAgent) {
         document.getElementById("change-2").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
@@ -82,6 +83,10 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
         document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationController.show(isAgent).url
+      }
+      "render the cancel link" in new Setup(isAgent) {
+        document.getElementById("cancel-link").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.cancel")
+        document.getElementById("cancel-link").getElementsByTag("a").attr("href") shouldBe getCancelLinkUrl(isAgent)
       }
       "hide the Payment On Account reason row when the user has increased the PoA after a prior adjustment" in new Setup(isAgent, poaReason = Increase) {
           document.getElementsByClass("govuk-summary-list__key").size() shouldBe 1
@@ -93,6 +98,11 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
     }
   }
+
+  def getCancelLinkUrl(isAgent: Boolean): String = {
+    if (isAgent) controllers.routes.HomeController.showAgent
+    else         controllers.routes.HomeController.show()
+  }.url
 
   executeTest(isAgent = true)
   executeTest(isAgent = false)
