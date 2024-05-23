@@ -32,8 +32,7 @@
 @(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
-    if(isAgent) controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
-    else controllers.optOut.routes.ConfirmedOptOutController.show().url
+    controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
 }
 
 @getChangeOptOutHref = @{
