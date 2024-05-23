@@ -23,6 +23,7 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
+import models.core.NormalMode
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -248,9 +249,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "2000"))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, false).url)
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)
         status(resultAgent) shouldBe SEE_OTHER
-        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, false).url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, NormalMode).url)
       }
     }
     "redirect back to the Enter PoA Amount page with a 500 response" when {

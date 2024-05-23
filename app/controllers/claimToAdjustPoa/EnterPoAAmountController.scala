@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.{Increase, PoAAmendmentData, PoAAmountViewModel}
-import models.core.Nino
+import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -100,7 +100,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         case Right(_) =>
           Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
       }
-      case (true, _) => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, isChange = false)))
+      case (true, _) => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
       case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
     }
   }
