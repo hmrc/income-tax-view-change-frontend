@@ -94,21 +94,23 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
       }
   }
 
-  private def getPoaAndSessionData(nino: String)(implicit user: MtdItUser[_]):
-  Future[(Either[Throwable, Option[PaymentOnAccountViewModel]], PoAAmendmentData)] = {
+  //TODO: refactor as return type doesn't make any sense
+  private def getPoaAndSessionData(nino: String)(implicit user: MtdItUser[_]): Future[(Either[Throwable, Option[PaymentOnAccountViewModel]], PoAAmendmentData)] = {
     for {
       poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(nino))
       sessionData <- dataFromSession
     } yield (poaMaybe, sessionData)
   }
 
-  private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel, otherData: PoAAmendmentData, isAgent: Boolean, nino: String)(implicit user: MtdItUser[_]):
-  Future[Result] = {
+  private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
+                                    otherData: PoAAmendmentData, isAgent: Boolean, nino: String)
+                                   (implicit user: MtdItUser[_]): Future[Result] = {
     {
-    for {
-      amount <- otherData.newPoAAmount
-      reason <- otherData.poaAdjustmentReason
-    } yield (amount, reason) }
+      for {
+        amount <- otherData.newPoAAmount
+        reason <- otherData.poaAdjustmentReason
+      } yield (amount, reason)
+    }
     match {
       case Some(x) =>
         calculationService.recalculate(nino, poa.taxYear, x._1, x._2) map {
