@@ -54,13 +54,13 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
     case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
-      Future.failed(new Exception(s"failed to retrieve session data."))
+      Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
   }
 
   def dataFromSession(implicit hc: HeaderCarrier): Future[PoAAmendmentData] = sessionService.getMongo(hc, ec).flatMap {
     case Right(Some(newPoaData: PoAAmendmentData)) =>
       Future.successful(newPoaData)
-    case _ => Future.failed(new Exception(s"failed to retrieve session data."))
+    case _ => Future.failed(new Exception(s"Failed to retrieve session data: dataFromSession`"))
   }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -92,12 +92,6 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   }
 
   //TODO: refactor as return type doesn't make any sense
-  private def getPoaAndSessionData(nino: String)(implicit user: MtdItUser[_]): Future[(Either[Throwable, Option[PaymentOnAccountViewModel]], PoAAmendmentData)] = {
-    for {
-      poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(nino))
-      sessionData <- dataFromSession
-    } yield (poaMaybe, sessionData)
-  }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
                                     otherData: PoAAmendmentData, isAgent: Boolean, nino: String)
@@ -105,8 +99,11 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
     otherData match {
       case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount)) =>
         calculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
-          case Left(ex: Throwable) => Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
-          case Right(_) => Redirect(controllers.routes.HomeController.show()) // to be changed
+          case Left(ex) =>
+            Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
+            Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
+          case Right(_) =>
+            Redirect(controllers.routes.HomeController.show()) // to be changed
         }
       case PoAAmendmentData(_, _) =>
         Future.successful(showInternalServerError(isAgent))
@@ -116,14 +113,23 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       if (isEnabled(AdjustPaymentsOnAccount)) {
-        getPoaAndSessionData(user.nino) flatMap {
-          case (Right(Some(poa)), otherData) => handlePoaAndOtherData(poa, otherData, isAgent, user.nino)
-          case (Right(None), otherData) => Logger("application").error(s"Failed to create PaymentOnAccount model, otherData: $otherData")
-            Future.successful(showInternalServerError(isAgent))
-          case (Left(ex), otherData) =>
-            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. otherData: $otherData")
-            Future.failed(ex)
+        val r = {
+          for {
+            poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
+          } yield poaMaybe match {
+            case Right(Some(poa)) =>
+              dataFromSession.flatMap(otherData =>
+                handlePoaAndOtherData(poa, otherData, isAgent, user.nino)
+              )
+            case Right(None) =>
+              Logger("application").error(s"Failed to create PaymentOnAccount model")
+              Future.successful(showInternalServerError(isAgent))
+            case Left(ex) =>
+              Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}.")
+              Future.failed(ex)
+          }
         }
+        r.flatten
       } else {
         Future.successful(
           Redirect(
