@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object ITSAStatusUpdateConnector {
   val CorrelationIdHeader = "CorrelationId"
-  def toFormat(taxYear: TaxYear): String = {
+  def toApiFormat(taxYear: TaxYear): String = {
     s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
   }
 }
@@ -47,7 +47,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
-    val body = OptOutUpdateRequest(taxYear = toFormat(taxYear), updateReason = updateReason)
+    val body = OptOutUpdateRequest(taxYear = toApiFormat(taxYear), updateReason = updateReason)
 
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
