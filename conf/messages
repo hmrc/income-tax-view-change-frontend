@@ -1951,7 +1951,7 @@ claimToAdjustPoa.enterPoaAmount.cancel                  = Cancel
 claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for each payment on account
 claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
-claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number like 1000 or 1000.00
+claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
 
 
 # opt out confirm

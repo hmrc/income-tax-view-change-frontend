@@ -81,7 +81,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
     "redirect to the home page" when {
       "FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
-        println("BOOP" + isEnabled(AdjustPaymentsOnAccount))
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()

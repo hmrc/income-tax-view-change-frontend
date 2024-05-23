@@ -40,7 +40,6 @@ object EnterPoaAmountForm extends CustomConstraints{
   val form: Form[EnterPoaAmountForm] = Form(
     mapping(
       amount -> of(currencyFormatter())
-        //bigDecimal.verifying(firstError(isValidNumber))
     )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
   )
 
