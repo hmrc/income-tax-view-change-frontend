@@ -17,19 +17,5 @@
 package models.optout
 
 import models.incomeSourceDetails.TaxYear
-import play.api.mvc.Call
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Boolean = false) {
-  def startYear: String = oneYearOptOutTaxYear.startYear.toString
-
-  def endYear: String = oneYearOptOutTaxYear.endYear.toString
-
-  def optOutConfirmationLink(isAgent: Boolean): Call = {
-    if (showWarning) {
-      return controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
-    }
-
-    controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
-
-  }
-}
+case class OptOutOneYearCheckpointViewModel(oneYearOptOutTaxYear: TaxYear, showFutureChangeInfo: Boolean)

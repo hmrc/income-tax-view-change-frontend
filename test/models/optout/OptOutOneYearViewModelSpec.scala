@@ -24,8 +24,8 @@ class OptOutOneYearViewModelSpec extends UnitSpec {
 
   val singleYearOptOutConfirmationIndividual: Call = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent = false)
   val singleYearOptOutConfirmationAgent: Call = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent = true)
-  val confirmOptOutIndividual: Call = controllers.optOut.routes.ConfirmOptOutController.show()
-  val confirmOptOutAgent: Call = controllers.optOut.routes.ConfirmOptOutController.showAgent()
+  val confirmOptOutIndividual: Call = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false)
+  val confirmOptOutAgent: Call = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true)
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2022)
   "OptOutOneYearViewModel.optOutConfirmationLink" when {

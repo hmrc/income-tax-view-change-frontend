@@ -26,7 +26,7 @@ import controllers.routes
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
-import models.core.Nino
+import models.core.{Mode, Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,6 +34,7 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.SelectYourReasonView
+import controllers.claimToAdjustPoa.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,20 +55,20 @@ class SelectYourReasonController @Inject()(
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching  {
 
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       ifAdjustPoaIsEnabled(isAgent) {
         withSessionAndPoa(isAgent) { (session, poa) =>
           (session.newPoAAmount) match {
             case Some(amount) if amount >= poa.totalAmount =>
-              saveValueAndRedirect(isChange, isAgent, Increase)
+              saveValueAndRedirect(mode, isAgent, Increase)
             case _ =>
               val form = formProvider.apply()
               EitherT.rightT(Ok(view(
                 selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
                 taxYear = poa.taxYear,
                 isAgent = isAgent,
-                isChange = isChange,
+                mode = mode,
                 useFallbackLink = true)))
           }
         } fold(
@@ -77,16 +78,16 @@ class SelectYourReasonController @Inject()(
       }
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit request =>
       ifAdjustPoaIsEnabled(isAgent) {
         formProvider.apply()
           .bindFromRequest()
           .fold(
             formWithErrors => withSessionAndPoa(isAgent) { (_, poa) =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, isChange, true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, isAgent, mode, true)))
             },
-            value => saveValueAndRedirect(isChange, isAgent, value))
+            value => saveValueAndRedirect(mode, isAgent, value))
           .fold(
             logAndShowErrorPage(isAgent),
             result => result
@@ -119,14 +120,14 @@ class SelectYourReasonController @Inject()(
   }
 
 
-  private def saveValueAndRedirect(isChange: Boolean, isAgent: Boolean, value: SelectYourReason)
+  private def saveValueAndRedirect(mode: Mode, isAgent: Boolean, value: SelectYourReason)
                                   (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
     for {
-      _ <- EitherT(sessionService.setAdjustmentReason(value))
-      redirect <- withSessionAndPoa(isAgent) { (session, poa) =>
-        (isChange, poa.totalAmountLessThanPoa) match {
-          case (false, false) => EitherT.rightT(Redirect(controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)))
-          case (_,_) => EitherT.rightT(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
+      _        <- EitherT(sessionService.setAdjustmentReason(value))
+      redirect <- withSessionAndPoa(isAgent) { (_, poa) =>
+        (mode, poa.totalAmountLessThanPoa) match {
+          case (NormalMode, false) if value != Increase => EitherT.rightT(Redirect(EnterPoAAmountController.show(isAgent)))
+          case (_,_)                                    => EitherT.rightT(Redirect(CheckYourAnswersController.show(isAgent)))
         }
       }
     } yield {

@@ -22,8 +22,10 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
+import models.core.NormalMode
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import controllers.claimToAdjustPoa.routes._
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 
@@ -36,7 +38,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
   class Setup(isAgent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(isAgent = isAgent, poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, false).url)
+    val view: Html = whatYouNeedToKnowView(isAgent, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), SelectYourReasonController.show(isAgent, NormalMode).url)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
@@ -48,7 +50,8 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "render the caption" in new Setup {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe
+          msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
       }
 
       "render the main heading" in new Setup {

@@ -23,15 +23,17 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{AllowanceOrReliefHigher, Increase, MainIncomeLower, OtherIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.TaxYear
+import org.jsoup.Jsoup
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{OK, POST, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testUtils.TestSupport
+import testUtils.{TestSupport, ViewSpec}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,6 +44,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
   with MockPaymentOnAccountSessionService
   with MockCalculationListService
   with MockCalculationListConnector
+  with ViewSpec
   with MockFinancialDetailsConnector {
 
   object TestSelectYourReasonController extends SelectYourReasonController(
@@ -93,20 +96,30 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
       setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
-      val result = TestSelectYourReasonController.show(isAgent = false, isChange = true)(fakeRequestWithNinoAndOrigin("PTA"))
+      val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
     }
 
     s"return status: $OK when PoA tax year crystallized" when {
 
-      "in change mode must pre-populate the answer" when {
-        "user is agent" in {
-          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
-        }
+      "in check mode must pre-populate the answer with AllowanceOrReliefHigher" when {
+        "the user previously selected the AllowanceOrReliefHigher checkbox" in {
+          setupTest(
+            sessionResponse = Right(Some(
+              PoAAmendmentData(newPoAAmount = Some(200.0), poaAdjustmentReason = Some(AllowanceOrReliefHigher))
+            )),
+            claimToAdjustResponse = poa
+          )
 
-        "user is not agent" in {
-          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
+          setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(AllowanceOrReliefHigher)
+
+          val result = TestSelectYourReasonController.show(isAgent = false, mode = CheckMode)(fakeRequestWithNinoAndOrigin("PTA"))
+          val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = CheckMode)(fakeRequestConfirmedClient())
+          status(result) shouldBe OK
+          status(resultAgent) shouldBe OK
+          Jsoup.parse(contentAsString(result)).select("#value-3[checked]").toArray should have length 1
+          Jsoup.parse(contentAsString(resultAgent)).select("#value-3[checked]").toArray should have length 1
         }
       }
 
@@ -115,7 +128,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = poa)
-          val result = TestSelectYourReasonController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
+          val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
         }
 
@@ -123,7 +136,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = poa)
-          val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+          val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
           status(result) shouldBe OK
         }
       }
@@ -135,7 +148,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         setupTest(
           sessionResponse = Right(None),
           claimToAdjustResponse = poa)
-        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
@@ -143,7 +156,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         setupTest(
           sessionResponse = Right(Some(PoAAmendmentData())),
           claimToAdjustResponse = None)
-        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
@@ -152,7 +165,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           sessionResponse = Left(new Exception("Something went wrong")),
           claimToAdjustResponse = poa)
 
-        val result = TestSelectYourReasonController.show(isAgent = false, isChange = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -169,10 +182,10 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
           sessionResponse = Right(Some(PoAAmendmentData())),
           claimToAdjustResponse = poa)
 
-        val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+        val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
           .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
-        val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+        val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
         status(result) shouldBe BAD_REQUEST
       }
@@ -190,11 +203,11 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
-          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
-          val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+          val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/enter-poa-amount")
@@ -207,11 +220,11 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
-          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, isChange = false).url)
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
             .withFormUrlEncodedBody("value" -> "MainIncomeLower")
             .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
 
-          val result = TestSelectYourReasonController.submit(isAgent = false, isChange = false)(request)
+          val result = TestSelectYourReasonController.submit(isAgent = false, mode = NormalMode)(request)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
@@ -220,11 +233,53 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
       "in check mode" when {
         "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
-          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData())),
+            claimToAdjustResponse = poa
+          )
+
+          setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
+
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = CheckMode).url)
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val requestAgent = fakePostRequestConfirmedClient()
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val result = TestSelectYourReasonController.submit(isAgent = false, mode = CheckMode)(request)
+          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
+
+          status(result) shouldBe SEE_OTHER
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+          redirectLocation(resultAgent) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/adjust-poa/check-your-answers")
         }
 
         "if 'totalAmount' is less than 'poaRelevantAmount'" in {
-          // TODO https://jira.tools.tax.service.gov.uk/browse/MISUV-7489
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(5000.0)))),
+            claimToAdjustResponse = poaTotalLessThanRelevant
+          )
+
+          setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
+
+          val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = CheckMode).url)
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val requestAgent = fakePostRequestConfirmedClient()
+            .withFormUrlEncodedBody("value" -> "MainIncomeLower")
+            .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
+
+          val result = TestSelectYourReasonController.submit(isAgent = false, mode = CheckMode)(request)
+          val resultAgent = TestSelectYourReasonController.submit(isAgent = true, mode = CheckMode)(requestAgent)
+
+          status(result) shouldBe SEE_OTHER
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+          redirectLocation(resultAgent) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/adjust-poa/check-your-answers")
         }
       }
     }

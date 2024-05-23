@@ -14,18 +14,16 @@
  * limitations under the License.
  *@
 
-@import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import exceptions.MissingFieldException
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
-@import play.twirl.api.HtmlFormat
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.incomeSourceDetails.TaxYear
+@import models.core.Mode
 
 @this(
     mainTemplate: unifiedLayout,
@@ -46,7 +44,7 @@
 @(  selectYourReasonForm: Form[SelectYourReason],
     taxYear: TaxYear,
     isAgent: Boolean,
-    isChange: Boolean,
+    mode: Mode,
     useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @formContent = {
@@ -72,8 +70,7 @@
 
     <h2 class="govuk-caption-l hmrc-caption-l"><span class="govuk-visually-hidden">@messages("claimToAdjustPoa.selectYourReason.h2.caption.hidden") </span>@messages("claimToAdjustPoa.selectYourReason.h2.caption", taxYear.startYear.toString, taxYear.endYear.toString)</h2>
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, isChange), Symbol("id") -> "select-your-reason-form") {
-        @govukRadios(
+    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {        @govukRadios(
             Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(

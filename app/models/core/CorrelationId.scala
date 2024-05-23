@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package models.optout
+package models.core
 
-import models.incomeSourceDetails.TaxYear
-import play.api.mvc.Call
+import models.core.CorrelationId.correlationId
+import uk.gov.hmrc.http.HeaderCarrier
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, showWarning: Boolean = false) {
-  def startYear: String = oneYearOptOutTaxYear.startYear.toString
+import java.util.UUID
+import java.util.UUID.randomUUID;
 
-  def endYear: String = oneYearOptOutTaxYear.endYear.toString
+case class CorrelationId(id: UUID = randomUUID()) {
+  def asHeader(): (String, String) = (correlationId, id.toString)
+}
 
-  def optOutConfirmationLink(isAgent: Boolean): Call = {
-    if (showWarning) {
-      return controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent)
-    }
+object CorrelationId {
 
-    controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
-
+  val correlationId = "Correlation-Id"
+  def fromHeaderCarrier(hc: HeaderCarrier): Option[CorrelationId] = {
+    hc.headers(Seq(correlationId))
+      .headOption
+      .map(header => CorrelationId(UUID.fromString(header._2)))
   }
 }
