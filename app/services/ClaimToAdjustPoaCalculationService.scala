@@ -16,8 +16,8 @@
 
 package services
 
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponse
-import models.claimToAdjustPoa.{ClaimToAdjustPoaFailure, ClaimToAdjustPoaRequest, ClaimToAdjustPoaSuccess, SelectYourReason}
+import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaFailure, ClaimToAdjustPoaResponse, ClaimToAdjustPoaSuccess}
+import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 
