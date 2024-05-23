@@ -1938,3 +1938,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 i 2024 ymlaen
 optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 i 2025 ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo
 optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
+
+# Check your answers
+optout.checkYourAnswers.heading                    = Gwiriwch eich atebion
+optout.checkYourAnswers.summary-list-1.key         = Optio allan o
+optout.checkYourAnswers.summary-list-1.value       = flwyddyn dreth 2023 i 2024 ymlaen
+optout.checkYourAnswers.summary-list.change        = Newid y flwyddyn dreth
+optout.checkYourAnswers.p1                     = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
+optout.checkYourAnswers.p2                     = Yn y dyfodol, efallai y bydd gofyn i chi cyflwyno adroddiadau bob chwarter eto os, er enghraifft, y bydd eich incwm yn cynyddu neu’r bod y trothwy ar gyfer cyflwyno adroddiadau chwarterol yn newid. Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
+optout.checkYourAnswers.cancel                     = Canslo

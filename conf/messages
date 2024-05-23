@@ -1977,3 +1977,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 to 2024 onwards
 optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 to 2025 onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
 optout.chooseOptOutTaxYear.continue                  = Continue
+
+# Check your answers
+optout.checkYourAnswers.heading                    = Check your answers
+optout.checkYourAnswers.summary-list-1.key         = Opt out from
+optout.checkYourAnswers.summary-list-1.value       = 2023 to 2024 tax year onwards
+optout.checkYourAnswers.summary-list.change        = Change tax year
+optout.checkYourAnswers.p1                         = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.checkYourAnswers.p2                         = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we'll write to you to let you know.
+optout.checkYourAnswers.cancel                     = Cancel
