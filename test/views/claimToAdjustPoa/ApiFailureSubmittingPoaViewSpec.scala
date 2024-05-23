@@ -16,14 +16,11 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ChangePoaReasonController, ConfirmationController}
-import models.claimToAdjustPoa.{MainIncomeLower, SelectYourReason}
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.{ApiFailureSubmittingPoaView, CheckYourAnswers}
+import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 class ApiFailureSubmittingPoaViewSpec extends TestSupport {
 
@@ -45,6 +42,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
     if (isAgent) controllers.routes.HomeController.showAgent.url
     else controllers.routes.HomeController.show().url
   }
+
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {

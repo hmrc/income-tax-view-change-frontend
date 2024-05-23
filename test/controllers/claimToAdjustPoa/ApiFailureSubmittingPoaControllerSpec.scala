@@ -16,9 +16,8 @@
 
 package controllers.claimToAdjustPoa
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
-import enums.IncomeSourceJourney.SelfEmployment
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
