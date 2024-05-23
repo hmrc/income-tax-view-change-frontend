@@ -565,6 +565,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
+
+    def confirmOneYearOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
   }
 
 
@@ -634,6 +636,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(if (form.confirmOptOut.isDefined) form.confirmOptOut.get.toString else ""),
         ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
       post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
+    }
+
+    def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/review-confirm-taxyear", additionalCookies)
     }
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")

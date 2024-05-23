@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package models.optOut
+package connectors.optout
 
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
 
 object OptOutUpdateRequestModel {
 
-  private val defaultUpdateReason: Int = 10
+  val optOutUpdateReason = 10
 
-  case class OptOutUpdateRequest(taxYear: String, updateReason: Int = defaultUpdateReason)
+  case class OptOutUpdateRequest(taxYear: String, updateReason: Int)
   sealed trait OptOutUpdateResponse {
     val statusCode: Int
   }
@@ -35,7 +35,7 @@ object OptOutUpdateRequestModel {
     def defaultFailure(correlationId: String = "unknown"): OptOutUpdateResponseFailure =
       OptOutUpdateResponseFailure(correlationId,
         INTERNAL_SERVER_ERROR,
-        List(ErrorItem("INTERNAL_SERVER_ERROR", "Json validation error parsing response"))
+        List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown error"))
       )
   }
 

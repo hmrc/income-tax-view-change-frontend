@@ -19,7 +19,7 @@ package views.nextUpdates
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.nextUpdates._
-import models.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._

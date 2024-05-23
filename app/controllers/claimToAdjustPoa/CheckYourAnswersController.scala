@@ -21,8 +21,8 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
-import models.core.Nino
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.core.{CheckMode, Nino}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -54,18 +54,20 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
         ifAdjustPoaIsEnabled(isAgent) {
           withSessionAndPoa(isAgent) { (session, poa) =>
             withValidSession(isAgent, session) { (reason, amount) =>
-              EitherT.rightT(Ok(
-                checkYourAnswers(
-                  isAgent = isAgent,
-                  taxYear = poa.taxYear,
-                  adjustedFirstPoaAmount = amount,
-                  adjustedSecondPoaAmount = amount,
-                  poaReason = reason,
-                  redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
-                  changePoaReasonUrl = ChangePoaReasonController.show(isAgent).url,
-                  changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url
+              EitherT.rightT(
+                Ok(
+                  checkYourAnswers(
+                    isAgent = isAgent,
+                    poaReason = reason,
+                    taxYear = poa.taxYear,
+                    adjustedFirstPoaAmount = amount,
+                    adjustedSecondPoaAmount = amount,
+                    redirectUrl = ConfirmationController.show(isAgent).url,
+                    changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url,
+                    changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url
+                  )
                 )
-              ))
+              )
             }
           } fold(
             logAndShowErrorPage(isAgent),
@@ -83,7 +85,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
       Future.successful(
         Redirect(
           if (isAgent) controllers.routes.HomeController.showAgent
-          else controllers.routes.HomeController.show()
+          else         controllers.routes.HomeController.show()
         )
       )
     }

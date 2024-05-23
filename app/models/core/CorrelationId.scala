@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package models.optOut
+package models.core
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
+import models.core.CorrelationId.correlationId
+import uk.gov.hmrc.http.HeaderCarrier
 
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
+import java.util.UUID
+import java.util.UUID.randomUUID;
 
-  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+case class CorrelationId(id: UUID = randomUUID()) {
+  def asHeader(): (String, String) = (correlationId, id.toString)
+}
 
-  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+object CorrelationId {
+
+  val correlationId = "Correlation-Id"
+  def fromHeaderCarrier(hc: HeaderCarrier): Option[CorrelationId] = {
+    hc.headers(Seq(correlationId))
+      .headOption
+      .map(header => CorrelationId(UUID.fromString(header._2)))
+  }
 }

@@ -34,7 +34,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val validYesForm = ConfirmOptOutSingleTaxYearForm(Some(true), "")
   val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
-  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.showAgent().url
+  val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val homePageUrl = controllers.routes.HomeController.showAgent.url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)

@@ -49,7 +49,7 @@ trait ClaimToAdjustHelper {
     documentDetail.documentDescription.contains(POA2) &&
       (documentDetail.outstandingAmount != 0)
 
-  private val taxReturnDeadlineOf: LocalDate => LocalDate = date =>
+  private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
@@ -61,8 +61,8 @@ trait ClaimToAdjustHelper {
     poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
     latestDocumentDetail       = poaTwoDocDetail
     poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
-    poaDeadline                = taxReturnDeadlineOf(poaTwoDueDate)
-    poasAreBeforeDeadline      = poaTwoDueDate isBefore poaDeadline
+    taxReturnDeadline          = getTaxReturnDeadline(poaTwoDueDate)
+    poasAreBeforeDeadline      = poaTwoDueDate isBefore taxReturnDeadline
     if poasAreBeforeDeadline
   } yield
     PaymentOnAccountViewModel(

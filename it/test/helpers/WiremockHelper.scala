@@ -17,12 +17,12 @@
 package helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier
+import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.JsValue
@@ -39,8 +39,21 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
       case None => uriMapping
     }
+
     verify(postRequest)
   }
+
+  def verifyPost(uri: String, optBody: Option[String], headers: (String, String)*): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(equalTo(body))
+      case None => uriMapping
+    }
+    val postRequestWithHeaders = headers.foldLeft(postRequest)(
+      (request, header) => request.withHeader(header._1, equalTo(header._2)))
+    verify(postRequestWithHeaders)
+  }
+
 
   def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
     val uriMapping = putRequestedFor(urlEqualTo(uri))
@@ -134,6 +147,24 @@ object WiremockHelper extends Eventually with IntegrationPatience {
           withBody(responseBody)
       )
     )
+
+  def stubPutWithHeaders(url: String, status: Integer, responseBody: String, headers: Map[String, String] = Map()): StubMapping = {
+    def toHttpHeaders(toConvert: Map[String, String]): HttpHeaders = {
+      val headersList = toConvert.map { case (key, value) =>
+        new HttpHeader(key, value)
+      }.toSeq
+      new HttpHeaders(headersList: _*)
+    }
+
+    stubFor(put(urlEqualTo(url))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withBody(responseBody).
+          withHeaders(toHttpHeaders(headers))
+      )
+    )
+  }
 
   def stubPatch(url: String, status: Integer, responseBody: String): StubMapping =
     stubFor(patch(urlEqualTo(url))

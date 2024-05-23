@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import models.incomeSourceDetails.TaxYear
-import models.optOut.OptOutOneYearViewModel
+import models.optout.OptOutOneYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -88,9 +88,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
           },
           {
             case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
-              val nextPage = if (isAgent)
-                controllers.optOut.routes.ConfirmOptOutController.showAgent()
-              else controllers.optOut.routes.ConfirmOptOutController.show()
+              val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
 
               Logger("application").info(s"redirecting to : $nextPage")
               Redirect(nextPage)

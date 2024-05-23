@@ -1947,8 +1947,9 @@ claimToAdjustPoa.checkYourAnswers.summary-list.change        = Change
 claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
 
 # opt out confirm
-optout.confirmOptOut.heading            = Confirm and opt out for the 2022 to 2023 tax year
+optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year
 optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.confirmOptOut.info-message       = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
 optout.confirmOptOut.confirm            = Confirm
 optout.confirmOptOut.cancel             = Cancel
 

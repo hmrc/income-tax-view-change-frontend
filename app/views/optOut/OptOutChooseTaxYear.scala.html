@@ -31,8 +31,7 @@
 @(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
-    if(isAgent) controllers.optOut.routes.ConfirmOptOutController.showAgent().url
-    else controllers.optOut.routes.ConfirmOptOutController.show().url
+    controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
 }
 
 @mainTemplate(
