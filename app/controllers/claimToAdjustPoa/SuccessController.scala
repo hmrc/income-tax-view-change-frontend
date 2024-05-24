@@ -22,26 +22,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class ConfirmationController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                           val auth: AuthenticatorPredicate,
-                                           implicit val itvcErrorHandler: ItvcErrorHandler,
-                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           implicit override val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
+class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                  val auth: AuthenticatorPredicate,
+                                  implicit val itvcErrorHandler: ItvcErrorHandler,
+                                  implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                 (implicit val appConfig: FrontendAppConfig,
+                                  implicit override val mcc: MessagesControllerComponents,
+                                  val ec: ExecutionContext)
   extends ClientConfirmedController {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future.successful(Ok(
-          "TO BE IMPLEMENTED: " +
-            (if (isAgent) "/agents/adjust-poa/confirmation"
-            else         "/adjust-poa/confirmation")
-        ))
+        Future successful Ok(
+          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/success")
     }
+
 }
