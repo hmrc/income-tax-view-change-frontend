@@ -22,14 +22,13 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
-import models.admin.AdjustPaymentsOnAccount
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
@@ -45,12 +44,12 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                       (implicit val appConfig: FrontendAppConfig,
                                        implicit override val mcc: MessagesControllerComponents,
                                        val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        if (isEnabled(AdjustPaymentsOnAccount)) {
+        ifAdjustPoaIsEnabled(isAgent) {
           claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
             case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
               Future.successful(
@@ -66,13 +65,6 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)
           }
-        } else {
-          Future.successful(
-            Redirect(
-              if (isAgent) routes.HomeController.showAgent
-              else         routes.HomeController.show()
-            )
-          )
         } recover {
           case ex: Exception =>
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
