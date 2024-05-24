@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                     taxYear = poa.taxYear,
                     adjustedFirstPoaAmount = amount,
                     adjustedSecondPoaAmount = amount,
-                    redirectUrl = ConfirmationController.show(isAgent).url,
+                    redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
                     changePoaAmountUrl = ChangePoaAmountController.show(isAgent).url,
                     changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url
                   )

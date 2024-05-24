@@ -25,7 +25,7 @@ object ClaimToAdjustPoaResponse {
 
   case class ClaimToAdjustPoaSuccess(processingDate: String)
 
-  trait ClaimToAdjustPoaFailure {
+  sealed trait ClaimToAdjustPoaFailure {
     val message: String
   }
 

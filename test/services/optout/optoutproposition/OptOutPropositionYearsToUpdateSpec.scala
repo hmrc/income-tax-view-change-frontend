@@ -16,70 +16,35 @@
 
 package services.optout.optoutproposition
 
-import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
-import OptOutPropositionYearsToUpdateSpec._
+import services.optout.OptOutTestSupport._
 
-object OptOutPropositionYearsToUpdateSpec {
-
-  val currentTaxYear = TaxYear.forYearEnd(2024)
-  val previousTaxYear = currentTaxYear.previousYear
-  val nextTaxYear = currentTaxYear.nextYear
-
-  val Crystallised = true
-  val NotCrystallised = false
-
-  val OneYearOptOut = true
-  val NotOneYearOptOut = false
-
-  val MultiYearOptOut = true
-  val NotMultiYearOptOut = false
-
-  object ToBeUpdated {
-
-    val PY = Seq("PY")
-    val CY = Seq("CY")
-    val NY = Seq("NY")
-
-    val PY_CY_NY = Seq("PY", "CY", "NY")
-
-    val PY_CY = Seq("PY", "CY")
-    val CY_NY = Seq("CY", "NY")
-    val PY_NY = Seq("PY", "NY")
-  }
-
-  object Intent {
-    val PY = "PY"
-    val CY = "CY"
-    val NY = "NY"
-  }
-}
 
 class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
 
   val testCases = List(
 
-    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_CY_NY),
-    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY_NY),
-    ((NotCrystallised, Voluntary, Voluntary, Voluntary), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_CY_NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY_NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
 
-    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_CY),
-    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY),
-    ((NotCrystallised, Voluntary, Voluntary, NoStatus), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_CY),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
 
-    ((Crystallised, Voluntary, Voluntary, Voluntary), Intent.CY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.CY_NY),
-    ((Crystallised, Voluntary, Voluntary, Voluntary), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
-    ((Crystallised, Voluntary, Voluntary, NoStatus), Intent.NY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.NY),
+    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY_NY),
+    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
+    ((Crystallised.YES, Voluntary, Voluntary, NoStatus), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
 
-    ((NotCrystallised, Voluntary, Mandated, Voluntary), Intent.PY, (NotOneYearOptOut, MultiYearOptOut), ToBeUpdated.PY_NY),
-    ((NotCrystallised, Voluntary, Mandated, NoStatus), Intent.PY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.PY),
-    ((NotCrystallised, Voluntary, Mandated, Mandated), Intent.PY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.PY),
-    ((Crystallised, Voluntary, Voluntary, Mandated), Intent.CY, (OneYearOptOut, NotMultiYearOptOut), ToBeUpdated.CY),
+    ((Crystallised.NO, Voluntary, Mandated, Voluntary), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_NY),
+    ((Crystallised.NO, Voluntary, Mandated, NoStatus), Intent.PY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.PY),
+    ((Crystallised.NO, Voluntary, Mandated, Mandated), Intent.PY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.PY),
+    ((Crystallised.YES, Voluntary, Voluntary, Mandated), Intent.CY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.CY),
 
-    ((Crystallised, Voluntary, Mandated, Voluntary), Intent.NY, (OneYearOptOut, false), ToBeUpdated.NY),
+    ((Crystallised.YES, Voluntary, Mandated, Voluntary), Intent.NY, (OneYearOptOut.YES, OneYearOptOut.NO), ToBeUpdated.NY),
 
   )
 

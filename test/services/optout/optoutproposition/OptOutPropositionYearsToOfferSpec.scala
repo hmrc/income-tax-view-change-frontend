@@ -16,58 +16,27 @@
 
 package services.optout.optoutproposition
 
-import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, OptOutTaxYear, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
-import OptOutPropositionYearsToOfferSpec._
-
-object OptOutPropositionYearsToOfferSpec {
-  val currentTaxYear = TaxYear.forYearEnd(2024)
-  val previousTaxYear = currentTaxYear.previousYear
-  val nextTaxYear = currentTaxYear.nextYear
-
-  val Crystallised = true
-  val NotCrystallised = false
-
-  val OneYearOptOut = true
-  val NotOneYearOptOut = false
-
-  val MultiYearOptOut = true
-  val NotMultiYearOptOut = false
-
-  object ToBeOffered {
-
-    val NoOffers = Seq()
-
-    val PY = Seq("PY")
-    val CY = Seq("CY")
-    val NY = Seq("NY")
-
-    val PY_CY_NY = Seq("PY", "CY", "NY")
-
-    val PY_CY = Seq("PY", "CY")
-    val CY_NY = Seq("CY", "NY")
-    val PY_NY = Seq("PY", "NY")
-  }
-}
+import services.optout.OptOutTestSupport._
 
 class OptOutPropositionYearsToOfferSpec extends UnitSpec {
 
   private val testCases = List(
-    ((Crystallised, Mandated, Mandated, Mandated), (NotOneYearOptOut, NotMultiYearOptOut), ToBeOffered.NoOffers),
+    ((Crystallised.YES, Mandated, Mandated, Mandated), (OneYearOptOut.NO, MultiYearOptOut.NO), ToBeOffered.NoOffers),
 
-    ((NotCrystallised, Voluntary, Mandated, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.PY),
-    ((Crystallised, Voluntary, Voluntary, Mandated), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.CY),
-    ((Crystallised, Voluntary, Mandated, Voluntary), (OneYearOptOut, NotMultiYearOptOut), ToBeOffered.NY),
-    ((Crystallised, Voluntary, Voluntary, NoStatus), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.CY_NY),
+    ((Crystallised.NO, Voluntary, Mandated, Mandated), (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeOffered.PY),
+    ((Crystallised.YES, Voluntary, Voluntary, Mandated), (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeOffered.CY),
+    ((Crystallised.YES, Voluntary, Mandated, Voluntary), (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeOffered.NY),
+    ((Crystallised.YES, Voluntary, Voluntary, NoStatus), (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeOffered.CY_NY),
 
-    ((NotCrystallised, Voluntary, Voluntary, Voluntary), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_CY_NY),
-    ((Crystallised, Voluntary, Voluntary, Voluntary), (NotOneYearOptOut, MultiYearOptOut),ToBeOffered.CY_NY ),
-    ((Crystallised, Mandated, Voluntary, NoStatus), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.CY_NY),
-    ((NotCrystallised, Voluntary, Voluntary, Mandated), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_CY),
-    ((NotCrystallised, Voluntary, Mandated, Voluntary), (NotOneYearOptOut, MultiYearOptOut), ToBeOffered.PY_NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeOffered.PY_CY_NY),
+    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), (OneYearOptOut.NO, MultiYearOptOut.YES),ToBeOffered.CY_NY ),
+    ((Crystallised.YES, Mandated, Voluntary, NoStatus), (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeOffered.CY_NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Mandated), (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeOffered.PY_CY),
+    ((Crystallised.NO, Voluntary, Mandated, Voluntary), (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeOffered.PY_NY),
   )
 
   testCases.foreach {

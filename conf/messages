@@ -1895,6 +1895,8 @@ claimToAdjustPoa.selectYourReason.continue                              =   Cont
 claimToAdjustPoa.selectYourReason.cancel                                =   Cancel
 claimToAdjustPoa.selectYourReason.error.required                        =   Select the main reason you’re reducing your payments on account
 
+# what you need to know
+
 claimToAdjustPoa.whatYouNeedToKnow.bold                                 =   31 January {0}
 claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh                         =   .
 claimToAdjustPoa.whatYouNeedToKnow.warning-text                         = 	You may have to pay interest if you reduce your payments on account too much and underpay
@@ -1908,7 +1910,26 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See 
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
 
+# API Failure
+claimToAdjustPoa.apiFailure.heading                  = Sorry, there is a problem with the service
+claimToAdjustPoa.apiFailure.para1                    = Your payments on account could not be updated.
+claimToAdjustPoa.apiFailure.para2                    = You can:
+claimToAdjustPoa.apiFailure.bullet1Text              = try
+claimToAdjustPoa.apiFailure.bullet1Link              = adjusting your payments on account again
+claimToAdjustPoa.apiFailure.bullet2Text              = go back to the
+claimToAdjustPoa.apiFailure.bullet2Link              = homepage
+
 # Adjust payments on account
+
+claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
+claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
+claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
+claimToAdjustPoa.confirmation.cancel                                    =   Cancel
+
+
 paymentOnAccount.caption                             = Adjust payments on account for {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
