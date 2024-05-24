@@ -45,6 +45,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import ITSAStatusUpdateConnector._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -71,7 +72,7 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutUpdateRequest(taxYear.toString, optOutUpdateReason)
+        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
         val apiResponse = OptOutUpdateResponseSuccess("123", NO_CONTENT)
         val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
@@ -93,7 +94,7 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         val correlationId = "123"
-        val apiRequest = OptOutUpdateRequest(taxYear.toString, optOutUpdateReason)
+        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
         val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
 
@@ -115,7 +116,7 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         val correlationId = "123"
-        val apiRequest = OptOutUpdateRequest(taxYear.toString, optOutUpdateReason)
+        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
         val apiFailResponse = OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
 
@@ -127,6 +128,22 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
 
       }
     }
+
+  }
+
+  "For OptOutConnector.taxYearToFormat " when {
+    "happy case" should {
+      "match required format" in {
+        toApiFormat(TaxYear.forYearEnd(2024)) shouldBe "2023-24"
+      }
+    }
+
+    "unhappy case" should {
+      "default format not match required format" in {
+        toApiFormat(TaxYear.forYearEnd(2024)) should not be TaxYear.forYearEnd(2024).toString
+      }
+    }
+
   }
 
   def setupHttpClientMock[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit = {

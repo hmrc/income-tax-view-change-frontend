@@ -1910,6 +1910,15 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See 
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cancel
 
+# API Failure
+claimToAdjustPoa.apiFailure.heading                  = Sorry, there is a problem with the service
+claimToAdjustPoa.apiFailure.para1                    = Your payments on account could not be updated.
+claimToAdjustPoa.apiFailure.para2                    = You can:
+claimToAdjustPoa.apiFailure.bullet1Text              = try
+claimToAdjustPoa.apiFailure.bullet1Link              = adjusting your payments on account again
+claimToAdjustPoa.apiFailure.bullet2Text              = go back to the
+claimToAdjustPoa.apiFailure.bullet2Link              = homepage
+
 # Adjust payments on account
 
 claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
