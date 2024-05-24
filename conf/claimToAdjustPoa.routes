@@ -32,3 +32,6 @@ GET          /agents/adjust-poa/confirmation                                cont
 
 GET          /adjust-poa/change-poa-amount                                  controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/change-poa-amount                           controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/error-poa-not-updated                              controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/error-poa-not-updated                       controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = true)

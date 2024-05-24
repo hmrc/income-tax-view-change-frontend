@@ -1896,6 +1896,14 @@ claimToAdjustPoa.selectYourReason.continue                              =   Yn e
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
 claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
 
+claimToAdjustPoa.apiFailure.heading                  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+claimToAdjustPoa.apiFailure.para1                    = Nid oedd modd diweddaru’ch taliadau ar gyfrif.
+claimToAdjustPoa.apiFailure.para2                    = Gallwch wneud y canlynol:
+claimToAdjustPoa.apiFailure.bullet1Text              = ceisio
+claimToAdjustPoa.apiFailure.bullet1Link              = addasu eich taliadau ar gyfrif eto
+claimToAdjustPoa.apiFailure.bullet2Text              = mynd yn ôl i’r
+claimToAdjustPoa.apiFailure.bullet2Link              = hafan
+
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth {0} i {1}
 optout.confirmOptOut.desc               = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
