@@ -119,11 +119,13 @@
     @h1(msg = getMessage("heading"),
         id = Some("h1"))
 
-    <p class="govuk-body">@getMessage("p1")</p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>@getMessage("bullet1")</li>
-        <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>
-    </ul>
+    <div id="bulletPoints">
+        <p class="govuk-body" id="p1">@getMessage("p1")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@getMessage("bullet1")</li>
+            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>
+        </ul>
+    </div>
 
     @govukTable(Table(
         rows = Seq(
@@ -157,8 +159,9 @@
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
-        content = Text(getMessage("warning"))
-    ))
+        content = Text(getMessage("warning")),
+        attributes = Map("id" -> "warning"))
+    )
 
     @form(action = postAction, Symbol("id") -> "poa-amount") {
 
@@ -189,7 +192,7 @@
             )
 
             @link(
-                id = Some("cancel-link"),
+                id = Some("cancel"),
                 link = getHomePageUrl,
                 messageKey = getMessage("cancel")
             )

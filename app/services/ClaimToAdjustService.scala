@@ -94,6 +94,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
+  //TODO: Merge the two functions below, lots of code duplication
   private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
@@ -117,5 +118,5 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 }
 
-case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+private case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
                                         poaModel: Option[PaymentOnAccountViewModel])
