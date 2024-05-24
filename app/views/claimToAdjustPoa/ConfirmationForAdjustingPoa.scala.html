@@ -14,11 +14,10 @@
  * limitations under the License.
  *@
 
+@import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.TaxYear
-@import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,8 +34,8 @@
 @(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
 
 @getCorrectBody = @{
-    if (viewModel.isAmountZero)   getMessage("p1")
-    else                          getMessage("p2")
+    if (viewModel.isAmountZero)   getMessage("p2")
+    else                          getMessage("p1")
 }
 
 @getHomePageUrl = @{
@@ -64,8 +63,7 @@
 
         @govukButton(Button(
             id = Some("continue"),
-            content = Text(getMessage("continue")),
-            href = Some(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent).toString)
+            content = Text(getMessage("continue"))
         ))
         <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>

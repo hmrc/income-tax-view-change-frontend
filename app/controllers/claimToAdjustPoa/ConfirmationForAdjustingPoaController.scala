@@ -51,7 +51,9 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = sessionService.getMongo(hc, ec).flatMap {
-    case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
+    case Right(Some(PoAAmendmentData(_, _))) =>
+      // TODO: remove hardcoded value
+      val newPoAAmount: BigDecimal = 40.0
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
       Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
@@ -78,7 +80,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             Future.successful(Ok(view(isAgent, viewModel)))
           case (Right(None), isAmountZero) =>
             Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
-            Future.successful(showInternalServerError(isAgent))
+            Future.successful(Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent)))
           case (Left(ex), isAmountZero) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
             Future.failed(ex)
@@ -100,9 +102,9 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         calculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
-            Redirect(controllers.routes.NextUpdatesController.show()) // to be changed
+            Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
           case Right(_) =>
-            Redirect(controllers.routes.HomeController.show()) // to be changed
+            Redirect(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent))
         }
       case PoAAmendmentData(_, _) =>
         Future.successful(showInternalServerError(isAgent))
@@ -122,7 +124,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
               )
             case Right(None) =>
               Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
+              Future.successful(Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent)))
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}.")
               Future.failed(ex)
@@ -131,10 +133,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         r.flatten
       } else {
         Future.successful(
-          Redirect(
-            if (isAgent) HomeController.showAgent
-            else HomeController.show()
-          )
+          Redirect(if (isAgent) HomeController.showAgent else HomeController.show())
         )
       }
   }
