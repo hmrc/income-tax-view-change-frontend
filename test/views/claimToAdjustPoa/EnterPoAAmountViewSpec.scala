@@ -25,6 +25,7 @@ import org.jsoup.select.Elements
 import play.api.data.Form
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
+import _root_.implicits.ImplicitCurrencyFormatter._
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.EnterPoAAmountView
 
@@ -54,6 +55,15 @@ class EnterPoAAmountViewSpec extends TestSupport{
     relevantAmountOne = 5000,
     relevantAmountTwo = 5000
   )
+
+  val noInputErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.emptyError")
+    .fill(EnterPoaAmountForm(0))
+  val invalidErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.invalidError")
+    .fill(EnterPoaAmountForm(-1))
+  val sameErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.sameError")
+    .fill(EnterPoaAmountForm(5000))
+  val higherErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.higherError")
+    .fill(EnterPoaAmountForm(7000))
 
   class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PoAAmountViewModel = poaViewModelFirstJourney) {
     val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent))
@@ -88,10 +98,34 @@ class EnterPoAAmountViewSpec extends TestSupport{
     "render the table with only Initial Amount for user on first visit" in new Setup(viewModel = poaViewModelFirstJourney) {
       document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
       val tableBody = document.getElementsByClass("govuk-table__body")
-      tableBody.select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
-      tableBody.select(".govuk-table__cell:nth-of-type(3)").text shouldBe {"£"+poaViewModelFirstJourney.relevantAmountOne}
-       // table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
-
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poaViewModelFirstJourney.relevantAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("secondPayment")
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poaViewModelFirstJourney.relevantAmountTwo.toCurrencyString
+    }
+    "render the table with Initial and Adjusted amount for user who has decrease previously" in new Setup(viewModel = poaViewModelSecondJourney) {
+      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("initialAmount") + " " + msg("adjustedAmount")}
+      val tableBody = document.getElementsByClass("govuk-table__body")
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poaViewModelSecondJourney.relevantAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poaViewModelSecondJourney.totalAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("secondPayment")
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poaViewModelSecondJourney.relevantAmountTwo.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poaViewModelSecondJourney.totalAmountOne.toCurrencyString
+    }
+    "render the correct error message" when {
+      "no number input" in new Setup(form = noInputErrorForm){
+        document.getElementById("poa-amount-error").text() shouldBe {"Error: " + msg("emptyError")}
+      }
+      "non-number input" in new Setup(form = invalidErrorForm){
+        document.getElementById("poa-amount-error").text() shouldBe {"Error: " + msg("invalidError")}
+      }
+      "number input same as current poa" in new Setup(form = sameErrorForm){
+        document.getElementById("poa-amount-error").text() shouldBe {"Error: " + msg("sameError")}
+      }
+      "number input higher than relevant amount" in new Setup(form = higherErrorForm){
+        document.getElementById("poa-amount-error").text() shouldBe {"Error: " + msg("higherError")}
+      }
     }
   }
 
