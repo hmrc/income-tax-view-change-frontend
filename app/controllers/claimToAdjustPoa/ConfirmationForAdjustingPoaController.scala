@@ -51,9 +51,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = sessionService.getMongo(hc, ec).flatMap {
-    case Right(Some(PoAAmendmentData(_, _))) =>
-      // TODO: remove hardcoded value
-      val newPoAAmount: BigDecimal = 40.0
+    case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
       Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
