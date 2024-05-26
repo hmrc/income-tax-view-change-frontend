@@ -224,4 +224,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyPut("/income-tax-view-change/update-income-source", body)
   }
 
+  def stubPostClaimToAdjustPoa(status: Int, response: String): Unit = {
+    WiremockHelper.stubPost("/income-tax-view-change/submit-claim-to-adjust-poa", status, response)
+  }
+
 }

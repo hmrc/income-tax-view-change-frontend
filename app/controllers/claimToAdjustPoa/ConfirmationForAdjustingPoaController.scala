@@ -61,7 +61,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
     case Right(Some(newPoaData: PoAAmendmentData)) =>
       Future.successful(newPoaData)
     case _ =>
-      Future.failed(new Exception(s"Failed to retrieve session data: dataFromSession`"))
+      Future.failed(new Exception(s"Failed to retrieve session data"))
   }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -78,7 +78,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             Future.successful(Ok(view(isAgent, viewModel)))
           case (Right(None), isAmountZero) =>
             Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
-            Future.successful(Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent)))
+            Future.successful(showInternalServerError(isAgent))
           case (Left(ex), isAmountZero) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
             Future.failed(ex)
@@ -122,7 +122,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
               )
             case Right(None) =>
               Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent)))
+              Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}.")
               Future.failed(ex)

@@ -82,7 +82,7 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
     setupMockPaymentOnAccountSessionService(Future.successful(sessionResponse))
   }
 
-  "SelectYourReasonController.show" should {
+  "CheckYourAnswersController.show" should {
 
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
