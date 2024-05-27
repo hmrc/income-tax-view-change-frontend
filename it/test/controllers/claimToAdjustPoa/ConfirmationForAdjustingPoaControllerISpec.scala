@@ -25,7 +25,6 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
-//import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.FinancialDetailsIntegrationTestConstants.testFinancialDetailsErrorModel
@@ -34,13 +33,13 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
-  def homeUrl: String =
+  private def homeUrl: String =
     if (isAgent) controllers.routes.HomeController.showAgent.url
     else         controllers.routes.HomeController.show().url
-  val testTaxYear = 2024
-  val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
-
+  private val testTaxYear = 2024
+  private val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
+  private val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  private val url: String = "/adjust-poa/confirmation"
 
   override def beforeEach(): Unit = {
 
@@ -51,11 +50,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       status = OK,
-      response =
-        propertyOnlyResponseWithMigrationData(
-          year = testTaxYear - 1,
-          yearOfMigration = Some(testTaxYear.toString)
-      )
+      response = propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
     )
   }
 
@@ -70,23 +65,46 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     )(Map.empty)
   }
 
+  def stubFinancialDetailsSuccessResponse(): Unit = {
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+      OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+    )
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+      OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+    )
+  }
+
+  def stubFinancialDetailsEmptyResponse(): Unit = {
+    And("I wiremock stub empty financial details response")
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+      OK, Json.toJson(testEmptyFinancialDetailsModelJson)
+    )
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+      OK, Json.toJson(testEmptyFinancialDetailsModelJson)
+    )
+  }
+
+  def stubFinancialDetailsErrorResponse(): Unit = {
+    And("I wiremock stub financial details error response")
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+      OK, Json.toJson(testFinancialDetailsErrorModel)
+    )
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+      OK, Json.toJson(testFinancialDetailsErrorModel)
+    )
+  }
+
+
   s"calling GET" should {
     s"return status $OK" when {
       "non-crystallised financial details are found" in {
 
         enable(AdjustPaymentsOnAccount)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-
+        stubFinancialDetailsSuccessResponse()
         sessionService.setMongoData(Some(validSession))
 
-        When(s"I call GET")
-        val res = get("/adjust-poa/confirmation")
+        When(s"I call GET $url")
+        val res = get(url)
 
         res should have(
           httpStatus(OK)
@@ -98,8 +116,8 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         disable(AdjustPaymentsOnAccount)
 
-        When(s"I call GET")
-        val res = get("/adjust-poa/confirmation")
+        When(s"I call GET $url")
+        val res = get(url)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -109,40 +127,26 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     }
     s"return status $INTERNAL_SERVER_ERROR" when {
       "an error response is returned when requesting financial details" in {
+
         enable(AdjustPaymentsOnAccount)
-
-        And("I wiremock stub empty financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, Json.toJson(testFinancialDetailsErrorModel)
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, Json.toJson(testFinancialDetailsErrorModel)
-        )
-
+        stubFinancialDetailsErrorResponse()
         sessionService.setMongoData(Some(validSession))
 
-        When(s"I call GET")
-        val res = get("/adjust-poa/confirmation")
+        When(s"I call GET $url")
+        val res = get(url)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
       "no non-crystallised financial details are found" in {
+
         enable(AdjustPaymentsOnAccount)
-
-        And("I wiremock stub empty financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, Json.toJson(testEmptyFinancialDetailsModelJson)
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, Json.toJson(testEmptyFinancialDetailsModelJson)
-        )
-
+        stubFinancialDetailsEmptyResponse()
         sessionService.setMongoData(Some(validSession))
 
-        When(s"I call GET")
-        val res = get("/adjust-poa/confirmation")
+        When(s"I call GET $url")
+        val res = get(url)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -157,7 +161,8 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         disable(AdjustPaymentsOnAccount)
 
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -167,23 +172,16 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       "an error response is returned when submitting POA" in {
 
         enable(AdjustPaymentsOnAccount)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-
+        stubFinancialDetailsSuccessResponse()
         sessionService.setMongoData(Some(validSession))
 
-        IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(BAD_REQUEST, s"""
-          {
-             "message": "INVALID_REQUEST"
-          }
-          """)
+        IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+          BAD_REQUEST,
+          Json.stringify(Json.obj("message" -> "INVALID_REQUEST"))
+        )
 
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -194,21 +192,18 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       "a success response is returned when submitting POA" in {
 
         enable(AdjustPaymentsOnAccount)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-
+        stubFinancialDetailsSuccessResponse()
         sessionService.setMongoData(Some(validSession))
 
-        val processingDate = "2024-01-31T09:27:17Z"
+        IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+          CREATED,
+          Json.stringify(Json.toJson(
+            ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
+          ))
+        )
 
-        IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(CREATED, Json.stringify(Json.toJson(ClaimToAdjustPoaSuccess(processingDate))))
-
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(SEE_OTHER),
@@ -218,56 +213,39 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     }
     s"return status $INTERNAL_SERVER_ERROR" when {
       "an error response is returned when requesting financial details" in {
+
         enable(AdjustPaymentsOnAccount)
-
-        And("I wiremock stub empty financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, Json.toJson(testFinancialDetailsErrorModel)
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, Json.toJson(testFinancialDetailsErrorModel)
-        )
-
+        stubFinancialDetailsErrorResponse()
         sessionService.setMongoData(Some(validSession))
 
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
       "no non-crystallised financial details are found" in {
+
         enable(AdjustPaymentsOnAccount)
-
-        And("I wiremock stub empty financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, Json.toJson(testEmptyFinancialDetailsModelJson)
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, Json.toJson(testEmptyFinancialDetailsModelJson)
-        )
-
+        stubFinancialDetailsEmptyResponse()
         sessionService.setMongoData(Some(validSession))
 
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
       "some session data is missing" in {
+
         enable(AdjustPaymentsOnAccount)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-
+        stubFinancialDetailsSuccessResponse()
         sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None)))
 
-        val res = post("/adjust-poa/confirmation")
+        When(s"I call POST $url")
+        val res = post(url)
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
