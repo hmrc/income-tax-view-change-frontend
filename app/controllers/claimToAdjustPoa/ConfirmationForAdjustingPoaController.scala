@@ -50,11 +50,16 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                       val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = sessionService.getMongo(hc, ec).flatMap {
+  private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = {
+    println("CCCCCC")
+    sessionService.getMongo(hc, ec).flatMap {
     case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
+      println("DDDDDD")
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
+      println("EEEEEEE")
       Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
+  }
   }
 
   private def dataFromSession(implicit hc: HeaderCarrier): Future[PoAAmendmentData] = sessionService.getMongo(hc, ec).flatMap {
@@ -80,6 +85,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
             Future.successful(Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent)))
           case (Left(ex), isAmountZero) =>
+            println("BBBBBB")
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
             Future.failed(ex)
         }
