@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 
 @this(
         mainTemplate: unifiedLayout,
@@ -28,7 +29,8 @@
         link: link,
         form: FormWithCSRF,
         govukBackLink : GovukBackLink,
-        govukButton : GovukButton
+        govukButton : GovukButton,
+        formWithCSRF: FormWithCSRF
 )
 
 @(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
@@ -47,6 +49,9 @@
  messages(s"claimToAdjustPoa.confirmation.$key", args: _*)
 }
 
+@postAction = @{
+    controllers.claimToAdjustPoa.routes.ConfirmationForAdjustingPoaController.submit(isAgent)
+}
 @mainTemplate(pageTitle = getMessage("heading"),
      backUrl = Some("/"),
      isAgent = isAgent,
@@ -59,14 +64,16 @@
 
     <p class="govuk-body">@getCorrectBody</p>
 
-    <div class="govuk-button-group">
+    @formWithCSRF(action = postAction) {
 
-        @govukButton(Button(
-            id = Some("continue"),
-            content = Text(getMessage("continue"))
-        ))
-        <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
-    </div>
+        <div class="govuk-button-group">
 
+            @govukButton(Button(
+                id = Some("continue"),
+                content = Text(getMessage("continue"))
+            ))
+            <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
+        </div>
+    }
 
 }
