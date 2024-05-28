@@ -24,6 +24,9 @@ POST         /agents/adjust-poa/change-your-reason                          cont
 GET          /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = true)
 
+POST         /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = false)
+POST         /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = true)
+
 GET          /adjust-poa/check-your-answers                                 controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/check-your-answers                          controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = true)
 

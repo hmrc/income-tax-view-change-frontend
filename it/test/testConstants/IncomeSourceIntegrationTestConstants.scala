@@ -1087,7 +1087,8 @@ object IncomeSourceIntegrationTestConstants {
         "documentDescription" -> "ITSA- POA 1",
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
-        "reversalReason" -> "Customer Request"
+        "reversalReason" -> "Customer Request",
+        "poaAdjustmentReason" ->  "002"
       )
     )
   )

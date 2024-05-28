@@ -19,7 +19,7 @@ package mocks.services
 import connectors.CalculationListConnector
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -61,6 +61,22 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockGetPaymentsOnAccountFailure(): Unit =
     when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+      .thenReturn(
+        Future.successful(
+          Left(
+            new Exception("Unexpected Error occurred")
+          )
+        )
+      )
+
+  def setupMockGetPoaAmountViewModel(response: Either[Throwable, PoAAmountViewModel]): Unit = {
+    when(claimToAdjustService
+      .getEnterPoAAmountViewModel(Nino(any()))(any(), any(), any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetPoaAmountViewModelFailure(): Unit =
+    when(claimToAdjustService.getEnterPoAAmountViewModel(Nino(any()))(any(), any(), any()))
       .thenReturn(
         Future.successful(
           Left(
