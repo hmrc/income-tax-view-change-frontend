@@ -42,7 +42,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
   private val log = Logger("application")
 
   def buildRequestUrlWith(taxableEntityId: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax/itsa-status/update/$taxableEntityId"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
 
   def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
@@ -55,12 +55,11 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
       val correlationId = response.headers.get(CorrelationIdHeader).map(_.head).getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
-        //todo keep this 'case' until this endpoint is implemented in the BE
-        case Status.NOT_FOUND if response.body.contains("URI not found") => OptOutUpdateResponseSuccess(correlationId)//OptOutUpdateResponseFailure.defaultFailure()
+        case Status.NOT_FOUND => OptOutUpdateResponseFailure.notFoundFailure(correlationId, buildRequestUrlWith(taxableEntityId))
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
-              log.error(s"Json validation error parsing update income source response, error $invalid")
+              log.error(s"Json validation error parsing itsa-status update response, error $invalid")
               OptOutUpdateResponseFailure.defaultFailure(correlationId)
             },
             valid => valid.copy(correlationId = correlationId, statusCode = response.status)
