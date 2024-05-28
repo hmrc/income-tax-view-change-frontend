@@ -54,7 +54,7 @@ class ClaimToAdjustPoaCalculationService @Inject()(
           Logger("application").error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
           Left(new Exception(UnexpectedError.message))
         case Right(ClaimToAdjustPoaSuccess(_)) =>
-          Logger("application").info(s"POA recalculation success: ${UnexpectedError.message}")
+          Logger("application").info(s"POA recalculation success")
           Right(())
       }
 
