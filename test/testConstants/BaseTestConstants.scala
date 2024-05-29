@@ -54,6 +54,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val idType: String = "utr"
   val ninoIdType: String = "NINO"
   val docNumber: String = "XM0026100122"
+  val chargeReference: String = "XD000024425799"
   val testArn = "XAIT0000123456"
   val testCredId = "testCredId"
   val testUserTypeIndividual = AffinityGroup.Individual

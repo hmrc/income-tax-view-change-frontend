@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import connectors.{CalculationListConnector, FinancialDetailsConnector}
+import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
@@ -77,12 +77,13 @@ trait ClaimToAdjustHelper {
       poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
     )
 
-  protected def getChargeHistory(documentDetails: List[DocumentDetail], financialDetailsConnector: FinancialDetailsConnector)
+  protected def getChargeHistory(documentDetails: List[DocumentDetail], chargeHistoryConnector: ChargeHistoryConnector)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     for {
       poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
     } yield {
-      financialDetailsConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
+      //TODO: Call with chargeReference
+      chargeHistoryConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
         case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
           case Some(detailsList) => Right(detailsList.headOption)
           case None => Right(None)

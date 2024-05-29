@@ -48,10 +48,6 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
 
-  def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
-  }
-
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
@@ -165,43 +161,6 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
       case ex =>
         Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
-    }
-
-  }
-
-  def getChargeHistory(mtdBsa: String, docNumber: String)
-                      (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
-    val url = getChargeHistoryUrl(mtdBsa, docNumber)
-    Logger("application").debug(s"GET $url")
-
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ChargesHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
-            },
-            valid => valid
-          )
-        case status =>
-          if (status == 404 || status == 403) {
-            Logger("application").info(s"No charge history found for $docNumber - Status: ${response.status}, body: ${response.body}")
-            ChargesHistoryModel("", "", "", None)
-          } else {
-            if (status >= 500) {
-              Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-            } else {
-              Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-            }
-            ChargesHistoryErrorModel(response.status, response.body)
-          }
-      }
-    } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-        ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
   }

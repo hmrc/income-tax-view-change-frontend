@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import connectors.{CalculationListConnector, FinancialDetailsConnector}
+import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
@@ -31,6 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                                     val chargeHistoryConnector: ChargeHistoryConnector,
                                      val calculationListConnector: CalculationListConnector,
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
@@ -65,7 +66,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoaAdjustmentReason(financialDetails: Either[Throwable, FinancialDetailsAndPoAModel])(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     financialDetails match {
       case Right(FinancialDetailsAndPoAModel(Some(financialDetails), _)) =>
-        getChargeHistory(financialDetails.documentDetails, financialDetailsConnector) map {
+        getChargeHistory(financialDetails.documentDetails, chargeHistoryConnector) map {
           case Right(Some(chargeHistory)) => Right(chargeHistory.poaAdjustmentReason)
           case Right(None) => Right(None)
           case Left(ex) => Left(ex)

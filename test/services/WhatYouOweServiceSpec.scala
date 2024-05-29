@@ -243,11 +243,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
               )
             ))))
@@ -288,11 +288,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
               )
             ))))
@@ -336,11 +336,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = creditDocumentDetailList,
             financialDetails = List(
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("chargeRef"), Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
             )
           ))))

@@ -21,7 +21,7 @@ import audit.models.ChargeSummaryAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.FinancialDetailsConnector
+import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -55,6 +55,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val financialDetailsConnector: FinancialDetailsConnector,
+                                        val chargeHistoryConnector: ChargeHistoryConnector,
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -220,7 +221,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      financialDetailsConnector.getChargeHistory(user.mtditid, documentNumber).map {
+      //TODO: Link in actual documentNumber
+      chargeHistoryConnector.getChargeHistory(user.mtditid, documentNumber).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse => Left(errorResponse)
       }
