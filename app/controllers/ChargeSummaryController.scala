@@ -90,7 +90,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    Logger("application").info(s"FS Status: ${user.featureSwitches.mkString("->\n")}")
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
       Logger("application").debug(s"- financialResponses = $financialResponses")
 
