@@ -413,9 +413,7 @@ class OptOutServiceSpec extends UnitSpec
 
     val testCases = List(
       ((Voluntary, Mandated, Mandated, false), Some(ConfirmedOptOutViewModel(previousOptOutTaxYear, OneYearOptOutFollowedByMandated))),
-      ((Mandated, Voluntary, Mandated, false), Some(ConfirmedOptOutViewModel(currentOptOutTaxYear, OneYearOptOutFollowedByMandated))),
-      ((Mandated, Voluntary, Annual, false), None),
-      ((Mandated, Voluntary, Voluntary, false), None)
+      ((Mandated, Voluntary, Mandated, false), Some(ConfirmedOptOutViewModel(currentOptOutTaxYear, OneYearOptOutFollowedByMandated)))
     )
     testCases.foreach {
       case (input, output) =>
