@@ -16,34 +16,24 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.optout.{ConfirmedOptOutViewModel, OneYearOptOutFollowedByMandated}
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.IncomeSourceDetailsService
-import services.optout.CurrentOptOutTaxYear
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.optout.OptOutService
 import utils.AuthenticatorPredicate
-import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmedOptOut
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val confirmedOptOut: ConfirmedOptOut,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val retrieveBtaNavBar: NavBarPredicate,
-                                          val retrieveNino: NinoPredicate,
-                                          val customNotFoundErrorView: CustomNotFoundError,
-                                          val auth: AuthenticatorPredicate)
+class ConfirmedOptOutController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+                                          val view: ConfirmedOptOut,
+                                          val auth: AuthenticatorPredicate,
+                                          val optOutService: OptOutService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
@@ -52,11 +42,27 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    code.recover {
+      case ex: Exception =>
+        Logger("application").error(s"request failed :: $ex")
+        errorHandler(isAgent).showInternalServerError()
+    }
+  }
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      val viewModel = ConfirmedOptOutViewModel(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2022)), OneYearOptOutFollowedByMandated);
-      Future.successful(Ok(confirmedOptOut(viewModel, isAgent)))
+      withRecover(isAgent) {
+        optOutService.optOutConfirmedPageViewModel().map {
+          case Some(viewModel) => Ok(view(viewModel, isAgent))
+          case None =>
+            Logger("application").error(s"error, invalid Opt-out journey")
+            errorHandler(isAgent).showInternalServerError()
+        }
+      }
+
   }
 
 }

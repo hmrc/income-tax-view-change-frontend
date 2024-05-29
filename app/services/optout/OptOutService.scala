@@ -171,7 +171,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     combineByReturningAnyFailureFirstOrAnySuccess(responses)
   }
 
-  def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
+  def optOutConfirmedPageViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
     setupOptOutProposition().map {
       case optOutProposition@OptOutProposition(previousTaxYear, currentTaxYear, nextTaxYear) if optOutProposition.isOneYearOptOut =>
         val optOutYear = optOutProposition.availableOptOutYears.head;
