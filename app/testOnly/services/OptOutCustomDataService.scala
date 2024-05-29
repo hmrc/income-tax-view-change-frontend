@@ -56,7 +56,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
                                    cyMinusOneItsaStatus: String,
                                    cyItsaStatus: String,
                                    cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    Logger("application").info(s"[OptOutCustomDataService][stubITSAStatusFutureYearData] - cyMinusOneItsaStatus :: $cyMinusOneItsaStatus, cyItsaStatus:: $cyItsaStatus, cyPlusOneItsaStatus:: $cyPlusOneItsaStatus")
+    Logger("application").info(s"cyMinusOneItsaStatus :: $cyMinusOneItsaStatus, cyItsaStatus:: $cyItsaStatus, cyPlusOneItsaStatus:: $cyPlusOneItsaStatus")
 
     def commonStatusDetails(taxYear: TaxYear, status: ITSAStatus) =
       StatusDetail(
