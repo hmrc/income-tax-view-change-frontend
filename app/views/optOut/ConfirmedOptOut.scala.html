@@ -48,7 +48,7 @@
             @messages("optout.confirmedOptOut.heading")
         </h1>
         <div class="govuk-panel__body">
-            @messages(panelBody, viewModel.optOutTaxYear.startYear.toString, viewModel.optOutTaxYear.endYear.toString)
+            @messages(panelBody, viewModel.optOutTaxYear.taxYear.startYear.toString, viewModel.optOutTaxYear.taxYear.endYear.toString)
         </div>
     </div>
 }
@@ -74,7 +74,7 @@
             messageKey = "optout.confirmedOptOut.software-compatible"  )
 
         val content = HtmlContent(messages("optout.confirmedOptOut.warning-quarterly-update.text",
-                                            viewModel.optOutTaxYear.endYear.toString) + anchor.toString())
+                                            viewModel.optOutTaxYear.taxYear.endYear.toString) + anchor.toString())
 
         govukInsetText(InsetText(
             id = Some("warning-quarterly-update"),

@@ -23,7 +23,7 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
+import models.optout._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -127,7 +127,6 @@ class OptOutServiceSpec extends UnitSpec
       }
     }
   }
-
   "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
 
     s"PY is $Voluntary, CY is $NoStatus, NY is $NoStatus and PY is NOT finalised" should {
@@ -402,6 +401,53 @@ class OptOutServiceSpec extends UnitSpec
       case (input, output) =>
         val test = testOptOutCheckPointPageViewModel _
         test.tupled(input).tupled(output)
+    }
+
+  }
+  "OptOutService.optOutConfirmedPageViewModel" when {
+    val CY = TaxYear.forYearEnd(2024)
+    val PY = CY.previousYear
+    val NY = CY.nextYear
+    val previousOptOutTaxYear = PreviousOptOutTaxYear(Voluntary, PY, crystallised = false)
+    val currentOptOutTaxYear = CurrentOptOutTaxYear(Voluntary, CY)
+
+    val testCases = List(
+      ((Voluntary, Mandated, Mandated, false), Some(ConfirmedOptOutViewModel(previousOptOutTaxYear, OneYearOptOutFollowedByMandated))),
+      ((Mandated, Voluntary, Mandated, false), Some(ConfirmedOptOutViewModel(currentOptOutTaxYear, OneYearOptOutFollowedByMandated))),
+      ((Mandated, Voluntary, Annual, false), None),
+      ((Mandated, Voluntary, Voluntary, false), None)
+    )
+    testCases.foreach {
+      case (input, output) =>
+        val test = testOptOutConfirmedPageViewModel _
+        test.tupled(input)(output)
+    }
+
+    def testOptOutConfirmedPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
+                                        (viewModel: Option[ConfirmedOptOutViewModel]): Unit = {
+
+      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
+        s"return  $viewModel" in {
+
+          val previousYear: TaxYear = PY
+          when(dateService.getCurrentTaxYear).thenReturn(CY)
+
+          val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+            PY -> StatusDetail("", statusPY, ""),
+            CY -> StatusDetail("", statusCY, ""),
+            NY -> StatusDetail("", statusNY, ""),
+          )
+          when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+          val response = service.optOutConfirmedPageViewModel()
+
+          response.futureValue shouldBe viewModel
+
+        }
+      }
+
     }
 
   }

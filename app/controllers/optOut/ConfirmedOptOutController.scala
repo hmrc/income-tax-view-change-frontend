@@ -22,10 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.optout.{ConfirmedOptOutViewModel, OneYearOptOutFollowedByMandated}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
+import services.optout.CurrentOptOutTaxYear
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.ConfirmedOptOut
@@ -53,7 +55,7 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      val viewModel = ConfirmedOptOutViewModel(TaxYear.forYearEnd(2022), OneYearOptOutFollowedByMandated);
+      val viewModel = ConfirmedOptOutViewModel(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2022)), OneYearOptOutFollowedByMandated);
       Future.successful(Ok(confirmedOptOut(viewModel, isAgent)))
   }
 

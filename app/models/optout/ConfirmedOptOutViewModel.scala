@@ -16,7 +16,7 @@
 
 package models.optout
 
-import models.incomeSourceDetails.TaxYear
+import services.optout.OptOutTaxYear
 
 sealed trait ConfirmedOptOutStates
 
@@ -30,4 +30,4 @@ object MultiYearOptOutDefault extends ConfirmedOptOutStates
 
 object MultiYearOptOutFollowedByMandated extends ConfirmedOptOutStates
 
-case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: ConfirmedOptOutStates)
+case class ConfirmedOptOutViewModel(optOutTaxYear: OptOutTaxYear, state: ConfirmedOptOutStates)
