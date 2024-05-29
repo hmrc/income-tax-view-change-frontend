@@ -21,6 +21,8 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.incomeSourceDetails.TaxYear
+import models.optout.{ConfirmedOptOutViewModel, OneYearOptOutFollowedByMandated}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
@@ -50,7 +52,9 @@ class ConfirmedOptOutController @Inject()(val authenticate: AuthenticationPredic
 
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok(confirmedOptOut(isAgent)))
+    implicit user =>
+      val viewModel = ConfirmedOptOutViewModel(TaxYear.forYearEnd(2022), OneYearOptOutFollowedByMandated);
+      Future.successful(Ok(confirmedOptOut(viewModel, isAgent)))
   }
 
 }

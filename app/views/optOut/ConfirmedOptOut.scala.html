@@ -17,6 +17,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optout.ConfirmedOptOutViewModel
+@import models.optout.OneYearOptOutFollowedByMandated
 
 @this(
     mainTemplate: unifiedLayout,
@@ -26,45 +28,108 @@
     link: link,
     hr: hr,
     govukTable: GovukTable,
+    govukInsetText : GovukInsetText
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: ConfirmedOptOutViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+
+
+@panelBody = @{
+    viewModel.state match {
+      case OneYearOptOutFollowedByMandated  => "optout.confirmedOptOut.one-year"
+      case _ => "optout.confirmedOptOut.taxYear"
+    }
+}
+
+@panel = {
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+            @messages("optout.confirmedOptOut.heading")
+        </h1>
+        <div class="govuk-panel__body">
+            @messages(panelBody, viewModel.optOutTaxYear.startYear.toString, viewModel.optOutTaxYear.endYear.toString)
+        </div>
+    </div>
+}
+
+@nextUpdatePageAnchor = @{
+    val nexUpdatePageRef = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
+                           else controllers.routes.NextUpdatesController.show().url
+
+    link(id = Some("next-update-link"),
+         link = nexUpdatePageRef,
+         messageKey = "optout.confirmedOptOut.next-updates").toString
+}
+
+@optOutYearFollowedByMandatedContent = {
+    <h2 class="govuk-heading-m">@messages("optout.confirmedOptOut.report-quarterly-next-year-onwards")</h2>
+
+    @{
+        val externalRefLink = messages("optout.confirmedOptOut.software-compatible.link")
+        val anchor = link(
+            id = Some("software-compatible-ext"),
+            target = Some("_blank"),
+            link = externalRefLink,
+            messageKey = "optout.confirmedOptOut.software-compatible"  )
+
+        val content = HtmlContent(messages("optout.confirmedOptOut.warning-quarterly-update.text",
+                                            viewModel.optOutTaxYear.endYear.toString) + anchor.toString())
+
+        govukInsetText(InsetText(
+            id = Some("warning-quarterly-update"),
+            content = content ))
+    }
+
+    <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.reason-list")</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("optout.confirmedOptOut.reportQuarterly.reason1")</li>
+        <li>@messages("optout.confirmedOptOut.reportQuarterly.reason2")</li>
+    </ul>
+}
+
+@submitYourTaxReturnBlock = {
+    <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.submitTax")</h2>
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc1")</p>
+        <p id="submit-tax-p2" class="govuk-body" >@messages("optout.confirmedOptOut.submitTax.desc2")</p>
+    </div>
+}
+
+@nextUpdateDueBlock = {
+    <div id="updates-due" class="govuk-!-margin-bottom-7">
+        <h2 id="updates-due-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.updatesDue")</h2>
+        <p id="updates-due-content" class="govuk-body">@Html(messages("optout.confirmedOptOut.updatesDue.desc", nextUpdatePageAnchor))</p>
+    </div>
+}
+
+@reportingUpdatesBlock = {
+    <div id="reporting-updates" class="govuk-!-margin-bottom-9  govuk-!-margin-top-8">
+        @if(viewModel.state == OneYearOptOutFollowedByMandated) {
+            @optOutYearFollowedByMandatedContent
+        } else {
+            <h2 class="govuk-heading-m" >@messages("optout.confirmedOptOut.reportQuarterly")</h2>
+            <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc1")</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@messages("optout.confirmedOptOut.reportQuarterly.p1")</li>
+                <li>@messages("optout.confirmedOptOut.reportQuarterly.p2")</li>
+            </ul>
+            <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example")</div>
+            <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc2")</p>
+        }
+        <p class="govuk-body">
+            @messages("optout.confirmedOptOut.reportQuarterly.desc3")
+        </p>
+    </div>
+}
 
 @mainTemplate(
     pageTitle = messages("optout.confirmedOptOut.heading"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
 ) {
-
-<div class="govuk-panel govuk-panel--confirmation">
-    <h1 class="govuk-panel__title">
-        @messages("optout.confirmedOptOut.heading")
-    </h1>
-    <div class="govuk-panel__body">
-        @messages("optout.confirmedOptOut.taxYear")
-    </div>
-</div>
-<div class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-    <h2 class="govuk-heading-m" id="submitTax">@messages("optout.confirmedOptOut.submitTax")</h2>
-    <p class="govuk-body">@messages("optout.confirmedOptOut.submitTax.desc1")</p>
-    <p class="govuk-body">@messages("optout.confirmedOptOut.submitTax.desc2")</p>
-</div>
-<div class="govuk-!-margin-bottom-7">
-    <h2 class="govuk-heading-m" id="updatesDue">@messages("optout.confirmedOptOut.updatesDue")</h2>
-    <p class="govuk-body">@messages("optout.confirmedOptOut.updatesDue.desc")</p>
-</div>
-<div class="govuk-!-margin-bottom-9  govuk-!-margin-top-8">
-    <h2 class="govuk-heading-m" id="reportQuarterly">@messages("optout.confirmedOptOut.reportQuarterly")</h2>
-    <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc1")</p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>@messages("optout.confirmedOptOut.reportQuarterly.p1")</li>
-        <li>@messages("optout.confirmedOptOut.reportQuarterly.p2")</li>
-    </ul>
-    <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example")</div>
-    <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc2")</p>
-    <p class="govuk-body">
-        @messages("optout.confirmedOptOut.reportQuarterly.desc3")
-    </p>
-</div>
-
+    @panel
+    @submitYourTaxReturnBlock
+    @nextUpdateDueBlock
+    @reportingUpdatesBlock
 }
