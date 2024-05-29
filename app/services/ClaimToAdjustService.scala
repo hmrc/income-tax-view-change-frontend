@@ -44,7 +44,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         Right(x)
       case Right(None) => Right(None)
       case Left(ex) =>
-        Logger("application").error(s"[ClaimToAdjustService][getPoaTaxYearForEntryPoint] There was an error getting FinancialDetailsModel" +
+        Logger("application").error(s"There was an error getting FinancialDetailsModel" +
           s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
         Left(ex)
     }
