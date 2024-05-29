@@ -21,7 +21,7 @@ import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import play.api.Logger
 import play.mvc.Http
@@ -188,7 +188,11 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
           case _ => None
         }
 
-      case optOutProposition if optOutProposition.isMultiYearOptOut => None
+      case optOutProposition if optOutProposition.isMultiYearOptOut =>
+        //TODO: multiYearOptOutTo be implemented (following code is placeholder for static page).
+        Some(ConfirmedOptOutViewModel(
+          optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2023)),
+          state = MultiYearOptOutDefault))
       case _ => None
 
     }

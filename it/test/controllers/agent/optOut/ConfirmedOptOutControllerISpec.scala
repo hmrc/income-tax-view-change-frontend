@@ -21,6 +21,7 @@ import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.Mandated
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
@@ -38,22 +39,24 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
 
   s"calling GET $confirmedOptOutPageUrl" should {
-    s"render confirm single year opt out page $confirmedOptOutPageUrl" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+    s"render $confirmedOptOutPageUrl" when {
+      s"following year to opt-out year is $Mandated" when {
+        "User is authorised" in {
+          stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+          val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmedOptOut(clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
+          val result = IncomeTaxViewChangeFrontend.getConfirmedOptOut(clientDetailsWithConfirmation)
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          pageTitleAgent("optout.confirmedOptOut.heading")
-        )
+          result should have(
+            httpStatus(OK),
+            pageTitleAgent("optout.confirmedOptOut.heading")
+          )
+        }
       }
     }
   }

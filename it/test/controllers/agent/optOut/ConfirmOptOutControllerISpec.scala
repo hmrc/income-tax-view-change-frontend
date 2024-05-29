@@ -24,6 +24,7 @@ import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.Mandated
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -49,25 +50,27 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
 
   s"calling GET $confirmOptOutPageUrl" should {
-    s"render confirm single year opt out page $confirmOptOutPageUrl" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+    s"render $confirmOptOutPageUrl" when {
+      s"following year to opt-out year is $Mandated" when {
+        "User is authorised" in {
+          stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Annual, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+          val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Annual, ITSAStatus.NoStatus)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmOptOut(clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
+          val result = IncomeTaxViewChangeFrontend.getConfirmOptOut(clientDetailsWithConfirmation)
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-        result should have(
-          httpStatus(OK),
-          elementTextByID("heading")(expectedTitle),
-          elementTextByID("summary")(summary),
-          elementTextByID("info-message")(infoMessage),
-        )
+          result should have(
+            httpStatus(OK),
+            elementTextByID("heading")(expectedTitle),
+            elementTextByID("summary")(summary),
+            elementTextByID("info-message")(infoMessage),
+          )
+        }
       }
     }
   }
