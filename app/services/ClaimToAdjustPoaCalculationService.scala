@@ -55,7 +55,7 @@ class ClaimToAdjustPoaCalculationService @Inject()(
           Left(new Exception(UnexpectedError.message))
         case Right(ClaimToAdjustPoaSuccess(_)) =>
           Logger("application").info(s"POA recalculation success")
-          Right(())
+          Right((): Unit)
       }
 
   }
