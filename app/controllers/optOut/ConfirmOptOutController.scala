@@ -69,9 +69,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       withRecover(isAgent) {
         withOptOutQualifiedTaxYear(isAgent)(
-          viewModel => {
-            Ok(view(viewModel, isAgent = isAgent))
-          }
+          viewModel => Ok(view(viewModel, isAgent = isAgent))
         )
       }
   }
