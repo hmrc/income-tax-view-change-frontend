@@ -128,24 +128,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     })
   }
 
-  def oneYearOptOutViewModel[T](function: (TaxYear, Boolean) => T)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[T]] = {
-    setupOptOutProposition()
-      .map(optOutData => optOutData.optOutForSingleYear((optOutData, optOutYear) => {
-        val showWarning = optOutData match {
-          case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == optOutYear && currentTaxYear.status == Mandated => true
-          case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == optOutYear && nextTaxYear.status == Mandated => true
-          case _ => false
-        }
-        function(optOutYear.taxYear, showWarning)
-      }))
-      .recover({
-        case e =>
-          Logger("application").error(s"trying to get opt-out status but failed with message: ${e.getMessage}")
-          None
-      })
-  }
-
-
   def makeOptOutUpdateRequest(taxPayerIntent: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     setupOptOutProposition().flatMap { proposition =>

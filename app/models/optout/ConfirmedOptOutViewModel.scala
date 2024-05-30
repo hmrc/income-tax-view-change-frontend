@@ -30,4 +30,9 @@ object MultiYearOptOutDefault extends ConfirmedOptOutStates
 
 object MultiYearOptOutFollowedByMandated extends ConfirmedOptOutStates
 
-case class ConfirmedOptOutViewModel(optOutTaxYear: OptOutTaxYear, state: ConfirmedOptOutStates)
+case class
+ConfirmedOptOutViewModel(optOutTaxYear: OptOutTaxYear, state: ConfirmedOptOutStates) {
+  val isOneYearOptOutFollowedByMandated = state == OneYearOptOutFollowedByMandated
+  val starYear = optOutTaxYear.taxYear.startYear.toString
+  val endYear = optOutTaxYear.taxYear.endYear.toString
+}
