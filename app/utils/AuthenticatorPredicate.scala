@@ -62,7 +62,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
 
     } else
       (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar andThen featureSwitchPredicate).async { implicit user =>
+        andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }
