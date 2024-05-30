@@ -20,13 +20,14 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, redirectLocation, status}
+import services.ClaimToAdjustPoaCalculationService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -40,16 +41,18 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
   with MockPaymentOnAccountSessionService
   with MockCalculationListService
   with MockCalculationListConnector
-  with MockFinancialDetailsConnector {
+  with MockFinancialDetailsConnector
+  with MockClaimToAdjustPoaCalculationService {
 
   object TestCheckYourAnswersController extends CheckYourAnswersController(
     authorisedFunctions = mockAuthService,
     auth = testAuthenticator,
-    sessionService = mockPaymentOnAccountSessionService,
+    poaSessionService = mockPaymentOnAccountSessionService,
     checkYourAnswers = app.injector.instanceOf[CheckYourAnswers],
-    claimToAdjustService = claimToAdjustService,
+    ctaService = claimToAdjustService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
+    ctaCalculationService = mockClaimToAdjustPoaCalculationService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     mcc = app.injector.instanceOf[MessagesControllerComponents],

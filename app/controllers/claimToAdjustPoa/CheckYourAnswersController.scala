@@ -18,35 +18,35 @@ package controllers.claimToAdjustPoa
 
 import auth.MtdItUser
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
 import models.core.{CheckMode, Nino}
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import play.api.mvc._
+import services.claimToAdjustPoa.SubmitPoaHelper
+import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.CheckYourAnswers
-import controllers.claimToAdjustPoa.routes._
-import models.admin.AdjustPaymentsOnAccount
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                           ctaService: ClaimToAdjustService,
+                                           val poaSessionService: PaymentOnAccountSessionService,
+                                           val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                            val auth: AuthenticatorPredicate,
-                                           val sessionService: PaymentOnAccountSessionService,
                                            val checkYourAnswers: CheckYourAnswers,
-                                           val claimToAdjustService: ClaimToAdjustService,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils {
+  extends ClientConfirmedController with ClaimToAdjustUtils with SubmitPoaHelper {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
@@ -76,6 +76,16 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
         }
     }
 
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit request =>
+      handleSubmitPoaData(
+        claimToAdjustService = ctaService,
+        ctaCalculationService = ctaCalculationService,
+        poaSessionService = poaSessionService,
+        isAgent = isAgent
+      )
+  }
+
   private def withValidSession(isAgent: Boolean, session: PoAAmendmentData)
                               (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
@@ -100,8 +110,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     for {
-      session <- EitherT(sessionService.getMongo)
-      poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+      session <- EitherT(poaSessionService.getMongo)
+      poa <- EitherT(ctaService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
       result <- (session, poa) match {
         case (Some(s), Some(p)) =>
           block(s, p)
