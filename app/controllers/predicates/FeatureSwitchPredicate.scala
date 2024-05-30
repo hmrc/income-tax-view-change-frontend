@@ -19,8 +19,6 @@ package controllers.predicates
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin
-import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import services.admin.FeatureSwitchService
