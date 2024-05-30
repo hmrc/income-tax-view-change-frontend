@@ -39,10 +39,13 @@ class FeatureSwitchServiceImpl @Inject()(
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with FeatureSwitchService {
 
-  def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
+  def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] = {
+    Logger("application").info(s"GET FS${featureSwitchName}")
+
     featureSwitchRepository
       .getFeatureSwitch(featureSwitchName)
       .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+  }
 
 
   def getAll: Future[List[FeatureSwitch]] = {

@@ -16,6 +16,7 @@
 
 package helpers
 
+import actors.TestFeatureSwitchServiceImpl
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
@@ -43,6 +44,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
+import services.admin.FeatureSwitchService
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -125,10 +127,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
+
   val csbTestUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
+
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -176,6 +180,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
+    .overrides(bind[FeatureSwitchService].to[TestFeatureSwitchServiceImpl])
     .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
     .build()
