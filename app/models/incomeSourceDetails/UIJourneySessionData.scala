@@ -16,20 +16,22 @@
 
 package models.incomeSourceDetails
 
+import models.optout.OptOutSessionData
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 
 import java.time.Instant
 
 case class UIJourneySessionData(
-                                 sessionId:               String,
-                                 journeyType:             String,
-                                 addIncomeSourceData:     Option[AddIncomeSourceData]    = None,
-                                 manageIncomeSourceData:  Option[ManageIncomeSourceData] = None,
-                                 ceaseIncomeSourceData:   Option[CeaseIncomeSourceData]  = None,
-                                 lastUpdated:             Instant                        = Instant.now
+                                 sessionId: String,
+                                 journeyType: String,
+                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
+                                 manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+                                 ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
+                                 optOutSessionData: Option[OptOutSessionData] = None,
+                                 lastUpdated: Instant = Instant.now
                                ) {
 
   def encrypted: SensitiveUIJourneySessionData =
@@ -39,6 +41,7 @@ case class UIJourneySessionData(
       addIncomeSourceData.map(_.encrypted),
       manageIncomeSourceData,
       ceaseIncomeSourceData,
+      optOutSessionData,
       lastUpdated
     )
 }
@@ -47,24 +50,26 @@ object UIJourneySessionData {
 
   implicit val format: OFormat[UIJourneySessionData] = {
 
-       ((__ \ "sessionId"             ).format[String]
-      ~ (__ \ "journeyType"           ).format[String]
-      ~ (__ \ "addIncomeSourceData"   ).formatNullable[AddIncomeSourceData]
+    ((__ \ "sessionId").format[String]
+      ~ (__ \ "journeyType").format[String]
+      ~ (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
+      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
     )
   }
 }
 
 case class SensitiveUIJourneySessionData(
-                                          sessionId:              String,
-                                          journeyType:            String,
-                                          addIncomeSourceData:    Option[SensitiveAddIncomeSourceData]  = None,
-                                          manageIncomeSourceData: Option[ManageIncomeSourceData]        = None,
-                                          ceaseIncomeSourceData:  Option[CeaseIncomeSourceData]         = None,
-                                          lastUpdated:            Instant                               = Instant.now
+                                          sessionId: String,
+                                          journeyType: String,
+                                          addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
+                                          manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+                                          ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
+                                          optOutSessionData: Option[OptOutSessionData] = None,
+                                          lastUpdated: Instant = Instant.now
                                         ) {
 
   def decrypted: UIJourneySessionData =
@@ -74,6 +79,7 @@ case class SensitiveUIJourneySessionData(
       addIncomeSourceData.map(_.decrypted),
       manageIncomeSourceData,
       ceaseIncomeSourceData,
+      optOutSessionData,
       lastUpdated
     )
 }
@@ -82,12 +88,12 @@ object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
 
-       ((__ \ "sessionId"             ).format[String]
-      ~ (__ \ "journeyType"           ).format[String]
-      ~ (__ \ "addIncomeSourceData"   ).formatNullable[SensitiveAddIncomeSourceData]
+    ((__ \ "sessionId").format[String]
+      ~ (__ \ "journeyType").format[String]
+      ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )
 }
