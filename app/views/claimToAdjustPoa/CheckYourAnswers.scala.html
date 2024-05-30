@@ -60,21 +60,19 @@
 }
 
 @getConfirmButton = @{
-    formWithCSRF(action = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.submit(isAgent)) {
-        poaReason match {
-            case Increase =>
-                    govukButton(Button(
-                        id = Some("continue"),
-                        content = Text(getMessage("confirm-and-submit")),
-                        attributes = Map("id" -> "confirm-and-submit-button")
-                    ))
-            case _ =>
-                govukButton(Button(
-                    content = Text(messages("base.confirm-and-continue")),
-                    attributes = Map("id" -> "confirm-button"),
-                    href = Some(redirectUrl)
-                ))
-        }
+    poaReason match {
+        case Increase =>
+            govukButton(Button(
+                id = Some("continue"),
+                content = Text(getMessage("confirm-and-submit")),
+                attributes = Map("id" -> "confirm-and-submit-button")
+            ))
+        case _ =>
+            govukButton(Button(
+                content = Text(messages("base.confirm-and-continue")),
+                attributes = Map("id" -> "confirm-button"),
+                href = Some(redirectUrl)
+            ))
     }
 }
 
@@ -127,14 +125,18 @@
         )
     ))
 
-    <div class="govuk-button-group">
+    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.submit(isAgent)) {
 
-        @getConfirmButton
+        <div class="govuk-button-group">
 
-        @link(
-            id = Some("cancel-link"),
-            link = getHomePageUrl,
-            messageKey = "claimToAdjustPoa.checkYourAnswers.cancel"
-        )
-    </div>
+            @getConfirmButton
+
+            @link(
+                id = Some("cancel-link"),
+                link = getHomePageUrl,
+                messageKey = "claimToAdjustPoa.checkYourAnswers.cancel"
+            )
+
+        </div>
+    }
 }
