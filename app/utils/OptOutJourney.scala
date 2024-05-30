@@ -24,23 +24,28 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
+object OptOutJourney {
+  val Name = "OPTOUT"
+}
+
 trait OptOutJourney {
   self =>
   val sessionService: SessionService
 
   implicit val ec: ExecutionContext
 
-  def withSessionData(codeBlock: UIJourneySessionData => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionData(handleSessionData: UIJourneySessionData => Future[Result],
+                      handleErrorCase: Throwable => Future[Result])
+                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val journeyType = "OPTOUT"
-    sessionService.getMongo(journeyType).flatMap {
-      case Right(Some(data: UIJourneySessionData)) => codeBlock(data)
+    sessionService.getMongo(OptOutJourney.Name).flatMap {
+      case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)
       case Right(None) =>
-        sessionService.createSession(journeyType).flatMap { _ =>
-          val data = UIJourneySessionData(hc.sessionId.get.value, journeyType)
-          codeBlock(data)
+        sessionService.createSession(OptOutJourney.Name).flatMap { _ =>
+          val data = UIJourneySessionData(hc.sessionId.get.value, OptOutJourney.Name)
+          handleSessionData(data)
         }
-      case Left(ex) => ???
+      case Left(ex) => handleErrorCase(ex)
     }
   }
 }
