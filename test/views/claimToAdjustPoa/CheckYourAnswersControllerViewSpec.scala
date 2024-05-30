@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, ConfirmationForAdjustingPoaController, SelectYourReasonController}
+import controllers.claimToAdjustPoa.routes.{ChangePoaAmountController, CheckYourAnswersController, ConfirmationForAdjustingPoaController, SelectYourReasonController}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import models.core.CheckMode
@@ -49,6 +49,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       )
   }
 
+  //noinspection ScalaStyle
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
@@ -83,6 +84,9 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
         document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationForAdjustingPoaController.show(isAgent).url
+      }
+      "render the Confirm and Submit button" in new Setup(isAgent = isAgent, poaReason = Increase) {
+        document.getElementById("confirm-and-submit-button").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.confirm-and-submit")
       }
       "render the cancel link" in new Setup(isAgent) {
         document.getElementById("cancel-link").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.cancel")
