@@ -74,7 +74,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+          s"${if (isAgent) "[Agent]"}[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

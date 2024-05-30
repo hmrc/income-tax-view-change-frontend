@@ -46,11 +46,11 @@ class FeatureSwitchService @Inject()(
 
   def getAll: Future[List[FeatureSwitch]] = {
 
-    Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS - ${appConfig.readFeatureSwitchesFromMongo}")
+    Logger("application").info(s"reading FSS - ${appConfig.readFeatureSwitchesFromMongo}")
     if (appConfig.readFeatureSwitchesFromMongo) {
       // TODO: do we need to apply fallback in case can not connect to mongoDb?
       featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
-        Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS: ${mongoSwitches}")
+        Logger("application").info(s"reading FSS: ${mongoSwitches}")
         FeatureSwitchName.allFeatureSwitches
           .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
             if (featureSwitches.map(_.name).contains(missingSwitch))

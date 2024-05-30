@@ -1,0 +1,80 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukBackLink : GovukBackLink,
+        govukButton : GovukButton,
+        formWithCSRF: FormWithCSRF
+)
+
+@(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+
+@getCorrectBody = @{
+    if (viewModel.isAmountZero)   getMessage("p2")
+    else                          getMessage("p1")
+}
+
+@getHomePageUrl = @{
+    if (isAgent) controllers.routes.HomeController.showAgent.url
+    else         controllers.routes.HomeController.show().url
+}
+
+@getMessage(key: String, args: String*) = @{
+ messages(s"claimToAdjustPoa.confirmation.$key", args: _*)
+}
+
+@postAction = @{
+    controllers.claimToAdjustPoa.routes.ConfirmationForAdjustingPoaController.submit(isAgent)
+}
+
+@mainTemplate(pageTitle = getMessage("heading"),
+     backUrl = Some("/"),
+     isAgent = isAgent,
+     btaNavPartial = user.btaNavPartial,
+     useFallbackBackLink = true) {
+
+    <span class="govuk-caption-l" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
+
+    <h1 class="govuk-heading-l" id ="h1">@getMessage("h1")</h1>
+
+    <p class="govuk-body">@getCorrectBody</p>
+
+    @formWithCSRF(action = postAction) {
+
+        <div class="govuk-button-group">
+
+            @govukButton(Button(
+                id = Some("continue"),
+                content = Text(getMessage("continue"))
+            ))
+            <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
+        </div>
+    }
+
+}

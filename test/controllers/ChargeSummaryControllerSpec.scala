@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FinancialDetailsConnector
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -85,7 +85,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
       mockAuthService,
-      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError]
+      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
+      app.injector.instanceOf[FeatureSwitchPredicate]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[DateService],

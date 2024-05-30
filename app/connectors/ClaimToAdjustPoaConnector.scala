@@ -34,7 +34,7 @@ class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig
                                             val http: HttpClientV2)
                                           ( implicit val ec: ExecutionContext ) {
 
-  val endpoint = s"${frontendAppConfig.itvcProtectedService}/submit-claim-to-adjust-poa"
+  val endpoint = s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/submit-claim-to-adjust-poa"
 
   def postClaimToAdjustPoa(request: ClaimToAdjustPoaRequest)(implicit hc: HeaderCarrier
   ): Future[ClaimToAdjustPoaResponse] = {

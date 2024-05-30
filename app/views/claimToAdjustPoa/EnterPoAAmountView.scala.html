@@ -1,0 +1,202 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.adjustPoa.EnterPoaAmountForm
+@import models.claimToAdjustPoa.PoAAmountViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import views.html.components._
+@import views.html.helpers.injected.InputHelper
+@import views.html.layouts.unifiedLayout
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukBackLink: GovukBackLink,
+        govukButton: GovukButton,
+        govukWarningText: GovukWarningText,
+        govukInput: GovukInput,
+        govukInsetText: GovukInsetText,
+        govukTable: GovukTable,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary
+)
+
+@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PoAAmountViewModel, isAgent: Boolean, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"claimToAdjustPoa.enterPoaAmount.$key", args: _*)
+}
+
+@getHomePageUrl = @{
+    if(isAgent) controllers.routes.HomeController.showAgent.url
+    else controllers.routes.HomeController.show().url
+}
+
+@getTableHeading = @{
+    if(viewModel.poaPreviouslyAdjusted) {
+        Some(Seq(
+            HeadCell(
+            ),
+            HeadCell(
+                content = Text(getMessage("initialAmount")),
+                format = Some("numeric")
+            ),
+            HeadCell(
+                content = Text(getMessage("adjustedAmount")),
+                format = Some("numeric")
+            )
+        ))
+    }
+    else {
+        Some(Seq(
+            HeadCell(
+            ),
+            HeadCell(
+                content = Text(getMessage("initialAmount")),
+                format = Some("numeric")
+            )
+        ))
+    }
+}
+
+@getRow1 = @{
+    if(viewModel.poaPreviouslyAdjusted) {
+        Seq(TableRow(
+            content = Text(viewModel.relevantAmountOne.toCurrencyString),
+            format = Some("numeric")
+        ))
+    }
+    else {
+        Seq.empty
+    }
+}
+@getRow2 = @{
+    if(viewModel.poaPreviouslyAdjusted) {
+        Seq(TableRow(
+            content = Text(viewModel.relevantAmountTwo.toCurrencyString),
+            format = Some("numeric")
+        ))
+    }
+    else {
+        Seq.empty
+    }
+}
+
+
+@mainTemplate(pageTitle = getMessage("heading"),
+    backUrl = Some("/"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true) {
+
+    @errorSummary(
+        form = enterPoaForm
+    )
+
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString)</span>
+
+    @h1(msg = getMessage("heading"),
+        id = Some("h1"))
+
+    <div id="bulletPoints">
+        <p class="govuk-body" id="p1">@getMessage("p1")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@getMessage("bullet1")</li>
+            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>
+        </ul>
+    </div>
+
+    @govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(
+                    content = Text(getMessage("firstPayment"))
+                )
+            ) ++ getRow1 ++ 
+            Seq(
+                TableRow(
+                    content = Text(viewModel.totalAmountOne.toCurrencyString),
+                    format = Some("numeric")
+                )
+            ),
+            Seq(
+                TableRow(
+                    content = Text(getMessage("secondPayment"))
+                )
+            )
+            ++ getRow2 ++
+            Seq(
+                TableRow(
+                    content = Text(viewModel.totalAmountOne.toCurrencyString),
+                    format = Some("numeric")
+                )
+            )
+        ),
+        head = getTableHeading,
+        firstCellIsHeader = true
+    ))
+
+    @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = Text(getMessage("warning")),
+        attributes = Map("id" -> "warning"))
+    )
+
+    @form(action = postAction, Symbol("id") -> "poa-amount") {
+
+        @govukInput(Input(
+            id = "poa-amount",
+            name = "poa-amount",
+            label = Label(
+                isPageHeading = false,
+                classes = "govuk-label--m",
+                content = Text(getMessage("howMuch"))
+            ),
+            hint = Some(Hint(
+                content = Text(getMessage("howMuchHint"))
+            )),
+            classes = "govuk-input--width-5",
+            spellcheck = Some(false),
+            prefix = Some(PrefixOrSuffix(
+                content = Text("£")
+            ))
+        ).withFormField(enterPoaForm("poa-amount")))
+
+        <div class="govuk-button-group">
+            @govukButton(
+                Button(
+                    element = Some("button"),
+                    content = HtmlContent(messages("base.continue"))
+                )
+            )
+
+            @link(
+                id = Some("cancel"),
+                link = getHomePageUrl,
+                messageKey = getMessage("cancel")
+            )
+        </div>
+    }
+
+}

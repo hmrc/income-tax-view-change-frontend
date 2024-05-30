@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package helpers
+package models.claimToAdjustPoa
 
-object ITSAStatusUpdateConnectorStub {
-  def stubPUTItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =
-    WiremockHelper.stubPutWithHeaders(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", status = status, responseBody = responseBody, headers)
-}
+import models.incomeSourceDetails.TaxYear
+
+case class ConfirmationForAdjustingPoaViewModel(
+                                               poaTaxYear: TaxYear,
+                                               isAmountZero: Boolean
+                                               )

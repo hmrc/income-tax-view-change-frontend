@@ -1873,6 +1873,16 @@ claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gwel
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
 claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canslo
 
+# confirmation
+
+claimToAdjustPoa.confirmation.caption                                   =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.h1                                        =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
+claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
+claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chyflwyno
+claimToAdjustPoa.confirmation.cancel                                    =   Canslo
+
 # select your reason
 
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
@@ -1895,6 +1905,33 @@ claimToAdjustPoa.selectYourReason.radios.taxed-at-source.hint           =   Er e
 claimToAdjustPoa.selectYourReason.continue                              =   Yn eich blaen
 claimToAdjustPoa.selectYourReason.cancel                                =   Canslo
 claimToAdjustPoa.selectYourReason.error.required                        =   Dewiswch y prif reswm dros ostwng eich taliadau ar gyfrif
+
+claimToAdjustPoa.enterPoaAmount.caption                 = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+claimToAdjustPoa.enterPoaAmount.heading                 = Nodwch swm newydd
+claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hafal i hanner swm disgwyliedig eich bil treth. Mae’ch bil treth yn cynnwys y canlynol:
+claimToAdjustPoa.enterPoaAmount.bullet1                 = Treth Incwm
+claimToAdjustPoa.enterPoaAmount.bullet2                 = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+claimToAdjustPoa.enterPoaAmount.initialAmount           = Swm cychwynnol
+claimToAdjustPoa.enterPoaAmount.adjustedAmount          = Swm wedi’i addasu
+claimToAdjustPoa.enterPoaAmount.firstPayment            = Taliad cyntaf ar gyfrif
+claimToAdjustPoa.enterPoaAmount.secondPayment           = Ail daliad ar gyfrif
+claimToAdjustPoa.enterPoaAmount.warning                 = Mae’n bosibl y bydd yn rhaid i chi dalu llog os byddwch yn gostwng eich taliadau ar gyfrif gormod, ac yn gwneud tandaliad
+claimToAdjustPoa.enterPoaAmount.howMuch                 = Faint a ddylai bob taliad ar gyfrif fod?
+claimToAdjustPoa.enterPoaAmount.howMuchHint             = Nodwch hanner y swm rydych yn disgwyl i’ch bil treth terfynol i fod
+claimToAdjustPoa.enterPoaAmount.cancel                  = Canslo
+claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar gyfer pob taliad ar gyfrif
+claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
+claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
+claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
+
+claimToAdjustPoa.apiFailure.heading                  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+claimToAdjustPoa.apiFailure.para1                    = Nid oedd modd diweddaru’ch taliadau ar gyfrif.
+claimToAdjustPoa.apiFailure.para2                    = Gallwch wneud y canlynol:
+claimToAdjustPoa.apiFailure.bullet1Text              = ceisio
+claimToAdjustPoa.apiFailure.bullet1Link              = addasu eich taliadau ar gyfrif eto
+claimToAdjustPoa.apiFailure.bullet2Text              = mynd yn ôl i’r
+claimToAdjustPoa.apiFailure.bullet2Link              = hafan
+
 
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth {0} i {1}

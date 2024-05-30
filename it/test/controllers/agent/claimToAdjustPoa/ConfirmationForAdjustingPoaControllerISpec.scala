@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package helpers
+package controllers.agent.claimToAdjustPoa
 
-object ITSAStatusUpdateConnectorStub {
-  def stubPUTItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =
-    WiremockHelper.stubPutWithHeaders(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", status = status, responseBody = responseBody, headers)
+class ConfirmationForAdjustingPoaControllerISpec extends controllers.claimToAdjustPoa.ConfirmationForAdjustingPoaControllerISpec {
+
+  override val isAgent = true
+
 }
