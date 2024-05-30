@@ -21,12 +21,14 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
+import models.incomeSourceDetails.UIJourneySessionData
 import models.optout.OptOutOneYearCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.SessionService
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, OptOutJourney}
 import views.html.optOut.ConfirmOptOut
 
 import javax.inject.Inject
@@ -34,14 +36,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        override val sessionService: SessionService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -68,9 +71,13 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        withOptOutQualifiedTaxYear(isAgent)(
-          viewModel => Ok(view(viewModel, isAgent = isAgent))
-        )
+        withSessionData((sessionData: UIJourneySessionData) =>
+          withOptOutQualifiedTaxYear(isAgent)(
+            viewModel => {
+              sessionData.optOutSessionData.get.intent
+              Ok(view(viewModel, isAgent = isAgent))
+            }
+          ))
       }
   }
 
