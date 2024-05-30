@@ -32,7 +32,7 @@ object MultiYearOptOutFollowedByMandated extends ConfirmedOptOutStates
 
 case class
 ConfirmedOptOutViewModel(optOutTaxYear: OptOutTaxYear, state: ConfirmedOptOutStates) {
-  val isOneYearOptOutFollowedByMandated = state == OneYearOptOutFollowedByMandated
-  val starYear = optOutTaxYear.taxYear.startYear.toString
-  val endYear = optOutTaxYear.taxYear.endYear.toString
+  val isOneYearOptOutFollowedByMandated: Boolean = state == OneYearOptOutFollowedByMandated
+  val starYear: String = optOutTaxYear.taxYear.startYear.toString
+  val endYear: String = optOutTaxYear.taxYear.endYear.toString
 }
