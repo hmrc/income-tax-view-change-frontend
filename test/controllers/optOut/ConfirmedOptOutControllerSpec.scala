@@ -21,12 +21,12 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.optout.{ConfirmedOptOutViewModel, OneYearOptOutFollowedByMandated}
+import models.optout.ConfirmedOptOutViewModel
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.optout.{CurrentOptOutTaxYear, OptOutTaxYear}
+import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optOut.ConfirmedOptOut
@@ -53,7 +53,7 @@ class ConfirmedOptOutControllerSpec extends TestSupport
 
     val taxYear = TaxYear.forYearEnd(2024)
     val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear, OneYearOptOutFollowedByMandated)))
+    val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear, Some(OneYearOptOutFollowedByMandated))))
     val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
 

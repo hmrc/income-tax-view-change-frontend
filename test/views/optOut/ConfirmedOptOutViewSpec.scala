@@ -19,11 +19,11 @@ package views.optOut
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.optout.{ConfirmedOptOutStates, ConfirmedOptOutViewModel, MultiYearOptOutDefault, OneYearOptOutFollowedByMandated}
+import models.optout.ConfirmedOptOutViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.Helpers._
-import services.optout.{CurrentOptOutTaxYear, OptOutTaxYear}
+import services.optout._
 import testUtils.TestSupport
 import views.html.optOut.ConfirmedOptOut
 
@@ -35,9 +35,8 @@ class ConfirmedOptOutViewSpec extends TestSupport {
   val optOutTaxYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
 
   class Setup(isAgent: Boolean = true,
-              taxYear: TaxYear = taxYear,
-              state: ConfirmedOptOutStates = OneYearOptOutFollowedByMandated) {
-    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear, state = state)
+              state: OptOutState = OneYearOptOutFollowedByMandated) {
+    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear, state = Some(state))
     val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent)))
   }
 

@@ -18,7 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optout.ConfirmedOptOutViewModel
-@import models.optout.OneYearOptOutFollowedByMandated
+@import services.optout.OneYearOptOutFollowedByMandated
 
 @this(
     mainTemplate: unifiedLayout,
@@ -37,7 +37,7 @@
 
 @panelBody = @{
     viewModel.state match {
-      case OneYearOptOutFollowedByMandated  => "optout.confirmedOptOut.one-year"
+      case Some(OneYearOptOutFollowedByMandated)  => "optout.confirmedOptOut.one-year"
       case _ => "optout.confirmedOptOut.taxYear"
     }
 }

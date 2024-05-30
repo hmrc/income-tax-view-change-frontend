@@ -20,11 +20,13 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
-import models.optout.OptOutOneYearCheckpointViewModel
+import models.itsaStatus.ITSAStatus
+import models.optout.OptOutCheckpointViewModel
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optOut.ConfirmOptOut
@@ -50,7 +52,8 @@ class ConfirmOptOutControllerSpec extends TestSupport
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
     val taxYear = TaxYear.forYearEnd(2024)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearCheckpointViewModel(taxYear, showFutureChangeInfo = true)))
+    val optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
+    val eligibleTaxYearResponse = Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear, Some(OneYearOptOutFollowedByAnnual))))
     val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
 
