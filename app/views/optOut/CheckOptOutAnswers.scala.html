@@ -30,7 +30,7 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(model: OptOutMultiYearViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:OptOutMultiYearViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url

@@ -18,8 +18,8 @@ GET         /next-updates                                                 contro
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
 #OptOut
-GET         /optout/review-confirm-taxyear/:intent                        controllers.optOut.ConfirmOptOutController.show(intent, isAgent:Boolean = false)
-GET         /agents/optout/review-confirm-taxyear/:intent                 controllers.optOut.ConfirmOptOutController.show(intent, isAgent:Boolean = true)
+GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = false)
+GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = true)
 POST        /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.submit(isAgent: Boolean = false)
 POST        /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.submit(isAgent: Boolean = true)
 

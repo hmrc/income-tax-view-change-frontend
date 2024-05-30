@@ -18,4 +18,9 @@ package models.optout
 
 import models.incomeSourceDetails.TaxYear
 
-case class OptOutOneYearCheckpointViewModel(oneYearOptOutTaxYear: TaxYear, showFutureChangeInfo: Boolean)
+sealed trait OptOutCheckpointViewModel
+
+case class OptOutOneYearCheckpointViewModel(taxYear: TaxYear, showFutureChangeInfo: Boolean) extends OptOutCheckpointViewModel
+
+case class OptOutMultiYearViewModel(intent: TaxYear) extends OptOutCheckpointViewModel
+
