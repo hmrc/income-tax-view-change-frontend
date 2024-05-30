@@ -139,6 +139,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
+    val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
+      case Some(value) => value.chargeReference
+      case None => None
+    }
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
         financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
@@ -151,7 +155,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
+    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
@@ -218,13 +222,15 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReferenceMaybe: Option[String])
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      //TODO: Link in actual documentNumber
-      chargeHistoryConnector.getChargeHistory(user.mtditid, documentNumber).map {
-        case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-        case errorResponse => Left(errorResponse)
+      chargeReferenceMaybe match {
+        case Some(chargeReference) => chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
+          case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
+          case errorResponse => Left(errorResponse)
+        }
+        case None => Future.successful(Right(Nil))
       }
     } else {
       Future.successful(Right(Nil))

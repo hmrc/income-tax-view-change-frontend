@@ -59,43 +59,41 @@ trait ClaimToAdjustHelper {
     _.sortBy(_.taxYear).reverse
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
-    poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
-    poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
-    latestDocumentDetail       = poaTwoDocDetail
-    poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
-    taxReturnDeadline          = getTaxReturnDeadline(poaTwoDueDate)
-    poasAreBeforeDeadline      = poaTwoDueDate isBefore taxReturnDeadline
+    poaOneDocDetail <- documentDetails.find(isUnpaidPoAOne)
+    poaTwoDocDetail <- documentDetails.find(isUnpaidPoATwo)
+    latestDocumentDetail = poaTwoDocDetail
+    poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+    taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
+    poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
     if poasAreBeforeDeadline
   } yield
     PaymentOnAccountViewModel(
-      poaOneTransactionId  = poaOneDocDetail.transactionId,
-      poaTwoTransactionId  = poaTwoDocDetail.transactionId,
-      taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      paymentOnAccountOne  = poaOneDocDetail.originalAmount,
-      paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
+      poaOneTransactionId = poaOneDocDetail.transactionId,
+      poaTwoTransactionId = poaTwoDocDetail.transactionId,
+      taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+      paymentOnAccountOne = poaOneDocDetail.originalAmount,
+      paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
       poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
       poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
     )
 
-  protected def getChargeHistory(documentDetails: List[DocumentDetail], chargeHistoryConnector: ChargeHistoryConnector)
+  protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
-    for {
-      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
-    } yield {
-      //TODO: Call with chargeReference
-      chargeHistoryConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
+    chargeReference match {
+      case Some(chargeRef) => chargeHistoryConnector.getChargeHistory(user.mtditid, chargeRef).map {
         case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
           case Some(detailsList) => Right(detailsList.headOption)
           case None => Right(None)
         }
         case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
       }
+      case None => Future.successful(Left(new Exception(s"No chargeReference value supplied")))
     }
-  }.getOrElse(Future(Left(new Exception("No document data found for PoA1"))))
+  }
 
   protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
-                                      (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                       calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
+                                        (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
+                                         calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
