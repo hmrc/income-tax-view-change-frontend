@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils
 import controllers.agent.utils.SessionKeys.clientNino
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -65,7 +65,8 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[IncomeSourceDetailsService],
     app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[FrontendAppConfig],
-    testAuthenticator
+    testAuthenticator,
+    app.injector.instanceOf[FeatureSwitchPredicate]
   )
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
