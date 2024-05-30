@@ -16,29 +16,54 @@
 
 package controllers.claimToAdjustPoa
 
+import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.core.Nino
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
+import views.html.claimToAdjustPoa.SuccessView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                  val auth: AuthenticatorPredicate,
+                                  val view: SuccessView,
+                                  val sessionService: PaymentOnAccountSessionService,
+                                  val claimToAdjustService: ClaimToAdjustService,
+                                  auth: AuthenticatorPredicate,
                                   implicit val itvcErrorHandler: ItvcErrorHandler,
                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                  (implicit val appConfig: FrontendAppConfig,
                                   implicit override val mcc: MessagesControllerComponents,
                                   val ec: ExecutionContext)
-  extends ClientConfirmedController {
+  extends ClientConfirmedController with ClaimToAdjustUtils{
 
-  def show(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
       implicit user =>
-        Future successful Ok(
-          s"to be implemented: /report-quarterly/income-and-expenses/view/${if (isAgent) "agents" else ""}adjust-poa/success")
-    }
+        ifAdjustPoaIsEnabled(isAgent) {
+          {
+            for {
+              poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+            } yield poaMaybe
+            }.value.flatMap {
+              case Right(Some(poa)) =>
+                Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmount)))
+              case Right(None) =>
+                Logger("application").error(s"No payment on account data found")
+                Future.successful(showInternalServerError(isAgent))
+              case Left(ex) =>
+                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+                Future.successful(showInternalServerError(isAgent))
+          }
+        }.recover {
+          case ex: Exception =>
+            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
+        }
+  }
 
 }
