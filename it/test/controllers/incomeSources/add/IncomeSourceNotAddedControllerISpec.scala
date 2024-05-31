@@ -56,7 +56,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      enableFs(IncomeSources)
+      disableFs(IncomeSources)
 
       And("API 1771  returns a success response")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -112,7 +112,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $foreignPropertyNotSavedErrorUrl" should {
     "render the Foreign property not added error page" when {
       "Income Sources FS is enabled" in {
-        disableFs(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
