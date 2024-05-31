@@ -52,7 +52,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
 
   private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(hc, ec).flatMap {
-    case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
+    case Right(Some(PoAAmendmentData(_, Some(newPoAAmount), _))) =>
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
       Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
@@ -98,7 +98,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                     otherData: PoAAmendmentData, isAgent: Boolean, nino: String)
                                    (implicit user: MtdItUser[_]): Future[Result] = {
     otherData match {
-      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount)) =>
+      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         calculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
@@ -106,7 +106,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
           case Right(_) =>
             Redirect(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent))
         }
-      case PoAAmendmentData(_, _) =>
+      case PoAAmendmentData(_, _, _) =>
         Future.successful(showInternalServerError(isAgent))
     }
   }

@@ -24,6 +24,7 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.SuccessView
 
@@ -42,6 +43,10 @@ class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                   val ec: ExecutionContext)
   extends ClientConfirmedController with ClaimToAdjustUtils{
 
+  private def endOfJourney(implicit hc: HeaderCarrier) = {
+    sessionService.setCompletedJourney(hc, ec)
+  }
+
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
@@ -51,7 +56,8 @@ class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
             } yield poaMaybe
             }.value.flatMap {
               case Right(Some(poa)) =>
-                Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmount)))
+                  endOfJourney
+                  Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
               case Right(None) =>
                 Logger("application").error(s"No payment on account data found")
                 Future.successful(showInternalServerError(isAgent))

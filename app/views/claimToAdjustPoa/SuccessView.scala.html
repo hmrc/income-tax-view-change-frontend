@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import views.html.components._
+@import _root_.implicits.ImplicitCurrencyFormatter._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -40,24 +41,34 @@
     }
 }
 
-@mainTemplate(pageTitle = getMessage("heading"),
-    backUrl = Some("/"),
-    isAgent = isAgent) {
+@whatYouOweUrl = @{
+    if(isAgent) {
+        controllers.routes.WhatYouOweController.showAgent.url
+    } else {
+        controllers.routes.WhatYouOweController.show().url
+    }
+}
 
-    <span class="govuk-caption-l" id="caption">@getMessage("caption")</span>
+@mainTemplate(pageTitle = getMessage("heading"),
+    isAgent = isAgent) {
 
     @govukPanel(Panel(
         title = Text(getMessage("h1")),
-        content = HtmlContent(getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString))
+        content = HtmlContent(getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, poaTotalAmount.toCurrencyString))
     ))
 
     @p(id = Some("p2")) {
-        @getMessage("p2")
+        @getMessage("p2", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, (poaTaxYear.endYear + 1).toString)
     }
 
     @p(id = Some("p3"))(Html(getMessage("checkYour") + link(link = taxYearSummaryUrl,
-        outerMessage = getMessage("afterLinkText"),
-        messageKey = getMessage("link"),
+        outerMessage = " " + getMessage("afterLinkText"),
+        messageKey = getMessage("link", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString),
+        id = Some("link")).toString()))
+
+    @p(id = Some("p4"))(Html(getMessage("check") + link(link = whatYouOweUrl,
+        outerMessage = " " + getMessage("forUpcomingCharges"),
+        messageKey = getMessage("whatYouOwe"),
         id = Some("link")).toString()))
 
 }
