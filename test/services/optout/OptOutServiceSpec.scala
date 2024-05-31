@@ -208,7 +208,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
 
@@ -232,7 +232,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe noOptOutOptionAvailable
       }
@@ -255,7 +255,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByMandated)))
       }
@@ -278,7 +278,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOneYearOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
       }
@@ -301,7 +301,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.nextUpdatesPageOneYearOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModel()
 
           val model = response.futureValue.get
           model.oneYearOptOutTaxYear shouldBe previousYear
@@ -323,7 +323,7 @@ class OptOutServiceSpec extends UnitSpec
 
             when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-            val response = service.nextUpdatesPageOneYearOptOutViewModel()
+            val response = service.nextUpdatesPageOptOutViewModel()
 
             val model = response.futureValue.get
             model.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
@@ -345,7 +345,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.nextUpdatesPageOneYearOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModel()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -368,7 +368,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.nextUpdatesPageOneYearOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModel()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
