@@ -93,6 +93,7 @@ object SensitiveUIJourneySessionData {
       ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )

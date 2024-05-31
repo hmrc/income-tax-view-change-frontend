@@ -16,7 +16,6 @@
 
 package models.optout
 
-import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.libs.json.{Json, OFormat}
 
 case class OptOutSessionData(intent: Option[String]) {

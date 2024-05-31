@@ -50,7 +50,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val agentItvcErrorHandler: AgentItvcErrorHandler,
                                    val auth: AuthenticatorPredicate,
-                                   val feedbackConnector : FeedbackConnector
+                                   val feedbackConnector : FeedbackConnector,
+                                   val featureSwitchPredicate: FeatureSwitchPredicate
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
@@ -120,7 +121,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar) {
+    andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar) {
     implicit request =>
       val referer = request.session.get(REFERER).getOrElse(config.baseUrl)
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)

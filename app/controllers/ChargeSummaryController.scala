@@ -70,7 +70,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
   lazy val action: ActionBuilder[MtdItUser, AnyContent] =
-    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial andThen featureSwitchPredicate
+    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"

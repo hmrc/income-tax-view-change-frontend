@@ -34,7 +34,6 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
@@ -60,6 +59,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()
     }
+
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
@@ -84,9 +84,16 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
               Ok(checkOptOutAnswers(multiYearViewModel,isAgent))
             }
           )
-        }
+        },
+          ex => handleErrorCase(isAgent)(ex)
         )
       }
+  }
+
+  def handleErrorCase(isAgent: Boolean)(ex: Throwable): Future[Result] = {
+    Logger("application").error(s"Error retrieving Opt Out session data: ${ex.getMessage}", ex)
+    //TODO handle errors
+    Future.successful(???)
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
