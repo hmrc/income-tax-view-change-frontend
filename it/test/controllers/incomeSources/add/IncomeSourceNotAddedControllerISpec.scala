@@ -21,8 +21,10 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.Helpers.await
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import play.api.test.Helpers.{defaultAwaitTimeout}
 
 class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
 
@@ -38,6 +40,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $selfEmploymentNotSavedErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
+        await( featureSwitchService.set(IncomeSources, true) )
         enable(IncomeSources)
 
         And("API 1771  returns a success response")
@@ -56,6 +59,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
+      await( featureSwitchService.set(IncomeSources, false) )
       disable(IncomeSources)
 
       And("API 1771  returns a success response")
@@ -75,6 +79,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $ukPropertyNotSavedErrorUrl" should {
     "render the UK Property not added error page" when {
       "Income Sources FS is enabled" in {
+        await( featureSwitchService.set(IncomeSources, true) )
         enable(IncomeSources)
 
         And("API 1771  returns a success response")
@@ -93,6 +98,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
+      await( featureSwitchService.set(IncomeSources, false) )
       disable(IncomeSources)
 
       And("API 1771  returns a success response")
@@ -112,6 +118,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $foreignPropertyNotSavedErrorUrl" should {
     "render the Foreign property not added error page" when {
       "Income Sources FS is enabled" in {
+        await( featureSwitchService.set(IncomeSources, true) )
         enable(IncomeSources)
 
         And("API 1771  returns a success response")
@@ -130,6 +137,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
+      await( featureSwitchService.set(IncomeSources, false) )
       disable(IncomeSources)
 
       And("API 1771  returns a success response")
