@@ -34,9 +34,11 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
+
   def homeUrl: String =
     if (isAgent) controllers.routes.HomeController.showAgent.url
-    else         controllers.routes.HomeController.show().url
+    else controllers.routes.HomeController.show().url
+
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
@@ -49,22 +51,27 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     super.beforeEach()
     setupGetIncomeSourceDetails()
     sessionService.setMongoData(None)
-    if(isAgent) {
+    if (isAgent) {
       stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
     }
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${if (isAgent) {"/agents" } else ""}$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(s"""${
+      if (isAgent) {
+        "/agents"
+      } else ""
+    }$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   def post(url: String): WSResponse = {
     IncomeTaxViewChangeFrontend.post(
-      uri = s"""${
-        if (isAgent) {
-          "/agents"
-        } else ""
-      }$url""",
+      uri =
+        s"""${
+          if (isAgent) {
+            "/agents"
+          } else ""
+        }$url""",
       additionalCookies = clientDetailsWithConfirmation
     )(Map.empty)
   }

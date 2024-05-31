@@ -20,16 +20,14 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.errorPages.templates.ErrorTemplate
-import controllers.routes.HomeController
 
 import scala.concurrent.{ExecutionContext, Future}
 
