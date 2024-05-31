@@ -79,15 +79,12 @@ trait ClaimToAdjustHelper {
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
-    chargeReference match {
-      case Some(chargeRef) => chargeHistoryConnector.getChargeHistory(user.mtditid, chargeRef).map {
-        case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
-          case Some(detailsList) => Right(detailsList.headOption)
-          case None => Right(None)
-        }
-        case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
+    chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
+      case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
+        case Some(detailsList) => Right(detailsList.headOption)
+        case None => Right(None)
       }
-      case None => Future.successful(Left(new Exception(s"No chargeReference value supplied")))
+      case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
 

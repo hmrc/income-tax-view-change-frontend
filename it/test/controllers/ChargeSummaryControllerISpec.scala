@@ -72,7 +72,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
       Given("the ChargeHistory feature switch is disabled")
       disable(ChargeHistory)
@@ -351,7 +351,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
       Given("the ChargeHistory feature switch is disabled")
       disable(ChargeHistory)
@@ -420,7 +420,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(INTERNAL_SERVER_ERROR, Json.parse(
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(INTERNAL_SERVER_ERROR, Json.parse(
         """
           |{
           |   "code": "SERVER_ERROR",
@@ -476,6 +476,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1040000123",
+          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
@@ -524,6 +525,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1",
+          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
@@ -546,6 +548,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "Payment on Account",
           "transactionId" -> "2",
+          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
@@ -595,7 +598,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1040000123")
 
@@ -648,7 +651,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1")
 

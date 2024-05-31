@@ -46,7 +46,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockAudi
 
   "getChargeHistoryUrl" should {
     "return the correct url" in new Setup {
-      connector.getChargeHistoryUrl(testMtditid, chargeReference) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/chargeRef/$chargeReference"
+      connector.getChargeHistoryUrl(testMtditid, chargeReference) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
     }
   }
 
@@ -57,19 +57,19 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockAudi
     val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getChargeHistoryUrlTestUrl =
-      s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/chargeRef/$chargeReference"
+      s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
 
     "return a ChargeHistory model when successful JSON is received" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponse)
 
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, chargeReference)
+      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe testValidChargeHistoryModel
 
     }
 
     "return a ChargeHistory model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, chargeReference)
+      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 
@@ -77,14 +77,14 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockAudi
     "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
 
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, chargeReference)
+      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ChargeHistoryErrorResponse model in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponseBadJson)
 
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, chargeReference)
+      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
       result.futureValue shouldBe testChargeHistoryErrorModelParsing
     }
 

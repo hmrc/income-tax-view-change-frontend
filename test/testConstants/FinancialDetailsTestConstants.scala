@@ -24,7 +24,7 @@ import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
-import testConstants.BaseTestConstants.{app, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
+import testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import java.time.LocalDate
@@ -482,6 +482,7 @@ object FinancialDetailsTestConstants {
                       mainTransaction: String = "4920",
                       chargeType: String = NIC4_WALES,
                       originalAmount: BigDecimal = 100,
+                      chargeRef: Option[String] = Some(chargeReference),
                       dunningLock: Option[String] = None,
                       interestLock: Option[String] = None,
                       accruedInterest: Option[BigDecimal] = None,
@@ -494,6 +495,7 @@ object FinancialDetailsTestConstants {
     mainTransaction = Some(mainTransaction),
     transactionId = transactionId,
     transactionDate = Some(LocalDate.parse("2022-08-16")),
+    chargeReference = chargeRef,
     `type` = Some("type"),
     originalAmount = Some(originalAmount),
     outstandingAmount = Some(100),

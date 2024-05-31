@@ -31,42 +31,46 @@ class ChargeHistoryConnector @Inject()(val http: HttpClient,
                                       )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getChargeHistoryUrl(mtdBsa: String, chargeReference: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/chargeRef/$chargeReference"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/chargeReference/$chargeReference"
   }
 
-  def getChargeHistory(mtdBsa: String, chargeReference: String)
+  def getChargeHistory(mtdBsa: String, chargeRef: Option[String])
                       (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
-    val url = getChargeHistoryUrl(mtdBsa, chargeReference)
-    Logger("application").debug(s"GET $url")
+    chargeRef match {
+      case Some(chargeReference) => val url = getChargeHistoryUrl(mtdBsa, chargeReference)
+        Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ChargesHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
-            },
-            valid => valid
-          )
-        case status =>
-          if (status == 404 || status == 403) {
-            Logger("application").info(s"No charge history found for $chargeReference - Status: ${response.status}, body: ${response.body}")
-            ChargesHistoryModel("", "", "", None)
-          } else {
-            if (status >= 500) {
-              Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-            } else {
-              Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-            }
-            ChargesHistoryErrorModel(response.status, response.body)
+        http.GET[HttpResponse](url) map { response =>
+          response.status match {
+            case OK =>
+              Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+              response.json.validate[ChargesHistoryModel].fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error: $invalid")
+                  ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
+                },
+                valid => valid
+              )
+            case status =>
+              if (status == 404 || status == 403) {
+                Logger("application").info(s"No charge history found for $chargeReference - Status: ${response.status}, body: ${response.body}")
+                ChargesHistoryModel("", "", "", None)
+              } else {
+                if (status >= 500) {
+                  Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+                } else {
+                  Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+                }
+                ChargesHistoryErrorModel(response.status, response.body)
+              }
           }
-      }
-    } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-        ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+        } recover {
+          case ex =>
+            Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+            ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+        }
+      case None => Logger("application").error("No charge reference value supplied")
+        Future(ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "No charge reference value supplied"))
     }
 
   }

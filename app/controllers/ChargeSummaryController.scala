@@ -222,15 +222,12 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReferenceMaybe: Option[String])
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      chargeReferenceMaybe match {
-        case Some(chargeReference) => chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
-          case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-          case errorResponse => Left(errorResponse)
-        }
-        case None => Future.successful(Right(Nil))
+      chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
+        case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
+        case errorResponse => Left(errorResponse)
       }
     } else {
       Future.successful(Right(Nil))
