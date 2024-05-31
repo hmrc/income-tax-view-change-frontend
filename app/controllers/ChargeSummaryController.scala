@@ -144,7 +144,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       case Some(value) => value.chargeReference
       case None => None
     }
-    println("BEEP BEEP "+chargeReference)
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
         financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)

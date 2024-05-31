@@ -103,6 +103,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
 
     "load the page with right audit events when PaymentAllocations FS on and ChargeHistory FS off" in {
+      Given("the PaymentAllocations feature switch is on and ChargeHistory is off")
+      enable(PaymentAllocation)
+      disable(ChargeHistory)
+
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -112,10 +116,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
-
-      Given("the PaymentAllocations feature switch is on and ChargeHistory is off")
-      enable(PaymentAllocation)
-      disable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
@@ -129,7 +129,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         )(FakeRequest()),
         docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
-        chargeHistories = List.empty,
+        chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
         isLatePaymentCharge = false,
         taxYear = testTaxYear
@@ -476,7 +476,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1040000123",
-          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
@@ -525,7 +524,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1",
-          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
@@ -548,7 +546,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "Payment on Account",
           "transactionId" -> "2",
-          "chargeReference" -> "ABCD1234",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
