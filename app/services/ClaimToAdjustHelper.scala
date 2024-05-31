@@ -26,6 +26,7 @@ import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -58,20 +59,20 @@ trait ClaimToAdjustHelper {
     _.sortBy(_.taxYear).reverse
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
-    poaOneDocDetail <- documentDetails.find(isUnpaidPoAOne)
-    poaTwoDocDetail <- documentDetails.find(isUnpaidPoATwo)
-    latestDocumentDetail = poaTwoDocDetail
-    poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-    taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-    poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+    poaOneDocDetail           <- documentDetails.find(isUnpaidPoAOne)
+    poaTwoDocDetail           <- documentDetails.find(isUnpaidPoATwo)
+    latestDocumentDetail       = poaTwoDocDetail
+    poaTwoDueDate             <- poaTwoDocDetail.documentDueDate
+    taxReturnDeadline          = getTaxReturnDeadline(poaTwoDueDate)
+    poasAreBeforeDeadline      = poaTwoDueDate isBefore taxReturnDeadline
     if poasAreBeforeDeadline
   } yield
     PaymentOnAccountViewModel(
-      poaOneTransactionId = poaOneDocDetail.transactionId,
-      poaTwoTransactionId = poaTwoDocDetail.transactionId,
-      taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      paymentOnAccountOne = poaOneDocDetail.originalAmount,
-      paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
+      poaOneTransactionId  = poaOneDocDetail.transactionId,
+      poaTwoTransactionId  = poaTwoDocDetail.transactionId,
+      taxYear              = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+      paymentOnAccountOne  = poaOneDocDetail.originalAmount,
+      paymentOnAccountTwo  = poaTwoDocDetail.originalAmount,
       poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
       poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
     )
@@ -79,7 +80,7 @@ trait ClaimToAdjustHelper {
   protected def getChargeHistory(documentDetails: List[DocumentDetail], financialDetailsConnector: FinancialDetailsConnector)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     for {
-      poaOneDocDetail <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
+      poaOneDocDetail          <- documentDetails.filter(isUnpaidPoAOne).sortBy(_.taxYear).reverse.headOption //Will need to change this in Scenario 2 to allow for paid PoAs
     } yield {
       financialDetailsConnector.getChargeHistory(user.mtditid, poaOneDocDetail.transactionId).map {
         case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
@@ -92,8 +93,8 @@ trait ClaimToAdjustHelper {
   }.getOrElse(Future(Left(new Exception("No document data found for PoA1"))))
 
   protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
-                                        (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                         calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
+                                      (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
+                                       calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
