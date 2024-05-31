@@ -43,6 +43,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import play.api.test.Helpers.await
 import play.api.{Application, Environment, Mode}
 import services.admin.FeatureSwitchService
 import services.{DateService, DateServiceInterface}
@@ -56,6 +57,7 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.test.Helpers.{defaultAwaitTimeout}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -114,10 +116,21 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
+
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
     override def getCurrentTaxYearEnd: Int = 2023
+  }
+
+  def enableFs(featureSwitch: FeatureSwitchName): Unit = {
+    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+    await( featureSwitchService.set(featureSwitch, true) )
+  }
+
+  def disableFs(featureSwitch: FeatureSwitchName): Unit = {
+    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+    await( featureSwitchService.set(featureSwitch, false) )
   }
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
