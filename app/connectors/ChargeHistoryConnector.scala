@@ -30,14 +30,14 @@ class ChargeHistoryConnector @Inject()(val http: HttpClient,
                                        val appConfig: FrontendAppConfig
                                       )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getChargeHistoryUrl(mtdBsa: String, chargeReference: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/chargeReference/$chargeReference"
+  def getChargeHistoryUrl(nino: String, chargeReference: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$nino/chargeReference/$chargeReference"
   }
 
-  def getChargeHistory(mtdBsa: String, chargeRef: Option[String])
+  def getChargeHistory(nino: String, chargeRef: Option[String])
                       (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
     chargeRef match {
-      case Some(chargeReference) => val url = getChargeHistoryUrl(mtdBsa, chargeReference)
+      case Some(chargeReference) => val url = getChargeHistoryUrl(nino, chargeReference)
         Logger("application").debug(s"GET $url")
 
         http.GET[HttpResponse](url) map { response =>
@@ -69,8 +69,8 @@ class ChargeHistoryConnector @Inject()(val http: HttpClient,
             Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
             ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
         }
-      case None => Logger("application").error("No charge reference value supplied")
-        Future(ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "No charge reference value supplied"))
+      case None => Logger("application").info("No charge history found as no chargeReference value supplied")
+        Future(ChargesHistoryModel("", "", "", None))
     }
 
   }

@@ -1166,6 +1166,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1180,6 +1181,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "ABCD1235",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1198,6 +1200,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "ABCD1236",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1216,6 +1219,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Overpayment Relief",
         "mainTransaction" -> "4004",
         "transactionId" -> "1040000126",
+        "chargeReference" -> "ABCD1237",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1230,6 +1234,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000127",
+        "chargeReference" -> "ABCD1238",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1311,6 +1316,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1325,6 +1331,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "ABCD1235",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1343,6 +1350,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "ABCD1236",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1361,6 +1369,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000126",
+        "chargeReference" -> "ABCD1237",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1375,6 +1384,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000127",
+        "chargeReference" -> "ABCD1238",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(

@@ -79,7 +79,7 @@ trait ClaimToAdjustHelper {
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
-    chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
+    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
       case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
         case Some(detailsList) => Right(detailsList.headOption)
         case None => Right(None)

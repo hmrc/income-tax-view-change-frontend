@@ -187,12 +187,12 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   //Charge History stubs
-  def getChargeHistoryUrl(mtdBsa: String, chargeReference: String): String = {
-    s"/income-tax-view-change/charge-history/$mtdBsa/chargeReference/$chargeReference"
+  def getChargeHistoryUrl(nino: String, chargeReference: String): String = {
+    s"/income-tax-view-change/charge-history/$nino/chargeReference/$chargeReference"
   }
 
-  def stubChargeHistoryResponse(mtdBsa: String, chargeReference: String)(status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubGet(getChargeHistoryUrl(mtdBsa, chargeReference), status, response.toString())
+  def stubChargeHistoryResponse(nino: String, chargeReference: String)(status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(getChargeHistoryUrl(nino, chargeReference), status, response.toString())
   }
 
   //Payment Allocation Charges stubs

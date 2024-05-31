@@ -127,7 +127,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
         )
 
         And("I wiremock stub charge history details with a poaAdjustmentReason")
-        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
+        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
 
         And("A session has been created")
         sessionService.setMongoData(Some(PoAAmendmentData()))

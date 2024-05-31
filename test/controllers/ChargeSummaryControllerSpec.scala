@@ -54,7 +54,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     financialDetail(taxYear = taxYear, chargeType = NIC4_WALES, dunningLock = Some("Stand over order"))
   )
 
-  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
+  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),

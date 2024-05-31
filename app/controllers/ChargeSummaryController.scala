@@ -144,6 +144,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       case Some(value) => value.chargeReference
       case None => None
     }
+    println("BEEP BEEP "+chargeReference)
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
         financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
@@ -226,7 +227,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      chargeHistoryConnector.getChargeHistory(user.mtditid, chargeReference).map {
+      chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse => Left(errorResponse)
       }
