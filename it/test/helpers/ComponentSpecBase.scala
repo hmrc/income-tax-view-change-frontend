@@ -16,6 +16,7 @@
 
 package helpers
 
+import actors.TestFeatureSwitchServiceImpl
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
@@ -43,6 +44,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
+import services.admin.FeatureSwitchService
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -104,6 +106,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val lang: Lang = Lang("GB")
@@ -158,7 +161,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,
     "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false"
+    "feature-switches.read-from-mongo" -> "true"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -177,6 +180,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
     .overrides(bind[DateServiceInterface].to[TestDateService])
+    .overrides(bind[FeatureSwitchService].to[TestFeatureSwitchServiceImpl])
     .configure(config)
     .build()
 
@@ -186,6 +190,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   override def beforeEach(): Unit = {
+
     super.beforeEach()
     WireMock.reset()
     isAuthorisedUser(true)

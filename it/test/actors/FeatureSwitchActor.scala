@@ -21,8 +21,8 @@ import org.apache.pekko.actor.{Actor, Props}
 
 object FeatureSwitchActor {
   def props = Props[FeatureSwitchActor]()
-  case class Get(fs: FeatureSwitchName)
-  case class Set(fs: FeatureSwitch)
+  case class GetFs(fs: FeatureSwitchName)
+  case class SetFs(fs: FeatureSwitch)
 }
 
 class FeatureSwitchActor extends Actor {
@@ -31,14 +31,17 @@ class FeatureSwitchActor extends Actor {
   import actors.FeatureSwitchActor._
 
   def receive = {
-    case Get(fsn: FeatureSwitchName) =>
+    case GetFs(fsn: FeatureSwitchName) =>
       if (fss.contains(fsn))
-        sender() ! fss.get(fsn)
+        sender() ! fss.get(fsn).get
       else
         sender() ! FeatureSwitch( fsn, false)
-    case Set(fsn: FeatureSwitch) =>
+    case SetFs(fsn: FeatureSwitch) =>
       fss += (fsn.name -> fsn)
       sender() ! true
   }
+
+
+  //await( featureSwitchService.set(IncomeSources, true) )
 
 }
