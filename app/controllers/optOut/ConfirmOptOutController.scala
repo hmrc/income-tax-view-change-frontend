@@ -76,7 +76,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         withSessionData((sessionData: UIJourneySessionData) => {
           val intent = sessionData.optOutSessionData.get.intent
           val intentTaxYear = TaxYear.getTaxYearModel(intent.get)
-          withOptOutQualifiedTaxYear(intentTaxYear,isAgent)(
+          withOptOutQualifiedTaxYear(intentTaxYear, isAgent)(
             optOutOneYearCheckpointViewModel => {
               Ok(view(optOutOneYearCheckpointViewModel, isAgent = isAgent))
             },
