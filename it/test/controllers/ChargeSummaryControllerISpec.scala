@@ -129,7 +129,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         )(FakeRequest()),
         docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
-        chargeHistories = chargeHistories,
+        chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         isLatePaymentCharge = false,
         taxYear = testTaxYear
