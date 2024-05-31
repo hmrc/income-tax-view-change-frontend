@@ -32,11 +32,6 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
   private lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
 
-  def optOutForSingleYear[T](function: (OptOutProposition, OptOutTaxYear) => T): Option[T] = {
-    if (countVoluntaryOptOutYears == 1) Some(function(this, availableOptOutYears.head)) else
-      None
-  }
-
   val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
