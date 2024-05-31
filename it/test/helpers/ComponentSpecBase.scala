@@ -125,7 +125,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
-  val csbTestUser: MtdItUser[_] = MtdItUser(
+  implicit val csbTestUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())

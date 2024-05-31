@@ -51,11 +51,12 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                               val retrieveBtaNavBar: NavBarPredicate,
                                               implicit val appConfig: FrontendAppConfig,
-                                              val auth: AuthenticatorPredicate
+                                              val auth: AuthenticatorPredicate,
+                                              val featureSwitchPredicate: FeatureSwitchPredicate
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSources andThen retrieveBtaNavBar
+    retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar
 
 
   def handleShowRequest(taxYear: Int,

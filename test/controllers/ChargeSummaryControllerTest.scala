@@ -20,7 +20,7 @@ import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FinancialDetailsConnector
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import forms.IncomeSourcesFormsSpec.tsTestUser
 import models.admin.{ChargeHistory, CodingOut}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
@@ -52,6 +52,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
   val authorisedFunctions: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
   val customNotFoundErrorView: CustomNotFoundError = mock(classOf[CustomNotFoundError])
+  val featureSwitchPredicate: FeatureSwitchPredicate = mock(classOf[FeatureSwitchPredicate])
 
   implicit val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   implicit val dateService: DateServiceInterface = mock(classOf[DateServiceInterface])
@@ -61,7 +62,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
 
   val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, checkSessionTimeout, retrieveNinoWithIncomeSources,
     financialDetailsService, auditingService, itvcErrorHandler, financialDetailsConnector, chargeSummaryView,
-    retrievebtaNavPartial, incomeSourceDetailsService, authorisedFunctions, customNotFoundErrorView))
+    retrievebtaNavPartial, incomeSourceDetailsService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
 
   before {
     Mockito.reset(controller)

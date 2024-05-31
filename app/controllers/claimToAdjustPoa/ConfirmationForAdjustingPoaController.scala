@@ -50,11 +50,13 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                       val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = sessionService.getMongo(hc, ec).flatMap {
+  private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(hc, ec).flatMap {
     case Right(Some(PoAAmendmentData(_, Some(newPoAAmount)))) =>
       Future.successful(newPoAAmount == BigDecimal(0))
     case _ =>
       Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
+  }
   }
 
   private def dataFromSession(implicit hc: HeaderCarrier): Future[PoAAmendmentData] = sessionService.getMongo(hc, ec).flatMap {
@@ -81,7 +83,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             Future.successful(showInternalServerError(isAgent))
           case (Left(ex), isAmountZero) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
-            Future.failed(ex)
+            Future.successful(showInternalServerError(isAgent))
         }
       } else {
         Future.successful(Redirect(if (isAgent) HomeController.showAgent else HomeController.show()))
@@ -125,7 +127,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
               Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}.")
-              Future.failed(ex)
+              Future.successful(showInternalServerError(isAgent))
           }
         }
         r.flatten
