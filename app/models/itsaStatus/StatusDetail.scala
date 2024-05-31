@@ -20,7 +20,7 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Vol
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,
-                        status: ITSAStatus,
+                        status: String,
                         statusReason: String,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 

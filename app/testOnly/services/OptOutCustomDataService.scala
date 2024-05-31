@@ -61,7 +61,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
     def commonStatusDetails(taxYear: TaxYear, status: ITSAStatus) =
       StatusDetail(
         submittedOn = s"${taxYear.endYear}-01-10T06:14:00Z",
-        status = status,
+        status = status.toString,
         statusReason = "Sign up - no return available",
         businessIncomePriorTo2Years = None)
 
