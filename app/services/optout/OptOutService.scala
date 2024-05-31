@@ -96,7 +96,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
             }
             OptOutOneYearCheckpointViewModel(optOutYear.taxYear, showFutureChangeInfo)
         } else {
-          OptOutMultiYearViewModel(intent.get)
+          OptOutMultiYearViewModel(intent.getOrElse(TaxYear.forYearEnd(2024))) //TODO remove hard coded values
         }
     }
   }

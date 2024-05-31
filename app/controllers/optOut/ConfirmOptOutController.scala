@@ -74,8 +74,8 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       withRecover(isAgent) {
         withSessionData((sessionData: UIJourneySessionData) => {
-          val intent = sessionData.optOutSessionData.get.intent
-          val intentTaxYear = TaxYear.getTaxYearModel(intent.get)
+          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse("2023-2024 Tax Year") //TODO Remove hard coded values
+          val intentTaxYear = TaxYear.getTaxYearModel(intent)
           withOptOutQualifiedTaxYear(intentTaxYear, isAgent)(
             optOutOneYearCheckpointViewModel => {
               Ok(view(optOutOneYearCheckpointViewModel, isAgent = isAgent))
@@ -90,10 +90,9 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  def handleErrorCase(isAgent: Boolean)(ex: Throwable): Future[Result] = {
+  def handleErrorCase(isAgent: Boolean)(ex: Throwable)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"Error retrieving Opt Out session data: ${ex.getMessage}", ex)
-    //TODO handle errors
-    Future.successful(???)
+    Future.successful(errorHandler(isAgent).showInternalServerError())
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {

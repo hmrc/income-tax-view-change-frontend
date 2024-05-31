@@ -1943,13 +1943,12 @@ optout.confirmOptOut.cancel             = Canslo
 #opt out multi year check answers
 optout.checkAnswers.heading             = Gwiriwch eich atebion
 optout.checkAnswers.optOut              = Optio allan o
-optout.checkAnswers.taxYears            = 2023 to 2024 tax year onwards - ViewModel?
-optOut.checkAnswers.change              = Newid y flwyddyn dreth
+optout.checkAnswers.taxYears            = flwyddyn dreth {0} i {1} ymlaen
+optOut.checkAnswers.change              = Newid
 optout.checkAnswers.p1                  = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
 optout.checkAnswers.p2                  = Yn y dyfodol, efallai y bydd gofyn i chi cyflwyno adroddiadau bob chwarter eto os, er enghraifft, y bydd eich incwm yn cynyddu neu’r bod y trothwy ar gyfer cyflwyno adroddiadau chwarterol yn newid. Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
 optout.checkAnswers.confirm             = Cadarnhau
 optout.checkAnswers.cancel              = Canslo
-optout.checkAnswers.change              = Newid y flwyddyn dreth
 
 # opt out confirmed
 optout.confirmedOptOut.heading                  = Optio allan wedi’i gwblhau
