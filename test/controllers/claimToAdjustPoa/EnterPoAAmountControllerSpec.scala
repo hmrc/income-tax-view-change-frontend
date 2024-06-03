@@ -22,8 +22,8 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
-import models.core.{Mode, NormalMode}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -206,11 +206,14 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "3000"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "3000"))
+        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "3000"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
+        status(resultChange) shouldBe SEE_OTHER
+        redirectLocation(resultChange) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
       }
       "The user is on the increase/decrease journey and chooses to increase" in {
         enable(AdjustPaymentsOnAccount)
@@ -232,6 +235,71 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
       }
+      "CHANGE Only: The user is on the increase/decrease journey and has come from CYA" when {
+        "They had previously decreased, and are now increasing" in {
+          enable(AdjustPaymentsOnAccount)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+
+          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
+        }
+        "They had previously decreased, and are still decreasing" in {
+          enable(AdjustPaymentsOnAccount)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+
+          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
+        }
+        "They had previously increased, and are still increasing" in {
+          enable(AdjustPaymentsOnAccount)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(4600))))))
+          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+
+          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(true).url)
+        }
+      }
     }
     "redirect to the Select Reason page" when {
       "The user is on the increase/decrease journey and chooses to decrease" in {
@@ -252,6 +320,29 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, NormalMode).url)
+      }
+      "CHANGE Only: The user is on the increase/decrease journey and has come from CYA" when {
+        "They had previously increased, and are now decreasing" in {
+          enable(AdjustPaymentsOnAccount)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(Increase), Some(4500))))))
+          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+
+          val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "500"))
+          val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, CheckMode).url)
+          status(resultAgent) shouldBe SEE_OTHER
+          redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, CheckMode).url)
+        }
       }
     }
     "redirect back to the Enter PoA Amount page with a 500 response" when {
