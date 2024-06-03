@@ -25,7 +25,7 @@ import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, Sel
 import models.core.{CheckMode, Nino}
 import play.api.Logger
 import play.api.mvc._
-import services.claimToAdjustPoa.SubmitPoaHelper
+import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
@@ -46,7 +46,7 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils with SubmitPoaHelper {
+  extends ClientConfirmedController with ClaimToAdjustUtils with RecalculatePoaHelper {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {

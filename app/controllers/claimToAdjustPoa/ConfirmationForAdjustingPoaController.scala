@@ -26,7 +26,7 @@ import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.SubmitPoaHelper
+import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -48,7 +48,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with SubmitPoaHelper {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with RecalculatePoaHelper {
 
   private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = {
     poaSessionService.getMongo(hc, ec).flatMap {

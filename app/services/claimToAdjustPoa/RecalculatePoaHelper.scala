@@ -31,9 +31,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait SubmitPoaHelper extends ClientConfirmedController with FeatureSwitching {
+trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitching {
 
-  protected def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[PoAAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
       case Right(Some(newPoaData: PoAAmendmentData)) =>
@@ -43,8 +43,8 @@ trait SubmitPoaHelper extends ClientConfirmedController with FeatureSwitching {
     }
   }
 
-  protected def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                      otherData: PoAAmendmentData, isAgent: Boolean, nino: String, ctaCalculationService: ClaimToAdjustPoaCalculationService)
+  private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
+                                      otherData: PoAAmendmentData, isAgent: Boolean, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
     otherData match {
@@ -71,7 +71,7 @@ trait SubmitPoaHelper extends ClientConfirmedController with FeatureSwitching {
         } yield poaMaybe match {
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, isAgent, user.nino, ctaCalculationService)
+              handlePoaAndOtherData(poa, otherData, isAgent, Nino(user.nino), ctaCalculationService)
             )
           case Right(None) =>
             Logger("application").error(s"Failed to create PaymentOnAccount model")
