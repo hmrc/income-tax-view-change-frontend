@@ -23,6 +23,7 @@ import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearV
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import services.optout.OneYearOptOutFollowedByAnnual
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
@@ -47,7 +48,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         previousYearItsaStatus = true,
         previousYearCrystallisedStatus = Some(true))
 
-    val optOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024))
+    val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
   }
 
