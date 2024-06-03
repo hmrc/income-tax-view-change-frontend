@@ -26,15 +26,12 @@
     p: p,
     link: link,
     hr: hr,
-    govukTable: GovukTable,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton,
+    formWithCSRF: FormWithCSRF
 )
 
-@(viewModel:OptOutMultiYearViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
-
-@confirmOptOutURL = @{
-    controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
-}
+@(viewModel:OptOutMultiYearViewModel, postAction: Call, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
     if(isAgent) controllers.optOut.routes.OptOutChooseTaxYearController.showAgent().url
@@ -57,38 +54,39 @@
 
     @h1(messages("optout.checkAnswers.heading"), classes = "govuk-heading-l")
 
-    @govukSummaryList(SummaryList(
-        classes = "govuk-!-margin-bottom-9",
-        rows = Seq(
-            SummaryListRow(
-                key = Key(Text(messages("optout.checkAnswers.optOut"))),
-                value = Value(Text(taxYears)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                        href = getChangeOptOutHref,
-                        classes = "govuk-link govuk-body",
-                        content = HtmlContent(messages("optOut.checkAnswers.change")),
-                        attributes = Map("id" -> "change")
+    @formWithCSRF(action = postAction) {
+        @govukSummaryList(SummaryList(
+            classes = "govuk-!-margin-bottom-9",
+            rows = Seq(
+                SummaryListRow(
+                    key = Key(Text(messages("optout.checkAnswers.optOut"))),
+                    value = Value(Text(taxYears)),
+                    actions = Some(Actions(
+                        items = Seq(ActionItem(
+                            href = getChangeOptOutHref,
+                            classes = "govuk-link govuk-body",
+                            content = HtmlContent(messages("optOut.checkAnswers.change")),
+                            attributes = Map("id" -> "change")
+                        ))
                     ))
-                ))
-            )
-        )))
+                )
+            )))
 
-    @p(id=Some("optOut-summary")) {
-        @messages("optout.checkAnswers.p1")
+        @p(id=Some("optOut-summary")) {
+            @messages("optout.checkAnswers.p1")
+        }
+
+        @p(id=Some("optOut-warning")) {
+            @messages("optout.checkAnswers.p2")
+        }
+
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                content = Text(messages("optout.checkAnswers.confirm")),
+                attributes = Map("id" -> "confirm-button")
+            ))
+            <a class="govuk-link" href="">Cancel</a>
+        </div>
     }
-
-    @p(id=Some("optOut-warning")) {
-        @messages("optout.checkAnswers.p2")
-    }
-
-    <div class="govuk-button-group">
-        <a class="govuk-button" role="button" data-module="govuk-button" id="confirm-button" href="@confirmOptOutURL" data-module="govuk-button">
-            @messages("optout.checkAnswers.confirm")
-        </a>
-        <a class="govuk-link" id="cancel-button" href="#">
-            @messages("optout.checkAnswers.cancel")
-        </a>
-    </div>
 
 }

@@ -25,7 +25,7 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.SessionService
 import services.optout.OptOutService
 import utils.{AuthenticatorPredicate, OptOutJourney}
@@ -59,7 +59,6 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()
     }
-
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
@@ -71,6 +70,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
     implicit user =>
       withRecover(isAgent) {
         withSessionData((sessionData: UIJourneySessionData) => {
@@ -81,7 +81,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
               Ok(view(optOutOneYearCheckpointViewModel, isAgent = isAgent))
             },
             multiYearViewModel => {
-              Ok(checkOptOutAnswers(multiYearViewModel,isAgent))
+              Ok(checkOptOutAnswers(multiYearViewModel, postAction ,isAgent))
             }
           )
         },
@@ -99,7 +99,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
         case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => itvcErrorHandler.showInternalServerError()
+        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }
 }
