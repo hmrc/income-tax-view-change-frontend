@@ -33,7 +33,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
   val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(true).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(true).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(true, NormalMode).url
   val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(true, NormalMode).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]

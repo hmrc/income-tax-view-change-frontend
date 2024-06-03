@@ -23,7 +23,7 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
-import models.core.NormalMode
+import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -80,9 +80,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     relevantAmountTwo = 5000
   )
 
-  def getPostRequest(isAgent: Boolean, poaAmount: String) = {
+  def getPostRequest(isAgent: Boolean, mode: Mode, poaAmount: String) = {
     if (isAgent) {
-      FakeRequest(POST, routes.EnterPoAAmountController.submit(true).url)
+      FakeRequest(POST, routes.EnterPoAAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
           utils.SessionKeys.clientFirstName -> "Test",
@@ -94,7 +94,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         )
     }
     else {
-      FakeRequest(POST, routes.EnterPoAAmountController.submit(false).url)
+      FakeRequest(POST, routes.EnterPoAAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
     }
@@ -114,8 +114,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
 
-        val result = TestEnterPoAAmountController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
 
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
@@ -128,8 +128,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        val result = TestEnterPoAAmountController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -150,8 +150,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
 
-        val result = TestEnterPoAAmountController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
@@ -168,8 +168,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
 
-        val result = TestEnterPoAAmountController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestEnterPoAAmountController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
@@ -182,8 +182,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModelFailure()
 
-        val result = TestEnterPoAAmountController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestEnterPoAAmountController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
 
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
         resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
@@ -204,8 +204,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "3000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "3000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "3000"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "3000"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
@@ -224,8 +224,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
         when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "4500"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "4500"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
@@ -245,8 +245,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "2000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "2000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "2000"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "2000"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)
@@ -266,8 +266,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, ""))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, ""))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
 
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
@@ -285,8 +285,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "test"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "invalid"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
 
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
@@ -304,8 +304,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "6000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "6000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
 
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
@@ -323,8 +323,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false)(getPostRequest(isAgent = false, "4000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true)(getPostRequest(isAgent = true, "4000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
 
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None

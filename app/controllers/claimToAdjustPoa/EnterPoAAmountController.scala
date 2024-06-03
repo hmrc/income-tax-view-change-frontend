@@ -113,7 +113,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
           sessionService.getMongo.map {
             case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
               case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
-              case None => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
+              case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
             }
             case _ => Logger("application").error(s"No active mongo data found")
               showInternalServerError(isAgent)
