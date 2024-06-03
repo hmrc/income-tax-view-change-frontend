@@ -18,14 +18,10 @@ package connectors
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.core.Nino
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
-import models.paymentAllocationCharges.{
-  FinancialDetailsWithDocumentDetailsErrorModel,
-  FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse
-}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status

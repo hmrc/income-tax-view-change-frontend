@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -52,7 +52,7 @@ class ChargeHistoryConnector @Inject()(val http: HttpClient,
                 valid => valid
               )
             case status =>
-              if (status == 404 || status == 403) {
+              if (status == NOT_FOUND || status == FORBIDDEN) {
                 Logger("application").info(s"No charge history found for $chargeReference - Status: ${response.status}, body: ${response.body}")
                 ChargesHistoryModel("", "", "", None)
               } else {
