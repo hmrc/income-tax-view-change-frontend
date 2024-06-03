@@ -244,7 +244,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/optout/review-confirm-taxyear", additionalCookies)
     }
 
+    def postConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/optout/review-confirm-taxyear", additionalCookies)(Map.empty)
+    }
 
+    def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/confirmed", additionalCookies)
+    }
 
     def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)

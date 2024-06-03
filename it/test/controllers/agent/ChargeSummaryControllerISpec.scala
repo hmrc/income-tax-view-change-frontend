@@ -257,7 +257,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
 
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(NOT_FOUND, Json.parse(
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(NOT_FOUND, Json.parse(
         """
           |{
           |   "code": "NO_DATA_FOUND",
@@ -282,7 +282,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
 
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(FORBIDDEN, Json.parse(
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(FORBIDDEN, Json.parse(
         """
           |{
           |   "code": "REQUEST_NOT_PROCESSED",
@@ -308,7 +308,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
 
-        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(INTERNAL_SERVER_ERROR, Json.parse(
+        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(INTERNAL_SERVER_ERROR, Json.parse(
           """
             |{
             |   "code": "SERVER_ERROR",
@@ -397,6 +397,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            chargeReference = Some("ABCD1234"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(LocalDate.parse("2020-08-16")),
@@ -410,6 +411,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            chargeReference = Some("ABCD1234"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(currentDate),
@@ -422,6 +424,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("PAYID01"),
+            chargeReference = Some("ABCD1234"),
             mainType = Some("Payment"),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(
@@ -475,9 +478,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   private def stubChargeHistorySuccess() = {
-    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "CHARGEID01")(OK, Json.obj(
-      "idType" -> "MTDBSA",
-      "idValue" -> testMtditid,
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, Json.obj(
+      "idType" -> "NINO",
+      "idValue" -> testNino,
       "regimeType" -> "ITSA",
       "chargeHistoryDetails" -> Json.arr(
         Json.obj(
@@ -623,7 +626,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1040000123", clientDetailsWithConfirmation)
 
@@ -660,7 +663,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
 
       And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1", clientDetailsWithConfirmation)
 

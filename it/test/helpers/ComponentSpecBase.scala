@@ -47,7 +47,7 @@ import play.api.test.Helpers.await
 import play.api.{Application, Environment, Mode}
 import services.admin.FeatureSwitchService
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -583,8 +583,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
-
-    def confirmOneYearOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
   }
 
 
@@ -658,6 +656,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/review-confirm-taxyear", additionalCookies)
+    }
+
+    def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
+
+    def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/confirmed", additionalCookies)
     }
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")

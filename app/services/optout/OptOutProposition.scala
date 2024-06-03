@@ -18,6 +18,7 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 
+
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
                              currentTaxYear: CurrentOptOutTaxYear,
                              nextTaxYear: NextOptOutTaxYear) {
@@ -29,22 +30,24 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
   lazy val availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
 
-  private lazy val countVoluntaryOptOutYears: Int = availableOptOutYears.size
-
-  def optOutForSingleYear[T](function: (OptOutProposition, OptOutTaxYear) => T): Option[T] = {
-    if (countVoluntaryOptOutYears == 1) Some(function(this, availableOptOutYears.head)) else
-      None
-  }
 
   val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
-  def optOutYearsToUpdate(intent: OptOutTaxYear) : Seq[OptOutTaxYear] = {
+  def optOutYearsToUpdate(intent: OptOutTaxYear): Seq[OptOutTaxYear] = {
     availableOptOutYears.filter(_.shouldBeUpdated(intent))
   }
 
   def optOutTaxYearFor(taxYear: TaxYear): Option[OptOutTaxYear] =
     availableOptOutYears.find(offered => offered.taxYear.isSameAs(taxYear))
+
+  def optOutPropositionType: Option[OptOutPropositionTypes] = {
+    (isOneYearOptOut, isMultiYearOptOut) match {
+      case (true, _) => Some(OneYearOptOutProposition(this))
+      case (_, true) => Some(MultiYearOptOutProposition(this))
+      case _ => None
+    }
+  }
 
 }

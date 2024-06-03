@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.FinancialDetailsConnector
+import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import forms.IncomeSourcesFormsSpec.tsTestUser
 import models.admin.{ChargeHistory, CodingOut}
@@ -47,6 +47,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   val auditingService: AuditingService = mock(classOf[AuditingService])
   val itvcErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   val financialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+  val chargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
   val chargeSummaryView: ChargeSummary = mock(classOf[ChargeSummary])
   val retrievebtaNavPartial: NavBarPredicate = mock(classOf[NavBarPredicate])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
@@ -61,7 +62,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
   val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, checkSessionTimeout, retrieveNinoWithIncomeSources,
-    financialDetailsService, auditingService, itvcErrorHandler, financialDetailsConnector, chargeSummaryView,
+    financialDetailsService, auditingService, itvcErrorHandler, financialDetailsConnector, chargeHistoryConnector, chargeSummaryView,
     retrievebtaNavPartial, incomeSourceDetailsService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
 
   before {

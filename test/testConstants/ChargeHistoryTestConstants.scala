@@ -16,7 +16,7 @@
 
 package testConstants
 
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 import play.api.libs.json.{JsValue, Json}
 import models.chargeHistory._
 
@@ -59,8 +59,8 @@ object ChargeHistoryTestConstants {
 
 
   val testValidChargeHistoryModel: ChargesHistoryModel = ChargesHistoryModel(
-    idType = "MTDBSA",
-    idValue = "XAIT000000000000",
+    idType = "NINO",
+    idValue = testNino,
     regimeType = "ITSA",
     chargeHistoryDetails = Some(List(
       ChargeHistoryModel("2017", "123456789", LocalDate.parse("2020-01-29"), "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("005")))))
@@ -76,8 +76,8 @@ object ChargeHistoryTestConstants {
   )
 
   val testValidChargeHistoryDetailsModelJson: JsValue = Json.obj(
-    "idType" -> "MTDBSA",
-    "idValue" -> "XAIT000000000000",
+    "idType" -> "NINO",
+    "idValue" -> "AB123456C",
     "regimeType" -> "ITSA",
     "chargeHistoryDetails" -> Json.arr(
       Json.obj(
