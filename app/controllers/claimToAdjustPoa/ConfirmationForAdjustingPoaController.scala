@@ -104,7 +104,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
           case Right(_) =>
-            Redirect(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent))
+            Redirect(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent))
         }
       case PoAAmendmentData(_, _, _) =>
         Future.successful(showInternalServerError(isAgent))

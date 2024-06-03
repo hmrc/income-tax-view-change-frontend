@@ -58,7 +58,7 @@
     ))
 
     @p(id = Some("p2")) {
-        @getMessage("p2", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, (poaTaxYear.endYear + 1).toString)
+        @getMessage("p2", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, (poaTaxYear.nextYear.endYear).toString)
     }
 
     @p(id = Some("p3"))(Html(getMessage("checkYour") + link(link = taxYearSummaryUrl,

@@ -24,28 +24,23 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.SuccessView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                  val view: SuccessView,
-                                  val sessionService: PaymentOnAccountSessionService,
-                                  val claimToAdjustService: ClaimToAdjustService,
-                                  auth: AuthenticatorPredicate,
-                                  implicit val itvcErrorHandler: ItvcErrorHandler,
-                                  implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                 (implicit val appConfig: FrontendAppConfig,
+class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                                    val view: SuccessView,
+                                                    val sessionService: PaymentOnAccountSessionService,
+                                                    val claimToAdjustService: ClaimToAdjustService,
+                                                    auth: AuthenticatorPredicate,
+                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
+                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                   (implicit val appConfig: FrontendAppConfig,
                                   implicit override val mcc: MessagesControllerComponents,
                                   val ec: ExecutionContext)
   extends ClientConfirmedController with ClaimToAdjustUtils{
-
-  private def endOfJourney(implicit hc: HeaderCarrier) = {
-    sessionService.setCompletedJourney(hc, ec)
-  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
       implicit user =>
@@ -56,7 +51,7 @@ class SuccessController @Inject()(val authorisedFunctions: AuthorisedFunctions,
             } yield poaMaybe
             }.value.flatMap {
               case Right(Some(poa)) =>
-                  endOfJourney
+                  sessionService.setCompletedJourney(hc, ec)
                   Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
               case Right(None) =>
                 Logger("application").error(s"No payment on account data found")
