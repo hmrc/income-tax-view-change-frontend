@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import models.optout.OptOutOneYearCheckpointViewModel
+import models.optout.OptOutCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -45,7 +45,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutOneYearCheckpointViewModel => Result)
+  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutCheckpointViewModel => Result)
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     optOutService.optOutCheckPointPageViewModel().map {

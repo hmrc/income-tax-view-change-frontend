@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package models.optout
+package services.optout
 
-import models.incomeSourceDetails.TaxYear
+sealed trait OptOutState
 
-case class OptOutOneYearCheckpointViewModel(oneYearOptOutTaxYear: TaxYear, showFutureChangeInfo: Boolean)
+trait OneYearOptOutState extends OptOutState
+
+trait MultiYearOptOutState extends OptOutState
+
+object OneYearOptOutFollowedByMandated extends OneYearOptOutState
+
+object OneYearOptOutFollowedByAnnual extends OneYearOptOutState
+
+object MultiYearOptOutDefault extends MultiYearOptOutState
+
+object NextYearOptOut extends OneYearOptOutState with MultiYearOptOutState

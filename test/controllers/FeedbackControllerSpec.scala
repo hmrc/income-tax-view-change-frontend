@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.FeedbackConnector
 import controllers.feedback.FeedbackController
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -68,7 +68,8 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     mockErrorHandler,
     mockItvcErrorHandler,
     testAuthenticator,
-    mockFeedbackConnector
+    mockFeedbackConnector,
+    app.injector.instanceOf[FeatureSwitchPredicate]
   )
 
   ".show" when {
