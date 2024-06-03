@@ -22,7 +22,7 @@ import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
+import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer}
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
@@ -131,7 +131,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     s"return $OK with correct page title and audit events when PaymentAllocations FS is enabled" in {
 
       enableFs(PaymentAllocation)
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -652,7 +652,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Given("the MFADebitsAndCredits feature switch is enabled")
       enableFs(MFACreditsAndDebits)
       enableFs(ChargeHistory)
-      disable(CodingOut)
+      disableFs(CodingOut)
       enableFs(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 

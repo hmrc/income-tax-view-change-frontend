@@ -18,7 +18,7 @@ package controllers.agent
 
 import models.admin.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
@@ -59,7 +59,7 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

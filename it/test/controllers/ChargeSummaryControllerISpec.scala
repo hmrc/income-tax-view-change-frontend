@@ -75,7 +75,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
       Given("the ChargeHistory feature switch is disabled")
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
 
@@ -105,7 +105,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     "load the page with right audit events when PaymentAllocations FS on and ChargeHistory FS off" in {
       Given("the PaymentAllocations feature switch is on and ChargeHistory is off")
       enableFs(PaymentAllocation)
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
 
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -230,7 +230,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
 
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
       enableFs(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
@@ -254,8 +254,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
-      disable(ChargeHistory)
-      disable(PaymentAllocation)
+      disableFs(ChargeHistory)
+      disableFs(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
 
@@ -290,7 +290,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           )),
         "financialDetails" -> Json.arr()))
 
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
       enableFs(PaymentAllocation)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040001234")
@@ -354,7 +354,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
       Given("the ChargeHistory feature switch is disabled")
-      disable(ChargeHistory)
+      disableFs(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
 

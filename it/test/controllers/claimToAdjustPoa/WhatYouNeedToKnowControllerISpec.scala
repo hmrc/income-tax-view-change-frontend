@@ -99,7 +99,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
     }
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

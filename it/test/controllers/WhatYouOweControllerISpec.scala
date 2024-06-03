@@ -102,7 +102,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     "Authorised" when {
 
       "render the payments due totals" in {
-        disable(NavBarFs)
+        disableFs(NavBarFs)
         Given("Display Totals feature is enabled")
 
         And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
@@ -799,7 +799,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         "render the payments owed without a Coding out banner" in {
 
           Given("Coding Out feature is disabled")
-          disable(CodingOut)
+          disableFs(CodingOut)
 
           And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
@@ -844,7 +844,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         "render the payments owed" when {
           def testMFADebits(MFADebitsEnabled: Boolean): Unit = {
             Given(s"MFADebitsEnabled is ${MFADebitsEnabled}")
-            if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+            if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disableFs(MFACreditsAndDebits)
 
             And("I wiremock stub a successful Income Source Details response with multiple business and property")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -931,7 +931,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("adjust-poa-link")(expectedValue = false))
           }
           "The user has valid POAs but the FS is Disabled" in {
-            disable(AdjustPaymentsOnAccount)
+            disableFs(AdjustPaymentsOnAccount)
 
             Given("I wiremock stub a successful Income Source Details response with multiple business and property")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))

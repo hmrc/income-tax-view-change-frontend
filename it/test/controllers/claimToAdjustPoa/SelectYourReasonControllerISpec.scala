@@ -138,7 +138,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "AdjustPaymentsOnAccount FS is disabled" in {
 
-          disable(AdjustPaymentsOnAccount)
+          disableFs(AdjustPaymentsOnAccount)
 
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -277,7 +277,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "AdjustPaymentsOnAccount FS is disabled and redirect to the home page" in {
 
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.core.AccountingPeriodModel
@@ -111,7 +111,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "redirect to custom not found page" when {
       "the feature switch is off" in {
-        disable(CreditsRefundsRepay)
+        disableFs(CreditsRefundsRepay)
 
         stubAuthorisedAgentUser(authorised = true)
 

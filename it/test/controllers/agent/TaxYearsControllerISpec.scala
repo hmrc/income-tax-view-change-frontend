@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
 import models.core.AccountingPeriodModel
@@ -37,7 +37,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(ITSASubmissionIntegration)
+    disableFs(ITSASubmissionIntegration)
   }
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

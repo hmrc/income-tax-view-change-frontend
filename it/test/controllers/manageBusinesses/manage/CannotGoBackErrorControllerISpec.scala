@@ -59,7 +59,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   }
 
   def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
-    disable(IncomeSources)
+    disableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     lazy val result: WSResponse = incomeSourceType match {

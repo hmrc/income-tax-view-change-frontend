@@ -20,7 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -152,7 +152,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Business Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

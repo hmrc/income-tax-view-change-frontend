@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
@@ -207,7 +207,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
     "the user has obligations and the Opt Out feature switch disabled" in {
       stubAuthorisedAgentUser(authorised = true)
-      disable(OptOut)
+      disableFs(OptOut)
 
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel(

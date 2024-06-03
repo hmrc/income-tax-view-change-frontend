@@ -182,7 +182,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $HomeControllerShowUrl" when {
       "Income Sources Feature Switch is disabled" in {
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))

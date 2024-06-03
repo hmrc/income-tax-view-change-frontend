@@ -20,7 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -74,7 +74,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")
@@ -116,7 +116,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")
@@ -158,7 +158,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
       stubAuthorisedAgentUser(authorised = true)
 
       And("API 1771  returns a success response")

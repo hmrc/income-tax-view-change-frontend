@@ -21,7 +21,7 @@ import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.core.AccountingPeriodModel
@@ -115,10 +115,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the enter client utr page" when {
     s"return $OK" in {
-      disable(CutOverCredits)
-      disable(MFACreditsAndDebits)
+      disableFs(CutOverCredits)
+      disableFs(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
-      disable(PaymentHistoryRefunds)
+      disableFs(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
         response = incomeSourceDetailsModel
@@ -142,7 +142,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       enableFs(CutOverCredits)
       enableFs(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
-      disable(PaymentHistoryRefunds)
+      disableFs(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
         response = incomeSourceDetailsModel

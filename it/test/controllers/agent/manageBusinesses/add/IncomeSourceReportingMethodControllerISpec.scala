@@ -143,7 +143,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
-    //disable(TimeMachineAddYear)
+    //disableFs(TimeMachineAddYear)
     enableFs(IncomeSources)
     stubAuthorisedAgentUser(authorised = true)
 

@@ -87,7 +87,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
     }
     s"return status $SEE_OTHER" when {
       s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS disabled" in {
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         When(s"I call GET")
         val res = get("/adjust-poa/error-poa-not-updated")

@@ -45,7 +45,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(NavBarFs)
+    disableFs(NavBarFs)
   }
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
@@ -361,7 +361,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "ForecastCalculation feature" should {
       def testForecast(featureSwitchEnabled: Boolean): Unit = {
         Given("ForecastCalculation feature switch is set")
-        if (featureSwitchEnabled) enableFs(ForecastCalculation) else disable(ForecastCalculation)
+        if (featureSwitchEnabled) enableFs(ForecastCalculation) else disableFs(ForecastCalculation)
 
         And("Income Source Details is stubbed")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -1072,7 +1072,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
     "MFA Debits" should {
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
-        if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disableFs(MFACreditsAndDebits)
         setupMFADebitsTests()
         verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString))
       }
@@ -1188,7 +1188,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
       "not show" when {
         "The user has amendable POAs for the given tax year but the FS is Disabled" in {
-          disable(AdjustPaymentsOnAccount)
+          disableFs(AdjustPaymentsOnAccount)
 
           Given("Business details returns a successful response back")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)

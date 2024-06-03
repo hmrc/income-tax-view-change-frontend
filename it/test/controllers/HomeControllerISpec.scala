@@ -41,7 +41,7 @@ class HomeControllerISpec extends ComponentSpecBase {
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     "Authorised" should {
       "render the home page with the payment due date" in {
-        disable(NavBarFs)
+        disableFs(NavBarFs)
         enableFs(IncomeSources)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -86,7 +86,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
       "render the home page with Your Business tile when new IS journey FS enabled" in {
-        disable(NavBarFs)
+        disableFs(NavBarFs)
         enableFs(IncomeSources)
         enableFs(IncomeSourcesNewJourney)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -127,7 +127,7 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
 
       "render the ISE page when receive an error from the backend" in {
-        disable(NavBarFs)
+        disableFs(NavBarFs)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 

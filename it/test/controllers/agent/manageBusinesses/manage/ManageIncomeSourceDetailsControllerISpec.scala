@@ -85,7 +85,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enableFs(IncomeSources)
-        //disable(TimeMachineAddYear)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -158,7 +158,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enableFs(IncomeSources)
-        //disable(TimeMachineAddYear)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -292,7 +292,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enableFs(IncomeSources)
-        //disable(TimeMachineAddYear)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -412,7 +412,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enableFs(IncomeSources)
-        //disable(TimeMachineAddYear)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))

@@ -192,7 +192,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "Income Sources FS is Disabled" in {
 
         Given("Income Sources FS is disabled")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -302,7 +302,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
-        disable(IncomeSources)
+        disableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

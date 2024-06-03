@@ -17,7 +17,7 @@
 package controllers.agent
 
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoAAmendmentData
 import models.admin.AdjustPaymentsOnAccount
@@ -102,7 +102,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
     }
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")

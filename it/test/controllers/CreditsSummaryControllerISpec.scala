@@ -104,8 +104,8 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
 
     "display the credit summary page" when {
       "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
-        disable(MFACreditsAndDebits)
-        disable(CutOverCredits)
+        disableFs(MFACreditsAndDebits)
+        disableFs(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK,

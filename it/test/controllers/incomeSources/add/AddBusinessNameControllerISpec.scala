@@ -72,7 +72,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "303 SEE_OTHER - redirect to home page" when {
       "Income Sources FS disabled" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessNameShowUrl}")
@@ -150,7 +150,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "303 SEE_OTHER - redirect to home page" when {
       "Income Sources FS disabled" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessNameShowUrl}")

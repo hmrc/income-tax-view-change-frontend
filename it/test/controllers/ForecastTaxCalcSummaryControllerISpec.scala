@@ -111,7 +111,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
       s"return $NOT_FOUND when the forecast calculation fs is disabled" in {
         Given("I disable the forecast calculation fs")
-        disable(ForecastCalculation)
+        disableFs(ForecastCalculation)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due/forecast")
         val res = IncomeTaxViewChangeFrontend.getForecastTaxCalcSummary(testYear)

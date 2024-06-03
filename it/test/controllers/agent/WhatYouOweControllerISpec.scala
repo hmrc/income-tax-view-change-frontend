@@ -20,7 +20,7 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay}
 import models.core.AccountingPeriodModel
@@ -884,7 +884,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       )
     }
     "coding out is disabled" in {
-      disable(CodingOut)
+      disableFs(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
@@ -970,7 +970,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("adjust-poa-link")(expectedValue = false))
       }
       "The user has valid POAs but the FS is Disabled" in {
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")

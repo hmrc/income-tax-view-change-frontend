@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -82,7 +82,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessTradeControllerShowUrl}")
@@ -179,7 +179,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       "Income Sources FS disabled" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         stubAuthorisedAgentUser(true)
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessTradeUrl}")

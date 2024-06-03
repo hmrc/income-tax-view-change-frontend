@@ -107,7 +107,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "redirect to custom not found page" when {
       "the feature switch is off" in {
-        disable(CreditsRefundsRepay)
+        disableFs(CreditsRefundsRepay)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))

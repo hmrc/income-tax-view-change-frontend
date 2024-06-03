@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
+import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.PaymentAllocation
 import models.core.AccountingPeriodModel
@@ -43,7 +43,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(PaymentAllocation)
+    disableFs(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -146,7 +146,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       "the PaymentAllocation feature switch is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-        disable(PaymentAllocation)
+        disableFs(PaymentAllocation)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 

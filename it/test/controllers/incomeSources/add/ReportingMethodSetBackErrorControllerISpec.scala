@@ -70,7 +70,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
 
       And("API 1771  returns a success response")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -109,7 +109,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
 
       And("API 1771  returns a success response")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -148,7 +148,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
     }
     "Income Sources FS is disabled" in {
       Given("Income Sources FS is enabled")
-      disable(IncomeSources)
+      disableFs(IncomeSources)
 
       And("API 1771  returns a success response")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

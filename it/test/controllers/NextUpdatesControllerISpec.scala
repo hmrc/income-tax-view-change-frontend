@@ -230,7 +230,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a Opt Out Feature Switch Disabled" in {
-        disable(OptOut)
+        disableFs(OptOut)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

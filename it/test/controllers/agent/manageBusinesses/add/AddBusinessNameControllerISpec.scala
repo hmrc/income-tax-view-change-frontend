@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
@@ -95,7 +95,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessNameShowUrl}")
@@ -184,7 +184,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessNameShowUrl}")

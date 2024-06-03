@@ -90,7 +90,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     s"return status $SEE_OTHER" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
 
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         val res = get(url)
 
@@ -132,7 +132,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     s"return status $SEE_OTHER" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
 
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         val res = post(url)
 
