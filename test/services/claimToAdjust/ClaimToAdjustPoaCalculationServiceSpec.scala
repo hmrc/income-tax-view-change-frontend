@@ -45,7 +45,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
         val result = testClaimToAdjustPoaCalculationService.
           recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
-        whenReady(result) { res => res shouldBe Right(()) }
+        result.futureValue shouldBe Right(())
       }
     }
     "return an error" when {
@@ -54,9 +54,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
         val result = testClaimToAdjustPoaCalculationService.
           recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
-        whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("Unexpected error")).toString
-        }
+        result.futureValue.toString shouldBe Left(new Exception("Unexpected error")).toString
       }
     }
     "return an error" when {
@@ -65,9 +63,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
         val result = testClaimToAdjustPoaCalculationService.
           recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
-        whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("Invalid JSON")).toString
-        }
+        result.futureValue.toString shouldBe Left(new Exception("Invalid JSON")).toString
       }
     }
     "return an error" when {
@@ -76,9 +72,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
         val result = testClaimToAdjustPoaCalculationService.
           recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
-        whenReady(result) {
-          result => result.toString shouldBe Left(new Exception("Unexpected error")).toString
-        }
+        result.futureValue.toString shouldBe Left(new Exception("Unexpected error")).toString
       }
     }
   }

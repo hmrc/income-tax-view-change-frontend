@@ -53,7 +53,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
     val homePage = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear)))
+    val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
 

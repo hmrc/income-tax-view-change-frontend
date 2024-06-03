@@ -420,6 +420,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainTransaction" -> "4910",
         "transactionId" -> "1040000123",
         "chargeType" -> ITSA_NI,
+        "chargeReference" -> "ABCD1234",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
@@ -431,6 +432,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 1",
         "mainTransaction" -> "4920",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -447,6 +449,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 2",
         "mainTransaction" -> "4930",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1001,6 +1004,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> "9999",
         "mainType" -> "Payment On Account",
+        "chargeReference" -> "ABCD1234",
         "transactionId" -> "PAYID01",
         "outstandingAmount" -> -outstandingAmount,
         "originalAmount" -> -originalAmount,
@@ -1019,6 +1023,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Balancing Charge",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
@@ -1034,6 +1039,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 1",
         "mainTransaction" -> "4920",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> NIC4_SCOTLAND,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
@@ -1053,6 +1059,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 2",
         "mainTransaction" -> "4930",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> NIC4_SCOTLAND,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
@@ -1084,7 +1091,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> "2019",
         "documentId" -> documentId,
         "documentDate" -> "2018-02-14",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> "ITSA - POA 1",
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
         "reversalReason" -> "Customer Request",
@@ -1163,6 +1170,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1177,6 +1185,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "ABCD1235",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1195,6 +1204,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "ABCD1236",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1213,6 +1223,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Overpayment Relief",
         "mainTransaction" -> "4004",
         "transactionId" -> "1040000126",
+        "chargeReference" -> "ABCD1237",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1227,6 +1238,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000127",
+        "chargeReference" -> "ABCD1238",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1308,6 +1320,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "ABCD1234",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1322,6 +1335,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "ABCD1235",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1340,6 +1354,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "ITSA Cutover Credits",
         "mainTransaction" -> "6110",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "ABCD1236",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1358,6 +1373,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000126",
+        "chargeReference" -> "ABCD1237",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -1372,6 +1388,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge Credit",
         "mainTransaction" -> "4905",
         "transactionId" -> "1040000127",
+        "chargeReference" -> "ABCD1238",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(

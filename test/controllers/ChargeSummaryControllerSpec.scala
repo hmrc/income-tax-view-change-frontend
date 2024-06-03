@@ -19,8 +19,8 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.FinancialDetailsConnector
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
+import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
+import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -54,18 +54,20 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     financialDetail(taxYear = taxYear, chargeType = NIC4_WALES, dunningLock = Some("Stand over order"))
   )
 
-  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
+  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
               isAgent: Boolean = false) {
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
     val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+    val mockChargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))
 
-    when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
+    when(mockChargeHistoryConnector.getChargeHistory(any(), any())(any()))
       .thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
@@ -81,11 +83,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
       mockFinancialDetailsConnector,
+      mockChargeHistoryConnector,
       app.injector.instanceOf[views.html.ChargeSummary],
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
       mockAuthService,
-      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError]
+      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
+      app.injector.instanceOf[FeatureSwitchPredicate]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[DateService],

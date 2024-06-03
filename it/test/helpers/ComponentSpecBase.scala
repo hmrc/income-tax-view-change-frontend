@@ -44,7 +44,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -125,7 +125,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
-  val csbTestUser: MtdItUser[_] = MtdItUser(
+  implicit val csbTestUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
@@ -565,8 +565,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
-
-    def confirmOneYearOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
   }
 
 
@@ -640,6 +638,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/review-confirm-taxyear", additionalCookies)
+    }
+
+    def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
+
+    def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/confirmed", additionalCookies)
     }
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")

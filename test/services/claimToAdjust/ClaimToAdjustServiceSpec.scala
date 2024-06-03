@@ -17,6 +17,7 @@
 package services.claimToAdjust
 
 import auth.MtdItUser
+import connectors.ChargeHistoryConnector
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
@@ -28,9 +29,11 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+
 import scala.language.reflectiveCalls
 import java.time.LocalDate
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import org.mockito.Mockito.mock
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService with MockCalculationListConnector {
 
@@ -44,7 +47,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         currentDate.isBefore(lastDayOfTaxYear)
       }
     }
-    val testClaimToAdjustService = new ClaimToAdjustService(mockFinancialDetailsConnector, mockCalculationListConnector, mockDateService)
+    val mockChargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+    val testClaimToAdjustService = new ClaimToAdjustService(mockFinancialDetailsConnector, mockChargeHistoryConnector, mockCalculationListConnector, mockDateService)
   }
 
   val testUser: MtdItUser[_] = MtdItUser(

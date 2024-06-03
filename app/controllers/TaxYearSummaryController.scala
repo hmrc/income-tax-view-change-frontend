@@ -74,7 +74,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar andThen featureSwitchPredicate
+    retrieveNinoWithIncomeSourcesNoCache andThen featureSwitchPredicate andThen retrieveBtaNavBar
 
   private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
