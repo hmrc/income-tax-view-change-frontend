@@ -101,7 +101,6 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
         }
         setMongoData(Some(newData))
           .flatMap(v => {
-            println("AAAAA" + newData)
             if (v)
               Future.successful(Right(()))
             else {
