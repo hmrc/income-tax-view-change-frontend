@@ -2014,7 +2014,7 @@ optOut.confirmSingleYearOptOut.form.title                   = Do you still want 
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
-
+optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report annually from
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting

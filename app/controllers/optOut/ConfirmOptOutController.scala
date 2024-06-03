@@ -19,22 +19,30 @@ package controllers.optOut
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseSuccess, optOutUpdateReason}
 import controllers.agent.predicates.ClientConfirmedController
 import models.optout.OptOutCheckpointViewModel
+import models.optout.OptOutSessionData
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.UIJourneySessionDataRepository
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
-import views.html.optOut.ConfirmOptOut
+import utils.{AuthenticatorPredicate, OptOutJourney}
+import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear, OptOutChooseTaxYear}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
+                                        multiyearCheckpointView: ConfirmOptOutMultiYear,
+                                        optOutChooseTaxYearView: OptOutChooseTaxYear,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        repository: UIJourneySessionDataRepository)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -80,5 +88,36 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
         case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
         case _ => itvcErrorHandler.showInternalServerError()
       }
+  }
+
+  def showMultiYearConfirm(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withRecover(isAgent) {
+        Future.successful(Ok(multiyearCheckpointView(isAgent)))
+      }
+  }
+
+  def submitMultiYearChoice(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+    implicit user =>
+
+      val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Result = formWithError => BadRequest(optOutChooseTaxYearView(isAgent, form = formWithError))
+      val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Result = form => {
+
+        //save choice
+        val data = UIJourneySessionData(
+          sessionId = hc.sessionId.get.value,
+          journeyType = OptOutJourney.Name,
+          optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = form.choice))
+        )
+        repository.set(data)
+
+        //redirect
+        val nextPage = controllers.optOut.routes.ConfirmOptOutController.showMultiYearConfirm(isAgent)
+        Logger("application").info(s"redirecting to : $nextPage")
+        Redirect(nextPage)
+      }
+      val submission = ConfirmOptOutMultiTaxYearChoiceForm().bindFromRequest().fold(onError, onSuccess)
+
+      Future.successful(submission)
   }
 }

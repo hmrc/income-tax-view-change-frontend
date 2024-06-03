@@ -18,6 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import services.optout.OptOutTaxYear
+@import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,7 +30,7 @@
         govukTable: GovukTable,
 )
 
-@(availableOptOutTaxYear: Seq[OptOutTaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(availableOptOutTaxYear: Seq[OptOutTaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false, form: Form[ConfirmOptOutMultiTaxYearChoiceForm])(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
@@ -47,54 +48,54 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
-    ) {
+) {
 
-@h1(messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
+    @h1(messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
-@p(id=Some("description1")) {
-    @messages("optout.chooseOptOutTaxYear.desc1")
-}
+    @p(id=Some("description1")) {
+        @messages("optout.chooseOptOutTaxYear.desc1")
+    }
 
-@p(id=Some("description2")) {
-    @messages("optout.chooseOptOutTaxYear.desc2")
-}
+    @p(id=Some("description2")) {
+        @messages("optout.chooseOptOutTaxYear.desc2")
+    }
 
-<ul class="govuk-list govuk-list--bullet">
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p1")</li>
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p2")</li>
-</ul>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("optout.chooseOptOutTaxYear.desc2.p1")</li>
+        <li>@messages("optout.chooseOptOutTaxYear.desc2.p2")</li>
+    </ul>
 
-<div class="govuk-form-group ">
-    <fieldset class="govuk-fieldset">
-        <legend id="whichTaxYear" class="govuk-fieldset__legend govuk-fieldset__legend--m">
+    <div class="govuk-form-group ">
+        <fieldset class="govuk-fieldset">
+            <legend id="whichTaxYear" class="govuk-fieldset__legend govuk-fieldset__legend--m">
             @messages("optout.chooseOptOutTaxYear.whichTaxYear")
-        </legend>
+            </legend>
 
-        <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-radios" data-module="govuk-radios">
             @availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="radio@{index + 1}" name="optoutYear" type="radio" value="@optOutTaxYear.taxYear.startYear">
                 <label class="govuk-label govuk-radios__label" for="radio@{index + 1}">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.taxYear.startYear}", s"${optOutTaxYear.taxYear.endYear}")
+                @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.taxYear.startYear}", s"${optOutTaxYear.taxYear.endYear}")
                 </label>
                 @if(getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear) > 0) {
                     <div id="signIn-item-hint" class="govuk-hint govuk-radios__hint">
-                        @messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear))
+                    @messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear))
                     </div>
                 }
             </div>
             }
-        </div>
-    </fieldset>
-</div>
+            </div>
+        </fieldset>
+    </div>
 
-<div class="govuk-button-group">
-    <a class="govuk-button" role="button" data-module="govuk-button" id="continue-button" href="@confirmOptOutURL" data-module="govuk-button">
+    <div class="govuk-button-group">
+        <a class="govuk-button" role="button" data-module="govuk-button" id="continue-button" href="@confirmOptOutURL" data-module="govuk-button">
         @messages("optout.chooseOptOutTaxYear.continue")
-    </a>
-    <a class="govuk-link" id="cancel-button" href="#">
+        </a>
+        <a class="govuk-link" id="cancel-button" href="#">
         @messages("optout.chooseOptOutTaxYear.cancel")
-    </a>
-</div>
+        </a>
+    </div>
 
 }
