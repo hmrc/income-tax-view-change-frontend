@@ -21,12 +21,8 @@ import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.optout._
-import models.itsaStatus.ITSAStatus.{Annual, Mandated}
-import models.itsaStatus.StatusDetail
 import models.nextUpdates.ObligationsModel
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
-import play.api.Logger
+import models.optout._
 import play.mvc.Http
 import services.optout.OptOutService.combineByReturningAnyFailureFirstOrAnySuccess
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
