@@ -25,13 +25,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
-import views.html.claimToAdjustPoa.SuccessView
+import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                    val view: SuccessView,
+                                                    val view: PaymentsOnAccountAdjustedView,
                                                     val sessionService: PaymentOnAccountSessionService,
                                                     val claimToAdjustService: ClaimToAdjustService,
                                                     auth: AuthenticatorPredicate,
