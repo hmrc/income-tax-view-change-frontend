@@ -55,17 +55,6 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  def getChargeHistoryDetails(mtdBsa: String, docNumber: String)
-                             (implicit hc: HeaderCarrier): Future[Option[List[ChargeHistoryModel]]] = {
-    financialDetailsConnector.getChargeHistory(mtdBsa, docNumber) flatMap {
-      case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
-
-      case error: ChargesHistoryErrorModel =>
-        Logger("application").error(s"$error")
-        Future.failed(new InternalServerException("Failed to retrieve successful charge history"))
-    }
-  }
-
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
     Logger("application").debug(

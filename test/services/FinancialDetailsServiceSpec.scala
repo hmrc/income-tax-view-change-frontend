@@ -143,8 +143,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 200.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -155,8 +155,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", None, None, 0, 0, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
@@ -176,8 +176,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", None, None, 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
-              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", None, None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(7)))))),
+              FinancialDetail("2018", None, None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -188,8 +188,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), 100.00, 0, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
             )
           )
 
@@ -209,8 +209,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(1)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(1))))))
             )
           )
 
@@ -221,8 +221,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), 100.00, 0.00, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
             ),
             financialDetails = List(
-              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
-              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
+              FinancialDetail("2018", Some("SA Payment on Account 1"), Some("4920"), Some("testTransactionId1"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+              FinancialDetail("2018", Some("SA Payment on Account 2"), Some("4930"), Some("testTransactionId2"), Some(fixedDate), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(fixedDate.minusDays(2))))))
             )
           )
 
@@ -245,48 +245,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
           result shouldBe None
         }
-      }
-    }
-  }
-
-  "getChargeHistoryDetails" when {
-
-    "the connector returns a successful ChargesHistoryModel" should {
-      "return the chargeHistoryDetails from connector response" in {
-        val docNumber = "chargeId"
-        val hc = implicitly[HeaderCarrier]
-
-        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
-          .thenReturn(Future.successful(testValidChargeHistoryModel))
-
-        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, docNumber)(hc)
-
-        result.futureValue shouldBe testValidChargeHistoryModel.chargeHistoryDetails
-        verify(mockFinancialDetailsConnector).getChargeHistory(testMtditid, docNumber)(hc)
-      }
-    }
-
-    "the connector returns an erroneous ChargesHistoryErrorModel" should {
-      "generate a failure with InternalServerException" in {
-        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
-          .thenReturn(Future.successful(testChargeHistoryErrorModel))
-
-        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
-
-        result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "Failed to retrieve successful charge history"
-      }
-    }
-
-    "the connector call fails" should {
-      "propagate a failure from the connector" in {
-        val emulatedConnectorFailure = Future.failed(new RuntimeException)
-        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
-          .thenReturn(emulatedConnectorFailure)
-
-        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
-
-        result shouldBe emulatedConnectorFailure
       }
     }
   }
@@ -630,5 +588,4 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
     }
   }
-
 }
