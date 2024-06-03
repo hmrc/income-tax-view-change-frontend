@@ -59,7 +59,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     "render the Add Business trade page for an Individual" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -98,7 +98,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   s"calling POST ${addBusinessTradeSubmitUrl}" should {
     s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
       "User is authorised and business trade is valid" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -123,7 +123,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       }
     }
     "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -149,7 +149,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     "render the Change Business Trade page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -190,7 +190,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   s"calling POST ${submitChangeBusinessTradeUrl}" should {
     s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
       "User is authorised and business trade is valid" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -215,7 +215,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       }
     }
     "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
       await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",

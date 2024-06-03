@@ -47,7 +47,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
     controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))

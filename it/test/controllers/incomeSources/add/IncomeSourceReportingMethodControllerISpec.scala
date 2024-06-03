@@ -140,7 +140,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
     //disable(TimeMachineAddYear)
-    enable(IncomeSources)
+    enableFs(IncomeSources)
 
     And("API 1171 getIncomeSourceDetails returns a success response")
     (incomeSourceType, scenario.isWithinLatencyPeriod) match {
@@ -179,8 +179,8 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def setupStubErrorCall(scenario: APIErrorScenario, incomeSourceType: IncomeSourceType): Unit = {
     Given("Income Sources FS is enabled")
-    enable(IncomeSources)
-    //enable(TimeMachineAddYear)
+    enableFs(IncomeSources)
+    //enableFs(TimeMachineAddYear)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 

@@ -21,6 +21,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
@@ -160,7 +161,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
     "the user has obligations and the Opt Out feature switch enabled" in {
       stubAuthorisedAgentUser(authorised = true)
-      enable(OptOut)
+      enableFs(OptOut)
       val currentTaxYear = dateService.getCurrentTaxYearEnd
       val previousYear = currentTaxYear - 1
       val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -247,7 +248,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           stubAuthorisedAgentUser(authorised = true)
-          enable(OptOut)
+          enableFs(OptOut)
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)
           val currentObligations: ObligationsModel = ObligationsModel(Seq(

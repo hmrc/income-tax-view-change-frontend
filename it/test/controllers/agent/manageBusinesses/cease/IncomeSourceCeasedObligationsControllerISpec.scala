@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -58,7 +59,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $businessCeasedObligationsShowUrl")
 
@@ -91,7 +92,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $ukPropertyCeasedObligationsShowUrl")
 
@@ -124,7 +125,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $foreignPropertyCeasedObligationsShowUrl")
 

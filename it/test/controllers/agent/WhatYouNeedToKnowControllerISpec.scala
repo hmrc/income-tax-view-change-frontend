@@ -17,6 +17,7 @@
 package controllers.agent
 
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoAAmendmentData
 import models.admin.AdjustPaymentsOnAccount
@@ -41,7 +42,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
   s"calling GET $whatYouNeedToKnowUrl" should {
     s"return status $OK and render the What You Need To Know page (with correct link)" when {
       "User is authorised and has originalAmount >= relevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -70,7 +71,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
         continueButton.attr("href") shouldBe selectReasonUrl
       }
       "User is authorised and has originalAmount < relevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -129,7 +130,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase{
   }
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
-      enable(AdjustPaymentsOnAccount)
+      enableFs(AdjustPaymentsOnAccount)
       stubAuthorisedAgentUser(authorised = true)
 
       And("I wiremock stub empty financial details response")

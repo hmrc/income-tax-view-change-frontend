@@ -18,6 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSources
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
@@ -33,7 +34,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
       "Agent is authorised" in {
         Given("I wiremock stub a successful Income Source Details response")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
@@ -53,7 +54,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
     "render the change business address page" when {
       "Agent is authorised" in {
         Given("I wiremock stub a successful Income Source Details response")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 

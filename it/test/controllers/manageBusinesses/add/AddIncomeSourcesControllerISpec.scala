@@ -41,7 +41,7 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
     "render the Add Income Source page for an Individual" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         When(s"I call GET $showIndividualAddIncomeSourceControllerUrl")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getAddIncomeSource()

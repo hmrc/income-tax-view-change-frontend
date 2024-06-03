@@ -41,7 +41,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   }
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType))))
@@ -77,7 +77,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   }
 
   def runISETest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Manage, incomeSourceType))))
@@ -96,7 +96,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   s"calling GET ${url(UkProperty)}" should {
     "return 200 OK" when {
       "FS enabled - UK Property" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, UkProperty))))
 
@@ -121,7 +121,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   s"calling GET ${url(ForeignProperty)}" should {
     "return 200 OK" when {
       "FS enabled - Foreign Property" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, ForeignProperty))))
 

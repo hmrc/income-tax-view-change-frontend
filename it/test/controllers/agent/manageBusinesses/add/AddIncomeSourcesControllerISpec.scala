@@ -18,6 +18,7 @@ package controllers.agent.manageBusinesses.add
 
 import models.admin.IncomeSources
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid}
@@ -41,7 +42,7 @@ class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
     "render the Add Income Source page for an Agent" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         When(s"I call GET ${showAgentAddIncomeSourceControllerUrl}")

@@ -43,9 +43,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     "display the credit and refund page with all credits/refund types and audit event" when {
 
       "a valid response is received and feature switches are enabled" in {
-        enable(CreditsRefundsRepay)
-        enable(CutOverCredits)
-        enable(MFACreditsAndDebits)
+        enableFs(CreditsRefundsRepay)
+        enableFs(CutOverCredits)
+        enableFs(MFACreditsAndDebits)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)

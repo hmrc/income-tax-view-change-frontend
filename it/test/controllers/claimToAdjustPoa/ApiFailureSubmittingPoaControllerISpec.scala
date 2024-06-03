@@ -74,7 +74,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
   "calling GET" should {
     s"return status $OK" when {
       s"user visits $apiFailureSubmittingPoaUrl with the AdjustPaymentsOnAccount FS enabled" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         When(s"I call GET")
         val res = get("/adjust-poa/error-poa-not-updated")

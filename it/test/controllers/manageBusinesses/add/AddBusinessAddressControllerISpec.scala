@@ -32,7 +32,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
     "render the add business address page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
@@ -52,7 +52,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
     "render the change business address page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")

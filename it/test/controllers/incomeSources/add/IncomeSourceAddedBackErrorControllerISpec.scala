@@ -51,7 +51,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $selfEmploymentBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $ukPropertyBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -131,7 +131,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   s"calling GET $foreignPropertyBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

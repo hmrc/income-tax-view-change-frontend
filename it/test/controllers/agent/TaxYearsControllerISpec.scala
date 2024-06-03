@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
 import models.core.AccountingPeriodModel
@@ -153,7 +153,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears.url}" should {
     "return the tax years page" when {
       "all calls were successful and has accounting period end date" in {
-        enable(ITSASubmissionIntegration)
+        enableFs(ITSASubmissionIntegration)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

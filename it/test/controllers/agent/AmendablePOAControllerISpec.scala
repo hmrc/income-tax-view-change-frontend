@@ -18,6 +18,7 @@ package controllers.agent
 
 import models.admin.AdjustPaymentsOnAccount
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
@@ -32,7 +33,7 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
     s"return status $OK and render the Adjusting your payments on account page" when {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -86,7 +87,7 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
       stubAuthorisedAgentUser(authorised = true)
-      enable(AdjustPaymentsOnAccount)
+      enableFs(AdjustPaymentsOnAccount)
 
       And("I wiremock stub empty financial details response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(

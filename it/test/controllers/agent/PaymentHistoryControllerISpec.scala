@@ -21,6 +21,7 @@ import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.core.AccountingPeriodModel
@@ -138,8 +139,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     }
 
     s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
-      enable(CutOverCredits)
-      enable(MFACreditsAndDebits)
+      enableFs(CutOverCredits)
+      enableFs(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
       disable(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

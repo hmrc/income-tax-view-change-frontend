@@ -41,7 +41,7 @@ class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
     "render the manage your businesses page for an Individual" when {
       "User is authorised" in {
         Given("I wiremock stub a successful manage your businesses response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getManageYourBusinesses
@@ -64,7 +64,7 @@ class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
 
       "User is authorised with different data" in {
         Given("I wiremock stub a successful manage your businesses response with a foreign property and a ceased business")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
         val res = IncomeTaxViewChangeFrontendManageBusinesses.getManageYourBusinesses

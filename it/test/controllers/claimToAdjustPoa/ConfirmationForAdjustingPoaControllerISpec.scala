@@ -76,7 +76,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     s"return status $OK" when {
       "non-crystallised financial details are found" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
         sessionService.setMongoData(Some(validSession))
 
@@ -103,7 +103,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     s"return status $INTERNAL_SERVER_ERROR" when {
       "an error response is returned when requesting financial details" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
         sessionService.setMongoData(Some(validSession))
 
@@ -115,7 +115,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       }
       "no non-crystallised financial details are found" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
         sessionService.setMongoData(Some(validSession))
 
@@ -143,7 +143,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       }
       "an error response is returned when submitting POA" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
         sessionService.setMongoData(Some(validSession))
 
@@ -162,7 +162,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
       "a success response is returned when submitting POA" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
         sessionService.setMongoData(Some(validSession))
 
@@ -184,7 +184,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
     s"return status $INTERNAL_SERVER_ERROR" when {
       "an error response is returned when requesting financial details" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
         sessionService.setMongoData(Some(validSession))
 
@@ -196,7 +196,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       }
       "no non-crystallised financial details are found" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
         sessionService.setMongoData(Some(validSession))
 
@@ -208,7 +208,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
       }
       "some session data is missing" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
         sessionService.setMongoData(Some(
           validSession.copy(poaAdjustmentReason = None)

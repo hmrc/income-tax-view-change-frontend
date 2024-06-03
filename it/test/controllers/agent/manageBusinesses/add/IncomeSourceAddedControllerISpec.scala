@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -78,7 +79,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowAgentUrl")
 
@@ -118,7 +119,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $addIncomeSourceAgentUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -138,7 +139,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowAgentUrl")
 
@@ -174,7 +175,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -192,7 +193,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the UK Property Added Page" when {
       "UK Property start date is provided" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -219,7 +220,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render error page" when {
       "UK property income source is missing trading start date" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))

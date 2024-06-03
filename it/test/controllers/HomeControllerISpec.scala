@@ -42,7 +42,7 @@ class HomeControllerISpec extends ComponentSpecBase {
     "Authorised" should {
       "render the home page with the payment due date" in {
         disable(NavBarFs)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -87,8 +87,8 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
       "render the home page with Your Business tile when new IS journey FS enabled" in {
         disable(NavBarFs)
-        enable(IncomeSources)
-        enable(IncomeSourcesNewJourney)
+        enableFs(IncomeSources)
+        enableFs(IncomeSourcesNewJourney)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -150,7 +150,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
 //    "low confidence level user" should {
 //      "redirect to ivuplift service" in {
-//        enable(IvUplift)
+//        enableFs(IvUplift)
 //        AuthStub.stubAuthorised(Some(50))
 //
 //        When(s"I call GET /report-quarterly/income-and-expenses/view")

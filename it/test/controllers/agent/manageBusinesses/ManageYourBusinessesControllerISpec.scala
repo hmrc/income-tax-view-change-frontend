@@ -18,6 +18,7 @@ package controllers.agent.manageBusinesses
 
 import models.admin.IncomeSources
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid}
@@ -42,7 +43,7 @@ class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful manage your businesses response with multiple businesses and a uk property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
         val res = IncomeTaxViewChangeFrontend.getManageYourBusinesses(clientDetailsWithStartDate)
@@ -66,7 +67,7 @@ class ManageYourBusinessesControllerISpec extends ComponentSpecBase {
       "User is authorised with different data" in {
         Given("I wiremock stub a successful manage your businesses response with a foreign property and a ceased business")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
         val res = IncomeTaxViewChangeFrontend.getManageYourBusinesses(clientDetailsWithStartDate)

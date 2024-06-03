@@ -361,7 +361,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "ForecastCalculation feature" should {
       def testForecast(featureSwitchEnabled: Boolean): Unit = {
         Given("ForecastCalculation feature switch is set")
-        if (featureSwitchEnabled) enable(ForecastCalculation) else disable(ForecastCalculation)
+        if (featureSwitchEnabled) enableFs(ForecastCalculation) else disable(ForecastCalculation)
 
         And("Income Source Details is stubbed")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -577,7 +577,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
 
       "should show user has Coding out that is requested and immediately rejected by NPS" in {
-        enable(CodingOut)
+        enableFs(CodingOut)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -629,7 +629,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show user has Coding out that has been accepted and rejected by NPS part way through the year" in {
-        enable(CodingOut)
+        enableFs(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -682,7 +682,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
 
       "should show at crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in {
-        enable(CodingOut)
+        enableFs(CodingOut)
 
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -1072,7 +1072,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
     "MFA Debits" should {
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
-        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
         setupMFADebitsTests()
         verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString))
       }
@@ -1163,7 +1163,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "Claim to adjust POA section" should {
       "show" when {
         "The user has amendable POAs for the given tax year and the FS is Enabled" in {
-          enable(AdjustPaymentsOnAccount)
+          enableFs(AdjustPaymentsOnAccount)
 
           Given("Business details returns a successful response back")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
@@ -1211,7 +1211,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             isElementVisibleById("adjust-poa-link")(expectedValue = false))
         }
         "The user has no amendable POAs and the FS is Enabled" in {
-          enable(AdjustPaymentsOnAccount)
+          enableFs(AdjustPaymentsOnAccount)
 
           Given("Business details returns a successful response back")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)

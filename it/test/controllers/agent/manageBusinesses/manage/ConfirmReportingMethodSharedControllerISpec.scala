@@ -22,6 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
@@ -113,7 +114,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $confirmReportingMethodShowUKPropertyUrl")
 
@@ -146,7 +147,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $confirmReportingMethodShowForeignPropertyUrl")
 
@@ -178,7 +179,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -236,7 +237,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -266,7 +267,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -319,7 +320,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-FP",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))
@@ -346,7 +347,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-UK",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testMtditid), Some(annual), Some(2024))))))

@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -80,7 +81,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Business Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -103,7 +104,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -128,7 +129,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -152,7 +153,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
         disable(IncomeSources)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -183,7 +184,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("08"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -205,7 +206,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -228,7 +229,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date UK Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -251,7 +252,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -273,7 +274,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -295,7 +296,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date UK Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -325,7 +326,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -347,7 +348,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -369,7 +370,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Foreign Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -392,7 +393,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -414,7 +415,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -436,7 +437,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Foreign Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 
@@ -465,7 +466,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -487,7 +488,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 

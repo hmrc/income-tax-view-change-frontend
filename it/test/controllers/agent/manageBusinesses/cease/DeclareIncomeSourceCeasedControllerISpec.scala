@@ -30,6 +30,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentIdHashed, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import controllers.manageBusinesses.cease.routes._
+import helpers.servicemocks.AuthStub.enableFs
 import play.api.http.Status
 
 class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
@@ -70,7 +71,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the UK Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareUKPropertyCeasedUrl")
@@ -89,7 +90,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareUKPropertyCeasedUrl" should {
     s"redirect to $showUKPropertyEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -108,7 +109,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -127,7 +128,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the Foreign Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareForeignPropertyCeasedUrl")
@@ -146,7 +147,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareForeignPropertyCeasedUrl" should {
     s"return status: ${Status.SEE_OTHER}: redirect to $showForeignPropertyEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -165,7 +166,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -185,7 +186,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     s"return status: ${Status.OK}: render the Cease Sole Trader Business Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareSelfEmploymentCeasedUrl")
@@ -204,7 +205,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST $submitDeclareSelfEmploymentCeasedUrl" should {
     s"return status: ${Status.SEE_OTHER}: redirect to $showSelfEmploymentEndDateUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -223,7 +224,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
     }
     s"return status: ${Status.BAD_REQUEST}" when {
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 

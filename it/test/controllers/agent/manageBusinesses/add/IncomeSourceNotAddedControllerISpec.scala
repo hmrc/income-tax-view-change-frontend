@@ -38,7 +38,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $selfEmploymentNotSavedErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")
@@ -75,7 +75,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $ukPropertyNotSavedErrorUrl" should {
     "render the UK Property not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")
@@ -112,7 +112,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
   s"calling GET $foreignPropertyNotSavedErrorUrl" should {
     "render the Foreign property not added error page" when {
       "Income Sources FS is enabled" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
 
         And("API 1771  returns a success response")

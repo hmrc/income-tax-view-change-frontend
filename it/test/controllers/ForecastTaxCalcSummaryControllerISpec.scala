@@ -87,7 +87,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
       "return the forecast tax calc summary page and audit event when the forecast calculation fs is enabled" in {
 
         Given("I enable the forecast calculation fs")
-        enable(ForecastCalculation)
+        enableFs(ForecastCalculation)
 
         And("I stub a successful calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(

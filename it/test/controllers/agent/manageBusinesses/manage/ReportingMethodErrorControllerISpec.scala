@@ -19,6 +19,7 @@ package controllers.agent.manageBusinesses.manage
 import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status
@@ -73,7 +74,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -95,7 +96,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -119,7 +120,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -141,7 +142,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -165,7 +166,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -190,7 +191,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))

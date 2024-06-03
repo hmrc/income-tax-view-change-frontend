@@ -69,7 +69,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "Income Sources FS is enabled" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -89,7 +89,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "the user does not have a UK property Income Source" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -111,7 +111,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "Income Sources FS is enabled" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -134,7 +134,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "Sole Trader Income Source Id does not exist" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(None)))))
@@ -161,7 +161,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "Income Sources FS is enabled" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -181,7 +181,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
       "the user does not have a Foreign property Income Source" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

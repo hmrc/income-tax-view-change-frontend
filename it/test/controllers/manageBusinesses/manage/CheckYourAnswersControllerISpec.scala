@@ -107,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $checkYourAnswersShowUKPropertyUrl")
 
@@ -137,7 +137,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $checkYourAnswersShowForeignPropertyUrl")
 
@@ -166,7 +166,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "all session parameters are valid" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
@@ -220,7 +220,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -248,7 +248,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -275,7 +275,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       "submitted with valid session data" in {
 
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))

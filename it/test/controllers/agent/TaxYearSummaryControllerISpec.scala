@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer, titleTechError}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits}
@@ -648,7 +648,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "MFA Debits" when {
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
         disable(AdjustPaymentsOnAccount)
-        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
         stubAuthorisedAgentUser(authorised = true)
         setupMFADebitsTests()
 
@@ -742,7 +742,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "Claim to adjust POA section" should {
       "show" when {
         "The user has amendable POAs for the given tax year and the FS is Enabled" in {
-          enable(AdjustPaymentsOnAccount)
+          enableFs(AdjustPaymentsOnAccount)
           stubAuthorisedAgentUser(authorised = true)
 
           Given("Business details returns a successful response back")
@@ -792,7 +792,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             isElementVisibleById("adjust-poa-link")(expectedValue = false))
         }
         "The user has no amendable POAs and the FS is Enabled" in {
-          enable(AdjustPaymentsOnAccount)
+          enableFs(AdjustPaymentsOnAccount)
           stubAuthorisedAgentUser(authorised = true)
 
           Given("Business details returns a successful response back")

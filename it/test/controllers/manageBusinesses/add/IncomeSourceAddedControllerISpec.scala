@@ -77,7 +77,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the Business Added page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $incomeSourceAddedSelfEmploymentShowUrl")
 
@@ -116,7 +116,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $addIncomeSourceUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -133,7 +133,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the UK Property Added Page" when {
       "UK Property start date is provided" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -161,7 +161,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render error page" when {
       "UK property income source is missing trading start date" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
@@ -203,7 +203,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     "render the Foreign Property Added obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowUrl")
 
@@ -237,7 +237,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
     s"redirect to $addIncomeSourceShowUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 

@@ -68,7 +68,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -101,7 +101,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return an error" when {
       "there is no incomeSourceId in the session storage" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -128,7 +128,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageUKObligationsShowUrl")
 
@@ -164,7 +164,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "render the self employment obligations page" when {
       "given valid url params" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageFPObligationsShowUrl")
 
@@ -200,7 +200,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     s"redirect to $manageIncomeSourcesShowUrl" when {
       "called" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

@@ -55,7 +55,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "render the Add Business Name page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addBusinessNameShowUrl")
@@ -89,7 +89,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   s"calling POST ${addBusinessNameSubmitUrl}" should {
     s"303 SEE_OTHER and redirect to $addBusinessStartDateUrl" when {
       "User is authorised and business name is valid" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -108,7 +108,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       }
     }
     "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {
@@ -131,7 +131,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "render the Add Business Name page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $changeBusinessNameShowUrl")
@@ -166,7 +166,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   s"calling POST ${changeBusinessNameSubmitUrl}" should {
     s"303 SEE_OTHER and redirect to $checkBusinessDetailsUrl" when {
       "User is authorised and business name is valid" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -186,7 +186,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       }
     }
     "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {

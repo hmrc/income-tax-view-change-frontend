@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -108,7 +109,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addBusinessStartDateCheckShowUrl")
@@ -132,7 +133,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -155,7 +156,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -177,7 +178,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -196,7 +197,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         stubAuthorisedAgentUser(authorised = true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -215,7 +216,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $foreignPropertyStartDateCheckShowUrl")
@@ -239,7 +240,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       "form is filled correctly with input Yes" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
@@ -258,7 +259,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       "form is filled correctly with input No" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
@@ -278,7 +279,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       "form is filled incorrectly" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
@@ -299,7 +300,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $checkUKPropertyStartDateShowUrl")
@@ -320,7 +321,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       "user selects 'yes' the date entered is correct" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
@@ -339,7 +340,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       s"redirect to $addUKPropertyStartDateShowUrl" when {
         "user selects 'no' the date entered is not correct" in {
           stubAuthorisedAgentUser(authorised = true)
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
@@ -358,7 +359,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         "user does not select anything" in {
 
           stubAuthorisedAgentUser(authorised = true)
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
@@ -380,7 +381,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addBusinessStartDateCheckChangeShowUrl")
@@ -404,7 +405,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addForeignPropertyStartDateCheckChangeShowUrl")
@@ -428,7 +429,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
@@ -452,7 +453,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addBusinessStartDateCheckChangeSubmitUrl")
@@ -479,7 +480,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         When(s"I call GET $addForeignPropertyStartDateCheckChangeSubmitUrl")
@@ -506,7 +507,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")

@@ -21,6 +21,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
@@ -72,7 +73,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addBusinessNameShowUrl")
@@ -113,7 +114,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       "User is authorised and business name is valid" in {
         stubAuthorisedAgentUser(true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -135,7 +136,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
 
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {
@@ -161,7 +162,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $changeBusinessNameShowUrl")
@@ -201,7 +202,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       "User is authorised and business name is valid" in {
         stubAuthorisedAgentUser(true)
 
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -222,7 +223,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     }
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
       val formData: Map[String, Seq[String]] = {

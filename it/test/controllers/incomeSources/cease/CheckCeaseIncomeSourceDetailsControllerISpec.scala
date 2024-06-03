@@ -103,7 +103,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Cease Business Details Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a SE buisness")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
@@ -130,7 +130,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Cease Business Page with unknown address and title" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a SE business with no address")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
@@ -162,7 +162,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriSE" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -188,7 +188,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Cease UK Property Details Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
@@ -215,7 +215,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriUK" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -241,7 +241,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     "render the Cease Foreign Property Details Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a Foreign Property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
@@ -267,7 +267,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriFP" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a Foriegn Property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))

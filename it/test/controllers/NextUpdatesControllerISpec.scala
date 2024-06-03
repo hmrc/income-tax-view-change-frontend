@@ -182,7 +182,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "the user has a Opt Out Feature Switch Enabled" in {
-        enable(OptOut)
+        enableFs(OptOut)
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -265,7 +265,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
     "one year opt-out scenarios" when {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
-        enable(OptOut)
+        enableFs(OptOut)
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -297,7 +297,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
 
       "don't show opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as NoStatus" in {
-        enable(OptOut)
+        enableFs(OptOut)
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
@@ -330,7 +330,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
     "show Internal Server Error page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
-          enable(OptOut)
+          enableFs(OptOut)
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
           val previousYear = currentTaxYear.addYears(-1)

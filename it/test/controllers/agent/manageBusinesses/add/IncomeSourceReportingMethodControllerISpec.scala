@@ -21,6 +21,7 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSources
@@ -143,7 +144,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
     //disable(TimeMachineAddYear)
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     stubAuthorisedAgentUser(authorised = true)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -183,8 +184,8 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   def setupStubErrorCall(scenario: APIErrorScenario, incomeSourceType: IncomeSourceType): Unit = {
     Given("Income Sources FS is enabled")
-    enable(IncomeSources)
-    //enable(TimeMachineAddYear)
+    enableFs(IncomeSources)
+    //enableFs(TimeMachineAddYear)
     stubAuthorisedAgentUser(authorised = true)
 
     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))

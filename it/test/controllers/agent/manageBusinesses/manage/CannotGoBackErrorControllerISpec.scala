@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -42,7 +43,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
     stubAuthorisedAgentUser(authorised = true)
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType))))
@@ -82,7 +83,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     "return 200 OK" when {
       "FS enabled - UK Property" in {
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, UkProperty))))
 
@@ -103,7 +104,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     "return 200 OK" when {
       "FS enabled - Foreign Property" in {
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, ForeignProperty))))
 

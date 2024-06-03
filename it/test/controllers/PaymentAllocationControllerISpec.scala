@@ -37,7 +37,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentAllocation)
+    enableFs(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -95,7 +95,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $OK with the payment allocation page for non LPI" when {
       "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
+        enableFs(PaymentAllocation)
         disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -116,7 +116,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       }
 
       "payment allocation for HMRC adjustment is shown" in {
-        enable(PaymentAllocation)
+        enableFs(PaymentAllocation)
         disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -140,7 +140,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $OK with the payment allocation page for LPI" when {
       "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
+        enableFs(PaymentAllocation)
         disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()

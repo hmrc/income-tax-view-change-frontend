@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSources, IncomeSourcesNewJourney}
@@ -504,7 +504,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           "display the page with Income Sources tile" when {
             "IncomeSources feature switch is enabled" in {
               stubAuthorisedAgentUser(authorised = true)
-              enable(IncomeSources)
+              enableFs(IncomeSources)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
@@ -574,8 +574,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
         "display the page with Your Businesses tile" when {
           "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
             stubAuthorisedAgentUser(authorised = true)
-            enable(IncomeSources)
-            enable(IncomeSourcesNewJourney)
+            enableFs(IncomeSources)
+            enableFs(IncomeSourcesNewJourney)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,

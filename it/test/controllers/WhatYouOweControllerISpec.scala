@@ -712,7 +712,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         "render the payments owed with a Coding out banner" in {
           Given("Coding Out feature is enabled")
-          enable(CodingOut)
+          enableFs(CodingOut)
 
           And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
@@ -755,7 +755,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         "render the payments due page with a multiple charges ~ TxM extension" in {
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          enable(CodingOut)
+          enableFs(CodingOut)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
           And("I wiremock stub a multiple financial details and outstanding charges response")
@@ -844,7 +844,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         "render the payments owed" when {
           def testMFADebits(MFADebitsEnabled: Boolean): Unit = {
             Given(s"MFADebitsEnabled is ${MFADebitsEnabled}")
-            if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+            if (MFADebitsEnabled) enableFs(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
 
             And("I wiremock stub a successful Income Source Details response with multiple business and property")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -889,7 +889,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
       "Claim to adjust POA section" should {
         "show" when {
           "The user has valid POAs and the FS is Enabled" in {
-            enable(AdjustPaymentsOnAccount)
+            enableFs(AdjustPaymentsOnAccount)
 
             Given("I wiremock stub a successful Income Source Details response with multiple business and property")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
@@ -911,7 +911,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         }
         "not show" when {
           "The user does not have valid POAs but the FS is Enabled" in {
-            enable(AdjustPaymentsOnAccount)
+            enableFs(AdjustPaymentsOnAccount)
 
             Given("I wiremock stub a successful Income Source Details response with multiple business and property")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
@@ -962,7 +962,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
 
     "render the money in your account section when balance details has available credits" in {
-      enable(CreditsRefundsRepay)
+      enableFs(CreditsRefundsRepay)
       Given("I wiremock stub a successful Income Source Details response with multiple business and property")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 

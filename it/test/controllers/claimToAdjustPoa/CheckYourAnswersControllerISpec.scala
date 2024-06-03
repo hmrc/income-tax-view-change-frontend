@@ -71,7 +71,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
     s"return status $OK" when {
       "user has successfully entered a new POA amount" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
         setupGetFinancialDetails()
@@ -107,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
     s"return $INTERNAL_SERVER_ERROR" when {
       "the Payment On Account Adjustment reason is missing from the session" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
         setupGetFinancialDetails()
@@ -123,7 +123,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
       }
       "the New Payment On Account Amount is missing from the session" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
         setupGetFinancialDetails()
@@ -139,7 +139,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
       }
       "both the New Payment On Account Amount and adjustment reason are missing from the session" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
         setupGetFinancialDetails()
@@ -155,7 +155,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
       }
       "no adjust POA session is found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
         setupGetFinancialDetails()
@@ -168,7 +168,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
       }
       "no non-crystallised financial details are found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         setupGetIncomeSourceDetails()
 
