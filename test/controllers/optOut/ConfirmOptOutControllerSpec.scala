@@ -56,10 +56,13 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleOneTaxYearResponse = Future.successful(OptOutOneYearCheckpointViewModel(taxYear, showFutureChangeInfo = true))
-  //  val noEligibleTaxYearResponse = Future.successful(None)
     val eligibleMultiTaxYearResponse = Future.successful(OptOutMultiYearViewModel(taxYear))
+//    val noEligibleTaxYearResponse = Future.successful(OptOutOneYearCheckpointViewModel(
+//      taxYear = ?,
+//      showFutureChangeInfo = false
+//    ))
+   // val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
-
 
     "show method is invoked" should {
       s"return result with $OK status when viewing Single Year Opt Out" in {

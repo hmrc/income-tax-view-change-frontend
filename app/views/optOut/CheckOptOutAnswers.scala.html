@@ -65,7 +65,7 @@
                         items = Seq(ActionItem(
                             href = getChangeOptOutHref,
                             classes = "govuk-link govuk-body",
-                            content = HtmlContent(messages("optOut.checkAnswers.change")),
+                            content = HtmlContent(messages("optout.checkAnswers.change")),
                             attributes = Map("id" -> "change")
                         ))
                     ))
@@ -85,7 +85,7 @@
                 content = Text(messages("optout.checkAnswers.confirm")),
                 attributes = Map("id" -> "confirm-button")
             ))
-            <a class="govuk-link" href="">Cancel</a>
+            <a class="govuk-link" href="" id="cancel-button">Cancel</a>
         </div>
     }
 

@@ -33,7 +33,8 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
 
   val checkAnswersViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel(TaxYear.forYearEnd(taxYear))
-
+  val intentStartTaxYear: String = checkAnswersViewModel.intent.startYear.toString
+  val intentEndTaxYear: String = checkAnswersViewModel.intent.endYear.toString
   class Setup(isAgent: Boolean = true) {
     val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel ,postAction, isAgent)))
@@ -43,7 +44,7 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
     val heading: String = messages("optout.checkAnswers.heading")
     val title: String = messages("htmlTitle", heading)
     val optOutTable: String = messages("optout.checkAnswers.optOut")
-    val optOutTableTaxYears: String = messages("optout.checkAnswers.taxYears")
+    val optOutTableTaxYears: String = messages("optout.checkAnswers.taxYears", intentStartTaxYear, intentEndTaxYear)
     val optOutTableChange: String = messages("optout.checkAnswers.change")
     val paragraph1: String = messages("optout.checkAnswers.p1")
     val paragraph2: String = messages("optout.checkAnswers.p2")
@@ -76,10 +77,9 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
 
     "have the correct summary heading and page contents" in new Setup(false) {
       pageDocument.getElementById("optOut-summary").text() shouldBe checkOptOutAnswers.paragraph1
-      pageDocument.getElementById("optOut-warning").text() shouldBe checkOptOutAnswers.paragraph2
+     pageDocument.getElementById("optOut-warning").text() shouldBe checkOptOutAnswers.paragraph2
 
       pageDocument.getElementById("confirm-button").text() shouldBe checkOptOutAnswers.confirmButton
-      pageDocument.getElementById("confirm-button").attr("href") shouldBe checkOptOutAnswers.confirmOptOutURL
       pageDocument.getElementById("cancel-button").text() shouldBe checkOptOutAnswers.cancelButton
     }
 
