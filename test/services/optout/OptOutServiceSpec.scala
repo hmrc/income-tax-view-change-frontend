@@ -384,7 +384,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
-          val response = service.optOutCheckPointPageViewModel()
+          val response = service.optOutCheckPointPageViewModel(intent = None)
 
           response.futureValue shouldBe Some(OptOutOneYearCheckpointViewModel(taxYear, showWarning))
 

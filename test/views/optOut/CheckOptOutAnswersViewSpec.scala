@@ -17,9 +17,13 @@
 package views.optOut
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
+import models.optout.OptOutMultiYearViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.Call
 import play.api.test.Helpers._
+import testConstants.BaseTestConstants.taxYear
 import testUtils.TestSupport
 import views.html.optOut.CheckOptOutAnswers
 
@@ -28,8 +32,11 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
 
+  val checkAnswersViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel(TaxYear.forYearEnd(taxYear))
+
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(isAgent)))
+    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel ,postAction, isAgent)))
   }
 
   object checkOptOutAnswers {
@@ -44,8 +51,8 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
     val cancelButton: String = messages("optout.checkAnswers.cancel")
 
     val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show().url
-    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show().url
-    val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.showAgent().url
+    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = false).url
+    val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = true).url
   }
 
 
