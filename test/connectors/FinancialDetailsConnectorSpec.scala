@@ -75,12 +75,6 @@ class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockA
     }
   }
 
-  "getChargeHistoryUrl" should {
-    "return the correct url" in new Setup {
-      connector.getChargeHistoryUrl(testMtditid, docNumber) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
-    }
-  }
-
   "getPaymentAllocations" should {
 
     val successResponse = HttpResponse(status = Status.OK, json = testValidPaymentAllocationsModelJson, headers = Map.empty)
@@ -196,46 +190,6 @@ class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockA
 
       val result: Future[OutstandingChargesResponseModel] = connector.getOutstandingCharges(idType, idNumber, taxYear2020)
       result.futureValue shouldBe testOutstandingChargesErrorModelParsing
-    }
-
-  }
-
-  "getChargeHistory" should {
-
-    val successResponse = HttpResponse(status = Status.OK, json = testValidChargeHistoryDetailsModelJson, headers = Map.empty)
-    val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidChargeHistoryDetailsModelJson, headers = Map.empty)
-    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
-
-    val getChargeHistoryUrlTestUrl =
-      s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
-
-    "return a ChargeHistory model when successful JSON is received" in new Setup {
-      setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponse)
-
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, docNumber)
-      result.futureValue shouldBe testValidChargeHistoryModel
-
-    }
-
-    "return a ChargeHistory model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, docNumber)
-      result.futureValue shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
-    }
-
-
-    "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
-      setupMockHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
-
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, docNumber)
-      result.futureValue shouldBe ChargesHistoryErrorModel(Status.BAD_REQUEST, "Error Message")
-    }
-
-    "return ChargeHistoryErrorResponse model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponseBadJson)
-
-      val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, docNumber)
-      result.futureValue shouldBe testChargeHistoryErrorModelParsing
     }
 
   }
