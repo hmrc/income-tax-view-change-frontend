@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
+import mocks.services._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,10 +50,11 @@ import scala.concurrent.Future
 * NY: Next Year
 *
 * */
-class OptOutServiceSpec extends UnitSpec
+abstract class OptOutServiceSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
+  with MockNextUpdatesService
   with MockDateService
   with MockITSAStatusUpdateConnector {
 
@@ -63,6 +64,7 @@ class OptOutServiceSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val itsaStatusService: ITSAStatusService = mockITSAStatusService
   val calculationListService: CalculationListService = mockCalculationListService
+  val nextUpdatesService: NextUpdatesService = mockNextUpdatesService
   val dateService: DateServiceInterface = mockDateService
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
@@ -74,7 +76,7 @@ class OptOutServiceSpec extends UnitSpec
 
   val error = new RuntimeException("Some Error")
 
-  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, dateService)
+  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService)
 
   before {
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)

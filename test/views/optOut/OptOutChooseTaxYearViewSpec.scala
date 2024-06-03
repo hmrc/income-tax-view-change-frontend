@@ -17,9 +17,12 @@
 package views.optOut
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import services.optout.{CurrentOptOutTaxYear, OptOutTaxYear}
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
 
@@ -27,9 +30,16 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optOutChooseTaxYearView: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
+  //test data needs to be added
+  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
+  val availableOptOutTaxYear: Seq[OptOutTaxYear] = Seq(
+    CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
+  )
+  val obligationsCountForTaxYears: Map[Int, Int] = Map(2023 -> 6)
+
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(availableOptOutTaxYear, obligationsCountForTaxYears, isAgent)))
   }
 
   object optOutChooseTaxYear {
