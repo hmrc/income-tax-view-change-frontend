@@ -49,8 +49,8 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
                 .get.tradingName.getOrElse("nextUpdates.business"), deadline))
           } else if (deadlinesModel.obligations.forall(ob => ob.obligationType == "Crystallised"))
             deadlinesModel.obligations.map {
-            deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
-          } else None
+              deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
+            } else None
       }
     }.flatten
 
@@ -68,6 +68,9 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+
+  def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
+    allDeadlinesWithSource().map(_.obligation.due).distinct.size
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth

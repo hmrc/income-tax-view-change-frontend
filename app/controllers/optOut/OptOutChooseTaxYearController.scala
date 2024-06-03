@@ -24,16 +24,18 @@ import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
+import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPredicate,
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
                                               val optOutChooseTaxYear: OptOutChooseTaxYear,
+                                              val optOutService: OptOutService,
                                               val checkSessionTimeout: SessionTimeoutPredicate,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                               val retrieveBtaNavBar: NavBarPredicate,
@@ -50,12 +52,20 @@ class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPr
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      Future.successful(Ok(optOutChooseTaxYear(false)))
+      optOutService.getAvailableOptOutYear().flatMap { availableOptOutTaxYear =>
+        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
+          Ok(optOutChooseTaxYear(availableOptOutTaxYear, submissionCountForTaxYear, false))
+        }
+      }
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Ok(optOutChooseTaxYear(true)))
+      optOutService.getAvailableOptOutYear().flatMap { availableOptOutTaxYear =>
+        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { obligationsCountForTaxYears =>
+          Ok(optOutChooseTaxYear(availableOptOutTaxYear, obligationsCountForTaxYears, true))
+        }
+      }
   }
 
 }

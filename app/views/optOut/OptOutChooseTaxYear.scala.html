@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import services.optout.OptOutTaxYear
 
 @this(
         mainTemplate: unifiedLayout,
@@ -28,10 +29,16 @@
         govukTable: GovukTable,
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(availableOptOutTaxYear: Seq[OptOutTaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
+}
+
+@getSubmissionsCount(startYear: Int, endYear: Int) = @{
+    val currentYearCount = obligationsCountForTaxYears.getOrElse(startYear, 0)
+    val nextYearCount = obligationsCountForTaxYears.getOrElse(endYear, 0)
+    currentYearCount + nextYearCount
 }
 
 @mainTemplate(
@@ -64,18 +71,19 @@
         </legend>
 
         <div class="govuk-radios" data-module="govuk-radios">
+            @availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio1" name="optoutYear" type="radio" value="2023">
-                <label class="govuk-label govuk-radios__label" for="radio1">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards1")
+                <input class="govuk-radios__input" id="radio@{index + 1}" name="optoutYear" type="radio" value="@optOutTaxYear.taxYear.startYear">
+                <label class="govuk-label govuk-radios__label" for="radio@{index + 1}">
+                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.taxYear.startYear}", s"${optOutTaxYear.taxYear.endYear}")
                 </label>
+                @if(getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear) > 0) {
+                    <div id="signIn-item-hint" class="govuk-hint govuk-radios__hint">
+                        @messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear))
+                    </div>
+                }
             </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio2" name="optoutYear" type="radio" value="2024">
-                <label class="govuk-label govuk-radios__label" for="radio2">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards2")
-                </label>
-            </div>
+            }
         </div>
     </fieldset>
 </div>
