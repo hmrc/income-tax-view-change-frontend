@@ -20,13 +20,14 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -60,7 +61,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
         {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-            _ <- EitherT(sessionService.createSession)
+            _ <- EitherT(handleSession)
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
@@ -77,5 +78,20 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
       }
+  }
+
+  def handleSession(implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
+    sessionService.getMongo flatMap {
+      case Right(Some(poaData: PoAAmendmentData)) => {
+        // TODO change this to new Mongo flag
+        if (poaData.poaAdjustmentReason.get == Increase) {
+          sessionService.createSession
+        } else {
+          Future.successful(Right((): Unit))
+        }
+      }
+      case Right(None) => sessionService.createSession
+      case Left(ex) => Future.successful(Left(ex))
+    }
   }
 }
