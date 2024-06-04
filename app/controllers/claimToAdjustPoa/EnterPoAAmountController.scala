@@ -83,7 +83,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
   }
 
-  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]) = {
+  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))),
@@ -104,7 +104,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     }
   }
 
-  private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+  private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     sessionService.setAdjustmentReason(Increase).map {
       case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
@@ -114,7 +114,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   }
 
   //user has decreased but could have increased:
-  private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]) = {
+  private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     if (mode == NormalMode)
       Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
     else {
@@ -129,7 +129,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     }
   }
 
-  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]) = {
+  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     sessionService.getMongo.flatMap {
       case Right(Some(data)) => block(data)
       case Right(None) => Logger("application").error(s"No mongo data found")
@@ -138,5 +138,4 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         Future.successful(showInternalServerError(isAgent))
     }
   }
-
 }
