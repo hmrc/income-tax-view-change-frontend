@@ -27,8 +27,8 @@
         link: link,
         hr: hr,
         govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
 )
-
 
 @(availableOptOutTaxYear: Seq[TaxYear], submissionCountForTaxYear: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -41,6 +41,12 @@
     val nextYearCount = submissionCountForTaxYear.getOrElse(endYear, 0)
     currentYearCount + nextYearCount
 }
+
+@warningBlock = {
+    @govukInsetText(InsetText(id=Some("warning-inset"),content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
+}
+
+@showWarning = @{submissionCountForTaxYear.values.sum > 0}
 
 @mainTemplate(
     pageTitle = messages("optout.chooseOptOutTaxYear.heading"),
@@ -60,10 +66,9 @@
     @messages("optout.chooseOptOutTaxYear.desc2")
 }
 
-<ul class="govuk-list govuk-list--bullet">
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p1")</li>
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p2")</li>
-</ul>
+@if(showWarning) {
+    @warningBlock
+}
 
 <div class="govuk-form-group ">
     <fieldset class="govuk-fieldset">
