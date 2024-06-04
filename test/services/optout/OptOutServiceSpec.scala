@@ -305,8 +305,14 @@ class OptOutServiceSpec extends UnitSpec
           val response = service.nextUpdatesPageOptOutViewModel()
 
           val model = response.futureValue.get
-          model.oneYearOptOutTaxYear shouldBe previousYear
-          model.showWarning shouldBe true
+
+          model match {
+            case m:OptOutOneYearViewModel =>
+              m.oneYearOptOutTaxYear shouldBe previousYear
+              m.showWarning shouldBe true
+            case _ => fail("model should be OptOutOneYearViewModel")
+          }
+
         }
         s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
           s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
@@ -327,8 +333,13 @@ class OptOutServiceSpec extends UnitSpec
             val response = service.nextUpdatesPageOptOutViewModel()
 
             val model = response.futureValue.get
-            model.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
-            model.showWarning shouldBe true
+            model match {
+              case m:OptOutOneYearViewModel =>
+                m.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
+                m.showWarning shouldBe true
+              case _ => fail("model should be OptOutOneYearViewModel")
+            }
+
           }
         }
       }
