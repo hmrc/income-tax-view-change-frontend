@@ -30,15 +30,15 @@
 )
 
 
-@(availableOptOutTaxYear: Seq[TaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(availableOptOutTaxYear: Seq[TaxYear], submissionCountForTaxYear: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
 }
 
 @getSubmissionsCount(startYear: Int, endYear: Int) = @{
-    val currentYearCount = obligationsCountForTaxYears.getOrElse(startYear, 0)
-    val nextYearCount = obligationsCountForTaxYears.getOrElse(endYear, 0)
+    val currentYearCount = submissionCountForTaxYear.getOrElse(startYear, 0)
+    val nextYearCount = submissionCountForTaxYear.getOrElse(endYear, 0)
     currentYearCount + nextYearCount
 }
 
