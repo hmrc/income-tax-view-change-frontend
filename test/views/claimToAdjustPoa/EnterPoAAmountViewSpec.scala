@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import _root_.implicits.ImplicitCurrencyFormatter._
+import models.core.NormalMode
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.EnterPoAAmountView
 
@@ -56,6 +57,9 @@ class EnterPoAAmountViewSpec extends TestSupport{
     relevantAmountTwo = 5000
   )
 
+  val prePopulatedForm = Some(1200).fold(EnterPoaAmountForm.form)(value =>
+    EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value)))
+
   val noInputErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.emptyError")
     .fill(EnterPoaAmountForm(0))
   val invalidErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.invalidError")
@@ -66,7 +70,7 @@ class EnterPoAAmountViewSpec extends TestSupport{
     .fill(EnterPoaAmountForm(7000))
 
   class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PoAAmountViewModel = poaViewModelFirstJourney) {
-    val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent))
+    val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, NormalMode))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val buttons = groupButton.first().children()
@@ -125,6 +129,14 @@ class EnterPoAAmountViewSpec extends TestSupport{
       }
       "number input higher than relevant amount" in new Setup(form = higherErrorForm){
         document.getElementById("poa-amount-error").text() shouldBe {"Error: " + msg("higherError")}
+      }
+    }
+  }
+
+  "The Change Poa Amount page" should {
+    "pre-populate the input field with data" when {
+      "the form contains an amount" in new Setup(form = prePopulatedForm){
+        document.getElementsByClass("govuk-input").attr("value") shouldBe "1200"
       }
     }
   }
