@@ -24,7 +24,7 @@ import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.nextUpdates.ObligationsModel
 import models.optout._
 import play.mvc.Http
-import services.optout.OptOutService.combineByReturningAnyFailureFirstOrAnySuccess
+import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -163,13 +163,13 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def getSubmissionCountForTaxYear(availableOptOutTaxYears: Seq[TaxYear])
                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, Int]] = {
     val futureCounts: Seq[Future[(Int, Int)]] = availableOptOutTaxYears.map { optOutTaxYear =>
-      val fromDate = LocalDate.of(optOutTaxYear.startYear, 4, 6)
-      val toDate = LocalDate.of(optOutTaxYear.endYear, 4, 5)
+      val fromDate = LocalDate.of(optOutTaxYear.startYear, April, Sixths)
+      val toDate = LocalDate.of(optOutTaxYear.endYear, April, Fifth)
 
       nextUpdatesService.getNextUpdates(fromDate, toDate).map {
         case obligationsModel: ObligationsModel =>
           (optOutTaxYear.startYear, obligationsModel.submissionsCount)
-        case _ => (optOutTaxYear.startYear, 0)
+        case _ => (optOutTaxYear.startYear, noSubmissions)
       }
     }
 
@@ -179,7 +179,13 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
 
 object OptOutService {
-  def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+
+  private val April = 4
+  private val Sixths = 6
+  private val Fifth = 5
+  private val noSubmissions = 0
+
+  private def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     Some(responses)
       .filter(isItsaStatusUpdateAttempted)
       .map(reduceByReturningAnyFailureFirstOrAnySuccess)
