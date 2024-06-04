@@ -50,8 +50,6 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     }
   }
 
-  def getAvailableOptOutYears(): Seq[OptOutTaxYear] = {
-    availableOptOutYears
-  }
+  val availableTaxYearsForOptOut: Seq[TaxYear] = availableOptOutYears.map(_.taxYear)
 
 }

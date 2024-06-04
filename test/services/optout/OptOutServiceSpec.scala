@@ -50,11 +50,10 @@ import scala.concurrent.Future
 * NY: Next Year
 *
 * */
-abstract class OptOutServiceSpec extends UnitSpec
+class OptOutServiceSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
-  with MockNextUpdatesService
   with MockDateService
   with MockITSAStatusUpdateConnector {
 
@@ -64,7 +63,7 @@ abstract class OptOutServiceSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val itsaStatusService: ITSAStatusService = mockITSAStatusService
   val calculationListService: CalculationListService = mockCalculationListService
-  val nextUpdatesService: NextUpdatesService = mockNextUpdatesService
+  val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val dateService: DateServiceInterface = mockDateService
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])

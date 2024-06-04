@@ -50,20 +50,11 @@ class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPr
                                              )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       optOutService.getAvailableOptOutYear().flatMap { availableOptOutTaxYear =>
         optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
-          Ok(optOutChooseTaxYear(availableOptOutTaxYear, submissionCountForTaxYear, false))
-        }
-      }
-  }
-
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      optOutService.getAvailableOptOutYear().flatMap { availableOptOutTaxYear =>
-        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { obligationsCountForTaxYears =>
-          Ok(optOutChooseTaxYear(availableOptOutTaxYear, obligationsCountForTaxYears, true))
+          Ok(optOutChooseTaxYear(availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
         }
       }
   }

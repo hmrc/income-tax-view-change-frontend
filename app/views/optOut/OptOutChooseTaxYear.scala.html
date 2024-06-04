@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import services.optout.OptOutTaxYear
+@import models.incomeSourceDetails.TaxYear
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,7 +29,8 @@
         govukTable: GovukTable,
 )
 
-@(availableOptOutTaxYear: Seq[OptOutTaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@(availableOptOutTaxYear: Seq[TaxYear], obligationsCountForTaxYears: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
@@ -73,13 +74,13 @@
         <div class="govuk-radios" data-module="govuk-radios">
             @availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio@{index + 1}" name="optoutYear" type="radio" value="@optOutTaxYear.taxYear.startYear">
+                <input class="govuk-radios__input" id="radio@{index + 1}" name="optoutYear" type="radio" value="@optOutTaxYear.startYear">
                 <label class="govuk-label govuk-radios__label" for="radio@{index + 1}">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.taxYear.startYear}", s"${optOutTaxYear.taxYear.endYear}")
+                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")
                 </label>
-                @if(getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear) > 0) {
+                @if(getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear) > 0) {
                     <div id="signIn-item-hint" class="govuk-hint govuk-radios__hint">
-                        @messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.taxYear.startYear, optOutTaxYear.taxYear.endYear))
+                        @messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear))
                     </div>
                 }
             </div>

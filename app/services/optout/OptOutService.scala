@@ -155,20 +155,20 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
 
-  def getAvailableOptOutYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OptOutTaxYear]] = {
-    setupOptOutProposition().map(optOutData => optOutData.getAvailableOptOutYears())
+  def getAvailableOptOutYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] = {
+    setupOptOutProposition().map(proposition => proposition.availableTaxYearsForOptOut)
   }
 
-  def getSubmissionCountForTaxYear(availableOptOutTaxYears: Seq[OptOutTaxYear])
+  def getSubmissionCountForTaxYear(availableOptOutTaxYears: Seq[TaxYear])
                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, Int]] = {
     val futureCounts: Seq[Future[(Int, Int)]] = availableOptOutTaxYears.map { optOutTaxYear =>
-      val fromDate = LocalDate.of(optOutTaxYear.taxYear.startYear, 4, 6)
-      val toDate = LocalDate.of(optOutTaxYear.taxYear.endYear, 4, 5)
+      val fromDate = LocalDate.of(optOutTaxYear.startYear, 4, 6)
+      val toDate = LocalDate.of(optOutTaxYear.endYear, 4, 5)
 
       nextUpdatesService.getNextUpdates(fromDate, toDate).map {
         case obligationsModel: ObligationsModel =>
-          (optOutTaxYear.taxYear.startYear, obligationsModel.submissionsCount)
-        case _ => (optOutTaxYear.taxYear.startYear, 0)
+          (optOutTaxYear.startYear, obligationsModel.submissionsCount)
+        case _ => (optOutTaxYear.startYear, 0)
       }
     }
 
