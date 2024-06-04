@@ -270,14 +270,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 1000)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 1234.56)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(selectReasonUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(None, Some(1000))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(None, Some(1234.56))))
       }
     }
     s"return status $SEE_OTHER and redirect to check details page" when {
@@ -302,14 +302,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 2500)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 2500.00)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500.00))))
       }
       "user was on decrease only journey" in {
         enable(AdjustPaymentsOnAccount)
@@ -332,14 +332,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 1500)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 1.11)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1500))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1.11))))
       }
     }
     s"return $INTERNAL_SERVER_ERROR" when {

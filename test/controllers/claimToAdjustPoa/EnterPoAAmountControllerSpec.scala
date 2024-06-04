@@ -204,9 +204,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "3000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "3000"))
-        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "3000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+        val resultChange = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1234.56"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(false).url)
@@ -313,8 +313,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
-        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "2000"))
-        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "2000"))
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(false, NormalMode).url)

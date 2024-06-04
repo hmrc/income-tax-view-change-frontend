@@ -50,7 +50,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          withvalidSession(isAgent) { session =>
+          withValidSession(isAgent) { session =>
             claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
               case Right(viewModel) =>
                 val filledForm = if (mode == NormalMode) EnterPoaAmountForm.form
@@ -97,33 +97,39 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   }
 
   def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
-    val canIncrease = viewModel.totalAmountLessThanPoa
-    val hasIncreased = newPoaAmount > viewModel.totalAmountOne
-    (canIncrease, hasIncreased) match {
-      case (true, true) => sessionService.setAdjustmentReason(Increase).map {
-        case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
-        case Right(_) =>
-          Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
-      }
-      case (true, _) =>
-        if (mode == NormalMode)
-          Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
-        else {
-          sessionService.getMongo.map {
-            case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
-              case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
-              case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
-            }
-            case _ => Logger("application").error(s"No active mongo data found")
-              showInternalServerError(isAgent)
-          }
-        }
+    (viewModel.totalAmountLessThanPoa, viewModel.hasIncreased(newPoaAmount)) match {
+      case (true, true) => hasIncreased(isAgent)
+      case (true, _) => hasDecreased(isAgent, mode)
       case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
     }
   }
 
-  private def withvalidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]) = {
+  private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+    sessionService.setAdjustmentReason(Increase).map {
+      case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError(isAgent)
+      case Right(_) =>
+        Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+    }
+  }
+
+  //user has decreased but could have increased:
+  private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]) = {
+    if (mode == NormalMode)
+      Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
+    else {
+      sessionService.getMongo.map {
+        case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
+          case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+          case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
+        }
+        case _ => Logger("application").error(s"No active mongo data found")
+          showInternalServerError(isAgent)
+      }
+    }
+  }
+
+  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]) = {
     sessionService.getMongo.flatMap {
       case Right(Some(data)) => block(data)
       case Right(None) => Logger("application").error(s"No mongo data found")
