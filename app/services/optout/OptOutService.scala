@@ -163,10 +163,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def getSubmissionCountForTaxYear(availableOptOutTaxYears: Seq[TaxYear])
                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, Int]] = {
     val futureCounts: Seq[Future[(Int, Int)]] = availableOptOutTaxYears.map { optOutTaxYear =>
-      val fromDate = LocalDate.of(optOutTaxYear.startYear, April, Sixths)
-      val toDate = LocalDate.of(optOutTaxYear.endYear, April, Fifth)
+      val financialYearStart = LocalDate.of(optOutTaxYear.startYear, April, Sixths)
+      val financialYearEnd = LocalDate.of(optOutTaxYear.endYear, April, Fifth)
 
-      nextUpdatesService.getNextUpdates(fromDate, toDate).map {
+      nextUpdatesService.getNextUpdates(financialYearStart, financialYearEnd).map {
         case obligationsModel: ObligationsModel =>
           (optOutTaxYear.startYear, obligationsModel.submissionsCount)
         case _ => (optOutTaxYear.startYear, noSubmissions)

@@ -33,18 +33,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-abstract class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
+class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
-  with MockNextUpdatesService
   with MockDateService
   with MockITSAStatusUpdateConnector {
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val itsaStatusService: ITSAStatusService = mockITSAStatusService
   val calculationListService: CalculationListService = mockCalculationListService
-  val nextUpdatesService: NextUpdatesService = mockNextUpdatesService
+  val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val dateService: DateServiceInterface = mockDateService
 
   val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService)
