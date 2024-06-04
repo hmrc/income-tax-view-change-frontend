@@ -21,6 +21,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, SelectYourReason}
+import models.core.NormalMode
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import services.PaymentOnAccountSessionService
@@ -30,7 +31,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
-  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent).url
+  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
   def poaCyaUrl: String = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
   def homeUrl: String = if(isAgent){
     controllers.routes.HomeController.showAgent.url

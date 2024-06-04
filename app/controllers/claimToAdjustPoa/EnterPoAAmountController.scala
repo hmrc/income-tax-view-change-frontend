@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.{Increase, PoAAmendmentData, PoAAmountViewModel}
-import models.core.{Nino, NormalMode}
+import models.core.{CheckMode, Mode, Nino, NormalMode}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -46,14 +46,18 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                                          val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with ClaimToAdjustUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] =
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          withvalidSession(isAgent) { _ =>
+          withValidSession(isAgent) { session =>
             claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
               case Right(viewModel) =>
-                Ok(view(EnterPoaAmountForm.form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))
+                val filledForm = if (mode == NormalMode) EnterPoaAmountForm.form
+                else session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
+                  EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
+                )
+                Ok(view(filledForm, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))
               case Left(ex) =>
                 Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
                 showInternalServerError(isAgent)
@@ -66,12 +70,12 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         }
     }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       ifAdjustPoaIsEnabled(isAgent) {
         claimToAdjustService.getEnterPoAAmountViewModel(Nino(request.nino)).flatMap {
           case Right(viewModel) =>
-            handleForm(viewModel, isAgent)
+            handleForm(viewModel, isAgent, mode)
           case Left(ex) =>
             Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
@@ -79,33 +83,53 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
   }
 
-  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))),
       validForm =>
         sessionService.setNewPoAAmount(validForm.amount).flatMap {
           case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
-          case Right(_) => getRedirect(viewModel, validForm.amount, isAgent)
+          case Right(_) => getRedirect(viewModel, validForm.amount, isAgent, mode)
         }
     )
   }
 
-  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
-      case (true, true) => sessionService.setAdjustmentReason(Increase).map {
-        case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
-          showInternalServerError(isAgent)
-        case Right(_) =>
-          Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
-      }
-      case (true, _) => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
+  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+    (viewModel.totalAmountLessThanPoa, viewModel.hasIncreased(newPoaAmount)) match {
+      case (true, true) => hasIncreased(isAgent)
+      case (true, _) => hasDecreased(isAgent, mode)
       case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
     }
   }
 
-  private def withvalidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]) = {
+  private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    sessionService.setAdjustmentReason(Increase).map {
+      case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError(isAgent)
+      case Right(_) =>
+        Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+    }
+  }
+
+  //user has decreased but could have increased:
+  private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+    if (mode == NormalMode)
+      Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
+    else {
+      sessionService.getMongo.map {
+        case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
+          case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+          case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
+        }
+        case _ => Logger("application").error(s"No active mongo data found")
+          showInternalServerError(isAgent)
+      }
+    }
+  }
+
+  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     sessionService.getMongo.flatMap {
       case Right(Some(data)) => block(data)
       case Right(None) => Logger("application").error(s"No mongo data found")
@@ -114,5 +138,4 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         Future.successful(showInternalServerError(isAgent))
     }
   }
-
 }

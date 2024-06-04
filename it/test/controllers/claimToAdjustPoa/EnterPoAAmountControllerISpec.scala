@@ -20,7 +20,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData}
-import models.core.NormalMode
+import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -30,35 +30,47 @@ import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testChargeHistoryJson, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
-class EnterPoAAmountControllerISpec extends ComponentSpecBase{
+class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  def enterPoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent).url
+  def enterPoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
 
   def checkYourAnswersUrl = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+
   def selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
+  def changePoAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, CheckMode).url
+
+  def changeReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode).url
+
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
+
   def msg(key: String) = msgs(s"claimToAdjustPoa.enterPoaAmount.$key")
 
-  def homeUrl: String = if(isAgent){
+  def homeUrl: String = if (isAgent) {
     controllers.routes.HomeController.showAgent.url
   } else {
     controllers.routes.HomeController.show().url
   }
+
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     sessionService.setMongoData(None)
-    if(isAgent) {
+    if (isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
   }
+
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${if (isAgent) {"/agents" } else ""}${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(s"""${
+      if (isAgent) {
+        "/agents"
+      } else ""
+    }${url}""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   def postEnterPoA(isAgent: Boolean, newPoAAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -68,13 +80,33 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
       )
     }
     IncomeTaxViewChangeFrontend.post(
-      uri = s"""${
-        if (isAgent) {
-          "/agents"
-        } else {
-          ""
-        }
-      }/adjust-poa/enter-poa-amount""",
+      uri =
+        s"""${
+          if (isAgent) {
+            "/agents"
+          } else {
+            ""
+          }
+        }/adjust-poa/enter-poa-amount""",
+      additionalCookies = additionalCookies
+    )(formData)
+  }
+
+  def postChangePoA(isAgent: Boolean, newPoAAmount: BigDecimal)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    val formData: Map[String, Seq[String]] = {
+      Map(
+        "poa-amount" -> Seq(newPoAAmount.toString())
+      )
+    }
+    IncomeTaxViewChangeFrontend.post(
+      uri =
+        s"""${
+          if (isAgent) {
+            "/agents"
+          } else {
+            ""
+          }
+        }/adjust-poa/change-poa-amount""",
       additionalCookies = additionalCookies
     )(formData)
   }
@@ -238,14 +270,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 1000)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 1234.56)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(selectReasonUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(None, Some(1000))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(None, Some(1234.56))))
       }
     }
     s"return status $SEE_OTHER and redirect to check details page" when {
@@ -270,14 +302,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 2500)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 2500.00)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500.00))))
       }
       "user was on decrease only journey" in {
         enable(AdjustPaymentsOnAccount)
@@ -300,14 +332,14 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
 
         When(s"I call POST")
 
-        val res = postEnterPoA(isAgent, 1500)(clientDetailsWithConfirmation)
+        val res = postEnterPoA(isAgent, 1.11)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkYourAnswersUrl)
         )
 
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1500))))
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1.11))))
       }
     }
     s"return $INTERNAL_SERVER_ERROR" when {
@@ -351,6 +383,196 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase{
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
+      }
+    }
+  }
+
+  s"calling GET $changePoAAmountUrl" should {
+    "render the page as normal, with the amount pre-populated" when {
+      "User is authorised" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+
+        And("A session exists and has data")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/change-poa-amount")
+
+        res should have(
+          httpStatus(OK)
+        )
+        lazy val document: Document = Jsoup.parse(res.body)
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+        document.getElementsByClass("govuk-input").attr("value") shouldBe "100"
+      }
+    }
+  }
+  s"calling POST $changePoAAmountUrl" should {
+    s"return status $SEE_OTHER and redirect to check your answers page, and overwrite amount in session" when {
+      "user is on decrease only journey, and has entered new amount" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs (relevantAmount <= totalAmount")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1200))))
+
+        When(s"I call POST")
+
+        val res = postChangePoA(isAgent, 100)(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourAnswersUrl)
+        )
+
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))
+      }
+      "user is on increase/decrease journey, had previously increased, is still increasing" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs (relevantAmount > totalAmount")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(2500))))
+
+        When(s"I call POST")
+
+        val res = postChangePoA(isAgent, 2800)(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourAnswersUrl)
+        )
+
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2800))))
+      }
+      "user is on increase/decrease journey, had previously decreased, is now increasing" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs (relevantAmount > totalAmount")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500))))
+
+        When(s"I call POST")
+
+        val res = postChangePoA(isAgent, 2800)(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourAnswersUrl)
+        )
+
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2800))))
+      }
+      "user is on increase/decrease journey, had previously decreased, is still decreasing" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs (relevantAmount > totalAmount")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500))))
+
+        When(s"I call POST")
+
+        val res = postChangePoA(isAgent, 1000)(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourAnswersUrl)
+        )
+
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1000))))
+      }
+    }
+    s"return status $SEE_OTHER and redirect to select your reason page" when {
+      "user is on increase/decrease journey, had previously increased, is now decreasing" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs (relevantAmount > totalAmount")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created and an amount entered")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(Increase), Some(2500))))
+
+        When(s"I call POST")
+
+        val res = postChangePoA(isAgent, 500)(clientDetailsWithConfirmation)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(changeReasonUrl)
+        )
+
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(500))))
       }
     }
   }
