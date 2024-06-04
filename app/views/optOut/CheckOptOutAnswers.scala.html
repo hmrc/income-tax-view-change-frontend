@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optout.OptOutMultiYearViewModel
+@import models.optout.OptOutCheckpointViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -31,7 +31,7 @@
     formWithCSRF: FormWithCSRF
 )
 
-@(viewModel:OptOutMultiYearViewModel, postAction: Call, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: OptOutCheckpointViewModel, postAction: Call, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
     if(isAgent) controllers.optOut.routes.OptOutChooseTaxYearController.showAgent().url
@@ -40,8 +40,8 @@
 
 @taxYears = @{
     messages("optout.checkAnswers.taxYears",
-    viewModel.intent.startYear.toString,
-    viewModel.intent.endYear.toString)
+    viewModel.startYear,
+    viewModel.endYear)
 }
 
 @mainTemplate(
