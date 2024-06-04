@@ -19,6 +19,7 @@ package config.featureswitch
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, FeatureSwitchName}
+import services.admin.FeatureSwitchService
 
 trait FeatureSwitching {
 
@@ -51,8 +52,9 @@ trait FeatureSwitching {
     }
   }
 
-  def enable(featureSwitch: FeatureSwitchName): Unit =
+  def enable(featureSwitch: FeatureSwitchName): Unit = {
     sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+  }
 
   def disable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF

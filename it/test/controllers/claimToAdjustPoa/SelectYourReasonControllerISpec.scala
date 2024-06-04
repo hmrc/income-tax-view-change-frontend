@@ -74,7 +74,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "user has entered an amount lower than current amount" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -105,7 +105,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "user has entered an amount higher than current amount" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -139,7 +139,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "AdjustPaymentsOnAccount FS is disabled" in {
 
-          disable(AdjustPaymentsOnAccount)
+          disableFs(AdjustPaymentsOnAccount)
 
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -167,7 +167,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
     s"return $INTERNAL_SERVER_ERROR" when {
 
       "no non-crystallised financial details are found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("I wiremock stub empty financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -189,7 +189,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
       }
 
       "no adjust POA session is found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("Financial details for multiple years with POAs")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -216,7 +216,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       s"when originalAmount >= relevantAmount should redirect to Enter the Amount page" in {
 
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -247,7 +247,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
       }
 
     "when originalAmount < relevantAmount redirect to Check Your Answers page" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -278,7 +278,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "AdjustPaymentsOnAccount FS is disabled and redirect to the home page" in {
 
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -310,7 +310,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
     s"return $INTERNAL_SERVER_ERROR" when {
       "no non-crystallised financial details are found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Empty financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -332,7 +332,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
       }
 
       "no adjust POA session is found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("Financial details for multiple years with POAs")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(

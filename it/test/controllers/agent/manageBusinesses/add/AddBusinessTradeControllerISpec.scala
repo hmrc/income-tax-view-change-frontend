@@ -21,6 +21,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -60,7 +61,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
         stubAuthorisedAgentUser(true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
@@ -81,7 +82,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessTradeControllerShowUrl}")
@@ -99,7 +100,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
       "User is authorised and business trade is valid" in {
         stubAuthorisedAgentUser(true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -125,7 +126,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     }
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
       await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -152,7 +153,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
         stubAuthorisedAgentUser(true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -178,7 +179,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       "Income Sources FS disabled" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         stubAuthorisedAgentUser(true)
-        disable(IncomeSources)
+        disableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessTradeUrl}")
@@ -196,7 +197,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     s"303 SEE_OTHER and redirect to $addBusinessAddressUrl" when {
       "User is authorised and business trade is valid" in {
         stubAuthorisedAgentUser(true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val changedTrade = "Updated Business Trade"
@@ -223,7 +224,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
     }
     "show error when form is filled incorrectly" in {
       stubAuthorisedAgentUser(true)
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
       await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",

@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
@@ -41,7 +42,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       "the user is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $addPropertyShowUrl")
@@ -61,7 +62,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       "form response is UK" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -81,7 +82,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       "form response is UK" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -101,7 +102,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       "form is empty" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -118,7 +119,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       "form is invalid" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")

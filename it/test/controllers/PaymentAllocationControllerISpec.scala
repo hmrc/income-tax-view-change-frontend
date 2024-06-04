@@ -37,7 +37,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentAllocation)
+    enableFs(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -75,8 +75,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $NOT_FOUND" when {
       "the payment allocation feature switch is disabled" in {
-        disable(PaymentAllocation)
-        disable(NavBarFs)
+        disableFs(PaymentAllocation)
+        disableFs(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -95,8 +95,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $OK with the payment allocation page for non LPI" when {
       "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
-        disable(NavBarFs)
+        enableFs(PaymentAllocation)
+        disableFs(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -116,8 +116,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       }
 
       "payment allocation for HMRC adjustment is shown" in {
-        enable(PaymentAllocation)
-        disable(NavBarFs)
+        enableFs(PaymentAllocation)
+        disableFs(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         val docNumber = "MA999991A202202"
@@ -140,8 +140,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $OK with the payment allocation page for LPI" when {
       "the payment allocation feature switch is enabled" in {
-        enable(PaymentAllocation)
-        disable(NavBarFs)
+        enableFs(PaymentAllocation)
+        disableFs(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
 

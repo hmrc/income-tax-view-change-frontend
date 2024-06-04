@@ -115,7 +115,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
   s"calling GET $enterPoAAmountUrl" should {
     s"return status $OK and render the Enter PoA Amount page" when {
       "User is authorised and has not previously adjusted their PoA" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -143,7 +143,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
       }
       "User is authorised and has previously adjusted their PoA" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -179,7 +179,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
     }
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
-        disable(AdjustPaymentsOnAccount)
+        disableFs(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -206,7 +206,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
     s"return $INTERNAL_SERVER_ERROR" when {
 
       "no non-crystallised financial details are found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("I wiremock stub empty financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -228,7 +228,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
       }
 
       "no adjust POA session is found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("Financial details for multiple years with POAs")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -250,7 +250,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
   s"calling POST $enterPoAAmountUrl" should {
     s"return status $SEE_OTHER and redirect to select your reason page" when {
       "user has decreased poa" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -282,7 +282,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
     }
     s"return status $SEE_OTHER and redirect to check details page" when {
       "user has increased poa" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -312,7 +312,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(Increase), Some(2500.00))))
       }
       "user was on decrease only journey" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -344,7 +344,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
     }
     s"return $INTERNAL_SERVER_ERROR" when {
       "no non-crystallised financial details are found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         Given("Empty financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -366,7 +366,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
       }
 
       "no adjust POA session is found" in {
-        enable(AdjustPaymentsOnAccount)
+        enableFs(AdjustPaymentsOnAccount)
 
         And("Financial details for multiple years with POAs")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(

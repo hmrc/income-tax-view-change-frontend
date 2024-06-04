@@ -169,7 +169,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
       "render the Check Business details page with accounting method" when {
         "User is authorised and has no existing businesses" in {
           Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -224,7 +224,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def runSubmitSuccessTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "user selects 'confirm and continue'" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
@@ -254,7 +254,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def businessNotAddedTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "error in response from API" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
@@ -286,7 +286,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   def noUserDetailsTest(incomeSourceType: IncomeSourceType): Unit = {
     s"calling POST ${checkBusinessDetailsSubmitUrl(incomeSourceType)}" should {
       "user session has no details" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType))))

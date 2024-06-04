@@ -74,7 +74,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   def runGetTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
     "User is authorised" in {
       Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
-      enable(IncomeSources)
+      enableFs(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
       When(s"I call GET $addIncomeSourcesAccountingMethodShowUrl")
       val result = IncomeTaxViewChangeFrontend.get(url, clientDetailsWithConfirmation)
@@ -89,7 +89,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   def runPostTest(checkDetailsShowUrl: String, url: String, formData: Map[String, Seq[String]], incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): Unit = {
 
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
     val result = IncomeTaxViewChangeFrontend.post(url, clientDetailsWithConfirmation)(formData)
@@ -141,7 +141,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
       s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
         "user does not select anything" in {
           val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
@@ -169,7 +169,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
       s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
         "user does not select anything" in {
           val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
@@ -197,7 +197,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
       s"return BAD_REQUEST $foreignPropertyCheckDetailsShowUrl" when {
         "user does not select anything" in {
           val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq(""))
-          enable(IncomeSources)
+          enableFs(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-business-accounting-method", clientDetailsWithConfirmation)(formData)

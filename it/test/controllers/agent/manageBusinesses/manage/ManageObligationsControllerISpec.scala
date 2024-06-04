@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Manage
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
@@ -72,7 +73,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "given valid url params" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
 
@@ -106,7 +107,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "there is no incomeSourceId in session storage" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))
 
@@ -133,7 +134,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "given valid url params" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageUKObligationsShowUrl")
 
@@ -170,7 +171,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "given valid url params" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $manageFPObligationsShowUrl")
 
@@ -207,7 +208,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "called" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 

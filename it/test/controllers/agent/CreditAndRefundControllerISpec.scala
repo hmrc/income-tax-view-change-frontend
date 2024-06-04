@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.core.AccountingPeriodModel
@@ -46,9 +47,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "display the credit and refund page with all credits/refund types and audit event" when {
       "a valid response is received and feature switches are enabled" in {
-        enable(CreditsRefundsRepay)
-        enable(CutOverCredits)
-        enable(MFACreditsAndDebits)
+        enableFs(CreditsRefundsRepay)
+        enableFs(CutOverCredits)
+        enableFs(MFACreditsAndDebits)
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -110,7 +111,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "redirect to custom not found page" when {
       "the feature switch is off" in {
-        disable(CreditsRefundsRepay)
+        disableFs(CreditsRefundsRepay)
 
         stubAuthorisedAgentUser(authorised = true)
 

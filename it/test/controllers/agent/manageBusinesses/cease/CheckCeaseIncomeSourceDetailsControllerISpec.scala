@@ -22,6 +22,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -106,7 +107,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     "render the Cease Business Page" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
@@ -144,7 +145,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriSE" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a SE business")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -169,7 +170,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseUKPropertyDetailsControllerUrl}" should {
     "render the Cease UK Property Page" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
@@ -198,7 +199,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriUK" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -223,7 +224,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseForeignPropertyDetailsControllerUrl}" should {
     "render the Cease Foreign Property Page" when {
       "User is authorised" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
@@ -251,7 +252,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     s"redirect to $redirectUriFP" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign Property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))

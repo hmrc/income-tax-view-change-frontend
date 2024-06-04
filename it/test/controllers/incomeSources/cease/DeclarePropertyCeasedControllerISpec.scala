@@ -58,7 +58,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     "render the Cease UK Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET ${showDeclareUKPropertyCeasedControllerUrl}")
         val res = IncomeTaxViewChangeFrontend.getCeaseUKProperty
@@ -77,7 +77,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(UkProperty).url}" should {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
@@ -93,7 +93,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
       }
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
@@ -111,7 +111,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     "render the Cease Foreign Property Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
         When(s"I call GET $showDeclareForeignPropertyCeasedControllerUrl")
         val res = IncomeTaxViewChangeFrontend.getCeaseForeignProperty
@@ -130,7 +130,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(ForeignProperty).url}" should {
     "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
@@ -146,7 +146,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
       }
       "form is filled incorrectly" in {
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))

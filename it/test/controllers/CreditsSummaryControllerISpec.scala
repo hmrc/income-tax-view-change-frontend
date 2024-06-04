@@ -51,8 +51,8 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       "a valid response is received" in {
         import audit.models.CreditSummaryAuditing._
 
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
+        enableFs(MFACreditsAndDebits)
+        enableFs(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -104,8 +104,8 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
 
     "display the credit summary page" when {
       "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
-        disable(MFACreditsAndDebits)
-        disable(CutOverCredits)
+        disableFs(MFACreditsAndDebits)
+        disableFs(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK,
@@ -154,8 +154,8 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       "the list contains Balancing Charge Credits" in {
         import audit.models.CreditSummaryAuditing._
 
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
+        enableFs(MFACreditsAndDebits)
+        enableFs(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))

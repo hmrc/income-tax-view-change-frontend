@@ -71,7 +71,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Business Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $dateBusinessShowUrl")
@@ -93,7 +93,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
@@ -114,7 +114,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
@@ -136,7 +136,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Business Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
@@ -165,7 +165,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
@@ -186,7 +186,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")(formData)
@@ -209,7 +209,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date UK Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $dateUKPropertyShowUrl")
@@ -231,7 +231,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
@@ -250,7 +250,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/uk-property-end-date")(formData)
@@ -271,7 +271,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date UK Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
@@ -298,7 +298,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
@@ -318,7 +318,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date")(formData)
@@ -339,7 +339,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Foreign Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         When(s"I call GET $dateForeignPropertyShowUrl")
@@ -361,7 +361,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
@@ -381,7 +381,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/foreign-property-end-date")(formData)
@@ -402,7 +402,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "render the Date Foreign Property Ceased Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
@@ -429,7 +429,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
@@ -450,7 +450,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date")(formData)

@@ -48,7 +48,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $selfEmploymentReportingMethodNotSavedShowUrl")
 
@@ -73,7 +73,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $ukPropertyReportingMethodNotSavedShowUrl")
 
@@ -98,7 +98,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
     "render the reporting method not saved page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $foreignPropertyReportingMethodNotSavedShowUrl")
 

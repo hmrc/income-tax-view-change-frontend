@@ -83,6 +83,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
+    Logger("application").info(s"HERE IS FS => ${user.featureSwitches.mkString(" -\n")}")
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = {

@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.PaymentAllocation
 import models.core.AccountingPeriodModel
@@ -43,7 +43,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(PaymentAllocation)
+    disableFs(PaymentAllocation)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -146,7 +146,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       "the PaymentAllocation feature switch is disabled" in {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-        disable(PaymentAllocation)
+        disableFs(PaymentAllocation)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 
@@ -158,7 +158,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
 
     s"return $OK and display the Payment Allocations page" in {
-      enable(PaymentAllocation)
+      enableFs(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -178,7 +178,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
 
     s"return $OK and display the Payment Allocations page and new LPI layout" in {
-      enable(PaymentAllocation)
+      enableFs(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
@@ -199,7 +199,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
 
     s"return $INTERNAL_SERVER_ERROR when the payment allocations call fails" in {
-      enable(PaymentAllocation)
+      enableFs(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -218,7 +218,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => {
-          enable(PaymentAllocation)
+          enableFs(PaymentAllocation)
           IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
         })
     }

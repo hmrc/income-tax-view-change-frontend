@@ -40,7 +40,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
     "render the Add Property page" when {
       "the user is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $addPropertyShowUrl")
@@ -60,7 +60,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
     "redirect to the add uk property start date page" when {
       "form response is UK" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -80,7 +80,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
     "redirect to the add foreign property start date page" when {
       "form response is UK" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -100,7 +100,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
     "return a BAD_REQUEST" when {
       "form is empty" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")
@@ -117,7 +117,7 @@ class AddPropertyControllerISpec extends ComponentSpecBase {
       }
       "form is invalid" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call POST $addPropertySubmitUrl")

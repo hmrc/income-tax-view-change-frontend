@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUserWithNino
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import models.admin.ForecastCalculation
 import models.core.AccountingPeriodModel
@@ -172,7 +172,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationModel response" should {
       "return the forecast tax calc summary page when the forecast calculation fs is enabled" in {
         Given("I enable the forecast calculation fs")
-        enable(ForecastCalculation)
+        enableFs(ForecastCalculation)
         stubAuthorisedAgentUser(authorised = true)
 
         And("I stub a successful calculation response")

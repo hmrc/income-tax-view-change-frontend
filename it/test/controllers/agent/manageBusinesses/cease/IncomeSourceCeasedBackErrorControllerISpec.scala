@@ -20,6 +20,7 @@ import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -48,7 +49,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
     stubAuthorisedAgentUser(authorised = true)
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
@@ -75,7 +76,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
 
   def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
     stubAuthorisedAgentUser(authorised = true)
-    disable(IncomeSources)
+    disableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     val result: WSResponse = incomeSourceType match {

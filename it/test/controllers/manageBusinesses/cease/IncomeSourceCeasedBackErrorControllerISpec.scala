@@ -47,7 +47,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
     controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
-    enable(IncomeSources)
+    enableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
@@ -73,7 +73,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
   }
 
   def runRedirectTest(incomeSourceType: IncomeSourceType): Assertion = {
-    disable(IncomeSources)
+    disableFs(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     val result: WSResponse = incomeSourceType match {

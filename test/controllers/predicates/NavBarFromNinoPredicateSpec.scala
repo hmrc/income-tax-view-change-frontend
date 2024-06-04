@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.Html
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -41,7 +41,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
   val mockBtaNavBarController = mock(classOf[BtaNavBarController])
   val mockItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   val mockPtaPartial = mock(classOf[PtaPartial])
-  val mockFeatureSwitchService = mock(classOf[FeatureSwitchService])
+  val mockFeatureSwitchService = mock(classOf[FeatureSwitchServiceImpl])
 
   object NavBarFromNinoPredicate extends NavBarFromNinoPredicate(mockBtaNavBarController, mockPtaPartial,
     mockItvcErrorHandler, mockFeatureSwitchService)(appConfig, ec, messagesApi)

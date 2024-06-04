@@ -19,6 +19,7 @@ package controllers.agent.manageBusinesses.manage
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -83,8 +84,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and agent's authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //disable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -114,8 +115,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //enable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //enableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
@@ -156,8 +157,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //disable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -199,7 +200,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and agent's authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
@@ -234,7 +235,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -258,8 +259,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //enable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //enableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
@@ -290,8 +291,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //disable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -323,7 +324,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
@@ -352,7 +353,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -376,8 +377,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //enable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //enableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
@@ -410,8 +411,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        //disable(TimeMachineAddYear)
+        enableFs(IncomeSources)
+        //disableFs(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
@@ -443,7 +444,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))

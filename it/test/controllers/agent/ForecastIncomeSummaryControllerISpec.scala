@@ -21,7 +21,7 @@ import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.ForecastCalculation
@@ -187,7 +187,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid Liability Calc response" should {
       "return the correct income summary page and audit event" in {
         Given("I enable forecast calculation display feature switch")
-        enable(ForecastCalculation)
+        enableFs(ForecastCalculation)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(

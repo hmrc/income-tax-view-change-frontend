@@ -91,8 +91,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     "the payment history feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
-      disable(CutOverCredits)
-      disable(MFACreditsAndDebits)
+      disableFs(CutOverCredits)
+      disableFs(MFACreditsAndDebits)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
@@ -110,9 +110,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     }
 
     "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
-      enable(CutOverCredits)
-      enable(MFACreditsAndDebits)
-      enable(PaymentHistoryRefunds)
+      enableFs(CutOverCredits)
+      enableFs(MFACreditsAndDebits)
+      enableFs(PaymentHistoryRefunds)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -137,9 +137,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
     "Show the user the payments history page" when {
       "The feature switch is disabled" in {
-        disable(PaymentHistoryRefunds)
-        enable(CutOverCredits)
-        enable(MFACreditsAndDebits)
+        disableFs(PaymentHistoryRefunds)
+        enableFs(CutOverCredits)
+        enableFs(MFACreditsAndDebits)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)

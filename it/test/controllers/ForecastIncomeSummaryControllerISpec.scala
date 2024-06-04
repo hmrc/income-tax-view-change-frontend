@@ -74,7 +74,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
       "return the correct forecast income summary page and audit event" in {
 
         Given("I enable forecast calculation display")
-        enable(ForecastCalculation)
+        enableFs(ForecastCalculation)
 
         And("I stub a successful calculation response for 2017-18")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
@@ -99,7 +99,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
       "return notfound when forecast calculation is disabled" in {
 
         Given("I disable forecast calculation display")
-        disable(ForecastCalculation)
+        disableFs(ForecastCalculation)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income/forecast")
         val res = IncomeTaxViewChangeFrontend.getForecastIncomeSummary(testYear)

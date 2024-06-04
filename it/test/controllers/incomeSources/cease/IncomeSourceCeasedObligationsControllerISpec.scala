@@ -56,7 +56,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the Business Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $businessCeasedObligationsShowUrl")
 
@@ -87,7 +87,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the UK Property Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $ukPropertyCeasedObligationsShowUrl")
 
@@ -115,7 +115,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
     "render the Foreign Property Ceased obligations page" when {
       "User is authorised" in {
         Given("Income Sources FS is enabled")
-        enable(IncomeSources)
+        enableFs(IncomeSources)
 
         When(s"I call GET $foreignPropertyCeasedObligationsShowUrl")
 

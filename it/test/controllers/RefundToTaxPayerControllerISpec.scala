@@ -87,7 +87,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
       "the user is not authenticated" in {
         isAuthorisedUser(authorised = false)
         stubUserDetails()
-        enable(PaymentHistoryRefunds)
+        enableFs(PaymentHistoryRefunds)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
@@ -105,7 +105,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
     "the payment history refunds feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
-      enable(PaymentHistoryRefunds)
+      enableFs(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 
@@ -121,7 +121,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
     "the audit event is running as expected" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
-      enable(PaymentHistoryRefunds)
+      enableFs(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 
