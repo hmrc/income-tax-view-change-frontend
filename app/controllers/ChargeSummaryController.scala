@@ -21,7 +21,7 @@ import audit.models.ChargeSummaryAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.FinancialDetailsConnector
+import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -55,6 +55,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val financialDetailsConnector: FinancialDetailsConnector,
+                                        val chargeHistoryConnector: ChargeHistoryConnector,
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -139,6 +140,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
+    val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
+      case Some(value) => value.chargeReference
+      case None => None
+    }
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
         financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
@@ -151,7 +156,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
+    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
@@ -218,10 +223,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      financialDetailsConnector.getChargeHistory(user.mtditid, documentNumber).map {
+      chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse => Left(errorResponse)
       }

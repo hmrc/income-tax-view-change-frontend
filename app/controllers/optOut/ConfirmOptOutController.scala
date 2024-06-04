@@ -23,6 +23,7 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearCheckpointViewModel}
+import models.optout.OptOutCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -37,8 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        override val sessionService: SessionService)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -49,7 +49,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)(oneYear: OptOutOneYearCheckpointViewModel => Result, multiYear:OptOutMultiYearViewModel => Result)
+  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)(oneYear: OptOutCheckpointViewModel => Result, multiYear: OptOutCheckpointViewModel => Result)
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     optOutService.optOutCheckPointPageViewModel(intent).map {

@@ -16,13 +16,11 @@
 
 package mocks.services
 
-import models.incomeSourceDetails.TaxYear
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutMultiYearViewModel, OptOutOneYearCheckpointViewModel, OptOutOneYearViewModel}
+import models.optout.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutOneYearViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optout.OptOutService
-import testConstants.BaseTestConstants.taxYear
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -42,17 +40,17 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOneYearOptOutViewModel()(any(), any(), any()))
+    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 
-  def mockOptOutOneYearCheckPointPageViewModel(out: Future[OptOutOneYearCheckpointViewModel]): Unit = {
-    when(mockOptOutService.optOutCheckPointPageViewModel(intent = None)(any(), any(), any()))
+  def mockOptOutCheckPointPageViewModel(out: Future[Option[OptOutCheckpointViewModel]]): Unit = {
+    when(mockOptOutService.optOutCheckPointPageViewModel(any())(any(), any(), any()))
       .thenReturn(out)
   }
 
-  def mockOptOutMultiYearCheckPointPageViewModel(out: Future[OptOutMultiYearViewModel]): Unit = {
-    when(mockOptOutService.optOutCheckPointPageViewModel(Some(TaxYear.forYearEnd(taxYear)))(any(), any(), any()))
+  def mockOptOutConfirmedPageViewModel(out: Future[Option[ConfirmedOptOutViewModel]]): Unit = {
+    when(mockOptOutService.optOutConfirmedPageViewModel(any())(any(), any(), any()))
       .thenReturn(out)
   }
 

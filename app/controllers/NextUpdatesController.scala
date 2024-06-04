@@ -76,7 +76,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
             optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
-              optOutService.nextUpdatesPageOneYearOptOutViewModel().map { optOutOneYearViewModel =>
+              optOutService.nextUpdatesPageOptOutViewModel().map { optOutOneYearViewModel =>
                 Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
               }
             } recover {

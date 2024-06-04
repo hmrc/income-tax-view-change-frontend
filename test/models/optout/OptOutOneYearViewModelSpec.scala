@@ -18,6 +18,7 @@ package models.optout
 
 import models.incomeSourceDetails.TaxYear
 import play.api.mvc.Call
+import services.optout.OneYearOptOutFollowedByMandated
 import testUtils.UnitSpec
 
 class OptOutOneYearViewModelSpec extends UnitSpec {
@@ -31,19 +32,19 @@ class OptOutOneYearViewModelSpec extends UnitSpec {
   "OptOutOneYearViewModel.optOutConfirmationLink" when {
     "show warning is true" should {
       s"Individual - return a $singleYearOptOutConfirmationIndividual " in {
-        OptOutOneYearViewModel(taxYear, showWarning = true).optOutConfirmationLink(isAgent = false) shouldBe singleYearOptOutConfirmationIndividual
+        OptOutOneYearViewModel(taxYear, Some(OneYearOptOutFollowedByMandated)).optOutConfirmationLink(isAgent = false) shouldBe singleYearOptOutConfirmationIndividual
       }
       s"Agent - return a $singleYearOptOutConfirmationAgent" in {
-        OptOutOneYearViewModel(taxYear, showWarning = true).optOutConfirmationLink(isAgent = true) shouldBe singleYearOptOutConfirmationAgent
+        OptOutOneYearViewModel(taxYear, Some(OneYearOptOutFollowedByMandated)).optOutConfirmationLink(isAgent = true) shouldBe singleYearOptOutConfirmationAgent
       }
     }
 
     "show warning is false" should {
       s"Individual - return a $confirmOptOutIndividual" in {
-        OptOutOneYearViewModel(taxYear).optOutConfirmationLink(isAgent = false) shouldBe confirmOptOutIndividual
+        OptOutOneYearViewModel(taxYear, None).optOutConfirmationLink(isAgent = false) shouldBe confirmOptOutIndividual
       }
       s"Agent - return a $confirmOptOutAgent" in {
-        OptOutOneYearViewModel(taxYear).optOutConfirmationLink(isAgent = true) shouldBe confirmOptOutAgent
+        OptOutOneYearViewModel(taxYear, None).optOutConfirmationLink(isAgent = true) shouldBe confirmOptOutAgent
       }
     }
 
