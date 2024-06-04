@@ -17,7 +17,6 @@
 package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
@@ -64,7 +63,8 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, poa))))
+            val showWarning = poa.poAPartiallyPaid && poa.totalAmountLessThanPoa
+            Future.successful(Ok(view(isAgent, poa.taxYear, showWarning, getRedirect(isAgent, poa))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))

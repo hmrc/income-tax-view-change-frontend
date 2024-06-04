@@ -35,7 +35,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, showPostPaymentWarning: Boolean, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -93,6 +93,20 @@
     }
 
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
+
+    @if(showPostPaymentWarning){
+        <h3 class="govuk-heading-m">@getMessage("increase-after-payment.h1")</h3>
+
+        @p(id = Some("p6")) {
+            @getMessage("increase-after-payment.p1")
+        }
+
+        <h3 class="govuk-heading-s">@getMessage("increase-after-payment.h2")</h3>
+
+        @p(id = Some("p7")) {
+            @getMessage("increase-after-payment.p2")
+        }
+    }
 
     <div class="govuk-button-group">
 

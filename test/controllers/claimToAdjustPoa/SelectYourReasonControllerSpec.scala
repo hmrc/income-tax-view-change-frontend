@@ -70,7 +70,8 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
       paymentOnAccountOne = 5000.00,
       paymentOnAccountTwo = 5000.00,
       poARelevantAmountOne = 5000.00,
-      poARelevantAmountTwo = 5000.00
+      poARelevantAmountTwo = 5000.00,
+      poAPartiallyPaid = false
     ))
 
   val poaTotalLessThanRelevant: Option[PaymentOnAccountViewModel] = poa.map(_.copy(

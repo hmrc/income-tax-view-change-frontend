@@ -25,7 +25,8 @@ case class PaymentOnAccountViewModel(
                              paymentOnAccountOne: BigDecimal,
                              paymentOnAccountTwo: BigDecimal,
                              poARelevantAmountOne: BigDecimal,
-                             poARelevantAmountTwo: BigDecimal
+                             poARelevantAmountTwo: BigDecimal,
+                             poAPartiallyPaid: Boolean
                            ) {
 
   val totalAmount: BigDecimal = paymentOnAccountOne + paymentOnAccountTwo
