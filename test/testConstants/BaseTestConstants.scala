@@ -41,6 +41,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testMtditidAgent = "XAIT00000000015"
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
+  val testNinoNino: Nino = Nino(testNino)
   val testSessionId = "xsession-12345"
   val repaymentId = "123456789"
   val dateFrom = "12/02/2021"

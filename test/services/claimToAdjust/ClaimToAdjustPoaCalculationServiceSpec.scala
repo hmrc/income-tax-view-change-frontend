@@ -21,7 +21,7 @@ import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, 
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
 import models.incomeSourceDetails.TaxYear
 import services.ClaimToAdjustPoaCalculationService
-import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.BaseTestConstants.{testNino, testNinoNino, testTaxYear}
 import testUtils.TestSupport
 
 class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimToAdjustPoaConnector{
@@ -43,7 +43,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
       "post POA was successful" in {
         setupMockPostClaimToAdjustPoa(request)(response = Right(ClaimToAdjustPoaSuccess(processingDate)))
         val result = testClaimToAdjustPoaCalculationService.
-          recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
+          recalculate(testNinoNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
         result.futureValue shouldBe Right(())
       }
@@ -52,7 +52,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
       "POA recalculation failed" in {
         setupMockPostClaimToAdjustPoa(request)(response = Left(ClaimToAdjustPoaError(errorMessage)))
         val result = testClaimToAdjustPoaCalculationService.
-          recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
+          recalculate(testNinoNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
         result.futureValue.toString shouldBe Left(new Exception("Unexpected error")).toString
       }
@@ -61,7 +61,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
       "POA recalculation failed due to json error" in {
         setupMockPostClaimToAdjustPoa(request)(response = Left(ClaimToAdjustPoaInvalidJson))
         val result = testClaimToAdjustPoaCalculationService.
-          recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
+          recalculate(testNinoNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
         result.futureValue.toString shouldBe Left(new Exception("Invalid JSON")).toString
       }
@@ -70,7 +70,7 @@ class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimT
       "POA recalculation failed due to unexpected error" in {
         setupMockPostClaimToAdjustPoa(request)(response = Left(UnexpectedError))
         val result = testClaimToAdjustPoaCalculationService.
-          recalculate(testNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
+          recalculate(testNinoNino, TaxYear(startYear = testTaxYear, endYear = testTaxYear + 1), 2000.00, MainIncomeLower)
 
         result.futureValue.toString shouldBe Left(new Exception("Unexpected error")).toString
       }
