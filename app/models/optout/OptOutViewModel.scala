@@ -20,7 +20,9 @@ import models.incomeSourceDetails.TaxYear
 import play.api.mvc.Call
 import services.optout.{OneYearOptOutFollowedByMandated, OneYearOptOutState}
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[OneYearOptOutState]) {
+sealed trait OptOutViewModel
+
+case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[OneYearOptOutState]) extends OptOutViewModel {
   def startYear: String = oneYearOptOutTaxYear.startYear.toString
 
   def endYear: String = oneYearOptOutTaxYear.endYear.toString
@@ -33,5 +35,11 @@ case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[O
     else
       controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
 
+  }
+}
+
+case class OptOutMultiYearViewModel() extends OptOutViewModel {
+  def optOutLink(isAgent: Boolean): Call = {
+    controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent)
   }
 }

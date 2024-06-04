@@ -115,12 +115,10 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
 
     optOutService.nextUpdatesPageOptOutViewModel().map {
       case Some(OptOutOneYearViewModel(taxYear, _)) => code(taxYear)
-      case None =>
+      case _ =>
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()
     }
 
   }
-
-
 }

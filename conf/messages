@@ -790,6 +790,9 @@ nextUpdates.updates.software.link       					       = https://www.gov.uk/guidanc
 nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
+nextUpdates.optOutMultiYear-1                                        = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear-2                                        = opt out of quarterly updates and report annually instead.
+
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
 paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.

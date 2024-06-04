@@ -721,6 +721,9 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
+nextUpdates.optOutMultiYear-1                                   = ToDo: Requested
+nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
 sections.open												    = Dangos
