@@ -21,11 +21,17 @@ POST         /adjust-poa/change-your-reason                                 cont
 POST         /agents/adjust-poa/select-your-reason                          controllers.claimToAdjustPoa.SelectYourReasonController.submit(isAgent: Boolean = true, mode: Mode = NormalMode)
 POST         /agents/adjust-poa/change-your-reason                          controllers.claimToAdjustPoa.SelectYourReasonController.submit(isAgent: Boolean = true, mode: Mode = CheckMode)
 
-GET          /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = false)
-GET          /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = true)
+GET          /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = false, mode: Mode = NormalMode)
+GET          /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = true, mode: Mode = NormalMode)
 
-POST         /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = false)
-POST         /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = true)
+GET          /adjust-poa/change-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = false, mode: Mode = CheckMode)
+GET          /agents/adjust-poa/change-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.show(isAgent: Boolean = true, mode: Mode = CheckMode)
+
+POST         /adjust-poa/enter-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = false, mode: Mode = NormalMode)
+POST         /agents/adjust-poa/enter-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = true, mode: Mode = NormalMode)
+
+POST         /adjust-poa/change-poa-amount                                   controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = false, mode: Mode = CheckMode)
+POST         /agents/adjust-poa/change-poa-amount                            controllers.claimToAdjustPoa.EnterPoAAmountController.submit(isAgent: Boolean = true, mode: Mode = CheckMode)
 
 GET          /adjust-poa/check-your-answers                                 controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/check-your-answers                          controllers.claimToAdjustPoa.CheckYourAnswersController.show(isAgent: Boolean = true)
@@ -38,9 +44,6 @@ POST         /agents/adjust-poa/confirmation                                cont
 
 GET          /adjust-poa/success                                            controllers.claimToAdjustPoa.SuccessController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/success                                     controllers.claimToAdjustPoa.SuccessController.show(isAgent: Boolean = true)
-
-GET          /adjust-poa/change-poa-amount                                  controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = false)
-GET          /agents/adjust-poa/change-poa-amount                           controllers.claimToAdjustPoa.ChangePoaAmountController.show(isAgent: Boolean = true)
 
 GET          /adjust-poa/error-poa-not-updated                              controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/error-poa-not-updated                       controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = true)

@@ -123,7 +123,7 @@ class SelectYourReasonController @Inject()(
       _        <- EitherT(sessionService.setAdjustmentReason(value))
       redirect <- withSessionAndPoa(isAgent) { (_, poa) =>
         (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => EitherT.rightT(Redirect(EnterPoAAmountController.show(isAgent)))
+          case (NormalMode, false) if value != Increase => EitherT.rightT(Redirect(EnterPoAAmountController.show(isAgent, NormalMode)))
           case (_,_)                                    => EitherT.rightT(Redirect(CheckYourAnswersController.show(isAgent)))
         }
       }

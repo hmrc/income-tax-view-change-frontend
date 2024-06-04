@@ -47,7 +47,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
-      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
+      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode)
     } else {
       controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)
     }).url

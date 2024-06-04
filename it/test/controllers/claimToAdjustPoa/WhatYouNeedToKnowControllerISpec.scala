@@ -35,8 +35,9 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
   val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent).url
+  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
   val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
+
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
@@ -77,8 +78,6 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe selectReasonUrl
-
-        // should NOT display the content
 
         val content = Option(document.getElementById("p6"))
         content.isDefined shouldBe false
