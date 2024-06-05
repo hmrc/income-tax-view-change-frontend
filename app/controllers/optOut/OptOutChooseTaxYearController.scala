@@ -20,33 +20,24 @@ import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.IncomeSourceDetailsService
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
-import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPredicate,
-                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              val optOutChooseTaxYear: OptOutChooseTaxYear,
-                                              val optOutService: OptOutService,
-                                              val checkSessionTimeout: SessionTimeoutPredicate,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: NavBarPredicate,
-                                              val retrieveNino: NinoPredicate,
-                                              val customNotFoundErrorView: CustomNotFoundError,
-                                              val auth: AuthenticatorPredicate)
+class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
+                                              val optOutService: OptOutService)
                                              (implicit val appConfig: FrontendAppConfig,
-                                              mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
+                                              val auth: AuthenticatorPredicate,
+                                              val authorisedFunctions: FrontendAuthorisedFunctions,
                                               val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                              override val mcc: MessagesControllerComponents
                                              )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
