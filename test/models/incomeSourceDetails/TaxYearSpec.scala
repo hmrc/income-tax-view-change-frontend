@@ -21,7 +21,7 @@ import testUtils.{TestSupport, UnitSpec}
 
 import java.time.LocalDate
 
-class TaxYearModelSpec extends UnitSpec with TestSupport {
+class TaxYearSpec extends UnitSpec with TestSupport {
 
   "currentTaxYearMinusOne method" when {
     "invoked on a TaxYear object" should {
