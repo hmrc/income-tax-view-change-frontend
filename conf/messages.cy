@@ -1937,6 +1937,23 @@ claimToAdjustPoa.apiFailure.bullet1Link              = addasu eich taliadau ar g
 claimToAdjustPoa.apiFailure.bullet2Text              = mynd yn ôl i’r
 claimToAdjustPoa.apiFailure.bullet2Link              = hafan
 
+# success
+
+claimToAdjustPoa.success.heading                    = Taliadau ar gyfrif wedi’u diweddaru
+claimToAdjustPoa.success.h1                         = Taliadau ar gyfrif wedi’u diweddaru
+claimToAdjustPoa.success.p1                         = Mae’ch taliadau ar gyfrif ar gyfer blwyddyn dreth 2023 i 2024 yn {2} yr un erbyn hyn
+claimToAdjustPoa.success.p2                         = Gallwch addasu’ch taliadau ar gyfrif eto, hyd at y swm cychwynnol a gyfrifwyd gan CThEF, mor aml ag sydd ei angen cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn 31 Ionawr {2} fan bellaf.
+claimToAdjustPoa.success.checkYour                  = Gwiriwch eich
+claimToAdjustPoa.success.link                       = crynodeb o flwyddyn dreth {0} i {1}
+claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnaethoch i’ch taliadau ar gyfrif.
+claimToAdjustPoa.success.check                      = Gwirio’r
+claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
+claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
+
+#######################################################################################################################
+## Opt Out ##
+#######################################################################################################################
+
 
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth {0} i {1}

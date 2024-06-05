@@ -90,4 +90,26 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
     }
   }
 
+  def setCompletedJourney(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+    poAAmmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
+      case Some(data: PoASessionData) =>
+        val newData: PoAAmendmentData = data.poaAmendmentData match {
+          case Some(value) =>
+            value.copy(hasCompletedJourneySuccessfully = true)
+          case None =>
+            PoAAmendmentData(hasCompletedJourneySuccessfully = true)
+        }
+        setMongoData(Some(newData))
+          .flatMap(v => {
+            if (v)
+              Future.successful(Right(()))
+            else {
+              Future.successful(Left(new Error("Unable to save records")))
+            }
+          })
+      case None =>
+        Future.successful(Left(new Error("No active mongo session found")))
+    }
+  }
+
 }

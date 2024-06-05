@@ -45,8 +45,8 @@ GET          /agents/adjust-poa/confirmation                                cont
 POST         /adjust-poa/confirmation                                       controllers.claimToAdjustPoa.ConfirmationForAdjustingPoaController.submit(isAgent: Boolean = false)
 POST         /agents/adjust-poa/confirmation                                controllers.claimToAdjustPoa.ConfirmationForAdjustingPoaController.submit(isAgent: Boolean = true)
 
-GET          /adjust-poa/success                                            controllers.claimToAdjustPoa.SuccessController.show(isAgent: Boolean = false)
-GET          /agents/adjust-poa/success                                     controllers.claimToAdjustPoa.SuccessController.show(isAgent: Boolean = true)
+GET          /adjust-poa/success                                            controllers.claimToAdjustPoa.PaymentsOnAccountAdjustedController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/success                                     controllers.claimToAdjustPoa.PaymentsOnAccountAdjustedController.show(isAgent: Boolean = true)
 
 GET          /adjust-poa/error-poa-not-updated                              controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/error-poa-not-updated                       controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = true)
