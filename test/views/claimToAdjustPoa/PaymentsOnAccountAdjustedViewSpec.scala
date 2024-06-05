@@ -79,6 +79,9 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
         document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(false)
       }
+      "Not display a back button" in new Setup(isAgent = false) {
+        Option(document.getElementById("back")).isDefined shouldBe false
+      }
     }
   }
 
@@ -105,6 +108,9 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
         document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(true)
+      }
+      "Not display a back button" in new Setup(isAgent = true) {
+        Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
   }
