@@ -23,7 +23,7 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.optout.OptOutCheckpointViewModel
+import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -50,12 +50,12 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)(oneYear: OptOutCheckpointViewModel => Result, multiYear: OptOutCheckpointViewModel => Result)
+  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)(oneYear: OneYearOptOutCheckpointViewModel => Result, multiYear: OptOutCheckpointViewModel => Result)
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     optOutService.optOutCheckPointPageViewModel(intent).map {
-      case Some(optOutOneYearCheckpointViewModel: OneYearOptOutProposition) => oneYear(optOutOneYearCheckpointViewModel)
-      case Some(multiYearCheckpointViewModel: MultiYearOptOutProposition) => multiYear(multiYearCheckpointViewModel)
+      case Some(optOutOneYearCheckpointViewModel: OneYearOptOutCheckpointViewModel) => oneYear(optOutOneYearCheckpointViewModel)
+      case Some(multiYearCheckpointViewModel: MultiYearOptOutCheckpointViewModel) => multiYear(multiYearCheckpointViewModel)
       case _ =>
         Logger("application").error("No qualified tax year available for opt out")
         errorHandler(isAgent).showInternalServerError()
