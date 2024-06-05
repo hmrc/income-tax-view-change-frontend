@@ -21,7 +21,6 @@ import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.core.AccountingPeriodModel

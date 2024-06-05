@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
 import models.core.AccountingPeriodModel

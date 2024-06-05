@@ -123,12 +123,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def enableFs(featureSwitch: FeatureSwitchName): Unit = {
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
     await( featureSwitchService.set(featureSwitch, true) )
   }
 
   def disableFs(featureSwitch: FeatureSwitchName): Unit = {
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
     await( featureSwitchService.set(featureSwitch, false) )
   }
 
@@ -209,13 +207,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     stubUserDetails()
     AuditStub.stubAuditing()
     cache.removeAll()
-    FeatureSwitchName.allFeatureSwitches foreach disable
+    FeatureSwitchName.allFeatureSwitches.foreach{ x => disableFs(x) }
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
-    FeatureSwitchName.allFeatureSwitches foreach disable
+    FeatureSwitchName.allFeatureSwitches.foreach{x => disableFs(x) }
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {

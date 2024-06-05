@@ -19,7 +19,6 @@ package controllers.agent.manageBusinesses.manage
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId

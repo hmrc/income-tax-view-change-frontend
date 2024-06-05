@@ -22,7 +22,7 @@ import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{disableFs, enableFs, titleInternalServer}
+import helpers.servicemocks.AuthStub.{titleInternalServer}
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}

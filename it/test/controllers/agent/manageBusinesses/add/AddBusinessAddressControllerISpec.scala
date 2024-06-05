@@ -16,10 +16,9 @@
 
 package controllers.agent.manageBusinesses.add
 
-import models.admin.IncomeSources
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
+import models.admin.IncomeSources
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse

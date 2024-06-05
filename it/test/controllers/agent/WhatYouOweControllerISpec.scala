@@ -20,7 +20,6 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay}
 import models.core.AccountingPeriodModel

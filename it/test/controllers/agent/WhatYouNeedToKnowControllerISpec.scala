@@ -17,10 +17,9 @@
 package controllers.agent
 
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.PoAAmendmentData
 import models.admin.AdjustPaymentsOnAccount
+import models.claimToAdjustPoa.PoAAmendmentData
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

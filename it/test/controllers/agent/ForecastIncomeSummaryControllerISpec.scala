@@ -21,7 +21,7 @@ import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.ForecastCalculation

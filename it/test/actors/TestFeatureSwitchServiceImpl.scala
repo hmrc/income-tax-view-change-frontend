@@ -24,7 +24,6 @@ import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.apache.pekko.actor.{ActorRef, ActorSystem}
 import org.apache.pekko.util.Timeout
-import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -49,7 +48,6 @@ class TestFeatureSwitchServiceImpl @Inject()(system: ActorSystem,
   val featureSwitchActor: ActorRef = system.actorOf(FeatureSwitchActor.props, "featureSwitch-actor")
 
   override def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] = {
-    Logger("application").info(s"GET FS22${featureSwitchName}")
     val sysProps = sys.props.get(featureSwitchName.name).getOrElse("false")
     Future {
       FeatureSwitch(featureSwitchName, sysProps == "true")
@@ -68,8 +66,11 @@ class TestFeatureSwitchServiceImpl @Inject()(system: ActorSystem,
   }
 
   override def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
-    Logger("application").info(s"GET FS - SET - ${featureSwitchName} - $enabled")
-    sys.props += featureSwitchName.name -> FEATURE_SWITCH_OFF
+    if (enabled) {
+      sys.props += featureSwitchName.name -> FEATURE_SWITCH_ON
+    } else {
+      sys.props += featureSwitchName.name -> FEATURE_SWITCH_OFF
+    }
     Future.successful {
       true
     }

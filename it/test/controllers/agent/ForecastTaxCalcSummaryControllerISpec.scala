@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUserWithNino
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{enableFs, titleInternalServer}
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import models.admin.ForecastCalculation
 import models.core.AccountingPeriodModel

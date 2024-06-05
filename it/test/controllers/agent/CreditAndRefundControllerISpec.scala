@@ -19,7 +19,6 @@ package controllers.agent
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{disableFs, enableFs}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.core.AccountingPeriodModel

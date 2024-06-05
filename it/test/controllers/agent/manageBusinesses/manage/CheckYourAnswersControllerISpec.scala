@@ -18,12 +18,11 @@ package controllers.agent.manageBusinesses.manage
 
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
-import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.enableFs
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.admin.IncomeSources
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}

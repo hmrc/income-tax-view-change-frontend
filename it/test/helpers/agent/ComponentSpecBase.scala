@@ -16,6 +16,8 @@
 
 package helpers.agent
 
+import actors.TestFeatureSwitchServiceImpl
+import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -25,7 +27,8 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceR
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.AuditStub
-import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
+import helpers.{CustomMatchers, GenericStubMethods, TestDateService, TestHeaderExtractor, WiremockHelper}
+import models.admin.FeatureSwitchName
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -40,8 +43,10 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.DateServiceInterface
+import services.admin.FeatureSwitchService
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,6 +68,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val dateService: DateServiceInterface = app.injector.instanceOf[DateServiceInterface]
+  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
 
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
@@ -97,10 +103,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
+    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
     .overrides(bind[DateServiceInterface].to[TestDateService])
+    .overrides(bind[FeatureSwitchService].to[TestFeatureSwitchServiceImpl])
     .configure(config)
     .build()
 
+  def enableFs(featureSwitch: FeatureSwitchName): Unit = {
+    await( featureSwitchService.set(featureSwitch, true) )
+  }
+
+  def disableFs(featureSwitch: FeatureSwitchName): Unit = {
+    await( featureSwitchService.set(featureSwitch, false) )
+  }
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf(classOf[AsyncCacheApi])
