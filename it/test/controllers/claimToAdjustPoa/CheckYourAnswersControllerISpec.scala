@@ -17,7 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, SuccessController}
+import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PaymentsOnAccountAdjustedController}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
@@ -261,7 +261,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(SuccessController.show(isAgent).url)
+          redirectURI(PaymentsOnAccountAdjustedController.show(isAgent).url)
         )
       }
     }

@@ -48,15 +48,15 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler, itvcErrorHandlerAgent: AgentItvcErrorHandler): Future[Result] = {
     otherData match {
-      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount)) =>
+      case PoAAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
           case Right(_) =>
-            Redirect(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent))
+            Redirect(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent))
         }
-      case PoAAmendmentData(_, _) =>
+      case PoAAmendmentData(_, _, _) =>
         Future.successful(showInternalServerError(isAgent))
     }
   }

@@ -1975,6 +1975,23 @@ claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each pa
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
 
+# success
+
+claimToAdjustPoa.success.heading                        = Payments on account updated
+claimToAdjustPoa.success.h1                             = Payments on account updated
+claimToAdjustPoa.success.p1                             = Your payments on account for the {0} to {1} tax year are now {2} each
+claimToAdjustPoa.success.p2                             = You can adjust your payments on account again, up to the initial amount calculated by HMRC, as often as you need to before submitting your tax return for {0} to {1}, and no later than 31 January {2}.
+claimToAdjustPoa.success.checkYour                      = Check your
+claimToAdjustPoa.success.link                           = tax year summary for {0} to {1}
+claimToAdjustPoa.success.afterLinkText                  = to see the changes you’ve made to your payments on account.
+claimToAdjustPoa.success.check                          = Check
+claimToAdjustPoa.success.whatYouOwe                     = what you owe
+claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
+
+
+#######################################################################################################################
+## Opt Out ##
+#######################################################################################################################
 
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year

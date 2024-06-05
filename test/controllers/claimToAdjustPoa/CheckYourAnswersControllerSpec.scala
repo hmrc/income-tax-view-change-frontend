@@ -219,8 +219,8 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
 
-        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent = false).url)
-        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent = true).url)
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent = false).url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent = true).url)
       }
     }
     "redirect to API error page" when {
