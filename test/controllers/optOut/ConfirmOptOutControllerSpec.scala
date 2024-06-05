@@ -18,10 +18,12 @@ package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockOptOutService
+import mocks.services.{MockOptOutService, MockSessionService}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -32,13 +34,14 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 import scala.concurrent.Future
 
 class ConfirmOptOutControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService {
+  with MockAuthenticationPredicate with MockOptOutService with MockSessionService {
 
   object TestConfirmOptOutController extends ConfirmOptOutController(
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
     checkOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers],
-    optOutService = mockOptOutService)(
+    optOutService = mockOptOutService,
+    sessionService = mockSessionService)(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -52,8 +55,8 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
     val taxYear = TaxYear.forYearEnd(2024)
     val optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear, Some(OneYearOptOutFollowedByAnnual))))
-    val noEligibleTaxYearResponse = Future.successful(None)
+    val eligibleTaxYearResponse = Future.successful(Some(OneYearOptOutCheckpointViewModel(taxYear, Some(OneYearOptOutFollowedByAnnual))))
+    val eligibleMultiTaxYearResponse = Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, None)))
     val failedResponse = Future.failed(new Exception("some error"))
 
 
@@ -71,7 +74,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
       s"return result with $OK status when viewing Multi Year Opt Out" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockOptOutMultiYearCheckPointPageViewModel(eligibleMultiTaxYearResponse)
+        mockOptOutCheckPointPageViewModel(eligibleMultiTaxYearResponse)
 
         val result: Future[Result] = TestConfirmOptOutController.show(isAgent)(requestGET)
 
@@ -89,8 +92,6 @@ class ConfirmOptOutControllerSpec extends TestSupport
         }
       }
     }
-  }
-
 
   "ConfirmOptOutController - Individual" when {
     tests(isAgent = false)

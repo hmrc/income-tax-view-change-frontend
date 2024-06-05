@@ -450,7 +450,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val response = service.optOutCheckPointPageViewModel()
 
-          response.futureValue shouldBe Some(OptOutCheckpointViewModel(optOutTaxYear, Some(state)))
+          response.futureValue shouldBe Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(state)))
 
         }
       }
@@ -467,44 +467,9 @@ class OptOutServiceSpec extends UnitSpec
         val test = testOptOutCheckPointPageViewModel _
         test.tupled(input).tupled(output)
     }
-
-    "Multi year scenario" should {
-      val CY = TaxYear.forYearEnd(2024)
-      val PY = CY.previousYear
-      val NY = CY.nextYear
-
-      def testOptOutMultiYearCheckPointPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean, intent: TaxYear)
-                                                    (taxYear: TaxYear): Unit = {
-
-        def getTaxYearText(taxYear: TaxYear): String = {
-          if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
-        }
-
-        s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised, intended opt out year is $intent" should {
-          s"offer ${getTaxYearText(taxYear)}" in {
-
-            val previousYear: TaxYear = PY
-            when(dateService.getCurrentTaxYear).thenReturn(CY)
-
-            val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-              PY -> StatusDetail("", statusPY, ""),
-              CY -> StatusDetail("", statusCY, ""),
-              NY -> StatusDetail("", statusNY, ""),
-            )
-            when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-            when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
-
-            val response = service.optOutCheckPointPageViewModel(Some(intent))
-
-            response.futureValue shouldBe OptOutMultiYearViewModel(taxYear)
-
-          }
-        }
-
-      }
-
   }
+
+
   "OptOutService.optOutConfirmedPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
@@ -548,6 +513,6 @@ class OptOutServiceSpec extends UnitSpec
       }
 
     }
-
   }
 }
+

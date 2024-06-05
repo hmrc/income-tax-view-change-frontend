@@ -37,8 +37,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                               dateService: DateServiceInterface) {
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  private val defaultOptOutMultiYearIntent = Some(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2023)))
-
+  private val defaultOptOutMultiYearIntent = Some(TaxYear.forYearEnd(2023))
+  private val defaultOptOutYearIntent = Some(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2023)))
   private def setupOptOutProposition()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutProposition] = {
 
     val currentYear = dateService.getCurrentTaxYear
@@ -132,17 +132,17 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutCheckPointPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
+  def optOutCheckPointPageViewModel(intent: Option[TaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
     setupOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
-        case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(optOutTaxYear = p.intent, state = p.state()))
-        case p: MultiYearOptOutProposition => intent.map(i => OptOutCheckpointViewModel(optOutTaxYear = i, state = p.state()))
+        case p: OneYearOptOutProposition => Some(OneYearOptOutCheckpointViewModel(optOutTaxYear = p.intent.taxYear, state = p.state()))
+        case _: MultiYearOptOutProposition => intent.map(i => MultiYearOptOutCheckpointViewModel(optOutTaxYear = i, state = None))
       }
     }
   }
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
+  def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
     setupOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent, state = p.state()))

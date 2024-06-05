@@ -18,7 +18,7 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optout.OptOutMultiYearViewModel
+import models.optout.{MultiYearOptOutCheckpointViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -32,9 +32,9 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
 
-  val checkAnswersViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel(TaxYear.forYearEnd(taxYear))
-  val intentStartTaxYear: String = checkAnswersViewModel.intent.startYear.toString
-  val intentEndTaxYear: String = checkAnswersViewModel.intent.endYear.toString
+  val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear), None)
+  val intentStartTaxYear: String = checkAnswersViewModel.startYear
+  val intentEndTaxYear: String = checkAnswersViewModel.endYear
   class Setup(isAgent: Boolean = true) {
     val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel ,postAction, isAgent)))
