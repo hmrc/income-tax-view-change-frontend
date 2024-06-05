@@ -75,7 +75,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       withRecover(isAgent) {
         withSessionData((sessionData: UIJourneySessionData) => {
-          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse(TaxYear.forYearEnd(2024).toString) //TODO Remove hard coded values
+          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse(TaxYear.forYearEnd(2022).toString) //TODO Remove hard coded values
           val intentTaxYear = TaxYear.getTaxYearModel(intent)
           withOptOutQualifiedTaxYear(intentTaxYear, isAgent)(
             oneYearOptOutCheckpointViewModel => {
