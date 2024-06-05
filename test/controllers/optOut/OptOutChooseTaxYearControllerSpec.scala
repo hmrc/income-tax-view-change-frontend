@@ -41,10 +41,10 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
   val counts: Future[Map[Int, Int]] = Future.successful(Map(2022 -> 1, 2023 -> 1, 2024 -> 0))
 
-  def testLogic(isAgent: Boolean): Unit = {
+  def testHappyCase(isAgent: Boolean): Unit = {
 
     "show method is invoked" should {
-      s"return result with status" in {
+      s"return result with ${Status.OK} status" in {
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
@@ -63,11 +63,11 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   }
 
   "OptOutChooseTaxYearController - Individual" when {
-    testLogic(isAgent = false)
+    testHappyCase(isAgent = false)
   }
 
   "OptOutChooseTaxYearController - Agent" when {
-    testLogic(isAgent = true)
+    testHappyCase(isAgent = true)
   }
 
 }
