@@ -126,3 +126,4 @@ class ConfirmOptOutControllerSpec extends TestSupport
       tests(isAgent = true)
     }
   }
+}
