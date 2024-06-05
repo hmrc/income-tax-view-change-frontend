@@ -19,6 +19,8 @@ package models.incomeSourceDetails
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import testUtils.{TestSupport, UnitSpec}
 
+import java.time.LocalDate
+
 class TaxYearModelSpec extends UnitSpec with TestSupport {
 
   "currentTaxYearMinusOne method" when {
@@ -200,6 +202,20 @@ class TaxYearModelSpec extends UnitSpec with TestSupport {
       "the TaxYear object is not after given tax year" in {
         TaxYear.forYearEnd(2024).isAfter(TaxYear.forYearEnd(2024)) shouldBe false
       }
+    }
+  }
+
+  "toFinancialYearStart method" should {
+    "return start of financial year" in {
+      val taxYear = TaxYear.forYearEnd(2024)
+      taxYear.toFinancialYearStart shouldBe LocalDate.of(taxYear.startYear, 4, 6)
+    }
+  }
+
+  "toFinancialYearEnd method" should {
+    "return end of financial year" in {
+      val taxYear = TaxYear.forYearEnd(2024)
+      taxYear.toFinancialYearEnd shouldBe LocalDate.of(taxYear.endYear, 4, 5)
     }
   }
 
