@@ -20,13 +20,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{OK, defaultAwaitTimeout, redirectLocation, status}
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -34,22 +34,24 @@ import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with TestSupport
+class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
   with MockCalculationListService
   with MockCalculationListConnector
-  with MockFinancialDetailsConnector {
+  with MockFinancialDetailsConnector
+  with MockClaimToAdjustPoaCalculationService {
 
   object TestCheckYourAnswersController extends CheckYourAnswersController(
     authorisedFunctions = mockAuthService,
     auth = testAuthenticator,
-    sessionService = mockPaymentOnAccountSessionService,
+    poaSessionService = mockPaymentOnAccountSessionService,
     checkYourAnswers = app.injector.instanceOf[CheckYourAnswers],
-    claimToAdjustService = claimToAdjustService,
+    ctaService = claimToAdjustService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
+    ctaCalculationService = mockClaimToAdjustPoaCalculationService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -69,6 +71,7 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
     ))
 
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val validSessionIncrease: PoAAmendmentData = PoAAmendmentData(Some(Increase), Some(BigDecimal(1000.00)))
 
   def setupTest(enablePaymentsOnAccountFS: Boolean = true,
                 sessionResponse: Either[Throwable, Option[PoAAmendmentData]],
@@ -112,6 +115,20 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
         val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
+
+        contentAsString(result).contains("Confirm and continue") shouldBe true
+      }
+      "the session contains the new POA Amount and reason, but the reason is INCREASE" in {
+        setupTest(
+          sessionResponse = Right(Some(validSessionIncrease)),
+          claimToAdjustResponse = poa
+        )
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+
+        contentAsString(result).contains("Confirm and submit") shouldBe true
       }
     }
 
@@ -167,6 +184,94 @@ class CheckYourAnswersControllerSpec  extends MockAuthenticationPredicate with T
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
+  "CheckYourAnswersController.submit" should {
+    "redirect to the home page" when {
+      "FS is disabled" in {
+        disable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+    }
+    "redirect to success page" when {
+      "data to API 1773 successfully sent" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+        setupMockRecalculateSuccess()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
+
+        val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
+
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent = false).url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.SuccessController.show(isAgent = true).url)
+      }
+    }
+    "redirect to API error page" when {
+      "data to API 1773 failed to be sent" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+        setupMockRecalculateFailure()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
+
+        val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
+
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent = false).url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent = true).url)
+      }
+    }
+    "redirect an error 500" when {
+      "Payment On Account Session data is missing" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount(None)
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "an Exception is returned from ClaimToAdjustService" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccountFailure()
+
+        val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())
+
+        result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
+        resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
