@@ -92,6 +92,32 @@ class OptOutServiceSpec extends UnitSpec
 
   val apiError: String = "some api error"
 
+  "OptOutService.getTaxYearsAvailableForOptOut" when {
+    "three years available for opt-out; end-year 2023, 2024, 2025" should {
+      "return three years" in {
+
+        val currentYearNum = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
+        val previousTaxYear: TaxYear = currentTaxYear.previousYear
+        val nextTaxYear: TaxYear = currentTaxYear.nextYear
+        when(dateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
+        )
+        when(itsaStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(calculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
+
+        val result = service.getTaxYearsAvailableForOptOut()
+
+        result.futureValue shouldBe Seq(previousTaxYear, currentTaxYear, nextTaxYear)
+      }
+    }
+  }
+
   "OptOutService.getSubmissionCountForTaxYear" when {
     "three years offered for opt-out; end-year 2023, 2024, 2025" when {
       "tax-payer made previous submissions for end-year 2023, 2024" should {

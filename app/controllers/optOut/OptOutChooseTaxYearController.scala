@@ -52,7 +52,7 @@ class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPr
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      optOutService.getAvailableOptOutYear().flatMap { availableOptOutTaxYear =>
+      optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
         optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
           Ok(optOutChooseTaxYear(availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
         }

@@ -154,7 +154,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
 
-  def getAvailableOptOutYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] = {
+  def getTaxYearsAvailableForOptOut()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] = {
     setupOptOutProposition().map(proposition => proposition.availableTaxYearsForOptOut)
   }
 
