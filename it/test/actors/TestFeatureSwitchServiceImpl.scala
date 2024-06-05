@@ -16,7 +16,6 @@
 
 package actors
 
-import actors.FeatureSwitchActor.SetFs
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -79,10 +78,11 @@ class TestFeatureSwitchServiceImpl @Inject()(system: ActorSystem,
   override def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
     featureSwitches
       .toList.map(fsn => {
+        // TODO: drop tuples usage
         if (fsn._2) {
-          sys.props += fsn._1 -> FEATURE_SWITCH_ON
+          sys.props += fsn._1.name -> FEATURE_SWITCH_ON
         } else {
-          sys.props += fsn._1 -> FEATURE_SWITCH_OFF
+          sys.props += fsn._1.name -> FEATURE_SWITCH_OFF
         }
       })
     Future.successful {
