@@ -53,15 +53,15 @@ class AmendablePOAControllerViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AmendablePaymentOnAccountView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-caption-xl").first().ownText() shouldBe messages("paymentOnAccount.caption", "2023", "2024")
+        document.getElementsByClass("hmrc-caption").first().ownText() shouldBe messages("paymentOnAccount.caption", "2023", "2024")
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("paymentOnAccount.heading")
       }
       "render the first paragraph text" in new Setup(isAgent) {
         document.getElementById("paragraph-1-text").text() shouldBe (
           messages("paymentOnAccount.p1") + " " +
-          messages("paymentOnAccount.class4NationalInsurance.link.text") + " " +
-          messages("paymentOnAccount.p2")
-        )
+            messages("paymentOnAccount.class4NationalInsurance.link.text") + " " +
+            messages("paymentOnAccount.p2")
+          )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "render the hint" in new Setup(isAgent) {
@@ -70,14 +70,14 @@ class AmendablePOAControllerViewSpec extends TestSupport {
       }
       "render the first Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
-        document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
+        document.getElementById("poa1-more-details-date-link").text() shouldBe s"${messages("paymentOnAccount.table-heading.link")} (${messages("paymentOnAccount.table-heading-1")})"
         document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
         document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£5,000.00"
       }
       "render the second Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
-        document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
+        document.getElementById("poa2-more-details-date-link").text() shouldBe s"${messages("paymentOnAccount.table-heading.link")} (${messages("paymentOnAccount.table-heading-2")})"
         document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
         document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£5,000.00"
@@ -98,7 +98,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
 
   def getChargeSummaryUrl(isAgent: Boolean, id: String): String = {
     if (isAgent) controllers.routes.ChargeSummaryController.showAgent(2024, id)
-    else         controllers.routes.ChargeSummaryController.show(2024, id)
+    else controllers.routes.ChargeSummaryController.show(2024, id)
   }.url
 
   def getWhatYouNeedToKnowUrl(isAgent: Boolean): String =
@@ -106,7 +106,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.routes.HomeController.showAgent
-    else         controllers.routes.HomeController.show()
+    else controllers.routes.HomeController.show()
   }.url
 
   executeTest(isAgent = true)
