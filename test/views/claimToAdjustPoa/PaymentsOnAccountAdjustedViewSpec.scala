@@ -39,6 +39,22 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
     val document: Document = Jsoup.parse(view.toString())
   }
 
+  def taxYearSummaryUrl(isAgent: Boolean) = {
+    if(isAgent) {
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
+    } else {
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
+    }
+  }
+
+  def whatYouOweUrl(isAgent: Boolean) = {
+    if(isAgent) {
+      controllers.routes.WhatYouOweController.showAgent.url
+    } else {
+      controllers.routes.WhatYouOweController.show().url
+    }
+  }
+
   "The PaymentsOnAccountAdjusted page" when {
     "a user loads the page" should {
       "render the heading" in new Setup(isAgent = false) {
@@ -56,10 +72,12 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
         document.getElementById("p3").text shouldBe
           msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
             msgs("claimToAdjustPoa.success.afterLinkText")
+        document.getElementById("p3").getElementById("link").attr("href") shouldBe taxYearSummaryUrl(false)
       }
       "render the final paragraph" in new Setup(isAgent = false) {
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
+        document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(false)
       }
     }
   }
@@ -81,10 +99,12 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
         document.getElementById("p3").text shouldBe
           msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
             msgs("claimToAdjustPoa.success.afterLinkText")
+        document.getElementById("p3").getElementById("link").attr("href") shouldBe taxYearSummaryUrl(true)
       }
       "render the final paragraph" in new Setup(isAgent = true) {
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
+        document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(true)
       }
     }
   }

@@ -38,33 +38,36 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
                                                     implicit val itvcErrorHandler: ItvcErrorHandler,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                    (implicit val appConfig: FrontendAppConfig,
-                                  implicit override val mcc: MessagesControllerComponents,
-                                  val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils{
+                                                    implicit override val mcc: MessagesControllerComponents,
+                                                    val ec: ExecutionContext)
+  extends ClientConfirmedController with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-      implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {
-          {
-            for {
-              poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-            } yield poaMaybe
-            }.value.flatMap {
-              case Right(Some(poa)) =>
-                  sessionService.setCompletedJourney(hc, ec)
-                  Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
-              case Right(None) =>
-                Logger("application").error(s"No payment on account data found")
-                Future.successful(showInternalServerError(isAgent))
+    implicit user =>
+      ifAdjustPoaIsEnabled(isAgent) {
+        {
+          for {
+            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+          } yield poaMaybe
+        }.value.flatMap {
+          case Right(Some(poa)) =>
+            sessionService.setCompletedJourney(hc, ec).flatMap {
+              case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
               case Left(ex) =>
-                Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+                Logger("application").error(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}")
                 Future.successful(showInternalServerError(isAgent))
-          }
-        }.recover {
-          case ex: Exception =>
-            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-            showInternalServerError(isAgent)
+            }
+          case Right(None) =>
+            Logger("application").error(s"No payment on account data found")
+            Future.successful(showInternalServerError(isAgent))
+          case Left(ex) =>
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            Future.successful(showInternalServerError(isAgent))
         }
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
+      }
   }
-
 }
