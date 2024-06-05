@@ -43,7 +43,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import play.api.test.Helpers.await
 import play.api.{Application, Environment, Mode}
 import services.admin.FeatureSwitchService
 import services.{DateService, DateServiceInterface}
@@ -57,7 +56,7 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.test.Helpers.{defaultAwaitTimeout}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -129,7 +128,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def disableFs(featureSwitch: FeatureSwitchName): Unit = {
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
     await( featureSwitchService.set(featureSwitch, false) )
   }
 

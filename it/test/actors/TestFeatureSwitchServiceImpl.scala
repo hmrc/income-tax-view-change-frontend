@@ -16,7 +16,7 @@
 
 package actors
 
-import actors.FeatureSwitchActor.{GetFs, SetFs}
+import actors.FeatureSwitchActor.SetFs
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -43,41 +43,50 @@ class TestFeatureSwitchServiceImpl @Inject()(system: ActorSystem,
                                              implicit val itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with FeatureSwitchService {
-  import org.apache.pekko.pattern.ask
+
   implicit val timeout: Timeout = 1.seconds
 
+  // TODO: drop actor usage
   val featureSwitchActor: ActorRef = system.actorOf(FeatureSwitchActor.props, "featureSwitch-actor")
 
   override def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] = {
     Logger("application").info(s"GET FS22${featureSwitchName}")
-//    val sysProps = sys.props.get(featureSwitchName.name).getOrElse("false")
-//    if (sysProps.nonEmpty) {
-//       Future{ FeatureSwitch(featureSwitchName, sysProps == "true") }
-//    } else {
-      (featureSwitchActor ? GetFs(featureSwitchName)).mapTo[FeatureSwitch]
-//    }
+    val sysProps = sys.props.get(featureSwitchName.name).getOrElse("false")
+    Future {
+      FeatureSwitch(featureSwitchName, sysProps == "true")
+    }
   }
 
   override def getAll: Future[List[FeatureSwitch]] = {
-    Future.sequence( allFeatureSwitches
-      .toList.map(fsn => (featureSwitchActor ? GetFs(fsn))
-        .mapTo[FeatureSwitch]) )
-      .map(x => {
-        Logger("application").info(s"GET FS33: ${x.mkString("-\n")}")
-        x
-      })
+    Future.sequence(
+      allFeatureSwitches.toList.map { featureSwitchName =>
+        val sysProps = sys.props.get(featureSwitchName.name).getOrElse("false")
+        Future {
+          FeatureSwitch(featureSwitchName, sysProps == "true")
+        }
+      }
+    )
   }
+
   override def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
     Logger("application").info(s"GET FS - SET - ${featureSwitchName} - $enabled")
-    val fs = FeatureSwitch(featureSwitchName, enabled)
-    (featureSwitchActor ? SetFs(fs)).mapTo[Boolean]
+    sys.props += featureSwitchName.name -> FEATURE_SWITCH_OFF
+    Future.successful {
+      true
+    }
   }
 
   override def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
-    val r = Future.sequence( featureSwitches
-      .toList.map(fsn => (featureSwitchActor ? Set(FeatureSwitch(fsn._1, fsn._2))).mapTo[FeatureSwitch]) )
-      .map(_ => ())
-    r
+    featureSwitches
+      .toList.map(fsn => {
+        if (fsn._2) {
+          sys.props += fsn._1 -> FEATURE_SWITCH_ON
+        } else {
+          sys.props += fsn._1 -> FEATURE_SWITCH_OFF
+        }
+      })
+    Future.successful {
+      Unit
+    }
   }
-
 }
