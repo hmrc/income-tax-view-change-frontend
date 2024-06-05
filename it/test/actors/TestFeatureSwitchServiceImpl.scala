@@ -86,7 +86,7 @@ class TestFeatureSwitchServiceImpl @Inject()(system: ActorSystem,
         }
       })
     Future.successful {
-      Unit
+      ()
     }
   }
 }
