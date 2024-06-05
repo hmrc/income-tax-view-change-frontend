@@ -80,6 +80,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         status(resultAgent) shouldBe OK
       }
     }
+
     "redirect to the home page" when {
       "FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
