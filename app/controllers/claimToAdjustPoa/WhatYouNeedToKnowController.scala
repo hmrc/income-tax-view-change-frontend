@@ -84,7 +84,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
     sessionService.getMongo flatMap {
       case Right(Some(poaData: PoAAmendmentData)) => {
         // TODO change this to new Mongo flag
-        if (poaData.poaAdjustmentReason.get == Increase) {
+        if (poaData.hasCompletedJourneySuccessfully) {
           sessionService.createSession
         } else {
           Future.successful(Right((): Unit))

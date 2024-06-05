@@ -16,7 +16,6 @@
 
 package forms.mappings
 
-import forms.adjustPoa.EnterPoaAmountForm.{emptyError, invalidError, stringFormatter}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 

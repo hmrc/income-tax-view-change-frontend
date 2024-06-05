@@ -34,7 +34,7 @@ object EnterPoaAmountForm extends Mappings {
   private val invalidErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.invalidError"
 
   val form: Form[EnterPoaAmountForm] = Form(
-      amount -> currency(emptyErrorMessageKey, invalidErrorMessageKey)
+    amount -> currency(emptyErrorMessageKey, invalidErrorMessageKey)
   )
 
   def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)(implicit messages: Messages): Form[EnterPoaAmountForm] = {
