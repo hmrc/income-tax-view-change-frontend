@@ -175,7 +175,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, false)))
         }
       }
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
@@ -188,7 +188,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
         }
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
@@ -199,7 +199,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
         }
       }
     }
