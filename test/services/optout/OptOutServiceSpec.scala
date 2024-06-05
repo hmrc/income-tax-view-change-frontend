@@ -24,10 +24,12 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
+import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -50,6 +52,11 @@ import scala.concurrent.Future
 * NY: Next Year
 *
 * */
+
+object OptOutServiceSpec {
+  case class TaxYearAndCountOfSubmissionsForIt(taxYear: TaxYear, submissions: Int)
+}
+
 class OptOutServiceSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
@@ -75,7 +82,7 @@ class OptOutServiceSpec extends UnitSpec
 
   val error = new RuntimeException("Some Error")
 
-  val service = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService)
+  val service: OptOutService = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService)
 
   before {
     reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
@@ -83,7 +90,32 @@ class OptOutServiceSpec extends UnitSpec
 
   val noOptOutOptionAvailable: Option[Nothing] = None
 
-  val apiError: Any = "some api error"
+  val apiError: String = "some api error"
+
+  "OptOutService.getSubmissionCountForTaxYear" when {
+    "three years offered for opt-out; end-year 2023, 2024, 2025" when {
+      "tax-payer made previous submissions for end-year 2023, 2024" should {
+        "return count of submissions for each year" in {
+
+          val offeredTaxYearsAndCountsTestSetup = Seq(
+            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2023), 1),
+            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2024), 1),
+            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2025), 0)
+          )
+
+          offeredTaxYearsAndCountsTestSetup map { year =>
+            when(nextUpdatesService.getSubmissionCounts(same(year.taxYear))(any(), any()))
+              .thenReturn(Future.successful((year.taxYear.startYear, year.submissions)))
+          }
+
+          val result = service.getSubmissionCountForTaxYear(offeredTaxYearsAndCountsTestSetup.map(_.taxYear))
+
+          val expectedResult = Map(2022 -> 1, 2023 -> 1, 2024 -> 0)
+          result.futureValue shouldBe expectedResult
+        }
+      }
+    }
+  }
 
   "OptOutService.makeOptOutUpdateRequestForYear" when {
     "make opt-out update request for previous tax-year" should {

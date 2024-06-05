@@ -21,14 +21,12 @@ import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
-import models.nextUpdates.ObligationsModel
 import models.optout._
 import play.mvc.Http
 import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -160,30 +158,19 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     setupOptOutProposition().map(proposition => proposition.availableTaxYearsForOptOut)
   }
 
-  def getSubmissionCountForTaxYear(availableOptOutTaxYears: Seq[TaxYear])
+  def getSubmissionCountForTaxYear(offeredOptOutYears: Seq[TaxYear])
                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, Int]] = {
-    val futureCounts: Seq[Future[(Int, Int)]] = availableOptOutTaxYears.map { optOutTaxYear =>
-      val financialYearStart = LocalDate.of(optOutTaxYear.startYear, April, Sixths)
-      val financialYearEnd = LocalDate.of(optOutTaxYear.endYear, April, Fifth)
-
-      nextUpdatesService.getNextUpdates(financialYearStart, financialYearEnd).map {
-        case obligationsModel: ObligationsModel =>
-          (optOutTaxYear.startYear, obligationsModel.submissionsCount)
-        case _ => (optOutTaxYear.startYear, noSubmissions)
-      }
+    val futureCounts: Seq[Future[(Int, Int)]] = offeredOptOutYears.map { optOutTaxYear =>
+      nextUpdatesService.getSubmissionCounts(optOutTaxYear)
     }
 
     Future.sequence(futureCounts).map(_.toMap)
   }
+
 }
 
 
 object OptOutService {
-
-  private val April = 4
-  private val Sixths = 6
-  private val Fifth = 5
-  private val noSubmissions = 0
 
   private def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     Some(responses)

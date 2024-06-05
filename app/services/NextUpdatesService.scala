@@ -19,15 +19,20 @@ package services
 import auth.MtdItUser
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.incomeSourceDetails.viewmodels._
 import models.nextUpdates._
 import play.api.Logger
+import services.NextUpdatesService.noSubmissions
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+
+object NextUpdatesService {
+  private val noSubmissions = 0
+}
 
 @Singleton
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
@@ -90,6 +95,15 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       case _ => NextUpdatesErrorModel(500, "Invalid response from connector")
     }
 
+  }
+
+  def getSubmissionCounts(optOutTaxYear: TaxYear)
+                         (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Int, Int)]  = {
+    getNextUpdates(optOutTaxYear.toFinancialYearStart, optOutTaxYear.toFinancialYearEnd).map {
+      case obligationsModel: ObligationsModel =>
+        (optOutTaxYear.startYear, obligationsModel.submissionsCount)
+      case _ => (optOutTaxYear.startYear, noSubmissions)
+    }
   }
 
   def getObligationDates(id: String)
