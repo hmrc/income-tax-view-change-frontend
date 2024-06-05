@@ -79,31 +79,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
       }
     }
 
-    "return Ok and display warning content" when {
-      "PaymentOnAccount is paid and totalAmount < poaRelevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Right(())))
-
-        setupMockGetPaymentsOnAccount(Some(defaultPaymentOnAccountModel.copy(
-          poAPartiallyPaid = true,
-          paymentOnAccountOne = defaultPaymentOnAccountModel.poARelevantAmountOne / 2,
-          paymentOnAccountTwo = defaultPaymentOnAccountModel.poARelevantAmountTwo / 2)))
-        setupMockTaxYearNotCrystallised()
-
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe OK
-        status(resultAgent) shouldBe OK
-
-        // check content?
-      }
-    }
     "redirect to the home page" when {
       "FS is disabled" in {
         disable(AdjustPaymentsOnAccount)

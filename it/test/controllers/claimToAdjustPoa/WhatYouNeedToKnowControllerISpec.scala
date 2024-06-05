@@ -38,7 +38,6 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
   val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
   val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
-
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
   override def beforeEach(): Unit = {
@@ -79,84 +78,88 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
         continueButton.attr("href") shouldBe selectReasonUrl
 
-        val content = Option(document.getElementById("p6"))
-        content.isDefined shouldBe false
-
-      }
-      "User is authorised and has originalAmount < relevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
-
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-        )
-
-        And("I wiremock stub financial details for multiple years with POAs")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-        )
-
-        When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
-
-        lazy val document: Document = Jsoup.parse(res.body)
-        val continueButton = document.getElementById("continue")
-
-        res should have(
-          httpStatus(OK)
-        )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
-        continueButton.attr("href") shouldBe enterPOAAmountUrl
-
-        val content = Option(document.getElementById("p6"))
-        content.isDefined shouldBe false
+        val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+        increaseAfterPaymentContent.isDefined shouldBe false
       }
 
-      "User is authorised and has partially paid, and has originalAmount < poaRelevantAmount" in {
-        enable(AdjustPaymentsOnAccount)
+      "User is authorised and has originalAmount < relevantAmount" when {
 
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-        )
+        "not paid or partially paid" in {
+          enable(AdjustPaymentsOnAccount)
 
-        And("I wiremock stub financial details for multiple years with POAs")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-          OK, testValidFinancialDetailsModelJson(
-            originalAmount = 2000,
-            outstandingAmount = 1000,
-            taxYear = (testTaxYear - 1).toString,
-            dueDate = testDate.toString,
-            poaRelevantAmount = Some(3000))
-        )
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-          OK, testValidFinancialDetailsModelJson(
-            originalAmount = 2000,
-            outstandingAmount = 1000,
-            taxYear = (testTaxYear - 1).toString,
-            dueDate = testDate.toString,
-            poaRelevantAmount = Some(3000))
-        )
+          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+          )
 
-        When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+          And("I wiremock stub financial details for multiple years with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+          )
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+          )
 
-        lazy val document: Document = Jsoup.parse(res.body)
-        val continueButton = document.getElementById("continue")
+          When(s"I call GET $whatYouNeedToKnowUrl")
+          val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
 
-        res should have(
-          httpStatus(OK)
-        )
-        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
-        continueButton.attr("href") shouldBe enterPOAAmountUrl
+          lazy val document: Document = Jsoup.parse(res.body)
+          val continueButton = document.getElementById("continue")
 
-        val content = Option(document.getElementById("p6"))
-        content.isDefined shouldBe true
+          res should have(
+            httpStatus(OK)
+          )
+          sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
+          continueButton.attr("href") shouldBe enterPOAAmountUrl
+
+          val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+          increaseAfterPaymentContent.isDefined shouldBe false
+        }
+
+        "paid or partially paid should display additional content" in {
+          enable(AdjustPaymentsOnAccount)
+
+          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+          )
+
+          And("I wiremock stub financial details for multiple years with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+            OK, testValidFinancialDetailsModelJson(
+              originalAmount = 2000,
+              outstandingAmount = 1000,
+              taxYear = (testTaxYear - 1).toString,
+              dueDate = testDate.toString,
+              poaRelevantAmount = Some(3000))
+          )
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+            OK, testValidFinancialDetailsModelJson(
+              originalAmount = 2000,
+              outstandingAmount = 1000,
+              taxYear = (testTaxYear - 1).toString,
+              dueDate = testDate.toString,
+              poaRelevantAmount = Some(3000))
+          )
+
+          When(s"I call GET $whatYouNeedToKnowUrl")
+          val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+
+          lazy val document: Document = Jsoup.parse(res.body)
+          val continueButton = document.getElementById("continue")
+
+          res should have(
+            httpStatus(OK)
+          )
+          sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
+          continueButton.attr("href") shouldBe enterPOAAmountUrl
+
+          val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+          increaseAfterPaymentContent.isDefined shouldBe true
+        }
       }
     }
+
     s"return status $SEE_OTHER and redirect to the home page" when {
       "AdjustPaymentsOnAccount FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
@@ -184,6 +187,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       }
     }
   }
+
   s"return $INTERNAL_SERVER_ERROR" when {
     "no non-crystallised financial details are found" in {
       enable(AdjustPaymentsOnAccount)
@@ -204,5 +208,4 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       )
     }
   }
-
 }

@@ -35,7 +35,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, showPostPaymentWarning: Boolean, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, showIncreaseAfterPaymentContent: Boolean, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -94,7 +94,7 @@
 
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
-    @if(showPostPaymentWarning){
+    @if(showIncreaseAfterPaymentContent){
         <h3 class="govuk-heading-m">@getMessage("increase-after-payment.h1")</h3>
 
         @p(id = Some("p6")) {

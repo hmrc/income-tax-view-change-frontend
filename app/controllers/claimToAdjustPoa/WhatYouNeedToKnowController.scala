@@ -63,8 +63,8 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
-            val showWarning = poa.poAPartiallyPaid && poa.totalAmountLessThanPoa
-            Future.successful(Ok(view(isAgent, poa.taxYear, showWarning, getRedirect(isAgent, poa))))
+            val showIncreaseAfterPaymentContent = poa.poAPartiallyPaid && poa.totalAmountLessThanPoa
+            Future.successful(Ok(view(isAgent, poa.taxYear, showIncreaseAfterPaymentContent, getRedirect(isAgent, poa))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
