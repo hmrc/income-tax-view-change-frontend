@@ -19,6 +19,7 @@ package forms.adjustPoa
 import forms.mappings.Mappings
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 
 
@@ -34,10 +35,14 @@ object EnterPoaAmountForm extends Mappings {
   private val invalidErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.invalidError"
 
   val form: Form[EnterPoaAmountForm] = Form(
-    amount -> currency(emptyErrorMessageKey, invalidErrorMessageKey)
+    mapping(
+      amount -> currency(emptyErrorMessageKey, invalidErrorMessageKey)
+    )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
   )
 
-  def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)(implicit messages: Messages): Form[EnterPoaAmountForm] = {
+
+  def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)
+                           (implicit messages: Messages): Form[EnterPoaAmountForm] = {
     if (form.hasErrors) form else {
       if (form.get.amount == totalAmount) {
         form.withError(EnterPoaAmountForm.amount, messages(sameErrorMessageKey, totalAmount.toCurrencyString))

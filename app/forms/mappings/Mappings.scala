@@ -27,7 +27,6 @@ trait Mappings extends Formatters with Constraints {
   protected def currency(emptyErrorMessageKey: String, invalidErrorMessageKey: String): FieldMapping[BigDecimal] =
     of(currencyFormatter(emptyErrorMessageKey, invalidErrorMessageKey))
 
-
   protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
 
