@@ -36,4 +36,7 @@ case class PaymentOnAccountViewModel(
     totalAmount < poaRelevantAmount
   }
 
+  val partiallyPaidAndTotalAmountLessThanPoa: Boolean =
+    poAPartiallyPaid && totalAmountLessThanPoa
+
 }
