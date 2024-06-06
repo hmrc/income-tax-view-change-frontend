@@ -43,7 +43,7 @@
 }
 
 @warningBlock = {
-    @govukInsetText(InsetText(id=Some("warning-inset"),content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
+    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
 }
 
 @showWarning = @{submissionCountForTaxYear.values.sum > 0}
@@ -56,7 +56,7 @@
     useFallbackBackLink = true
     ) {
 
-@h1(messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
+@h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
 @p(id=Some("description1")) {
     @messages("optout.chooseOptOutTaxYear.desc1")
@@ -80,7 +80,7 @@
             @availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id="radio@{index + 1}" name="optoutYear" type="radio" value="@optOutTaxYear.startYear">
-                <label class="govuk-label govuk-radios__label" for="radio@{index + 1}">
+                <label id="radio-tax-year-label-@{index + 1}" class="govuk-label govuk-radios__label" for="radio@{index + 1}">
                     @messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")
                 </label>
                 @if(getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear) > 0) {
