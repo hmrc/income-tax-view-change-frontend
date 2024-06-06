@@ -17,13 +17,14 @@
 package mocks.services.admin
 
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import services.admin.FeatureSwitchServiceImpl
+import services.TestFeatureSwitchServiceImpl
+import services.admin.{FeatureSwitchService, FeatureSwitchServiceImpl}
 import testUtils.TestSupport
 
 
 trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
   self: Suite =>
 
-  val featureSwitchService: FeatureSwitchServiceImpl = app.injector.instanceOf[FeatureSwitchServiceImpl]
+  val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[TestFeatureSwitchServiceImpl]
 
  }
