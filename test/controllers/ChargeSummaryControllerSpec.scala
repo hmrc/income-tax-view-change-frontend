@@ -37,6 +37,7 @@ import services.{DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
+import utils.AuthenticatorPredicate
 
 import scala.concurrent.Future
 
@@ -77,6 +78,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     val controller = new ChargeSummaryController(
       MockAuthenticationPredicate,
+      app.injector.instanceOf[AuthenticatorPredicate],
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockIncomeSourceDetailsPredicate,
       financialDetailsService,

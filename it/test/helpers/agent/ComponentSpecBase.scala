@@ -63,7 +63,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val testAppConfig: FrontendAppConfig = appConfig
+  implicit val testAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
@@ -130,11 +130,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     WireMock.reset()
     AuditStub.stubAuditing()
     cache.removeAll()
+    FeatureSwitchName.allFeatureSwitches.foreach{ x => disableFs(x) }
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
+    FeatureSwitchName.allFeatureSwitches.foreach{ x => disableFs(x) }
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {

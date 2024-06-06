@@ -32,6 +32,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.mvc.MessagesControllerComponents
 import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.ChargeSummary
 import views.html.errorPages.CustomNotFoundError
 
@@ -41,6 +42,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
 
   val authenticate: AuthenticationPredicate = mock(classOf[AuthenticationPredicate])
+  val authenticator: AuthenticatorPredicate = mock(classOf[AuthenticatorPredicate])
   val checkSessionTimeout: SessionTimeoutPredicate = mock(classOf[SessionTimeoutPredicate])
   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate = mock(classOf[IncomeSourceDetailsPredicate])
   val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
@@ -61,7 +63,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   implicit val  mcc: MessagesControllerComponents = mock(classOf[MessagesControllerComponents])
   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
-  val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, checkSessionTimeout, retrieveNinoWithIncomeSources,
+  val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, authenticator, checkSessionTimeout, retrieveNinoWithIncomeSources,
     financialDetailsService, auditingService, itvcErrorHandler, financialDetailsConnector, chargeHistoryConnector, chargeSummaryView,
     retrievebtaNavPartial, incomeSourceDetailsService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
 
