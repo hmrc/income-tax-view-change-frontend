@@ -21,12 +21,14 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import models.optout.OptOutCheckpointViewModel
+import models.incomeSourceDetails.TaxYear
+import models.optout.{OptOutCheckpointViewModel, OptOutMultiYearCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.UIJourneySessionDataRepository
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, OptOutJourney}
 import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear}
 
 import javax.inject.Inject
@@ -35,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         multiyearCheckpointView: ConfirmOptOutMultiYear,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        repository: UIJourneySessionDataRepository)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -65,8 +68,29 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   def showMultiYearConfirm(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
+
       withRecover(isAgent) {
-        Future.successful(Ok(multiyearCheckpointView(isAgent)))
+
+        repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
+          val taxYear = for {
+            data <- sessionData
+            optOutData <- data.optOutSessionData
+            selected <- optOutData.selectedOptOutYear
+            parsed <- TaxYear.getTaxYearModel(selected)
+          } yield parsed
+
+          taxYear match {
+            case Some(ty) => Ok(multiyearCheckpointView(OptOutMultiYearCheckpointViewModel(ty), isAgent))
+            case _ => itvcErrorHandler.showInternalServerError()
+          }
+        }
+      }
+  }
+
+  def submitMultiYearConfirm(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withRecover(isAgent) {
+        Future.successful(itvcErrorHandler.showInternalServerError())
       }
   }
 

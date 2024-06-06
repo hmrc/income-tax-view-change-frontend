@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.optout.OptOutMultiYearCheckpointViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,16 +31,41 @@
         govukButton: GovukButton,
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@(model: OptOutMultiYearCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@confirmOptOutPostUrl = @{
+    controllers.optOut.routes.ConfirmOptOutController.submitMultiYearConfirm(isAgent)
+}
+
+@formBlock = {
+    @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                content = Text(messages("base.continue")),
+                attributes = Map("id" -> "continue-button")
+            ))
+            <a class="govuk-link" id="cancel-button" href="#">
+                @messages("optout.confirmOptOut.cancel")
+            </a>
+        </div>
+    }
+}
+
+@title = @{
+    messages("optout.confirmOptOut.heading", model.startYear, model.endYear)
+}
 
 @mainTemplate(
-    pageTitle = "Multi-Year Checkpoint Page",
+    pageTitle = title,
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
     ) {
 
-    <h1>Multi-Year Checkpoint Page</h1>
+    @h1(id = Some("heading"), msg = title, classes = "govuk-heading-l")
+
+    @formBlock
 
 }
