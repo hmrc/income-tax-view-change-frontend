@@ -51,6 +51,16 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
+            sessionService.getMongo.map {
+              case Right(Some(sessionData)) =>
+                if (sessionData.newPoAAmount.contains(poa.paymentOnAccountOne)) {
+                  Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.paymentOnAccountOne}")
+                }
+                else {
+                  Logger("application").error(s"Amount returned from API: ${poa.paymentOnAccountOne} does not equal amount in mongo: ${sessionData.newPoAAmount}")
+                }
+              case _ => Logger("application").error(s"Error connecting to mongo to verify API data set")
+            }
             sessionService.setCompletedJourney(hc, ec).flatMap {
               case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
               case Left(ex) =>
