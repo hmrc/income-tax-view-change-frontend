@@ -65,4 +65,12 @@ class ConfirmedOptOutController @Inject()(val authorisedFunctions: FrontendAutho
 
   }
 
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      withRecover(isAgent) {
+        //todo: do opt-out
+        Future.successful(Redirect(routes.ConfirmedOptOutController.show(isAgent)))
+      }
+  }
+
 }

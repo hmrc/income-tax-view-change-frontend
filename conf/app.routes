@@ -25,6 +25,8 @@ POST        /agents/optout/review-confirm-taxyear                         contro
 
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
+POST        /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.submit(isAgent: Boolean = false)
+POST        /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.submit(isAgent: Boolean = true)
 
 GET         /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
 GET         /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
@@ -33,14 +35,8 @@ POST        /agents/optout/single-taxyear-warning                         contro
 
 GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = false)
 GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = true)
-
-# todo: to be reviewed and discussed by team
-GET        /optout/review-confirm-multiyear-taxyear                       controllers.optOut.ConfirmOptOutController.showMultiYearConfirm(isAgent: Boolean = false)
-GET        /agents/optout/review-confirm-multiyear-taxyear                controllers.optOut.ConfirmOptOutController.showMultiYearConfirm(isAgent: Boolean = true)
-POST       /optout/submit-choice-multiyear-taxyear                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
-POST       /agents/optout/submit-choice-multiyear-taxyear                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
-POST       /optout/submit-multiyear-taxyear-optout                        controllers.optOut.ConfirmOptOutController.submitMultiYearConfirm(isAgent: Boolean = false)
-POST       /agents/optout/submit-multiyear-taxyear-optout                 controllers.optOut.ConfirmOptOutController.submitMultiYearConfirm(isAgent: Boolean = true)
+POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
+POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)

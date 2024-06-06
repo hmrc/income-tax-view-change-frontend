@@ -16,10 +16,11 @@
 
 package models.optout
 
-import services.optout.{NextYearOptOut, OneYearOptOutFollowedByAnnual, OptOutState, OptOutTaxYear}
+import models.incomeSourceDetails.TaxYear
+import services.optout.{NextYearOptOut, OneYearOptOutFollowedByAnnual, OptOutState}
 
-case class OptOutCheckpointViewModel(optOutTaxYear: OptOutTaxYear, state: Option[OptOutState]) {
-  val startYear: String = optOutTaxYear.taxYear.startYear.toString
-  val endYear: String = optOutTaxYear.taxYear.endYear.toString
+case class OptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState] = None) {
+  val startYear: String = intent.startYear.toString
+  val endYear: String = intent.endYear.toString
   val showFutureChangeInfo: Boolean = state.contains(OneYearOptOutFollowedByAnnual) || state.contains(NextYearOptOut)
 }

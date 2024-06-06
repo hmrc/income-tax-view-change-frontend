@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optout.OptOutMultiYearCheckpointViewModel
+@import models.optout.OptOutCheckpointViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -32,10 +32,10 @@
 )
 
 
-@(model: OptOutMultiYearCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(model: OptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutPostUrl = @{
-    controllers.optOut.routes.ConfirmOptOutController.submitMultiYearConfirm(isAgent)
+    controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
 }
 
 @formBlock = {

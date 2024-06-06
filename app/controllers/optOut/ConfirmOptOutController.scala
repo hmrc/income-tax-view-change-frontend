@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.incomeSourceDetails.TaxYear
-import models.optout.{OptOutCheckpointViewModel, OptOutMultiYearCheckpointViewModel}
+import models.optout.OptOutCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -80,17 +80,10 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
           } yield parsed
 
           taxYear match {
-            case Some(ty) => Ok(multiyearCheckpointView(OptOutMultiYearCheckpointViewModel(ty), isAgent))
+            case Some(ty) => Ok(multiyearCheckpointView(OptOutCheckpointViewModel(ty), isAgent))
             case _ => itvcErrorHandler.showInternalServerError()
           }
         }
-      }
-  }
-
-  def submitMultiYearConfirm(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      withRecover(isAgent) {
-        Future.successful(itvcErrorHandler.showInternalServerError())
       }
   }
 

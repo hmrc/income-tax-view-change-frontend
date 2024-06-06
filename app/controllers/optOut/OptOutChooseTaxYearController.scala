@@ -83,7 +83,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
-    val nextPage = controllers.optOut.routes.ConfirmOptOutController.showMultiYearConfirm(isAgent)
+    val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
     Logger("application").info(s"redirecting to : $nextPage")
     Redirect(nextPage)
   }

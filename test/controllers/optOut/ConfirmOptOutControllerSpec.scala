@@ -26,6 +26,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import repositories.UIJourneySessionDataRepository
 import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
@@ -40,7 +41,8 @@ class ConfirmOptOutControllerSpec extends TestSupport
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
     multiyearCheckpointView = app.injector.instanceOf[ConfirmOptOutMultiYear],
-    optOutService = mockOptOutService)(
+    optOutService = mockOptOutService,
+    repository = app.injector.instanceOf[UIJourneySessionDataRepository])(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -54,7 +56,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
     val taxYear = TaxYear.forYearEnd(2024)
     val optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear, Some(OneYearOptOutFollowedByAnnual))))
+    val eligibleTaxYearResponse = Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
     val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
 
