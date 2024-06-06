@@ -35,18 +35,11 @@ class OptOutMongoTestJourneyController @Inject()(
                                         repository: UIJourneySessionDataRepository
                                       )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-//  val show: Action[AnyContent] = Action.async { implicit request =>
-//    // We don't need to show sensitive session keys
-//    val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
-//    //repository.get(sessionId = "", OptOutJourney.Name).flatMap(_.map(v => v.optOutSessionData.map(d => d.intent.getOrElse(""))))
-//    //Future.successful(Ok(sessionDataStr))
-//  }
-
   def show: Action[AnyContent] = Action.async { implicit request =>
     sessionService.getMongo("OPTOUT").map {
       case Right(Some(sessionData)) =>
         sessionData.optOutSessionData.flatMap(_.intent) match {
-          case Some(intent) => Ok(intent)
+          case Some(intent) => Ok(s"Intent = $intent")
           case None => Ok("No intent found")
         }
       case Right(None) =>
@@ -66,22 +59,20 @@ class OptOutMongoTestJourneyController @Inject()(
       res match {
         case Some((k, v)) =>
           sessionService.getMongo("OPTOUT").flatMap {
-            case Right(sessionDataOpt) =>
-              sessionDataOpt.map { sessionData =>
-                val optOutUIJourneySessionData: UIJourneySessionData = sessionData.copy(optOutSessionData = Some(OptOutSessionData(valueOpt)))
+            case Right(Some(sessionDataOption)) =>
+                val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(valueOpt)))
                 sessionService.setMongoData(optOutUIJourneySessionData).map { _ =>
                   Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
                 }
-              }.getOrElse {
-                val newSessionData = UIJourneySessionData(
-                  sessionId = hc.sessionId.get.value,
-                  journeyType = "OPTOUT",
-                  optOutSessionData = Some(OptOutSessionData(valueOpt))
-                )
-                sessionService.createSession("OPTOUT")
-                sessionService.setMongoData(newSessionData).map { _ =>
-                  Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
-                }
+            case Right(None) =>
+              val newSessionData = UIJourneySessionData(
+                sessionId = hc.sessionId.get.value,
+                journeyType = "OPTOUT",
+                optOutSessionData = Some(OptOutSessionData(valueOpt))
+              )
+              sessionService.createSession("OPTOUT")
+              sessionService.setMongoData(newSessionData).map { _ =>
+                Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
               }
             case Left(ex) =>
               Future.successful(Ok(s"Unable to add data to session storage ex: ${ex.getMessage}"))

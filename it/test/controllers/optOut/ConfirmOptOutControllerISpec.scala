@@ -115,7 +115,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
     }
 
     s"user confirms opt-out for one-year scenario and update fails" should {
-      "show error page" in {
+      "show Opt Out error page" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -130,7 +130,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
+          httpStatus(SEE_OTHER),
         )
 
       }
