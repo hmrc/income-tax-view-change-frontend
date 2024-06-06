@@ -20,17 +20,24 @@ import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import models.incomeSourceDetails.UIJourneySessionData
+import models.optout.OptOutSessionData
+import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader, Result}
+import repositories.UIJourneySessionDataRepository
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
+import utils.{AuthenticatorPredicate, OptOutJourney}
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
-                                              val optOutService: OptOutService)
+                                              val optOutService: OptOutService,
+                                              repository: UIJourneySessionDataRepository)
                                              (implicit val appConfig: FrontendAppConfig,
                                               val ec: ExecutionContext,
                                               val auth: AuthenticatorPredicate,
@@ -45,9 +52,39 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
     implicit user =>
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
         optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
-          Ok(optOutChooseTaxYear(availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+          Ok(optOutChooseTaxYear(ConfirmOptOutMultiTaxYearChoiceForm(), availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
         }
       }
   }
 
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+    implicit user =>
+      optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
+        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
+
+          val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Result = formWithError => BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+          val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Result = form => {
+            saveTaxYearChoice(form)
+            redirectToCheckpointPage(isAgent)
+          }
+
+          ConfirmOptOutMultiTaxYearChoiceForm().bindFromRequest().fold(onError, onSuccess)
+        }
+      }
+  }
+
+  private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Unit = {
+    val data = UIJourneySessionData(
+      sessionId = hc.sessionId.get.value,
+      journeyType = OptOutJourney.Name,
+      optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = form.choice))
+    )
+    repository.set(data)
+  }
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optOut.routes.ConfirmOptOutController.showMultiYearConfirm(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
+  }
 }

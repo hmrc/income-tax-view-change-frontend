@@ -24,7 +24,7 @@ case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String], csrfToken
 
 object ConfirmOptOutMultiTaxYearChoiceForm {
 
-  private val choiceField: String = "choice"
+  val choiceField: String = "choice"
   val noResponseErrorMessageKey: String = "optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error"
   val csrfToken: String = "csrfToken"
 

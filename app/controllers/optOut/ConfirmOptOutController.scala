@@ -39,10 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         multiyearCheckpointView: ConfirmOptOutMultiYear,
-                                        optOutChooseTaxYearView: OptOutChooseTaxYear,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        repository: UIJourneySessionDataRepository)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -52,26 +50,6 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutCheckpointViewModel => Result)
-                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-
-    optOutService.optOutCheckPointPageViewModel().map {
-      case Some(optOutOneYearCheckpointViewModel) => function(optOutOneYearCheckpointViewModel)
-      case None =>
-        Logger("application").error("No qualified tax year available for opt out")
-        errorHandler(isAgent).showInternalServerError()
-    }
-
-  }
-
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    code.recover {
-      case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
-        errorHandler(isAgent).showInternalServerError()
-    }
-  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -97,27 +75,24 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  def submitMultiYearChoice(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
-    implicit user =>
+  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(function: OptOutCheckpointViewModel => Result)
+                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-      val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Result = formWithError => BadRequest(optOutChooseTaxYearView(isAgent, form = formWithError))
-      val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Result = form => {
+    optOutService.optOutCheckPointPageViewModel().map {
+      case Some(optOutOneYearCheckpointViewModel) => function(optOutOneYearCheckpointViewModel)
+      case None =>
+        Logger("application").error("No qualified tax year available for opt out")
+        errorHandler(isAgent).showInternalServerError()
+    }
 
-        //save choice
-        val data = UIJourneySessionData(
-          sessionId = hc.sessionId.get.value,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = form.choice))
-        )
-        repository.set(data)
-
-        //redirect
-        val nextPage = controllers.optOut.routes.ConfirmOptOutController.showMultiYearConfirm(isAgent)
-        Logger("application").info(s"redirecting to : $nextPage")
-        Redirect(nextPage)
-      }
-      val submission = ConfirmOptOutMultiTaxYearChoiceForm().bindFromRequest().fold(onError, onSuccess)
-
-      Future.successful(submission)
   }
+
+  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    code.recover {
+      case ex: Exception =>
+        Logger("application").error(s"request failed :: $ex")
+        errorHandler(isAgent).showInternalServerError()
+    }
+  }
+
 }
