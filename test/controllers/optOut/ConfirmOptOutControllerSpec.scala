@@ -27,10 +27,9 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
-import repositories.UIJourneySessionDataRepository
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear, OptOutChooseTaxYear}
+import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear}
 
 import scala.concurrent.Future
 
@@ -41,8 +40,6 @@ class ConfirmOptOutControllerSpec extends TestSupport
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
     multiyearCheckpointView = app.injector.instanceOf[ConfirmOptOutMultiYear],
-    optOutChooseTaxYearView = app.injector.instanceOf[OptOutChooseTaxYear],
-    repository = app.injector.instanceOf[UIJourneySessionDataRepository],
     optOutService = mockOptOutService)(
     appConfig = appConfig,
     ec = ec,

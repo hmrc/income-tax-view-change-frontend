@@ -19,20 +19,15 @@ package controllers.optOut
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseSuccess, optOutUpdateReason}
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.optout.OptOutCheckpointViewModel
-import models.optout.OptOutSessionData
-import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
-import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.UIJourneySessionDataRepository
 import services.optout.OptOutService
-import utils.{AuthenticatorPredicate, OptOutJourney}
-import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear, OptOutChooseTaxYear}
+import utils.AuthenticatorPredicate
+import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

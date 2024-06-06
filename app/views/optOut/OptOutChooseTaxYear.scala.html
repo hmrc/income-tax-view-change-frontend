@@ -64,7 +64,8 @@
                 legend = Some(Legend(
                     content = Text(messages("optout.chooseOptOutTaxYear.whichTaxYear")),
                     classes = "govuk-fieldset__legend--m"
-                ))
+                )),
+                attributes = Map("id" -> "whichTaxYear")
             )),
             items = availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
                 RadioItem(

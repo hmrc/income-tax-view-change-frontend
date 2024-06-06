@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
@@ -7,9 +23,11 @@ import mocks.services.MockOptOutService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutMultiYearViewModel
+import org.mockito.Mockito
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import repositories.UIJourneySessionDataRepository
 import services.optout.CurrentOptOutTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
@@ -26,7 +44,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
   val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
 
-  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
+  val repository = Mockito.mock(classOf[UIJourneySessionDataRepository])
+
+  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService, repository)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
   val currentTaxYear = TaxYear.forYearEnd(2024)
