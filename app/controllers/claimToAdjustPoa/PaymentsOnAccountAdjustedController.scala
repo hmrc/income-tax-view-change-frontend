@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -70,7 +70,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
       }
   }
 
-  private def checkAPIDataSet(poa: PaymentOnAccountViewModel)(implicit hc: HeaderCarrier) = {
+  private def checkAPIDataSet(poa: PaymentOnAccountViewModel)(implicit hc: HeaderCarrier): Future[Unit] = {
     sessionService.getMongo.map {
       case Right(Some(sessionData)) =>
         if (sessionData.newPoAAmount.contains(poa.paymentOnAccountOne)) {
@@ -83,7 +83,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
     }
   }
 
-  private def setJourneyCompletedFlag(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]) = {
+  private def setJourneyCompletedFlag(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Result] = {
     sessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
       case Left(ex) =>
