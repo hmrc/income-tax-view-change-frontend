@@ -60,7 +60,6 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
         {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-            _ <- EitherT(handleSession)
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
@@ -79,18 +78,4 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def handleSession(implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
-    sessionService.getMongo flatMap {
-      case Right(Some(poaData: PoAAmendmentData)) => {
-        // TODO change this to new Mongo flag
-        if (poaData.hasCompletedJourneySuccessfully) {
-          sessionService.createSession
-        } else {
-          Future.successful(Right((): Unit))
-        }
-      }
-      case Right(None) => sessionService.createSession
-      case Left(ex) => Future.successful(Left(ex))
-    }
-  }
 }
