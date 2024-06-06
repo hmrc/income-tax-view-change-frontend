@@ -74,7 +74,8 @@
                     content = Text(messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
                     hint = {
                         if(getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear) > 0) {
-                            Some(Hint(content = Text(messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear)))))
+                            Some(
+                                Hint(content = Text(messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear)))))
                         } else Some(Hint(content = Text("")))
                     }
                 )
