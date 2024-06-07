@@ -101,16 +101,13 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
         origin)
   }
 
-  def showAgent: Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-        mtdItUser =>
-          getNextUpdates(
-            controllers.routes.HomeController.showAgent,
-            isAgent = true,
-            agentItvcErrorHandler,
-            None)(mtdItUser)
-      }
+  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      getNextUpdates(
+        controllers.routes.HomeController.showAgent,
+        isAgent = true,
+        agentItvcErrorHandler,
+        None)
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
