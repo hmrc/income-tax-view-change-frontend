@@ -42,7 +42,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    sessionService.setMongoData(None)
+    sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None)))
     if(isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }

@@ -19,14 +19,13 @@ package controllers.claimToAdjustPoa
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val view: WhatYouNeedToKnow,
-                                            val sessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,

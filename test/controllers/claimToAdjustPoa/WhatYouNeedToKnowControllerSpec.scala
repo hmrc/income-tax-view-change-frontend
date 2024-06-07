@@ -42,16 +42,13 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
   with MockCalculationListConnector
   with MockFinancialDetailsConnector{
 
-  val mockPOASessionService = mock(classOf[PaymentOnAccountSessionService])
-
   object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
     authorisedFunctions = mockAuthService,
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    view = app.injector.instanceOf[WhatYouNeedToKnow],
-    sessionService = mockPOASessionService
+    view = app.injector.instanceOf[WhatYouNeedToKnow]
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -66,9 +63,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
-
-        when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(None)))
-        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Right(())))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -98,24 +92,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
       }
     }
     "return an error 500" when {
-      "Error creating mongo session" in {
-        enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Left(new Error(""))))
-
-        setupMockGetPaymentsOnAccount()
-        setupMockTaxYearNotCrystallised()
-
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
-      }
       "PaymentOnAccount model is not built successfully" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
