@@ -116,6 +116,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intent: OptOutTaxYear)(implicit user: MtdItUser[_],
                                                                                            hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
+    def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]]): Future[OptOutUpdateResponse] = {
+      Some(responses)
+        .filter(isItsaStatusUpdateAttempted)
+        .map(reduceByReturningAnyFailureFirstOrAnySuccess)
+        .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
+          List(ErrorItem("Illegal State", "ITSA Status updated requested but no API call was made"))
+        )))
+    }
+
+    def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]]): Future[OptOutUpdateResponse] = {
+      Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) }
+    }
 
     val optOutYearsToUpdate = optOutProposition.optOutYearsToUpdate(intent)
 
@@ -178,6 +190,8 @@ object OptOutService {
 
   private val noSubmissions = 0
 
+  val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
+
   def includeTaxYearCount(optOutYear: TaxYear)(countsYear: TaxYear): Boolean = {
     (optOutYear.startYear == countsYear.startYear) || (optOutYear.endYear == countsYear.startYear)
   }
@@ -191,20 +205,5 @@ object OptOutService {
     val isSubmissionsMade: Boolean = counts.map(_.submissions).sum > noSubmissions
   }
 
-  private def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])
-                                                           (implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    Some(responses)
-      .filter(isItsaStatusUpdateAttempted)
-      .map(reduceByReturningAnyFailureFirstOrAnySuccess)
-      .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
-        List(ErrorItem("Illegal State", "ITSA Status updated requested but no API call was made"))
-      )))
-  }
 
-  private val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
-
-  private def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]])
-                                                          (implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) }
-  }
 }
