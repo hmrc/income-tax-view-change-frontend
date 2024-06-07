@@ -113,27 +113,20 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
 
-  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intent: OptOutTaxYear)(implicit user: MtdItUser[_],
-                                                                                           hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-
-    def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]]): Future[OptOutUpdateResponse] = {
-      Some(responses)
-        .filter(isItsaStatusUpdateAttempted)
-        .map(reduceByReturningAnyFailureFirstOrAnySuccess)
-        .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
-          List(ErrorItem("Illegal State", "ITSA Status updated requested but no API call was made"))
-        )))
-    }
-
-    def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]]): Future[OptOutUpdateResponse] = {
-      Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) }
-    }
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intent: OptOutTaxYear)
+                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     val optOutYearsToUpdate = optOutProposition.optOutYearsToUpdate(intent)
 
     val responses: Seq[Future[OptOutUpdateResponse]] = optOutYearsToUpdate.map(optOutYear =>
       itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
-    combineByReturningAnyFailureFirstOrAnySuccess(responses)
+
+    Some(responses)
+      .filter(isItsaStatusUpdateAttempted)
+      .map(items => Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) })
+      .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
+        List(ErrorItem("Illegal State", "ITSA Status updated requested but no API call was made"))
+      )))
   }
 
 
