@@ -418,7 +418,7 @@ class OptOutServiceSpec extends UnitSpec
       }
     }
   }
-  "OptOutService.optOutCheckPointPageViewModel" when {
+  "OptOutService.optOutCheckPointPageViewModel for single year case" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
     val NY = CY.nextYear
@@ -466,6 +466,61 @@ class OptOutServiceSpec extends UnitSpec
       case (input, output) =>
         val test = testOptOutCheckPointPageViewModel _
         test.tupled(input).tupled(output)
+    }
+  }
+
+  "OptOutService.optOutCheckPointPageViewModel for MultiYear case" when {
+    val CY = TaxYear.forYearEnd(2024)
+    val PY = CY.previousYear
+    val NY = CY.nextYear
+    val previousOptOutTaxYear = PreviousOptOutTaxYear(Voluntary, PY, crystallised = false)
+    val currentOptOutTaxYear = CurrentOptOutTaxYear(Voluntary, CY)
+    val nextOptOutTaxYear = NextOptOutTaxYear(Voluntary, NY, CurrentOptOutTaxYear(Mandated, CY))
+
+    def testOptOutCheckPointPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
+                                         (intent: TaxYear): Unit = {
+
+      def getTaxYearText(taxYear: TaxYear): String = {
+        if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
+      }
+
+      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
+        s"offer ${getTaxYearText(intent)} and onwards" in {
+
+          val previousYear: TaxYear = PY
+          when(dateService.getCurrentTaxYear).thenReturn(CY)
+
+          val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+            PY -> StatusDetail("", statusPY, ""),
+            CY -> StatusDetail("", statusCY, ""),
+            NY -> StatusDetail("", statusNY, ""),
+          )
+          when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+          val response = service.optOutCheckPointPageViewModel(Some(intent))
+
+          response.futureValue shouldBe Some(MultiYearOptOutCheckpointViewModel(intent, None))
+
+        }
+      }
+
+    }
+
+    val testCases = List(
+      ((Voluntary, Voluntary, Voluntary, false), previousOptOutTaxYear.taxYear),
+      ((Voluntary, Voluntary, Mandated, false), previousOptOutTaxYear.taxYear),
+      ((Voluntary, Voluntary, Voluntary, false), currentOptOutTaxYear.taxYear),
+      ((Voluntary, Voluntary, Mandated, false), currentOptOutTaxYear.taxYear),
+      ((Mandated, Voluntary, Voluntary, false), currentOptOutTaxYear.taxYear),
+      ((Voluntary, Voluntary, Voluntary, false), nextOptOutTaxYear.taxYear),
+      ((Mandated, Voluntary, Voluntary, false), nextOptOutTaxYear.taxYear)
+    )
+    testCases.foreach {
+      case (input, output) =>
+        val test = testOptOutCheckPointPageViewModel _
+        test.tupled(input)(output)
     }
   }
 
