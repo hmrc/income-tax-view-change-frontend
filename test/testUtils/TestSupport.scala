@@ -22,6 +22,7 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import controllers.predicates.FeatureSwitchPredicate
 import implicits.ImplicitDateFormatterImpl
+import models.admin.FeatureSwitch
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.apache.pekko.actor.ActorSystem
@@ -37,7 +38,8 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
-import services.DateService
+import services.admin.FeatureSwitchService
+import services.{DateService, TestFeatureSwitchServiceImpl}
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -105,7 +107,9 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
-  implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
+  implicit val individualUser: MtdItUser[_] = {
+    getIndividualUser(FakeRequest())
+  }
 
   def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -116,7 +120,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     saUtr = Some(testSaUtr),
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
-    arn = None
+    arn = None,
   )(request)
 
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)

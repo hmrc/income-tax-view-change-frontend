@@ -16,15 +16,24 @@
 
 package mocks.services.admin
 
+import models.admin.FeatureSwitchName
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import play.api.test.Helpers.await
 import services.TestFeatureSwitchServiceImpl
-import services.admin.{FeatureSwitchService, FeatureSwitchServiceImpl}
+import services.admin.{FeatureSwitchService}
 import testUtils.TestSupport
-
+import play.api.test.Helpers.{defaultAwaitTimeout}
 
 trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
   self: Suite =>
 
   val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[TestFeatureSwitchServiceImpl]
 
+  def enableFs(featureSwitch: FeatureSwitchName): Unit = {
+    await( featureSwitchService.set(featureSwitch, true) )
+  }
+
+  def disableFs(featureSwitch: FeatureSwitchName): Unit = {
+    await( featureSwitchService.set(featureSwitch, false) )
+  }
  }

@@ -92,7 +92,8 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
     controllers.manageBusinesses.manage.routes.ManageObligationsController.submit(isAgent)
   }
 
-  def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
+  // TODO: create a story to mark this method as private and fix broken tests
+  private def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       (getTaxYearModel(taxYear), changeTo) match {
