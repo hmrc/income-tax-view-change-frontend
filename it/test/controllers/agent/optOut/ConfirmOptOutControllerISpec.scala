@@ -28,7 +28,7 @@ import models.itsaStatus.ITSAStatus.Mandated
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
+import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -120,7 +120,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
     }
 
     s"user confirms opt-out for one-year scenario and update fails" should {
-      "show error page" in {
+      "show Opt Out error page" in {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -135,7 +135,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmOptOut(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
+          httpStatus(SEE_OTHER),
         )
 
       }

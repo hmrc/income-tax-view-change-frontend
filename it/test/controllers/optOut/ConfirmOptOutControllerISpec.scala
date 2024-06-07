@@ -26,7 +26,7 @@ import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
+import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse

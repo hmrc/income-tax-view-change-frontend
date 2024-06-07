@@ -22,6 +22,7 @@ import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateRespon
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
+import play.api.Logger
 import play.mvc.Http
 import services.optout.OptOutService.combineByReturningAnyFailureFirstOrAnySuccess
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
@@ -37,7 +38,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                               dateService: DateServiceInterface) {
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  private val defaultOptOutMultiYearIntent = Some(TaxYear.forYearEnd(2023))
+  //private val defaultOptOutMultiYearIntent = Some(TaxYear.forYearEnd(2023))
   private val defaultOptOutYearIntent = Some(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2023)))
   private def setupOptOutProposition()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutProposition] = {
 
@@ -132,7 +133,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutCheckPointPageViewModel(intent: Option[TaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
+  def optOutCheckPointPageViewModel(intent: Option[TaxYear])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
     setupOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(OneYearOptOutCheckpointViewModel(optOutTaxYear = p.intent.taxYear, state = p.state()))
