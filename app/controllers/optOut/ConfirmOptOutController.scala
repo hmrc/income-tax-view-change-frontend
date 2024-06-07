@@ -28,11 +28,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.ConfirmOptOut
+import views.html.errorPages.CustomNotFoundError
+import views.html.optOut.{ConfirmOptOut,OptOutCheckYourAnswers}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
+class ConfirmOptOutController @Inject()(
+                                        val checkYourAnswers: OptOutCheckYourAnswers,
                                         optOutService: OptOutService,
                                         auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
@@ -69,7 +72,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       withRecover(isAgent) {
         withOptOutQualifiedTaxYear(isAgent)(
-          viewModel => Ok(view(viewModel, isAgent = isAgent))
+          viewModel => Ok(checkYourAnswers(isAgent))
         )
       }
   }
@@ -77,8 +80,9 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show())
         case _ => itvcErrorHandler.showInternalServerError()
       }
   }
+
 }
