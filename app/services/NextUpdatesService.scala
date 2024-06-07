@@ -23,7 +23,7 @@ import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, Tax
 import models.incomeSourceDetails.viewmodels._
 import models.nextUpdates._
 import play.api.Logger
-import services.NextUpdatesService.noSubmissions
+import services.NextUpdatesService.{SubmissionsCountForTaxYear, noSubmissions}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
@@ -31,6 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object NextUpdatesService {
+  case class SubmissionsCountForTaxYear(taxYear: TaxYear, submissions: Int)
   private val noSubmissions = 0
 }
 
@@ -98,11 +99,11 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   }
 
   def getSubmissionCounts(optOutTaxYear: TaxYear)
-                         (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Int, Int)]  = {
+                         (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[SubmissionsCountForTaxYear]  = {
     getNextUpdates(optOutTaxYear.toFinancialYearStart, optOutTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
-        (optOutTaxYear.startYear, obligationsModel.submissionsCount)
-      case _ => (optOutTaxYear.startYear, noSubmissions)
+        SubmissionsCountForTaxYear(optOutTaxYear, obligationsModel.submissionsCount)
+      case _ => SubmissionsCountForTaxYear(optOutTaxYear, noSubmissions)
     }
   }
 

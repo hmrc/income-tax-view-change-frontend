@@ -18,7 +18,6 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 
-
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
                              currentTaxYear: CurrentOptOutTaxYear,
                              nextTaxYear: NextOptOutTaxYear) {
@@ -28,8 +27,9 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     currentTaxYear,
     nextTaxYear)
 
-  lazy val availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
+  val availableTaxYearsForOptOut: Seq[TaxYear] = availableOptOutYears.map(_.taxYear)
 
+  lazy val availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
 
   val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
   val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
@@ -49,7 +49,4 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
       case _ => None
     }
   }
-
-  val availableTaxYearsForOptOut: Seq[TaxYear] = availableOptOutYears.map(_.taxYear)
-
 }
