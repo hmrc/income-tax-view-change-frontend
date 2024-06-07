@@ -28,7 +28,9 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import repositories.UIJourneySessionDataRepository
+import services.NextUpdatesService.SubmissionsCountForTaxYear
 import services.optout.CurrentOptOutTaxYear
+import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
@@ -59,7 +61,11 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val optOutYearsOffered = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
   val optOutYearsOfferedFuture = Future.successful(optOutYearsOffered)
 
-  val counts: Future[Map[Int, Int]] = Future.successful(Map(2022 -> 1, 2023 -> 1, 2024 -> 0))
+  val counts: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
+  )))
 
   def testHappyCase(isAgent: Boolean): Unit = {
 

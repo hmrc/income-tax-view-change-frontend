@@ -18,6 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.incomeSourceDetails.TaxYear
+@import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 @import views.html.helpers.injected.ErrorSummary
 @import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 
@@ -36,25 +37,16 @@
         govukInsetText: GovukInsetText,
 )
 
-@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm],
-        availableOptOutTaxYear: Seq[TaxYear],
-        submissionCountForTaxYear: Map[Int, Int], isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: SubmissionsCountForTaxYearModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutPostUrl = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
 }
 
-@getSubmissionsCount(startYear: Int, endYear: Int) = @{
-    val currentYearCount = submissionCountForTaxYear.getOrElse(startYear, 0)
-    val nextYearCount = submissionCountForTaxYear.getOrElse(endYear, 0)
-    currentYearCount + nextYearCount
-}
-
 @warningBlock = {
     @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
 }
-
-@showWarning = @{submissionCountForTaxYear.values.sum > 0}
 
 @formBlock = {
     @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
@@ -73,9 +65,9 @@
                     value = Some(optOutTaxYear.toString),
                     content = Text(messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
                     hint = {
-                        if(getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear) > 0) {
+                        if(submissionCounts.getCountFor(optOutTaxYear) > 0) {
                             Some(
-                                Hint(content = Text(messages("optout.chooseOptOutTaxYear.deleteUpdates", getSubmissionsCount(optOutTaxYear.startYear, optOutTaxYear.endYear)))))
+                                Hint(content = Text(messages("optout.chooseOptOutTaxYear.deleteUpdates", submissionCounts.getCountFor(optOutTaxYear)))))
                         } else Some(Hint(content = Text("")))
                     }
                 )
@@ -89,7 +81,7 @@
                 attributes = Map("id" -> "continue-button")
             ))
             <a class="govuk-link" id="cancel-button" href="#">
-                @messages("optout.confirmOptOut.cancel")
+            @messages("optout.confirmOptOut.cancel")
             </a>
         </div>
     }
@@ -100,9 +92,8 @@
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
-    useFallbackBackLink = true) {
-
-    @errorSummary(form = form)
+    useFallbackBackLink = true
+    ) {
 
     @h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
@@ -114,7 +105,7 @@
         @messages("optout.chooseOptOutTaxYear.desc2")
     }
 
-    @if(showWarning) {
+    @if(submissionCounts.isSubmissionsMade) {
         @warningBlock
     }
 

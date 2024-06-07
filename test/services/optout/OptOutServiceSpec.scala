@@ -29,6 +29,8 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import services.NextUpdatesService.SubmissionsCountForTaxYear
+import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
@@ -131,12 +133,17 @@ class OptOutServiceSpec extends UnitSpec
 
           offeredTaxYearsAndCountsTestSetup map { year =>
             when(nextUpdatesService.getSubmissionCounts(same(year.taxYear))(any(), any()))
-              .thenReturn(Future.successful((year.taxYear.startYear, year.submissions)))
+              .thenReturn(Future.successful(SubmissionsCountForTaxYear(year.taxYear, year.submissions)))
           }
 
           val result = service.getSubmissionCountForTaxYear(offeredTaxYearsAndCountsTestSetup.map(_.taxYear))
 
-          val expectedResult = Map(2022 -> 1, 2023 -> 1, 2024 -> 0)
+          val expectedResult = SubmissionsCountForTaxYearModel(Seq(
+            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0),
+          ))
+
           result.futureValue shouldBe expectedResult
         }
       }
