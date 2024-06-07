@@ -22,6 +22,7 @@ import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optout.OptOutService
+import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -53,7 +54,7 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptOutService.getTaxYearsAvailableForOptOut()(any(), any(), any())).thenReturn(out)
   }
 
-  def mockGetSubmissionCountForTaxYear(in: Seq[TaxYear], out: Future[Map[Int, Int]]): Unit = {
+  def mockGetSubmissionCountForTaxYear(in: Seq[TaxYear], out: Future[SubmissionsCountForTaxYearModel]): Unit = {
     when(mockOptOutService.getSubmissionCountForTaxYear(same(in))(any(), any(), any())).thenReturn(out)
   }
 

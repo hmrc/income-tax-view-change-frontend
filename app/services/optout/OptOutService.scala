@@ -23,6 +23,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import play.mvc.Http
+import services.NextUpdatesService.SubmissionsCountForTaxYear
 import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -96,7 +97,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     } yield optOutChecks
   }
 
-  def makeOptOutUpdateRequest(taxPayerIntent: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  def makeOptOutUpdateRequest(taxPayerIntent: Option[TaxYear] = None)
+                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     setupOptOutProposition().flatMap { proposition =>
       if (proposition.isOneYearOptOut)
@@ -134,7 +136,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutCheckPointPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
+  def optOutCheckPointPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
     setupOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(optOutTaxYear = p.intent, state = p.state()))
@@ -144,7 +147,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
+  def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)
+                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
     setupOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent, state = p.state()))
@@ -159,12 +163,12 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   def getSubmissionCountForTaxYear(offeredOptOutYears: Seq[TaxYear])
-                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Map[Int, Int]] = {
-    val futureCounts: Seq[Future[(Int, Int)]] = offeredOptOutYears.map { optOutTaxYear =>
+                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[SubmissionsCountForTaxYearModel] = {
+    val futureCounts: Seq[Future[SubmissionsCountForTaxYear]] = offeredOptOutYears.map { optOutTaxYear =>
       nextUpdatesService.getSubmissionCounts(optOutTaxYear)
     }
 
-    Future.sequence(futureCounts).map(_.toMap)
+    Future.sequence(futureCounts).map(SubmissionsCountForTaxYearModel)
   }
 
 }
@@ -172,7 +176,23 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
 object OptOutService {
 
-  private def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  private val noSubmissions = 0
+
+  def includeTaxYearCount(optOutYear: TaxYear)(countsYear: TaxYear): Boolean = {
+    (optOutYear.startYear == countsYear.startYear) || (optOutYear.endYear == countsYear.startYear)
+  }
+
+  case class SubmissionsCountForTaxYearModel(counts: Seq[SubmissionsCountForTaxYear]) {
+
+    def getCountFor(optOutYear: TaxYear): Int = counts.find(v => includeTaxYearCount(optOutYear)(v.taxYear))
+      .map(_.submissions)
+      .getOrElse(noSubmissions)
+
+    val isSubmissionsMade: Boolean = counts.map(_.submissions).sum > noSubmissions
+  }
+
+  private def combineByReturningAnyFailureFirstOrAnySuccess(responses: Seq[Future[OptOutUpdateResponse]])
+                                                           (implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     Some(responses)
       .filter(isItsaStatusUpdateAttempted)
       .map(reduceByReturningAnyFailureFirstOrAnySuccess)
@@ -183,7 +203,8 @@ object OptOutService {
 
   private val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
 
-  private def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]])(implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+  private def reduceByReturningAnyFailureFirstOrAnySuccess(items: Seq[Future[OptOutUpdateResponse]])
+                                                          (implicit ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) }
   }
 }
