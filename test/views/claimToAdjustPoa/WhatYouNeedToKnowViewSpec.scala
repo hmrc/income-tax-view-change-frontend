@@ -37,8 +37,8 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   val testOpenUrlInNewTab: String =
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
-  class Setup(isAgent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(isAgent, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), SelectYourReasonController.show(isAgent, NormalMode).url)
+  class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
+    val view: Html = whatYouNeedToKnowView(isAgent, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, SelectYourReasonController.show(isAgent, NormalMode).url)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
@@ -101,5 +101,13 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
         document.getElementById("cancel").attr("href") shouldBe testCancelUrl
       }
+
+      "render warning text when showIncreaseAfterPaymentContent is true" in new Setup(showIncreaseAfterPaymentContent = true) {
+        document.getElementById("p6").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p1")
+      }
+
+    "not render warning text when showIncreaseAfterPaymentContent is false" in new Setup(showIncreaseAfterPaymentContent = false) {
+      Option(document.getElementById("p6")) shouldBe None
+    }
   }
 }

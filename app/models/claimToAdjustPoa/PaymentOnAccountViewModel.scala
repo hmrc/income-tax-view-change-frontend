@@ -25,7 +25,8 @@ case class PaymentOnAccountViewModel(
                              paymentOnAccountOne: BigDecimal,
                              paymentOnAccountTwo: BigDecimal,
                              poARelevantAmountOne: BigDecimal,
-                             poARelevantAmountTwo: BigDecimal
+                             poARelevantAmountTwo: BigDecimal,
+                             poAPartiallyPaid: Boolean
                            ) {
 
   val totalAmount: BigDecimal = paymentOnAccountOne + paymentOnAccountTwo
@@ -34,5 +35,8 @@ case class PaymentOnAccountViewModel(
   def totalAmountLessThanPoa: Boolean = {
     totalAmount < poaRelevantAmount
   }
+
+  val partiallyPaidAndTotalAmountLessThanPoa: Boolean =
+    poAPartiallyPaid && totalAmountLessThanPoa
 
 }

@@ -1854,6 +1854,7 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Taliad ar gyfrif 
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Ail daliad ar gyfrif, wedi’i addasu: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Newid
 claimToAdjustPoa.checkYourAnswers.cancel                     = Canslo
+claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Cadarnhau a chyflwyno
 
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
@@ -1868,6 +1869,10 @@ claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Talia
 claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   Os byddwch yn gostwng eich taliadau ar gyfrif gormod, a bod eich bil treth terfynol yn dangos bod arnoch fwy o dreth na’r hyn rydych wedi’i thalu drwy’ch taliadau ar gyfrif, byddwn yn ychwanegu’r gwahaniaeth i’ch cyfrif fel tâl am fod yn hwyr.
 claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Yn unol ag unrhyw daliadau a wnaed yn hwyr, bydd CThEF yn codi llog ar y swm hwnnw o’r dyddiad yr oedd pob taliad ar gyfrif yn ddyledus, hyd nes bod y swm yn cael ei dalu.
 claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   Er mwyn osgoi talu llog, gallwch gynyddu’ch taliadau ar gyfrif cyn bod pob taliad yn ddyledus, hyd at y swm cychwynnol a gyfrifwyd gan CThEF.
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.h1            =   Cynyddu eich taliadau ar gyfrif ar ôl i chi dalu’n barod
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p1            =   Os byddwch yn cynyddu eich taliadau ar gyfrif ar ôl gwneud un taliad neu’r ddau ohonynt, mae hyn yn golygu na wnaethoch dalu digon i ddechrau. Bydd y gwahaniaeth yn cael ei ychwanegu at eich cyfrif fel tâl am fod yn hwyr. Bydd CThEF yn codi llog ar y swm hwn o’r dyddiad yr oedd pob taliad yn ddyledus.
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.h2            =   Enghraifft
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p2            =   Er enghraifft, os gwnaethoch daliad gostyngedig cyntaf o £1,500 cyn 31 Ionawr ac yna cynyddu’ch taliadau ar gyfrif i £2,000 yn hwyrach, byddwch wedi tandalu £500 am y cyfnod hwnnw. Bydd CThEF yn gofyn i chi dalu’r £500 sy’n weddill. Bydd llog yn gymwys ar y swm hwnnw o’r dyddiad yr oedd y taliad yn ddyledus (1 Chwefror), hyd nes y caiff ei dalu.
 claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Yn eich blaen
 claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   Gweler yr arweiniad ynghylch
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   y gyfradd llog a bennir gan CThEF (yn agor tab newydd)
@@ -1931,6 +1936,23 @@ claimToAdjustPoa.apiFailure.bullet1Text              = ceisio
 claimToAdjustPoa.apiFailure.bullet1Link              = addasu eich taliadau ar gyfrif eto
 claimToAdjustPoa.apiFailure.bullet2Text              = mynd yn ôl i’r
 claimToAdjustPoa.apiFailure.bullet2Link              = hafan
+
+# success
+
+claimToAdjustPoa.success.heading                    = Taliadau ar gyfrif wedi’u diweddaru
+claimToAdjustPoa.success.h1                         = Taliadau ar gyfrif wedi’u diweddaru
+claimToAdjustPoa.success.p1                         = Mae’ch taliadau ar gyfrif ar gyfer blwyddyn dreth 2023 i 2024 yn {2} yr un erbyn hyn
+claimToAdjustPoa.success.p2                         = Gallwch addasu’ch taliadau ar gyfrif eto, hyd at y swm cychwynnol a gyfrifwyd gan CThEF, mor aml ag sydd ei angen cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn 31 Ionawr {2} fan bellaf.
+claimToAdjustPoa.success.checkYour                  = Gwiriwch eich
+claimToAdjustPoa.success.link                       = crynodeb o flwyddyn dreth {0} i {1}
+claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnaethoch i’ch taliadau ar gyfrif.
+claimToAdjustPoa.success.check                      = Gwirio’r
+claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
+claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
+
+#######################################################################################################################
+## Opt Out ##
+#######################################################################################################################
 
 
 # opt out confirm

@@ -19,6 +19,7 @@ package services
 import connectors.ClaimToAdjustPoaConnector
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaFailure, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaResponse, ClaimToAdjustPoaSuccess, UnexpectedError}
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
+import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,12 +32,12 @@ class ClaimToAdjustPoaCalculationService @Inject()(
                                                   (implicit ec: ExecutionContext) {
 
 
-  def recalculate(nino: String, taxYear: TaxYear,
+  def recalculate(nino: Nino, taxYear: TaxYear,
                   amount: BigDecimal, poaAdjustmentReason: SelectYourReason)
                  (implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
 
     val request: ClaimToAdjustPoaRequest = ClaimToAdjustPoaRequest(
-      nino = nino,
+      nino = nino.value,
       taxYear = taxYear.endYear.toString,
       amount = amount,
       poaAdjustmentReason = poaAdjustmentReason

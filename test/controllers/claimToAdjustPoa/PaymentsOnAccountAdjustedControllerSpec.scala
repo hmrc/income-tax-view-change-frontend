@@ -21,6 +21,7 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
+import models.claimToAdjustPoa.PoAAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -30,26 +31,26 @@ import services.PaymentOnAccountSessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
+class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicate
   with TestSupport
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
-  with MockFinancialDetailsConnector{
+  with MockFinancialDetailsConnector {
 
   val mockPOASessionService = mock(classOf[PaymentOnAccountSessionService])
 
-  object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
+  object TestController extends PaymentsOnAccountAdjustedController(
     authorisedFunctions = mockAuthService,
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    view = app.injector.instanceOf[WhatYouNeedToKnow],
+    view = app.injector.instanceOf[PaymentsOnAccountAdjustedView],
     sessionService = mockPOASessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -57,7 +58,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
-  "WhatYouNeedToKnowController.show" should {
+  "PaymentsOnAccountAdjustedController.show" should {
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
         enable(AdjustPaymentsOnAccount)
@@ -66,19 +67,19 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Right(())))
+        when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
+        when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(newPoAAmount = Some(1200))))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
 
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
       }
     }
-
     "redirect to the home page" when {
       "FS is disabled" in {
         disable(AdjustPaymentsOnAccount)
@@ -86,8 +87,8 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -96,20 +97,20 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
       }
     }
     "return an error 500" when {
-      "Error creating mongo session" in {
+      "Error setting journey completed flag in mongo session" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.createSession(any(),any())).thenReturn(Future(Left(new Error(""))))
+        when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Left(new Error(""))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
 
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
@@ -122,8 +123,8 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPaymentsOnAccountBuildFailure()
 
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
@@ -136,8 +137,8 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPaymentsOnAccountFailure()
 
-        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+        val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
         resultAgent.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
