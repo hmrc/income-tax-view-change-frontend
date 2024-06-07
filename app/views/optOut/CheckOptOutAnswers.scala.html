@@ -52,7 +52,7 @@
     useFallbackBackLink = true
 ) {
 
-    @h1(messages("optout.checkAnswers.heading"), classes = "govuk-heading-l")
+    @h1(id = Some("heading"), msg = messages("optout.checkAnswers.heading"), classes = "govuk-heading-l")
 
     @formWithCSRF(action = postAction) {
         @govukSummaryList(SummaryList(

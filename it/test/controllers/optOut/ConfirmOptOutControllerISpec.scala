@@ -46,6 +46,10 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   val emptyBodyString = ""
 
+  val optOutExpectedTitle = s"Check your answers"
+  val optOutSummary = "If you opt out, you can submit your tax return through your HMRC online account or software."
+  val optOutWarning = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+
 
   s"calling GET $confirmOptOutPageUrl" should {
     s"render confirm single year opt out page $confirmOptOutPageUrl" when {
@@ -58,7 +62,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontend.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -69,7 +73,30 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         )
       }
     }
+
+    "in a multi year opt-out scenario" when {
+      "User is authorised" in {
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+
+        val result = IncomeTaxViewChangeFrontend.getConfirmOptOut()
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("heading")(optOutExpectedTitle),
+          elementTextByID("optOut-summary")(optOutSummary),
+          elementTextByID("optOut-warning")(optOutWarning)
+        )
+      }
+    }
   }
+
   s"calling POST $submitConfirmOptOutPageUrl" when {
     s"user confirms opt-out for one-year scenario" should {
       "show opt-out complete page" in {
@@ -83,7 +110,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -105,7 +132,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map("missing-header-name" -> "missing-header-value")
         )
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
 
         result should have(
           httpStatus(Status.SEE_OTHER),
@@ -127,10 +154,31 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
 
         result should have(
           httpStatus(SEE_OTHER),
+        )
+
+      }
+    }
+
+    s"user confirms opt-out for multi-year scenario and update fails" should {
+      "show Opt Out error page" in {
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
+          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+        )
+
+        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
+
+        result should have(
+          httpStatus(SEE_OTHER)
         )
 
       }
