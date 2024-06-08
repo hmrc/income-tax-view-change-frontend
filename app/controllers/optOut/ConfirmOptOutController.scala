@@ -75,7 +75,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       withRecover(isAgent) {
         withSessionData((sessionData: UIJourneySessionData) => {
-          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse(throw MissingFieldException("Unable to find Opt Out Intent")) //TODO Remove hard coded values
+          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse("Unable to find Opt Out Intent") //TODO Remove hard coded values
           val intentTaxYear = TaxYear.getTaxYearModel(intent)
           withOptOutQualifiedTaxYear(intentTaxYear, isAgent)(
             oneYearOptOutCheckpointViewModel => {

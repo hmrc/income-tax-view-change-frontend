@@ -21,12 +21,14 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
+import models.optout.OptOutSessionData
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -47,9 +49,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val emptyBodyString = ""
 
   val optOutExpectedTitle = s"Check your answers"
-  val optOutSummary = "If you opt out, you can submit your tax return through your HMRC online account or software."
-  val optOutWarning = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   s"calling GET $confirmOptOutPageUrl" should {
     s"render confirm single year opt out page $confirmOptOutPageUrl" when {
@@ -83,6 +84,13 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
+        val newSessionData = UIJourneySessionData(
+          sessionId = hc.sessionId.get.value,
+          journeyType = "OPTOUT",
+          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
+        )
+        sessionService.createSession("OPTOUT")
+        sessionService.setMongoData(newSessionData)
 
         val result = IncomeTaxViewChangeFrontend.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -90,8 +98,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           elementTextByID("heading")(optOutExpectedTitle),
-          elementTextByID("optOut-summary")(optOutSummary),
-          elementTextByID("optOut-warning")(optOutWarning)
+          elementTextByID("optOut-summary")(summary),
+          elementTextByID("optOut-warning")(infoMessage),
         )
       }
     }
@@ -174,6 +182,14 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
+
+        val newSessionData = UIJourneySessionData(
+          sessionId = hc.sessionId.get.value,
+          journeyType = "OPTOUT",
+          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
+        )
+        sessionService.createSession("OPTOUT")
+        sessionService.setMongoData(newSessionData)
 
         val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
 
