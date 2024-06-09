@@ -1946,6 +1946,11 @@ paymentOnAccount.table-heading.link                  = More details
 paymentOnAccount.table-heading.key                   = Full amount
 paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
+paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
+paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
+paymentOnAccount.heading.example                     = Example
+paymentOnAccount.p5                                  = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
+paymentOnAccount.p6                                  = If you’ve already paid the first payment on account (in this case, £2,000), HMRC will reduce both payments on account to £1,500, and add £500 credit to your account for the first payment.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 

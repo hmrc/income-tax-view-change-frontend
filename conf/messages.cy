@@ -1842,6 +1842,11 @@ paymentOnAccount.table-heading.link                  = Rhagor o fanylion
 paymentOnAccount.table-heading.key                   = Y swm llawn
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
+paymentOnAccount.p3-additional-content               = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall, hyd yn oed ar ôl i chi wneud y taliad ar gyfrif cyntaf.
+paymentOnAccount.p4                                  = Os ydych eisoes wedi gwneud eich taliad cyntaf, bydd CThEF yn ei ostwng ar eich cyfrif ac yn ychwanegu’r gwahaniaeth fel credyd.
+paymentOnAccount.heading.example                     = Enghraifft
+paymentOnAccount.p5                                  = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
+paymentOnAccount.p6                                  = Os ydych eisoes wedi talu’r taliad ar y gyfrif cyntaf (yn yr achos hwn, £2,000), bydd CThEF yn lleihau’r ddau daliad ar gyfrif i £1,500, ac yn ychwanegu credyd o £500 i’ch cyfrif am y taliad cyntaf.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.link                         = Canslo
 

@@ -25,6 +25,7 @@
 
 @this(
     p: p,
+    h3: h3,
     link: link,
     govukButton : GovukButton,
     mainTemplate: unifiedLayout,
@@ -61,6 +62,10 @@
     controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
+@partiallyOrFullyPaidPoaExists = @{
+    paymentOnAccount.poAPartiallyPaid || paymentOnAccount.poAFullyPaid
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
@@ -87,9 +92,11 @@
         @getMessage("p2")
     }
 
-    @govukInsetText(InsetText(
-        content = Text(getMessage("inset-text"))
-    ))
+    @if(partiallyOrFullyPaidPoaExists) {
+        @govukInsetText(InsetText(
+            content = Text(getMessage("inset-text"))
+        ))
+    }
 
     @govukSummaryList(SummaryList(
         rows = Seq(
@@ -147,7 +154,15 @@
         ))
     ))
 
-    @p(id = Some("paragraph-2-text")){ @getMessage("p3") }
+    @if(partiallyOrFullyPaidPoaExists) {
+        @p(id = Some("paragraph-3-additional-text")) { @getMessage("p3-additional-content") }
+        @p(id = Some("paragraph-4-text")) { @getMessage("p4") }
+        @h3(getMessage("heading.example"))
+        @p(id = Some("paragraph-5-text")) { @getMessage("p5") }
+        @p(id = Some("paragraph-6-text")) { @getMessage("p6") }
+    } else {
+        @p(id = Some("paragraph-3-text")) { @getMessage("p3") }
+    }
 
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
