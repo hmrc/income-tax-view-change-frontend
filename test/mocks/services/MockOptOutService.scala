@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponse
 import models.incomeSourceDetails.TaxYear
 import models.optout.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.mockito.ArgumentMatchers.{any, same}
@@ -65,6 +66,11 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
 
   def mockOptOutConfirmedPageViewModel(out: Future[Option[ConfirmedOptOutViewModel]]): Unit = {
     when(mockOptOutService.optOutConfirmedPageViewModel(any())(any(), any(), any()))
+      .thenReturn(out)
+  }
+
+  def mockMakeOptOutUpdateRequest(out: Future[OptOutUpdateResponse]): Unit = {
+    when(mockOptOutService.makeOptOutUpdateRequest()(any(), any(), any()))
       .thenReturn(out)
   }
 
