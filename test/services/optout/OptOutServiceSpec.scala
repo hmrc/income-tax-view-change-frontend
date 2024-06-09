@@ -567,6 +567,12 @@ class OptOutServiceSpec extends UnitSpec
 
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
+          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+          val intent = optOutTaxYear
+          val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+          val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+          when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+
           val response = service.optOutCheckPointPageViewModel()
 
           response.futureValue shouldBe Some(OptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(state)))

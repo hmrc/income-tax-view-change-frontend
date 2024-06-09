@@ -156,14 +156,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
   }
 
-  //TODO: Remove the default intent when Multi year OptOut intent is implemented
-  def optOutCheckPointPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)
+  def optOutCheckPointPageViewModel()
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
-    fetchOptOutProposition().map { proposition =>
-      proposition.optOutPropositionType.flatMap {
-        case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
-        case p: MultiYearOptOutProposition =>
-          intent.map(i => OptOutCheckpointViewModel(intent = i.taxYear, state = p.state(), isOneYear = false))//todo: add test code
+    fetchOptOutProposition().flatMap { proposition =>
+      fetchSavedIntent().map { intent =>
+        proposition.optOutPropositionType.flatMap {
+          case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
+          case p: MultiYearOptOutProposition =>
+            intent.map(i => OptOutCheckpointViewModel(intent = i, state = p.state(), isOneYear = false))//todo: add test code
+        }
       }
     }
   }
