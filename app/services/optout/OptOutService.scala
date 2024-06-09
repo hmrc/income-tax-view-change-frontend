@@ -17,16 +17,18 @@
 package services.optout
 
 import auth.MtdItUser
+import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
-import models.incomeSourceDetails.TaxYear
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
-import play.mvc.Http
+import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.SubmissionsCountForTaxYear
 import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.OptOutJourney
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,12 +38,13 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                               itsaStatusService: ITSAStatusService,
                               calculationListService: CalculationListService,
                               nextUpdatesService: NextUpdatesService,
-                              dateService: DateServiceInterface) {
+                              dateService: DateServiceInterface,
+                              repository: UIJourneySessionDataRepository) {
 
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
   private val defaultOptOutMultiYearIntent = Some(CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2023)))
 
-  private def setupOptOutProposition()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutProposition] = {
+  private def fetchOptOutProposition()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutProposition] = {
 
     val currentYear = dateService.getCurrentTaxYear
     val previousYear = currentYear.previousYear
@@ -67,14 +70,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     OptOutProposition(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
   }
 
-  private def makeOptOutUpdateRequestForOneYear(optOutProposition: OptOutProposition)(implicit
-                                                                                      user: MtdItUser[_],
-                                                                                      shc: HeaderCarrier,
-                                                                                      ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-    val intent = optOutProposition.availableOptOutYears.head
-    makeOptOutUpdateRequest(optOutProposition, intent)
-  }
-
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
                                                     hc: HeaderCarrier,
                                                     ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
@@ -97,41 +92,62 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     } yield optOutChecks
   }
 
-  def makeOptOutUpdateRequest(taxPayerIntent: Option[TaxYear] = None)
-                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-
-    setupOptOutProposition().flatMap { proposition =>
-      if (proposition.isOneYearOptOut)
-        makeOptOutUpdateRequestForOneYear(proposition)
-
-      else {
-        taxPayerIntent.flatMap(intent => proposition.optOutTaxYearFor(intent))
-          .map(optOutTaxYearIntent => makeOptOutUpdateRequest(proposition, optOutTaxYearIntent))
-          .getOrElse(Future.successful(OptOutUpdateResponseFailure.defaultFailure()))
-      }
+  def makeOptOutUpdateRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+    fetchOptOutProposition().flatMap { proposition =>
+      proposition.optOutPropositionType.map {
+        case _: OneYearOptOutProposition =>
+          saveIntent(intent = proposition.availableTaxYearsForOptOut.head)
+          makeOptOutUpdateRequest(proposition)
+        case _: MultiYearOptOutProposition => makeOptOutUpdateRequest(proposition)
+      } getOrElse Future.successful(OptOutUpdateResponseFailure.defaultFailure())
     }
   }
 
-
-  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intent: OptOutTaxYear)
-                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-
-    val optOutYearsToUpdate = optOutProposition.optOutYearsToUpdate(intent)
-
-    val responses: Seq[Future[OptOutUpdateResponse]] = optOutYearsToUpdate.map(optOutYear =>
-      itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
-
-    Some(responses)
-      .filter(isItsaStatusUpdateAttempted)
-      .map(items => Future.sequence(items).map { responses => responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head) })
-      .getOrElse(Future.successful(OptOutUpdateResponseFailure("default", Http.Status.INTERNAL_SERVER_ERROR,
-        List(ErrorItem("Illegal State", "ITSA Status updated requested but no API call was made"))
-      )))
+  def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val data = UIJourneySessionData(
+      sessionId = hc.sessionId.get.value,
+      journeyType = OptOutJourney.Name,
+      optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = Some(intent.toString)))
+    )
+    repository.set(data)
   }
 
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition)
+                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
+
+    def makeUpdateCalls(optOutYearsToUpdate: Seq[OptOutTaxYear]): Seq[Future[OptOutUpdateResponse]] = {
+      optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
+    }
+
+    def findAnyFailOrFirstSuccess(responses: Seq[OptOutUpdateResponse]): OptOutUpdateResponse = {
+      responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head)
+    }
+
+    val result = for {
+      intentTaxYear <- OptionT(fetchSavedIntent())
+      intentOptOutTaxYear <- OptionT(Future.successful(optOutProposition.optOutTaxYearFor(intentTaxYear)))
+      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentOptOutTaxYear))))
+      responsesSeqOfFutures  <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
+      responsesSeq <- OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
+      finalResponse <- OptionT(Future.successful(Option(findAnyFailOrFirstSuccess(responsesSeq))))
+    } yield finalResponse
+
+    result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
+  }
+
+  private def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
+    repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
+      for {
+        data <- sessionData
+        optOutData <- data.optOutSessionData
+        selected <- optOutData.selectedOptOutYear
+        parsed <- TaxYear.getTaxYearModel(selected)
+      } yield parsed
+    }
+  }
 
   def nextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
-    setupOptOutProposition().map { proposition =>
+    fetchOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
         case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())//todo: add test code
@@ -143,10 +159,11 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
   def optOutCheckPointPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutCheckpointViewModel]] = {
-    setupOptOutProposition().map { proposition =>
+    fetchOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
-        case p: MultiYearOptOutProposition => intent.map(i => OptOutCheckpointViewModel(intent = i.taxYear, state = p.state()))//todo: add test code
+        case p: MultiYearOptOutProposition =>
+          intent.map(i => OptOutCheckpointViewModel(intent = i.taxYear, state = p.state(), isOneYear = false))//todo: add test code
       }
     }
   }
@@ -154,7 +171,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   //TODO: Remove the default intent when Multi year OptOut intent is implemented
   def optOutConfirmedPageViewModel(intent: Option[OptOutTaxYear] = defaultOptOutMultiYearIntent)
                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
-    setupOptOutProposition().map { proposition =>
+    fetchOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent, state = p.state()))
         case p: MultiYearOptOutProposition => intent.map(i => ConfirmedOptOutViewModel(optOutTaxYear = i, state = p.state()))//todo: add test code
@@ -164,7 +181,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
 
   def getTaxYearsAvailableForOptOut()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] = {
-    setupOptOutProposition().map(proposition => proposition.availableTaxYearsForOptOut)
+    fetchOptOutProposition().map(proposition => proposition.availableTaxYearsForOptOut)
   }
 
   def getSubmissionCountForTaxYear(offeredOptOutYears: Seq[TaxYear])
@@ -183,9 +200,7 @@ object OptOutService {
 
   private val noSubmissions = 0
 
-  val isItsaStatusUpdateAttempted: Seq[Future[OptOutUpdateResponse]] => Boolean = items => items.nonEmpty
-
-  def includeTaxYearCount(optOutYear: TaxYear)(countsYear: TaxYear): Boolean = {
+  private def includeTaxYearCount(optOutYear: TaxYear)(countsYear: TaxYear): Boolean = {
     (optOutYear.startYear == countsYear.startYear) || (optOutYear.endYear == countsYear.startYear)
   }
 

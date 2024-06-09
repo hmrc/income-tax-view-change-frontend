@@ -95,6 +95,8 @@
     useFallbackBackLink = true
     ) {
 
+    @errorSummary(form = form)
+
     @h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
     @p(id=Some("description1")) {

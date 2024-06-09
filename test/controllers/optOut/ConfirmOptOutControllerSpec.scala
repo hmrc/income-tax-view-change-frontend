@@ -41,8 +41,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
     multiyearCheckpointView = app.injector.instanceOf[ConfirmOptOutMultiYear],
-    optOutService = mockOptOutService,
-    repository = app.injector.instanceOf[UIJourneySessionDataRepository])(
+    optOutService = mockOptOutService)(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

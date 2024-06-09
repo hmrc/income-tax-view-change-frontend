@@ -46,9 +46,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
   val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
 
-  val repository = Mockito.mock(classOf[UIJourneySessionDataRepository])
-
-  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService, repository)(appConfig,
+  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
   val currentTaxYear = TaxYear.forYearEnd(2024)

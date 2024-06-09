@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services._
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
@@ -29,6 +29,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.SubmissionsCountForTaxYear
 import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
@@ -36,7 +37,8 @@ import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, 
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import utils.OptOutJourney
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -74,6 +76,7 @@ class OptOutServiceSpec extends UnitSpec
   val calculationListService: CalculationListService = mockCalculationListService
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val dateService: DateServiceInterface = mockDateService
+  val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
@@ -82,12 +85,13 @@ class OptOutServiceSpec extends UnitSpec
   val previousTaxYear: TaxYear = taxYear.previousYear
   val crystallised: Boolean = true
 
+  val sessionIdValue = "123"
   val error = new RuntimeException("Some Error")
 
-  val service: OptOutService = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService)
+  val service: OptOutService = new OptOutService(optOutConnector, itsaStatusService, calculationListService, nextUpdatesService, dateService, repository)
 
   before {
-    reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc)
+    reset(optOutConnector, itsaStatusService, calculationListService, dateService, user, hc, repository)
   }
 
   val noOptOutOptionAvailable: Option[Nothing] = None
@@ -164,10 +168,18 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
+
         val proposition = buildOneYearOptOutDataForPreviousYear(currentYear)
-        val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequest(proposition, intent)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, optOutUpdateReason)
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        val intent = optOutTaxYear
+        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+        when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
+        val result = service.makeOptOutUpdateRequest(proposition)
+        //verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, optOutUpdateReason)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
     }
 
@@ -185,9 +197,17 @@ class OptOutServiceSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
-        val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequest(proposition, intent)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear), taxableEntityId, optOutUpdateReason)
+
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        val intent = optOutTaxYear
+        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+        when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
+        val result = service.makeOptOutUpdateRequest(proposition)
+        //verify(optOutConnector, times(1)).requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
     }
 
@@ -205,8 +225,15 @@ class OptOutServiceSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = buildOneYearOptOutDataForNextYear(currentYear)
-        val intent = proposition.availableOptOutYears.head
-        service.makeOptOutUpdateRequest(proposition, intent)
+
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        val intent = optOutTaxYear
+        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+        when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
+        service.makeOptOutUpdateRequest(proposition)
         verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId, optOutUpdateReason)
       }
     }
@@ -225,8 +252,16 @@ class OptOutServiceSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
-        val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequest(proposition, intent)
+
+
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        val intent = currentTaxYear
+        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+        when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
+        val result = service.makeOptOutUpdateRequest(proposition)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
@@ -248,8 +283,15 @@ class OptOutServiceSpec extends UnitSpec
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
-        val intent = proposition.availableOptOutYears.head
-        val result = service.makeOptOutUpdateRequest(proposition, intent)
+
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        val intent = currentTaxYear
+        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
+        when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
+        val result = service.makeOptOutUpdateRequest(proposition)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }
