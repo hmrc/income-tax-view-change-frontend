@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
+import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
@@ -26,7 +26,6 @@ import models.core.Nino
 import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
-import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -74,7 +73,8 @@ trait ClaimToAdjustHelper {
       paymentOnAccountOne = poaOneDocDetail.originalAmount,
       paymentOnAccountTwo = poaTwoDocDetail.originalAmount,
       poARelevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount"))
+      poARelevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+      poAPartiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid
     )
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])

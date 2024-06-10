@@ -17,7 +17,6 @@
 package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
@@ -48,7 +47,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
-      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent)
+      controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode)
     } else {
       controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)
     }).url
@@ -64,7 +63,7 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
-            Future.successful(Ok(view(isAgent, poa.taxYear, getRedirect(isAgent, poa))))
+            Future.successful(Ok(view(isAgent, poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))))
           case Left(ex) =>
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))

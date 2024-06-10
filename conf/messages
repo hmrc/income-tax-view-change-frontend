@@ -1870,6 +1870,10 @@ claimToAdjustPoa.whatYouNeedToKnow.h2                                   = 	Inter
 claimToAdjustPoa.whatYouNeedToKnow.p3                                   =   If you reduce your payments on account by too much, and your final tax bill shows you owe more tax than you’ve paid through your payments on account, we’ll add the difference to your account as an overdue charge.
 claimToAdjustPoa.whatYouNeedToKnow.p4                                   =   Like with other late payments, HMRC will charge you interest on that amount, from the date each payment on account was due, until it is paid.
 claimToAdjustPoa.whatYouNeedToKnow.p5                                   =   To avoid paying interest, you can increase your payments on account again, up to the initial amount created by HMRC, before each payment is due.
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.h1            =   Increasing your payments on account after you’ve already paid
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p1            =   If you increase your payments on account after making one or both payments, this means that you didn’t pay enough initially. The difference will be added to your account as an overdue charge. HMRC will charge you interest on this amount from the date each payment was due.
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.h2            =   Example
+claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p2            =   For example, if you made a first reduced payment of £1,500 before 31 January and later increase your payments on account to £2,000, you will have underpaid £500 for that period. HMRC will ask you to pay the remaining £500. Interest will apply on that amount from the date the payment was due (1 February), until it is paid.
 claimToAdjustPoa.whatYouNeedToKnow.continue-button                      =   Continue
 claimToAdjustPoa.whatYouNeedToKnow.link-text                            =   See guidance on the
 claimToAdjustPoa.whatYouNeedToKnow.link                                 =   interest rate set by HMRC (opens in new tab)
@@ -1957,8 +1961,9 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Adjusted first pa
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Adjusted second payment on account: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Change
 claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
+claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Confirm and submit
 
-
+# Enter POA Amount
 claimToAdjustPoa.enterPoaAmount.caption                 = Adjust payments on account for {0} to {1} tax year
 claimToAdjustPoa.enterPoaAmount.heading                 = Enter a new amount
 claimToAdjustPoa.enterPoaAmount.p1                      = Each payment on account should be half the amount of your expected tax bill. Your tax bill is made up of:
@@ -1977,6 +1982,23 @@ claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each pa
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
 
+# success
+
+claimToAdjustPoa.success.heading                        = Payments on account updated
+claimToAdjustPoa.success.h1                             = Payments on account updated
+claimToAdjustPoa.success.p1                             = Your payments on account for the {0} to {1} tax year are now {2} each
+claimToAdjustPoa.success.p2                             = You can adjust your payments on account again, up to the initial amount calculated by HMRC, as often as you need to before submitting your tax return for {0} to {1}, and no later than 31 January {2}.
+claimToAdjustPoa.success.checkYour                      = Check your
+claimToAdjustPoa.success.link                           = tax year summary for {0} to {1}
+claimToAdjustPoa.success.afterLinkText                  = to see the changes you’ve made to your payments on account.
+claimToAdjustPoa.success.check                          = Check
+claimToAdjustPoa.success.whatYouOwe                     = what you owe
+claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
+
+
+#######################################################################################################################
+## Opt Out ##
+#######################################################################################################################
 
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year

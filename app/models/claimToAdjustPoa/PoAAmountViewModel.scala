@@ -32,4 +32,8 @@ case class PoAAmountViewModel(
   def totalAmountLessThanPoa: Boolean = {
     totalAmount < poaRelevantAmount
   }
+
+  def hasIncreased(newAmount: BigDecimal): Boolean = {
+    newAmount > totalAmountOne
+  }
 }

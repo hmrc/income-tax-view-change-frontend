@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import models.core.Nino
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -35,11 +36,11 @@ trait MockClaimToAdjustPoaCalculationService extends UnitSpec with BeforeAndAfte
   }
 
   def setupMockRecalculateSuccess(): Unit =
-    when(mockClaimToAdjustPoaCalculationService.recalculate(ArgumentMatchers.anyString(), any(), any(), any())(any()))
+    when(mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any()))
       .thenReturn(Future.successful(Right((): Unit)))
 
   def setupMockRecalculateFailure(): Unit =
-    when(mockClaimToAdjustPoaCalculationService.recalculate(ArgumentMatchers.anyString(), any(), any(), any())(any()))
+    when(mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any()))
       .thenReturn(Future.successful(Left(new Exception())))
 
 }

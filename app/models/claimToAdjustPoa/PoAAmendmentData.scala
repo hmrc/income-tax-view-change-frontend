@@ -39,8 +39,9 @@ object PoASessionData {
 }
 
 case class PoAAmendmentData(
-                              poaAdjustmentReason: Option[SelectYourReason] = None,
-                              newPoAAmount: Option[BigDecimal] = None
+                             poaAdjustmentReason: Option[SelectYourReason] = None,
+                             newPoAAmount: Option[BigDecimal] = None,
+                             journeyCompleted: Boolean = false
                             )
 
 object PoAAmendmentData {
