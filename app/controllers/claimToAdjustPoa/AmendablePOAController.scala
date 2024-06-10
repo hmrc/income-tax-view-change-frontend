@@ -16,11 +16,14 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.ChargeHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import play.api.Logger
@@ -39,6 +42,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                        claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
                                        view: AmendablePaymentOnAccount,
+                                       chargeHistoryConnector: ChargeHistoryConnector,
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                       (implicit val appConfig: FrontendAppConfig,
@@ -52,12 +56,13 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         ifAdjustPoaIsEnabled(isAgent) {
           claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
             case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
-              Future.successful(
+              isSubsequentAdjustmentAttempt(paymentOnAccount) map { poasHaveBeenAdjustedPreviously =>
                 Ok(view(
                   isAgent = isAgent,
-                  paymentOnAccount = paymentOnAccount
+                  paymentOnAccount = paymentOnAccount,
+                  poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
                 ))
-              )
+              }
             case Right(None) =>
               Logger("application").error(s"Failed to create PaymentOnAccount model")
               Future.successful(showInternalServerError(isAgent))
@@ -70,5 +75,17 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
+    }
+
+  private def isSubsequentAdjustmentAttempt(paymentOnAccount: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Boolean] =
+    for {
+      chargeHistoryResponseModelOne <- chargeHistoryConnector.getChargeHistory(user.mtditid, Some(paymentOnAccount.poaOneTransactionId))
+      chargeHistoryResponseModelTwo <- chargeHistoryConnector.getChargeHistory(user.mtditid, Some(paymentOnAccount.poaTwoTransactionId))
+    } yield (chargeHistoryResponseModelOne, chargeHistoryResponseModelTwo) match {
+      case
+        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaOneAdjustmentReason)))) ->
+        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaTwoAdjustmentReason))))
+        if poaOneAdjustmentReason.isDefined || poaTwoAdjustmentReason.isDefined => true
+      case _                                                                    => true
     }
 }
