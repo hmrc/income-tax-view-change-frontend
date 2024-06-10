@@ -602,8 +602,8 @@ class OptOutServiceSpec extends UnitSpec
     val currentOptOutTaxYear = CurrentOptOutTaxYear(Voluntary, CY)
 
     val testCases = List(
-      ((Voluntary, Mandated, Mandated, false), Some(ConfirmedOptOutViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByMandated)))),
-      ((Mandated, Voluntary, Mandated, false), Some(ConfirmedOptOutViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated))))
+      ((Voluntary, Mandated, Mandated, false), Some(ConfirmedOptOutViewModel(previousOptOutTaxYear.taxYear, Some(OneYearOptOutFollowedByMandated)))),
+      ((Mandated, Voluntary, Mandated, false), Some(ConfirmedOptOutViewModel(currentOptOutTaxYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
     )
     testCases.foreach {
       case (input, output) =>
@@ -626,8 +626,12 @@ class OptOutServiceSpec extends UnitSpec
             NY -> StatusDetail("", statusNY, ""),
           )
           when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
           when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+          val optOutSessionData = OptOutSessionData(Some(viewModel.get.optOutTaxYear.toString))
+          val sessionData = Some(UIJourneySessionData(hc.sessionId.get.value, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
+          when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 
           val response = service.optOutConfirmedPageViewModel()
 

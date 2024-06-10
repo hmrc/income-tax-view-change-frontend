@@ -65,7 +65,7 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockOptOutConfirmedPageViewModel(out: Future[Option[ConfirmedOptOutViewModel]]): Unit = {
-    when(mockOptOutService.optOutConfirmedPageViewModel(any())(any(), any(), any()))
+    when(mockOptOutService.optOutConfirmedPageViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 

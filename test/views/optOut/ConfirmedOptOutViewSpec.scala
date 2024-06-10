@@ -36,7 +36,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean = true,
               state: OptOutState = OneYearOptOutFollowedByMandated) {
-    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear, state = Some(state))
+    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(state))
     val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent)))
   }
 
