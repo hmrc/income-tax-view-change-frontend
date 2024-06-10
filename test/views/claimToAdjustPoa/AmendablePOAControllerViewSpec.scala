@@ -26,7 +26,7 @@ import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 class AmendablePOAControllerViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean) {
+  class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Boolean = false) {
 
     val amendablePaymentOnAccount: AmendablePaymentOnAccount = app.injector.instanceOf[AmendablePaymentOnAccount]
 
@@ -45,9 +45,9 @@ class AmendablePOAControllerViewSpec extends TestSupport {
                 poARelevantAmountOne = BigDecimal(5000),
                 poARelevantAmountTwo = BigDecimal(5000),
                 poAPartiallyPaid = false,
-                poAFullyPaid = false
+                poAFullyPaid = poAFullyPaid
               ),
-            poasHaveBeenAdjustedPreviously = false
+            poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
           )
         )
       )
@@ -67,9 +67,12 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "not render the hint" in new Setup(isAgent) {
+      "not render the hint if poAs are partially or fully paid" in new Setup(isAgent) {
         Option(document.getElementById("inset-text")).isDefined shouldBe false
-//        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
+      }
+      "render the hint if any poAs are unpaid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementsByClass("govuk-inset-text").text() shouldBe messages("paymentOnAccount.inset-text")
+        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "render the first Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
@@ -85,8 +88,23 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£5,000.00"
       }
-      "render the second paragraph text" in new Setup(isAgent) {
+      "render the second paragraph text without additional content" in new Setup(isAgent) {
         document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
+      }
+      "render the second paragraph text with additional content if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("paragraph-3-additional-text").text() shouldBe messages("paymentOnAccount.p3-additional-content")
+      }
+      "render the third paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("paragraph-4-text").text() shouldBe messages("paymentOnAccount.p4")
+      }
+      "render the Example h3 text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
+      }
+      "render the fourth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("paragraph-5-text").text() shouldBe messages("paymentOnAccount.p5")
+      }
+      "render the fifth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("paragraph-6-text").text() shouldBe messages("paymentOnAccount.p6")
       }
       "render the Adjust my payments on account button" in new Setup(isAgent) {
         document.getElementById("adjust-my-payments-button").text() shouldBe messages("paymentOnAccount.button")
