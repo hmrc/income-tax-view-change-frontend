@@ -17,18 +17,17 @@
 package controllers.optOut
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import exceptions.MissingFieldException
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.SessionService
-import services.optout.{MultiYearOptOutProposition, OneYearOptOutProposition, OptOutService, OptOutTaxYear}
+import services.optout.OptOutService
 import utils.{AuthenticatorPredicate, OptOutJourney}
 import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
@@ -50,16 +49,41 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withOptOutQualifiedTaxYear(intent: Option[TaxYear], isAgent: Boolean)(oneYear: OneYearOptOutCheckpointViewModel => Result, multiYear: OptOutCheckpointViewModel => Result)
-                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
 
-    optOutService.optOutCheckPointPageViewModel(intent).map {
-      case Some(optOutOneYearCheckpointViewModel: OneYearOptOutCheckpointViewModel) => oneYear(optOutOneYearCheckpointViewModel)
-      case Some(multiYearCheckpointViewModel: MultiYearOptOutCheckpointViewModel) => multiYear(multiYearCheckpointViewModel)
-      case _ =>
-        Logger("application").error("No qualified tax year available for opt out")
-        errorHandler(isAgent).showInternalServerError()
-    }
+    implicit user =>
+      withRecover(isAgent) {
+
+        val resultToReturn = for {
+          viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
+          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, postAction))))
+        } yield result
+
+        resultToReturn.getOrElse {
+          Logger("application").error("No qualified tax year available for opt out")
+          errorHandler(isAgent).showInternalServerError()
+        }
+      }
+  }
+
+  def handleErrorCase(isAgent: Boolean)(ex: Throwable)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    Logger("application").error(s"Error retrieving Opt Out session data: ${ex.getMessage}", ex)
+    Future.successful(errorHandler(isAgent).showInternalServerError())
+  }
+
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, postAction: Call)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent))
+    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, postAction, isAgent))
+    case _ => Ok
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+    implicit user =>
+      optOutService.makeOptOutUpdateRequest().map {
+        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+      }
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
@@ -70,37 +94,4 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     }
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
-    implicit user =>
-      withRecover(isAgent) {
-        withSessionData((sessionData: UIJourneySessionData) => {
-          val intent = sessionData.optOutSessionData.flatMap(_.intent).getOrElse("Unable to find Opt Out Intent") //TODO Remove hard coded values
-          val intentTaxYear = TaxYear.getTaxYearModel(intent)
-          withOptOutQualifiedTaxYear(intentTaxYear, isAgent)(
-            oneYearOptOutCheckpointViewModel => {
-              Ok(view(oneYearOptOutCheckpointViewModel, isAgent = isAgent))
-            },
-            multiYearViewModel => {
-              Ok(checkOptOutAnswers(multiYearViewModel, postAction ,isAgent))
-            }
-          )
-        },
-          ex => handleErrorCase(isAgent)(ex)
-        )
-      }
-  }
-
-  def handleErrorCase(isAgent: Boolean)(ex: Throwable)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(s"Error retrieving Opt Out session data: ${ex.getMessage}", ex)
-    Future.successful(errorHandler(isAgent).showInternalServerError())
-  }
-
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
-    implicit user =>
-      optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
-      }
-  }
 }

@@ -47,22 +47,24 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
-  val currentTaxYear = TaxYear.forYearEnd(2024)
-  val nextTaxYear = currentTaxYear.nextYear
-  val previousTaxYear = currentTaxYear.previousYear
+  val yearEnd = 2014
+  val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
+  val nextTaxYear: TaxYear = currentTaxYear.nextYear
+  val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
-  val optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-  val eligibleTaxYearResponse = Future.successful(Some(OptOutMultiYearViewModel()))
-  val noEligibleTaxYearResponse = Future.successful(None)
-  val optOutYearsOffered = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
-  val optOutYearsOfferedFuture = Future.successful(optOutYearsOffered)
+  val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+  val eligibleTaxYearResponse: Future[Some[OptOutMultiYearViewModel]] = Future.successful(Some(OptOutMultiYearViewModel()))
+  val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
+  val optOutYearsOffered: Seq[TaxYear] = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
+  val optOutYearsOfferedFuture: Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
 
-  val counts: Future[Map[Int, Int]] = Future.successful(Map(2022 -> 1, 2023 -> 1, 2024 -> 0))
-  val counts2: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
-  )))
+  "OptOutChooseTaxYearController - Individual" when {
+    testHappyCase(isAgent = false)
+  }
+
+  "OptOutChooseTaxYearController - Agent" when {
+    testHappyCase(isAgent = true)
+  }
 
   def testHappyCase(isAgent: Boolean): Unit = {
 
@@ -75,7 +77,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
-        mockGetSubmissionCountForTaxYear(optOutYearsOffered, counts2)
+        mockGetSubmissionCountForTaxYear(optOutYearsOffered, counts)
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)
 
@@ -85,12 +87,10 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
   }
 
-  "OptOutChooseTaxYearController - Individual" when {
-    testHappyCase(isAgent = false)
-  }
-
-  "OptOutChooseTaxYearController - Agent" when {
-    testHappyCase(isAgent = true)
-  }
+  val counts: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
+  )))
 
 }

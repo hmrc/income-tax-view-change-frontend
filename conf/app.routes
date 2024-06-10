@@ -36,6 +36,8 @@ POST        /agents/optout/single-taxyear-warning                         contro
 
 GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = false)
 GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = true)
+POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
+POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)

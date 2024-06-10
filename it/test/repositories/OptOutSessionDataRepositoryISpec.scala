@@ -46,7 +46,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
 
         val currentYear = 2024
         val sessionId = "123"
-        val expectedOptOutSessionData = OptOutSessionData(intent = Some(TaxYear.forYearEnd(currentYear).toString))
+        val expectedOptOutSessionData = OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
         val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
           journeyType = OptOutJourney.Name,
           optOutSessionData = Some(expectedOptOutSessionData))
@@ -95,7 +95,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
 
       val currentYear = 2025
       val sessionId = "xsession-12345"
-      val expectedOptOutSessionData = OptOutSessionData(intent = Some(TaxYear.forYearEnd(currentYear).toString))
+      val expectedOptOutSessionData = OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
       val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
         journeyType = OptOutJourney.Name,
         optOutSessionData = Some(expectedOptOutSessionData))
@@ -103,7 +103,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
       repository.set(expectedSessionData)
 
       val result = target.withSessionData(
-        data => Future.successful(Results.Ok(s"Yes! I have data: ${data.sessionId}, ${data.optOutSessionData.get.intent.get}")),
+        data => Future.successful(Results.Ok(s"Yes! I have data: ${data.sessionId}, ${data.optOutSessionData.get.selectedOptOutYear.get}")),
         th => Future.successful(Results.BadRequest(s"Oh No! got error: ${th.getMessage}"))
       )
 

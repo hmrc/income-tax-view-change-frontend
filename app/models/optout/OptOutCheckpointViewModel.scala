@@ -24,13 +24,20 @@ trait OptOutCheckpointViewModel {
   val endYear: String;
 }
 
-case class OneYearOptOutCheckpointViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) extends OptOutCheckpointViewModel {
-  val startYear: String = optOutTaxYear.startYear.toString
-  val endYear: String = optOutTaxYear.endYear.toString
+case class OneYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState]) extends OptOutCheckpointViewModel {
+  val startYear: String = intent.startYear.toString
+  val endYear: String = intent.endYear.toString
   val showFutureChangeInfo: Boolean = state.contains(OneYearOptOutFollowedByAnnual) || state.contains(NextYearOptOut)
 }
 
-case class MultiYearOptOutCheckpointViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) extends OptOutCheckpointViewModel {
-  val startYear: String = optOutTaxYear.startYear.toString
-  val endYear: String = optOutTaxYear.endYear.toString
+case class MultiYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState]) extends OptOutCheckpointViewModel {
+  val startYear: String = intent.startYear.toString
+  val endYear: String = intent.endYear.toString
 }
+
+
+//case class OptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState] = None, isOneYear: Boolean = true) {
+//  val startYear: String = intent.startYear.toString
+//  val endYear: String = intent.endYear.toString
+//  val showFutureChangeInfo: Boolean = state.contains(OneYearOptOutFollowedByAnnual) || state.contains(NextYearOptOut)
+//}

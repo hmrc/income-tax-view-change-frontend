@@ -31,14 +31,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class OptOutMongoTestJourneyController @Inject()(
                                         sessionService: SessionService,
                                         implicit val mcc: MessagesControllerComponents,
-                                        val appConfig: FrontendAppConfig,
-                                        repository: UIJourneySessionDataRepository
+                                        val appConfig: FrontendAppConfig
                                       )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = Action.async { implicit request =>
     sessionService.getMongo("OPTOUT").map {
       case Right(Some(sessionData)) =>
-        sessionData.optOutSessionData.flatMap(_.intent) match {
+        sessionData.optOutSessionData.map(_.selectedOptOutYearField) match {
           case Some(intent) => Ok(s"Intent = $intent")
           case None => Ok("No intent found")
         }
