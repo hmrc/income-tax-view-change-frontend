@@ -17,12 +17,14 @@
 package controllers.optOut
 
 import controllers.optOut.OptOutChooseTaxYearControllerISpec._
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import play.api.http.Status
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
@@ -36,12 +38,12 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
   val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
 
-  def testHappyCase(isAgent: Boolean): Unit = {
+  def testShowHappyCase(isAgent: Boolean): Unit = {
 
     val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 
     s"calling GET $chooseOptOutTaxYearPageUrl" should {
-      s"render page for choose multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
+      s"render page for show choose multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
         "User is authorised" in {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -65,7 +67,38 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
         }
       }
     }
+  }
 
+  def testSubmitHappyCase(isAgent: Boolean): Unit = {
+
+    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+
+    s"calling GET $chooseOptOutTaxYearPageUrl" should {
+      s"render page for submit choose multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
+        "User is authorised" in {
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+          CalculationListStub.stubGetLegacyCalculationList(testNino,
+            previousTaxYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+
+          val formData: Map[String, Seq[String]] = Map(
+            ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
+            ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptOutChooseTaxYear(formData)
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          result should have(
+            httpStatus(Status.SEE_OTHER),
+            //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
+            //todo add more asserts as part MISUV-7538
+          )
+        }
+      }
+    }
   }
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
@@ -96,11 +129,13 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
   ))
 
   "OptOutChooseTaxYearController - Individual" when {
-    testHappyCase(isAgent = false)
+    testShowHappyCase(isAgent = false)
+    testSubmitHappyCase(isAgent = false)
   }
 
   "OptOutChooseTaxYearController - Agent" when {
-    testHappyCase(isAgent = true)
+    testShowHappyCase(isAgent = true)
+    testSubmitHappyCase(isAgent = true)
   }
 
 }

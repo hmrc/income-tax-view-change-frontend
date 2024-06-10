@@ -16,7 +16,7 @@
 
 package controllers.optOut
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -31,7 +31,7 @@ import utils.AuthenticatorPredicate
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
                                               val optOutService: OptOutService)
