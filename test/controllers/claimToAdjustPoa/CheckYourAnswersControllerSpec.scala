@@ -67,7 +67,8 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
       paymentOnAccountTwo = 5000.00,
       poARelevantAmountOne = 5000.00,
       poARelevantAmountTwo = 5000.00,
-      poAPartiallyPaid = false
+      poAPartiallyPaid = false,
+      poAFullyPaid = false
     ))
 
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))

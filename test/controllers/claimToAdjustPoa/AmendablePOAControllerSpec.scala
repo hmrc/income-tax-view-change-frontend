@@ -17,10 +17,12 @@
 package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.ChargeHistoryConnector
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
+import org.mockito.Mockito._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
@@ -43,6 +45,7 @@ class AmendablePOAControllerSpec
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
+    chargeHistoryConnector = mock(classOf[ChargeHistoryConnector]),
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(

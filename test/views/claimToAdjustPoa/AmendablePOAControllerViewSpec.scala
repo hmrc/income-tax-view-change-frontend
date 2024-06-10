@@ -44,8 +44,10 @@ class AmendablePOAControllerViewSpec extends TestSupport {
                 paymentOnAccountTwo = BigDecimal(5000),
                 poARelevantAmountOne = BigDecimal(5000),
                 poARelevantAmountTwo = BigDecimal(5000),
-                poAPartiallyPaid = false
-              )
+                poAPartiallyPaid = false,
+                poAFullyPaid = false
+              ),
+            poasHaveBeenAdjustedPreviously = false
           )
         )
       )

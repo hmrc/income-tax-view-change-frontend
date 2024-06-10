@@ -42,7 +42,8 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
     paymentOnAccountTwo = 5000.00,
     poARelevantAmountOne = 5000.00,
     poARelevantAmountTwo = 5000.00,
-    poAPartiallyPaid = false
+    poAPartiallyPaid = false,
+    poAFullyPaid = false
   )
 
   def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccountViewModel] = Some(defaultPaymentOnAccountModel)): Unit =
