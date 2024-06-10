@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.utils
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
 import models.core.{CheckMode, Mode, NormalMode}
@@ -44,9 +44,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
-  with MockFinancialDetailsConnector {
-
-  val mockPOASessionService = mock(classOf[PaymentOnAccountSessionService])
+  with MockFinancialDetailsConnector
+  with MockPaymentOnAccountSessionService {
 
   object TestEnterPoAAmountController extends EnterPoAAmountController(
     authorisedFunctions = mockAuthService,
@@ -55,7 +54,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[EnterPoAAmountView],
-    sessionService = mockPOASessionService
+    sessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -109,7 +108,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower))))))
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower))))))
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
         setupMockTaxYearNotCrystallised()
@@ -145,7 +144,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Left(new Error(""))))
+        setupMockPaymentOnAccountSessionService(Future(Left(new Error(""))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -163,7 +162,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(None)))
+        setupMockPaymentOnAccountSessionService(Future(Right(None)))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -180,6 +179,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData()))))
         setupMockGetPoaAmountViewModelFailure()
 
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -202,7 +202,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
@@ -224,8 +224,8 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
-        when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
@@ -245,9 +245,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
-          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
-          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
           val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
@@ -266,9 +266,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
-          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
-          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))))
+          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
           val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
@@ -287,9 +287,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(4600))))))
-          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
-          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(4600))))))
+          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "4500"))
           val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "4500"))
@@ -311,7 +311,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
@@ -331,9 +331,9 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
           setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-          when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(Increase), Some(4500))))))
-          when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
-          when(mockPOASessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(Some(Increase), Some(4500))))))
+          when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+          when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
 
           val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "500"))
           val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "500"))
@@ -355,7 +355,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, ""))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, ""))
@@ -374,7 +374,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "test"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "invalid"))
@@ -393,7 +393,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "6000"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "6000"))
@@ -412,7 +412,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-        when(mockPOASessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
 
         val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4000"))
         val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4000"))
