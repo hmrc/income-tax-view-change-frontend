@@ -19,10 +19,11 @@ package controllers.claimToAdjustPoa
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
+import models.claimToAdjustPoa.PoAAmendmentData
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, times, verify, when}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.PaymentOnAccountSessionService
@@ -39,9 +40,11 @@ class AmendablePOAControllerSpec
     with MockClaimToAdjustService
     with MockCalculationListService
     with MockCalculationListConnector
-    with MockFinancialDetailsConnector {
+    with MockFinancialDetailsConnector
+    with MockPaymentOnAccountSessionService {
 
-  val mockPOASessionService: PaymentOnAccountSessionService = mock(classOf[PaymentOnAccountSessionService])
+  val getMongoResponseJourneyIncomplete: Option[PoAAmendmentData] = Some(PoAAmendmentData())
+  val getMongoResponseJourneyComplete: Option[PoAAmendmentData] = Some(PoAAmendmentData(None, None, hasCompletedJourneySuccessfully = true))
 
   object TestAmendablePOAController extends AmendablePOAController(
     authorisedFunctions = mockAuthService,
@@ -50,7 +53,7 @@ class AmendablePOAControllerSpec
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    sessionService = mockPOASessionService
+    sessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -59,16 +62,53 @@ class AmendablePOAControllerSpec
 
   "AmendablePOAController.show" should {
     s"return status: $OK" when {
-      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and no active session" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockPaymentOnAccountSessionService(Future(Right(None)))
+        setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
 
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(None)))
-        when(mockPOASessionService.createSession(any(), any())).thenReturn(Future(Right(())))
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+      }
+      "PoA data is all fine, and we have an active session but is journey completed flag is false" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyComplete)))
+        setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
+
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+
+      }
+      "PoA data is all fine, and we have an active session but is journey completed flag is true" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyIncomplete)))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -105,7 +145,8 @@ class AmendablePOAControllerSpec
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(mockPOASessionService.createSession(any(), any())).thenReturn(Future(Left(new Error(""))))
+        setupMockPaymentOnAccountSessionService(Future(Right(None)))
+        setupMockPaymentOnAccountSessionServiceCreateSession(Future(Left(new Error(""))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
@@ -115,6 +156,7 @@ class AmendablePOAControllerSpec
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+        verifyMockCreateSession(2)
       }
       "PaymentOnAccount model is not built successfully" in {
         enable(AdjustPaymentsOnAccount)
