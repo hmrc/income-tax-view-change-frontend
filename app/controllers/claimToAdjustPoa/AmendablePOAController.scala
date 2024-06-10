@@ -82,7 +82,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
   private def handleSession(implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
     sessionService.getMongo flatMap {
       case Right(Some(poaData: PoAAmendmentData)) => {
-        if (poaData.hasCompletedJourneySuccessfully) {
+        if (poaData.journeyCompleted) {
           sessionService.createSession
         } else {
           Future.successful(Right((): Unit))
