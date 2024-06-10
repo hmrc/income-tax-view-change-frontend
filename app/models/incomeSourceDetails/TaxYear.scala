@@ -18,6 +18,7 @@ package models.incomeSourceDetails
 
 import services.DateServiceInterface
 
+import java.time.LocalDate
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
@@ -45,6 +46,18 @@ case class TaxYear(startYear: Int, endYear: Int) {
   def isAfter(taxYear: TaxYear): Boolean = this.startYear > taxYear.startYear
 
   def isBefore(taxYear: TaxYear): Boolean = this.startYear < taxYear.startYear
+
+  private val April = 4
+  private val Sixths = 6
+  private val Fifth = 5
+
+  def toFinancialYearStart: LocalDate = {
+    LocalDate.of(this.startYear, April, Sixths)
+  }
+
+  def toFinancialYearEnd: LocalDate = {
+    LocalDate.of(this.endYear, April, Fifth)
+  }
 
 }
 

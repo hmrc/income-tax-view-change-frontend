@@ -41,7 +41,7 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
 
   def taxYearSummaryUrl(isAgent: Boolean) = {
     if(isAgent) {
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
+      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear.endYear).url
     } else {
       controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
     }

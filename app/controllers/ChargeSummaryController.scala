@@ -37,7 +37,7 @@ import play.api.mvc._
 import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.FallBackBackLinks
+import utils.{AuthenticatorPredicate, FallBackBackLinks}
 import views.html.ChargeSummary
 import views.html.errorPages.CustomNotFoundError
 
@@ -49,6 +49,7 @@ object ChargeSummaryController {
 }
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
+                                        val auth : AuthenticatorPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDetailsService: FinancialDetailsService,
@@ -123,14 +124,11 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
 
   def showAgent(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
-          }
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
     }
+
 
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                   chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,

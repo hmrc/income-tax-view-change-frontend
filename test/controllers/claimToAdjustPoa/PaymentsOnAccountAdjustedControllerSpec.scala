@@ -21,6 +21,7 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
+import models.claimToAdjustPoa.PoAAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -67,6 +68,7 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
         mockSingleBISWithCurrentYearAsMigrationYear()
 
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
+        when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(newPoAAmount = Some(1200))))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()

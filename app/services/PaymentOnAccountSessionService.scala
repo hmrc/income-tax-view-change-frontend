@@ -95,9 +95,9 @@ class PaymentOnAccountSessionService @Inject()(poAAmmendmentDataRepository: PoAA
       case Some(data: PoASessionData) =>
         val newData: PoAAmendmentData = data.poaAmendmentData match {
           case Some(value) =>
-            value.copy(hasCompletedJourneySuccessfully = true)
+            value.copy(journeyCompleted = true)
           case None =>
-            PoAAmendmentData(hasCompletedJourneySuccessfully = true)
+            PoAAmendmentData(journeyCompleted = true)
         }
         setMongoData(Some(newData))
           .flatMap(v => {
