@@ -17,30 +17,26 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import mocks.connectors.MockFinancialDetailsConnector
+import mocks.services.admin.MockFeatureSwitchService
 import models.admin.CodingOut
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
-import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
-class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
+class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsConnector
+  with MockFeatureSwitchService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -502,14 +498,16 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     }
     "return unpaid transactions and coding out document details" when {
       "coding out is enabled and coding out data exists" in {
-        enable(CodingOut)
+        enableFs(CodingOut)
+        val isEnabledCodingOut: Boolean = true
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(fixedDate.minusYears(1)),
           documentDetails = List(
             documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
-            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
+            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0)
+              .copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"),
+                documentText = Some(CODING_OUT_ACCEPTED)),
             documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
           ),
@@ -533,7 +531,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabledCodingOut)(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List(
           financialDetailCodingOut,
