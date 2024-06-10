@@ -95,6 +95,7 @@
 
     @if(partiallyOrFullyPaidPoaExists) {
         @govukInsetText(InsetText(
+            id = Some("inset-text"),
             content = Text(getMessage("inset-text"))
         ))
     }

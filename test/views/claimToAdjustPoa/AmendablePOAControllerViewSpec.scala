@@ -67,26 +67,26 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "render the hint" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-inset-text").text() shouldBe messages("paymentOnAccount.inset-text")
-        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
+      "not render the hint" in new Setup(isAgent) {
+        Option(document.getElementById("inset-text")).isDefined shouldBe false
+//        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "render the first Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
         document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
-        document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading.key")
+        document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£5,000.00"
       }
       "render the second Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
         document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
-        document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading.key")
+        document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£5,000.00"
       }
       "render the second paragraph text" in new Setup(isAgent) {
-        document.getElementById("paragraph-2-text").text() shouldBe messages("paymentOnAccount.p3")
+        document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
       }
       "render the Adjust my payments on account button" in new Setup(isAgent) {
         document.getElementById("adjust-my-payments-button").text() shouldBe messages("paymentOnAccount.button")

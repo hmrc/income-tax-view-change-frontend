@@ -22,11 +22,13 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
 import models.admin.AdjustPaymentsOnAccount
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.ChargeHistoryTestConstants.testValidChargeHistoryModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
@@ -40,12 +42,14 @@ class AmendablePOAControllerSpec
     with MockCalculationListConnector
     with MockFinancialDetailsConnector {
 
+  val mockChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+
   object TestAmendablePOAController extends AmendablePOAController(
     authorisedFunctions = mockAuthService,
     claimToAdjustService = claimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
-    chargeHistoryConnector = mock(classOf[ChargeHistoryConnector]),
+    chargeHistoryConnector = mockChargeHistoryConnector,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(
@@ -65,6 +69,8 @@ class AmendablePOAControllerSpec
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
+
+        when(mockChargeHistoryConnector.getChargeHistory(any(), any())(any())).thenReturn(Future.successful(testValidChargeHistoryModel))
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
