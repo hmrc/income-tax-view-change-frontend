@@ -16,7 +16,7 @@
 
 package controllers.optOut
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -31,7 +31,7 @@ import utils.AuthenticatorPredicate
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
                                               val optOutService: OptOutService)
@@ -54,7 +54,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
         optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
