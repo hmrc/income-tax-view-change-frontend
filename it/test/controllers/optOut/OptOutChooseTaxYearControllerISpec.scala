@@ -101,6 +101,38 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
     }
   }
 
+  def testSubmitUnhappyCase(isAgent: Boolean): Unit = {
+
+    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+
+    s"calling GET $chooseOptOutTaxYearPageUrl" should {
+      s"render page with error for submit choose multi-year opt-out tax-year $chooseOptOutTaxYearPageUrl" when {
+        "User is authorised" in {
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+          CalculationListStub.stubGetLegacyCalculationList(testNino,
+            previousTaxYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+
+          val formData: Map[String, Seq[String]] = Map(
+            ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
+            ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptOutChooseTaxYear(formData)
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          result should have(
+            httpStatus(Status.BAD_REQUEST),
+            //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
+            //todo add more asserts as part MISUV-7538
+          )
+        }
+      }
+    }
+  }
+
   val allObligations: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel(
       identification = "ABC123456789",
@@ -131,11 +163,13 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
   "OptOutChooseTaxYearController - Individual" when {
     testShowHappyCase(isAgent = false)
     testSubmitHappyCase(isAgent = false)
+    testSubmitUnhappyCase(isAgent = false)
   }
 
   "OptOutChooseTaxYearController - Agent" when {
     testShowHappyCase(isAgent = true)
     testSubmitHappyCase(isAgent = true)
+    testSubmitUnhappyCase(isAgent = true)
   }
 
 }
