@@ -25,7 +25,7 @@
 
 @this(
     p: p,
-    h3: h3,
+    h2: h2,
     link: link,
     govukButton : GovukButton,
     mainTemplate: unifiedLayout,
@@ -212,7 +212,7 @@
     @if(partiallyOrFullyPaidPoaExists) {
         @p(id = Some("paragraph-3-additional-text")) { @getMessage("p3-additional-content") }
         @p(id = Some("paragraph-4-text")) { @getMessage("p4") }
-        @h3(optId = Some("heading-example"), msg = getMessage("heading.example"))
+        @h2(optId = Some("heading-example"), msg = getMessage("heading.example"))
         @p(id = Some("paragraph-5-text")) { @getMessage("p5") }
         @p(id = Some("paragraph-6-text")) { @getMessage("p6") }
     } else {

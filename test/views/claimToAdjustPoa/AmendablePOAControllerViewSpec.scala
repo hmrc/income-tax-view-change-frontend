@@ -40,8 +40,8 @@ class AmendablePOAControllerViewSpec extends TestSupport {
                 poaOneTransactionId = "poa-one-id",
                 poaTwoTransactionId = "poa-two-id",
                 taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-                paymentOnAccountOne = BigDecimal(5000),
-                paymentOnAccountTwo = BigDecimal(5000),
+                paymentOnAccountOne = BigDecimal(3000),
+                paymentOnAccountTwo = BigDecimal(3000),
                 poARelevantAmountOne = BigDecimal(5000),
                 poARelevantAmountTwo = BigDecimal(5000),
                 poAPartiallyPaid = false,
@@ -79,14 +79,32 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
         document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
+        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£3,000.00"
+      }
+      "render the first Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
+        document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
+        document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
+        document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
+        document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£5,000.00"
+        document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-adjusted-amount.key")
+        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£3,000.00"
       }
       "render the second Payment On Account Summary Card" in new Setup(isAgent) {
         document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
         document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
         document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£5,000.00"
+        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£3,000.00"
+      }
+      "render the second Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
+        document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
+        document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
+        document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
+        document.getElementsByClass("govuk-summary-list__key").get(2).text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
+        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(2).text() shouldBe "£5,000.00"
+        document.getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe messages("paymentOnAccount.table-heading-adjusted-amount.key")
+        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(3).text() shouldBe "£3,000.00"
       }
       "render the second paragraph text without additional content" in new Setup(isAgent) {
         document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
