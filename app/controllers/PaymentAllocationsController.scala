@@ -61,17 +61,17 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-      implicit user =>
-        if (isEnabled(PaymentAllocation)) {
-          handleRequest(
-            itvcErrorHandler = itvcErrorHandler,
-            documentNumber = documentNumber,
-            redirectUrl = redirectUrlIndividual,
-            isAgent = false,
-            origin = origin
-          )
-        } else Future.successful(Redirect(redirectUrlIndividual))
-    }
+    implicit user =>
+      if (isEnabled(PaymentAllocation)) {
+        handleRequest(
+          itvcErrorHandler = itvcErrorHandler,
+          documentNumber = documentNumber,
+          redirectUrl = redirectUrlIndividual,
+          isAgent = false,
+          origin = origin
+        )
+      } else Future.successful(Redirect(redirectUrlIndividual))
+  }
 
   def handleRequest(itvcErrorHandler: ShowInternalServerError,
                     documentNumber: String,
@@ -93,11 +93,11 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
             .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
           val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
-            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
-              CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
-              isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-              creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
-              outstandingAmount = outstandingAmount)(implicitly, messages))
+          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
+            CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
+            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
+            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
+            outstandingAmount = outstandingAmount)(implicitly, messages))
         }
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
@@ -107,19 +107,17 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   }
 
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          if (isEnabled(PaymentAllocation)(mtdItUser)) {
-            handleRequest(
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              documentNumber = documentNumber,
-              redirectUrl = redirectUrlAgent,
-              isAgent = true
-            )
-          } else
-            Future.successful(Redirect(redirectUrlAgent))
-        }
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        if (isEnabled(PaymentAllocation)(mtdItUser)) {
+          handleRequest(
+            itvcErrorHandler = itvcErrorHandlerAgent,
+            documentNumber = documentNumber,
+            redirectUrl = redirectUrlAgent,
+            isAgent = true
+          )
+        } else
+          Future.successful(Redirect(redirectUrlAgent))
     }
   }
 
