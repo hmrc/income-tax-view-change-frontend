@@ -86,6 +86,6 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaOneAdjustmentReason)))) ->
         ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaTwoAdjustmentReason))))
         if poaOneAdjustmentReason.isDefined || poaTwoAdjustmentReason.isDefined => true
-      case _                                                                    => true
+      case _                                                                    => false
     }
 }
