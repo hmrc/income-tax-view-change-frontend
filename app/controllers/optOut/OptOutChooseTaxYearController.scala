@@ -31,7 +31,7 @@ import utils.AuthenticatorPredicate
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
                                               val optOutService: OptOutService)
@@ -57,13 +57,16 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
-        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
+        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).flatMap { submissionCountForTaxYear =>
 
-          val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Result = formWithError =>
-            BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
-          val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Result = form => {
-            saveTaxYearChoice(form)
-            redirectToCheckpointPage(isAgent)
+          val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Future[Result] = formWithError =>
+            Future.successful(BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent)))
+
+          val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Future[Result] = form => {
+              saveTaxYearChoice(form).map {
+              case true => redirectToCheckpointPage(isAgent)
+              case false => itvcErrorHandler.showInternalServerError()
+            }
           }
 
           ConfirmOptOutMultiTaxYearChoiceForm().bindFromRequest().fold(onError, onSuccess)
@@ -71,10 +74,10 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       }
   }
 
-  private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Unit = {
+  private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
       optOutService.saveIntent(intent)
-    }
+    } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))
   }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
