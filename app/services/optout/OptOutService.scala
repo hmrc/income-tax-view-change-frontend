@@ -147,8 +147,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     fetchOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.flatMap {
         case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
-        case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())//todo: add test code
-        case _ => None
+        case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
       }
     }
   }

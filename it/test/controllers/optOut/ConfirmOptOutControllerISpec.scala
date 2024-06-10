@@ -27,6 +27,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
+import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -46,8 +47,10 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   val emptyBodyString = ""
 
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   s"calling GET $confirmOptOutPageUrl" should {
+
     s"render confirm single year opt out page $confirmOptOutPageUrl" when {
       "User is authorised" in {
 
@@ -66,6 +69,28 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           elementTextByID("heading")(expectedTitle),
           elementTextByID("summary")(summary),
           elementTextByID("info-message")(infoMessage),
+        )
+      }
+    }
+
+    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
+      "User is authorised" in {
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("heading")(expectedTitle),
+          //todo add more asserts as part of MISUV-7538
         )
       }
     }
