@@ -63,7 +63,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -92,7 +92,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         sessionService.createSession("OPTOUT")
         sessionService.setMongoData(newSessionData)
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -118,7 +118,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -140,7 +140,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map("missing-header-name" -> "missing-header-value")
         )
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
           httpStatus(Status.SEE_OTHER),
@@ -162,7 +162,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -191,7 +191,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         sessionService.createSession("OPTOUT")
         sessionService.setMongoData(newSessionData)
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmOptOut()
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
           httpStatus(SEE_OTHER)

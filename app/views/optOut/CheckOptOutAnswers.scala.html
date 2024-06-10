@@ -34,8 +34,7 @@
 @(viewModel: OptOutCheckpointViewModel, postAction: Call, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
-    if(isAgent) controllers.optOut.routes.OptOutChooseTaxYearController.showAgent().url
-    else controllers.optOut.routes.OptOutChooseTaxYearController.show().url
+    controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 }
 
 @taxYears = @{

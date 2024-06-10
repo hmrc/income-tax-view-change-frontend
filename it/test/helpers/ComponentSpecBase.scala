@@ -565,12 +565,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
-
-    def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get("/optout/review-confirm-taxyear", additionalCookies)
-    }
-
-    def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
   }
 
 
@@ -641,6 +635,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq(""))
       post(s"/optout/single-taxyear-warning", additionalCookies)(formData)
     }
+
+    def getConfirmOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/review-confirm-taxyear", additionalCookies)
+    }
+
+    def renderChooseOptOutTaxYearPageInMultiYearJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/choose-taxyear", additionalCookies)
+    }
+
+    def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
+
 
     def getConfirmedOptOut(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/confirmed", additionalCookies)

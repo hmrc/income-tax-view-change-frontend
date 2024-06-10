@@ -51,7 +51,9 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
     val confirmButton: String = messages("optout.checkAnswers.confirm")
     val cancelButton: String = messages("optout.checkAnswers.cancel")
 
-    val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show().url
+    val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = false).url
+    val changeOptOutAgent: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = true).url
+
     val confirmOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = true).url
   }
