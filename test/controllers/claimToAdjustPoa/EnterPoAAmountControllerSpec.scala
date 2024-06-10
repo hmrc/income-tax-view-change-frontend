@@ -25,13 +25,13 @@ import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
+import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -101,7 +101,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
   "EnterPoAAmountController.show" should {
     "return Ok" when {
-      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized does not exist in session" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -118,6 +118,28 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
+        Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
+        Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe ""
+      }
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and newPoAAmount exists in session" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
+
+        setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+        Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe "1111.22"
+        Jsoup.parse(contentAsString(resultAgent)).select("#poa-amount").attr("value") shouldBe "1111.22"
       }
     }
     "redirect to the home page" when {
