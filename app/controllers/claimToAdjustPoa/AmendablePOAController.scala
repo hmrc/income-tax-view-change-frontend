@@ -50,17 +50,11 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
+          claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(user.nino)) flatMap {
+            case Right(viewModel) =>
               Future.successful(
-                Ok(view(
-                  isAgent = isAgent,
-                  paymentOnAccount = paymentOnAccount
-                ))
+                Ok(view(isAgent, viewModel))
               )
-            case Right(None) =>
-              Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)
