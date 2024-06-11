@@ -16,17 +16,20 @@
 
 package controllers.claimToAdjustPoa
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.ChargeHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
+import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustHelper, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
@@ -39,28 +42,23 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                        claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
                                        view: AmendablePaymentOnAccount,
+                                       chargeHistoryConnector: ChargeHistoryConnector,
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                       (implicit val appConfig: FrontendAppConfig,
                                        implicit override val mcc: MessagesControllerComponents,
                                        val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with ClaimToAdjustHelper {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
+          claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(user.nino)) flatMap {
+            case Right(viewModel: AmendablePoaViewModel) =>
               Future.successful(
-                Ok(view(
-                  isAgent = isAgent,
-                  paymentOnAccount = paymentOnAccount
-                ))
+                Ok(view(isAgent, viewModel))
               )
-            case Right(None) =>
-              Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)

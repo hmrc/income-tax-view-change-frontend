@@ -18,9 +18,10 @@ package services
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
+import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
@@ -38,7 +39,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
     for {
-      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+      res <- getNonCrystallisedFinancialDetails(nino)
     } yield res match {
       case Right(Some(financialDetails)) =>
         val x = arePoAPaymentsPresent(financialDetails.documentDetails)
@@ -53,13 +54,28 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
     for {
-      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+      res <- getNonCrystallisedFinancialDetails(nino)
     } yield res match {
       case Right(Some(financialDetails)) =>
         val x = getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))
         Right(x)
       case Right(None) => Right(None)
       case Left(ex) => Left(ex)
+    }
+  }
+
+  def getAdjustPaymentOnAccountViewModel(nino: Nino)
+                                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, AmendablePoaViewModel]] = {
+    getNonCrystallisedFinancialDetails(nino)
+      .flatMap  {
+        case Right(Some(FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _))) =>
+          isSubsequentAdjustment(chargeHistoryConnector, chargeReference)
+            .map {
+              case Right(haveBeenAdjusted) => getAmendablePoaViewModel(sortByTaxYear(documentDetails), haveBeenAdjusted)
+              case Left(ex)                => Left(ex)
+            }
+        case Right(_) => Future.successful(Left(new Exception("Failed to retrieve non-crystallised financial details")))
+        case Left(ex) => Future.successful(Left(ex))
     }
   }
 
@@ -99,7 +115,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   //TODO: Merge the two functions below, lots of code duplication
-  private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
+  private def getNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
