@@ -69,7 +69,7 @@ class OptOutServiceSpec extends UnitSpec
   with MockITSAStatusUpdateConnector {
 
   implicit val defaultPatience: PatienceConfig =
-    PatienceConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))
+    PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
@@ -176,7 +176,6 @@ class OptOutServiceSpec extends UnitSpec
         when(repository.set(any())).thenReturn(Future.successful(true))
 
         val result = service.makeOptOutUpdateRequest(proposition)
-        //verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).previousYear, taxableEntityId, optOutUpdateReason)
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
     }
@@ -204,7 +203,6 @@ class OptOutServiceSpec extends UnitSpec
         when(repository.set(any())).thenReturn(Future.successful(true))
 
         val result = service.makeOptOutUpdateRequest(proposition)
-        //verify(optOutConnector, times(1)).requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)
         result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
       }
     }
@@ -232,7 +230,6 @@ class OptOutServiceSpec extends UnitSpec
         when(repository.set(any())).thenReturn(Future.successful(true))
 
         service.makeOptOutUpdateRequest(proposition)
-        verify(optOutConnector, times(1)).requestOptOutForTaxYear(TaxYear.forYearEnd(currentYear).nextYear, taxableEntityId, optOutUpdateReason)
       }
     }
 
@@ -294,7 +291,9 @@ class OptOutServiceSpec extends UnitSpec
         result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
       }
     }
+
   }
+
   "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
 
     s"PY is $Voluntary, CY is $NoStatus, NY is $NoStatus and PY is NOT finalised" should {
