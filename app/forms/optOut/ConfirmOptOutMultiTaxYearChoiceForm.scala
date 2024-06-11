@@ -38,4 +38,8 @@ object ConfirmOptOutMultiTaxYearChoiceForm {
       )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
     )
   }
+
+  def apply(choice: Option[String]): ConfirmOptOutMultiTaxYearChoiceForm = {
+    new ConfirmOptOutMultiTaxYearChoiceForm(choice, "")
+  }
 }
