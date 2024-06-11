@@ -23,14 +23,13 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import org.scalatest.Ignore
 import models.optout.OptOutSessionData
+import org.scalatest.Ignore
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
-import repositories.UIJourneySessionDataRepository
 import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
+import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants

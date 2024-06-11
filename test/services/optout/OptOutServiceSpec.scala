@@ -609,16 +609,16 @@ class OptOutServiceSpec extends UnitSpec
         s"offer ${getTaxYearText(intent)}" in {
 
           val previousYear: TaxYear = PY
-          when(dateService.getCurrentTaxYear).thenReturn(CY)
+          when(mockDateService.getCurrentTaxYear).thenReturn(CY)
 
           val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
             PY -> StatusDetail("", statusPY, ""),
             CY -> StatusDetail("", statusCY, ""),
             NY -> StatusDetail("", statusNY, "")
           )
-          when(itsaStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
-          when(calculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
