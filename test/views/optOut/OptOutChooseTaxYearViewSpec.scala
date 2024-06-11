@@ -17,6 +17,7 @@
 package views.optOut
 
 import config.FrontendAppConfig
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -37,7 +38,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     SubmissionsCountForTaxYearModel(Seq(SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
   }
 
   object optOutChooseTaxYear {
@@ -65,19 +66,17 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     "have the correct summary heading and page contents" in new Setup(false) {
       pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
-      pageDocument.getElementById("whichTaxYear").text() shouldBe optOutChooseTaxYear.whichTaxYear
+      pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
-      pageDocument.getElementById("continue-button").attr("href") shouldBe optOutChooseTaxYear.confirmOptOutURL
     }
 
     "have the correct summary heading and page contents for Agents" in new Setup(true) {
       pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
-      pageDocument.getElementById("whichTaxYear").text() shouldBe optOutChooseTaxYear.whichTaxYear
+      pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
-      pageDocument.getElementById("continue-button").attr("href") shouldBe optOutChooseTaxYear.confirmOptOutURLAgent
     }
 
   }
