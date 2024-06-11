@@ -107,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session exists which contains the new Payment On Account amount and reason")
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -139,7 +139,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session exists which is missing the Payment On Account adjustment reason")
-        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None)))
+        await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -154,7 +154,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session exists which is missing the New Payment On Account amount")
-        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None)))
+        await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -169,7 +169,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         setupGetFinancialDetails()
 
         And("A session exists which is missing the New Payment On Account amount")
-        sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoAAmount = None)))
+        await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoAAmount = None))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -202,7 +202,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         When(s"I call GET")
         val res = get("/adjust-poa/check-your-answers")
@@ -230,7 +230,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         enable(AdjustPaymentsOnAccount)
 
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
           BAD_REQUEST,
@@ -249,7 +249,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         enable(AdjustPaymentsOnAccount)
 
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
           CREATED,
@@ -271,7 +271,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         enable(AdjustPaymentsOnAccount)
 
         stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = post(url)
 
@@ -283,7 +283,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = post(url)
 
@@ -295,9 +295,9 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(
+        await(sessionService.setMongoData(Some(
           validSession.copy(poaAdjustmentReason = None)
-        ))
+        )))
 
         val res = post(url)
 

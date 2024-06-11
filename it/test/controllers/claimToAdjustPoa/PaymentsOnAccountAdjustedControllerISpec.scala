@@ -77,7 +77,7 @@ class PaymentsOnAccountAdjustedControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/success")

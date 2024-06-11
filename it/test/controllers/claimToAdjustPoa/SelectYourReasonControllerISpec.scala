@@ -91,7 +91,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -119,7 +119,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -150,7 +150,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(newPoAAmount = Some(1500.0))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(newPoAAmount = Some(1500.0)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -207,7 +207,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -261,7 +261,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
 
@@ -292,7 +292,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
       And("A session has been created")
-      sessionService.setMongoData(Some(PoAAmendmentData()))
+      await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
       When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
@@ -323,7 +323,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
 
         When(s"I call POST")
@@ -350,7 +350,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)

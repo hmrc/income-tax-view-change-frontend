@@ -72,10 +72,10 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
-        sessionService.setMongoData(Some(PoAAmendmentData(
+        await(sessionService.setMongoData(Some(PoAAmendmentData(
           poaAdjustmentReason = Some(OtherIncomeLower),
           newPoAAmount = Some(BigDecimal(3333))
-        )))
+        ))))
 
         When(s"I call GET $amendPoaUrl")
         val res = IncomeTaxViewChangeFrontend.getAdjustPaymentsOnAccount
@@ -101,11 +101,11 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
         )
-        sessionService.setMongoData(Some(PoAAmendmentData(
+        await(sessionService.setMongoData(Some(PoAAmendmentData(
           poaAdjustmentReason = Some(OtherIncomeLower),
           newPoAAmount = Some(BigDecimal(1111)),
           journeyCompleted = true
-        )))
+        ))))
 
         When(s"I call GET $amendPoaUrl")
         val res = IncomeTaxViewChangeFrontend.getAdjustPaymentsOnAccount

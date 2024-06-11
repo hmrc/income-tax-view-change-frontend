@@ -79,7 +79,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = get(url)
 
@@ -106,7 +106,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = get(url)
 
@@ -118,7 +118,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = get(url)
 
@@ -146,7 +146,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
           BAD_REQUEST,
@@ -165,7 +165,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
           CREATED,
@@ -187,7 +187,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = post(url)
 
@@ -199,7 +199,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
-        sessionService.setMongoData(Some(validSession))
+        await(sessionService.setMongoData(Some(validSession)))
 
         val res = post(url)
 
@@ -211,9 +211,9 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         enable(AdjustPaymentsOnAccount)
         stubFinancialDetailsResponse()
-        sessionService.setMongoData(Some(
+        await(sessionService.setMongoData(Some(
           validSession.copy(poaAdjustmentReason = None)
-        ))
+        )))
 
         val res = post(url)
 
