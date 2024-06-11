@@ -142,6 +142,34 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         lazy val document: Document = Jsoup.parse(res.body)
         document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
       }
+      "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+
+        And("A session has been created")
+        sessionService.setMongoData(Some(PoAAmendmentData(None, Some(BigDecimal(3333.33)))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/enter-poa-amount")
+
+        res should have(
+          httpStatus(OK)
+        )
+        lazy val document: Document = Jsoup.parse(res.body)
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+      }
       "User is authorised and has previously adjusted their PoA" in {
         enable(AdjustPaymentsOnAccount)
 

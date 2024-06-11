@@ -99,6 +99,34 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
           httpStatus(OK)
         )
       }
+
+      "user has entered an amount lower than current amount but PoA adjustment reason is populated in session data" in {
+
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created")
+        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/select-your-reason")
+
+        res should have(
+          httpStatus(OK)
+        )
+      }
     }
 
     s"return status $SEE_OTHER" when {
