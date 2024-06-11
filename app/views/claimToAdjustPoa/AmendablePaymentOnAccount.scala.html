@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.claimToAdjustPoa.PaymentOnAccountViewModel
+@import models.claimToAdjustPoa.AmendablePoaViewModel
 
 @this(
     p: p,
@@ -37,8 +37,7 @@
 
 @(
     isAgent: Boolean,
-    paymentOnAccount: PaymentOnAccountViewModel,
-    poasHaveBeenAdjustedPreviously: Boolean
+    amendablePoaViewModel: AmendablePoaViewModel
 )(
     implicit request: Request[_],
     user: MtdItUser[_],
@@ -55,8 +54,8 @@
 }
 
 @getChargeSummaryUrl(id: String) = @{
-    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(paymentOnAccount.taxYear.endYear, id).url
-    else         controllers.routes.ChargeSummaryController.show(paymentOnAccount.taxYear.endYear, id).url
+    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(amendablePoaViewModel.taxYear.endYear, id).url
+    else         controllers.routes.ChargeSummaryController.show(amendablePoaViewModel.taxYear.endYear, id).url
 }
 
 @getWhatYouNeedToKnowUrl = @{
@@ -64,7 +63,7 @@
 }
 
 @partiallyOrFullyPaidPoaExists = @{
-    paymentOnAccount.poAPartiallyPaid || paymentOnAccount.poAFullyPaid
+    amendablePoaViewModel.poAPartiallyPaid || amendablePoaViewModel.poAFullyPaid
 }
 
 @mainTemplate(
@@ -78,7 +77,7 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-xl"),
-        section = Some(getMessage("caption", paymentOnAccount.taxYear.startYear.toString, paymentOnAccount.taxYear.endYear.toString)),
+        section = Some(getMessage("caption", amendablePoaViewModel.taxYear.startYear.toString, amendablePoaViewModel.taxYear.endYear.toString)),
         captionClasses = Some("govuk-caption-xl")
     ))
 
@@ -102,7 +101,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(poasHaveBeenAdjustedPreviously) {
+            if(amendablePoaViewModel.poasHaveBeenAdjustedPreviously) {
                 Seq(
                     SummaryListRow(
                         key = Key(
@@ -111,7 +110,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.poARelevantAmountOne.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.poARelevantAmountOne.toCurrencyString)
                         )
                     ),
                     SummaryListRow(
@@ -121,7 +120,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.paymentOnAccountOne.toCurrencyString)
                         )
                     )
                 )
@@ -134,7 +133,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.paymentOnAccountOne.toCurrencyString)
                         ),
                     )
                 )
@@ -146,7 +145,7 @@
                 actions = Some(Actions(
                     items = Seq(
                         ActionItem(
-                            href = getChargeSummaryUrl(paymentOnAccount.poaOneTransactionId),
+                            href = getChargeSummaryUrl(amendablePoaViewModel.poaOneTransactionId),
                             content = Text(getMessage("table-heading.link")),
                             attributes = Map("id" -> "poa1-more-details-date-link")
                         )
@@ -157,7 +156,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(poasHaveBeenAdjustedPreviously) {
+            if(amendablePoaViewModel.poasHaveBeenAdjustedPreviously) {
                 Seq(
                     SummaryListRow(
                         key = Key(
@@ -166,7 +165,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.poARelevantAmountTwo.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.poARelevantAmountTwo.toCurrencyString)
                         )
                     ),
                     SummaryListRow(
@@ -176,7 +175,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.paymentOnAccountTwo.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.paymentOnAccountTwo.toCurrencyString)
                         )
                     )
                 )
@@ -188,7 +187,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(paymentOnAccount.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(amendablePoaViewModel.paymentOnAccountOne.toCurrencyString)
                         ),
                     )
                 )
@@ -200,7 +199,7 @@
                 actions = Some(Actions(
                     items = Seq(
                         ActionItem(
-                            href = getChargeSummaryUrl(paymentOnAccount.poaTwoTransactionId),
+                            href = getChargeSummaryUrl(amendablePoaViewModel.poaTwoTransactionId),
                             content = Text(getMessage("table-heading.link")),
                             attributes = Map("id" -> "poa2-more-details-date-link")
                         )

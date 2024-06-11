@@ -24,7 +24,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -54,18 +54,11 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
-              isSubsequentAdjustmentAttempt(paymentOnAccount) map { poasHaveBeenAdjustedPreviously =>
-                Ok(view(
-                  isAgent = isAgent,
-                  paymentOnAccount = paymentOnAccount,
-                  poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
-                ))
-              }
-            case Right(None) =>
-              Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
+          claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(user.nino)) flatMap {
+            case Right(viewModel: AmendablePoaViewModel) =>
+              Future.successful(
+                Ok(view(isAgent, viewModel))
+              )
             case Left(ex) =>
               Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
               Future.failed(ex)
@@ -75,17 +68,5 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
-    }
-
-  private def isSubsequentAdjustmentAttempt(paymentOnAccount: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Boolean] =
-    for {
-      chargeHistoryResponseModelOne <- chargeHistoryConnector.getChargeHistory(user.nino, Some(paymentOnAccount.poaOneTransactionId))
-      chargeHistoryResponseModelTwo <- chargeHistoryConnector.getChargeHistory(user.nino, Some(paymentOnAccount.poaTwoTransactionId))
-    } yield (chargeHistoryResponseModelOne, chargeHistoryResponseModelTwo) match {
-      case
-        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaOneAdjustmentReason), _*))) ->
-        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaTwoAdjustmentReason), _*)))
-        if poaOneAdjustmentReason.isDefined || poaTwoAdjustmentReason.isDefined => true
-      case _                                                                    => false
     }
 }
