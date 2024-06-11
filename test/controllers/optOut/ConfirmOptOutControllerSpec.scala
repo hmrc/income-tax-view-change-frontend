@@ -166,7 +166,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
           val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.SEE_OTHER
         }
 
         "opt-out service fails" in {
@@ -176,7 +176,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
           val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.SEE_OTHER
         }
       }
     }
