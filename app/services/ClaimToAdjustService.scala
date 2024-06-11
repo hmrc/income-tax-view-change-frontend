@@ -18,10 +18,10 @@ package services
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
-import models.chargeHistory.ChargeHistoryModel
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
@@ -66,32 +66,16 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getAdjustPaymentOnAccountViewModel(nino: Nino)
                                         (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, AmendablePoaViewModel]] = {
-    getNonCrystallisedFinancialDetails(nino) flatMap  {
-      case Right(Some(financialDetails)) =>
-        getPoaAdjustmentReason(financialDetails) map {
-          case Right(haveBeenAdjusted) =>
-            getAmendablePoaViewModel(
-              sortByTaxYear(financialDetails.documentDetails),
-              poasHaveBeenAdjustedPreviously = haveBeenAdjusted
-            ) match {
-              case Some(model) => Right(model)
-              case None        => Left(new Exception("Failed to create AmendablePoaViewModel"))
+    getNonCrystallisedFinancialDetails(nino)
+      .flatMap  {
+        case Right(Some(FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _))) =>
+          isSubsequentAdjustment(chargeHistoryConnector, chargeReference)
+            .map {
+              case Right(haveBeenAdjusted) => getAmendablePoaViewModel(sortByTaxYear(documentDetails), haveBeenAdjusted)
+              case Left(ex)                => Left(ex)
             }
-          case Left(ex) => Left(ex)
-        }
-      case _ => Future.successful(Left(new Exception("Failed to retrieve non-crystallised Financial details")))
-    }
-  }
-
-  private def getPoaAdjustmentReason(financialDetailsModel: FinancialDetailsModel)
-                                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Boolean]] = {
-    getChargeHistory(
-      chargeHistoryConnector,
-      financialDetailsModel.financialDetails.headOption.flatMap(_.chargeReference)
-    ) map {
-      case Right(Some(ChargeHistoryModel(_, _, _, _, _, _, _, Some(reason)))) => Right(true)
-      case Right(_)                                                           => Right(false)
-      case Left(ex)                                                           => Left(ex)
+        case Right(_) => Future.successful(Left(new Exception("Failed to retrieve non-crystallised financial details")))
+        case Left(ex) => Future.successful(Left(ex))
     }
   }
 

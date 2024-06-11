@@ -84,7 +84,8 @@ trait ClaimToAdjustHelper {
       poAPartiallyPaid     = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid
     )
 
-  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail], poasHaveBeenAdjustedPreviously: Boolean): Option[AmendablePoaViewModel] = for {
+  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
+                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, AmendablePoaViewModel] = (for {
     poaOneDocDetail         <- documentDetails.find(iPoAOne)
     poaTwoDocDetail         <- documentDetails.find(isPoATwo)
     latestDocumentDetail     = poaTwoDocDetail
@@ -92,19 +93,23 @@ trait ClaimToAdjustHelper {
     taxReturnDeadline        = getTaxReturnDeadline(poaTwoDueDate)
     poasAreBeforeDeadline    = poaTwoDueDate isBefore taxReturnDeadline
     if poasAreBeforeDeadline
-  } yield
+  } yield {
     AmendablePoaViewModel(
-      poaOneTransactionId   = poaOneDocDetail.transactionId,
-      poaTwoTransactionId   = poaTwoDocDetail.transactionId,
-      taxYear               = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      paymentOnAccountOne   = poaOneDocDetail.originalAmount,
-      paymentOnAccountTwo   = poaTwoDocDetail.originalAmount,
-      poARelevantAmountOne  = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      poARelevantAmountTwo  = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      poAPartiallyPaid      = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      poAFullyPaid          = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
+      poaOneTransactionId            = poaOneDocDetail.transactionId,
+      poaTwoTransactionId            = poaTwoDocDetail.transactionId,
+      taxYear                        = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+      paymentOnAccountOne            = poaOneDocDetail.originalAmount,
+      paymentOnAccountTwo            = poaTwoDocDetail.originalAmount,
+      poARelevantAmountOne           = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+      poARelevantAmountTwo           = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+      poAPartiallyPaid               = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+      poAFullyPaid                   = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
       poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
     )
+  }) match {
+    case Some(model) => Right(model)
+    case None        => Left(new Exception("Failed to create AmendablePoaViewModel"))
+  }
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
@@ -112,6 +117,15 @@ trait ClaimToAdjustHelper {
       case ChargesHistoryModel(_, _, _, Some(List(details, _*))) => Right(Some(details))
       case ChargesHistoryModel(_, _, _, _)                       => Right(None)
       case ChargesHistoryErrorModel(code, message)               => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
+    }
+  }
+
+  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
+                                      (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
+      case ChargesHistoryModel(_, _, _, Some(chargeOne :: chargeTwo :: _)) if adjustmentReasonExists(chargeOne, chargeTwo) => Right(true)
+      case ChargesHistoryModel(_, _, _, _)             => Right(false)
+      case ChargesHistoryErrorModel(code, message)     => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
 
@@ -160,5 +174,9 @@ trait ClaimToAdjustHelper {
     documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
+
+  private val adjustmentReasonExists: (ChargeHistoryModel, ChargeHistoryModel) => Boolean = (chargeOne, chargeTwo) =>
+    chargeOne.poaAdjustmentReason.isDefined ||
+      chargeTwo.poaAdjustmentReason.isDefined
 
 }
