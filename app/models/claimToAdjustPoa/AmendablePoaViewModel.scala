@@ -29,4 +29,7 @@ case class AmendablePoaViewModel(
                                   poARelevantAmountTwo: BigDecimal,
                                   poAPartiallyPaid: Boolean,
                                   poAFullyPaid: Boolean
-                                )
+                                ) {
+
+  val partiallyOrFullyPaidPoaExists: Boolean = poAPartiallyPaid || poAFullyPaid
+}
