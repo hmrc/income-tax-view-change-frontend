@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel}
+import models.claimToAdjustPoa.AmendablePoaViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
