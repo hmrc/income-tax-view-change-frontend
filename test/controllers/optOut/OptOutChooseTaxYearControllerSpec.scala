@@ -17,6 +17,7 @@
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
@@ -25,7 +26,7 @@ import models.itsaStatus.ITSAStatus
 import models.optout.OptOutMultiYearViewModel
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.NextUpdatesService.SubmissionsCountForTaxYear
 import services.optout.CurrentOptOutTaxYear
 import services.optout.OptOutService.SubmissionsCountForTaxYearModel
@@ -58,18 +59,34 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val optOutYearsOffered: Seq[TaxYear] = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
   val optOutYearsOfferedFuture: Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
 
+  val counts: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
+  )))
+
+  val taxYears: Seq[TaxYear] =
+    Seq(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024), TaxYear.forYearEnd(2025))
+  val futureTaxYears: Future[Seq[TaxYear]] = Future.successful(taxYears)
+
+  val submissionsCountForTaxYearModel: Future[SubmissionsCountForTaxYearModel] = counts
+
   "OptOutChooseTaxYearController - Individual" when {
-    testHappyCase(isAgent = false)
+    controllerShowTest(isAgent = false)
+    controllerSubmitTest(isAgent = false)
+    testSaveIntent(isAgent = false)
   }
 
   "OptOutChooseTaxYearController - Agent" when {
-    testHappyCase(isAgent = true)
+    controllerShowTest(isAgent = true)
+    controllerSubmitTest(isAgent = true)
+    testSaveIntent(isAgent = true)
   }
 
-  def testHappyCase(isAgent: Boolean): Unit = {
+  def controllerShowTest(isAgent: Boolean): Unit = {
 
     "show method is invoked" should {
-      s"return result with ${Status.OK} status" in {
+      s"return result with ${Status.OK} status for show" in {
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
@@ -87,10 +104,106 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
   }
 
-  val counts: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
-  )))
+  def controllerSubmitTest(isAgent: Boolean): Unit = {
 
+    "submit method is invoked and choice made in form" should {
+      s"return result with successful ${Status.SEE_OTHER} status for submit" in {
+
+        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+        )
+
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
+
+        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
+        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockSaveIntent(currentTaxYear, Future.successful(true))
+
+        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
+
+        status(result) shouldBe Status.SEE_OTHER
+        val agentPath = if(isAgent) "/agents" else ""
+        redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+      }
+    }
+
+    "submit method is invoked and choice is missing in form" should {
+      s"return result with with error ${Status.BAD_REQUEST} status for submit" in {
+
+        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
+          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+        )
+
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
+
+        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
+        mockGetSubmissionCountForTaxYear(taxYears, counts)
+
+        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
+
+        status(result) shouldBe Status.BAD_REQUEST
+        redirectLocation(result) shouldBe None
+      }
+    }
+  }
+
+  def testSaveIntent(isAgent: Boolean): Unit = {
+
+    "submit method is invoked and choice made in form but save intent fails" should {
+      s"return result with ${Status.INTERNAL_SERVER_ERROR} status for submit" in {
+
+        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+        )
+
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
+
+        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
+        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockSaveIntent(currentTaxYear, Future.successful(false))
+
+        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        redirectLocation(result) shouldBe None
+      }
+    }
+
+    "submit method is invoked and choice made not in form but save intent fails" should {
+      s"return result with ${Status.BAD_REQUEST} status for submit" in {
+
+        val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+        val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+          ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "",
+          ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+        )
+
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
+
+        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
+        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockSaveIntent(currentTaxYear, Future.successful(true))
+
+        val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
+
+        status(result) shouldBe Status.BAD_REQUEST
+        redirectLocation(result) shouldBe None
+      }
+    }
+
+  }
 }
