@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.Messages
 
-case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String], csrfToken: String)
+case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String])
 
 object ConfirmOptOutMultiTaxYearChoiceForm {
 
@@ -28,24 +28,23 @@ object ConfirmOptOutMultiTaxYearChoiceForm {
   val noResponseErrorMessageKey: String = "optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error"
   val csrfToken: String = "csrfToken"
 
-  def apply()(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
+  def
+  apply(optionValue:List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
-    form(noSelectionErrorMessage)
+    form(noSelectionErrorMessage, optionValue)
 
   }
 
-  def apply(intent: String)(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
-    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
-    ConfirmOptOutMultiTaxYearChoiceForm(intent)
-    form(noSelectionErrorMessage)
-  }
+//  def apply(intent: String)(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
+//    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
+//    form(noSelectionErrorMessage).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(intent), csrfToken))
+//  }
 
 
- def form(msg: String): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form(
+ def form(msg: String, optionValue:List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
     mapping(
-      choiceField -> optional(text).verifying(msg, response => response.isInstanceOf[Some[String]]),
-      csrfToken -> text
+      choiceField -> optional(text).verifying(msg, response => response.nonEmpty && optionValue.contains(response.get))
     )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
   )
 
