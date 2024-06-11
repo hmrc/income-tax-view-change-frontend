@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utils.Headers.genericCheckAndAddTestHeader
+import utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -100,7 +100,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     val url = getChargesUrl(nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")
 
-    val hc = genericCheckAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
     http.GET[HttpResponse](url)(httpReads, hc = hc, implicitly) map { response =>
       response.status match {

@@ -23,23 +23,8 @@ object Headers {
   //Checks and adding the value to the test header
   def checkAndAddTestHeader(requestPath: String,
                             headerCarrier: HeaderCarrier,
-                            configPages: Option[Seq[String]]): HeaderCarrier = {
-    val incomeSourcePage : Map[String, String] = configPages.map(kv =>
-          kv.map(k => (k, "afterIncomeSourceCreated")).toMap
-      ).getOrElse( Map[String, String]())
-    val urlPathArray = requestPath.split('/')
-    val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
-    val updatedHeader = incomeSourcePage.get(actionPath) match {
-      case Some(data) => "Gov-Test-Scenario" -> data
-      case _ => "Gov-Test-Scenario" -> ""
-    }
-    headerCarrier.withExtraHeaders(updatedHeader)
-  }
-
-  def genericCheckAndAddTestHeader(requestPath: String,
-                                   headerCarrier: HeaderCarrier,
-                                   configPages: Option[Seq[String]],
-                                   suffix: String): HeaderCarrier = {
+                            configPages: Option[Seq[String]],
+                            suffix: String): HeaderCarrier = {
     val page : Map[String, String] = configPages.map(kv =>
       kv.map(k => (k, suffix)).toMap
     ).getOrElse( Map[String, String]())
