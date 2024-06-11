@@ -81,13 +81,19 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
     sessionService.getMongo flatMap {
       case Right(Some(poaData: PoAAmendmentData)) => {
         if (poaData.journeyCompleted) {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
           sessionService.createSession
         } else {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
           Future.successful(Right((): Unit))
         }
       }
-      case Right(None) => sessionService.createSession
-      case Left(ex) => Future.successful(Left(ex))
+      case Right(None) =>
+        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
+        sessionService.createSession
+      case Left(ex) =>
+        Logger("application").error(s"There was an error getting the current mongo session")
+        Future.successful(Left(ex))
     }
   }
 }
