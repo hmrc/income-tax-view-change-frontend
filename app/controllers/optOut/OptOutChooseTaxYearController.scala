@@ -48,16 +48,9 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      for {
-        intent <- OptionT(optOutService.fetchSavedIntent())
-        form <- ConfirmOptOutMultiTaxYearChoiceForm
-      } yield {
-        val filledForm = intent
-      }
-
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
         optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
-          Ok(optOutChooseTaxYear(ConfirmOptOutMultiTaxYearChoiceForm().fill(ConfirmOptOutMultiTaxYearChoiceForm.form()), availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+          Ok(optOutChooseTaxYear(ConfirmOptOutMultiTaxYearChoiceForm(), availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
         }
       }
   }
