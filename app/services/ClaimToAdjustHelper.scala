@@ -29,6 +29,7 @@ import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
+import scala.::
 import scala.concurrent.{ExecutionContext, Future}
 
 // TODO: This part of the logic expected to be moved within BE
@@ -48,9 +49,14 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val adjustmentReasonExists: (ChargeHistoryModel, ChargeHistoryModel) => Boolean = (chargeOne, chargeTwo) =>
-    chargeOne.poaAdjustmentReason.isDefined ||
-      chargeTwo.poaAdjustmentReason.isDefined
+  private val poAOneCharge: List[ChargeHistoryModel] => Boolean = charges =>
+    charges.exists(_.documentDescription.contains("POA1"))
+
+  private val poATwoCharge: List[ChargeHistoryModel] => Boolean = charges =>
+    charges.exists(_.documentDescription.contains("POA2"))
+
+  private val arePoA: List[ChargeHistoryModel] => Boolean = chargeHistoryModel =>
+    poAOneCharge(chargeHistoryModel) || poATwoCharge(chargeHistoryModel)
 
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA1) &&
@@ -174,10 +180,9 @@ trait ClaimToAdjustHelper {
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(chargeOne :: chargeTwo :: _))
-        if adjustmentReasonExists(chargeOne, chargeTwo) => Right(true)
-      case ChargesHistoryModel(_, _, _, _)              => Right(false)
-      case ChargesHistoryErrorModel(code, message)      => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
+      case ChargesHistoryModel(_, _, _, Some(charges)) if arePoA(charges) => Right(true)
+      case ChargesHistoryModel(_, _, _, _)                                => Right(false)
+      case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
 }
