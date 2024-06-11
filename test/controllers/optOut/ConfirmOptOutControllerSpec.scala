@@ -21,7 +21,8 @@ import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutU
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptOutService, MockSessionService}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutSessionData}
+import models.itsaStatus.ITSAStatus
+import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel, OptOutSessionData}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Request, Result}
@@ -30,7 +31,7 @@ import repositories.UIJourneySessionDataRepository
 import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optOut.{ConfirmOptOut, CheckOptOutAnswers}
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import scala.concurrent.Future
 
@@ -71,10 +72,9 @@ class ConfirmOptOutControllerSpec extends TestSupport
   val taxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
   val oneYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
-    Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
+    Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
   val multiYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
-    Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual),
-      isOneYear = false)))
+    Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 

@@ -575,7 +575,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val response = service.optOutCheckPointPageViewModel()
 
-          response.futureValue shouldBe Some(OptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(state)))
+          response.futureValue shouldBe Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(state)))
 
         }
       }
