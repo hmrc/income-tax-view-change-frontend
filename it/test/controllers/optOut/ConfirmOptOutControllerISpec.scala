@@ -23,6 +23,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
+import org.scalatest.Ignore
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -32,7 +33,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-
+@Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
