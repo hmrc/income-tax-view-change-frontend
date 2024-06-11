@@ -27,6 +27,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SE
 import play.api.libs.json.{JsValue, Json}
 import services.PaymentOnAccountSessionService
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
@@ -50,7 +51,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
     super.beforeEach()
     setupGetIncomeSourceDetails()
-    sessionService.setMongoData(None)
+    await(sessionService.setMongoData(None))
     if (isAgent) {
       stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
     }

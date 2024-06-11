@@ -25,6 +25,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
@@ -46,7 +47,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
   override def beforeEach(): Unit = {
 
     super.beforeEach()
-    sessionService.setMongoData(None)
+    await(sessionService.setMongoData(None))
     if(isAgent) stubAuthorisedAgentUser(isAgent, clientMtdId = testMtditid)
 
     Given("Income Source Details with multiple business and property")
