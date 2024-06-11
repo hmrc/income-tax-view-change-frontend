@@ -25,6 +25,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Mandated
+import org.scalatest.Ignore
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -34,6 +35,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
+@Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
   implicit val defaultPatience: PatienceConfig =

@@ -48,7 +48,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
-  val yearEnd = 2014
+  val yearEnd = 2023
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val nextTaxYear: TaxYear = currentTaxYear.nextYear
   val previousTaxYear: TaxYear = currentTaxYear.previousYear
@@ -94,6 +94,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
+        mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
         mockGetSubmissionCountForTaxYear(optOutYearsOffered, counts)
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)

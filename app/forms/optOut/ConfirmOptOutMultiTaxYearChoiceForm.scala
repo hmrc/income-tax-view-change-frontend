@@ -29,22 +29,16 @@ object ConfirmOptOutMultiTaxYearChoiceForm {
   val csrfToken: String = "csrfToken"
 
   def
-  apply(optionValue:List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
+  apply(optionValue: List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     form(noSelectionErrorMessage, optionValue)
 
   }
 
-//  def apply(intent: String)(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
-//    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
-//    form(noSelectionErrorMessage).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(intent), csrfToken))
-//  }
-
-
- def form(msg: String, optionValue:List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
+  def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
     mapping(
-      choiceField -> optional(text).verifying(msg, response => response.nonEmpty && optionValue.contains(response.get))
+      choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
     )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
   )
 
