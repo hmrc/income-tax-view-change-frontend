@@ -25,6 +25,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Mandated
+import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -35,6 +36,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
+
+  implicit val defaultPatience: PatienceConfig =
+    PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
+
   val isAgent: Boolean = true
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
