@@ -60,7 +60,7 @@ class AmendablePOAControllerSpec
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccount()
+        setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -88,26 +88,12 @@ class AmendablePOAControllerSpec
     }
 
     s"return status: $INTERNAL_SERVER_ERROR" when {
-      "PaymentOnAccount model is not built successfully" in {
-        enable(AdjustPaymentsOnAccount)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        setupMockGetPaymentsOnAccountBuildFailure()
-
-        val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent: Future[Result] = TestAmendablePOAController.show(isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
-      }
       "an Exception is returned from ClaimToAdjustService" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetPaymentsOnAccountBuildFailure()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
 
