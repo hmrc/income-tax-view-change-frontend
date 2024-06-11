@@ -17,10 +17,8 @@
 package controllers.claimToAdjustPoa
 
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes
 import implicits.ImplicitCurrencyFormatter
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
