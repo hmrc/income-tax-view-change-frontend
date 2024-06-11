@@ -24,6 +24,7 @@ import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
@@ -42,7 +43,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None)))
+    await(sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None))))
     if(isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
