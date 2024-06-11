@@ -27,6 +27,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.Headers.genericCheckAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -91,7 +92,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
 
   // TODO: MFA Credits
   def getFinancialDetails(taxYear: Int, nino: String)
-                         (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
     val dateFrom: String = (taxYear - 1).toString + "-04-06"
     val dateTo: String = taxYear.toString + "-04-05"
@@ -99,7 +100,9 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     val url = getChargesUrl(nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+    val hc = genericCheckAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    http.GET[HttpResponse](url)(httpReads, hc = hc, implicitly) map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")

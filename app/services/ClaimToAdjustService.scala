@@ -36,7 +36,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
 
-  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
+  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     for {
       res <- getPoaForNonCrystallisedFinancialDetails(nino)
     } yield res match {
@@ -51,7 +51,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
+  def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
     for {
       res <- getPoaForNonCrystallisedFinancialDetails(nino)
     } yield res match {
@@ -99,7 +99,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   //TODO: Merge the two functions below, lots of code duplication
-  private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
+  private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -110,7 +110,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
+  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(FinancialDetailsAndPoAModel(None, None)))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
