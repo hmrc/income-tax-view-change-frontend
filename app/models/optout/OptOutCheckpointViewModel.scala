@@ -34,10 +34,3 @@ case class MultiYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[Opt
   val startYear: String = intent.startYear.toString
   val endYear: String = intent.endYear.toString
 }
-
-
-//case class OptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState] = None, isOneYear: Boolean = true) {
-//  val startYear: String = intent.startYear.toString
-//  val endYear: String = intent.endYear.toString
-//  val showFutureChangeInfo: Boolean = state.contains(OneYearOptOutFollowedByAnnual) || state.contains(NextYearOptOut)
-//}
