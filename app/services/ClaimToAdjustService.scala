@@ -18,9 +18,10 @@ package services
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.chargeHistory.ChargeHistoryModel
+import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
@@ -38,7 +39,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[TaxYear]]] = {
     for {
-      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+      res <- getNonCrystallisedFinancialDetails(nino)
     } yield res match {
       case Right(Some(financialDetails)) =>
         val x = arePoAPaymentsPresent(financialDetails.documentDetails)
@@ -53,7 +54,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
     for {
-      res <- getPoaForNonCrystallisedFinancialDetails(nino)
+      res <- getNonCrystallisedFinancialDetails(nino)
     } yield res match {
       case Right(Some(financialDetails)) =>
         val x = getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))
@@ -63,43 +64,87 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel])(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    financialPoaDetails match {
-      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
-        finDetails.financialDetails.headOption match {
-          case Some(detail) => getChargeHistory(chargeHistoryConnector, detail.chargeReference) map {
-            case Right(Some(chargeHistory)) => Right(chargeHistory.poaAdjustmentReason)
-            case Right(None) => Right(None)
-            case Left(ex) => Left(ex)
-          }
-          case None => Future.successful(Left(new Exception("No financial details found for this charge")))
-        }
-      case Right(_) => Future.successful(Right(None))
-      case Left(ex) => Future.successful(Left(ex))
-    }
-  }
+//  def getDocumentDetailsForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, FinancialDetailsModel]] = {
+//    getNonCrystallisedFinancialDetails(nino) map {
+//      case Right(Some(financialDetails)) => Right(financialDetails)
+//      case Right(None)                   => Left(new Exception("Financial details not found"))
+//      case Left(ex)                      => Left(ex)
+//    }
+//  }
 
-  def getEnterPoAAmountViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PoAAmountViewModel]] = {
-    for {
-      finanicalAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
-      adjustmentReasonMaybe <- getPoaAdjustmentReason(finanicalAndPoaModelMaybe)
-    } yield (adjustmentReasonMaybe, finanicalAndPoaModelMaybe) match {
-      case (Right(reason), Right(FinancialDetailsAndPoAModel(Some(_), Some(model)))) =>
-        Right(PoAAmountViewModel(
-          poaPreviouslyAdjusted = reason.isDefined,
-          taxYear = model.taxYear,
-          relevantAmountOne = model.poARelevantAmountOne,
-          relevantAmountTwo = model.poARelevantAmountTwo,
-          totalAmountOne = model.paymentOnAccountOne,
-          totalAmountTwo = model.paymentOnAccountTwo))
-      case (Left(ex), _) => Left(ex)
-      case (_, Left(ex)) => Left(ex)
-      case _ => Left(new Exception("Unexpected error when creating Enter PoA Amount view model"))
-    }
-  }
+//  def getAdjustPaymentOnAccountViewModel(nino: Nino)
+//                                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, AmendablePoaViewModel]] = {
+//    getNonCrystallisedFinancialDetails(nino) map {
+//      case Right(Some(financialDetails)) => getPoaAdjustmentReason(financialDetails) map {
+//        case Right(reason) =>
+//          AmendablePoaViewModel(
+//            poaOneTransactionId = ???,
+//            poaTwoTransactionId = ???,
+//            taxYear = ???,
+//            poasHaveBeenAdjustedPreviously = ???,
+//            paymentOnAccountOne = ???,
+//            paymentOnAccountTwo = ???,
+//            poARelevantAmountOne = ???,
+//            poARelevantAmountTwo = ???,
+//            poAPartiallyPaid = ???,
+//            poAFullyPaid = ???
+//          )
+//      }
+//
+//
+//
+//    }
+//
+//  }
+
+//  private def getPoaAdjustmentReason(financialDetailsModel: FinancialDetailsModel)
+//                                    (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, String]] = {
+//    getChargeHistory(
+//      chargeHistoryConnector,
+//      financialDetailsModel.financialDetails.headOption.flatMap(_.chargeReference)
+//    ) map {
+//      case Right(ChargeHistoryModel(_, _, _, _, _, _, _, Some(reason))) => Right(reason)
+//      case Left(ex)                                                     => Left(ex)
+//    }
+//  }
+
+//  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel])(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+//    financialPoaDetails match {
+//      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+//        finDetails.financialDetails.headOption match {
+//          case Some(detail) => getChargeHistory(chargeHistoryConnector, detail.chargeReference) map {
+//            case Right(Some(chargeHistory)) => Right(chargeHistory.poaAdjustmentReason)
+//            case Right(None) => Right(None)
+//            case Left(ex) => Left(ex)
+//          }
+//          case None => Future.successful(Left(new Exception("No financial details found for this charge")))
+//        }
+//      case Right(_) => Future.successful(Right(None))
+//      case Left(ex) => Future.successful(Left(ex))
+//    }
+//  }
+
+//  def getEnterPoAAmountViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PoAAmountViewModel]] = {
+//    for {
+//      finanicalAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
+//      adjustmentReasonMaybe <- getPoaAdjustmentReason(finanicalAndPoaModelMaybe)
+//    } yield (adjustmentReasonMaybe, finanicalAndPoaModelMaybe) match {
+//      case (Right(reason), Right(FinancialDetailsAndPoAModel(Some(_), Some(model)))) =>
+//        Right(PoAAmountViewModel(
+//          poaPreviouslyAdjusted = reason.isDefined,
+//          taxYear = model.taxYear,
+//          relevantAmountOne = model.poARelevantAmountOne,
+//          relevantAmountTwo = model.poARelevantAmountTwo,
+//          totalAmountOne = model.paymentOnAccountOne,
+//          totalAmountTwo = model.paymentOnAccountTwo))
+//      case (Left(ex), _) => Left(ex)
+//      case (_, Left(ex)) => Left(ex)
+//      case _ => Left(new Exception("Unexpected error when creating Enter PoA Amount view model"))
+//    }
+//  }
 
   //TODO: Merge the two functions below, lots of code duplication
-  private def getPoaForNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
+  private def getNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -110,16 +155,16 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(FinancialDetailsAndPoAModel(None, None)))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(FinancialDetailsAndPoAModel(Some(financialDetails), getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => Right(FinancialDetailsAndPoAModel(None, None))
-      }
-    }
-  }
+//  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
+//    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
+//      case None => Future.successful(Right(FinancialDetailsAndPoAModel(None, None)))
+//      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+//        case financialDetails: FinancialDetailsModel => Right(FinancialDetailsAndPoAModel(Some(financialDetails), getPaymentOnAccountModel(sortByTaxYear(financialDetails.documentDetails))))
+//        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
+//        case _ => Right(FinancialDetailsAndPoAModel(None, None))
+//      }
+//    }
+//  }
 }
 
 private case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],

@@ -29,7 +29,7 @@ import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustHelper, ClaimToAdjustService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
@@ -48,7 +48,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
                                       (implicit val appConfig: FrontendAppConfig,
                                        implicit override val mcc: MessagesControllerComponents,
                                        val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with ClaimToAdjustHelper {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
@@ -79,12 +79,12 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
 
   private def isSubsequentAdjustmentAttempt(paymentOnAccount: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Boolean] =
     for {
-      chargeHistoryResponseModelOne <- chargeHistoryConnector.getChargeHistory(user.mtditid, Some(paymentOnAccount.poaOneTransactionId))
-      chargeHistoryResponseModelTwo <- chargeHistoryConnector.getChargeHistory(user.mtditid, Some(paymentOnAccount.poaTwoTransactionId))
+      chargeHistoryResponseModelOne <- chargeHistoryConnector.getChargeHistory(user.nino, Some(paymentOnAccount.poaOneTransactionId))
+      chargeHistoryResponseModelTwo <- chargeHistoryConnector.getChargeHistory(user.nino, Some(paymentOnAccount.poaTwoTransactionId))
     } yield (chargeHistoryResponseModelOne, chargeHistoryResponseModelTwo) match {
       case
-        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaOneAdjustmentReason)))) ->
-        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaTwoAdjustmentReason))))
+        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaOneAdjustmentReason), _*))) ->
+        ChargesHistoryModel(_, _, _, Some(List(ChargeHistoryModel(_, _, _, _, _, _, _, poaTwoAdjustmentReason), _*)))
         if poaOneAdjustmentReason.isDefined || poaTwoAdjustmentReason.isDefined => true
       case _                                                                    => false
     }
