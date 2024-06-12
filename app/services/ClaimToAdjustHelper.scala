@@ -49,15 +49,6 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val poAOneCharge: List[ChargeHistoryModel] => Boolean = charges =>
-    charges.exists(_.documentDescription.contains("POA1"))
-
-  private val poATwoCharge: List[ChargeHistoryModel] => Boolean = charges =>
-    charges.exists(_.documentDescription.contains("POA2"))
-
-  private val arePoA: List[ChargeHistoryModel] => Boolean = chargeHistoryModel =>
-    poAOneCharge(chargeHistoryModel) || poATwoCharge(chargeHistoryModel)
-
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA1) &&
       (documentDetail.outstandingAmount != 0)
@@ -180,8 +171,8 @@ trait ClaimToAdjustHelper {
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if arePoA(charges) => Right(true)
-      case ChargesHistoryModel(_, _, _, _)                                => Right(false)
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.forall(_.isPoA) => Right(true)
+      case ChargesHistoryModel(_, _, _, _)                                        => Right(false)
       case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }

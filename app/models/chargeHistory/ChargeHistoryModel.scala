@@ -37,6 +37,8 @@ case class ChargeHistoryModel(taxYear: String,
       Logger("application").error(s"Missing or non-matching history reason: $error found")
       "unrecognisedReason"
   }
+
+  val isPoA: Boolean = documentDescription == "POA1" || documentDescription == "POA2"
 }
 
 object ChargeHistoryModel {
