@@ -52,7 +52,7 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {{
           for {
-            poaMaybe <- EitherT(claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(user.nino)))
+            poaMaybe <- EitherT(claimToAdjustService.getAmendablePoaViewModel(Nino(user.nino)))
             _ <- EitherT(handleSession)
           } yield poaMaybe
         }.value.flatMap {

@@ -59,7 +59,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
   )
 
   def setupMockGetPaymentOnAccountViewModel(data: AmendablePoaViewModel = defaultPaymentOnAccountViewModel): Unit =
-    when(claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(any()))(any(), any()))
+    when(claimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(Right(data)))
 
   def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccountViewModel] = Some(defaultPaymentOnAccountModel)): Unit =
@@ -77,7 +77,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
       )
 
   def setupMockGetAmendablePoaViewModelFailure(): Unit =
-    when(claimToAdjustService.getAdjustPaymentOnAccountViewModel(Nino(any()))(any(), any()))
+    when(claimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
       .thenReturn(
         Future.successful(
           Left(

@@ -121,8 +121,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def getAdjustPaymentOnAccountViewModel(nino: Nino)
-                                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, AmendablePoaViewModel]] = {
+  def getAmendablePoaViewModel(nino: Nino)
+                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, AmendablePoaViewModel]] = {
     getNonCrystallisedFinancialDetails(nino)
       .flatMap  {
         case Right(Some(FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _))) =>
