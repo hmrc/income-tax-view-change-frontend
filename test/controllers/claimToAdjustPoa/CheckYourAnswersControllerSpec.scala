@@ -265,7 +265,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestCheckYourAnswersController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = TestCheckYourAnswersController.submit(isAgent = true)(fakeRequestConfirmedClient())

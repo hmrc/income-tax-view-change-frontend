@@ -88,7 +88,7 @@ class AmendablePOAControllerSpec
         setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyComplete)))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
 
-        setupMockGetPaymentsOnAccount()
+        setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -140,7 +140,7 @@ class AmendablePOAControllerSpec
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
 
@@ -156,7 +156,7 @@ class AmendablePOAControllerSpec
         setupMockPaymentOnAccountSessionService(Future(Right(None)))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future(Left(new Error(""))))
 
-        setupMockGetPaymentsOnAccount()
+        setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))

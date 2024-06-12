@@ -112,7 +112,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
