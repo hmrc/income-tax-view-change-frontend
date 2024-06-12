@@ -46,11 +46,11 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
   )
 
   def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccountViewModel] = Some(defaultPaymentOnAccountModel)): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
       .thenReturn(Future.successful(Right(data)))
 
   def setupMockGetPaymentsOnAccountBuildFailure(): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
       .thenReturn(
         Future.successful(
           Right(
@@ -60,7 +60,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
       )
 
   def setupMockGetPaymentsOnAccountFailure(): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
       .thenReturn(
         Future.successful(
           Left(
@@ -87,7 +87,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockGetPoaTaxYearForEntryPointCall(response: Either[Throwable, Option[TaxYear]]): Unit = {
     when(claimToAdjustService
-      .getPoaTaxYearForEntryPoint(Nino(any()))(any))
+      .getPoaTaxYearForEntryPoint(Nino(any()))(any(),any()))
       .thenReturn(Future.successful(response))
   }
 }
