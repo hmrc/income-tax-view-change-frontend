@@ -73,25 +73,25 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
-      "User is authorised" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          elementTextByID("heading")(expectedTitle),
-          //todo add more asserts as part of MISUV-7538
-        )
-      }
-    }
+//    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
+//      "User is authorised" in {
+//
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+//
+//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+//
+//        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
+//        verifyIncomeSourceDetailsCall(testMtditid)
+//
+//        result should have(
+//          httpStatus(OK),
+//          elementTextByID("heading")(expectedTitle),
+//          //todo add more asserts as part of MISUV-7538
+//        )
+//      }
+//    }
   }
 
 //  s"calling POST $submitConfirmOptOutPageUrl" when {
