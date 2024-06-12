@@ -47,11 +47,8 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
 
-  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-
-
     implicit user =>
       withRecover(isAgent) {
 
@@ -60,10 +57,8 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
           result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel))))
         } yield result
 
-        resultToReturn.getOrElse {
-          Logger("application").error("No qualified tax year available for opt out")
-          errorHandler(isAgent).showInternalServerError()
-        }
+        resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
+
       }
   }
 
@@ -82,10 +77,15 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
-      case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
-        errorHandler(isAgent).showInternalServerError()
+      case ex: Exception => handleError(s"request failed :: $ex", isAgent)
     }
+  }
+
+  private def handleError(message: String, isAgent: Boolean)(implicit request: Request[_]): Result = {
+    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    Logger("application").error(message)
+    errorHandler(isAgent).showInternalServerError()
   }
 
 }
