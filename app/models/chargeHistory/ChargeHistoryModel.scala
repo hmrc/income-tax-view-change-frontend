@@ -38,7 +38,10 @@ case class ChargeHistoryModel(taxYear: String,
       "unrecognisedReason"
   }
 
-  val isPoA: Boolean = documentDescription == "POA1" || documentDescription == "POA2"
+  private val POA1: String = "POA1"
+  private val POA2: String = "POA2"
+
+  val isPoA: Boolean = Seq(POA1, POA2).contains(documentDescription)
 }
 
 object ChargeHistoryModel {
