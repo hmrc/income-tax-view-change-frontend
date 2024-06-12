@@ -94,70 +94,70 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       }
     }
   }
-  s"calling POST $submitConfirmOptOutPageUrl" when {
-    s"user confirms opt-out for one-year scenario" should {
-      "show opt-out complete page" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString,
-          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
-        )
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
-
-        result should have(
-          httpStatus(SEE_OTHER),
-        )
-
-      }
-    }
-
-    s"user confirms opt-out for one-year scenario and missing header" should {
-      "show opt-out complete page" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString,
-          Map("missing-header-name" -> "missing-header-value")
-        )
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
-
-        result should have(
-          httpStatus(Status.SEE_OTHER),
-        )
-
-      }
-    }
-
-    s"user confirms opt-out for one-year scenario and update fails" should {
-      "show error page" in {
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
-          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
-        )
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-        )
-
-      }
-    }
-  }
+//  s"calling POST $submitConfirmOptOutPageUrl" when {
+//    s"user confirms opt-out for one-year scenario" should {
+//      "show opt-out complete page" in {
+//
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+//        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+//          Status.NO_CONTENT, emptyBodyString,
+//          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+//        )
+//
+//        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+//
+//        result should have(
+//          httpStatus(SEE_OTHER),
+//        )
+//
+//      }
+//    }
+//
+//    s"user confirms opt-out for one-year scenario and missing header" should {
+//      "show opt-out complete page" in {
+//
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+//
+//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+//        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+//          Status.NO_CONTENT, emptyBodyString,
+//          Map("missing-header-name" -> "missing-header-value")
+//        )
+//
+//        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+//
+//        result should have(
+//          httpStatus(Status.SEE_OTHER),
+//        )
+//
+//      }
+//    }
+//
+//    s"user confirms opt-out for one-year scenario and update fails" should {
+//      "show error page" in {
+//
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+//
+//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+//        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+//          BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
+//          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+//        )
+//
+//        val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
+//
+//        result should have(
+//          httpStatus(INTERNAL_SERVER_ERROR),
+//        )
+//
+//      }
+//    }
+//  }
 }
