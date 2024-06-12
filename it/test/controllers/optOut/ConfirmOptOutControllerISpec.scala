@@ -16,6 +16,7 @@
 
 package controllers.optOut
 
+import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
@@ -23,16 +24,18 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
+import models.optout.OptOutSessionData
+import org.scalatest.BeforeAndAfter
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
-import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptOutJourney
 
-class ConfirmOptOutControllerISpec extends ComponentSpecBase {
+class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfter {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
@@ -46,7 +49,14 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   val emptyBodyString = ""
 
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  before {
+    for {
+      savedSessionData <- OptionT(uiRepository.get(hc.sessionId.get.value, OptOutJourney.Name))
+    } yield {
+      val setSessionData = uiRepository.set(savedSessionData.copy(optOutSessionData = Some(OptOutSessionData(None))))
+      assert(setSessionData.futureValue)
+    }
+  }
 
   s"calling GET $confirmOptOutPageUrl" should {
 
