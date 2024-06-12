@@ -24,7 +24,7 @@ import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.ClaimToAdjustService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
@@ -35,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val view: WhatYouNeedToKnow,
-                                            val sessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,
@@ -59,7 +58,6 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
         {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-            _ <- EitherT(sessionService.createSession)
           } yield poaMaybe
         }.value.flatMap {
           case Right(Some(poa)) =>
@@ -77,4 +75,5 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           showInternalServerError(isAgent)
       }
   }
+
 }

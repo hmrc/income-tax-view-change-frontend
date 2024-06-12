@@ -53,8 +53,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
           withValidSession(isAgent) { session =>
             claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
               case Right(viewModel) =>
-                val filledForm = if (mode == NormalMode) EnterPoaAmountForm.form
-                else session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
+                val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
                 )
                 Ok(view(filledForm, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))
@@ -138,4 +137,5 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
         Future.successful(showInternalServerError(isAgent))
     }
   }
+
 }
