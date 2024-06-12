@@ -42,6 +42,10 @@ class ApiFailureSubmittingPoaController @Inject()(val authorisedFunctions: Autho
                                                   val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
 
+
+
+
+
   def show(isAgent: Boolean): Action[AnyContent] = {
     auth.authenticatedAction(isAgent) {
       implicit user =>
