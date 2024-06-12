@@ -16,18 +16,18 @@
 
 package controllers.claimToAdjustPoa
 
-import config.featureswitch.FeatureSwitching
+import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes
 import implicits.ImplicitCurrencyFormatter
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                        claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
+                                       val sessionService: PaymentOnAccountSessionService,
                                        view: AmendablePaymentOnAccount,
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -49,26 +50,50 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {
-          claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)) flatMap {
-            case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
-              Future.successful(
-                Ok(view(
-                  isAgent = isAgent,
-                  paymentOnAccount = paymentOnAccount
-                ))
-              )
-            case Right(None) =>
-              Logger("application").error(s"Failed to create PaymentOnAccount model")
-              Future.successful(showInternalServerError(isAgent))
-            case Left(ex) =>
-              Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
-              Future.failed(ex)
-          }
+        ifAdjustPoaIsEnabled(isAgent) {{
+          for {
+            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+            _ <- EitherT(handleSession)
+          } yield poaMaybe
+        }.value.flatMap {
+          case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
+            Future.successful(
+              Ok(view(
+                isAgent = isAgent,
+                paymentOnAccount = paymentOnAccount
+              ))
+            )
+          case Right(None) =>
+            Logger("application").error(s"Failed to create PaymentOnAccount model")
+            Future.successful(showInternalServerError(isAgent))
+          case Left(ex) =>
+            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
+            Future.failed(ex)
+        }
         } recover {
           case ex: Exception =>
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
     }
+
+  private def handleSession(implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
+    sessionService.getMongo flatMap {
+      case Right(Some(poaData: PoAAmendmentData)) => {
+        if (poaData.journeyCompleted) {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+          sessionService.createSession
+        } else {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+          Future.successful(Right((): Unit))
+        }
+      }
+      case Right(None) =>
+        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
+        sessionService.createSession
+      case Left(ex) =>
+        Logger("application").error(s"There was an error getting the current mongo session")
+        Future.successful(Left(ex))
+    }
+  }
 }

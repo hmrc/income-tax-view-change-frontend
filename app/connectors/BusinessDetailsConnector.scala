@@ -87,7 +87,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
     implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
 
     //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios
-    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.incomeSourceOverrides())
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.incomeSourceOverrides(), "afterIncomeSourceCreated")
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"GET $url")

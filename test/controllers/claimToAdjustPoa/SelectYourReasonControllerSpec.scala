@@ -23,7 +23,7 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{AllowanceOrReliefHigher, Increase, MainIncomeLower, OtherIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{AllowanceOrReliefHigher, Increase, MainIncomeLower, MoreTaxedAtSource, OtherIncomeLower, PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -124,12 +124,13 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         }
       }
 
-      s"in normal mode" when {
+      s"in normal mode and session data has no poaAdjustmentReason data" when {
         "user is agent" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = poa)
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
           status(result) shouldBe OK
         }
 
@@ -138,7 +139,30 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
             sessionResponse = Right(Some(PoAAmendmentData())),
             claimToAdjustResponse = poa)
           val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+
           status(result) shouldBe OK
+        }
+      }
+
+      s"in normal mode and session data has valid poaAdjustmentReason data" when {
+        "user is agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
+            claimToAdjustResponse = poa)
+          val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
+          status(result) shouldBe OK
+          Jsoup.parse(contentAsString(result)).select("#value-4[checked]").toArray should have length 1
+        }
+
+        "user is not agent" in {
+          setupTest(
+            sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower)))),
+            claimToAdjustResponse = poa)
+          val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+
+          status(result) shouldBe OK
+          Jsoup.parse(contentAsString(result)).select("#value-2[checked]").toArray should have length 1
         }
       }
     }

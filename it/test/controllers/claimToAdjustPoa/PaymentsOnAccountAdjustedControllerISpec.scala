@@ -22,6 +22,7 @@ import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoAAmendmentData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
@@ -51,7 +52,7 @@ class PaymentsOnAccountAdjustedControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    sessionService.setMongoData(None)
+    await(sessionService.setMongoData(None))
     if (isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
@@ -76,7 +77,7 @@ class PaymentsOnAccountAdjustedControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/success")

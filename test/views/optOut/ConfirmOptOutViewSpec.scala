@@ -18,12 +18,11 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.optout.OptOutCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
+import services.optout.OneYearOptOutFollowedByAnnual
 import testUtils.TestSupport
 import views.html.optOut.ConfirmOptOut
 
@@ -37,7 +36,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         confirmOptOutView(
           OptOutCheckpointViewModel(
-            CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear.forYearEnd(2022)),
+            intent = TaxYear.forYearEnd(2022),
             state = Some(OneYearOptOutFollowedByAnnual)
           ),
           isAgent = isAgent))
