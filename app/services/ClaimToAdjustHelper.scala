@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.::
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 // TODO: This part of the logic expected to be moved within BE
 // TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
@@ -171,8 +172,8 @@ trait ClaimToAdjustHelper {
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.forall(_.isPoA) => Right(true)
-      case ChargesHistoryModel(_, _, _, _)                                        => Right(false)
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoA).exists(_.poaAdjustmentReason.isDefined) => Right(true)
+      case ChargesHistoryModel(_, _, _, _)                                                                                => Right(false)
       case ChargesHistoryErrorModel(code, message) => Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
