@@ -69,8 +69,12 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
+    //todo remove this after discussion with business
+//  def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
+//    allDeadlinesWithSource().map(_.obligation.due).distinct.size
+
   def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
-    allDeadlinesWithSource().map(_.obligation.due).distinct.size
+    allQuarterly.map(_.obligation.due).distinct.size
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth
