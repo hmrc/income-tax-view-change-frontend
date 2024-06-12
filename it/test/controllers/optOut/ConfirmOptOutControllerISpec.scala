@@ -16,17 +16,19 @@
 
 package controllers.optOut
 
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
+//import connectors.optout.ITSAStatusUpdateConnector
+//import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
+import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.TaxYear
+//import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
+//import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
-import play.api.libs.json.Json
-import play.mvc.Http.Status
-import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
+//import play.api.libs.json.Json
+//import play.mvc.Http.Status
+//import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
@@ -59,7 +61,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -72,28 +73,27 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       }
     }
 
-//    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
-//      "User is authorised" in {
-//
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-//
-//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-//
-//
-//
-//        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
-//        verifyIncomeSourceDetailsCall(testMtditid)
-//
-//        result should have(
-//          httpStatus(OK),
-//          elementTextByID("heading")(expectedTitle),
-//          //todo add more asserts as part of MISUV-7538
-//        )
-//      }
-//    }
+    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
+      "User is authorised" in {
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("heading")(expectedTitle),
+          //todo add more asserts as part of MISUV-7538
+        )
+      }
+    }
   }
+
 //  s"calling POST $submitConfirmOptOutPageUrl" when {
 //    s"user confirms opt-out for one-year scenario" should {
 //      "show opt-out complete page" in {
