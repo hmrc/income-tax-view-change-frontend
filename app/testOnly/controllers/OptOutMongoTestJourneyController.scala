@@ -21,7 +21,6 @@ import models.incomeSourceDetails.UIJourneySessionData
 import models.optout.OptOutSessionData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.OptOutJourney
@@ -35,9 +34,9 @@ class OptOutMongoTestJourneyController @Inject()(
                                       )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = Action.async { implicit request =>
-    sessionService.getMongo("OPTOUT").map {
+    sessionService.getMongo(OptOutJourney.Name).map {
       case Right(Some(sessionData)) =>
-        sessionData.optOutSessionData.map(_.selectedOptOutYearField) match {
+        sessionData.optOutSessionData.map(_.selectedOptOutYear) match {
           case Some(intent) => Ok(s"Intent = $intent")
           case None => Ok("No intent found")
         }
@@ -56,7 +55,7 @@ class OptOutMongoTestJourneyController @Inject()(
         value <- valueOpt
       } yield (key, value)
       res match {
-        case Some((k, v)) =>
+        case Some(_) =>
           sessionService.getMongo("OPTOUT").flatMap {
             case Right(Some(sessionDataOption)) =>
                 val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(valueOpt)))

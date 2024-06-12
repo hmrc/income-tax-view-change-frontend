@@ -17,12 +17,10 @@
 package controllers.optOut
 
 import auth.FrontendAuthorisedFunctions
-import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
-import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm.{choiceField, csrfToken}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.data.Form

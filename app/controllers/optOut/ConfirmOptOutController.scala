@@ -50,14 +50,14 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+
 
     implicit user =>
       withRecover(isAgent) {
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, postAction))))
+          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel))))
         } yield result
 
         resultToReturn.getOrElse {
@@ -67,15 +67,9 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  def handleErrorCase(isAgent: Boolean)(ex: Throwable)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(s"Error retrieving Opt Out session data: ${ex.getMessage}", ex)
-    Future.successful(errorHandler(isAgent).showInternalServerError())
-  }
-
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, postAction: Call)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
     case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent))
-    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, postAction, isAgent))
-    case _ => Ok
+    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {

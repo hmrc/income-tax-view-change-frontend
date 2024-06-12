@@ -34,12 +34,15 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptOutJourney
 
 @Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
+
+  val optOutErrorPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -90,7 +93,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         val newSessionData = UIJourneySessionData(
           sessionId = hc.sessionId.get.value,
-          journeyType = "OPTOUT",
+          journeyType = OptOutJourney.Name,
           optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
         )
         sessionService.createSession("OPTOUT")
@@ -189,18 +192,18 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         val newSessionData = UIJourneySessionData(
           sessionId = hc.sessionId.get.value,
-          journeyType = "OPTOUT",
+          journeyType = OptOutJourney.Name,
           optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
         )
-        sessionService.createSession("OPTOUT")
+        sessionService.createSession(OptOutJourney.Name)
         sessionService.setMongoData(newSessionData)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(SEE_OTHER)
+          httpStatus(SEE_OTHER),
+          redirectURI(optOutErrorPageUrl)
         )
-
       }
     }
   }

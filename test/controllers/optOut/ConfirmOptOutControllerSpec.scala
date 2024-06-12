@@ -74,7 +74,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
   val oneYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
     Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
   val multiYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
-    Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
+    Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear)))
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 

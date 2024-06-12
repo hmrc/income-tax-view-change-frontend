@@ -31,11 +31,16 @@
     formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: OptOutCheckpointViewModel, postAction: Call, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: OptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 }
+
+@getPostAction = @{
+    controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+}
+
 
 @taxYears = @{
     messages("optout.checkAnswers.taxYears",
@@ -53,7 +58,7 @@
 
     @h1(id = Some("heading"), msg = messages("optout.checkAnswers.heading"), classes = "govuk-heading-l")
 
-    @formWithCSRF(action = postAction) {
+    @formWithCSRF(action = getPostAction) {
         @govukSummaryList(SummaryList(
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(
@@ -84,7 +89,7 @@
                 content = Text(messages("optout.checkAnswers.confirm")),
                 attributes = Map("id" -> "confirm-button")
             ))
-            <a class="govuk-link" href="" id="cancel-button">Cancel</a>
+            <a class="govuk-link" href="" id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
         </div>
     }
 

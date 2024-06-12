@@ -32,12 +32,11 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
 
-  val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear), None)
+  val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear))
   val intentStartTaxYear: String = checkAnswersViewModel.startYear
   val intentEndTaxYear: String = checkAnswersViewModel.endYear
   class Setup(isAgent: Boolean = true) {
-    val postAction: Call = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel ,postAction, isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent)))
   }
 
   object checkOptOutAnswers {

@@ -159,7 +159,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
         proposition.optOutPropositionType.flatMap {
           case p: OneYearOptOutProposition => Some(OneYearOptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
           case p: MultiYearOptOutProposition =>
-            intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i, state = p.state()))//todo: add test code
+            intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i))//todo: add test code
         }
       }
     }
