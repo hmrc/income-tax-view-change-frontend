@@ -17,7 +17,6 @@
 package helpers
 
 import auth.{HeaderExtractor, MtdItUser}
-import cats.data.OptionT
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -52,7 +51,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.OptOutJourney
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -205,38 +203,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     stopWiremock()
     super.afterAll()
     FeatureSwitchName.allFeatureSwitches foreach disable
-  }
-
-  def saveOptOutTaxYearIntent(taxYear: String): Future[Boolean] = {
-    (for {
-      sessionData <- OptionT(uiRepository.get(hc.sessionId.get.value, OptOutJourney.Name))
-      optOutSessionData <- OptionT(Future.successful(sessionData.optOutSessionData))
-      isSaved <- OptionT(uiRepository.set(sessionData.copy(optOutSessionData =
-        Some(optOutSessionData.copy(selectedOptOutYear = Option(taxYear))))).map(v => Option(v)))
-    } yield isSaved).value.flatMap {
-      case Some(b) => Future.successful(b)
-      case _ => Future.successful(false)
-    }
-  }
-
-  def resetOptOutTaxYearIntent(): Future[Boolean] = {
-    (for {
-      sessionData <- OptionT(uiRepository.get(hc.sessionId.get.value, OptOutJourney.Name))
-      optOutSessionData <- OptionT(Future.successful(sessionData.optOutSessionData))
-      isReset <- OptionT(uiRepository.set(sessionData.copy(optOutSessionData =
-        Option(optOutSessionData.copy(selectedOptOutYear = None)))).map(v => Option(v)))
-    } yield isReset).value.flatMap {
-      case Some(b) => Future.successful(b)
-      case _ => Future.successful(false)
-    }
-  }
-
-  def fetchOptOutTaxYearIntent(): Future[Option[String]] = {
-    (for {
-      sessionData <- OptionT(uiRepository.get(hc.sessionId.get.value, OptOutJourney.Name))
-      optOutSessionData <- OptionT(Future.successful(sessionData.optOutSessionData))
-      selectedOptOutYear <- OptionT(Future.successful(optOutSessionData.selectedOptOutYear))
-    } yield selectedOptOutYear).value
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
