@@ -80,34 +80,34 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       }
     }
 
-//    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
-//      "User is authorised" in {
-//
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-//
-//        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-//        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-//
-//        val newSessionData = UIJourneySessionData(
-//          sessionId = hc.sessionId.get.value,
-//          journeyType = OptOutJourney.Name,
-//          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
-//        )
-//        sessionService.createSession(OptOutJourney.Name)
-//        sessionService.setMongoData(newSessionData)
-//
-//        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
-//        verifyIncomeSourceDetailsCall(testMtditid)
-//
-//        result should have(
-//          httpStatus(OK),
-//          elementTextByID("heading")(optOutExpectedTitle),
-//          elementTextByID("optOut-summary")(summary),
-//          elementTextByID("optOut-warning")(infoMessage),
-//        )
-//      }
-//    }
+    s"render confirm multi-year opt out page $confirmOptOutPageUrl" when {
+      "User is authorised" in {
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val newSessionData = UIJourneySessionData(
+          sessionId = hc.sessionId.get.value,
+          journeyType = OptOutJourney.Name,
+          optOutSessionData = Some(OptOutSessionData(Some("2021-2022")))
+        )
+        sessionService.createSession(OptOutJourney.Name)
+        sessionService.setMongoData(newSessionData)
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("heading")(optOutExpectedTitle),
+          elementTextByID("optOut-summary")(summary),
+          elementTextByID("optOut-warning")(infoMessage),
+        )
+      }
+    }
   }
 
   s"calling POST $submitConfirmOptOutPageUrl" when {
