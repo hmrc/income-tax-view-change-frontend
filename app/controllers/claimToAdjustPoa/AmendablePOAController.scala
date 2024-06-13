@@ -52,20 +52,14 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {{
           for {
-            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+            poaMaybe <- EitherT(claimToAdjustService.getAmendablePoaViewModel(Nino(user.nino)))
             _ <- EitherT(handleSession)
           } yield poaMaybe
         }.value.flatMap {
-          case Right(Some(paymentOnAccount: PaymentOnAccountViewModel)) =>
+          case Right(viewModel) =>
             Future.successful(
-              Ok(view(
-                isAgent = isAgent,
-                paymentOnAccount = paymentOnAccount
-              ))
+              Ok(view(isAgent, viewModel))
             )
-          case Right(None) =>
-            Logger("application").error(s"Failed to create PaymentOnAccount model")
-            Future.successful(showInternalServerError(isAgent))
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
             Future.failed(ex)

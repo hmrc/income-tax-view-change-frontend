@@ -168,7 +168,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockPaymentOnAccountSessionService(Future(Left(new Error(""))))
 
-        setupMockGetPaymentsOnAccount()
+        setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -186,7 +186,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
         setupMockPaymentOnAccountSessionService(Future(Right(None)))
 
-        setupMockGetPaymentsOnAccount()
+        setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()
 
         val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))

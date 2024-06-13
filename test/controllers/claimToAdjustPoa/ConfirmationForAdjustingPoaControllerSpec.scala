@@ -127,7 +127,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
         val result = TestConfirmationForAdjustingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -216,7 +216,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestConfirmationForAdjustingPoaController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = TestConfirmationForAdjustingPoaController.submit(isAgent = true)(fakeRequestConfirmedClient())

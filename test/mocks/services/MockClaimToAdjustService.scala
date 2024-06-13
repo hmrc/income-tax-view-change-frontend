@@ -17,7 +17,7 @@
 package mocks.services
 
 import connectors.CalculationListConnector
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
@@ -45,22 +45,39 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
     poAPartiallyPaid = false
   )
 
+  val defaultPaymentOnAccountViewModel = AmendablePoaViewModel(
+    poaOneTransactionId = "poaOne-Id",
+    poaTwoTransactionId = "poaTwo-Id",
+    taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+    paymentOnAccountOne = 5000.00,
+    paymentOnAccountTwo = 5000.00,
+    poARelevantAmountOne = 5000.00,
+    poARelevantAmountTwo = 5000.00,
+    poAPartiallyPaid = false,
+    poAFullyPaid = false,
+    poasHaveBeenAdjustedPreviously = false
+  )
+
+  def setupMockGetPaymentOnAccountViewModel(data: AmendablePoaViewModel = defaultPaymentOnAccountViewModel): Unit =
+    when(claimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
+      .thenReturn(Future.successful(Right(data)))
+
   def setupMockGetPaymentsOnAccount(data: Option[PaymentOnAccountViewModel] = Some(defaultPaymentOnAccountModel)): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(Right(data)))
 
   def setupMockGetPaymentsOnAccountBuildFailure(): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
+    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(), any()))
       .thenReturn(
         Future.successful(
-          Right(
-            None
+          Left(
+            new Exception("Failed to create AmendablePoaViewModel")
           )
         )
       )
 
-  def setupMockGetPaymentsOnAccountFailure(): Unit =
-    when(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(any()))(any(),any()))
+  def setupMockGetAmendablePoaViewModelFailure(): Unit =
+    when(claimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
       .thenReturn(
         Future.successful(
           Left(
@@ -87,7 +104,7 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockGetPoaTaxYearForEntryPointCall(response: Either[Throwable, Option[TaxYear]]): Unit = {
     when(claimToAdjustService
-      .getPoaTaxYearForEntryPoint(Nino(any()))(any(),any()))
+      .getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }

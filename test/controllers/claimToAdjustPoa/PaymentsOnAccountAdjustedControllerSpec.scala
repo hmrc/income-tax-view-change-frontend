@@ -135,7 +135,7 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccountFailure()
+        setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = TestController.show(isAgent = true)(fakeRequestConfirmedClient())
