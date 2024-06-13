@@ -54,7 +54,7 @@
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
-        claimToAdjustViewModel: WYOClaimToAdjustViewModel,
+    claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -326,12 +326,32 @@
 }
 
 @getClaimToAdjustPoaSection = @{
-    claimToAdjustViewModel.claimToAdjustTaxYear match {
-        case Some(value) =>
-            link(link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
-                messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
-                id = Some("adjust-poa-link"))
-        case None => Html("")
+    if(whatYouOweChargesList.hasUnpaidPOAs) {
+        p(id = Some("adjust-poa-content"))(
+            claimToAdjustViewModel.claimToAdjustTaxYear match {
+                case Some(value) =>
+                    link(
+                        link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                        messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
+                        id = Some("adjust-poa-link"))
+                case None => Html("")
+        })
+    } else {
+        claimToAdjustViewModel.claimToAdjustTaxYear match {
+            case Some(value) =>
+                p(id = Some("adjust-paid-poa-content"))(Html(s"""
+                    ${getMessage("adjust-poa.paid-1", value.startYear.toString, value.endYear.toString)}
+                    ${link(
+                        link = WYOClaimToAdjustViewModel.ctaLink(isAgent),
+                        messageKey = getMessage("adjust-poa.paid-2", value.startYear.toString, value.endYear.toString),
+                        id = Some("adjust-poa-link"))}
+                    ${getMessage("adjust-poa.paid-3", value.startYear.toString, value.endYear.toString)}
+                    <span class="govuk-!-font-weight-bold">
+                        ${getMessage("adjust-poa.paid-4", (value.endYear + 1).toString)}
+                    </span>
+                """))
+            case None => Html("")
+        }
     }
 }
 
@@ -345,9 +365,14 @@
     @h1(msg = getHeading, id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
+
+        @getClaimToAdjustPoaSection
+
         @saNoteParagraph
     } else {
+
         <div>
+
             @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                 <div id="payments-due-table">
                     <table class="govuk-table">

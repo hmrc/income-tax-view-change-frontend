@@ -42,13 +42,13 @@ trait ClaimToAdjustHelper {
 
   protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
+  // TODO: Can unpaid be removed? We are now allowing changes to paid POAs
+
   private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1) &&
-      (documentDetail.outstandingAmount != 0)
+    documentDetail.documentDescription.contains(POA1) && (documentDetail.outstandingAmount != 0)
 
   private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA2) &&
-      (documentDetail.outstandingAmount != 0)
+    documentDetail.documentDescription.contains(POA2) && (documentDetail.outstandingAmount != 0)
 
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
