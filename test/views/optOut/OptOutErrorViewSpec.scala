@@ -40,15 +40,15 @@ class OptOutErrorViewSpec extends TestSupport {
     val optOutHomeBullet2: String = messages("optout.optOutError.home-bullet-2")
     val optOutHomeTotal: String = optOutHomeBullet1 ++ " " ++ optOutHomeBullet2
 
-    val origin: String = controllers.optOut.routes.OptOutErrorController.show(isAgent = false).url
-    val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show(Some(origin)).url
+    val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show().url
     val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent.url
-    val homePageLink: String = controllers.routes.HomeController.show(Some(origin)).url
+    val homePageLink: String = controllers.routes.HomeController.show().url
+    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
 
   }
 
 
-  "Opt-out confirm page" should {
+  "Opt-out confirm page for individuals" should {
 
     "have the correct title" in new Setup(false) {
       pageDocument.title().contains(optOutErrorPageMessages.heading)
@@ -65,10 +65,30 @@ class OptOutErrorViewSpec extends TestSupport {
     "render the navigation options" in new Setup(false) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
       pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLink
-      pageDocument.getElementById("homePageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
-      //pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLink
-      //TODO test fails as passing origin in
+      pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
+      pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLink
+    }
+  }
+
+  "Opt-out confirm page for agents" should {
+
+    "have the correct title" in new Setup(true) {
+      pageDocument.title().contains(optOutErrorPageMessages.heading)
     }
 
+    "have the correct heading" in new Setup(true) {
+      pageDocument.select("h1").text() shouldBe optOutErrorPageMessages.heading
+    }
+
+    "render the navigation options 1 " in new Setup(true) {
+      pageDocument.getElementById("options").text() shouldBe optOutErrorPageMessages.options
+    }
+
+    "render the navigation options" in new Setup(true) {
+      pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
+      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
+      pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
+      pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLink
+    }
   }
 }
