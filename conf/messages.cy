@@ -882,6 +882,11 @@ whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}
 whatYouOwe.taxYear                                              = Blwyddyn dreth
 whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {2}%
 whatYouOwe.adjust-poa                                           = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-1                                    = Gallwch
+whatYouOwe.adjust-poa.paid-2                                    = addasu eich taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-3                                    = Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn
+whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
+whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
