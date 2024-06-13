@@ -67,7 +67,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "not render the hint if poAs are partially or fully paid" in new Setup(isAgent) {
+      "not render the hint if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
         Option(document.getElementById("inset-text")).isDefined shouldBe false
       }
       "render the hint if any poAs are unpaid" in new Setup(isAgent, poAFullyPaid = true) {
@@ -108,6 +108,9 @@ class AmendablePOAControllerViewSpec extends TestSupport {
       }
       "render the second paragraph text without additional content" in new Setup(isAgent) {
         document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
+      }
+      "render the large heading if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
+        document.getElementById("already-made-a-payment-heading").text() shouldBe messages("paymentOnAccount.h2")
       }
       "render the second paragraph text with additional content if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
         document.getElementById("paragraph-3-additional-text").text() shouldBe messages("paymentOnAccount.p3-additional-content")
