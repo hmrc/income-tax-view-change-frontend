@@ -17,9 +17,8 @@
 package utils
 
 import auth.MtdItUser
-import cats.data.EitherT
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{AfterSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import models.claimToAdjustPoa.PoAAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
@@ -39,9 +38,9 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
 
   implicit val ec: ExecutionContext
 
-  def errorHandler(implicit user: MtdItUser[_]) = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
+  private def errorHandler(implicit user: MtdItUser[_]) = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def withSessionData(journeyState: JourneyState)(codeBlock: Option[PoAAmendmentData] => Future[Result])
+  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     ifAdjustPoaIsEnabled(isAgent(user)) {
       if (journeyState == InitialPage) {
@@ -49,13 +48,13 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
       } else {
         poaSessionService.getMongo.flatMap {
           case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
-            codeBlock(Some(sessionData))
+            codeBlock(sessionData)
           case Right(Some(_)) =>
             redirectToYouCannotGoBackPage(user)
           case Right(None) =>
             Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
             Future.successful(errorHandler.showInternalServerError())
-          case Left(ex: Exception) =>
+          case Left(ex: Throwable) =>
             Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
               s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
             Future.successful(errorHandler.showInternalServerError())
@@ -66,7 +65,7 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Future[Result] = {
+  private def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Future[Result] = {
     // TODO: Update with new URL
     Future.successful(Redirect(controllers.routes.HomeController.showAgent.url))
   }
@@ -80,22 +79,23 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
     }
   }
 
-  private def handleSession(codeBlock: Option[PoAAmendmentData] => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
+  private def handleSession(codeBlock: PoAAmendmentData => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
     poaSessionService.getMongo flatMap {
       case Right(Some(poaData: PoAAmendmentData)) => {
         if (poaData.journeyCompleted) {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
           poaSessionService.createSession
-          codeBlock(Some(poaData))
+          codeBlock(poaData)
         } else {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
-          codeBlock(Some(poaData))
+          codeBlock(poaData)
         }
       }
       case Right(None) =>
         Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
         poaSessionService.createSession
-        codeBlock(None)
+        // TODO: look at this again
+        codeBlock(PoAAmendmentData())
       case Left(ex) =>
         Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")

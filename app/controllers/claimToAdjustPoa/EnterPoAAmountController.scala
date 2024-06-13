@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
+import utils.{AuthenticatorPredicate, ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
 import views.html.claimToAdjustPoa.EnterPoAAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                          val auth: AuthenticatorPredicate,
-                                         val sessionService: PaymentOnAccountSessionService,
+                                         val poaSessionService: PaymentOnAccountSessionService,
                                          view: EnterPoAAmountView,
                                          claimToAdjustService: ClaimToAdjustService,
                                          implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -44,13 +44,13 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                                         (implicit val appConfig: FrontendAppConfig,
                                          implicit override val mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with ClaimToAdjustUtils {
+  extends ClientConfirmedController with FeatureSwitching with ClaimToAdjustUtils with JourneyCheckerClaimToAdjust {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
-          withValidSession(isAgent) { session =>
+          withSessionData() { session =>
             claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
               case Right(viewModel) =>
                 val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
@@ -87,7 +87,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))),
       validForm =>
-        sessionService.setNewPoAAmount(validForm.amount).flatMap {
+        poaSessionService.setNewPoAAmount(validForm.amount).flatMap {
           case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
           case Right(_) => getRedirect(viewModel, validForm.amount, isAgent, mode)
@@ -104,7 +104,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   }
 
   private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    sessionService.setAdjustmentReason(Increase).map {
+    poaSessionService.setAdjustmentReason(Increase).map {
       case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
       case Right(_) =>
@@ -117,7 +117,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     if (mode == NormalMode)
       Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode)))
     else {
-      sessionService.getMongo.map {
+      poaSessionService.getMongo.map {
         case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
           case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
           case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, CheckMode))
@@ -128,14 +128,14 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     }
   }
 
-  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    sessionService.getMongo.flatMap {
-      case Right(Some(data)) => block(data)
-      case Right(None) => Logger("application").error(s"No mongo data found")
-        Future.successful(showInternalServerError(isAgent))
-      case Left(ex) => Logger("application").error(s"Error while retrieving mongo data : ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(showInternalServerError(isAgent))
-    }
-  }
+//  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+//    poaSessionService.getMongo.flatMap {
+//      case Right(Some(data)) => block(data)
+//      case Right(None) => Logger("application").error(s"No mongo data found")
+//        Future.successful(showInternalServerError(isAgent))
+//      case Left(ex) => Logger("application").error(s"Error while retrieving mongo data : ${ex.getMessage} - ${ex.getCause}")
+//        Future.successful(showInternalServerError(isAgent))
+//    }
+//  }
 
 }

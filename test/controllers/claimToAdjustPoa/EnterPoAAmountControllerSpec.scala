@@ -54,7 +54,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[EnterPoAAmountView],
-    sessionService = mockPaymentOnAccountSessionService
+    poaSessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
