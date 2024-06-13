@@ -92,6 +92,17 @@
     messages(key)
 }
 
+@getPoaExplanationContent = {
+    <div>
+        @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
+        <ul id="bullets" class="govuk-list govuk-list--bullet">
+            <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
+            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+        </ul>
+        @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+    </div>
+}
+
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
         @messages("chargeSummary.check-paye-tax-code-1")
@@ -185,15 +196,11 @@
         }
     </h1>
 
-    @if(documentDetail.isPoa()) {
-        <div>
-            @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
-            <ul id="bullets" class="govuk-list govuk-list--bullet">
-                <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
-                <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
-            </ul>
-            @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
-        </div>
+    @{
+        documentDetail.documentDescription match {
+            case Some("ITSA- POA 1") | Some("ITSA - POA 2") => getPoaExlpanationContent
+            case _ =>
+        }
     }
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
