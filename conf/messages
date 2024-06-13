@@ -2071,3 +2071,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards            = {0} to {1} onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
 optout.chooseOptOutTaxYear.continue                  = Continue
 optout.chooseOptOutTaxYear.deleteUpdates             = This will delete {0} quarterly updates submitted.
+
+# opt out error page
+optout.optOutError.heading                           = Sorry, there is a problem with the service
+optout.optOutError.options                           = You can:
+optout.optOutError.nextUpdates-bullet-1              = go back to your
+optout.optOutError.nextUpdates-link                  = next updates
+optout.optOutError.nextUpdates-bullet-2              = and try again
+optout.optOutError.home-bullet-1                     = go back to the
+optout.optOutError.home-bullet-2                     = homepage

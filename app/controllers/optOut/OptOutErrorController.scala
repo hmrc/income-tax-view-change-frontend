@@ -16,27 +16,35 @@
 
 package controllers.optOut
 
+import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.AuthenticationPredicate
+import play.api.i18n.I18nSupport
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import views.html.optOut.OptOutError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutErrorController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val auth: AuthenticatorPredicate)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                         ){
+class OptOutErrorController @Inject()(val errorView: OptOutError,
+                                      val authenticate: AuthenticationPredicate,
+                                      val auth: AuthenticatorPredicate,
+                                      val authorisedFunctions: AuthorisedFunctions)
+                                     (implicit val appConfig: FrontendAppConfig,
+                                      mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                     ) extends ClientConfirmedController with I18nSupport {
 
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok("Error submitting Opt Out details"))
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      Future.successful(Ok(errorView(isAgent)))
   }
 
 }

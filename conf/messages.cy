@@ -2029,3 +2029,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo
 optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
 optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diweddarid chwarterol sydd wedi?u cyflwyno.
+
+# opt out error page
+optout.optOutError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
+optout.optOutError.options                           = Gallwch wneud y canlynol:
+optout.optOutError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen diweddariadau nesaf a rhoi cynnig arall arni
+optout.optOutError.nextUpdates-link                  = next updates
+optout.optOutError.nextUpdates-bullet-2              = and try again
+optout.optOutError.home-bullet-1                     = mynd yn ôl i’r hafan
+optout.optOutError.home-bullet-2                     = homepage
