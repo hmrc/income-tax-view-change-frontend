@@ -24,7 +24,6 @@ import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
-import org.scalatest.Ignore
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -36,7 +35,6 @@ import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 import utils.OptOutJourney
 
-@Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
@@ -96,7 +94,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           journeyType = OptOutJourney.Name,
           optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
         )
-        sessionService.createSession("OPTOUT")
+        sessionService.createSession(OptOutJourney.Name)
         sessionService.setMongoData(newSessionData)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
