@@ -28,6 +28,7 @@
     p: p,
     link: link,
     h2: h2,
+    h1_large: h1_large,
     govukButton : GovukButton,
     mainTemplate: unifiedLayout,
     continueButton: ContinueButton,
@@ -93,7 +94,7 @@
         @getMessage("p2")
     }
 
-    @if(partiallyOrFullyPaidPoaExists) {
+    @if(!partiallyOrFullyPaidPoaExists) {
         @govukInsetText(InsetText(
             id = Some("inset-text"),
             content = Text(getMessage("inset-text"))
@@ -210,6 +211,7 @@
     ))
 
     @if(partiallyOrFullyPaidPoaExists) {
+        @h1_large(getMessage("h2"), id = Some("already-made-a-payment-heading"))
         @p(id = Some("paragraph-3-additional-text")) { @getMessage("p3-additional-content") }
         @p(id = Some("paragraph-4-text")) { @getMessage("p4") }
         @h2(optId = Some("heading-example"), msg = getMessage("heading.example"))

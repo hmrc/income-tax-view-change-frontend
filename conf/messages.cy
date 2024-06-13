@@ -1847,6 +1847,7 @@ paymentOnAccount.table-heading-created-amount.key    = Swm a gyfrifwyd gan CThEF
 paymentOnAccount.table-heading-adjusted-amount.key   = Swm wedi’i addasu
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
+paymentOnAccount.h2                                  = Os ydych wedi eisoes wedi gwneud taliad
 paymentOnAccount.p3-additional-content               = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall, hyd yn oed ar ôl i chi wneud y taliad ar gyfrif cyntaf.
 paymentOnAccount.p4                                  = Os ydych eisoes wedi gwneud eich taliad cyntaf, bydd CThEF yn ei ostwng ar eich cyfrif ac yn ychwanegu’r gwahaniaeth fel credyd.
 paymentOnAccount.heading.example                     = Enghraifft
