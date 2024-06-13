@@ -203,7 +203,7 @@ case class DocumentDetail(taxYear: Int,
     documentDescription match {
       case Some("ITSA- POA 1") => true
       case Some("ITSA - POA 2") => true
-      case None => false
+      case _ => false
     }
   }
 

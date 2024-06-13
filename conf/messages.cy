@@ -945,6 +945,11 @@ chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog a
 
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
+chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
+chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
+chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
 chargeSummary.chargeHistory.date								        = Dyddiad
 chargeSummary.chargeHistory.description							        = Disgrifiad
