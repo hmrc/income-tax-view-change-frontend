@@ -51,7 +51,6 @@
 @formBlock = {
     @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
         @govukRadios(Radios(
-            value = Some(""),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(messages("optout.chooseOptOutTaxYear.whichTaxYear")),

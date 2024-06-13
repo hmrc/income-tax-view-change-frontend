@@ -22,30 +22,31 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import models.optout.OptOutCheckpointViewModel
+import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
+import services.SessionService
 import services.optout.OptOutService
-import utils.AuthenticatorPredicate
-import views.html.optOut.{ConfirmOptOut, ConfirmOptOutMultiYear}
+import utils.{AuthenticatorPredicate, OptOutJourney}
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
-                                        multiyearCheckpointView: ConfirmOptOutMultiYear,
+                                        checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate)
+                                        auth: AuthenticatorPredicate,
+                                        override val sessionService: SessionService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
 
-  private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -56,32 +57,35 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
           result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel))))
         } yield result
 
-        resultToReturn.getOrElse {
-          Logger("application").error("No qualified tax year available for opt out")
-          errorHandler(isAgent).showInternalServerError()
-        }
+        resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
+
       }
   }
 
   private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
-    case m: OptOutCheckpointViewModel if m.isOneYear => Ok(view(viewModel, isAgent = isAgent))
-    case _ => Ok(multiyearCheckpointView(viewModel, isAgent = isAgent))
+    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent))
+    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
         case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => itvcErrorHandler.showInternalServerError()
+        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
-      case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
-        errorHandler(isAgent).showInternalServerError()
+      case ex: Exception => handleError(s"request failed :: $ex", isAgent)
     }
+  }
+
+  private def handleError(message: String, isAgent: Boolean)(implicit request: Request[_]): Result = {
+    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    Logger("application").error(message)
+    errorHandler(isAgent).showInternalServerError()
   }
 
 }

@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.Messages
 
-case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String], csrfToken: String)
+case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String])
 
 object ConfirmOptOutMultiTaxYearChoiceForm {
 
@@ -28,14 +28,19 @@ object ConfirmOptOutMultiTaxYearChoiceForm {
   val noResponseErrorMessageKey: String = "optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error"
   val csrfToken: String = "csrfToken"
 
-  def apply()(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
+  def
+  apply(optionValue: List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
-    Form(
-      mapping(
-        choiceField -> optional(text).verifying(noSelectionErrorMessage, response => response.isInstanceOf[Some[String]]),
-        csrfToken -> text
-      )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
-    )
+    form(noSelectionErrorMessage, optionValue)
+
   }
+
+  def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
+    mapping(
+      choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
+    )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
+  )
+
+
 }

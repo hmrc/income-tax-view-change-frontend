@@ -44,8 +44,8 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
   def optOutPropositionType: Option[OptOutPropositionTypes] = {
     (isOneYearOptOut, isMultiYearOptOut) match {
-      case (true, _) => Some(OneYearOptOutProposition(this))
-      case (_, true) => Some(MultiYearOptOutProposition(this))
+      case (true, false) => Some(OneYearOptOutProposition(this))
+      case (false, true) => Some(MultiYearOptOutProposition(this))
       case _ => None
     }
   }

@@ -132,7 +132,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
-  private def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
+  def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
     repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
       for {
         data <- sessionData
@@ -157,9 +157,9 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     fetchOptOutProposition().flatMap { proposition =>
       fetchSavedIntent().map { intent =>
         proposition.optOutPropositionType.flatMap {
-          case p: OneYearOptOutProposition => Some(OptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
+          case p: OneYearOptOutProposition => Some(OneYearOptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
           case p: MultiYearOptOutProposition =>
-            intent.map(i => OptOutCheckpointViewModel(intent = i, state = p.state(), isOneYear = false))//todo: add test code
+            intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i))//todo: add test code
         }
       }
     }

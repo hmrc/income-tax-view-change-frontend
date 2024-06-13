@@ -34,11 +34,12 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
   //test data needs to be added
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
   val availableOptOutTaxYear: Seq[TaxYear] = Seq(taxYear)
+  val availableOptOutTaxYearsList: List[String] = List(taxYear.toString)
   val submissionsCountForTaxYearModel: SubmissionsCountForTaxYearModel =
     SubmissionsCountForTaxYearModel(Seq(SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
   }
 
   object optOutChooseTaxYear {
