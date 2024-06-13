@@ -185,6 +185,17 @@
         }
     </h1>
 
+    @if(documentDetail.isPoa()) {
+        <div>
+            @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
+                <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+            </ul>
+            @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+        </div>
+    }
+
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
         <div id="coding-out-wrapper">

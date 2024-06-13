@@ -199,6 +199,14 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  def isPoa(): Boolean = {
+    documentDescription match {
+      case Some("ITSA- POA 1") => true
+      case Some("ITSA - POA 2") => true
+      case None => false
+    }
+  }
+
 }
 
 
