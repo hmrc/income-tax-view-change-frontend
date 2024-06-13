@@ -884,7 +884,7 @@ whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {
 whatYouOwe.adjust-poa                                           = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 whatYouOwe.adjust-poa.paid-1                                    = Gallwch
 whatYouOwe.adjust-poa.paid-2                                    = addasu eich taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
-whatYouOwe.adjust-poa.paid-3                                    = Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn
+whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 
