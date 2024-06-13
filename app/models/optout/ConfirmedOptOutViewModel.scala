@@ -24,3 +24,4 @@ case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: Option[OptOut
   val starYear: String = optOutTaxYear.startYear.toString
   val endYear: String = optOutTaxYear.endYear.toString
 }
+

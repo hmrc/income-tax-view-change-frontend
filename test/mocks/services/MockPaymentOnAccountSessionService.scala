@@ -38,9 +38,16 @@ trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEac
       when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(response)
   }
 
+  def setupMockPaymentOnAccountSessionServiceCreateSession(response: Future[Either[Throwable, Unit]]): Unit = {
+    when(mockPaymentOnAccountSessionService.createSession(any(), any())).thenReturn(response)
+  }
+
   def setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(reason: SelectYourReason,
                                                                  response: Future[Either[Throwable, Unit]] = Future.successful(Right(()))): Unit = {
     when(mockPaymentOnAccountSessionService.setAdjustmentReason(same(reason))(any(), any())).thenReturn(response)
   }
+
+  def verifyMockCreateSession(noOfCalls: Int): Future[Either[Throwable, Unit]] =
+    verify(mockPaymentOnAccountSessionService, times(noOfCalls)).createSession(any(), any())
 
 }

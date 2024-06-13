@@ -47,10 +47,19 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
 
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
-        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).map { submissionCountForTaxYear =>
-          Ok(optOutChooseTaxYear(ConfirmOptOutMultiTaxYearChoiceForm(), availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+      for {
+        availableOptOutTaxYear <- optOutService.getTaxYearsAvailableForOptOut()
+        submissionCountForTaxYear <- optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear)
+        intent <- optOutService.fetchSavedIntent()
+      } yield {
+        val taxYearsList = availableOptOutTaxYear.map(_.toString).toList
+        val form = intent match {
+          case Some(savedIntent) =>
+            ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
+          case None =>
+            ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList)
         }
+        Ok(optOutChooseTaxYear(form, availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
       }
   }
 
@@ -69,7 +78,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
             }
           }
 
-          ConfirmOptOutMultiTaxYearChoiceForm().bindFromRequest().fold(onError, onSuccess)
+          ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYear.map(_.toString).toList).bindFromRequest().fold(onError, onSuccess)
         }
       }
   }

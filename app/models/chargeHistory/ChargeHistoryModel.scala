@@ -37,6 +37,11 @@ case class ChargeHistoryModel(taxYear: String,
       Logger("application").error(s"Missing or non-matching history reason: $error found")
       "unrecognisedReason"
   }
+
+  private val POA1: String = "ITSA- POA 1"
+  private val POA2: String = "ITSA - POA 2"
+
+  val isPoA: Boolean = Seq(POA1, POA2).contains(documentDescription)
 }
 
 object ChargeHistoryModel {

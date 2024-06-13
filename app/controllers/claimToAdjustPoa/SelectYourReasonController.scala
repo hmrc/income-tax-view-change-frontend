@@ -36,7 +36,6 @@ import controllers.claimToAdjustPoa.routes._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class SelectYourReasonController @Inject()(
                                             val view: SelectYourReasonView,
