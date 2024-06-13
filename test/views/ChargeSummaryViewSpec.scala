@@ -19,6 +19,7 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
+import enums.OtherCharge
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -57,7 +58,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -807,7 +808,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
         chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
+          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false, documentType = OtherCharge)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
