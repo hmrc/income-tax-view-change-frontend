@@ -44,23 +44,23 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
   def withSessionData(journeyState: JourneyState)(codeBlock: Option[PoAAmendmentData] => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     ifAdjustPoaIsEnabled(isAgent(user)) {
-      poaSessionService.getMongo.flatMap {
-        case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
-          codeBlock(Some(sessionData))
-        case Right(Some(_)) =>
-          redirectToYouCannotGoBackPage(user)
-        case Right(None) =>
-          if (journeyState == InitialPage) {
-            codeBlock(None)
-          } else {
+      if (journeyState == InitialPage) {
+        handleSession(codeBlock)
+      } else {
+        poaSessionService.getMongo.flatMap {
+          case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
+            codeBlock(Some(sessionData))
+          case Right(Some(_)) =>
+            redirectToYouCannotGoBackPage(user)
+          case Right(None) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
             Future.successful(errorHandler.showInternalServerError())
-          }
-        case Left(ex: Exception) =>
-          Logger("application").error( if (isAgent(user)) "[Agent]" else "" +
-            s"There was an error while retrieving the mongo data")
-          Future.successful(errorHandler.showInternalServerError())
+          case Left(ex: Exception) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
+              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
+            Future.successful(errorHandler.showInternalServerError())
+        }
       }
-
     }
   }
 
@@ -77,6 +77,29 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
       case (_, true) => false
       case (true, _) => true
       case _ => false
+    }
+  }
+
+  private def handleSession(codeBlock: Option[PoAAmendmentData] => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
+    poaSessionService.getMongo flatMap {
+      case Right(Some(poaData: PoAAmendmentData)) => {
+        if (poaData.journeyCompleted) {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+          poaSessionService.createSession
+          codeBlock(Some(poaData))
+        } else {
+          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+          codeBlock(Some(poaData))
+        }
+      }
+      case Right(None) =>
+        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
+        poaSessionService.createSession
+        codeBlock(None)
+      case Left(ex) =>
+        Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
+          s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
+        Future.successful(errorHandler.showInternalServerError())
     }
   }
 
