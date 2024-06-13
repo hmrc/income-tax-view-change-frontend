@@ -922,7 +922,7 @@ chargeSummary.nic2TaxYear                                          = This is the
 chargeSummary.paymentsOnAccount                                    = Payments on account are 2 advance payments made towards your next tax bill. They pay for:
 chargeSummary.paymentsOnAccount.bullet1                            = Income Tax
 chargeSummary.paymentsOnAccount.bullet2                            = Class 4 National Insurance contributions (opens in new tab)
-chargeSummary.paymentsOnAccount.p2                                 = HMRC estimates the total amount based on your previous year's tax bill. Each payment is half of that amount.
+chargeSummary.paymentsOnAccount.p2                                 = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
