@@ -21,9 +21,9 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
-import models.optout.OptOutSessionData
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -33,9 +33,8 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
-class ConfirmOptOutControllerISpec extends ComponentSpecBase {
+class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfterEach {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
@@ -55,6 +54,11 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val optOutExpectedTitle = s"Check your answers"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    resetOptOutTaxYearIntent().futureValue
+  }
 
   s"calling GET $confirmOptOutPageUrl" should {
 
@@ -89,13 +93,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val newSessionData = UIJourneySessionData(
-          sessionId = hc.sessionId.get.value,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(OptOutSessionData(Some("2021-2022")))
-        )
-        sessionService.createSession(OptOutJourney.Name)
-        sessionService.setMongoData(newSessionData)
+        saveOptOutTaxYearIntent("2023-2024")
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -188,13 +186,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val newSessionData = UIJourneySessionData(
-          sessionId = hc.sessionId.get.value,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
-        )
-        sessionService.createSession(OptOutJourney.Name)
-        sessionService.setMongoData(newSessionData)
+        saveOptOutTaxYearIntent("2023-2024")
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
