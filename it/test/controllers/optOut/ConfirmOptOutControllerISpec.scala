@@ -23,7 +23,6 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
-import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -34,7 +33,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfterEach {
+class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
@@ -55,11 +54,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfter
   val optOutExpectedTitle = s"Check your answers"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    resetOptOutTaxYearIntent().futureValue.isInstanceOf[Boolean] shouldBe true
-  }
 
   s"calling GET $confirmOptOutPageUrl" should {
 
@@ -94,17 +88,17 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfter
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        assert(saveOptOutTaxYearIntent("2023-2024").futureValue)
+        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(OK),
-//          elementTextByID("heading")(optOutExpectedTitle),
-//          elementTextBySelector(".govuk-summary-list__value")("2023 to 2024 tax year onwards"),
-//          elementTextByID("optOut-summary")(summary),
-//          elementTextByID("optOut-warning")(infoMessage),
+          elementTextByID("heading")(optOutExpectedTitle),
+          elementTextBySelector(".govuk-summary-list__value")("2023 to 2024 tax year onwards"),
+          elementTextByID("optOut-summary")(summary),
+          elementTextByID("optOut-warning")(infoMessage),
         )
       }
     }
@@ -191,7 +185,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase with BeforeAndAfter
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        assert(saveOptOutTaxYearIntent("2023-2024").futureValue)
+        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
