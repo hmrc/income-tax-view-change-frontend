@@ -1951,6 +1951,7 @@ paymentOnAccount.table-heading-created-amount.key    = Amount created by HMRC
 paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
 paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
+paymentOnAccount.h2                                  = If you’ve already made a payment
 paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
 paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
 paymentOnAccount.heading.example                     = Example
