@@ -20,42 +20,78 @@ import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import models.incomeSourceDetails.TaxYear
+import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.IncomeSourceDetailsService
+import play.api.mvc._
+import services.optout.OptOutService
 import utils.AuthenticatorPredicate
-import views.html.errorPages.CustomNotFoundError
 import views.html.optOut.OptOutChooseTaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutChooseTaxYearController @Inject()(val authenticate: AuthenticationPredicate,
-                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              val optOutChooseTaxYear: OptOutChooseTaxYear,
-                                              val checkSessionTimeout: SessionTimeoutPredicate,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: NavBarPredicate,
-                                              val retrieveNino: NinoPredicate,
-                                              val customNotFoundErrorView: CustomNotFoundError,
-                                              val auth: AuthenticatorPredicate)
+class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
+                                              val optOutService: OptOutService)
                                              (implicit val appConfig: FrontendAppConfig,
-                                              mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
+                                              val auth: AuthenticatorPredicate,
+                                              val authorisedFunctions: FrontendAuthorisedFunctions,
                                               val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                              override val mcc: MessagesControllerComponents
                                              )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      Future.successful(Ok(optOutChooseTaxYear(false)))
+      for {
+        availableOptOutTaxYear <- optOutService.getTaxYearsAvailableForOptOut()
+        submissionCountForTaxYear <- optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear)
+        intent <- optOutService.fetchSavedIntent()
+      } yield {
+        val taxYearsList = availableOptOutTaxYear.map(_.toString).toList
+        val form = intent match {
+          case Some(savedIntent) =>
+            ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
+          case None =>
+            ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList)
+        }
+        Ok(optOutChooseTaxYear(form, availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+      }
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      Future.successful(Ok(optOutChooseTaxYear(true)))
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
+        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).flatMap { submissionCountForTaxYear =>
+
+          val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Future[Result] = formWithError =>
+            Future.successful(BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent)))
+
+          val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Future[Result] = form => {
+              saveTaxYearChoice(form).map {
+              case true => redirectToCheckpointPage(isAgent)
+              case false => itvcErrorHandler.showInternalServerError()
+            }
+          }
+
+          ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYear.map(_.toString).toList).bindFromRequest().fold(onError, onSuccess)
+        }
+      }
   }
 
+  private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Future[Boolean] = {
+    form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
+      optOutService.saveIntent(intent)
+    } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))
+  }
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
+  }
 }

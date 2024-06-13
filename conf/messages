@@ -790,6 +790,9 @@ nextUpdates.updates.software.link       					       = https://www.gov.uk/guidanc
 nextUpdates.optOutOneYear-1                                        = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear-2                                        = opt out of quarterly updates and report annually instead.
 
+nextUpdates.optOutMultiYear-1                                        = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear-2                                        = opt out of quarterly updates and report annually instead.
+
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
 paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
@@ -1947,9 +1950,16 @@ paymentOnAccount.p2                                  = to be lower than the prev
 paymentOnAccount.inset-text                          = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.
 paymentOnAccount.table-heading-1                     = First payment on account
 paymentOnAccount.table-heading.link                  = More details
-paymentOnAccount.table-heading.key                   = Full amount
+paymentOnAccount.table-heading-full-amount.key       = Full amount
+paymentOnAccount.table-heading-created-amount.key    = Amount created by HMRC
+paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
 paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
+paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
+paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
+paymentOnAccount.heading.example                     = Example
+paymentOnAccount.p5                                  = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
+paymentOnAccount.p6                                  = If you’ve already paid the first payment on account (in this case, £2,000), HMRC will reduce both payments on account to £1,500, and add £500 credit to your account for the first payment.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 
@@ -2008,6 +2018,16 @@ optout.confirmOptOut.info-message       = In future, you could be required to re
 optout.confirmOptOut.confirm            = Confirm
 optout.confirmOptOut.cancel             = Cancel
 
+#opt out multi year check answers
+optout.checkAnswers.heading             = Check your answers
+optout.checkAnswers.optOut              = Opt out from
+optout.checkAnswers.taxYears            = {0} to {1} tax year onwards
+optout.checkAnswers.change              = Change
+optout.checkAnswers.p1                  = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.checkAnswers.p2                  = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
+optout.checkAnswers.confirm             = Confirm
+optout.checkAnswers.cancel              = Cancel
+
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
 optout.confirmedOptOut.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
@@ -2022,9 +2042,11 @@ optout.confirmedOptOut.reportQuarterly                           = Reporting qua
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
 optout.confirmedOptOut.reportQuarterly.p1                        = HMRC lowers the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.p2                        = you report an increase in your qualifying income in a tax return
-optout.confirmedOptOut.reportQuarterly.example                   = For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025.
+optout.confirmedOptOut.reportQuarterly.example                   = For example, if your qualifying income exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
 optout.confirmedOptOut.reportQuarterly.desc2                     = If this happens, we will write to you to let you know.
-optout.confirmedOptOut.reportQuarterly.desc3                     = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab).
+optout.confirmedOptOut.reportQuarterly.desc3                     = You can check the threshold for qualifying income in the {0} .
+optout.confirmedOptOut.reportQuarterly.desc3.anchor-text         = criteria for people who will need to sign up for Making Tax Digital
+optout.confirmedOptOut.reportQuarterly.desc3.anchor-link         = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 optout.confirmedOptOut.report-quarterly-next-year-onwards        = Reporting quarterly from next tax year onwards
 optout.confirmedOptOut.warning-quarterly-update.text             = From 6 April {0}, you’ll be required to send quarterly updates through
 optout.confirmedOptOut.software-compatible                       = software compatible with Making Tax Digital for Income Tax
@@ -2040,16 +2062,15 @@ optOut.confirmSingleYearOptOut.form.title                   = Do you still want 
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = I want to opt out and report annually.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = I want to continue reporting quarterly.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt out for the {0} to {1} tax year
-
+optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report annually from
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Confirm you want to opt out of quarterly reporting
-optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards.
-optout.chooseOptOutTaxYear.desc2                     = You can then choose to submit your tax return through:
-optout.chooseOptOutTaxYear.desc2.p1                  = your HMRC online account
-optout.chooseOptOutTaxYear.desc2.p2                  = compatible record-keeping software
+optout.chooseOptOutTaxYear.desc1                     = You can opt out from any of the tax years available and report annually from that tax year onwards. This applies to all your businesses (even if they are less than 2 years old).
+optout.chooseOptOutTaxYear.desc2                     = If you opt out, you can submit your tax return through your HMRC online account or software.
+optout.chooseOptOutTaxYear.submissions.deleted       = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
 optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?
-optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 to 2024 onwards
-optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 to 2025 onwards
+optout.chooseOptOutTaxYear.taxYearOnwards            = {0} to {1} onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
 optout.chooseOptOutTaxYear.continue                  = Continue
+optout.chooseOptOutTaxYear.deleteUpdates             = This will delete {0} quarterly updates submitted.

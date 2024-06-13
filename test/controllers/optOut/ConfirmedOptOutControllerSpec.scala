@@ -53,7 +53,7 @@ class ConfirmedOptOutControllerSpec extends TestSupport
 
     val taxYear = TaxYear.forYearEnd(2024)
     val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear, Some(OneYearOptOutFollowedByMandated))))
+    val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
     val noEligibleTaxYearResponse = Future.successful(None)
     val failedResponse = Future.failed(new Exception("some error"))
 

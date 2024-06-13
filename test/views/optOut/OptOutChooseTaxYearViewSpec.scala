@@ -17,9 +17,13 @@
 package views.optOut
 
 import config.FrontendAppConfig
+import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import services.NextUpdatesService.SubmissionsCountForTaxYear
+import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
 
@@ -27,9 +31,15 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optOutChooseTaxYearView: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
+  //test data needs to be added
+  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
+  val availableOptOutTaxYear: Seq[TaxYear] = Seq(taxYear)
+  val availableOptOutTaxYearsList: List[String] = List(taxYear.toString)
+  val submissionsCountForTaxYearModel: SubmissionsCountForTaxYearModel =
+    SubmissionsCountForTaxYearModel(Seq(SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
   }
 
   object optOutChooseTaxYear {
@@ -57,19 +67,17 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     "have the correct summary heading and page contents" in new Setup(false) {
       pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
-      pageDocument.getElementById("whichTaxYear").text() shouldBe optOutChooseTaxYear.whichTaxYear
+      pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
-      pageDocument.getElementById("continue-button").attr("href") shouldBe optOutChooseTaxYear.confirmOptOutURL
     }
 
     "have the correct summary heading and page contents for Agents" in new Setup(true) {
       pageDocument.getElementById("description1").text() shouldBe optOutChooseTaxYear.summary1
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
-      pageDocument.getElementById("whichTaxYear").text() shouldBe optOutChooseTaxYear.whichTaxYear
+      pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
-      pageDocument.getElementById("continue-button").attr("href") shouldBe optOutChooseTaxYear.confirmOptOutURLAgent
     }
 
   }

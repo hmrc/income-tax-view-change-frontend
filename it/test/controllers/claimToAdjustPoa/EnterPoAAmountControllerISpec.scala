@@ -26,6 +26,7 @@ import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testChargeHistoryJson, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
@@ -59,7 +60,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    sessionService.setMongoData(None)
+    await(sessionService.setMongoData(None))
     if (isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
@@ -131,7 +132,35 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/enter-poa-amount")
+
+        res should have(
+          httpStatus(OK)
+        )
+        lazy val document: Document = Jsoup.parse(res.body)
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+      }
+      "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+
+        And("A session has been created")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(None, Some(BigDecimal(3333.33))))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -162,7 +191,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -217,7 +246,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/enter-poa-amount")
@@ -266,7 +295,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
 
@@ -298,7 +327,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
 
@@ -328,7 +357,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower)))))
 
         When(s"I call POST")
 
@@ -355,7 +384,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
         val res = postEnterPoA(isAgent, 2000)(clientDetailsWithConfirmation)
@@ -406,7 +435,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session exists and has data")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(100)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/change-poa-amount")
@@ -439,7 +468,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1200))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(1200)))))
 
         When(s"I call POST")
 
@@ -469,7 +498,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(2500))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(2500)))))
 
         When(s"I call POST")
 
@@ -499,7 +528,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500)))))
 
         When(s"I call POST")
 
@@ -529,7 +558,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower), Some(500)))))
 
         When(s"I call POST")
 
@@ -561,7 +590,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(Some(Increase), Some(2500))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(Increase), Some(2500)))))
 
         When(s"I call POST")
 

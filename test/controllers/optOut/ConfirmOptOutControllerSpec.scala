@@ -17,29 +17,33 @@
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockOptOutService
-import models.incomeSourceDetails.TaxYear
+import mocks.services.{MockOptOutService, MockSessionService}
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.optout.OptOutCheckpointViewModel
+import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel, OptOutSessionData}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.{MessagesControllerComponents, Request, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import repositories.UIJourneySessionDataRepository
 import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optOut.ConfirmOptOut
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import scala.concurrent.Future
 
 class ConfirmOptOutControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockOptOutService {
+  with MockAuthenticationPredicate with MockOptOutService with MockSessionService {
 
   object TestConfirmOptOutController extends ConfirmOptOutController(
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
-    optOutService = mockOptOutService)(
+    checkOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers],
+    optOutService = mockOptOutService,
+    sessionService = mockSessionService)(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -48,21 +52,46 @@ class ConfirmOptOutControllerSpec extends TestSupport
     authorisedFunctions = mockAuthService) {
   }
 
-  def tests(isAgent: Boolean): Unit = {
+  "ConfirmOptOutController - Individual" when {
+    oneYearShowTest(isAgent = false)
+    multiYearShowTest(isAgent = false)
+
+    oneYearSubmitTest(isAgent = false)
+    multiYearSubmitTest(isAgent = false)
+  }
+
+  "ConfirmOptOutController - Agent - view" when {
+    oneYearShowTest(isAgent = true)
+    multiYearShowTest(isAgent = true)
+
+    oneYearSubmitTest(isAgent = true)
+    multiYearSubmitTest(isAgent = true)
+  }
+
+  val yearEnd = 2024
+  val taxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
+  val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
+  val oneYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
+    Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
+  val multiYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
+    Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear)))
+  val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
+  val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
+
+  val optOutUpdateResponseSuccess: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseSuccess("123"))
+  val optOutUpdateResponseFailure: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseFailure.defaultFailure("123"))
+
+
+  def oneYearShowTest(isAgent: Boolean): Unit = {
+    val testName = "OneYear Opt-Out"
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
-    val taxYear = TaxYear.forYearEnd(2024)
-    val optOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutCheckpointViewModel(optOutTaxYear, Some(OneYearOptOutFollowedByAnnual))))
-    val noEligibleTaxYearResponse = Future.successful(None)
-    val failedResponse = Future.failed(new Exception("some error"))
+    s"show method is invoked for $testName" should {
 
-
-    "show method is invoked" should {
-      s"return result with $OK status" in {
+      s"return result with $OK status for $testName" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockOptOutCheckPointPageViewModel(eligibleTaxYearResponse)
+        mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
 
         val result: Future[Result] = TestConfirmOptOutController.show(isAgent)(requestGET)
 
@@ -70,6 +99,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
       }
 
       s"return result with $INTERNAL_SERVER_ERROR status" when {
+
         "there is no tax year eligible for opt out" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
@@ -93,11 +123,81 @@ class ConfirmOptOutControllerSpec extends TestSupport
     }
   }
 
+  def multiYearShowTest(isAgent: Boolean): Unit = {
+    val testName = "MultiYear Opt-Out"
+    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
 
-  "ConfirmOptOutController - Individual" when {
-    tests(isAgent = false)
+    s"show method is invoked $testName" should {
+
+      s"return result with $OK status for $testName" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockOptOutCheckPointPageViewModel(multiYearViewModelResponse)
+
+        val result: Future[Result] = TestConfirmOptOutController.show(isAgent)(requestGET)
+
+        status(result) shouldBe Status.OK
+      }
+    }
   }
-  "ConfirmOptOutController - Agent" when {
-    tests(isAgent = true)
+
+  def oneYearSubmitTest(isAgent: Boolean): Unit = {
+    val testName = "OneYear Opt-Out"
+    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+
+    s"submit method is invoked for $testName" should {
+
+      s"return result with $OK status for $testName" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMakeOptOutUpdateRequest(optOutUpdateResponseSuccess)
+
+        val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      s"return result with $INTERNAL_SERVER_ERROR status" when {
+
+        "there is no tax year eligible for opt out" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
+
+          val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
+
+          status(result) shouldBe Status.SEE_OTHER
+        }
+
+        "opt-out service fails" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
+
+          val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
+
+          status(result) shouldBe Status.SEE_OTHER
+        }
+      }
+    }
   }
+
+  def multiYearSubmitTest(isAgent: Boolean): Unit = {
+    val testName = "MultiYear Opt-Out"
+    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+
+    s"submit method is invoked $testName" should {
+
+      s"return result with $OK status for $testName" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMakeOptOutUpdateRequest(optOutUpdateResponseSuccess)
+
+        val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+  }
+
 }

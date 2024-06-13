@@ -95,4 +95,30 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def currencyFormatter(emptyErrorMessageKey: String, invalidErrorMessageKey: String): Formatter[BigDecimal] =
+    new Formatter[BigDecimal] {
+
+      val is2dp = """\d+|\d*\.\d{1,2}"""
+      val validNumeric = """[0-9.]*"""
+
+      private val baseFormatter = stringFormatter(emptyErrorMessageKey)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] =
+        baseFormatter
+          .bind(key, data)
+          .flatMap {
+            case s if s.isEmpty =>
+              Left(Seq(FormError(key, emptyErrorMessageKey)))
+            case s if !s.matches(validNumeric) || !s.matches(is2dp) =>
+              Left(Seq(FormError(key, invalidErrorMessageKey)))
+            case s =>
+              nonFatalCatch
+                .either(BigDecimal(s))
+                .left.map(_ => Seq(FormError(key, invalidErrorMessageKey)))
+          }
+
+      override def unbind(key: String, value: BigDecimal): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
 }

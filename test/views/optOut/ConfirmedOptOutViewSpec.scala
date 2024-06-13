@@ -36,7 +36,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean = true,
               state: OptOutState = OneYearOptOutFollowedByMandated) {
-    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear, state = Some(state))
+    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(state))
     val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent)))
   }
 
@@ -63,9 +63,10 @@ class ConfirmedOptOutViewSpec extends TestSupport {
     val multiYearReportingUpdatesP1 = "You could be required to report quarterly again in the future if:"
     val multiYearReportingUpdatesListP1 = "HMRC lowers the income threshold for Making Tax Digital"
     val multiYearReportingUpdatesListP2 = "you report an increase in your qualifying income in a tax return"
-    val multiYearReportingUpdatesInset = "For example, if your qualifying income exceeds the threshold in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025."
+    val multiYearReportingUpdatesInset = s"For example, if your qualifying income exceeds the threshold in the ${optOutTaxYear.taxYear.startYear} to ${optOutTaxYear.taxYear.endYear} tax year, you would have to report quarterly from 6 April ${optOutTaxYear.taxYear.nextYear.endYear}."
     val multiYearReportingUpdatesP2 = "If this happens, we will write to you to let you know."
-    val multiYearReportingUpdatesP3 = "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab)."
+    val multiYearReportingUpdatesP3 = "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab) ."
+    val multiYearReportingUpdatesP3Link = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
   }
 
   "Opt-out confirmed page" should {
@@ -120,6 +121,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         reportingUpdateBlock.child(3).child(0).text() shouldBe confirmOptOutMessages.singleYearReportingUpdatesListP1
         reportingUpdateBlock.child(3).child(1).text() shouldBe confirmOptOutMessages.singleYearReportingUpdatesListP2
         reportingUpdateBlock.getElementById("software-compatible-ext").attr("href") shouldBe confirmOptOutMessages.singleYearSoftwareCompatibleLink
+        reportingUpdateBlock.getElementById("sign-up-criteria-ext").attr("href") shouldBe confirmOptOutMessages.multiYearReportingUpdatesP3Link
       }
 
       "multi year opt out" in new Setup(isAgent = false, state = MultiYearOptOutDefault) {
@@ -131,6 +133,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         reportingUpdateBlock.child(3).text() shouldBe confirmOptOutMessages.multiYearReportingUpdatesInset
         reportingUpdateBlock.child(4).text() shouldBe confirmOptOutMessages.multiYearReportingUpdatesP2
         reportingUpdateBlock.child(5).text() shouldBe confirmOptOutMessages.multiYearReportingUpdatesP3
+        reportingUpdateBlock.getElementById("sign-up-criteria-ext").attr("href") shouldBe confirmOptOutMessages.multiYearReportingUpdatesP3Link
 
       }
     }

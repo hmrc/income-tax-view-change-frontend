@@ -17,21 +17,73 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.incomeSourceDetails.TaxYear
+@import services.optout.OptOutService.SubmissionsCountForTaxYearModel
+@import views.html.helpers.injected.ErrorSummary
+@import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 
 @this(
         mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukRadios: GovukRadios,
+        govukButton: GovukButton,
+        errorSummary: ErrorSummary,
         h1: h1,
         h2: h2,
         p: p,
         link: link,
         hr: hr,
         govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
 )
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@confirmOptOutURL = @{
-    controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
+@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: SubmissionsCountForTaxYearModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@confirmOptOutPostUrl = @{
+    controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
+}
+
+@warningBlock = {
+    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
+}
+
+@formBlock = {
+    @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("optout.chooseOptOutTaxYear.whichTaxYear")),
+                    classes = "govuk-fieldset__legend--m"
+                )),
+                attributes = Map("id" -> "whichTaxYear")
+            )),
+            items = availableOptOutTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
+                RadioItem(
+                    id = Some(s"choice-year-$index"),
+                    value = Some(optOutTaxYear.toString),
+                    content = Text(messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
+                    hint = {
+                        if(submissionCounts.getCountFor(optOutTaxYear) > 0) {
+                            Some(
+                                Hint(content = Text(messages("optout.chooseOptOutTaxYear.deleteUpdates", submissionCounts.getCountFor(optOutTaxYear)))))
+                        } else Some(Hint(content = Text("")))
+                    }
+                )
+            },
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form(ConfirmOptOutMultiTaxYearChoiceForm.choiceField)))
+
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                content = Text(messages("base.continue")),
+                attributes = Map("id" -> "continue-button")
+            ))
+            <a class="govuk-link" id="cancel-button" href="#">
+            @messages("optout.confirmOptOut.cancel")
+            </a>
+        </div>
+    }
 }
 
 @mainTemplate(
@@ -42,51 +94,22 @@
     useFallbackBackLink = true
     ) {
 
-@h1(messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
+    @errorSummary(form = form)
 
-@p(id=Some("description1")) {
-    @messages("optout.chooseOptOutTaxYear.desc1")
-}
+    @h1(id = Some("heading"), msg = messages("optout.chooseOptOutTaxYear.heading"), classes = "govuk-heading-l")
 
-@p(id=Some("description2")) {
-    @messages("optout.chooseOptOutTaxYear.desc2")
-}
+    @p(id=Some("description1")) {
+        @messages("optout.chooseOptOutTaxYear.desc1")
+    }
 
-<ul class="govuk-list govuk-list--bullet">
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p1")</li>
-    <li>@messages("optout.chooseOptOutTaxYear.desc2.p2")</li>
-</ul>
+    @p(id=Some("description2")) {
+        @messages("optout.chooseOptOutTaxYear.desc2")
+    }
 
-<div class="govuk-form-group ">
-    <fieldset class="govuk-fieldset">
-        <legend id="whichTaxYear" class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            @messages("optout.chooseOptOutTaxYear.whichTaxYear")
-        </legend>
+    @if(submissionCounts.isSubmissionsMade) {
+        @warningBlock
+    }
 
-        <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio1" name="optoutYear" type="radio" value="2023">
-                <label class="govuk-label govuk-radios__label" for="radio1">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards1")
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="radio2" name="optoutYear" type="radio" value="2024">
-                <label class="govuk-label govuk-radios__label" for="radio2">
-                    @messages("optout.chooseOptOutTaxYear.taxYearOnwards2")
-                </label>
-            </div>
-        </div>
-    </fieldset>
-</div>
-
-<div class="govuk-button-group">
-    <a class="govuk-button" role="button" data-module="govuk-button" id="continue-button" href="@confirmOptOutURL" data-module="govuk-button">
-        @messages("optout.chooseOptOutTaxYear.continue")
-    </a>
-    <a class="govuk-link" id="cancel-button" href="#">
-        @messages("optout.chooseOptOutTaxYear.cancel")
-    </a>
-</div>
+    @formBlock
 
 }

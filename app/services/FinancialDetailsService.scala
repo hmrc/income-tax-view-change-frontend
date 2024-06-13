@@ -34,7 +34,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
-  def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
 

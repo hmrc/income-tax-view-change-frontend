@@ -16,11 +16,14 @@
 
 package mocks.services
 
-import models.optout.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutOneYearViewModel}
-import org.mockito.ArgumentMatchers.any
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponse
+import models.incomeSourceDetails.TaxYear
+import models.optout.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutMultiYearViewModel, OptOutOneYearViewModel}
+import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optout.OptOutService
+import services.optout.OptOutService.SubmissionsCountForTaxYearModel
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -44,14 +47,38 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(out)
   }
 
+  def mockNextUpdatesPageMultiYearOptOutViewModel(out: Future[Option[OptOutMultiYearViewModel]]): Unit = {
+    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any())).thenReturn(out)
+  }
+
+  def mockGetTaxYearsAvailableForOptOut(out: Future[Seq[TaxYear]]): Unit = {
+    when(mockOptOutService.getTaxYearsAvailableForOptOut()(any(), any(), any())).thenReturn(out)
+  }
+
+  def mockGetSubmissionCountForTaxYear(in: Seq[TaxYear], out: Future[SubmissionsCountForTaxYearModel]): Unit = {
+    when(mockOptOutService.getSubmissionCountForTaxYear(same(in))(any(), any(), any())).thenReturn(out)
+  }
+
   def mockOptOutCheckPointPageViewModel(out: Future[Option[OptOutCheckpointViewModel]]): Unit = {
-    when(mockOptOutService.optOutCheckPointPageViewModel(any())(any(), any(), any()))
+    when(mockOptOutService.optOutCheckPointPageViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 
   def mockOptOutConfirmedPageViewModel(out: Future[Option[ConfirmedOptOutViewModel]]): Unit = {
-    when(mockOptOutService.optOutConfirmedPageViewModel(any())(any(), any(), any()))
+    when(mockOptOutService.optOutConfirmedPageViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 
+  def mockMakeOptOutUpdateRequest(out: Future[OptOutUpdateResponse]): Unit = {
+    when(mockOptOutService.makeOptOutUpdateRequest()(any(), any(), any()))
+      .thenReturn(out)
+  }
+
+  def mockSaveIntent(in: TaxYear, out: Future[Boolean]): Unit = {
+    when(mockOptOutService.saveIntent(any[TaxYear])(any())).thenReturn(out)
+  }
+
+  def mockFetchIntent(out: Future[Option[TaxYear]]): Unit = {
+    when(mockOptOutService.fetchSavedIntent()(any(), any())).thenReturn(out)
+  }
 }

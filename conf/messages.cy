@@ -721,6 +721,9 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
+nextUpdates.optOutMultiYear-1                                   = ToDo: Requested
+nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
 sections.open												    = Dangos
@@ -1839,9 +1842,16 @@ paymentOnAccount.p2                                  = i fod yn is na’r flwydd
 paymentOnAccount.inset-text                          = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un.
 paymentOnAccount.table-heading-1                     = Taliad cyntaf ar gyfrif
 paymentOnAccount.table-heading.link                  = Rhagor o fanylion
-paymentOnAccount.table-heading.key                   = Y swm llawn
+paymentOnAccount.table-heading-full-amount.key       = Y swm llawn
+paymentOnAccount.table-heading-created-amount.key    = Swm a gyfrifwyd gan CThEF
+paymentOnAccount.table-heading-adjusted-amount.key   = Swm wedi’i addasu
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
+paymentOnAccount.p3-additional-content               = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall, hyd yn oed ar ôl i chi wneud y taliad ar gyfrif cyntaf.
+paymentOnAccount.p4                                  = Os ydych eisoes wedi gwneud eich taliad cyntaf, bydd CThEF yn ei ostwng ar eich cyfrif ac yn ychwanegu’r gwahaniaeth fel credyd.
+paymentOnAccount.heading.example                     = Enghraifft
+paymentOnAccount.p5                                  = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
+paymentOnAccount.p6                                  = Os ydych eisoes wedi talu’r taliad ar y gyfrif cyntaf (yn yr achos hwn, £2,000), bydd CThEF yn lleihau’r ddau daliad ar gyfrif i £1,500, ac yn ychwanegu credyd o £500 i’ch cyfrif am y taliad cyntaf.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.link                         = Canslo
 
@@ -1962,6 +1972,16 @@ optout.confirmOptOut.info-message       = Yn y dyfodol, efallai y bydd gofyn i c
 optout.confirmOptOut.confirm            = Cadarnhau
 optout.confirmOptOut.cancel             = Canslo
 
+#opt out multi year check answers
+optout.checkAnswers.heading             = Gwiriwch eich atebion
+optout.checkAnswers.optOut              = Optio allan o
+optout.checkAnswers.taxYears            = flwyddyn dreth {0} i {1} ymlaen
+optout.checkAnswers.change              = Newid
+optout.checkAnswers.p1                  = Os ydych yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd neu’ch cyfrif ar-lein CThEF.
+optout.checkAnswers.p2                  = Yn y dyfodol, efallai y bydd gofyn i chi cyflwyno adroddiadau bob chwarter eto os, er enghraifft, y bydd eich incwm yn cynyddu neu’r bod y trothwy ar gyfer cyflwyno adroddiadau chwarterol yn newid. Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
+optout.checkAnswers.confirm             = Cadarnhau
+optout.checkAnswers.cancel              = Canslo
+
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau
 optout.confirmedOptOut.taxYear                                   = Rydych yn cyflwyno adroddiadau’n flynyddol o flwyddyn dreth {0} i {1} ymlaen
@@ -1976,9 +1996,11 @@ optout.confirmedOptOut.reportQuarterly                           = Cyflwyno adro
 optout.confirmedOptOut.reportQuarterly.desc1                     = Mae’n bosibl y bydd gofyn i chi gyflwyno adroddiadau’n chwarterol eto yn y dyfodol os yw’r canlynol yn digwydd:
 optout.confirmedOptOut.reportQuarterly.p1                        = CThEF yn gostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn
 optout.confirmedOptOut.reportQuarterly.p2                        = Ddigidol rydych yn rhoi gwybod am gynnydd yn eich incwm cymwys mewn Ffurflen Dreth
-optout.confirmedOptOut.reportQuarterly.example                   = Er enghraifft, os yw’ch incwm cymwys yn uwch na’r trothwy ym mlwyddyn dreth 2023 i 2024, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill 2025 ymlaen.
+optout.confirmedOptOut.reportQuarterly.example                   = Er enghraifft, os yw’ch incwm cymwys yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
 optout.confirmedOptOut.reportQuarterly.desc2                     = Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
-optout.confirmedOptOut.reportQuarterly.desc3                     = Gallwch wirio’r trothwy ar gyfer incwm cymwys yn y meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol (yn agor tab newydd).
+optout.confirmedOptOut.reportQuarterly.desc3                     = Gallwch wirio’r trothwy ar gyfer incwm cymwys yn y {0} .
+optout.confirmedOptOut.reportQuarterly.desc3.anchor-text         = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.reportQuarterly.desc3.anchor-link         = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
 optout.confirmedOptOut.report-quarterly-next-year-onwards        = Cyflwyno adroddiadau’n chwarterol o’r flwyddyn dreth nesaf ymlaen
 optout.confirmedOptOut.warning-quarterly-update.text             = O 6 Ebrill {0} ymlaen, bydd gofyn i chi anfon diweddariadau chwarterol drwy
 optout.confirmedOptOut.software-compatible                       = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
@@ -1994,15 +2016,15 @@ optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio a
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
+optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error.todo = ToDo: Requested
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Cadarnhau eich bod am optio allan o gyflwyno adroddiadau yn chwarterol
-optout.chooseOptOutTaxYear.desc1                     = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn dreth honno ymlaen.
-optout.chooseOptOutTaxYear.desc2                     = Gallwch wedyn dewis cyflwyno’ch Ffurflen Dreth drwy’r canlynol:
-optout.chooseOptOutTaxYear.desc2.p1                  = eich cyfrif ar-lein CThEF meddalwedd cadw
-optout.chooseOptOutTaxYear.desc2.p2                  = cofnodion sy’n cydweddu
+optout.chooseOptOutTaxYear.desc1                     = Gallwch optio allan o unrhyw un o?r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o?r flwyddyn honno ymlaen. Mae hyn yn berthnasol i?ch busnesau i gyd (hyd yn oed os ydynt yn llai na 2 flwydd oed).
+optout.chooseOptOutTaxYear.desc2                     = Os ydych yn optio allan, gallwch gyflwyno?ch Ffurflen Dreth drwy?ch meddalwedd neu?ch cyfrif ar-lein CThEF.
+optout.chooseOptOutTaxYear.submissions.deleted       = Gallwch optio allan o unrhyw un o?r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o?r flwyddyn dreth honno ymlaen.
 optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
-optout.chooseOptOutTaxYear.taxYearOnwards1           = 2023 i 2024 ymlaen
-optout.chooseOptOutTaxYear.taxYearOnwards2           = 2024 i 2025 ymlaen
+optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo
 optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
+optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diweddarid chwarterol sydd wedi?u cyflwyno.

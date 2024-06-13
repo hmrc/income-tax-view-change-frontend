@@ -24,6 +24,7 @@ import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, Sel
 import models.core.NormalMode
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
@@ -43,7 +44,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    sessionService.setMongoData(None)
+    await(sessionService.setMongoData(None))
     if(isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
@@ -90,7 +91,35 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/select-your-reason")
+
+        res should have(
+          httpStatus(OK)
+        )
+      }
+
+      "user has entered an amount lower than current amount but PoA adjustment reason is populated in session data" in {
+
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(Some(MainIncomeLower)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -121,7 +150,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData(newPoAAmount = Some(1500.0))))
+        await(sessionService.setMongoData(Some(PoAAmendmentData(newPoAAmount = Some(1500.0)))))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -178,7 +207,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call GET")
         val res = get("/adjust-poa/select-your-reason")
@@ -232,7 +261,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
 
@@ -263,7 +292,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
       And("A session has been created")
-      sessionService.setMongoData(Some(PoAAmendmentData()))
+      await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
       When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
@@ -294,7 +323,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
 
         When(s"I call POST")
@@ -321,7 +350,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         )
 
         And("A session has been created and an amount entered")
-        sessionService.setMongoData(Some(PoAAmendmentData()))
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
         When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)

@@ -39,12 +39,12 @@ trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
       .thenReturn(Future.successful(response))
   }
 
   def setupMockGetFinancialDetailsError(taxYear: Int, nino: String)(response: FinancialDetailsErrorModel): Unit = {
-    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
       .thenReturn(Future.successful(response))
   }
 

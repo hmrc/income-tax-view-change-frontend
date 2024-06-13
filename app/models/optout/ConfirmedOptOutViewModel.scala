@@ -16,10 +16,13 @@
 
 package models.optout
 
-import services.optout.{OneYearOptOutFollowedByMandated, OptOutState, OptOutTaxYear}
+import models.incomeSourceDetails.TaxYear
+import services.optout.{OneYearOptOutFollowedByMandated, OptOutState}
 
-case class ConfirmedOptOutViewModel(optOutTaxYear: OptOutTaxYear, state: Option[OptOutState]) {
+case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) {
   val isOneYearOptOutFollowedByMandated: Boolean = state.contains(OneYearOptOutFollowedByMandated)
-  val starYear: String = optOutTaxYear.taxYear.startYear.toString
-  val endYear: String = optOutTaxYear.taxYear.endYear.toString
+  val startYear: String = optOutTaxYear.startYear.toString
+  val endYear: String = optOutTaxYear.endYear.toString
+  val nextYear: String = optOutTaxYear.nextYear.endYear.toString
 }
+

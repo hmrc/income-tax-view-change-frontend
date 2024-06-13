@@ -99,7 +99,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
@@ -112,7 +112,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
@@ -123,7 +123,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
 
         val f = fixture(LocalDate.of(2024, 4, 1))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
@@ -138,7 +138,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(userNoPOADetails)
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(None)
@@ -154,7 +154,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
         whenReady(result) {
           result => result.toString shouldBe Left(new Exception("There was an error whilst fetching financial details data")).toString
@@ -172,7 +172,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, false)))
@@ -185,7 +185,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(genericUserPOADetails(2023))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
@@ -196,8 +196,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
 
         val f = fixture(LocalDate.of(2024, 4, 1))
-        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
-
+        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
         whenReady(result) {
           result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
         }
@@ -211,7 +210,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(userNoPOADetails)
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
           result => result shouldBe Right(None)
@@ -227,7 +226,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
 
         val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)(hc = implicitly)
+        val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
           result => result.toString shouldBe Left(new Exception("There was an error whilst fetching financial details data")).toString
