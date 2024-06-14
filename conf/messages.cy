@@ -956,6 +956,8 @@ chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau
 chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
 
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
+chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
+chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.date								        = Dyddiad
 chargeSummary.chargeHistory.description							        = Disgrifiad
 chargeSummary.chargeHistory.amount								        = Swm

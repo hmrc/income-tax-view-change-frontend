@@ -128,7 +128,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
-    val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
+    val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
+    val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
+    val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
@@ -179,7 +181,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
-
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
@@ -356,7 +357,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
         documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
-        document.select("main h2").text shouldBe chargeHistoryHeading
+        document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display only the charge creation item when no history found for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -542,13 +543,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
         documentDetailModel(lpiWithDunningLock = None, outstandingAmount = 0)) {
-        document.select("main h2").text shouldBe chargeHistoryHeading
+        document.select("main h2").text shouldBe chargeHistoryHeadingPoa1
       }
 
       "display a charge history heading as an h3 when there is a Payment Breakdown" in new TestSetup(
         documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("main h3").text shouldBe chargeHistoryHeading
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
       }
+
+      "display charge history heading as poa1 heading when charge is a poa1" in new TestSetup(
+        documentDetailModel(), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+      }
+      "display charge history heading as poa2 heading when charge is a poa2" in new TestSetup(
+        documentDetailModel(documentDescription = Some("ITSA - POA 2")), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa2
+      }
+      "display charge history heading as non-poa heading when charge is not a poa" in new TestSetup(
+        documentDetailModel(documentDescription = Some("Other")), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
+      }
+
 
       "display only the charge creation item when no history found for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         document.select("tbody tr").size() shouldBe 1
