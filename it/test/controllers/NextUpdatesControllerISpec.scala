@@ -326,37 +326,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
             "voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
         )
       }
-
-      // ToDo: this test shouldn't really exits will keep it for reference to discuss but should be removed eventually
-      //      "don't show opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as NoStatus" in {
-      //        enable(OptOut)
-      //
-      //        val currentTaxYear = dateService.getCurrentTaxYearEnd
-      //        val previousYear = currentTaxYear - 1
-      //
-      //        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-      //
-      //        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
-      //
-      //        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-      //        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.NoStatus)
-      //        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-      //        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-      //
-      //        val res = IncomeTaxViewChangeFrontend.getNextUpdates
-      //
-      //        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
-      //
-      //        verifyIncomeSourceDetailsCall(testMtditid)
-      //        verifyNextUpdatesCall(testNino)
-      //        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
-      //
-      //        Then("the quarterly updates info sections")
-      //        res should have(
-      //          elementTextBySelector("#optout-message")(expectedValue = "")
-      //        )
-      //      }
-
     }
 
     "show Internal Server Error page" when {
