@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import auth.MtdItUser
+import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
@@ -106,9 +107,9 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def isAllInterestPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.interestIsPaid)
 
   def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.documentDescription) match {
+    (documentDetail.documentText, documentDetail.getDocType) match {
       case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Some("ITSA- POA 1") | Some("ITSA - POA 2") | Some("TRM New Charge") | Some("TRM Amend Charge")) => true
+      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge) => true
       case (_, _) => false
     }
   }

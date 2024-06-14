@@ -32,6 +32,14 @@ case object BalancingCharge extends DocumentType {
   override val key: String = "ITSA BCD"
 }
 
+case object TRMNewCharge extends DocumentType {
+  override val key: String = "TRM New Charge"
+}
+
+case object TRMAmmendCharge extends DocumentType {
+  override val key: String = "TRM Amend Charge"
+}
+
 //EXTEND WITH OTHER CHARGES
 
 case object OtherCharge extends DocumentType {
