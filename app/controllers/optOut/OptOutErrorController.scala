@@ -16,12 +16,10 @@
 
 package controllers.optOut
 
-import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.AuthenticationPredicate
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
@@ -30,7 +28,7 @@ import views.html.optOut.OptOutError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutErrorController @Inject()(val errorView: OptOutError,
+class OptOutErrorController @Inject()(val view: OptOutError,
                                       val authenticate: AuthenticationPredicate,
                                       val auth: AuthenticatorPredicate,
                                       val authorisedFunctions: AuthorisedFunctions)
@@ -44,7 +42,7 @@ class OptOutErrorController @Inject()(val errorView: OptOutError,
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      Future.successful(Ok(errorView(isAgent)))
+      Future.successful(Ok(view(isAgent)))
   }
 
 }

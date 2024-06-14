@@ -25,6 +25,7 @@ import views.html.optOut.OptOutError
 class OptOutErrorViewSpec extends TestSupport {
 
   val optOutErrorPage: OptOutError = app.injector.instanceOf[OptOutError]
+
   class Setup(isAgent: Boolean) {
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutErrorPage(isAgent)))
   }
@@ -46,7 +47,6 @@ class OptOutErrorViewSpec extends TestSupport {
     val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
 
   }
-
 
   "Opt-out confirm page for individuals" should {
 
