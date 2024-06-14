@@ -182,7 +182,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                 codingOutEnabled = isEnabled(CodingOut),
                 btaNavPartial = user.btaNavPartial,
                 isAgent = isAgent,
-                isMFADebit = isMFADebit
+                isMFADebit = isMFADebit,
+                documentType = documentDetailWithDueDate.documentDetail.getDocType
               ))
 
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)

@@ -29,6 +29,9 @@
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.FinancialDetailsModel
 @import enums.GatewayPage._
+@import enums.DocumentType
+@import enums.Poa1Charge
+@import enums.Poa2Charge
 
 @this(
     mainTemplate: unifiedLayout,
@@ -49,7 +52,7 @@
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean, documentType: DocumentType
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -90,6 +93,17 @@
         case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
     }
     messages(key)
+}
+
+@getPoaExplanationContent = {
+    <div>
+        @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
+        <ul id="bullets" class="govuk-list govuk-list--bullet">
+            <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
+            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+        </ul>
+        @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+    </div>
 }
 
 @checkPayeCodePara = {
@@ -184,6 +198,13 @@
             messages(key)
         }
     </h1>
+
+    @{
+        documentType match {
+            case Poa1Charge | Poa2Charge => getPoaExplanationContent
+            case _ =>
+        }
+    }
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
