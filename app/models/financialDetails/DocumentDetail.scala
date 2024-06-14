@@ -161,6 +161,11 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
+  val isPOA: Boolean = {
+    val poaDescriptions = Seq("ITSA- POA 1", "ITSA - POA 2")
+    documentDescription.exists(poaDescriptions.contains)
+  }
+
   def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
 
   def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {

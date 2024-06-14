@@ -882,6 +882,11 @@ whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}
 whatYouOwe.taxYear                                              = Blwyddyn dreth
 whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {2}%
 whatYouOwe.adjust-poa                                           = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-1                                    = Gallwch
+whatYouOwe.adjust-poa.paid-2                                    = addasu eich taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
+whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
+whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -1852,6 +1857,7 @@ paymentOnAccount.table-heading-created-amount.key    = Swm a gyfrifwyd gan CThEF
 paymentOnAccount.table-heading-adjusted-amount.key   = Swm wedi’i addasu
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
 paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
+paymentOnAccount.h2                                  = Os ydych wedi eisoes wedi gwneud taliad
 paymentOnAccount.p3-additional-content               = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall, hyd yn oed ar ôl i chi wneud y taliad ar gyfrif cyntaf.
 paymentOnAccount.p4                                  = Os ydych eisoes wedi gwneud eich taliad cyntaf, bydd CThEF yn ei ostwng ar eich cyfrif ac yn ychwanegu’r gwahaniaeth fel credyd.
 paymentOnAccount.heading.example                     = Enghraifft

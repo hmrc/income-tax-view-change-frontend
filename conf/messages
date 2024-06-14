@@ -896,6 +896,11 @@ whatYouOwe.moneyOnAccount-3                                        = claim a ref
 whatYouOwe.moneyOnAccount-agent                                    = Money in your client’s account
 whatYouOwe.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
 whatYouOwe.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
+whatYouOwe.adjust-poa.paid-1                                       = You can
+whatYouOwe.adjust-poa.paid-2                                       = adjust your payments on account for the {0} to {1} tax year
+whatYouOwe.adjust-poa.paid-3                                       = at any point before submitting your tax return for {0} to {1}, and no later than
+whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
+whatYouOwe.adjust-poa.paid-5                                       =
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -1956,6 +1961,7 @@ paymentOnAccount.table-heading-created-amount.key    = Amount created by HMRC
 paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
 paymentOnAccount.table-heading-2                     = Second payment on account
 paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
+paymentOnAccount.h2                                  = If you’ve already made a payment
 paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
 paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
 paymentOnAccount.heading.example                     = Example
