@@ -19,7 +19,7 @@ package views.nextUpdates
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.nextUpdates._
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutOneYearViewModel}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -50,6 +50,10 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
+
+    val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
+    val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations,
+      Some(optOutMultiYearViewModel), checks, "testBackURL")))
   }
 
   object obligationsMessages {
@@ -64,7 +68,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
     val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
-    val optOutMessage: String = messages("nextUpdates.optOutOneYear")
+    val oneYearOptOutMessage: String = s"${messages("nextUpdates.optOutOneYear-1", "2023", "2024")} ${messages("nextUpdates.optOutOneYear-2")}"
+    val multiYearOptOutMessage: String = s"${messages("nextUpdates.optOutMultiYear-1")} ${messages("nextUpdates.optOutMultiYear-2")}"
   }
 
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
@@ -137,6 +142,14 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     s"don't show the Submitting updates in software section" in new Setup(obligationsModel, quarterlyUpdateContentShow = false) {
       pageDocument.select("#updates-software-heading").isEmpty shouldBe true
       pageDocument.select("#updates-software-link").isEmpty shouldBe true
+    }
+
+    "have the one year opt out message" in new Setup(obligationsModel) {
+      pageDocument.getElementById("one-year-opt-out-message").text() shouldBe obligationsMessages.oneYearOptOutMessage
+    }
+
+    "have the multi year opt out message" in new Setup(obligationsModel) {
+      pageDocumentMultiYearOptOut.getElementById("multi-year-opt-out-message").text() shouldBe obligationsMessages.multiYearOptOutMessage
     }
   }
 }

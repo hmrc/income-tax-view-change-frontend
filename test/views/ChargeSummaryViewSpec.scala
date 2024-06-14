@@ -19,6 +19,7 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
+import enums.OtherCharge
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -57,7 +58,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -73,10 +74,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
-      document.select(Selectors.table).text() shouldBe s"""
-                                                          |Date Description Amount
-                                                          |${rows.mkString("\n")}
-                                                          |""".stripMargin.trim.linesIterator.mkString(" ")
+      document.select(Selectors.table).text() shouldBe
+        s"""
+           |Date Description Amount
+           |${rows.mkString("\n")}
+           |""".stripMargin.trim.linesIterator.mkString(" ")
 
     }
 
@@ -103,6 +105,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
+
+    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount")
+    val poaTextBullets = messages("chargeSummary.paymentsOnAccount.bullet1") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
+    val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
 
     def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
 
@@ -175,13 +181,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
 
 
-
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
       amount = Some(500.0),
       dueDate = Some(LocalDate.parse("2018-09-08")),
       clearingDate = Some(LocalDate.parse("2018-09-07")),
-      clearingSAPDocument=Some("123456789012"),
+      clearingSAPDocument = Some("123456789012"),
       paymentAmount = Some(500.0),
       paymentLot = None,
       paymentLotItem = None)
@@ -230,7 +235,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Clerical Interest Signal"))
   )
 
-  def subItemWithClearingSapDocument(clearingSAPDocument: String):SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
+  def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -311,6 +316,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
         document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
 
+      }
+
+      "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
+      }
+
+      "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -791,7 +808,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
         chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
+          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false, documentType = OtherCharge)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -850,7 +867,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       val paymentAllocations = List(
         paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
-        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"),  Some("PAYID01"))
+        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"), Some("PAYID01"))
       )
 
       "Display an unpaid MFA Credit" in new TestSetup(
@@ -874,7 +891,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "Display a paid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
           outstandingAmount = 0.00), isMFADebit = true, isAgent = true,
-          paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"

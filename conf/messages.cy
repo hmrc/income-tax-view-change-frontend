@@ -721,8 +721,8 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
-nextUpdates.optOutMultiYear-1                                   = ToDo: Requested
-nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -949,6 +949,11 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
+
+chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
+chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
+chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
 
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
 chargeSummary.chargeHistory.date								        = Dyddiad

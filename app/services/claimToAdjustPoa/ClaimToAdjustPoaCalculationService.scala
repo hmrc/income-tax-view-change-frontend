@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package services
+package services.claimToAdjustPoa
 
 import connectors.ClaimToAdjustPoaConnector
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaFailure, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaResponse, ClaimToAdjustPoaSuccess, UnexpectedError}
+import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
