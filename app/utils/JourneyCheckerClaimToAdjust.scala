@@ -40,6 +40,8 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
 
   private def errorHandler(implicit user: MtdItUser[_]) = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
+
+
   def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     ifAdjustPoaIsEnabled(isAgent(user)) {
@@ -84,8 +86,13 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
       case Right(Some(poaData: PoAAmendmentData)) => {
         if (poaData.journeyCompleted) {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
-          poaSessionService.createSession
-          codeBlock(poaData)
+          poaSessionService.createSession.flatMap {
+            case Right(_) => codeBlock(poaData)
+            case Left(ex: Throwable) =>
+              Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
+                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
+              Future.successful(errorHandler.showInternalServerError())
+          }
         } else {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
           codeBlock(poaData)
