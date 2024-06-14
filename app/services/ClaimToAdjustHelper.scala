@@ -29,9 +29,7 @@ import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
-import scala.::
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 // TODO: This part of the logic expected to be moved within BE
 // TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
@@ -50,12 +48,6 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1) && (documentDetail.outstandingAmount != 0)
-
-  private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA2) && (documentDetail.outstandingAmount != 0)
-
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
@@ -64,8 +56,8 @@ trait ClaimToAdjustHelper {
     _.sortBy(_.taxYear).reverse
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
-    poaOneDocDetail         <- documentDetails.find(isUnpaidPoAOne)
-    poaTwoDocDetail         <- documentDetails.find(isUnpaidPoATwo)
+    poaOneDocDetail         <- documentDetails.find(isPoAOne)
+    poaTwoDocDetail         <- documentDetails.find(isPoATwo)
     latestDocumentDetail     = poaTwoDocDetail
     poaTwoDueDate           <- poaTwoDocDetail.documentDueDate
     taxReturnDeadline        = getTaxReturnDeadline(poaTwoDueDate)
