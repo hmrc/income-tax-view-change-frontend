@@ -24,6 +24,7 @@ import models.financialDetails.{FinancialDetail, FinancialDetailsErrorModel, Fin
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
+import services.claimToAdjustPoa.ClaimToAdjustHelper
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
