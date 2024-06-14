@@ -24,9 +24,9 @@ import config.featureswitch._
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
+import models.admin._
 import models.core.Nino
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, WhatYouOweCreditAmount}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -57,40 +57,37 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).flatMap {
-      whatYouOweChargesList =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-        val codingOutEnabled = isEnabled(CodingOut)
+    for {
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits))
+      creditCharges <- whatYouOweService.getCreditCharges()
+      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
+    } yield {
 
-        whatYouOweService.getCreditCharges().flatMap {
-          creditCharges =>
-            claimToAdjustViewModel(Nino(user.nino)).map {
-              ctaViewModel =>
-                Ok(whatYouOwe(
-                  currentDate = dateService.getCurrentDate,
-                  creditCharges,
-                  whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-                  currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
-                  btaNavPartial = user.btaNavPartial,
-                  dunningLock = whatYouOweChargesList.hasDunningLock,
-                  codingOutEnabled = codingOutEnabled,
-                  MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
-                  isAgent = isAgent,
-                  whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
-                  isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-                  creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-                  origin = origin,
-                  claimToAdjustViewModel = ctaViewModel)(user, user, messages)
-                ).addingToSession(gatewayPage -> WhatYouOwePage.name)
-            }
-        }
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
-        itvcErrorHandler.showInternalServerError()
+      auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+
+      Ok(whatYouOwe(
+        currentDate = dateService.getCurrentDate,
+        creditCharges,
+        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+        currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+        btaNavPartial = user.btaNavPartial,
+        dunningLock = whatYouOweChargesList.hasDunningLock,
+        codingOutEnabled = isEnabled(CodingOut),
+        MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
+        isAgent = isAgent,
+        whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
+        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+        creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+        origin = origin,
+        claimToAdjustViewModel = ctaViewModel)(user, user, messages)
+      ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
+  } recover {
+    case ex: Exception =>
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
+      itvcErrorHandler.showInternalServerError()
   }
 
   private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
@@ -103,7 +100,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
   }
-
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
