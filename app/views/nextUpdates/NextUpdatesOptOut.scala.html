@@ -66,7 +66,7 @@
 				case m:OptOutOneYearViewModel =>
 					Html(
 						s"""
-						<span id="optout-message">
+						<span id="one-year-opt-out-message">
 							${messages("nextUpdates.optOutOneYear-1", m.startYear, m.endYear)}
 							${link(link = m.optOutConfirmationLink(isAgent).url, messageKey = "nextUpdates.optOutOneYear-2")}
 						</span>
@@ -76,7 +76,7 @@
 				case m:OptOutMultiYearViewModel =>
 					Html(
 						s"""
-						<span id="optout-message">
+						<span id="multi-year-opt-out-message">
       						${messages("nextUpdates.optOutMultiYear-1")}
        						${link(link = m.optOutLink(isAgent).url, messageKey = "nextUpdates.optOutMultiYear-2")}
 						</span>
