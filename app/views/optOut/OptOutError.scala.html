@@ -45,7 +45,7 @@
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
+    @h1(id = Some("heading"), msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
 
     <p class="govuk-body" id="options">@messages("optout.optOutError.options")</p>
     <ul class="govuk-list govuk-list--bullet">
