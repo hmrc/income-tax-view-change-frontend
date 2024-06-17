@@ -29,14 +29,13 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutErrorController @Inject()(val view: OptOutError,
-                                      val authenticate: AuthenticationPredicate,
                                       val auth: AuthenticatorPredicate,
                                       val authorisedFunctions: AuthorisedFunctions)
                                      (implicit val appConfig: FrontendAppConfig,
-                                      mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,
                                       val itvcErrorHandler: ItvcErrorHandler,
-                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      override val mcc: MessagesControllerComponents
                                      ) extends ClientConfirmedController with I18nSupport {
 
 
