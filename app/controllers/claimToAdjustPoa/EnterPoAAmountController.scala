@@ -38,7 +38,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                                          val auth: AuthenticatorPredicate,
                                          val poaSessionService: PaymentOnAccountSessionService,
                                          view: EnterPoAAmountView,
-                                         claimToAdjustService: ClaimToAdjustService,
+                                         val claimToAdjustService: ClaimToAdjustService,
                                          implicit val itvcErrorHandler: ItvcErrorHandler,
                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                         (implicit val appConfig: FrontendAppConfig,

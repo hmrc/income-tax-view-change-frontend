@@ -17,15 +17,16 @@
 package utils
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
+import enums.IncomeSourceJourney._
 import models.claimToAdjustPoa.PoAAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.PaymentOnAccountSessionService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,44 +36,20 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
   val poaSessionService: PaymentOnAccountSessionService
   val itvcErrorHandler: ItvcErrorHandler
   val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  val claimToAdjustService: ClaimToAdjustService
 
   implicit val ec: ExecutionContext
 
-  private def errorHandler(implicit user: MtdItUser[_]) = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
+  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
+  lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-
-  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(isAgent(user)) {
-      if (journeyState == InitialPage) {
-        handleSession(codeBlock)
-      } else {
-        poaSessionService.getMongo.flatMap {
-          case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
-            codeBlock(sessionData)
-          case Right(Some(_)) =>
-            redirectToYouCannotGoBackPage(user)
-          case Right(None) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
-            Future.successful(errorHandler.showInternalServerError())
-          case Left(ex: Throwable) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-            Future.successful(errorHandler.showInternalServerError())
-        }
-      }
-    }
-  }
-
-  private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
-
-  private def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Future[Result] = {
+  def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
     // TODO: Update with new URL
-    Future.successful(Redirect(controllers.routes.HomeController.showAgent.url))
+    Redirect(controllers.routes.HomeController.show().url)
   }
 
-  private def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
+  def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
     val isOnCannotGoBackOrSuccessPage = journeyState == CannotGoBackPage || journeyState == AfterSubmissionPage
     (journeyCompleted, isOnCannotGoBackOrSuccessPage) match {
       case (_, true) => false
@@ -107,6 +84,29 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
         Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
         Future.successful(errorHandler.showInternalServerError())
+    }
+  }
+
+  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
+                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    ifAdjustPoaIsEnabled(isAgent(user)) {
+      if (journeyState == InitialPage) {
+        handleSession(codeBlock)
+      } else {
+        poaSessionService.getMongo.flatMap {
+          case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
+            codeBlock(sessionData)
+          case Right(Some(_)) =>
+            Future.successful(redirectToYouCannotGoBackPage(user))
+          case Right(None) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
+            Future.successful(errorHandler.showInternalServerError())
+          case Left(ex: Throwable) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
+              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
+            Future.successful(errorHandler.showInternalServerError())
+        }
+      }
     }
   }
 

@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -31,6 +32,7 @@ import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, Payme
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
+import utils.ClaimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                      ctaService: ClaimToAdjustService,
+                                                      val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                                       val view: ConfirmationForAdjustingPoa,
@@ -48,39 +50,21 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with RecalculatePoaHelper {
-
-  private def isAmountZeroFromSession(implicit hc: HeaderCarrier): Future[Boolean] = {
-    poaSessionService.getMongo(hc, ec).flatMap {
-      case Right(Some(PoAAmendmentData(_, Some(newPoAAmount), _))) =>
-        Future.successful(newPoAAmount == BigDecimal(0))
-      case _ =>
-        Future.failed(new Exception(s"Failed to retrieve session data: isAmountZeroFromSession"))
-    }
-  }
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      if (isEnabled(AdjustPaymentsOnAccount)) {
-        {
-          for {
-            poaMaybe <- ctaService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
-            isAmountZero <- isAmountZeroFromSession
-          } yield (poaMaybe, isAmountZero)
-        } flatMap {
-          case (Right(Some(poaModel)), isAmountZero) =>
-            val viewModel = ConfirmationForAdjustingPoaViewModel(poaModel.taxYear, isAmountZero)
-            Future.successful(Ok(view(isAgent, viewModel)))
-          case (Right(None), isAmountZero) =>
-            Logger("application").error(s"Failed to create PaymentOnAccount model, isAmountZero: $isAmountZero")
-            Future.successful(showInternalServerError(isAgent))
-          case (Left(ex), isAmountZero) =>
-            Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}. isAmountZero: $isAmountZero")
-            Future.successful(showInternalServerError(isAgent))
+      withSessionDataAndPoa() { (sessionData, poa) =>
+        sessionData.newPoAAmount match {
+          case Some(value) =>
+            val isAmountZero: Boolean = value.equals(BigDecimal(0))
+            val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
+            EitherT.rightT(Ok(view(isAgent, viewModel)))
+          case None =>
+            Logger("application").error(s"Error, New PoA Amount was not found in session")
+            EitherT.rightT(showInternalServerError(isAgent))
         }
-      } else {
-        Future.successful(Redirect(if (isAgent) HomeController.showAgent else HomeController.show()))
-      }.recover {
+      } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
@@ -90,7 +74,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleSubmitPoaData(
-        claimToAdjustService = ctaService,
+        claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         isAgent = isAgent
