@@ -902,10 +902,10 @@ chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
-chargeSummary.whatYouOwe.textOne                                = Bwriwch olwg dros
-chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.whatYouOwe.textOne-agent                          = Bwriwch olwg dros
-chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.whatYouOwe.textOne                                = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw beth arall i’w dalu.
+chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill i’w talu.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
