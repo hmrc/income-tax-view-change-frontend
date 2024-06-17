@@ -14,25 +14,18 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.chargeSummary.PaymentHistoryAllocations
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails.FinancialDetail
-@import models.financialDetails.PaymentsWithChargeType
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import exceptions.MissingFieldException
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import java.time.LocalDate
-@import views.html.partials.chargeSummary._
-@import models.chargeHistory.ChargeHistoryModel
-@import models.financialDetails.FinancialDetailsModel
 @import enums.GatewayPage._
-@import enums.DocumentType
-@import enums.Poa1Charge
-@import enums.Poa2Charge
-@import enums.{BalancingCharge, OtherCharge, TRMAmmendCharge, TRMNewCharge}
+@import enums.{DocumentType, Poa1Charge, Poa2Charge}
+@import models.chargeHistory.ChargeHistoryModel
+@import models.chargeSummary.PaymentHistoryAllocations
+@import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.chargeSummary._
+
+@import java.time.LocalDate
 
 
 @this(
