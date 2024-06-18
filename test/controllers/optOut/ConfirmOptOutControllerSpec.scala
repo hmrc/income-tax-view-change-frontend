@@ -40,7 +40,6 @@ class ConfirmOptOutControllerSpec extends TestSupport
   object TestConfirmOptOutController extends ConfirmOptOutController(
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
-    errorView = app.injector.instanceOf[OptOutError],
     checkOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers],
     optOutService = mockOptOutService,
     sessionService = mockSessionService)(
@@ -166,7 +165,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
           val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
 
-          status(result) shouldBe Status.BAD_REQUEST
+          status(result) shouldBe Status.SEE_OTHER
         }
 
         "opt-out service fails" in {
@@ -176,7 +175,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
 
           val result: Future[Result] = TestConfirmOptOutController.submit(isAgent)(requestGET)
 
-          status(result) shouldBe Status.BAD_REQUEST
+          status(result) shouldBe Status.SEE_OTHER
         }
       }
     }

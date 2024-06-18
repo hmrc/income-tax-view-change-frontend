@@ -35,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
-                                        errorView: OptOutError,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
                                         auth: AuthenticatorPredicate,
@@ -47,7 +46,6 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
-
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -72,7 +70,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
         case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => BadRequest(errorView(isAgent))
+        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }
 

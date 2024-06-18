@@ -165,7 +165,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(BAD_REQUEST)
+          httpStatus(SEE_OTHER)
         )
 
       }
@@ -189,7 +189,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(BAD_REQUEST)
+          httpStatus(SEE_OTHER)
         )
       }
     }
