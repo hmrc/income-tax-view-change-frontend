@@ -18,6 +18,7 @@ package audit.models
 
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
+import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
@@ -38,13 +39,13 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case None => Json.obj()
   }
 
-  val getChargeType: String = (docDateDetail.documentDetail.documentDescription, docDateDetail.documentDetail.documentText) match {
+  val getChargeType: String = (docDateDetail.documentDetail.getDocType, docDateDetail.documentDetail.documentText) match {
     case _ if isMFADebit => "MFADebit"
     case (_, Some(text)) if text.contains("Cancelled PAYE Self Assessment") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
     case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") => "Balancing payment collected through PAYE tax code"
-    case (Some("ITSA- POA 1"), _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case (Some("ITSA - POA 2"), _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
+    case (Poa1Charge, _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
+    case (Poa2Charge, _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
+    case (TRMNewCharge, _) | (TRMAmmendCharge, _) =>
       if (isLatePaymentCharge) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application").error(s"Missing or non-matching charge type: $error found")

@@ -19,16 +19,18 @@
 @import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetail
-@import models.financialDetails.PaymentsWithChargeType
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
 @import views.html.partials.chargeSummary._
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.FinancialDetailsModel
 @import enums.GatewayPage._
+@import enums.DocumentType
+@import enums.Poa1Charge
+@import enums.Poa2Charge
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -49,7 +51,7 @@
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean, documentType: DocumentType
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -90,6 +92,17 @@
         case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
     }
     messages(key)
+}
+
+@getPoaExplanationContent = {
+    <div>
+        @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
+        <ul id="bullets" class="govuk-list govuk-list--bullet">
+            <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
+            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+        </ul>
+        @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+    </div>
 }
 
 @checkPayeCodePara = {
@@ -161,6 +174,13 @@
 
 @isBalancingChargeZero = @{documentDetail.isBalancingChargeZero(codingOutEnabled)}
 
+@chargeHistoryHeading = @{
+    documentType match {
+        case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
+        case Poa2Charge => messages("chargeSummary.chargeHistory.Poa2heading")
+        case _ => messages("chargeSummary.chargeHistory.heading")
+    }
+}
 
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
     useFallbackBackLink = true, gatewayPage = gatewayPage) {
@@ -184,6 +204,13 @@
             messages(key)
         }
     </h1>
+
+    @{
+        documentType match {
+            case Poa1Charge | Poa2Charge => getPoaExplanationContent
+            case _ =>
+        }
+    }
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
@@ -284,9 +311,9 @@
 
     @if((chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero ){
         @if(hasPaymentBreakdown && documentDetail.isNotCodingOutDocumentDetail) {
-            <h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
+            <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
         } else {
-            <h2 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h2>
+            <h2 class="govuk-heading-l">@chargeHistoryHeading</h2>
         }
 
         <table class="govuk-table" id="payment-history-table">

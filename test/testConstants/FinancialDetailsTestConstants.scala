@@ -1168,6 +1168,15 @@ object FinancialDetailsTestConstants {
     interestOutstandingAmount = interestOutstandingAmount
   )
 
+  def whatYouOweDataWithPaidPOAs(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None, None),
+    chargesList = financialDetailsDueIn30Days(dunningLocks)
+      .getAllDocumentDetailsWithDueDates()(dateService)
+      .map(d => d.copy(documentDetail = d.documentDetail.copy(outstandingAmount = 0.0))),
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
+  )
+
+
   def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None, None),
     chargesList = financialDetailsDueIn30Days(dunningLocks).getAllDocumentDetailsWithDueDates()(dateService),

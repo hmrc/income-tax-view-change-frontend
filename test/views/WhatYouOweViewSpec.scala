@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.{fixedDate, testFinancialDetailsModel, _}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe
@@ -120,7 +120,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   migrationYear: Int = fixedDate.getYear - 1,
                   codingOutEnabled: Boolean = true,
                   MFADebitsEnabled: Boolean = false,
-                  adjustPaymentsOnAccountFSEnabled: Boolean = false
+                  adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                  claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
                  ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -134,10 +135,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       arn = None
     )(FakeRequest())
 
+    val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+
     val html: HtmlFormat.Appendable = whatYouOweView(
-      dateService.getCurrentDate,
-      creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true, claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled))(FakeRequest(), individualUser, implicitly)
+      currentDate = dateService.getCurrentDate,
+      creditCharges = creditCharges,
+      whatYouOweChargesList = charges,
+      hasLpiWithDunningLock = hasLpiWithDunningLock,
+      currentTaxYear = currentTaxYear,
+      backUrl = "testBackURL",
+      utr = Some("1234567890"),
+      btaNavPartial = None,
+      dunningLock = dunningLock,
+      codingOutEnabled = codingOutEnabled,
+      MFADebitsEnabled = MFADebitsEnabled,
+      whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
+      creditAndRefundEnabled = true,
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -161,7 +175,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        whatYouOweCreditAmountEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
-                       adjustPaymentsOnAccountFSEnabled: Boolean = false) {
+                       adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                       claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
+
+    val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
     val agentUser: MtdItUser[_] = MtdItUser(
       nino = "AA111111A",
@@ -196,7 +213,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
-      claimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -1081,10 +1098,37 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "AdjustPaymentsOnAccount is enabled" should {
-      "display the claim to adjust payments on account link" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
-        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
-        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
+    "AdjustPaymentsOnAccount is enabled" when {
+
+      "user has a POA that can be adjusted" when {
+
+        val poaModel = ctaViewModel(true)
+
+        "POA is paid off fully should display link with additional content" in new TestSetup(
+          charges = whatYouOweDataWithPaidPOAs(),
+          adjustPaymentsOnAccountFSEnabled = true,
+          claimToAdjustViewModel = Some(poaModel) ) {
+            pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa.paid-2", "2024", "2025")
+            pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
+            Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
+        }
+
+        "POA is not paid off fully should display link" in new TestSetup(
+          charges = whatYouOweDataWithZeroMoneyInAccount(),
+          adjustPaymentsOnAccountFSEnabled = true,
+          claimToAdjustViewModel = Some(poaModel) ) {
+            pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+            pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
+            Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
+        }
+      }
+
+      "user has no POA that can be adjusted should not display link" in new TestSetup(
+        charges = whatYouOweDataNoCharges,
+        adjustPaymentsOnAccountFSEnabled = true,
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
+        Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
     }
 
@@ -1256,10 +1300,37 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "AdjustPaymentsOnAccount is enabled" should {
-      "display the claim to adjust payments on account link" in new AgentTestSetup(charges = whatYouOweDataWithCodingOutNics2, adjustPaymentsOnAccountFSEnabled = true) {
-        pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
-        pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
+    "AdjustPaymentsOnAccount is enabled" when {
+
+      "user has a POA that can be adjusted" when {
+
+        val poaModel = ctaViewModel(true)
+
+        "POA is paid off fully should display link with additional content" in new AgentTestSetup(
+          charges = whatYouOweDataWithPaidPOAs(),
+          adjustPaymentsOnAccountFSEnabled = true,
+          claimToAdjustViewModel = Some(poaModel) ) {
+          pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa.paid-2", "2024", "2025")
+          pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
+          Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
+        }
+
+        "POA is not paid off fully should display link" in new AgentTestSetup(
+          charges = whatYouOweDataWithZeroMoneyInAccount(),
+          adjustPaymentsOnAccountFSEnabled = true,
+          claimToAdjustViewModel = Some(poaModel) ) {
+          pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
+          pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
+          Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
+        }
+      }
+
+      "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
+        charges = whatYouOweDataNoCharges,
+        adjustPaymentsOnAccountFSEnabled = true,
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
+        Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
     }
   }

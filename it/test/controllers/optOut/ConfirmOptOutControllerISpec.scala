@@ -21,9 +21,8 @@ import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
-import models.optout.OptOutSessionData
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -33,12 +32,13 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
+
+  val confirmedPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -87,13 +87,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        val newSessionData = UIJourneySessionData(
-          sessionId = hc.sessionId.get.value,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
-        )
-        sessionService.createSession("OPTOUT")
-        sessionService.setMongoData(newSessionData)
+        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -101,6 +95,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           elementTextByID("heading")(optOutExpectedTitle),
+          elementTextBySelector(".govuk-summary-list__value")("2023 to 2024 tax year onwards"),
           elementTextByID("optOut-summary")(summary),
           elementTextByID("optOut-warning")(infoMessage),
         )
@@ -116,7 +111,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           Status.NO_CONTENT, emptyBodyString,
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
@@ -125,6 +120,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
+          redirectURI(confirmedPageUrl)
         )
 
       }
@@ -138,7 +134,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           Status.NO_CONTENT, emptyBodyString,
           Map("missing-header-name" -> "missing-header-value")
         )
@@ -147,6 +143,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(Status.SEE_OTHER),
+          redirectURI(confirmedPageUrl)
         )
 
       }
@@ -160,7 +157,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
@@ -168,7 +165,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(BAD_REQUEST),
+          httpStatus(BAD_REQUEST)
         )
 
       }
@@ -181,24 +178,18 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        val newSessionData = UIJourneySessionData(
-          sessionId = hc.sessionId.get.value,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(OptOutSessionData(Some("2023-2024")))
-        )
-        sessionService.createSession(OptOutJourney.Name)
-        sessionService.setMongoData(newSessionData)
+        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(BAD_REQUEST),
-          //elementTextByID("heading")(optOutExpectedTitle),
+          httpStatus(BAD_REQUEST)
         )
       }
     }

@@ -721,8 +721,8 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 nextUpdates.optOutOneYear-1                                     = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear-2                                     = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
 
-nextUpdates.optOutMultiYear-1                                   = ToDo: Requested
-nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear-1                                   = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear-2                                   = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -1229,7 +1229,7 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cy
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
 
-incomeSources.add.error.standardError                            = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
+incomeSources.add.error.standardError                            = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd ychwanegu eich busnes {0}. Nid ydym wedi cadw’ch atebion. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
 incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
@@ -2029,12 +2029,3 @@ optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo
 optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
 optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diweddarid chwarterol sydd wedi?u cyflwyno.
-
-# opt out error page
-optout.optOutError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
-optout.optOutError.options                           = Gallwch wneud y canlynol:
-optout.optOutError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
-optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
-optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
-optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
-optout.optOutError.home-bullet-2                     = hafan
