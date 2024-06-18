@@ -15,10 +15,10 @@
  *@
 
 @import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import views.html.errorPages.templates.ErrorTemplatePartial
 
 @this(
-    mainTemplate: unifiedLayout,
+    template: ErrorTemplatePartial,
     h1: h1,
     p: p,
     link: link
@@ -27,9 +27,10 @@
 @(isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getNextUpdatesUrl = @{
-    if(isAgent) { controllers.routes.NextUpdatesController.showAgent.url
+    if(isAgent) {
+        controllers.routes.NextUpdatesController.showAgent.url
     } else {
-    controllers.routes.NextUpdatesController.show().url
+        controllers.routes.NextUpdatesController.show().url
     }
 }
 
@@ -37,13 +38,7 @@
     controllers.routes.HomeController.show().url
 }
 
-@mainTemplate(
-    pageTitle = messages("incomeSources.add.error.standardError"),
-    isAgent = isAgent,
-    backUrl = None,
-    btaNavPartial = user.btaNavPartial) {
-
-    @h1(id = Some("heading"), msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
+@errorContent = {
 
     <p class="govuk-body" id="options">@messages("optout.optOutError.options")</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -51,11 +46,16 @@
             @messages("optout.optOutError.nextUpdates-bullet-1")
             @link(id=Some("next-updates-link"), link = getNextUpdatesUrl, messageKey = "optout.optOutError.nextUpdates-link")
             @messages("optout.optOutError.nextUpdates-bullet-2")
-        </li>
-        <li id="homepageBullet">
+            </li>
+            <li id="homepageBullet">
             @messages("optout.optOutError.home-bullet-1")
             @link(id=Some("home-link"), link = getHomepageUrl, messageKey = "optout.optOutError.home-bullet-2")
         </li>
     </ul>
-
 }
+
+@template(
+    pageTitle = messages("incomeSources.add.error.standardError"),
+    heading = messages("incomeSources.add.error.standardError"),
+    content = errorContent,
+    isAgent = isAgent)

@@ -29,12 +29,13 @@ import play.api.mvc._
 import services.SessionService
 import services.optout.OptOutService
 import utils.{AuthenticatorPredicate, OptOutJourney}
-import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut, OptOutError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
+                                        errorView: OptOutError,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
                                         auth: AuthenticatorPredicate,
@@ -71,7 +72,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
         case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-        case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+        case _ => BadRequest(errorView(isAgent))
       }
   }
 

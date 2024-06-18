@@ -24,7 +24,6 @@ import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
-import org.scalatest.Ignore
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -36,13 +35,10 @@ import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 import utils.OptOutJourney
 
-@Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
-
-  val optOutErrorPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -172,7 +168,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(SEE_OTHER),
+          httpStatus(BAD_REQUEST),
         )
 
       }
@@ -201,8 +197,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(optOutErrorPageUrl)
+          httpStatus(BAD_REQUEST),
+          //elementTextByID("heading")(optOutExpectedTitle),
         )
       }
     }
