@@ -48,7 +48,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
     auth = testAuthenticator,
     poaSessionService = mockPaymentOnAccountSessionService,
     checkYourAnswers = app.injector.instanceOf[CheckYourAnswers],
-    ctaService = claimToAdjustService,
+    claimToAdjustService = claimToAdjustService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     ctaCalculationService = mockClaimToAdjustPoaCalculationService

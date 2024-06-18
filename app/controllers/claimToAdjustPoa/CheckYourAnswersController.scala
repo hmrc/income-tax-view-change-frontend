@@ -21,13 +21,14 @@ import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.claimToAdjustPoa.routes._
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
-import models.core.{CheckMode, Nino}
+import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
+import models.core.CheckMode
 import play.api.Logger
 import play.api.mvc._
 import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.ClaimToAdjust.WithSessionAndPoa
 import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
 import views.html.claimToAdjustPoa.CheckYourAnswers
 
@@ -36,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                           ctaService: ClaimToAdjustService,
+                                           val claimToAdjustService: ClaimToAdjustService,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                            val auth: AuthenticatorPredicate,
@@ -46,40 +47,38 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with ClaimToAdjustUtils with RecalculatePoaHelper {
+  extends ClientConfirmedController with ClaimToAdjustUtils with RecalculatePoaHelper with WithSessionAndPoa {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {
-          withSessionAndPoa(isAgent) { (session, poa) =>
-            withValidSession(isAgent, session) { (reason, amount) =>
-              EitherT.rightT(
-                Ok(
-                  checkYourAnswers(
-                    isAgent = isAgent,
-                    poaReason = reason,
-                    taxYear = poa.taxYear,
-                    adjustedFirstPoaAmount = amount,
-                    adjustedSecondPoaAmount = amount,
-                    redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
-                    changePoaAmountUrl = EnterPoAAmountController.show(isAgent, CheckMode).url,
-                    changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url
-                  )
+        withSessionDataAndPoa() { (session, poa) =>
+          withValidSession(isAgent, session) { (reason, amount) =>
+            EitherT.rightT(
+              Ok(
+                checkYourAnswers(
+                  isAgent = isAgent,
+                  poaReason = reason,
+                  taxYear = poa.taxYear,
+                  adjustedFirstPoaAmount = amount,
+                  adjustedSecondPoaAmount = amount,
+                  redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
+                  changePoaAmountUrl = EnterPoAAmountController.show(isAgent, CheckMode).url,
+                  changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url
                 )
               )
-            }
-          } fold(
-            logAndShowErrorPage(isAgent),
-            view => view
-          )
+            )
+          }
+        }.recover {
+          case ex: Exception =>
+            logAndShowErrorPage(isAgent)(ex)
         }
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       handleSubmitPoaData(
-        claimToAdjustService = ctaService,
+        claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         isAgent = isAgent
@@ -103,33 +102,4 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
     }
   }
 
-  private def withSessionAndPoa(isAgent: Boolean)
-                               (block: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
-                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
-
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-    for {
-      session <- EitherT(poaSessionService.getMongo)
-      poa <- EitherT(ctaService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-      result <- (session, poa) match {
-        case (Some(s), Some(p)) =>
-          block(s, p)
-        case (None, _) =>
-          Logger("application").error(s"Session missing")
-          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
-          x
-        case (_, None) =>
-          Logger("application").error(s"POA missing")
-          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
-          x
-      }
-    } yield result
-  }
-
-  private def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit request: Request[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-    errorHandler.showInternalServerError()
-  }
 }

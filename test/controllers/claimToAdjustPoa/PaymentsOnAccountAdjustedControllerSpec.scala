@@ -51,7 +51,7 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[PaymentsOnAccountAdjustedView],
-    sessionService = mockPOASessionService
+    poaSessionService = mockPOASessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],

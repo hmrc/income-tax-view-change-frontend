@@ -54,7 +54,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
     view = app.injector.instanceOf[SelectYourReasonView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     formProvider = app.injector.instanceOf[SelectYourReasonFormProvider],
-    sessionService = mockPaymentOnAccountSessionService,
+    poaSessionService = mockPaymentOnAccountSessionService,
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],

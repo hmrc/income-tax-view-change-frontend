@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.{Increase, PoAAmendmentData, PoAAmountViewModel}
+import models.claimToAdjustPoa.{Increase, PoAAmountViewModel}
 import models.core.{CheckMode, Mode, Nino, NormalMode}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -127,15 +127,5 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
     }
   }
-
-//  private def withValidSession(isAgent: Boolean)(block: (PoAAmendmentData) => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-//    poaSessionService.getMongo.flatMap {
-//      case Right(Some(data)) => block(data)
-//      case Right(None) => Logger("application").error(s"No mongo data found")
-//        Future.successful(showInternalServerError(isAgent))
-//      case Left(ex) => Logger("application").error(s"Error while retrieving mongo data : ${ex.getMessage} - ${ex.getCause}")
-//        Future.successful(showInternalServerError(isAgent))
-//    }
-//  }
 
 }

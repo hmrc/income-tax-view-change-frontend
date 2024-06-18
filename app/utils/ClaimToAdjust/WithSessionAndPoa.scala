@@ -18,15 +18,13 @@ package utils.ClaimToAdjust
 
 import auth.MtdItUser
 import cats.data.EitherT
-import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxEitherId}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, InitialPage, JourneyState}
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.JourneyCheckerClaimToAdjust
-import controllers.routes
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -85,7 +83,6 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
         val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
         x.value
-//        EitherT.rightT[Future, Result](errorHandler.showInternalServerError()).value
     }.flatten)
   }
 
@@ -96,7 +93,6 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
       poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
       result <- (session, poa) match {
         case (Some(s), Some(_)) if showCannotGoBackErrorPage(s.journeyCompleted, journeyState) =>
-//          val x: EitherT[Future, Throwable, Result] = EitherT.rightT(errorHandler.showInternalServerError())
           val x: EitherT[Future, Throwable, Result] = EitherT.rightT(redirectToYouCannotGoBackPage(user))
           x
         case (Some(s), Some(p)) =>
@@ -113,8 +109,8 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     } yield result
   }
 
-  private def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit request: Request[_], user: MtdItUser[_]): Result = {
-    Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+  def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
+    Logger("application").error(if (isAgent) "[Agent]" else "" + s"${ex.getMessage} - ${ex.getCause}")
     errorHandler.showInternalServerError()
   }
 

@@ -20,23 +20,19 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.routes.HomeController
-import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{ConfirmationForAdjustingPoaViewModel, PoAAmendmentData}
-import models.core.Nino
+import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import utils.ClaimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: AuthorisedFunctions,
