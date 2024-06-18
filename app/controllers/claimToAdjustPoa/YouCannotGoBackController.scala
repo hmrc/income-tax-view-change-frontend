@@ -48,7 +48,7 @@ class YouCannotGoBackController @Inject()(val authorisedFunctions: AuthorisedFun
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
+      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(x, poa) =>
         EitherT.rightT(Ok(view(
           isAgent = isAgent,
           poaTaxYear = poa.taxYear
