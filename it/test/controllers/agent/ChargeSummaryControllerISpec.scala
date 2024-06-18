@@ -55,7 +55,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val currentYear: Int = currentDate.getYear
   val testArn: String = "1"
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
-  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.Poa1heading")
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
