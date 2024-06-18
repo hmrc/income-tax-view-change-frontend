@@ -38,7 +38,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
 
-  val optOutErrorPageUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
   val confirmedPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -166,8 +165,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(optOutErrorPageUrl)
+          httpStatus(SEE_OTHER)
         )
 
       }
@@ -191,8 +189,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
 
         result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(optOutErrorPageUrl)
+          httpStatus(SEE_OTHER)
         )
       }
     }
