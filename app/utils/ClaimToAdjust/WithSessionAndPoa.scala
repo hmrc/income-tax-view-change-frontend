@@ -23,13 +23,15 @@ import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.Result
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.JourneyCheckerClaimToAdjust
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
   self =>
+
+  val claimToAdjustService: ClaimToAdjustService
 
   def withSessionDataAndPoa(journeyState: JourneyState = BeforeSubmissionPage)
                            (codeBlock: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])

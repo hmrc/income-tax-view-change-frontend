@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.ClaimToAdjust
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching

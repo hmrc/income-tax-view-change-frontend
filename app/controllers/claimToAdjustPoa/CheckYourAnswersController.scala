@@ -28,8 +28,8 @@ import play.api.mvc._
 import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.ClaimToAdjust.WithSessionAndPoa
-import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
+import utils.ClaimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}

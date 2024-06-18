@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.ClaimToAdjust
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
@@ -36,11 +36,33 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
   val poaSessionService: PaymentOnAccountSessionService
   val itvcErrorHandler: ItvcErrorHandler
   val itvcErrorHandlerAgent: AgentItvcErrorHandler
-  val claimToAdjustService: ClaimToAdjustService
-
   implicit val ec: ExecutionContext
 
-  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError = if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
+  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
+                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    ifAdjustPoaIsEnabled(isAgent(user)) {
+      if (journeyState == InitialPage) {
+        handleSession(codeBlock)
+      } else {
+        poaSessionService.getMongo.flatMap {
+          case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
+            codeBlock(sessionData)
+          case Right(Some(_)) =>
+            Future.successful(redirectToYouCannotGoBackPage(user))
+          case Right(None) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
+            Future.successful(errorHandler.showInternalServerError())
+          case Left(ex: Throwable) =>
+            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
+              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
+            Future.successful(errorHandler.showInternalServerError())
+        }
+      }
+    }
+  }
+
+  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
+    if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
   lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
@@ -84,29 +106,6 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
         Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
         Future.successful(errorHandler.showInternalServerError())
-    }
-  }
-
-  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoAAmendmentData => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(isAgent(user)) {
-      if (journeyState == InitialPage) {
-        handleSession(codeBlock)
-      } else {
-        poaSessionService.getMongo.flatMap {
-          case Right(Some(sessionData)) if !showCannotGoBackErrorPage(sessionData.journeyCompleted, journeyState) =>
-            codeBlock(sessionData)
-          case Right(Some(_)) =>
-            Future.successful(redirectToYouCannotGoBackPage(user))
-          case Right(None) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" + s"Necessary session data was empty in mongo")
-            Future.successful(errorHandler.showInternalServerError())
-          case Left(ex: Throwable) =>
-            Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
-              s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")
-            Future.successful(errorHandler.showInternalServerError())
-        }
-      }
     }
   }
 
