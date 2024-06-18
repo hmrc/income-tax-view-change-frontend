@@ -111,7 +111,7 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     } yield result
   }
 
-  def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
+  private def logAndShowErrorPage(isAgent: Boolean)(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error(if (isAgent) "[Agent]" else "" + s"${ex.getMessage} - ${ex.getCause}")
     errorHandler.showInternalServerError()
   }

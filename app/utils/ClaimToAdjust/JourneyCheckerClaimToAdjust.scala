@@ -61,17 +61,17 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
     }
   }
 
-  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
+  protected def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
     if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
-  lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
+  protected lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
+  protected def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
     // TODO: Update with new URL
     Redirect(controllers.routes.HomeController.show().url)
   }
 
-  def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
+  protected def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
     val isOnCannotGoBackOrSuccessPage = journeyState == CannotGoBackPage || journeyState == AfterSubmissionPage
     (journeyCompleted, isOnCannotGoBackOrSuccessPage) match {
       case (_, true) => false

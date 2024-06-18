@@ -71,7 +71,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
           }
         }.recover {
           case ex: Exception =>
-            logAndShowErrorPage(isAgent)(ex)
+            Logger("application").error(if (isAgent) "[Agent]" else "" + s"${ex.getMessage} - ${ex.getCause}")
+            errorHandler.showInternalServerError()
         }
     }
 
