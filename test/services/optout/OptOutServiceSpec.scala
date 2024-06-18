@@ -565,8 +565,8 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
-          when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
-            .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
+          when(nextUpdatesService.getQuarterlyUpdatesCounts(same(optOutTaxYear.taxYear))(any(), any()))
+            .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val intent = optOutTaxYear
