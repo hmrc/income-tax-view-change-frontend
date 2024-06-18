@@ -28,9 +28,9 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.NextUpdatesService.SubmissionsCountForTaxYear
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.CurrentOptOutTaxYear
-import services.optout.OptOutService.SubmissionsCountForTaxYearModel
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
@@ -60,17 +60,17 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val optOutYearsOffered: Seq[TaxYear] = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
   val optOutYearsOfferedFuture: Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
 
-  val counts: Future[SubmissionsCountForTaxYearModel] = Future.successful(SubmissionsCountForTaxYearModel(Seq(
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
-    SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0)
+  val counts: Future[QuarterlyUpdatesCountForTaxYearModel] = Future.successful(QuarterlyUpdatesCountForTaxYearModel(Seq(
+    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2025), 0)
   )))
 
   val taxYears: Seq[TaxYear] =
     Seq(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024), TaxYear.forYearEnd(2025))
   val futureTaxYears: Future[Seq[TaxYear]] = Future.successful(taxYears)
 
-  val submissionsCountForTaxYearModel: Future[SubmissionsCountForTaxYearModel] = counts
+  val submissionsCountForTaxYearModel: Future[QuarterlyUpdatesCountForTaxYearModel] = counts
 
   "OptOutChooseTaxYearController - Individual" when {
     controllerShowTest(isAgent = false)

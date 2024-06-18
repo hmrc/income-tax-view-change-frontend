@@ -29,12 +29,17 @@
         govukTable: GovukTable,
         formWithCSRF: FormWithCSRF,
         govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
 )
 
 @(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+}
+
+@quarterlyUpdatesWarningBlock(count: Int) = {
+    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.confirmOptOut.quarterly-updates", count))))
 }
 
 @title = @{
@@ -61,6 +66,10 @@
     @p(id=Some("info-message")) {
         @messages("optout.confirmOptOut.info-message")
     }
+}
+
+@viewModel.quarterlyUpdates.filter( v => v > 0).map{ quarterlyUpdatesCount =>
+    @quarterlyUpdatesWarningBlock(quarterlyUpdatesCount)
 }
 
 @formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {

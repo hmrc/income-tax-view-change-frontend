@@ -24,7 +24,8 @@ sealed trait OptOutCheckpointViewModel {
   val endYear: String;
 }
 
-case class OneYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState]) extends OptOutCheckpointViewModel {
+case class OneYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState],
+                                            quarterlyUpdates: Option[Int] = Some(0)) extends OptOutCheckpointViewModel {
   val startYear: String = intent.startYear.toString
   val endYear: String = intent.endYear.toString
   val showFutureChangeInfo: Boolean = state.contains(OneYearOptOutFollowedByAnnual) || state.contains(NextYearOptOut)
