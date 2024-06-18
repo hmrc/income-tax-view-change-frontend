@@ -76,11 +76,6 @@ object ClaimToAdjustPOATestConstants {
     latePaymentInterestId = None
   )
 
-//  val chargeHistoryModel =
-//
-//  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
-
-
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2024), genericDocumentDetailPOA2(2024)),
