@@ -48,7 +48,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
     implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
-        EitherT.rightT(setJourneyCompletedFlag(isAgent, poa))
+        EitherT.liftF(setJourneyCompletedFlag(isAgent, poa))
       } recover {
         case ex: Exception =>
           Logger("application").error(if (isAgent) "[Agent]" else "" + s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
