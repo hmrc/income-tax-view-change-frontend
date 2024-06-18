@@ -71,6 +71,8 @@ class SelectYourReasonController @Inject()(
           logAndShowErrorPage(isAgent),
           view => view
         )
+      } recover {
+        case ex: Throwable => logAndShowErrorPage(isAgent)(ex)
       }
   }
 
