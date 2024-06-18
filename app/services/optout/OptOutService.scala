@@ -117,7 +117,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
 
     def findAnyFailOrFirstSuccess(responses: Seq[OptOutUpdateResponse]): OptOutUpdateResponse = {
-      responses.find(_.isInstanceOf[OptOutUpdateResponseFailure]).getOrElse(responses.head)
+      responses.find {
+          case _: OptOutUpdateResponseFailure => true
+          case _ => false
+      }.getOrElse(responses.head)
     }
 
     val result = for {

@@ -69,11 +69,10 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
             Logger("application").error(s"No payment on account data found")
             Future.successful(showInternalServerError(isAgent))
         }
-      }.recover {
+      } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
       }
   }
-
 }

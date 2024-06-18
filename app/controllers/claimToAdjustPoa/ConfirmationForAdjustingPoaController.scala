@@ -80,7 +80,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authorisedFunctions: A
         }
       } else {
         Future.successful(Redirect(if (isAgent) HomeController.showAgent else HomeController.show()))
-      }.recover {
+      } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)

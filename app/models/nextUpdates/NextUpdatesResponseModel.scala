@@ -70,7 +70,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
   def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
-    allDeadlinesWithSource().map(_.obligation.due).distinct.size
+    allQuarterly.map(_.obligation.due).distinct.size
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth

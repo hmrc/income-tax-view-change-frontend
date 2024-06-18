@@ -73,6 +73,8 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
             logAndShowErrorPage(isAgent),
             view => view
           )
+        } recover {
+          case ex: Throwable => logAndShowErrorPage(isAgent)(ex)
         }
     }
 

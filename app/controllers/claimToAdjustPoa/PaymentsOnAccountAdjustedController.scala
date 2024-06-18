@@ -63,7 +63,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
             Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
             Future.successful(showInternalServerError(isAgent))
         }
-      }.recover {
+      } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)

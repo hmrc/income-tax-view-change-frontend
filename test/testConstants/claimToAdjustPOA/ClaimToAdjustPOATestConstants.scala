@@ -16,11 +16,29 @@
 
 package testConstants.claimToAdjustPoa
 
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails._
 
 import java.time.LocalDate
 
 object ClaimToAdjustPOATestConstants {
+
+  def genericFinancialDetailPOA1(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
+    taxYear = taxYearEnd.toString,
+    mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
+    outstandingAmount = Some(outstandingAmount),
+    chargeReference = Some("ABCD1234"),
+    items = None
+  )
+
+  def genericFinancialDetailPOA2(taxYearEnd: Int, outstandingAmount: BigDecimal = 0.0) = FinancialDetail(
+    taxYear = taxYearEnd.toString,
+    mainType = Some("SA Payment on Account 2"),
+    mainTransaction = Some("4930"),
+    outstandingAmount = Some(outstandingAmount),
+    chargeReference = Some("ABCD1234"),
+    items = None
+  )
 
   def genericDocumentDetailPOA1(taxYearEnd: Int) = DocumentDetail(
     taxYear = taxYearEnd,
@@ -101,5 +119,7 @@ object ClaimToAdjustPOATestConstants {
   )
 
   def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
+
+
 
 }

@@ -89,5 +89,6 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
         Logger("application").error(s"There was an error getting the current mongo session")
         Future.successful(Left(ex))
     }
+
   }
 }
