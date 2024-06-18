@@ -73,6 +73,9 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
             logAndShowErrorPage(isAgent),
             view => view
           )
+        } recover {
+          case ex: Throwable => Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            logAndShowErrorPage(isAgent)(ex)
         }
     }
 
