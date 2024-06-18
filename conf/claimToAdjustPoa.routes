@@ -50,3 +50,6 @@ GET          /agents/adjust-poa/success                                     cont
 
 GET          /adjust-poa/error-poa-not-updated                              controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = false)
 GET          /agents/adjust-poa/error-poa-not-updated                       controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController.show(isAgent: Boolean = true)
+
+GET          /adjust-poa/poa-updated-cannot-go-back                         controllers.claimToAdjustPoa.YouCannotGoBackController.show(isAgent: Boolean = false)
+GET          /agents/adjust-poa/poa-updated-cannot-go-back                  controllers.claimToAdjustPoa.YouCannotGoBackController.show(isAgent: Boolean = true)

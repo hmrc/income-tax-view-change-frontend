@@ -2002,6 +2002,16 @@ claimToAdjustPoa.success.check                          = Check
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
 
+## You Cannot Go Back!
+claimToAdjustPoa.youCannotGoBack.heading                 = You cannot go back
+claimToAdjustPoa.youCannotGoBack.para1                   = Your payments on account have been updated.
+claimToAdjustPoa.youCannotGoBack.para2                   = You can:
+claimToAdjustPoa.youCannotGoBack.bullet1Text             = check the
+claimToAdjustPoa.youCannotGoBack.bullet1Link             = status of your payments on account
+claimToAdjustPoa.youCannotGoBack.bullet2Text             = check
+claimToAdjustPoa.youCannotGoBack.bullet2Link             = what you owe
+claimToAdjustPoa.youCannotGoBack.bullet3Text             = go back to the
+claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 
 #######################################################################################################################
 ## Opt Out ##

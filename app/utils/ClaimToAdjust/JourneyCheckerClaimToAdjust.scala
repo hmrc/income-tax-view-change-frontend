@@ -23,7 +23,7 @@ import models.claimToAdjustPoa.PoAAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -67,8 +67,7 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
   protected lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
   protected def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
-    // TODO: Update with new URL
-    Redirect(controllers.routes.HomeController.show().url)
+    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent(user)).url)
   }
 
   protected def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
@@ -82,7 +81,7 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
 
   private def handleSession(codeBlock: PoAAmendmentData => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
     poaSessionService.getMongo flatMap {
-      case Right(Some(poaData: PoAAmendmentData)) => {
+      case Right(Some(poaData: PoAAmendmentData)) =>
         if (poaData.journeyCompleted) {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
           poaSessionService.createSession.flatMap {
@@ -96,7 +95,6 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
           Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
           codeBlock(poaData)
         }
-      }
       case Right(None) =>
         Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
         poaSessionService.createSession
