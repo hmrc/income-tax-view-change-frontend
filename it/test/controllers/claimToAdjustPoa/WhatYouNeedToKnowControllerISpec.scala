@@ -24,34 +24,45 @@ import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData,
+  testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
-  val whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+  def whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
   val testTaxYear = 2024
 
-  val enterPOAAmountUrl = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
-  val selectReasonUrl = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
+  def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+  def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
+  def homeUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None))))
-    if(isAgent) {
-      stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
+    if (isAgent) {
+      stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
     }
+  }
+
+  def get(url: String): WSResponse = {
+    IncomeTaxViewChangeFrontend.get(s"""${
+      if (isAgent) {
+        "/agents"
+      } else ""
+    }$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   s"calling GET $whatYouNeedToKnowUrl" should {
     s"return status $OK and render the What You Need To Know page (with correct link)" when {
-      "User is authorised and has originalAmount >= relevantAmount" in {
+      s"User is authorised and has originalAmount >= relevantAmount" in {
         enable(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -68,9 +79,9 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = get("/adjust-poa/what-you-need-to-know")
 
-        lazy val document: Document = Jsoup.parse(res.body)
+        val document: Document = Jsoup.parse(res.body)
         val continueButton = document.getElementById("continue")
 
         res should have(
@@ -102,9 +113,9 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           )
 
           When(s"I call GET $whatYouNeedToKnowUrl")
-          val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+          val res = get("/adjust-poa/what-you-need-to-know")
 
-          lazy val document: Document = Jsoup.parse(res.body)
+          val document: Document = Jsoup.parse(res.body)
           val continueButton = document.getElementById("continue")
 
           res should have(
@@ -144,9 +155,9 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           )
 
           When(s"I call GET $whatYouNeedToKnowUrl")
-          val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+          val res = get("/adjust-poa/what-you-need-to-know")
 
-          lazy val document: Document = Jsoup.parse(res.body)
+          val document: Document = Jsoup.parse(res.body)
           val continueButton = document.getElementById("continue")
 
           res should have(
@@ -179,11 +190,11 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = get("/adjust-poa/what-you-need-to-know")
 
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
+          redirectURI(homeUrl)
         )
       }
     }
@@ -202,7 +213,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
       )
 
       When(s"I call GET $whatYouNeedToKnowUrl")
-      val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+      val res = get("/adjust-poa/what-you-need-to-know")
 
       res should have(
         httpStatus(INTERNAL_SERVER_ERROR)
