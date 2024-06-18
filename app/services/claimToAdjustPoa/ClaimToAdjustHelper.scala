@@ -49,12 +49,6 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val isUnpaidPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1) && (documentDetail.outstandingAmount != 0)
-
-  private val isUnpaidPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA2) && (documentDetail.outstandingAmount != 0)
-
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
@@ -63,8 +57,8 @@ trait ClaimToAdjustHelper {
     _.sortBy(_.taxYear).reverse
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
-    poaOneDocDetail         <- documentDetails.find(isUnpaidPoAOne)
-    poaTwoDocDetail         <- documentDetails.find(isUnpaidPoATwo)
+    poaOneDocDetail         <- documentDetails.find(isPoAOne)
+    poaTwoDocDetail         <- documentDetails.find(isPoATwo)
     latestDocumentDetail     = poaTwoDocDetail
     poaTwoDueDate           <- poaTwoDocDetail.documentDueDate
     taxReturnDeadline        = getTaxReturnDeadline(poaTwoDueDate)
