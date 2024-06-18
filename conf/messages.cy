@@ -882,6 +882,10 @@ whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}
 whatYouOwe.taxYear                                              = Blwyddyn dreth
 whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {2}%
 whatYouOwe.adjust-poa                                           = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-2                                    = addasu eich taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg cyn cyflwyno?ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
+whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
+whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -897,10 +901,10 @@ chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
-chargeSummary.whatYouOwe.textOne                                = Bwriwch olwg dros
-chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.whatYouOwe.textOne-agent                          = Bwriwch olwg dros
-chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.whatYouOwe.textOne                                = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw beth arall i?w dalu.
+chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill i?w talu.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
@@ -945,7 +949,14 @@ chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog a
 
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
+chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
+chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
+chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o?r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
+chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
+chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.date								        = Dyddiad
 chargeSummary.chargeHistory.description							        = Disgrifiad
 chargeSummary.chargeHistory.amount								        = Swm
@@ -2017,7 +2028,7 @@ optOut.confirmSingleYearOptOut.form.title                   = A ydych am optio a
 optOut.confirmSingleYearOptOut.form.answer.one.hint         = Rwyf am optio allan a chyflwyno adroddiadau’n flynyddol.
 optOut.confirmSingleYearOptOut.form.answer.two.hint         = Rwyf am barhau i gyflwyno adroddiadau’n chwarterol.
 optOut.confirmSingleYearOptOut.form.no-select.error         = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
-optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error.todo = ToDo: Requested
+optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn flynyddol
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Cadarnhau eich bod am optio allan o gyflwyno adroddiadau yn chwarterol
