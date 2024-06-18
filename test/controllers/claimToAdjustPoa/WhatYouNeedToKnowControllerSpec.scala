@@ -19,15 +19,12 @@ package controllers.claimToAdjustPoa
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoAAmendmentData
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -40,7 +37,8 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
   with MockClaimToAdjustService
   with MockCalculationListService
   with MockCalculationListConnector
-  with MockFinancialDetailsConnector{
+  with MockFinancialDetailsConnector
+  with MockPaymentOnAccountSessionService {
 
   object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
     authorisedFunctions = mockAuthService,
@@ -48,7 +46,8 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    view = app.injector.instanceOf[WhatYouNeedToKnow]
+    view = app.injector.instanceOf[WhatYouNeedToKnow],
+    poaSessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -66,6 +65,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
 
         val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
@@ -97,6 +97,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
 
         setupMockGetPaymentsOnAccountBuildFailure()
 
@@ -111,6 +112,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
 
         setupMockGetAmendablePoaViewModelFailure()
 
