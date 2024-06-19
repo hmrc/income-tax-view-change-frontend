@@ -109,6 +109,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     repository.set(data)
   }
 
+  def resetSavedIntent()(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val data = UIJourneySessionData(
+      sessionId = hc.sessionId.get.value,
+      journeyType = OptOutJourney.Name,
+      optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = None))
+    )
+    repository.set(data)
+  }
+
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
