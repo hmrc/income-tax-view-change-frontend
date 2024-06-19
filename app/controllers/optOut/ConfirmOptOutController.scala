@@ -29,7 +29,7 @@ import play.api.mvc._
 import services.SessionService
 import services.optout.OptOutService
 import utils.{AuthenticatorPredicate, OptOutJourney}
-import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut, OptOutError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,6 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
-
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>

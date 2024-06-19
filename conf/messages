@@ -199,8 +199,8 @@ tax-year-summary.tax-due                                           = Self Assess
 tax-year-summary.payments.payment-type                             = Payment type
 tax-year-summary.payments.due-date                                 = Due date
 tax-year-summary.payments.amount                                   = Amount
-tax-year-summary.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
-tax-year-summary.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
+tax-year-summary.payments.paymentOnAccount1.text                   = First payment on account
+tax-year-summary.payments.paymentOnAccount2.text                   = Second payment on account
 tax-year-summary.payments.balancingCharge.text                     = Balancing payment
 tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest for payment on account 1 of 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
@@ -834,8 +834,8 @@ whatYouOwe.tableHead.due-date                                      = Due date
 whatYouOwe.tableHead.payment-type                                  = Payment type
 whatYouOwe.tableHead.tax-year-summary                              = Tax year summary
 whatYouOwe.tableHead.amount-due                                    = Amount due
-whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
-whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
+whatYouOwe.paymentOnAccount1.text							       = First payment on account
+whatYouOwe.paymentOnAccount2.text							       = Second payment on account
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest for payment on account 1 of 2
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest for payment on account 2 of 2
@@ -903,8 +903,8 @@ whatYouOwe.adjust-poa.paid-4                                       = 31 January 
 whatYouOwe.adjust-poa.paid-5                                       =
 
 ## Charge Summary ##
-chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
-chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
+chargeSummary.paymentOnAccount1.text							   = First payment on account
+chargeSummary.paymentOnAccount2.text							   = Second payment on account
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
@@ -2083,3 +2083,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards            = {0} to {1} onwards
 optout.chooseOptOutTaxYear.cancel                    = Cancel
 optout.chooseOptOutTaxYear.continue                  = Continue
 optout.chooseOptOutTaxYear.deleteUpdates             = This will delete {0} quarterly updates submitted.
+
+# opt out error page
+optout.optOutError.heading                           = Sorry, there is a problem with the service
+optout.optOutError.options                           = You can:
+optout.optOutError.nextUpdates-bullet-1              = go back to your
+optout.optOutError.nextUpdates-link                  = next updates
+optout.optOutError.nextUpdates-bullet-2              = and try again
+optout.optOutError.home-bullet-1                     = go back to the
+optout.optOutError.home-bullet-2                     = homepage

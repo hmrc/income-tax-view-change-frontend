@@ -186,8 +186,8 @@ tax-year-summary.tax-due                                       = Swm y dreth Hun
 tax-year-summary.payments.payment-type                         = Math o daliad
 tax-year-summary.payments.due-date                             = Dyddiad dyledus
 tax-year-summary.payments.amount                               = Swm
-tax-year-summary.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
-tax-year-summary.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
+tax-year-summary.payments.paymentOnAccount1.text               = Taliad cyntaf ar gyfrif
+tax-year-summary.payments.paymentOnAccount2.text               = Ail daliad ar gyfrif
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
 tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwladol Dosbarth 2
 tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
@@ -813,8 +813,8 @@ whatYouOwe.tableHead.due-date                                   = Dyddiad dyledu
 whatYouOwe.tableHead.payment-type                               = Math o daliad
 whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddyledus
 whatYouOwe.tableHead.tax-year-summary                           = Crynodeb o’r flwyddyn dreth
-whatYouOwe.paymentOnAccount1.text							    = Taliad ar gyfrif 1 o 2
-whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
+whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
+whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
@@ -889,8 +889,8 @@ whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 
 ## Charge Summary ##
-chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
-chargeSummary.paymentOnAccount2.text                            = Taliad ar gyfrif 2 o 2
+chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
+chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
@@ -2041,3 +2041,12 @@ optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
 optout.chooseOptOutTaxYear.cancel                    = Canslo
 optout.chooseOptOutTaxYear.continue                  = Yn eich blaen
 optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diweddarid chwarterol sydd wedi’u cyflwyno.
+
+# opt out error page
+optout.optOutError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
+optout.optOutError.options                           = Gallwch wneud y canlynol:
+optout.optOutError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
+optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
+optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
+optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
+optout.optOutError.home-bullet-2                     = hafan
