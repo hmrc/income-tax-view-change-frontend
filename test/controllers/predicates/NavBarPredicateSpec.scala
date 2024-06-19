@@ -21,7 +21,7 @@ import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
-import models.admin.NavBarFs
+import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -46,11 +46,18 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
-  lazy val successResponseWithoutOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
+  val successResponseWithoutOrigin: Boolean => MtdItUser[Any] = (isNavBarFsOn : Boolean) => {
+    if (isNavBarFsOn) {
+      MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+        None, Some("testUtr"), Some("testCredId"), Some(Individual), None, List(FeatureSwitch(NavBarFs, true)))
+    } else {
+      MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+        None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
+    }
+  }
 
   lazy val successResponseWithBtaOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("BTA"))
+    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some(Individual), None, List(FeatureSwitch(NavBarFs, true)))(fakeRequestWithNinoAndOrigin("BTA"))
 
   lazy val successResponseWithPtaOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
     Some(Html("")), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -81,7 +88,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
         "Return a redirect to TaxAccountRouter when origin is not present in session which" should {
           "return the expected Redirect with a tax account router" in {
             enable(NavBarFs)
-            val result = NavBarPredicate.refine(successResponseWithoutOrigin)
+            val result = NavBarPredicate.refine(successResponseWithoutOrigin(true))
             status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.SEE_OTHER
             redirectLocation(Future.successful(result.futureValue.swap.toOption.value)).get shouldBe "http://localhost:9280/account"
           }
@@ -103,8 +110,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
     "The Bta Nav Bar is disabled" should {
       "Always return to origin call without nav bar partial content" in {
         disable(NavBarFs)
-
-        val result = NavBarPredicate.refine(successResponseWithoutOrigin)
+        val result = NavBarPredicate.refine(successResponseWithoutOrigin(false))
         result.futureValue.toOption.value shouldBe successResponseWithoutOrigin
       }
     }
