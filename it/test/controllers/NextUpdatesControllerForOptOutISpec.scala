@@ -33,7 +33,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class NextUpdatesControllerIForOptOutISpec extends ComponentSpecBase {
+class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
   "Calling the NextUpdatesController" when {
 
