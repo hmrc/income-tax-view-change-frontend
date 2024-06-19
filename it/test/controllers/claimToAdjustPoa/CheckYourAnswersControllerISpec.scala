@@ -22,13 +22,13 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import services.PaymentOnAccountSessionService
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.ClaimToAdjustPoaTestConstants.validSession
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
@@ -42,7 +42,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val postUrlTestName: String = routes.CheckYourAnswersController.submit(isAgent).url
   val url: String = "/adjust-poa/check-your-answers"
   private val validFinancialDetailsResponseBody: JsValue =
