@@ -22,6 +22,7 @@ import helpers.ITSAStatusUpdateConnectorStub
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+//import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Mandated
@@ -90,6 +91,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
+          optOutService.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
 
           val result = IncomeTaxViewChangeFrontend.getConfirmOptOut(clientDetailsWithConfirmation)
           verifyIncomeSourceDetailsCall(testMtditid)

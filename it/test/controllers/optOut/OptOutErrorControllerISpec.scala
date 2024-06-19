@@ -49,7 +49,7 @@ class OptOutErrorControllerISpec extends ComponentSpecBase {
 
           result should have(
             httpStatus(OK),
-            elementTextBySelector(".govuk-heading-xl")(headingText),
+            elementTextBySelector(".govuk-heading-l")(headingText),
           )
         }
       }
