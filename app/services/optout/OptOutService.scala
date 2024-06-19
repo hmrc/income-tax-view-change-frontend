@@ -109,6 +109,17 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     repository.set(data)
   }
 
+  def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
+    repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
+      for {
+        data <- sessionData
+        optOutData <- data.optOutSessionData
+        selected <- optOutData.selectedOptOutYear
+        parsed <- TaxYear.getTaxYearModel(selected)
+      } yield parsed
+    }
+  }
+
   def resetSavedIntent()(implicit hc: HeaderCarrier): Future[Boolean] = {
     val data = UIJourneySessionData(
       sessionId = hc.sessionId.get.value,
@@ -142,17 +153,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     } yield finalResponse
 
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
-  }
-
-  def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
-    repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
-      for {
-        data <- sessionData
-        optOutData <- data.optOutSessionData
-        selected <- optOutData.selectedOptOutYear
-        parsed <- TaxYear.getTaxYearModel(selected)
-      } yield parsed
-    }
   }
 
   def nextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
