@@ -36,7 +36,8 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   val intentEndTaxYear: String = checkAnswersViewModel.endYear
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent)))
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent, cancelURL)))
   }
 
   object checkOptOutAnswers {

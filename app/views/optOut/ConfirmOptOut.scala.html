@@ -31,7 +31,7 @@
         govukButton: GovukButton,
 )
 
-@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
@@ -41,11 +41,6 @@
     messages("optout.confirmOptOut.heading",
               viewModel.startYear,
               viewModel.endYear)
-}
-
-@nextUpdatesUrl = @{
-    if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
-    else controllers.routes.NextUpdatesController.show().url
 }
 
 @mainTemplate(
@@ -74,7 +69,7 @@
             content = Text(messages("optout.confirmOptOut.confirm")),
             id = Some("confirm-button")
         ))
-        <a class="govuk-link" id="cancel-button" href=@nextUpdatesUrl>
+        <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
         </a>
     </div>

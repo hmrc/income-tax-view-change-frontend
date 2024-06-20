@@ -38,7 +38,7 @@
 )
 
 
-@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: SubmissionsCountForTaxYearModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: SubmissionsCountForTaxYearModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutPostUrl = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
@@ -46,11 +46,6 @@
 
 @warningBlock = {
     @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
-}
-
-@nextUpdatesUrl = @{
-    if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
-    else controllers.routes.NextUpdatesController.show().url
 }
 
 @formBlock = {
@@ -84,7 +79,7 @@
                 content = Text(messages("base.continue")),
                 attributes = Map("id" -> "continue-button")
             ))
-            <a class="govuk-link" id="cancel-button" href=@nextUpdatesUrl>
+            <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
             </a>
         </div>

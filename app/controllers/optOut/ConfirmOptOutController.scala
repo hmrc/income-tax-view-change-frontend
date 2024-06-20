@@ -29,7 +29,7 @@ import play.api.mvc._
 import services.SessionService
 import services.optout.OptOutService
 import utils.{AuthenticatorPredicate, OptOutJourney}
-import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut, OptOutError}
+import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,10 +50,11 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
+        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel))))
+          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, cancelURL))))
         } yield result
 
         resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
@@ -61,9 +62,9 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
-    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent))
-    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent))
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent, cancelURL))
+    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {

@@ -32,6 +32,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
 
   class Setup(isAgent: Boolean = true, infoMessage: Boolean = false) {
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document =
       Jsoup.parse(contentAsString(
         confirmOptOutView(
@@ -39,7 +40,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
             intent = TaxYear.forYearEnd(2022),
             state = Some(OneYearOptOutFollowedByAnnual)
           ),
-          isAgent = isAgent))
+          isAgent = isAgent,
+          cancelURL))
       )
   }
 
