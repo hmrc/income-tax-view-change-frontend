@@ -39,7 +39,8 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent, cancelURL)))
   }
 
   object optOutChooseTaxYear {
@@ -51,6 +52,8 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val confirmOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
     val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
+    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
   }
 
@@ -69,6 +72,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
       pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe optOutChooseTaxYear.cancelButtonHref
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
     }
 
@@ -77,6 +81,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
       pageDocument.getElementById("description2").text() shouldBe optOutChooseTaxYear.summary2
       pageDocument.getElementById("whichTaxYear").child(0).text() shouldBe optOutChooseTaxYear.whichTaxYear
       pageDocument.getElementById("cancel-button").text() shouldBe optOutChooseTaxYear.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe optOutChooseTaxYear.cancelButtonAgentHref
       pageDocument.getElementById("continue-button").text() shouldBe optOutChooseTaxYear.continueButton
     }
 

@@ -32,7 +32,7 @@
         govukInsetText: GovukInsetText,
 )
 
-@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
@@ -78,7 +78,7 @@
             content = Text(messages("optout.confirmOptOut.confirm")),
             id = Some("confirm-button")
         ))
-        <a class="govuk-link" id="cancel-button" href="#">
+        <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
         </a>
     </div>

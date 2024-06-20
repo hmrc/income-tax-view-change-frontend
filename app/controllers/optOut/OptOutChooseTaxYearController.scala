@@ -53,13 +53,14 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
         intent <- optOutService.fetchSavedIntent()
       } yield {
         val taxYearsList = availableOptOutTaxYear.map(_.toString).toList
+        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
         val form = intent match {
           case Some(savedIntent) =>
             ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
           case None =>
             ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList)
         }
-        Ok(optOutChooseTaxYear(form, availableOptOutTaxYear, submissionCountForTaxYear, isAgent))
+        Ok(optOutChooseTaxYear(form, availableOptOutTaxYear, submissionCountForTaxYear, isAgent, cancelURL))
       }
   }
 
@@ -68,11 +69,12 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
         optOutService.getQuarterlyUpdatesCountForTaxYear(availableOptOutTaxYear).flatMap { submissionCountForTaxYear =>
 
+          val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
           val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Future[Result] = formWithError =>
-            Future.successful(BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent)))
+            Future.successful(BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent, cancelURL)))
 
           val onSuccess: ConfirmOptOutMultiTaxYearChoiceForm => Future[Result] = form => {
-              saveTaxYearChoice(form).map {
+            saveTaxYearChoice(form).map {
               case true => redirectToCheckpointPage(isAgent)
               case false => itvcErrorHandler.showInternalServerError()
             }
