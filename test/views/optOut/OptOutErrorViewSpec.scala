@@ -88,7 +88,7 @@ class OptOutErrorViewSpec extends TestSupport {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
       pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
       pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
-      pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLink
+      pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLinkAgent
     }
   }
 }
