@@ -24,7 +24,7 @@ POST        /optout/review-confirm-taxyear                                contro
 POST        /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.submit(isAgent: Boolean = true)
 
 GET         /optout/error                                                 controllers.optOut.OptOutErrorController.show(isAgent: Boolean = false)
-GET         /optout/error                                                 controllers.optOut.OptOutErrorController.show(isAgent: Boolean = true)
+GET         /agents/optout/error                                          controllers.optOut.OptOutErrorController.show(isAgent: Boolean = true)
 
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
