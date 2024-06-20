@@ -111,7 +111,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
       "Always return to origin call without nav bar partial content" in {
         disable(NavBarFs)
         val result = NavBarPredicate.refine(successResponseWithoutOrigin(false))
-        result.futureValue.toOption.value shouldBe successResponseWithoutOrigin
+        result.futureValue.toOption.value shouldBe successResponseWithoutOrigin(false)
       }
     }
   }
