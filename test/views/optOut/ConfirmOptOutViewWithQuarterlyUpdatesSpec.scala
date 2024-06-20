@@ -18,7 +18,7 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optout.{OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
+import models.optout.OneYearOptOutCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -26,7 +26,7 @@ import services.optout.OneYearOptOutFollowedByAnnual
 import testUtils.TestSupport
 import views.html.optOut.ConfirmOptOut
 
-class ConfirmOptOutViewSpec extends TestSupport {
+class ConfirmOptOutViewWithQuarterlyUpdatesSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
@@ -37,7 +37,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
         confirmOptOutView(
           OneYearOptOutCheckpointViewModel(
             intent = TaxYear.forYearEnd(2022),
-            state = Some(OneYearOptOutFollowedByAnnual)
+            state = Some(OneYearOptOutFollowedByAnnual),
+            quarterlyUpdates = Some(4)
           ),
           isAgent = isAgent))
       )
@@ -91,8 +92,9 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
 
-    "with quarterly updates as zero count" in new Setup(false) {
-      pageDocument.getElementById("warning-inset") shouldBe null
+    "with quarterly updates as 4 count" in new Setup(false) {
+      pageDocument.getElementById("warning-inset")
+        .text().startsWith("You have 4 quarterly updates submitted") shouldBe true
     }
   }
 }
