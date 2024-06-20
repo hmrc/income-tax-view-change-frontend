@@ -49,7 +49,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
     implicit user =>
       for {
         availableOptOutTaxYear <- optOutService.getTaxYearsAvailableForOptOut()
-        submissionCountForTaxYear <- optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear)
+        submissionCountForTaxYear <- optOutService.getQuarterlyUpdatesCountForTaxYear(availableOptOutTaxYear)
         intent <- optOutService.fetchSavedIntent()
       } yield {
         val taxYearsList = availableOptOutTaxYear.map(_.toString).toList
@@ -66,7 +66,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       optOutService.getTaxYearsAvailableForOptOut().flatMap { availableOptOutTaxYear =>
-        optOutService.getSubmissionCountForTaxYear(availableOptOutTaxYear).flatMap { submissionCountForTaxYear =>
+        optOutService.getQuarterlyUpdatesCountForTaxYear(availableOptOutTaxYear).flatMap { submissionCountForTaxYear =>
 
           val onError: Form[ConfirmOptOutMultiTaxYearChoiceForm] => Future[Result] = formWithError =>
             Future.successful(BadRequest(optOutChooseTaxYear(formWithError, availableOptOutTaxYear, submissionCountForTaxYear, isAgent)))

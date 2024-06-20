@@ -22,8 +22,8 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import services.NextUpdatesService.SubmissionsCountForTaxYear
-import services.optout.OptOutService.SubmissionsCountForTaxYearModel
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
 
@@ -35,8 +35,8 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
   val availableOptOutTaxYear: Seq[TaxYear] = Seq(taxYear)
   val availableOptOutTaxYearsList: List[String] = List(taxYear.toString)
-  val submissionsCountForTaxYearModel: SubmissionsCountForTaxYearModel =
-    SubmissionsCountForTaxYearModel(Seq(SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
+  val submissionsCountForTaxYearModel: QuarterlyUpdatesCountForTaxYearModel =
+    QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
 
   class Setup(isAgent: Boolean = true) {
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent)))
