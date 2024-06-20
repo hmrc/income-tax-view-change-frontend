@@ -68,7 +68,7 @@
     }
 }
 
-@viewModel.quarterlyUpdates.filter( v => v > 0).map{ quarterlyUpdatesCount =>
+@viewModel.whereQuarterlyUpdatesAreMade.map { quarterlyUpdatesCount =>
     @quarterlyUpdatesWarningBlock(quarterlyUpdatesCount)
 }
 
