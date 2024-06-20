@@ -165,20 +165,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
 
     def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes]): Future[Int] = {
-      propositionType.map {
-        case p: OneYearOptOutProposition =>
-          getQuarterlyUpdatesCountForTaxYear(Seq(p.intent.taxYear)).map(v => v.getCountFor(p.intent.taxYear))
+      propositionType match {
+        case Some(p:OneYearOptOutProposition) => getQuarterlyUpdatesCountForTaxYear(Seq(p.intent.taxYear)).map(_.getCountFor(p.intent.taxYear))
         case _ => Future.successful(noQuarterlyUpdates)
-      } getOrElse Future.successful(noQuarterlyUpdates)
+      }
     }
 
     for {
       proposition <- fetchOptOutProposition()
       intent <- fetchSavedIntent()
-      propositionType <- Future.successful(proposition.optOutPropositionType)
+      propositionType = proposition.optOutPropositionType
       quarterlyUpdatesCount <- getQuarterlyUpdatesCount(propositionType)
-      viewModel <- Future.successful(processPropositionType(propositionType.get, intent, quarterlyUpdatesCount))
-    } yield viewModel
+    } yield processPropositionType(propositionType.get, intent, quarterlyUpdatesCount)
   }
 
   def optOutConfirmedPageViewModel()(implicit user: MtdItUser[_],
