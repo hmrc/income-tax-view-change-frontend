@@ -212,13 +212,13 @@ object OptOutService {
 
   private val noQuarterlyUpdates = 0
 
-  private def includeTaxYearCount(optOutYear: TaxYear)(countsYear: TaxYear): Boolean = {
+  private def includeTaxYearCount(optOutYear: TaxYear, countsYear: TaxYear): Boolean = {
     (optOutYear.startYear == countsYear.startYear) || (optOutYear.endYear == countsYear.startYear)
   }
 
   case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
 
-    def getCountFor(optOutYear: TaxYear): Int = counts.find(v => includeTaxYearCount(optOutYear)(v.taxYear))
+    def getCountFor(optOutYear: TaxYear): Int = counts.find(taxYearCounts => includeTaxYearCount(optOutYear, taxYearCounts.taxYear))
       .map(_.count)
       .getOrElse(noQuarterlyUpdates)
 
