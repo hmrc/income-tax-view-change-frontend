@@ -40,6 +40,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.DateServiceInterface
+import services.optout.OptOutService
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
@@ -104,6 +105,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf(classOf[AsyncCacheApi])
+  val optOutService: OptOutService = app.injector.instanceOf[OptOutService]
 
   override def beforeAll(): Unit = {
     super.beforeAll()
