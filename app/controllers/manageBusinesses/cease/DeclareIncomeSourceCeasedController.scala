@@ -64,13 +64,13 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
     auth.authenticatedAction(isAgent = false) {
       implicit request =>
-        handleSubmitRequest(id, isAgent = false, incomeSourceType)
+        handleSubmitRequest(id, isAgent = false, isChange = false, incomeSourceType)
   }
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
     auth.authenticatedAction(isAgent = true) {
       implicit mtdItUser =>
-        handleSubmitRequest(id, isAgent = true, incomeSourceType)
+        handleSubmitRequest(id, isAgent = true, isChange = false, incomeSourceType)
   }
 
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -102,7 +102,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
         showInternalServerError()
     }
 
-  def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleSubmitRequest(id: Option[String], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     DeclareIncomeSourceCeasedForm.form(incomeSourceType).bindFromRequest().fold(
@@ -120,7 +120,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
       _ => {
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-            case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, incomeSourceType)))
+            case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
             case Left(exception) => Future.failed(exception)
           }
       }
@@ -139,9 +139,9 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     if (isAgent) routes.CeaseIncomeSourceController.showAgent()
     else         routes.CeaseIncomeSourceController.show()
 
-  private val redirectAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceEndDateController.showAgent(id, incomeSourceType)
-    else         routes.IncomeSourceEndDateController.show(id, incomeSourceType)
+  private val redirectAction: (Option[String], Boolean, Boolean, IncomeSourceType) => Call = (id, isAgent, isChange, incomeSourceType) =>
+    if (isAgent) routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
+    else         routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
 
   private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
     if (mtdItUser.userType.contains(Agent)) itvcErrorHandlerAgent

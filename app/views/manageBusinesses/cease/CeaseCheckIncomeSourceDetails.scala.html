@@ -48,11 +48,11 @@
 
 
 @getBusinessChangeHref = @{
-    if(isAgent){
-        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
-    } else {
-        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
-    }
+    controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(viewModel.incomeSourceId.toHash.hash),
+    SelfEmployment,
+    isAgent,
+    isChange = true
+    ).url
 }
 
 @getBusinessSubmitHref = @{
