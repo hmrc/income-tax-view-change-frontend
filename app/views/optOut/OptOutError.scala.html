@@ -35,7 +35,11 @@
 }
 
 @getHomepageUrl = @{
-    controllers.routes.HomeController.show().url
+    if(isAgent) {
+        controllers.routes.HomeController.showAgent.url
+    } else {
+        controllers.routes.HomeController.show().url
+    }
 }
 
 @errorContent = {
