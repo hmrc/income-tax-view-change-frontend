@@ -103,6 +103,41 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
       redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
     }
 
+    s"return status $SEE_OTHER" when {
+      "Adjust Payments On Account FS is Disabled" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
+          claimToAdjustResponse = testPoa1Maybe)
+
+        disable(AdjustPaymentsOnAccount)
+
+        setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
+
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+      "Adjust Payments On Account FS is Enabled but journeyCompleted flag is true" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData(None, newPoAAmount = Some(20000.0), journeyCompleted = true))),
+          claimToAdjustResponse = testPoa1Maybe)
+
+        setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
+
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+      }
+    }
+
     s"return status: $OK when PoA tax year crystallized" when {
 
       "in check mode must pre-populate the answer with AllowanceOrReliefHigher" when {

@@ -91,6 +91,27 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
+    "redirect to the You Cannot Go Back page" when {
+      "FS is enabled" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+      }
+    }
     "return an error 500" when {
       "PaymentOnAccount model is not built successfully" in {
         enable(AdjustPaymentsOnAccount)

@@ -28,20 +28,22 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData,
-  testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
 
   def whatYouNeedToKnowUrl: String = controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+
   val testTaxYear = 2024
 
   def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+
   def selectReasonUrl: String = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
 
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
+
   def homeUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
 
   override def beforeEach(): Unit = {
@@ -53,11 +55,12 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(
+      s"""${
+        if (isAgent) {
+          "/agents"
+        } else ""
+      }$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   s"calling GET $whatYouNeedToKnowUrl" should {
@@ -197,6 +200,35 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           redirectURI(homeUrl)
         )
       }
+    }
+  }
+  s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
+    "journeyCompleted flag is true and the user tries to access the page" in {
+      enable(AdjustPaymentsOnAccount)
+
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+      )
+
+      And("I wiremock stub financial details for multiple years with POAs")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+        OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+      )
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+        OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+      )
+
+      And("A session has been created with journeyCompleted flag set to true")
+      await(sessionService.setMongoData(Some(PoAAmendmentData(poaAdjustmentReason = None, newPoAAmount = None, journeyCompleted = true))))
+
+      When(s"I call GET $whatYouNeedToKnowUrl")
+      val res = get("/adjust-poa/what-you-need-to-know")
+
+      res should have(
+        httpStatus(SEE_OTHER),
+        redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+      )
     }
   }
 

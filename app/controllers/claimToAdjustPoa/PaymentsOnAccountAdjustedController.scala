@@ -20,6 +20,7 @@ import auth.MtdItUser
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import enums.IncomeSourceJourney.AfterSubmissionPage
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -46,7 +47,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      withSessionDataAndPoa() { (session, poa) =>
+      withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
         EitherT.liftF(setJourneyCompletedFlag(isAgent, poa))
       } recover {

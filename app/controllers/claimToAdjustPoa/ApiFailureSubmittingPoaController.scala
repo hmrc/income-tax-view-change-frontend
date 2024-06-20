@@ -26,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
+import utils.ClaimToAdjust.ClaimToAdjustUtils
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 import javax.inject.{Inject, Singleton}
@@ -40,20 +41,13 @@ class ApiFailureSubmittingPoaController @Inject()(val authorisedFunctions: Autho
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   implicit override val mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        if (isEnabled(AdjustPaymentsOnAccount)) {
+        ifAdjustPoaIsEnabled(isAgent) {
           Future.successful(Ok(view(isAgent)))
-        } else {
-          Future.successful(
-            Redirect(
-              if (isAgent) routes.HomeController.showAgent
-              else routes.HomeController.show()
-            )
-          )
         }
     }
   }

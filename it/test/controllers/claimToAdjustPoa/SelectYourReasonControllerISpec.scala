@@ -32,31 +32,46 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
+
   def enterPOAAmountUrl: String = controllers.claimToAdjustPoa.routes.EnterPoAAmountController.show(isAgent, NormalMode).url
+
   def poaCyaUrl: String = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
-  def homeUrl: String = if(isAgent){
+
+  def homeUrl: String = if (isAgent) {
     controllers.routes.HomeController.showAgent.url
   } else {
     controllers.routes.HomeController.show().url
   }
+
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if(isAgent) {
+    if (isAgent) {
       stubAuthorisedAgentUser(true, clientMtdId = testMtditid)
     }
   }
+
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${if (isAgent) {"/agents" } else ""}${url}""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(s"""${
+      if (isAgent) {
+        "/agents"
+      } else ""
+    }${url}""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   def postSelectYourReason(isAgent: Boolean, answer: Option[SelectYourReason])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     val formProvider = app.injector.instanceOf[SelectYourReasonFormProvider]
     IncomeTaxViewChangeFrontend.post(
-      uri = s"""${if(isAgent) {"/agents"} else {""}}/adjust-poa/select-your-reason""",
+      uri = s"""${
+        if (isAgent) {
+          "/agents"
+        } else {
+          ""
+        }
+      }/adjust-poa/select-your-reason""",
       additionalCookies = additionalCookies
     )(
       answer.fold(Map.empty[String, Seq[String]])(
@@ -168,28 +183,55 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
 
       "AdjustPaymentsOnAccount FS is disabled" in {
 
-          disable(AdjustPaymentsOnAccount)
+        disable(AdjustPaymentsOnAccount)
 
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-          )
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
 
-          And("I wiremock stub financial details for multiple years with POAs")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-          )
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-            OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-          )
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+        )
 
-          When(s"I call GET")
-          val res = get("/adjust-poa/select-your-reason")
+        When(s"I call GET")
+        val res = get("/adjust-poa/select-your-reason")
 
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(homeUrl)
-          )
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(homeUrl)
+        )
+      }
+      "journeyCompleted flag is true and the user tries to access the page" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("Income Source Details with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("Financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+        )
+
+        And("A session has been created with journeyCompleted flag set to true")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/select-your-reason")
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+        )
       }
     }
 
@@ -275,7 +317,7 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
         sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData(Some(MainIncomeLower), None)))
       }
 
-    "when originalAmount < relevantAmount redirect to Check Your Answers page" in {
+      "when originalAmount < relevantAmount redirect to Check Your Answers page" in {
         enable(AdjustPaymentsOnAccount)
 
         Given("Income Source Details with multiple business and property")
@@ -291,10 +333,10 @@ class SelectYourReasonControllerISpec extends ComponentSpecBase {
           OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
         )
 
-      And("A session has been created")
-      await(sessionService.setMongoData(Some(PoAAmendmentData())))
+        And("A session has been created")
+        await(sessionService.setMongoData(Some(PoAAmendmentData())))
 
-      When(s"I call POST")
+        When(s"I call POST")
         val res = postSelectYourReason(isAgent, Some(MainIncomeLower))(clientDetailsWithConfirmation)
 
         res should have(

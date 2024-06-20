@@ -104,6 +104,21 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
+    s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
+      "FS is enabled and the journeyCompleted flag is set to true in session" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData(None, None, journeyCompleted = true))),
+          claimToAdjustResponse = poa
+        )
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+      }
+    }
 
     s"return status: $OK when PoA tax year crystallized" when {
       "the session contains the new POA Amount and reason" in {
