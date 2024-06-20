@@ -30,14 +30,16 @@ class ConfirmOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
+  val expectedQuarterlyUpdates = 4
 
-  class Setup(isAgent: Boolean = true, infoMessage: Boolean = false) {
+  class Setup(isAgent: Boolean = true, infoMessage: Boolean = false, quarterlyUpdates: Int = 0) {
     val pageDocument: Document =
       Jsoup.parse(contentAsString(
         confirmOptOutView(
           OneYearOptOutCheckpointViewModel(
             intent = TaxYear.forYearEnd(2022),
-            state = Some(OneYearOptOutFollowedByAnnual)
+            state = Some(OneYearOptOutFollowedByAnnual),
+            quarterlyUpdates = Some(quarterlyUpdates)
           ),
           isAgent = isAgent))
       )
@@ -92,7 +94,12 @@ class ConfirmOptOutViewSpec extends TestSupport {
     }
 
     "with quarterly updates as zero count" in new Setup(false) {
-      pageDocument.getElementById("warning-inset") shouldBe null
+      pageDocument.select("#warning-inset").size() shouldBe 0
+    }
+
+    "with quarterly updates as 4 count" in new Setup(isAgent = false, quarterlyUpdates = expectedQuarterlyUpdates) {
+      pageDocument.getElementById("warning-inset")
+        .text().startsWith("You have 4 quarterly updates submitted") shouldBe true
     }
   }
 }
