@@ -48,6 +48,11 @@
     @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
 }
 
+@nextUpdatesUrl = @{
+    if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
+    else controllers.routes.NextUpdatesController.show().url
+}
+
 @formBlock = {
     @formWithCSRF(action = confirmOptOutPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
         @govukRadios(Radios(
@@ -79,7 +84,7 @@
                 content = Text(messages("base.continue")),
                 attributes = Map("id" -> "continue-button")
             ))
-            <a class="govuk-link" id="cancel-button" href="#">
+            <a class="govuk-link" id="cancel-button" href=@nextUpdatesUrl>
             @messages("optout.confirmOptOut.cancel")
             </a>
         </div>

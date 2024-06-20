@@ -43,6 +43,11 @@
               viewModel.endYear)
 }
 
+@nextUpdatesUrl = @{
+    if(isAgent) controllers.routes.NextUpdatesController.showAgent.url
+    else controllers.routes.NextUpdatesController.show().url
+}
+
 @mainTemplate(
     pageTitle = title,
     backUrl = Some("#"),
@@ -69,7 +74,7 @@
             content = Text(messages("optout.confirmOptOut.confirm")),
             id = Some("confirm-button")
         ))
-        <a class="govuk-link" id="cancel-button" href="#">
+        <a class="govuk-link" id="cancel-button" href=@nextUpdatesUrl>
             @messages("optout.confirmOptOut.cancel")
         </a>
     </div>

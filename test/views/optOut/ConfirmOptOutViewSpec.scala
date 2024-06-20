@@ -18,7 +18,7 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optout.{OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
+import models.optout.OneYearOptOutCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -52,6 +52,8 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val confirmedOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.submit(false).url
     val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.submit(true).url
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
+    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
   }
 
   "Opt-out confirm page" should {
@@ -80,6 +82,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
       pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe confirmOptOutMessages.cancelButtonHref
       pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURL
     }
 
@@ -88,6 +91,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
       pageDocument.getElementById("info-message").text() shouldBe confirmOptOutMessages.infoMessage
       pageDocument.getElementById("confirm-button").text() shouldBe confirmOptOutMessages.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe confirmOptOutMessages.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe confirmOptOutMessages.cancelButtonAgentHref
       pageDocument.getElementById("confirm-optout-form").attr("action") shouldBe confirmOptOutMessages.confirmedOptOutURLAgent
     }
   }

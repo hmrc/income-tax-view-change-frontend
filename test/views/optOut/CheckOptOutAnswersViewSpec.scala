@@ -18,10 +18,9 @@ package views.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.optout.{MultiYearOptOutCheckpointViewModel}
+import models.optout.MultiYearOptOutCheckpointViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.taxYear
 import testUtils.TestSupport
@@ -35,6 +34,7 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear))
   val intentStartTaxYear: String = checkAnswersViewModel.startYear
   val intentEndTaxYear: String = checkAnswersViewModel.endYear
+
   class Setup(isAgent: Boolean = true) {
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent)))
   }
@@ -49,6 +49,8 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
     val paragraph2: String = messages("optout.checkAnswers.p2")
     val confirmButton: String = messages("optout.checkAnswers.confirm")
     val cancelButton: String = messages("optout.checkAnswers.cancel")
+    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
 
     val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = false).url
     val changeOptOutAgent: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = true).url
@@ -78,10 +80,20 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
 
     "have the correct summary heading and page contents" in new Setup(false) {
       pageDocument.getElementById("optOut-summary").text() shouldBe checkOptOutAnswers.paragraph1
-     pageDocument.getElementById("optOut-warning").text() shouldBe checkOptOutAnswers.paragraph2
+      pageDocument.getElementById("optOut-warning").text() shouldBe checkOptOutAnswers.paragraph2
 
       pageDocument.getElementById("confirm-button").text() shouldBe checkOptOutAnswers.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe checkOptOutAnswers.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe checkOptOutAnswers.cancelButtonHref
+    }
+
+    "have the correct summary heading and page contents for Agents" in new Setup(true) {
+      pageDocument.getElementById("optOut-summary").text() shouldBe checkOptOutAnswers.paragraph1
+      pageDocument.getElementById("optOut-warning").text() shouldBe checkOptOutAnswers.paragraph2
+
+      pageDocument.getElementById("confirm-button").text() shouldBe checkOptOutAnswers.confirmButton
+      pageDocument.getElementById("cancel-button").text() shouldBe checkOptOutAnswers.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe checkOptOutAnswers.cancelButtonAgentHref
     }
 
   }
