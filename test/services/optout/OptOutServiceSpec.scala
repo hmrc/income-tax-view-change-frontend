@@ -25,9 +25,10 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Vol
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import org.mockito.ArgumentMatchers.{any, same}
+import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.{BeforeAndAfter, Succeeded}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
@@ -95,6 +96,53 @@ class OptOutServiceSpec extends UnitSpec
   val noOptOutOptionAvailable: Option[Nothing] = None
 
   val apiError: String = "some api error"
+
+  "OptOutService.resetSavedIntent" should {
+    "reset intent year" in {
+
+      val forYearEnd = 2024
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+      when(repository.set(any())).thenReturn(Future.successful(true))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.Name,
+        optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(forYearEnd).toString)))
+      )
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      def reconfigureMock(): Future[Unit] = {
+        Future {
+          Mockito.reset(repository)
+
+          when(repository.set(any())).thenReturn(Future.successful(true))
+
+          val data = UIJourneySessionData(
+            sessionId = hc.sessionId.get.value,
+            journeyType = OptOutJourney.Name,
+            optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = None))
+          )
+          when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+        }
+      }
+
+      val f = for {
+        isSaved <- service.saveIntent(TaxYear.forYearEnd(forYearEnd))
+        savedIntent <- service.fetchSavedIntent()
+        _ <- reconfigureMock()
+        isReset <- service.resetSavedIntent()
+        noneIntent <- service.fetchSavedIntent()
+      } yield {
+        isSaved shouldBe true
+        savedIntent.isDefined shouldBe true
+        isReset shouldBe true
+        noneIntent.isDefined shouldBe false
+      }
+
+      f.futureValue shouldBe Succeeded
+    }
+  }
 
   "OptOutService.getTaxYearsAvailableForOptOut" when {
     "three years available for opt-out; end-year 2023, 2024, 2025" should {
