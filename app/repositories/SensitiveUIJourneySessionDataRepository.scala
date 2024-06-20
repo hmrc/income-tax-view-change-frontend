@@ -50,6 +50,16 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
     ),
     indexes = Seq(
       IndexModel(
+        Indexes.ascending("sessionId"),
+        IndexOptions()
+          .name("sessionIdIdx")
+      ),
+      IndexModel(
+        Indexes.ascending("journeyType"),
+        IndexOptions()
+          .name("journeyTypeIdx")
+      ),
+      IndexModel(
         Indexes.ascending("lastUpdated"),
         IndexOptions()
           .name("lastUpdatedIdx")
