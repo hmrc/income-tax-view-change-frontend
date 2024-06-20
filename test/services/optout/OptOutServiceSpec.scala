@@ -120,6 +120,94 @@ class OptOutServiceSpec extends UnitSpec
         result.futureValue shouldBe Seq(previousTaxYear, currentTaxYear, nextTaxYear)
       }
     }
+
+    "status is only known for PY and CY" should {
+      "return three years when CY is V" in {
+
+        val currentYearNum = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
+        val previousTaxYear: TaxYear = currentTaxYear.previousYear
+        val nextTaxYear: TaxYear = currentTaxYear.nextYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
+
+        val result = service.getTaxYearsAvailableForOptOut()
+
+        result.futureValue shouldBe Seq(previousTaxYear, currentTaxYear, nextTaxYear)
+      }
+    }
+
+    "status is only known for CY" should {
+      "return two years when nothing returned for PY or NY" in {
+
+        val currentYearNum = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
+        val previousTaxYear: TaxYear = currentTaxYear.previousYear
+        val nextTaxYear: TaxYear = currentTaxYear.nextYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
+
+        val result = service.getTaxYearsAvailableForOptOut()
+
+        result.futureValue shouldBe Seq(currentTaxYear, nextTaxYear)
+      }
+    }
+
+    "status is only known for CY = No Status" should {
+      "return no years when nothing returned for PY or NY" in {
+
+        val currentYearNum = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
+        val previousTaxYear: TaxYear = currentTaxYear.previousYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          currentTaxYear -> StatusDetail("", ITSAStatus.NoStatus, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
+
+        val result = service.getTaxYearsAvailableForOptOut()
+
+        result.futureValue shouldBe Seq()
+      }
+    }
+
+    "status is only known for NY" should {
+      "return one year when no status for PY and CY" in {
+
+        val currentYearNum = 2024
+        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
+        val previousTaxYear: TaxYear = currentTaxYear.previousYear
+        val nextTaxYear: TaxYear = currentTaxYear.nextYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+
+        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
+
+        val result = service.getTaxYearsAvailableForOptOut()
+
+        result.futureValue shouldBe Seq(nextTaxYear)
+      }
+    }
   }
 
   "OptOutService.getSubmissionCountForTaxYear" when {
