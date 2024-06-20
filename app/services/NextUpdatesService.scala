@@ -98,12 +98,12 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   }
 
-  def getQuarterlyUpdatesCounts(optOutTaxYear: TaxYear)
+  def getQuarterlyUpdatesCounts(taxYear: TaxYear)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear]  = {
-    getNextUpdates(optOutTaxYear.toFinancialYearStart, optOutTaxYear.toFinancialYearEnd).map {
+    getNextUpdates(taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
-        QuarterlyUpdatesCountForTaxYear(optOutTaxYear, obligationsModel.submissionsCount)
-      case _ => QuarterlyUpdatesCountForTaxYear(optOutTaxYear, noQuarterlyUpdates)
+        QuarterlyUpdatesCountForTaxYear(taxYear, obligationsModel.submissionsCount)
+      case _ => QuarterlyUpdatesCountForTaxYear(taxYear, noQuarterlyUpdates)
     }
   }
 
