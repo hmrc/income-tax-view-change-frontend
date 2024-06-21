@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.ClaimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.SelectYourReasonView
 

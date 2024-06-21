@@ -28,7 +28,7 @@ import services.claimToAdjustPoa.RecalculatePoaHelper
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import utils.ClaimToAdjust.WithSessionAndPoa
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 
 import javax.inject.Inject

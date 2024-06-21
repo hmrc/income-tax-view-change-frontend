@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
-import utils.ClaimToAdjust.ClaimToAdjustUtils
+import utils.claimToAdjust.ClaimToAdjustUtils
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 import javax.inject.{Inject, Singleton}

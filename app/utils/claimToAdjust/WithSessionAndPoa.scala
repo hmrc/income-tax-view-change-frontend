@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils.ClaimToAdjust
+package utils.claimToAdjust
 
 import auth.MtdItUser
 import cats.data.EitherT

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.claimToAdjust
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
@@ -24,15 +24,13 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyBoolean}
-import org.mockito.Mockito.{doReturn, spy, when}
+import org.mockito.Mockito.{spy, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
 import testUtils.TestSupport
-import utils.ClaimToAdjust.JourneyCheckerClaimToAdjust
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import scala.concurrent.{ExecutionContext, Future}

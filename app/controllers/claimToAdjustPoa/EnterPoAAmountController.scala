@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.ClaimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
+import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.EnterPoAAmountView
 
