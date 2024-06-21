@@ -334,3 +334,4 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
   }
 }
+
