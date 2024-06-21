@@ -987,10 +987,10 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for Balancing payment created
 
-chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for payment on account 1 of 2
-chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 1 of 2
-chargeSummary.paymentAllocations.poa2.incomeTax                    = Payment allocated to Income Tax for payment on account 2 of 2
-chargeSummary.paymentAllocations.poa2.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 2 of 2
+chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
+chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account
+chargeSummary.paymentAllocations.poa2.incomeTax                    = Payment allocated to Income Tax for second payment on account
+chargeSummary.paymentAllocations.poa2.nic4                         = Payment allocated to Class 4 National Insurance for second payment on account
 chargeSummary.paymentAllocations.bcd.incomeTax                     = Payment allocated to Income Tax for Balancing payment
 chargeSummary.paymentAllocations.bcd.nic2                          = Payment allocated to Class 2 National Insurance for Balancing payment
 chargeSummary.paymentAllocations.bcd.vcnic2                        = Payment allocated to Voluntary Class 2 National Insurance for Balancing payment

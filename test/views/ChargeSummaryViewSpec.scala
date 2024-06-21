@@ -672,10 +672,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           )
 
           val expectedPaymentAllocationRows = List(
-            "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 2018 £1,500.00",
-            "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
-            "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
-            "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
+            "30 Mar 2018 Payment allocated to Income Tax for first payment on account 2018 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for first payment on account 2018 £1,600.00",
+            "1 Apr 2018 Payment allocated to Income Tax for second payment on account 2018 £2,400.00",
+            "15 Apr 2018 Payment allocated to Class 4 National Insurance for second payment on account 2018 £2,500.00",
             "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
             "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
             "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
