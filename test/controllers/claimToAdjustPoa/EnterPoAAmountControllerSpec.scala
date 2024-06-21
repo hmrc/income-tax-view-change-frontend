@@ -49,7 +49,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
   object TestEnterPoAAmountController extends EnterPoAAmountController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

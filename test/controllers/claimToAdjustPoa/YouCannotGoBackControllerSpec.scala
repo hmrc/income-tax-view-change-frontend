@@ -41,7 +41,7 @@ class YouCannotGoBackControllerSpec extends MockAuthenticationPredicate
 
   object TestYouCannotGoBackController extends YouCannotGoBackController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     poaSessionService = mockPaymentOnAccountSessionService,
     view = app.injector.instanceOf[YouCannotGoBackView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

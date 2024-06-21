@@ -42,7 +42,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
   object TestWhatYouNeedToKnowController extends WhatYouNeedToKnowController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

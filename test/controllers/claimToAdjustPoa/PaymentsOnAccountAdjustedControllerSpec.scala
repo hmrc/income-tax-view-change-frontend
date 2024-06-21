@@ -46,7 +46,7 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
 
   object TestController extends PaymentsOnAccountAdjustedController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

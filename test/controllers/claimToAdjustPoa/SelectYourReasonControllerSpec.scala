@@ -50,7 +50,7 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
 
   object TestSelectYourReasonController extends SelectYourReasonController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[SelectYourReasonView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

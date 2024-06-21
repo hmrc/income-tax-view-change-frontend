@@ -45,7 +45,7 @@ class AmendablePOAControllerSpec
 
   object TestAmendablePOAController extends AmendablePOAController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

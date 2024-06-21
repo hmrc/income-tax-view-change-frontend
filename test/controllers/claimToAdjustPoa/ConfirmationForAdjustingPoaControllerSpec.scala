@@ -53,7 +53,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
 
   object TestConfirmationForAdjustingPoaController extends ConfirmationForAdjustingPoaController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     ctaCalculationService = mockClaimToAdjustPoaCalculationService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
