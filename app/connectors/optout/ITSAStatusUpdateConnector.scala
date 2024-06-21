@@ -55,14 +55,19 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
       val correlationId = response.headers.get(CorrelationIdHeader).map(_.head).getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
-        case Status.NOT_FOUND => OptOutUpdateResponseFailure.notFoundFailure(correlationId, buildRequestUrlWith(taxableEntityId))
+        case Status.NOT_FOUND =>
+          log.error(s"response status: ${response.status}")
+          OptOutUpdateResponseFailure.notFoundFailure(correlationId, buildRequestUrlWith(taxableEntityId))
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
               log.error(s"Json validation error parsing itsa-status update response, error $invalid")
               OptOutUpdateResponseFailure.defaultFailure(correlationId)
             },
-            valid => valid.copy(correlationId = correlationId, statusCode = response.status)
+            valid => {
+              log.error(s"response status: ${response.status}")
+              valid.copy(correlationId = correlationId, statusCode = response.status)
+            }
           )
       }
     }

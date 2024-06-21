@@ -75,5 +75,4 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
           showInternalServerError(isAgent)
       }
   }
-
 }

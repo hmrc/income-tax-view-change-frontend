@@ -37,7 +37,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, oneYearOptOut: Option[OptOutViewModel],
+@(currentObligations: NextUpdatesViewModel, optOutViewModel: Option[OptOutViewModel],
   checks:NextUpdatesQuarterlyReportingContentChecks,
   backUrl: String,
   isAgent: Boolean = false,
@@ -61,7 +61,7 @@
 	@p() {
 
 		@{
-			oneYearOptOut.map {
+			optOutViewModel.map {
 
 				case m:OptOutOneYearViewModel =>
 					Html(
