@@ -51,7 +51,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-    val homePage = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+    val nextUpdatesPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)
@@ -105,7 +105,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
           redirectLocation(result) shouldBe confirmOptOutPage
         }
       }
-      s"return result with $SEE_OTHER status with redirect to $homePage" when {
+      s"return result with $SEE_OTHER status with redirect to $nextUpdatesPage" when {
         "No response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
@@ -117,7 +117,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
               ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
             ))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(homePage)
+          redirectLocation(result) shouldBe Some(nextUpdatesPage)
         }
       }
       s"return result with $BAD_REQUEST status" when {

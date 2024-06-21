@@ -31,7 +31,7 @@
     formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: OptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: OptOutCheckpointViewModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
@@ -89,7 +89,7 @@
                 content = Text(messages("optout.checkAnswers.confirm")),
                 attributes = Map("id" -> "confirm-button")
             ))
-            <a class="govuk-link" href="" id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
+            <a class="govuk-link" href=@cancelURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
         </div>
     }
 

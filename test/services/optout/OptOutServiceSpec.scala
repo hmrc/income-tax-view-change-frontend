@@ -24,15 +24,17 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
+import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfter
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.{BeforeAndAfter, Succeeded}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
-import services.NextUpdatesService.SubmissionsCountForTaxYear
-import services.optout.OptOutService.SubmissionsCountForTaxYearModel
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -95,6 +97,53 @@ class OptOutServiceSpec extends UnitSpec
   val noOptOutOptionAvailable: Option[Nothing] = None
 
   val apiError: String = "some api error"
+
+  "OptOutService.resetSavedIntent" should {
+    "reset intent year" in {
+
+      val forYearEnd = 2024
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+      when(repository.set(any())).thenReturn(Future.successful(true))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.Name,
+        optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(forYearEnd).toString)))
+      )
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      def reconfigureMock(): Future[Unit] = {
+        Future {
+          Mockito.reset(repository)
+
+          when(repository.set(any())).thenReturn(Future.successful(true))
+
+          val data = UIJourneySessionData(
+            sessionId = hc.sessionId.get.value,
+            journeyType = OptOutJourney.Name,
+            optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = None))
+          )
+          when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+        }
+      }
+
+      val f = for {
+        isSaved <- service.saveIntent(TaxYear.forYearEnd(forYearEnd))
+        savedIntent <- service.fetchSavedIntent()
+        _ <- reconfigureMock()
+        isReset <- service.resetSavedIntent()
+        noneIntent <- service.fetchSavedIntent()
+      } yield {
+        isSaved shouldBe true
+        savedIntent.isDefined shouldBe true
+        isReset shouldBe true
+        noneIntent.isDefined shouldBe false
+      }
+
+      f.futureValue shouldBe Succeeded
+    }
+  }
 
   "OptOutService.getTaxYearsAvailableForOptOut" when {
     "three years available for opt-out; end-year 2023, 2024, 2025" should {
@@ -222,16 +271,16 @@ class OptOutServiceSpec extends UnitSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(nextUpdatesService.getSubmissionCounts(same(year.taxYear))(any(), any()))
-              .thenReturn(Future.successful(SubmissionsCountForTaxYear(year.taxYear, year.submissions)))
+            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+              .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
-          val result = service.getSubmissionCountForTaxYear(offeredTaxYearsAndCountsTestSetup.map(_.taxYear))
+          val result = service.getQuarterlyUpdatesCountForTaxYear(offeredTaxYearsAndCountsTestSetup.map(_.taxYear))
 
-          val expectedResult = SubmissionsCountForTaxYearModel(Seq(
-            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2023), 1),
-            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2024), 1),
-            SubmissionsCountForTaxYear(TaxYear.forYearEnd(2025), 0),
+          val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2025), 0),
           ))
 
           result.futureValue shouldBe expectedResult
@@ -652,6 +701,9 @@ class OptOutServiceSpec extends UnitSpec
           when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+          when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
+            .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val intent = optOutTaxYear

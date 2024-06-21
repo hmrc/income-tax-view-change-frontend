@@ -75,11 +75,14 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             Future.successful(errorHandler.showInternalServerError())
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
-            optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
-              optOutService.nextUpdatesPageOptOutViewModel().map { optOutOneYearViewModel =>
-                Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
-              }
-            } recover {
+
+            val optOutSetup = for {
+              checks <- optOutService.getNextUpdatesQuarterlyReportingContentChecks
+              optOutOneYearViewModel <- optOutService.nextUpdatesPageOptOutViewModel()
+              _ <- optOutService.resetSavedIntent()
+            } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
+
+            optOutSetup recover {
               case ex =>
                 Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
                 errorHandler.showInternalServerError()
