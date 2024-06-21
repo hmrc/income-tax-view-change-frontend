@@ -61,16 +61,16 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
     }
   }
 
-  protected def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
+  def errorHandler(implicit user: MtdItUser[_]): FrontendErrorHandler with ShowInternalServerError =
     if (isAgent(user)) itvcErrorHandlerAgent else itvcErrorHandler
 
-  protected lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
+  lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  protected def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
+  def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
     Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent(user)).url)
   }
 
-  protected def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
+  def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {
     val isOnCannotGoBackOrSuccessPage = journeyState == CannotGoBackPage || journeyState == AfterSubmissionPage
     (journeyCompleted, isOnCannotGoBackOrSuccessPage) match {
       case (_, true) => false
@@ -98,7 +98,6 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
       case Right(None) =>
         Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
         poaSessionService.createSession
-        // TODO: look at this again
         codeBlock(PoAAmendmentData())
       case Left(ex) =>
         Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
