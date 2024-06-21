@@ -32,8 +32,6 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
 
-  val mockCalculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
-
   val defaultPaymentOnAccountModel = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",
     poaTwoTransactionId = "poaTwo-Id",

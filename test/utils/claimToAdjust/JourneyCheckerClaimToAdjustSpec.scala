@@ -19,6 +19,7 @@ package utils.claimToAdjust
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
+import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoAAmendmentData
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -55,12 +56,6 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   })
 
-  def successfulFutureRedirect: PoAAmendmentData => Future[Result] = _ =>
-    Future.successful(Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false)))
-
-  def successfulFutureRedirectAgent: PoAAmendmentData => Future[Result] = _ =>
-    Future.successful(Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true)))
-
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
   def successfulFutureOk: PoAAmendmentData => Future[Result] = _ =>
@@ -68,6 +63,11 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
   def successfulFutureOkAgent: PoAAmendmentData => Future[Result] = _ =>
     Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, "")))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    enable(AdjustPaymentsOnAccount)
+  }
 
   "JourneyCheckerClaimToAdjust.isAgent" should {
     "return true" when {
