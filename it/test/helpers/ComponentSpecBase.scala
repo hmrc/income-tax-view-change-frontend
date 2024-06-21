@@ -652,6 +652,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post("/optout/choose-taxyear")(body)
     }
 
+    def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/error", additionalCookies)
+    }
+
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)
 
 

@@ -29,12 +29,17 @@
         govukTable: GovukTable,
         formWithCSRF: FormWithCSRF,
         govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
 )
 
-@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:OneYearOptOutCheckpointViewModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutURL = @{
     controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+}
+
+@quarterlyUpdatesWarningBlock(count: Int) = {
+    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.confirmOptOut.quarterly-updates", count))))
 }
 
 @title = @{
@@ -63,13 +68,17 @@
     }
 }
 
+@viewModel.whereQuarterlyUpdatesAreMade.map { quarterlyUpdatesCount =>
+    @quarterlyUpdatesWarningBlock(quarterlyUpdatesCount)
+}
+
 @formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {
     <div class="govuk-button-group">
         @govukButton(Button(
             content = Text(messages("optout.confirmOptOut.confirm")),
             id = Some("confirm-button")
         ))
-        <a class="govuk-link" id="cancel-button" href="#">
+        <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
         </a>
     </div>

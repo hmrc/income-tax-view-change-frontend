@@ -47,14 +47,14 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
 
-
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
+        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel))))
+          result <- OptionT(Future.successful(Option(toPropositionView(isAgent, viewModel, cancelURL))))
         } yield result
 
         resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
@@ -62,9 +62,9 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
       }
   }
 
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
-    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent))
-    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent))
+  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) = viewModel match {
+    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent, cancelURL))
+    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
