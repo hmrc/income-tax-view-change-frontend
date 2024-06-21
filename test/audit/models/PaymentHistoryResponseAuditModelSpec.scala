@@ -51,7 +51,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
         dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None,
-        mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930")),
+        mainType = Some("Payment"), mainTransaction = Some("0060")),
       Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
         documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),

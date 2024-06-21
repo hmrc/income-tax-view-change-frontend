@@ -54,7 +54,7 @@ object CreditType {
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
   // TODO: This should be "0060", not "4920" or "4930"
-  private val payment = List("4920", "4930")
+  private val payment = List("0060")//List("4920", "4930")
 
   def fromCode(mainTransaction: String): Option[CreditType] = {
     mainTransaction match {
