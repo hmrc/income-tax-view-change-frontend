@@ -54,23 +54,36 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
+  def getStatusDetail(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): StatusDetail = {
+    val defaultStatusDetail = StatusDetail("Unknown", ITSAStatus.NoStatus, "Unknown")
+    statusMap.getOrElse(year, defaultStatusDetail)
+  }
+
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
                                       finalisedStatus: Boolean,
-                                      statusMap: Map[TaxYear, StatusDetail]): OptOutProposition = {
+                                      statusMap: Map[TaxYear, StatusDetail]
+                                     ): OptOutProposition = {
 
-    val defaultStatusDetail = StatusDetail("Unknown", ITSAStatus.NoStatus, "Unknown")
+    val previousYearOptOut = PreviousOptOutTaxYear(
+      status = getStatusDetail(previousYear, statusMap).status,
+      taxYear = previousYear,
+      crystallised = finalisedStatus
+    )
 
-    val previousYearStatus = statusMap.getOrElse(previousYear, defaultStatusDetail)
-    val currentYearStatus = statusMap.getOrElse(currentYear, defaultStatusDetail)
-    val nextYearStatus = statusMap.getOrElse(nextYear, defaultStatusDetail)
+    val currentYearOptOut = CurrentOptOutTaxYear(
+      status = getStatusDetail(currentYear, statusMap).status,
+      taxYear = currentYear
+    )
 
-    val previousYearOptOut = PreviousOptOutTaxYear(previousYearStatus.status, previousYear, finalisedStatus)
-    val currentTaxYearOptOut = CurrentOptOutTaxYear(currentYearStatus.status, currentYear)
-    val nextTaxYearOptOut = NextOptOutTaxYear(nextYearStatus.status, nextYear, currentTaxYearOptOut)
+    val nextYearOptOut = NextOptOutTaxYear(
+      status = getStatusDetail(nextYear, statusMap).status,
+      taxYear = nextYear,
+      currentTaxYear = currentYearOptOut
+    )
 
-    OptOutProposition(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
+    OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
 
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
@@ -124,8 +137,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     def findAnyFailOrFirstSuccess(responses: Seq[OptOutUpdateResponse]): OptOutUpdateResponse = {
       responses.find {
-          case _: OptOutUpdateResponseFailure => true
-          case _ => false
+        case _: OptOutUpdateResponseFailure => true
+        case _ => false
       }.getOrElse(responses.head)
     }
 
@@ -133,7 +146,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       intentTaxYear <- OptionT(fetchSavedIntent())
       intentOptOutTaxYear <- OptionT(Future.successful(optOutProposition.optOutTaxYearFor(intentTaxYear)))
       yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentOptOutTaxYear))))
-      responsesSeqOfFutures  <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
+      responsesSeqOfFutures <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
       responsesSeq <- OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
       finalResponse <- OptionT(Future.successful(Option(findAnyFailOrFirstSuccess(responsesSeq))))
     } yield finalResponse
@@ -168,7 +181,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
         proposition.optOutPropositionType.flatMap {
           case p: OneYearOptOutProposition => Some(OneYearOptOutCheckpointViewModel(intent = p.intent.taxYear, state = p.state()))
           case p: MultiYearOptOutProposition =>
-            intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i))//todo: add test code
+            intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i)) //todo: add test code
         }
       }
     }
