@@ -76,8 +76,11 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
 
     def getCeaseSoleTraderBusinessURL(incomeSourceId: String): String = {
-      if (isAgent) controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceId), SelfEmployment).url
-      else controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId), SelfEmployment).url
+      controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId),
+        SelfEmployment,
+        isAgent,
+        isChange = false
+      ).url
     }
 
     def getCeaseUkPropertyURL: String = {
