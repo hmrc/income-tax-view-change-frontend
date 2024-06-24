@@ -197,7 +197,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .get()
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-          println(document.text())
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.selectFirst("p").text shouldBe "£500.00 available to claim"
           layoutContent.select("p").get(1).text shouldBe
