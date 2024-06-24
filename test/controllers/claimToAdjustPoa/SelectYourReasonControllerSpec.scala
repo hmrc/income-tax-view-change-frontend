@@ -33,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.claimToAdjustPoa.ClaimToAdjustPOATestConstants.testPoa1Maybe
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
 import testUtils.{TestSupport, ViewSpec}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 

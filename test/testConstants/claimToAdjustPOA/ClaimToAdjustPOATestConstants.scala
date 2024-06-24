@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPoa
+package testConstants.claimToAdjustPOA
 
-import models.financialDetails._
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate

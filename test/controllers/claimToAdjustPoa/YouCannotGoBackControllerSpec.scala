@@ -27,7 +27,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.claimToAdjustPoa.ClaimToAdjustPOATestConstants.testPoa1Maybe
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 
@@ -109,11 +109,11 @@ class YouCannotGoBackControllerSpec extends MockAuthenticationPredicate
       "No POAs can be found" in {
         setupTest()
 
-        val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
-        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
-
         setupMockGetPaymentsOnAccount(None)
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+
+        val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
