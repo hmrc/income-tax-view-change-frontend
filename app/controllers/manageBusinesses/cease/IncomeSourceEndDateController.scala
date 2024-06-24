@@ -61,12 +61,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
     val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
 
-    (isAgent, isChange) match {
-      case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
-      case (false, _) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
-      case (_, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
-      case (_, _) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
-    }
+    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
+
   }
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {

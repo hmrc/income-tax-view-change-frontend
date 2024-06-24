@@ -140,8 +140,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authorisedFunctions: Fro
     else         routes.CeaseIncomeSourceController.show()
 
   private val redirectAction: (Option[String], Boolean, Boolean, IncomeSourceType) => Call = (id, isAgent, isChange, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
-    else         routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
+    routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
 
   private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
     if (mtdItUser.userType.contains(Agent)) itvcErrorHandlerAgent
