@@ -16,7 +16,6 @@
 
 package mocks.services
 
-import connectors.CalculationListConnector
 import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
@@ -31,6 +30,11 @@ import scala.concurrent.Future
 trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
 
   val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockClaimToAdjustService)
+  }
 
   val defaultPaymentOnAccountModel = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",

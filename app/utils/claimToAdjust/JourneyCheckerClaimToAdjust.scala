@@ -97,8 +97,9 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils {
         }
       case Right(None) =>
         Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
-        poaSessionService.createSession
-        codeBlock(PoAAmendmentData())
+        poaSessionService.createSession.flatMap(
+          _ => codeBlock(PoAAmendmentData())
+        )
       case Left(ex) =>
         Logger("application").error(if (isAgent(user)) "[Agent]" else "" +
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >")

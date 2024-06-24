@@ -271,6 +271,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       }
       "getMongo returns a right containing None" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
+        setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
         val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
         val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
