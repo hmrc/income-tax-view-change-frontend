@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package testConstants.claimToAdjustPoa
 
 import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
 import play.api.libs.json.JsValue

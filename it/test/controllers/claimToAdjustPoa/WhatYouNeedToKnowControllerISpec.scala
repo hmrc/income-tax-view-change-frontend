@@ -174,7 +174,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         }
       }
 
-      "when user has POAs that are fully paid" in {
+      "user has POAs that are fully paid" in {
         enable(AdjustPaymentsOnAccount)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -201,9 +201,9 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET $whatYouNeedToKnowUrl")
-        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+        val res = get("/adjust-poa/what-you-need-to-know")
 
-        lazy val document: Document = Jsoup.parse(res.body)
+        val document: Document = Jsoup.parse(res.body)
         val continueButton = document.getElementById("continue")
 
         res should have(

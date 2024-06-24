@@ -26,7 +26,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
-import testConstants.ClaimToAdjustPoaTestConstants.{testTaxYearPoa, validFinancialDetailsResponseBody, validSession}
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.{testTaxYearPoa, validFinancialDetailsResponseBody, validSession}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
 class YouCannotGoBackControllerISpec extends ComponentSpecBase {
