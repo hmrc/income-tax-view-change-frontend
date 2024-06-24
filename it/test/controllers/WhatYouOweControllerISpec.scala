@@ -20,7 +20,7 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
+import models.admin._
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
@@ -906,7 +906,30 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             res should have(
               httpStatus(OK),
               pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("adjust-poa-link")(expectedValue = true))
+              isElementVisibleById("adjust-poa-link")(expectedValue = true),
+              isElementVisibleById("adjust-poa-content")(expectedValue = true))
+          }
+
+          "user has valid POAs that have been paid in full, and the FS is Enabled" in {
+            enable(AdjustPaymentsOnAccount)
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+
+            And("I wiremock stub financial details for multiple years with POAs")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              isElementVisibleById("adjust-poa-link")(expectedValue = true),
+              isElementVisibleById("adjust-paid-poa-content")(expectedValue = true))
           }
         }
         "not show" when {

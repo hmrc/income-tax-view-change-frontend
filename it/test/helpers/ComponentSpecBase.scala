@@ -43,6 +43,8 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
+import repositories.UIJourneySessionDataRepository
+import services.optout.OptOutService
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -111,6 +113,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
+  implicit val optOutService: OptOutService = app.injector.instanceOf[OptOutService]
+  implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
@@ -646,6 +650,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
       post("/optout/choose-taxyear")(body)
+    }
+
+    def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/optout/error", additionalCookies)
     }
 
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)

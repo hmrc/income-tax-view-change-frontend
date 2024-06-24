@@ -48,7 +48,7 @@
             @messages("optout.confirmedOptOut.heading")
         </h1>
         <div class="govuk-panel__body">
-            @messages(panelBody, viewModel.starYear, viewModel.endYear)
+            @messages(panelBody, viewModel.startYear, viewModel.endYear)
         </div>
     </div>
 }
@@ -114,11 +114,20 @@
                 <li>@messages("optout.confirmedOptOut.reportQuarterly.p1")</li>
                 <li>@messages("optout.confirmedOptOut.reportQuarterly.p2")</li>
             </ul>
-            <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example")</div>
+            <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example", viewModel.startYear, viewModel.endYear, viewModel.nextYear)</div>
             <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc2")</p>
         }
         <p class="govuk-body">
-            @messages("optout.confirmedOptOut.reportQuarterly.desc3")
+            @{
+                val externalRefLink = messages("optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
+                val anchor = link(
+                    id = Some("sign-up-criteria-ext"),
+                    target = Some("_blank"),
+                    link = externalRefLink,
+                    messageKey = "optout.confirmedOptOut.reportQuarterly.desc3.anchor-text"  )
+
+                Html(messages("optout.confirmedOptOut.reportQuarterly.desc3", anchor.toString()))
+            }
         </p>
     </div>
 }

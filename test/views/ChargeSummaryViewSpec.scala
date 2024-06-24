@@ -19,6 +19,7 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
+import enums.OtherCharge
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -57,7 +58,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -73,10 +74,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
-      document.select(Selectors.table).text() shouldBe s"""
-                                                          |Date Description Amount
-                                                          |${rows.mkString("\n")}
-                                                          |""".stripMargin.trim.linesIterator.mkString(" ")
+      document.select(Selectors.table).text() shouldBe
+        s"""
+           |Date Description Amount
+           |${rows.mkString("\n")}
+           |""".stripMargin.trim.linesIterator.mkString(" ")
 
     }
 
@@ -104,8 +106,20 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
-    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
+    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount")
+    val poaTextBullets = messages("chargeSummary.paymentsOnAccount.bullet1") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
+    val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
 
+    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
+
+    def getFirstOrSecond(number: Int): String = {
+      require(number > 0, "Number must be greater than zero")
+      number match {
+        case 1 => "First"
+        case 2 => "Second"
+        case _=> throw new Error(s"Number must be 1 or 2 but got: $number")
+      }
+    }
     def poaInterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 
     def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
@@ -122,13 +136,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
-    val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
+    val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
+    val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
+    val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
     val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
 
-    def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
+    def paymentOnAccountCreated(number: Int) = messages(s"chargeSummary.chargeHistory.created.paymentOnAccount$number.text")
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
@@ -174,14 +190,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
 
-
-
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
       amount = Some(500.0),
       dueDate = Some(LocalDate.parse("2018-09-08")),
       clearingDate = Some(LocalDate.parse("2018-09-07")),
-      clearingSAPDocument=Some("123456789012"),
+      clearingSAPDocument = Some("123456789012"),
       paymentAmount = Some(500.0),
       paymentLot = None,
       paymentLotItem = None)
@@ -230,7 +244,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Clerical Interest Signal"))
   )
 
-  def subItemWithClearingSapDocument(clearingSAPDocument: String):SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
+  def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -313,6 +327,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       }
 
+      "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
+      }
+
+      "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
+      }
+
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
         verifySummaryListRowNumeric(2, paymentAmount, "£1,400.00")
@@ -339,7 +365,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
         documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
-        document.select("main h2").text shouldBe chargeHistoryHeading
+        document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display only the charge creation item when no history found for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -525,13 +551,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
         documentDetailModel(lpiWithDunningLock = None, outstandingAmount = 0)) {
-        document.select("main h2").text shouldBe chargeHistoryHeading
+        document.select("main h2").text shouldBe chargeHistoryHeadingPoa1
       }
 
       "display a charge history heading as an h3 when there is a Payment Breakdown" in new TestSetup(
         documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("main h3").text shouldBe chargeHistoryHeading
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
       }
+
+      "display charge history heading as poa1 heading when charge is a poa1" in new TestSetup(
+        documentDetailModel(), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+      }
+      "display charge history heading as poa2 heading when charge is a poa2" in new TestSetup(
+        documentDetailModel(documentDescription = Some("ITSA - POA 2")), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingPoa2
+      }
+      "display charge history heading as non-poa heading when charge is not a poa" in new TestSetup(
+        documentDetailModel(documentDescription = Some("Other")), paymentBreakdown = paymentBreakdown){
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
+      }
+
 
       "display only the charge creation item when no history found for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
         document.select("tbody tr").size() shouldBe 1
@@ -632,10 +672,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           )
 
           val expectedPaymentAllocationRows = List(
-            "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 2018 £1,500.00",
-            "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
-            "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
-            "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
+            "30 Mar 2018 Payment allocated to Income Tax for first payment on account 2018 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for first payment on account 2018 £1,600.00",
+            "1 Apr 2018 Payment allocated to Income Tax for second payment on account 2018 £2,400.00",
+            "15 Apr 2018 Payment allocated to Class 4 National Insurance for second payment on account 2018 £2,500.00",
             "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
             "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
             "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
@@ -777,7 +817,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = 0, originalAmount = BigDecimal(0), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
-          document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("p").get(1).text shouldBe "View what you owe to check if you have any other charges to pay."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
           document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
@@ -791,7 +831,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
         chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
+          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false, documentType = OtherCharge)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -850,7 +890,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       val paymentAllocations = List(
         paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
-        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"),  Some("PAYID01"))
+        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"), Some("PAYID01"))
       )
 
       "Display an unpaid MFA Credit" in new TestSetup(
@@ -874,7 +914,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "Display a paid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
           outstandingAmount = 0.00), isMFADebit = true, isAgent = true,
-          paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
         val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"

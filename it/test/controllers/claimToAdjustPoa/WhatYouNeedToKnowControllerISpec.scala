@@ -131,7 +131,7 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           increaseAfterPaymentContent.isDefined shouldBe false
         }
 
-        "paid or partially paid should display additional content" in {
+        "partially paid should display additional content" in {
           enable(AdjustPaymentsOnAccount)
 
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -172,6 +172,48 @@ class WhatYouNeedToKnowControllerISpec extends ComponentSpecBase {
           val increaseAfterPaymentContent = Option(document.getElementById("p6"))
           increaseAfterPaymentContent.isDefined shouldBe true
         }
+      }
+
+      "when user has POAs that are fully paid" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(
+            originalAmount = 2000,
+            outstandingAmount = 0,
+            taxYear = (testTaxYear - 1).toString,
+            dueDate = testDate.toString,
+            poaRelevantAmount = Some(3000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(
+            originalAmount = 2000,
+            outstandingAmount = 0,
+            taxYear = (testTaxYear - 1).toString,
+            dueDate = testDate.toString,
+            poaRelevantAmount = Some(3000))
+        )
+
+        When(s"I call GET $whatYouNeedToKnowUrl")
+        val res = IncomeTaxViewChangeFrontend.getPOAWhatYouNeedToKnow
+
+        lazy val document: Document = Jsoup.parse(res.body)
+        val continueButton = document.getElementById("continue")
+
+        res should have(
+          httpStatus(OK)
+        )
+        sessionService.getMongo.futureValue shouldBe Right(Some(PoAAmendmentData()))
+        continueButton.attr("href") shouldBe enterPOAAmountUrl
+
+        val increaseAfterPaymentContent = Option(document.getElementById("p6"))
+        increaseAfterPaymentContent.isDefined shouldBe true
       }
     }
 

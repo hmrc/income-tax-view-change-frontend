@@ -22,10 +22,10 @@ import helpers.ITSAStatusUpdateConnectorStub
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+//import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Mandated
-import org.scalatest.Ignore
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -35,7 +35,6 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
-@Ignore
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
   implicit val defaultPatience: PatienceConfig =
@@ -44,6 +43,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = true
   val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
   val submitConfirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.submit(isAgent).url
+  val optOutErrorControllerUrl = controllers.optOut.routes.OptOutErrorController.show(isAgent).url
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -91,6 +91,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
+          optOutService.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
 
           val result = IncomeTaxViewChangeFrontend.getConfirmOptOut(clientDetailsWithConfirmation)
           verifyIncomeSourceDetailsCall(testMtditid)
@@ -114,7 +115,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           Status.NO_CONTENT, emptyBodyString,
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
@@ -136,7 +137,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           Status.NO_CONTENT, emptyBodyString,
           Map("missing-header-name" -> "missing-header-value")
         )
@@ -158,7 +159,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
@@ -166,7 +167,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmOptOut(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(SEE_OTHER)
+          httpStatus(SEE_OTHER),
+          redirectURI(optOutErrorControllerUrl)
         )
 
       }
@@ -180,7 +182,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-        ITSAStatusUpdateConnectorStub.stubPUTItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
@@ -188,7 +190,8 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmOptOut(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(SEE_OTHER)
+          httpStatus(SEE_OTHER),
+          redirectURI(optOutErrorControllerUrl)
         )
 
       }

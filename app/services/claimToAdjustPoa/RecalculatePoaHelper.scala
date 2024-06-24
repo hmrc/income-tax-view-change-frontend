@@ -26,7 +26,7 @@ import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.mvc.Result
-import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

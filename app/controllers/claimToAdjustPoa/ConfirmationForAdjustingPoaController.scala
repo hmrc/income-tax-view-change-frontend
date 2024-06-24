@@ -24,8 +24,8 @@ import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.RecalculatePoaHelper
-import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.AuthenticatorPredicate
 import utils.claimToAdjust.WithSessionAndPoa

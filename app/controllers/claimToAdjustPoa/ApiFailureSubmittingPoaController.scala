@@ -22,6 +22,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.routes
 import implicits.ImplicitCurrencyFormatter
 import models.admin.AdjustPaymentsOnAccount
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -48,6 +49,10 @@ class ApiFailureSubmittingPoaController @Inject()(val authorisedFunctions: Autho
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
           Future.successful(Ok(view(isAgent)))
+        } recover {
+          case ex: Throwable =>
+            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
         }
     }
   }

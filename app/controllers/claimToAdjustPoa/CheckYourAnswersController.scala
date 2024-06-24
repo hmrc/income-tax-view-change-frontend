@@ -25,8 +25,8 @@ import models.claimToAdjustPoa.{PoAAmendmentData, SelectYourReason}
 import models.core.CheckMode
 import play.api.Logger
 import play.api.mvc._
-import services.claimToAdjustPoa.RecalculatePoaHelper
-import services.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import utils.AuthenticatorPredicate
@@ -69,10 +69,10 @@ class CheckYourAnswersController @Inject()(val authorisedFunctions: AuthorisedFu
               )
             )
           }
-        }.recover {
-          case ex: Exception =>
-            Logger("application").error(if (isAgent) "[Agent]" else "" + s"${ex.getMessage} - ${ex.getCause}")
-            errorHandler.showInternalServerError()
+        } recover {
+          case ex: Throwable =>
+            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+            showInternalServerError(isAgent)
         }
     }
 

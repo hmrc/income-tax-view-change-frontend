@@ -1,5 +1,5 @@
-/*
- * Copyright 2024 HM Revenue & Customs
+@*
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.optout
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
 
-import models.incomeSourceDetails.TaxYear
-import services.optout.{OneYearOptOutFollowedByMandated, OptOutState}
+@this(
+      mainTemplate: unifiedLayout,
+      h1: h1_large,
+      p: data_metric_p
+)
 
-case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) {
-  val isOneYearOptOutFollowedByMandated: Boolean = state.contains(OneYearOptOutFollowedByMandated)
-  val startYear: String = optOutTaxYear.startYear.toString
-  val endYear: String = optOutTaxYear.endYear.toString
-  val nextYear: String = optOutTaxYear.nextYear.endYear.toString
+@(pageTitle: String, heading: String, content: Html, isAgent: Boolean)(implicit request : Request[_], messages: Messages)
+
+@mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
+
+     @h1(msg = heading)
+     @content
+
 }
-

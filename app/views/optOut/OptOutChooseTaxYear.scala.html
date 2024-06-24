@@ -18,7 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.incomeSourceDetails.TaxYear
-@import services.optout.OptOutService.SubmissionsCountForTaxYearModel
+@import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 @import views.html.helpers.injected.ErrorSummary
 @import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 
@@ -38,7 +38,7 @@
 )
 
 
-@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: SubmissionsCountForTaxYearModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: QuarterlyUpdatesCountForTaxYearModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutPostUrl = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
@@ -79,7 +79,7 @@
                 content = Text(messages("base.continue")),
                 attributes = Map("id" -> "continue-button")
             ))
-            <a class="govuk-link" id="cancel-button" href="#">
+            <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
             </a>
         </div>
@@ -106,7 +106,7 @@
         @messages("optout.chooseOptOutTaxYear.desc2")
     }
 
-    @if(submissionCounts.isSubmissionsMade) {
+    @if(submissionCounts.isQuarterlyUpdatesMade) {
         @warningBlock
     }
 

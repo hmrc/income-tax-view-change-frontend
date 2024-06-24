@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
+import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
@@ -38,9 +39,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   val validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.documentDescription) match {
+    (documentDetail.documentText, documentDetail.getDocType) match {
       case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Some("ITSA- POA 1") | Some("ITSA - POA 2") | Some("TRM New Charge") | Some("TRM Amend Charge")) => true
+      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge) => true
       case (_, _) => false
     }
   }

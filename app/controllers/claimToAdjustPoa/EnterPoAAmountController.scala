@@ -63,7 +63,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                 showInternalServerError(isAgent)
             }
           }
-        }.recover {
+        } recover {
           case ex: Exception =>
             Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
