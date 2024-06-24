@@ -59,7 +59,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
     val controller = new WhatYouOweController(
       whatYouOweService,
-      claimToAdjustService,
+      mockClaimToAdjustService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       mockAuthService,

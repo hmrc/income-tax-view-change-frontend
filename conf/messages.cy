@@ -1973,6 +1973,17 @@ claimToAdjustPoa.success.check                      = Gwirio’r
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
 
+## You Cannot Go Back!
+claimToAdjustPoa.youCannotGoBack.heading                 = Ni allwch fynd yn ôl
+claimToAdjustPoa.youCannotGoBack.para1                   = Mae’ch taliadau ar gyfrif wedi’u diweddaru.
+claimToAdjustPoa.youCannotGoBack.para2                   = Gallwch wneud y canlynol:
+claimToAdjustPoa.youCannotGoBack.bullet1Text             = gwiriwch
+claimToAdjustPoa.youCannotGoBack.bullet1Link             = statws eich taliadau ar gyfrif
+claimToAdjustPoa.youCannotGoBack.bullet2Text             = gwiriwch
+claimToAdjustPoa.youCannotGoBack.bullet2Link             = yr hyn sydd arnoch
+claimToAdjustPoa.youCannotGoBack.bullet3Text             = ewch yn ôl i’r
+claimToAdjustPoa.youCannotGoBack.bullet3Link             = hafan
+
 #######################################################################################################################
 ## Opt Out ##
 #######################################################################################################################

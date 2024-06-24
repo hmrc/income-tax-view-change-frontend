@@ -19,16 +19,16 @@ package controllers.claimToAdjustPoa
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import enums.IncomeSourceJourney.InitialPage
 import implicits.ImplicitCurrencyFormatter
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
 import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
+import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
@@ -36,24 +36,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                       claimToAdjustService: ClaimToAdjustService,
+                                       val claimToAdjustService: ClaimToAdjustService,
                                        val auth: AuthenticatorPredicate,
-                                       val sessionService: PaymentOnAccountSessionService,
+                                       val poaSessionService: PaymentOnAccountSessionService,
                                        view: AmendablePaymentOnAccount,
                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                       (implicit val appConfig: FrontendAppConfig,
                                        implicit override val mcc: MessagesControllerComponents,
                                        val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with ImplicitCurrencyFormatter with WithSessionAndPoa {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
-        ifAdjustPoaIsEnabled(isAgent) {{
+        withSessionData(journeyState = InitialPage) { _ => {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getAmendablePoaViewModel(Nino(user.nino)))
-            _ <- EitherT(handleSession)
           } yield poaMaybe
         }.value.flatMap {
           case Right(viewModel) =>
@@ -70,25 +69,4 @@ class AmendablePOAController @Inject()(val authorisedFunctions: AuthorisedFuncti
             showInternalServerError(isAgent)
         }
     }
-
-  private def handleSession(implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
-    sessionService.getMongo flatMap {
-      case Right(Some(poaData: PoAAmendmentData)) => {
-        if (poaData.journeyCompleted) {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
-          sessionService.createSession
-        } else {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
-          Future.successful(Right((): Unit))
-        }
-      }
-      case Right(None) =>
-        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
-        sessionService.createSession
-      case Left(ex) =>
-        Logger("application").error(s"There was an error getting the current mongo session")
-        Future.successful(Left(ex))
-    }
-
-  }
 }

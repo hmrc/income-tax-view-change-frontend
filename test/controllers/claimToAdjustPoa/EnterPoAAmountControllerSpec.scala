@@ -49,12 +49,12 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
 
   object TestEnterPoAAmountController extends EnterPoAAmountController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     view = app.injector.instanceOf[EnterPoAAmountView],
-    sessionService = mockPaymentOnAccountSessionService
+    poaSessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -156,6 +156,28 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+    }
+    "redirect to the You Cannot Go Back page" when {
+      "FS is enabled and the journeyCompleted flag is set to true in session" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
+
+        setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
     }
     "return an error 500" when {

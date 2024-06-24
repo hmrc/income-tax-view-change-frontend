@@ -45,12 +45,12 @@ class AmendablePOAControllerSpec
 
   object TestAmendablePOAController extends AmendablePOAController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[AmendablePaymentOnAccount],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    sessionService = mockPaymentOnAccountSessionService
+    poaSessionService = mockPaymentOnAccountSessionService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -140,6 +140,7 @@ class AmendablePOAControllerSpec
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        setupMockPaymentOnAccountSessionService(Future(Right(Some(PoAAmendmentData()))))
         setupMockGetAmendablePoaViewModelFailure()
 
         val result = TestAmendablePOAController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -153,8 +154,8 @@ class AmendablePOAControllerSpec
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockPaymentOnAccountSessionService(Future(Right(None)))
-        setupMockPaymentOnAccountSessionServiceCreateSession(Future(Left(new Error(""))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Error("Error"))))
 
         setupMockGetPaymentOnAccountViewModel()
         setupMockTaxYearNotCrystallised()

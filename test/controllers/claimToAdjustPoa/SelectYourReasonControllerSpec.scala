@@ -33,12 +33,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.testPoa1Maybe
 import testUtils.{TestSupport, ViewSpec}
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with TestSupport
+class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with TestSupport
   with FeatureSwitching
   with MockClaimToAdjustService
   with MockPaymentOnAccountSessionService
@@ -49,12 +50,12 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
   object TestSelectYourReasonController extends SelectYourReasonController(
     authorisedFunctions = mockAuthService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     view = app.injector.instanceOf[SelectYourReasonView],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     formProvider = app.injector.instanceOf[SelectYourReasonFormProvider],
-    sessionService = mockPaymentOnAccountSessionService,
+    poaSessionService = mockPaymentOnAccountSessionService,
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -93,13 +94,48 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
     s"return status $SEE_OTHER and set Reason when new amount is greater than current amount" in {
       setupTest(
         sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
-        claimToAdjustResponse = poa)
+        claimToAdjustResponse = testPoa1Maybe)
 
       setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
       val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/adjust-poa/check-your-answers")
+    }
+
+    s"return status $SEE_OTHER" when {
+      "Adjust Payments On Account FS is Disabled" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData(newPoAAmount = Some(20000.0)))),
+          claimToAdjustResponse = testPoa1Maybe)
+
+        disable(AdjustPaymentsOnAccount)
+
+        setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
+
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+      "Adjust Payments On Account FS is Enabled but journeyCompleted flag is true" in {
+        setupTest(
+          sessionResponse = Right(Some(PoAAmendmentData(None, newPoAAmount = Some(20000.0), journeyCompleted = true))),
+          claimToAdjustResponse = testPoa1Maybe)
+
+        setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
+
+        val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+      }
     }
 
     s"return status: $OK when PoA tax year crystallized" when {
@@ -110,7 +146,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
             sessionResponse = Right(Some(
               PoAAmendmentData(newPoAAmount = Some(200.0), poaAdjustmentReason = Some(AllowanceOrReliefHigher))
             )),
-            claimToAdjustResponse = poa
+            claimToAdjustResponse = testPoa1Maybe
           )
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(AllowanceOrReliefHigher)
@@ -128,7 +164,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         "user is agent" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
-            claimToAdjustResponse = poa)
+            claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
@@ -137,7 +173,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         "user is not agent" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
-            claimToAdjustResponse = poa)
+            claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe OK
@@ -148,7 +184,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         "user is agent" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
-            claimToAdjustResponse = poa)
+            claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = true, mode = NormalMode)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
@@ -158,7 +194,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         "user is not agent" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData(poaAdjustmentReason = Some(OtherIncomeLower)))),
-            claimToAdjustResponse = poa)
+            claimToAdjustResponse = testPoa1Maybe)
           val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe OK
@@ -172,7 +208,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
       "Payment On Account Session data is missing" in {
         setupTest(
           sessionResponse = Right(None),
-          claimToAdjustResponse = poa)
+          claimToAdjustResponse = testPoa1Maybe)
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -188,7 +224,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
       "Something goes wrong in payment on account session Service" in {
         setupTest(
           sessionResponse = Left(new Exception("Something went wrong")),
-          claimToAdjustResponse = poa)
+          claimToAdjustResponse = testPoa1Maybe)
 
         val result = TestSelectYourReasonController.show(isAgent = false, mode = NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
 
@@ -205,7 +241,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
         setupTest(
           sessionResponse = Right(Some(PoAAmendmentData())),
-          claimToAdjustResponse = poa)
+          claimToAdjustResponse = testPoa1Maybe)
 
         val request = FakeRequest(POST, routes.SelectYourReasonController.submit(isAgent = false, mode = NormalMode).url)
           .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
@@ -224,7 +260,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
 
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
-            claimToAdjustResponse = poa)
+            claimToAdjustResponse = testPoa1Maybe)
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
@@ -260,7 +296,7 @@ class SelectYourReasonControllerSpec  extends MockAuthenticationPredicate with T
         "if 'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
           setupTest(
             sessionResponse = Right(Some(PoAAmendmentData())),
-            claimToAdjustResponse = poa
+            claimToAdjustResponse = testPoa1Maybe
           )
 
           setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)

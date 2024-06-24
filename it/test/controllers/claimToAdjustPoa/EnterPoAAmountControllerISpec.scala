@@ -232,6 +232,35 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
         )
       }
     }
+    s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
+      "journeyCompleted flag is true and the user tries to access the page" in {
+        enable(AdjustPaymentsOnAccount)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+        )
+
+        And("I wiremock stub financial details for multiple years with POAs")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+          OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+        )
+
+        And("A session has been created with journeyCompleted flag set to true")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/enter-poa-amount")
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+        )
+      }
+    }
     s"return $INTERNAL_SERVER_ERROR" when {
 
       "no non-crystallised financial details are found" in {
