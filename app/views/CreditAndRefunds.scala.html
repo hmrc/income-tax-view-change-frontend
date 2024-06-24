@@ -18,8 +18,6 @@
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
-@import _root_.utils.CreditAndRefundUtils._
-@import _root_.utils.CreditAndRefundUtils.UnallocatedCreditType._
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
@@ -28,7 +26,7 @@
 @import cats.instances.string._
 @import cats.syntax.eq._
 @import models.creditsandrefunds.CreditAndRefundViewModel
-@import models.creditsandrefunds.{CreditRow, CreditViewRow, PaymentCreditRow}
+@import models.creditsandrefunds.{CreditRow, CreditViewRow, RefundRow, PaymentCreditRow}
 
 
 @this(
@@ -41,30 +39,12 @@ p: p,
 link: link,
 govukInsetText : GovukInsetText
 )
-@(viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
+@(viewModel: CreditAndRefundViewModel,
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
-
-@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
-@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
-
-@creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
-    <li>
-        <p class="govuk-heading-s">
-            <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
-            @amount.toCurrencyString
-            <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-2")</span>
-        </p>
-    </li>
-}
-
-@maybeCreditChargesHead = @{
-    viewModel.creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
-}
-
 @maybeBalancesDetails = @{
-    balance.getOrElse(throw MissingFieldException("Balance"))
+    viewModel.balanceDetails.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @maybeAvailableCredit = @{
@@ -93,45 +73,61 @@ govukInsetText : GovukInsetText
         <h2 class="govuk-heading-s">
             <span class="govuk-body">@messages("credit-and-refund.subHeading.has-no-credits-1")</span>
             @{
-                balance.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                viewModel.balanceDetails.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
             }
             <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits-2")</span>
         </h2>
     }
 }
 
+@renderCreditRow(creditRow: CreditRow) = {
+    <p class="govuk-heading-s">
+        @creditRow match {
+            case PaymentCreditRow(amount, date) => {
+                @amount.toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.payment")
+                    @date.toLongDate
+                </span>
+            }
+            case CreditViewRow(amount, creditType, taxYear) => {
+                <span class="govuk-body">
+                    @messages(s"credit-and-refund.row.${creditType.key}-1")
+                </span>
+                @amount.toCurrencyString
+                <span class="govuk-body">
+                    @messages(s"credit-and-refund.row.${creditType.key}-2")
+                    @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
+                </span>
+            }
+            case RefundRow(amount) => {
+                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
+                @amount.toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-2")</span>
+            }
+        }
+    </p>
+}
+
 @getCreditAndRefundListContent = {
     <details class="govuk-details">
         <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  @messages("credit-and-refund.subHeading-source")
-                </span>
+            <span class="govuk-details__summary-text">
+                @messages("credit-and-refund.subHeading-source")
+            </span>
         </summary>
         <div class="govuk-details__text">
-            @creditAndRefundType match {
-                case Some(UnallocatedCreditFromOnePayment) => {
-                    <h2 class="govuk-heading-s">
-                        <span class="govuk-body" id="unallocated-payment">
-                            <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.payment")
-                            @((maybeCreditChargesHead match {
-                                case (documentDetailWithDueDate, _) => documentDetailWithDueDate.dueDate
-                            }).getOrElse(throw MissingFieldException("Due Date")).toLongDate)
-                        </span>
-                    </h2>
-                }
-                case Some(UnallocatedCreditFromSingleCreditItem) => {
-                    <h2 class="govuk-heading-s">
-                        <span class="govuk-body" id="unallocated-single-credit">
-                            <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.credit-from-adjustment-prt-1")
-                            @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
-                        </span>
-                    </h2>
-                }
-                case None => {
-                    @getListOfCreditsAndRefunds
-                }
+            @if(viewModel.sortedCreditRows.size == 1) {
+                <div id="credits-list">
+                    @renderCreditRow(viewModel.sortedCreditRows.head)
+                </div>
+            } else {
+                <ul class="govuk-list govuk-list--bullet" id="credits-list">
+                    @for((credit, index) <- viewModel.sortedCreditRows.zipWithIndex) {
+                        <li>
+                            @renderCreditRow(credit)
+                        </li>
+                    }
+                </ul>
             }
         </div>
     </details>
@@ -177,44 +173,6 @@ govukInsetText : GovukInsetText
     }
 }
 
-@getRefundsInProgress = @{
-    Array(balance.get.firstPendingAmountRequested,balance.get.secondPendingAmountRequested)
-    .flatten.sorted(Ordering.BigDecimal.reverse)
-}
-
-@getListOfCreditsAndRefunds = {
-    <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- viewModel.sortedCreditRows.flatten.zipWithIndex) {
-            <li>
-                <p class="govuk-heading-s">
-                    @credit match {
-                        case PaymentCreditRow(amount, creditType, date) => {
-                            @amount.toCurrencyString
-                            <span class="govuk-body">@messages("credit-and-refund.payment")
-                                @date.toLongDate
-                            </span>
-                        }
-                        case CreditViewRow(amount, creditType, taxYear) => {
-                            <span class="govuk-body">
-                                @messages(s"credit-and-refund.row.${creditType.key}-1")
-                            </span>
-                            @amount.toCurrencyString
-                            <span class="govuk-body">
-                                @messages(s"credit-and-refund.row.${creditType.key}-2")
-                                @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
-                            </span>
-                        }
-                    }
-                </p>
-            </li>
-        }
-        @for(amount <- getRefundsInProgress){
-            @creditAndRefundRefundProgressHtml(amount)
-        }
-    </ul>
-}
-
-
 
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
@@ -225,7 +183,7 @@ govukInsetText : GovukInsetText
 
     @h1(msg = "credit-and-refund.heading")
 
-    @if(balance.isDefined){
+    @if(viewModel.balanceDetails.isDefined){
         @getAvailableCreditContent
 
         @getCreditAndRefundListContent
@@ -246,7 +204,7 @@ govukInsetText : GovukInsetText
 
     @if(!isAgent) {
         <div class="govuk-button-group">
-            @if(balance.isDefined){
+            @if(viewModel.balanceDetails.isDefined){
                 @if(maybeAvailableCredit != 0){
                     @link(link = s"${controllers.routes.CreditAndRefundController.startRefund().url}",
                     messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
