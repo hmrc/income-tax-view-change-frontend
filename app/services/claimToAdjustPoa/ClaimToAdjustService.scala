@@ -83,16 +83,20 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   def getEnterPoAAmountViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PoAAmountViewModel]] = {
     for {
       finanicalAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
-      adjustmentReasonMaybe <- getPoaAdjustmentReason(finanicalAndPoaModelMaybe)
+      adjustmentReasonMaybe     <- getPoaAdjustmentReason(finanicalAndPoaModelMaybe)
     } yield (adjustmentReasonMaybe, finanicalAndPoaModelMaybe) match {
-      case (Right(reason), Right(FinancialDetailsAndPoAModel(Some(_), Some(model)))) =>
-        Right(PoAAmountViewModel(
-          poaPreviouslyAdjusted = reason.isDefined,
-          taxYear = model.taxYear,
-          relevantAmountOne = model.poARelevantAmountOne,
-          relevantAmountTwo = model.poARelevantAmountTwo,
-          totalAmountOne = model.paymentOnAccountOne,
-          totalAmountTwo = model.paymentOnAccountTwo))
+      case (Right(reason), Right(FinancialDetailsAndPoAModel(Some(fdm), Some(model)))) =>
+        Right(
+          PoAAmountViewModel(
+            partiallyOrFullyPaidPoaExists = hasPartiallyOrFullyPaidPoas(fdm.documentDetails),
+            poaPreviouslyAdjusted = reason.isDefined,
+            taxYear = model.taxYear,
+            relevantAmountOne = model.poARelevantAmountOne,
+            relevantAmountTwo = model.poARelevantAmountTwo,
+            totalAmountOne = model.paymentOnAccountOne,
+            totalAmountTwo = model.paymentOnAccountTwo
+          )
+        )
       case (Left(ex), _) => Left(ex)
       case (_, Left(ex)) => Left(ex)
       case _ => Left(new Exception("Unexpected error when creating Enter PoA Amount view model"))

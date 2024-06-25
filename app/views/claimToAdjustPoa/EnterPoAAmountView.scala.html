@@ -53,6 +53,14 @@
     else controllers.routes.HomeController.show().url
 }
 
+@partiallyOrFullyPaidPoaExists = @{
+    viewModel.partiallyOrFullyPaidPoaExists
+}
+
+@isFirstAdjustmentAttempt = @{
+    !viewModel.poaPreviouslyAdjusted
+}
+
 @getTableHeading = @{
     if(viewModel.poaPreviouslyAdjusted) {
         Some(Seq(
@@ -156,6 +164,18 @@
         head = getTableHeading,
         firstCellIsHeader = true
     ))
+
+    @if(partiallyOrFullyPaidPoaExists && isFirstAdjustmentAttempt) {
+        @govukInsetText(InsetText(
+            id = Some("insetText-firstAttempt"),
+            content = Text(getMessage("insetText.firstAttempt"))
+        ))
+    } else { @if(partiallyOrFullyPaidPoaExists && !isFirstAdjustmentAttempt) {
+        @govukInsetText(InsetText(
+            id = Some("insetText-secondAttempt"),
+            content = Text(getMessage("insetText.secondAttempt"))
+        ))
+    }}
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),

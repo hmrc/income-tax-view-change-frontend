@@ -30,6 +30,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.EnterPoAAmountView
+import controllers.claimToAdjustPoa.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +58,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                 val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
                 )
-                Ok(view(filledForm, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))
+                Ok(view(filledForm, viewModel, isAgent, EnterPoAAmountController.submit(isAgent, mode)))
               case Left(ex) =>
                 Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
                 showInternalServerError(isAgent)
