@@ -2001,8 +2001,8 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for
 claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
-claimToAdjustPoa.enterPoaAmount.firstAttempt.insetText  = If you've already made a payment and the adjusted amount is less than what you've paid, HMRC will add a credit to your account, based on the difference.
-claimToAdjustPoa.enterPoaAmount.secondAttempt.insetText = If you've already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = If you've already made a payment and the adjusted amount is less than what you've paid, HMRC will add a credit to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = If you've already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
 
 # success
 
