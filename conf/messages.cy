@@ -1951,6 +1951,8 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar g
 claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
+claimToAdjustPoa.enterPoaAmount.firstAttempt.insetText  = Os ydych eisoes wedi gwneud taliad ac mae’r swm a addaswyd yn llai na’r hyn rydych wedi’i dalu, bydd CThEF yn ychwanegu credyd i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
+claimToAdjustPoa.enterPoaAmount.secondAttempt.insetText = Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai’n ychwanegu credyd neu dâl am fod yn hwyr i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
 
 claimToAdjustPoa.apiFailure.heading                  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 claimToAdjustPoa.apiFailure.para1                    = Nid oedd modd diweddaru’ch taliadau ar gyfrif.
