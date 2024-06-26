@@ -40,8 +40,8 @@ class EnterPoAAmountViewSpec extends TestSupport{
   val cancelUrl: String = controllers.routes.HomeController.show().url
 
   def poAAmountViewModel(poaPreviouslyAdjusted: Boolean = false, partiallyOrFullyPaidPoaExists: Boolean = false) = PoAAmountViewModel(
-    partiallyOrFullyPaidPoaExists = false,
-    poaPreviouslyAdjusted = false,
+    partiallyOrFullyPaidPoaExists = partiallyOrFullyPaidPoaExists,
+    poaPreviouslyAdjusted = poaPreviouslyAdjusted,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 5000,
     totalAmountTwo = 5000,
@@ -110,14 +110,14 @@ class EnterPoAAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = true).totalAmountOne.toCurrencyString
     }
     "render the inset text specific to the first adjustment attempt" in new Setup(viewModel = poAAmountViewModel(partiallyOrFullyPaidPoaExists = true)) {
-      document.getElementsByClass("govuk-inset-text").text() shouldBe messages("insetText.firstAttempt")
+      document.getElementById("insetText-firstAttempt").text() shouldBe msg("insetText.firstAttempt")
     }
     "render the inset text specific to the second adjustment attempt" in
       new Setup(viewModel = poAAmountViewModel(partiallyOrFullyPaidPoaExists = true, poaPreviouslyAdjusted = true)) {
-        document.getElementsByClass("govuk-inset-text").text() shouldBe messages("insetText.secondAttempt")
+        document.getElementById("insetText-secondAttempt").text() shouldBe msg("insetText.secondAttempt")
       }
     "not render any inset text if poAs are unpaid" in new Setup(viewModel = poAAmountViewModel()) {
-      Option(document.getElementsByClass("govuk-inset-text")).isDefined shouldBe false
+      document.getElementsByClass("govuk-inset-text").toArray().isEmpty shouldBe true
     }
     "render the correct error message" when {
       "no number input" in new Setup(form = noInputErrorForm){
