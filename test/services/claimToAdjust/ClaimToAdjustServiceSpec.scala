@@ -357,8 +357,6 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val taxYear:Int = 2023
 
-      val outstandingAmount:BigDecimal = 1250.0
-
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
         ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
@@ -372,7 +370,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelBothPoAsWithOutstandingAmount(taxYear, outstandingAmount))
+      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoAs(taxYear))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
