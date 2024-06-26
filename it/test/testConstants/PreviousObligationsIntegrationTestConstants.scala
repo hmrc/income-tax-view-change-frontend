@@ -17,9 +17,9 @@
 package testConstants
 
 import java.time.LocalDate
-
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import models.nextUpdates.ObligationStatus.Fulfilled
 
 object PreviousObligationsIntegrationTestConstants {
 
@@ -29,7 +29,7 @@ object PreviousObligationsIntegrationTestConstants {
     incomeId,
     List(
       NextUpdateModel(
-        date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001"
+        date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001", status = Fulfilled.code
       )
     )
   )
@@ -38,7 +38,7 @@ object PreviousObligationsIntegrationTestConstants {
     incomeId,
     List(
       NextUpdateModel(
-        date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS"
+        date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS", status = Fulfilled.code
       )
     )
   )
@@ -47,7 +47,7 @@ object PreviousObligationsIntegrationTestConstants {
     testMtditid,
     List(
       NextUpdateModel(
-        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised"
+        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised", status = Fulfilled.code
       )
     )
   )

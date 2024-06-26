@@ -30,6 +30,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
@@ -213,7 +214,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#003"
+          periodKey = "#003",
+          Fulfilled.code
         )
       )
     ),
@@ -226,7 +228,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
-          periodKey = "#004"
+          periodKey = "#004",
+          Fulfilled.code
         )
       )
     )

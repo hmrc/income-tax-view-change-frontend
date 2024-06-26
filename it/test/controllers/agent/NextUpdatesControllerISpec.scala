@@ -26,6 +26,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
@@ -105,7 +106,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
           ))
       ))
 
@@ -167,7 +168,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
           ))
       ))
 
@@ -212,7 +213,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
           ))
       ))
 
@@ -254,7 +255,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
               ))
           ))
 

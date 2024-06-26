@@ -183,7 +183,7 @@ class OptOutServiceSpec extends UnitSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear), ArgumentMatchers.eq(offeredTaxYearsAndCountsTestSetup.map(_.taxYear)))(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
@@ -614,7 +614,10 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
-          when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
+          when(nextUpdatesService.getQuarterlyUpdatesCounts(
+            ArgumentMatchers.eq(optOutTaxYear.taxYear),
+            any()
+          )(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))

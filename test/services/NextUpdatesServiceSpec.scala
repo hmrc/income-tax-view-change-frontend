@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
 import models.admin.IncomeSources
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -38,10 +39,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
   class Setup extends NextUpdatesService(mockObligationsConnector)
 
-  val previousObligation: NextUpdateModel = NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001")
+  val previousObligation: NextUpdateModel = NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled.code)
 //  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
 
-  def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001")
+  def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001", Fulfilled.code)
 
   "getObligationDueDates" should {
     "return an internal server exception when an error model is returned from the connector" in new Setup {
@@ -56,9 +57,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(1), "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(1), "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey", Fulfilled.code)
             )
           )
         ))
@@ -75,10 +76,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(2), "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(1), "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(2), "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.minusDays(1), "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey", Fulfilled.code)
             )
           )
         ))
@@ -95,8 +96,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey"),
-              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(fixedDate, fixedDate, fixedDate, "obligationsType", None, "testPeriodKey", Fulfilled.code),
+              NextUpdateModel(fixedDate, fixedDate, fixedDate.plusDays(1), "obligationsType", None, "testPeriodKey", Fulfilled.code)
             )
           )
         ))
@@ -250,7 +251,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C", Fulfilled.code)
         ))
       ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
@@ -265,7 +266,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       enable(IncomeSources)
 
       val day: LocalDate = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C", Fulfilled.code)
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
@@ -294,14 +295,14 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001", Fulfilled.code)
         )),
         NextUpdatesModel("123", List(
-          NextUpdateModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "Quarterly", None, "#001")
+          NextUpdateModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "Quarterly", None, "#001", Fulfilled.code)
         )
         ),
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", Fulfilled.code)
         ))
       ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
@@ -331,7 +332,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", Fulfilled.code)
         ))
       ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
@@ -354,7 +355,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", Fulfilled.code)
         ))
       ))
       when(mockObligationsConnector.getNextUpdates()(any(), any())).

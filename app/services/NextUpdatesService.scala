@@ -19,11 +19,11 @@ package services
 import auth.MtdItUser
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.nextUpdates._
 import play.api.Logger
-import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
+import services.NextUpdatesService.{LastItem, QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
@@ -33,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 object NextUpdatesService {
   case class QuarterlyUpdatesCountForTaxYear(taxYear: TaxYear, count: Int)
   private val noQuarterlyUpdates = 0
+  private val LastItem = 1
 }
 
 @Singleton
@@ -98,14 +99,31 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   }
 
-  def getQuarterlyUpdatesCounts(taxYear: TaxYear)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear]  = {
-    getNextUpdates(taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd).map {
-      case obligationsModel: ObligationsModel =>
-        QuarterlyUpdatesCountForTaxYear(taxYear, obligationsModel.submissionsCount)
-      case _ => QuarterlyUpdatesCountForTaxYear(taxYear, noQuarterlyUpdates)
+  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear, offeredOptOutYears: Seq[TaxYear])
+                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
+
+    val sortedOffers = offeredOptOutYears.sortBy(_.startYear)
+    val isPreviousYear = sortedOffers.headOption.contains(queryTaxYear)
+
+    def getQuarterlyUpdatesCountForTaxYear(taxYearToQuery: TaxYear): Future[QuarterlyUpdatesCountForTaxYear] = {
+      getNextUpdates(taxYearToQuery.toFinancialYearStart, taxYearToQuery.toFinancialYearEnd).map {
+        case obligationsModel: ObligationsModel =>
+          QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
+        case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
+      }
+    }
+
+    val includeCountForOnwardYearsAsWell = isPreviousYear
+    if (includeCountForOnwardYearsAsWell) {
+      val responses = offeredOptOutYears.dropRight(LastItem).map(getQuarterlyUpdatesCountForTaxYear)
+      Future.sequence(responses).map { counts =>
+        counts.reduce((l, r) => QuarterlyUpdatesCountForTaxYear(queryTaxYear, l.count + r.count))
+      }
+    } else {
+      getQuarterlyUpdatesCountForTaxYear(queryTaxYear)
     }
   }
+
 
   def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
@@ -114,7 +132,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         Logger("application").error(
           s"Error: $message, code $code")
         Seq.empty
-      case NextUpdateModel(start, end, due, obligationType, _, periodKey) =>
+      case NextUpdateModel(start, end, due, obligationType, _, periodKey, _) =>
         Seq(DatesModel(start,
           end,
           due,

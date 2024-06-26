@@ -207,11 +207,11 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
   def getQuarterlyUpdatesCountForTaxYear(offeredOptOutYears: Seq[TaxYear])
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[QuarterlyUpdatesCountForTaxYearModel] = {
-    val futureCounts: Seq[Future[QuarterlyUpdatesCountForTaxYear]] = offeredOptOutYears.map { optOutTaxYear =>
-      nextUpdatesService.getQuarterlyUpdatesCounts(optOutTaxYear)
+    val updateCountByTaxYear: Seq[Future[QuarterlyUpdatesCountForTaxYear]] = offeredOptOutYears.map { optOutTaxYear =>
+      nextUpdatesService.getQuarterlyUpdatesCounts(optOutTaxYear, offeredOptOutYears)
     }
 
-    Future.sequence(futureCounts).map(QuarterlyUpdatesCountForTaxYearModel)
+    Future.sequence(updateCountByTaxYear).map(QuarterlyUpdatesCountForTaxYearModel)
   }
 
 }
@@ -221,15 +221,11 @@ object OptOutService {
 
   private val noQuarterlyUpdates = 0
 
-  private def includeTaxYearCount(optOutYear: TaxYear, countsYear: TaxYear): Boolean = {
-    (optOutYear.startYear == countsYear.startYear) || (optOutYear.endYear == countsYear.startYear)
-  }
-
   case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
 
-    def getCountFor(optOutYear: TaxYear): Int = counts.find(taxYearCounts => includeTaxYearCount(optOutYear, taxYearCounts.taxYear))
-      .map(_.count)
-      .getOrElse(noQuarterlyUpdates)
+    def getCountFor(offeredOptOutYear: TaxYear): Int = counts
+      .filter(taxYearCounts => taxYearCounts.taxYear == offeredOptOutYear)
+      .map(_.count).sum
 
     val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
