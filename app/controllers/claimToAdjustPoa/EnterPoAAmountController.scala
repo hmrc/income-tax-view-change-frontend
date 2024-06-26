@@ -87,7 +87,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, EnterPoAAmountController.submit(isAgent, mode)))),
       validForm =>
         poaSessionService.setNewPoAAmount(validForm.amount).flatMap {
           case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
@@ -101,7 +101,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     (viewModel.totalAmountLessThanPoa, viewModel.hasIncreased(newPoaAmount)) match {
       case (true, true) => hasIncreased(isAgent)
       case (true, _) => hasDecreased(isAgent, mode)
-      case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
+      case _ => Future.successful(Redirect(CheckYourAnswersController.show(isAgent)))
     }
   }
 
@@ -110,7 +110,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
       case Right(_) =>
-        Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+        Redirect(CheckYourAnswersController.show(isAgent))
     }
   }
 

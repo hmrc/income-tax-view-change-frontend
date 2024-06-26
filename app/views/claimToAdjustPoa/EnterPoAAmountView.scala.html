@@ -53,10 +53,6 @@
     else controllers.routes.HomeController.show().url
 }
 
-@partiallyOrFullyPaidPoaExists = @{
-    viewModel.partiallyOrFullyPaidPoaExists
-}
-
 @isFirstAdjustmentAttempt = @{
     !viewModel.poaPreviouslyAdjusted
 }
@@ -165,12 +161,12 @@
         firstCellIsHeader = true
     ))
 
-    @if(partiallyOrFullyPaidPoaExists && isFirstAdjustmentAttempt) {
+    @if(viewModel.partiallyOrFullyPaidPoaExists && !viewModel.poaPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
             content = Text(getMessage("insetText.firstAttempt"))
         ))
-    } else { @if(partiallyOrFullyPaidPoaExists && !isFirstAdjustmentAttempt) {
+    } else { @if(viewModel.partiallyOrFullyPaidPoaExists && viewModel.poaPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
             content = Text(getMessage("insetText.secondAttempt"))
