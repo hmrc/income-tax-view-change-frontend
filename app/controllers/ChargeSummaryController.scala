@@ -25,10 +25,11 @@ import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.DocumentType
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
-import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails._
 import play.api.Logger
@@ -49,7 +50,7 @@ object ChargeSummaryController {
 }
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
-                                        val auth : AuthenticatorPredicate,
+                                        val auth: AuthenticatorPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDetailsService: FinancialDetailsService,
@@ -154,7 +155,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference).map {
+    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference, documentDetailWithDueDate.documentDetail.getDocType).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
@@ -166,14 +167,12 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
           mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
             case Right(_) =>
-
               Ok(chargeSummaryView(
                 currentDate = dateService.getCurrentDate,
                 documentDetailWithDueDate = documentDetailWithDueDate,
                 backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
                 gatewayPage = sessionGatewayPage,
                 paymentBreakdown = paymentBreakdown,
-                chargeHistory = chargeHistory,
                 paymentAllocations = paymentAllocations,
                 payments = paymentsForAllYears,
                 chargeHistoryEnabled = isEnabled(ChargeHistory),
@@ -183,7 +182,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                 btaNavPartial = user.btaNavPartial,
                 isAgent = isAgent,
                 isMFADebit = isMFADebit,
-                documentType = documentDetailWithDueDate.documentDetail.getDocType
+                documentType = documentDetailWithDueDate.documentDetail.getDocType,
+                adjustmentHistory = getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
               ))
 
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
@@ -222,7 +222,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String], docType: DocumentType)
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
@@ -231,6 +231,35 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       }
     } else {
       Future.successful(Right(Nil))
+    }
+  }
+
+  def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): AdjustmentHistoryModel = {
+    chargeHistory match {
+      case Nil =>
+        val creation = AdjustmentModel(amount = documentDetail.originalAmount, adjustmentDate = Some(documentDetail.documentDate), reasonCode = "create")
+        AdjustmentHistoryModel(creation, List.empty)
+      case _ =>
+        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = "create")
+        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.filter(_.poaAdjustmentReason.isDefined), documentDetail.originalAmount)
+        val otherAdjustmentHistory: List[AdjustmentModel] = chargeHistory.filter(_.poaAdjustmentReason.isEmpty).map(
+          event => AdjustmentModel(event.totalAmount, Some(event.reversalDate), event.reasonCode)
+        )
+        val fullAdjustmentHistory: List[AdjustmentModel] = poaAdjustmentHistory ++ otherAdjustmentHistory
+        AdjustmentHistoryModel(creation, fullAdjustmentHistory.sortBy(_.adjustmentDate))
+    }
+  }
+
+  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
+    chargeHistory match {
+      case ::(head, next) => AdjustmentModel(
+        adjustmentDate = Some(head.reversalDate),
+        reasonCode = head.reasonCode,
+        amount = next match {
+          case ::(nextHead, _) => nextHead.totalAmount
+          case Nil => finalAmount
+        }) :: adjustments(next, finalAmount)
+      case Nil => Nil
     }
   }
 

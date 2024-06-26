@@ -26,8 +26,8 @@ import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -39,6 +39,7 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import utils.AuthenticatorPredicate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 
@@ -101,6 +102,47 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[AgentItvcErrorHandler]
     )
   }
+
+//  //ToDO: Remove these and the controller:
+//  val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+//  val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+//  val mockChargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+//
+//  val thisSpecificTestController = new ChargeSummaryController(
+//    MockAuthenticationPredicate,
+//    testAuthenticator,
+//    app.injector.instanceOf[SessionTimeoutPredicate],
+//    MockIncomeSourceDetailsPredicate,
+//    financialDetailsService,
+//    mockAuditingService,
+//    app.injector.instanceOf[ItvcErrorHandler],
+//    mockFinancialDetailsConnector,
+//    mockChargeHistoryConnector,
+//    app.injector.instanceOf[views.html.ChargeSummary],
+//    app.injector.instanceOf[NavBarPredicate],
+//    mockIncomeSourceDetailsService,
+//    mockAuthService,
+//    app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
+//    app.injector.instanceOf[FeatureSwitchPredicate]
+//  )(
+//    app.injector.instanceOf[FrontendAppConfig],
+//    app.injector.instanceOf[DateService],
+//    languageUtils,
+//    app.injector.instanceOf[MessagesControllerComponents],
+//    ec,
+//    app.injector.instanceOf[AgentItvcErrorHandler]
+//  )
+//
+//  val chargeHistoryList: List[ChargeHistoryModel] = List(
+//    ChargeHistoryModel("A", "12345", LocalDate.of(2021,1,1),"A", 2500, LocalDate.of(2024,2,10),"Reversal",Some("001")),
+//    ChargeHistoryModel("A", "34556", LocalDate.of(2021,1,1),"A", 2000, LocalDate.of(2024,3,15),"Reversal",Some("005"))
+//  )
+//  val unchangedDocumentDetail: DocumentDetail = DocumentDetail(
+//    1, "A", Some("PoA1"), None, 2500, 2500, LocalDate.of(2024,1,10)
+//  )
+//  val adjustedDocumentDetail: DocumentDetail = DocumentDetail(
+//    1, "A", Some("PoA1"), None, 2200, 2200, LocalDate.of(2024,3,15)
+//  )
 
   val errorHeading: String = messages("standardError.heading")
   val successHeading = s"Tax year 6 April 2017 to 5 April 2018 ${messages("chargeSummary.paymentOnAccount1.text")}"
@@ -310,6 +352,31 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("error.custom.heading")
       }
     }
+
+//    "getAdjustmentHistory" should {
+//      "return the adjustments in the correct list" when {
+//        "there is no charge history" in {
+//          val desiredAdjustments = AdjustmentHistoryModel(
+//            creationEvent = AdjustmentModel(2500, Some(LocalDate.of(2024,1,10))),
+//            adjustments = List.empty
+//          )
+//          val res = thisSpecificTestController.getAdjustmentHistory(Nil, unchangedDocumentDetail)
+//          res shouldBe desiredAdjustments
+//        }
+//        "there is a charge history" in {
+//          val desiredAdjustments = AdjustmentHistoryModel(
+//            creationEvent = AdjustmentModel(2500, None),
+//            adjustments = List(
+//              AdjustmentModel(2000, Some(LocalDate.of(2024,2,10))),
+//              AdjustmentModel(2200, Some(LocalDate.of(2024,3,15)))
+//            )
+//          )
+//
+//          val res = thisSpecificTestController.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
+//          res shouldBe desiredAdjustments
+//        }
+//      }
+//    }
   }
 
   "The ChargeSummaryController for Agents" should {

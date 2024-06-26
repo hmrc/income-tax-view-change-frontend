@@ -21,7 +21,7 @@ import enums.ChargeType._
 import enums.CodingOutType._
 import enums.OtherCharge
 import exceptions.MissingFieldException
-import models.chargeHistory.ChargeHistoryModel
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import org.jsoup.Jsoup
@@ -44,10 +44,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   import Messages._
 
+  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1234, None, "adjustment"), List())
+
   class TestSetup(documentDetail: DocumentDetail,
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                   paymentBreakdown: List[FinancialDetail] = List(),
-                  chargeHistory: List[ChargeHistoryModel] = List(),
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
@@ -55,10 +56,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   latePaymentInterestCharge: Boolean = false,
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
-                  isMFADebit: Boolean = false) {
+                  isMFADebit: Boolean = false,
+                  adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
     val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
-      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType)
+      paymentBreakdown, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType, adjustmentHistory = adjustmentHistory)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -188,7 +190,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   }
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
+  val amendedAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(
+    creationEvent = AdjustmentModel(1400, None, "create"),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "amended return"))
+  )
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
+  val customerRequestAdjustmentHistory : AdjustmentHistoryModel = AdjustmentHistoryModel(
+    creationEvent = AdjustmentModel(1400, None, "create"),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "Customer Request"))
+  )
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, additionalSubItems = Seq(SubItem(
@@ -613,41 +623,41 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the charge creation item when history is found and allocations are disabled" in new TestSetup(documentDetailModel(outstandingAmount = 0),
-        chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))) {
+        adjustmentHistory = amendedAdjustmentHistory, paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
         document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
-      "display the correct message for an amended charge for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), adjustmentHistory = amendedAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(1)").text() shouldBe "6 Jul 2018"
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(1)
         document.select("tbody tr:nth-child(2) td:nth-child(3)").text() shouldBe "£1,500.00"
       }
 
-      "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), adjustmentHistory = amendedAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(2)
       }
 
-      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), chargeHistory = List(amendedChargeHistoryModel)) {
+      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), adjustmentHistory = amendedAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
       }
 
-      "display the correct message for a customer requested change for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), adjustmentHistory = customerRequestAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(1)
       }
 
-      "display the correct message for a customer requested change for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), adjustmentHistory = customerRequestAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(2)
       }
 
-      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
+      "display the correct message for a customer requested change for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), adjustmentHistory = customerRequestAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
       }
@@ -831,7 +841,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
         chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false, documentType = OtherCharge)
+          paymentBreakdown, List(), payments, chargeHistoryEnabled = true, paymentAllocationEnabled = false, latePaymentInterestCharge = false,
+          codingOutEnabled = false, isAgent = false, isMFADebit = false, documentType = OtherCharge, adjustmentHistory = defaultAdjustmentHistory)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
