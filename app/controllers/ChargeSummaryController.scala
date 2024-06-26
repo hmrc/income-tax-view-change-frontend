@@ -155,7 +155,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference, documentDetailWithDueDate.documentDetail.getDocType).map {
+    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
@@ -222,7 +222,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String], docType: DocumentType)
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
@@ -252,6 +252,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
     chargeHistory match {
+      case Nil => Nil
       case ::(head, next) => AdjustmentModel(
         adjustmentDate = Some(head.reversalDate),
         reasonCode = head.reasonCode,
@@ -259,7 +260,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           case ::(nextHead, _) => nextHead.totalAmount
           case Nil => finalAmount
         }) :: adjustments(next, finalAmount)
-      case Nil => Nil
     }
   }
 
