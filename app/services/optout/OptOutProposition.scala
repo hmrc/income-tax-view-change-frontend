@@ -36,7 +36,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def optOutYearsToUpdate(intent: OptOutTaxYear): Seq[OptOutTaxYear] = {
-    availableOptOutYears.filter(_.shouldBeUpdated(intent))
+    availableOptOutYears.filter(_.shouldBeUpdated(intent.taxYear))
   }
 
   def optOutTaxYearFor(taxYear: TaxYear): Option[OptOutTaxYear] =
