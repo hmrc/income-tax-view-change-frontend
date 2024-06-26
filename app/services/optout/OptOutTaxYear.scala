@@ -31,8 +31,10 @@ trait OptOutTaxYear {
 case class CurrentOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear) extends OptOutTaxYear {
   def canOptOut: Boolean = status == Voluntary
 
-  override def shouldBeUpdated(intent: OptOutTaxYear): Boolean =
-    canOptOut && (taxYear.isSameAs(intent.taxYear) || taxYear.isAfter(intent.taxYear))
+  override def shouldBeUpdated(intent: OptOutTaxYear): Boolean = {
+    val intentTaxYear = intent.taxYear
+    canOptOut && (taxYear.isSameAs(intentTaxYear) || taxYear.isAfter(intentTaxYear))
+  }
 }
 
 case class NextOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear, currentTaxYear: CurrentOptOutTaxYear) extends OptOutTaxYear {
@@ -40,9 +42,10 @@ case class NextOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear, currentTaxYea
     (currentTaxYear.status == Voluntary && status == NoStatus)
 
   override def shouldBeUpdated(intent: OptOutTaxYear): Boolean = {
-    val isIntentOrAfter = taxYear.isSameAs(intent.taxYear) || taxYear.isAfter(intent.taxYear)
+    val intentTaxYear = intent.taxYear
+    val isIntentOrAfter = taxYear.isSameAs(intentTaxYear) || taxYear.isAfter(intentTaxYear)
     val nextYearIsVoluntary = status == ITSAStatus.Voluntary
-    val nextYearIsIntent = intent.taxYear.isSameAs(taxYear)
+    val nextYearIsIntent = intentTaxYear.isSameAs(taxYear)
     val shouldUpdateNextYear = (isIntentOrAfter && nextYearIsVoluntary) || nextYearIsIntent
     canOptOut && shouldUpdateNextYear
   }
@@ -51,6 +54,8 @@ case class NextOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear, currentTaxYea
 case class PreviousOptOutTaxYear(status: ITSAStatus, taxYear: TaxYear, crystallised: Boolean) extends OptOutTaxYear {
   def canOptOut: Boolean = status == Voluntary && !crystallised
 
-  override def shouldBeUpdated(intent: OptOutTaxYear): Boolean =
-    canOptOut && taxYear.isSameAs(intent.taxYear)
+  override def shouldBeUpdated(intent: OptOutTaxYear): Boolean = {
+    val intentTaxYear = intent.taxYear
+    canOptOut && taxYear.isSameAs(intentTaxYear)
+  }
 }
