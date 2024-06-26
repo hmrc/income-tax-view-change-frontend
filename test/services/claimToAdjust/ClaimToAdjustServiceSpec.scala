@@ -380,7 +380,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PoAAmountViewModel(false, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
       }
     }
 
@@ -411,7 +411,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PoAAmountViewModel(true, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
       }
     }
 

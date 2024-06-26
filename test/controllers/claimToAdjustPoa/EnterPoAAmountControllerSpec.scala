@@ -62,6 +62,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
   )
 
   val poaViewModelDecreaseJourney = PoAAmountViewModel(
+    partiallyOrFullyPaidPoaExists = false,
     poaPreviouslyAdjusted = false,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 5000,
@@ -71,6 +72,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
   )
 
   val poaViewModelIncreaseJourney = PoAAmountViewModel( //Increase OR Decrease journey
+    partiallyOrFullyPaidPoaExists = false,
     poaPreviouslyAdjusted = false,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 4000,
