@@ -369,23 +369,13 @@
                     </tr>
                 }
 
-
-
-
-
-
                 @for(charge <- adjustmentHistory.adjustments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(LocalDate.of(1000,1,1)).toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(documentDetail.documentDate).toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey()}")</td>
                         <td class="govuk-table__cell">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
-
-
-
-
-
             }
 
             @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
