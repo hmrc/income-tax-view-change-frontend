@@ -6,13 +6,16 @@ import scala.io.Source
 
 class OptOutPropositionTest extends UnitSpec {
 
-
-  "OptOut returns correct" should {
-    "csv file " when {
+  //TODO name well
+  "Parse opt out scenarios from tsv version" should {
+    "return formatted scenarios" when {
       "read" in {
-        val csvOpt = Source.fromFile("OptOutReduced.tsv")
+        //TODO comment on how to generate tsv file
 
-        val iter = csvOpt.getLines().drop(2).map(_.split("\t").take(7))
+        val tsvOptOut = Source.fromFile("OptOutReduced.tsv")
+
+        val lines = tsvOptOut.getLines().drop(2)
+
 
         def parseOptionsPresented(option: String): Seq[String] = {
           option match {
@@ -34,15 +37,14 @@ class OptOutPropositionTest extends UnitSpec {
         }
 
         // Print the extracted data
-        iter.foreach(line => {
-          println(line.mkString("  --  "))
-          println(s"(\"${line(0)}\", \"${line(1)}\", \"${line(2)}\", \"${line(3)}\", ${formatOptionPresented(parseOptionsPresented(line(4)))}, ${parseCustomerIntent(line(5))}, ${parseIsValid(line(6))}),")
+        lines.foreach(line => {
+          val cells = line.split("\t").take(7)
+         //println(cells.mkString("  --  "))
+          println(s"(\"${cells(0)}\", \"${cells(1)}\", \"${cells(2)}\", \"${cells(3)}\", ${formatOptionPresented(parseOptionsPresented(cells(4)))}, ${parseCustomerIntent(cells(5))}, ${parseIsValid(cells(6))}),")
         })
 
-        iter.foreach(a => a.mkString(""))
-
         // Close the CSV file
-        csvOpt.close()
+        tsvOptOut.close()
       }
     }
   }
