@@ -19,6 +19,7 @@ package models.claimToAdjustPoa
 import models.incomeSourceDetails.TaxYear
 
 case class PoAAmountViewModel(
+                               partiallyOrFullyPaidPoaExists: Boolean,
                                poaPreviouslyAdjusted: Boolean,
                                taxYear: TaxYear,
                                totalAmountOne: BigDecimal,
