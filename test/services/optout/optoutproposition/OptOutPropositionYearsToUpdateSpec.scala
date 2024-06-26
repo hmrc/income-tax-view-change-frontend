@@ -78,7 +78,7 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
         optOutData.isMultiYearOptOut shouldBe isMultiYearOptOut
         optOutData.isNoOptOutAvailable shouldBe !isOneYearOptOut && !isMultiYearOptOut
 
-        optOutData.optOutYearsToUpdate(intentYear).map {
+        optOutData.optOutYearsToUpdate(intentYear.taxYear).map {
           case _:PreviousOptOutTaxYear => "PY"
           case _:CurrentOptOutTaxYear => "CY"
           case _ => "NY"
