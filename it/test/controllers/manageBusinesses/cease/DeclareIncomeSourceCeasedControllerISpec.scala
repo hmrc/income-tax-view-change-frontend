@@ -36,12 +36,14 @@ class DeclareIncomeSourceCeasedControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val isAgent: Boolean = false
+  val isChange: Boolean = false
 
-  val showUKPropertyEndDateUrl: String            = IncomeSourceEndDateController.show(None, UkProperty).url
+  val showUKPropertyEndDateUrl: String            = IncomeSourceEndDateController.show(None, UkProperty, isAgent, isChange).url
   val showDeclareUKPropertyCeasedUrl: String      = DeclareIncomeSourceCeasedController.show(None, UkProperty).url
-  val showForeignPropertyEndDateUrl: String       = IncomeSourceEndDateController.show(None, ForeignProperty).url
+  val showForeignPropertyEndDateUrl: String       = IncomeSourceEndDateController.show(None, ForeignProperty, isAgent, isChange).url
   val showDeclareForeignPropertyCeasedUrl: String = DeclareIncomeSourceCeasedController.show(None, ForeignProperty).url
-  val showSelfEmploymentEndDateUrl: String        = IncomeSourceEndDateController.show(Some(testSelfEmploymentIdHashed), SelfEmployment).url
+  val showSelfEmploymentEndDateUrl: String        = IncomeSourceEndDateController.show(Some(testSelfEmploymentIdHashed), SelfEmployment, isAgent, isChange).url
   val showDeclareSelfEmploymentCeasedUrl: String  = DeclareIncomeSourceCeasedController.show(Some(testSelfEmploymentIdHashed), SelfEmployment).url
 
   val submitDeclareUKPropertyCeasedUrl: String      = DeclareIncomeSourceCeasedController.submit(None, UkProperty).url

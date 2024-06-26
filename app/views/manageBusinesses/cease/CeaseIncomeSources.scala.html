@@ -46,8 +46,11 @@
 }
 
 @ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
-    if(isAgent) controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceIdHash), SelfEmployment).url
-    else controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceIdHash), SelfEmployment).url
+    controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceIdHash),
+        SelfEmployment,
+        isAgent,
+        isChange = false
+        ).url
 }
 
 @ceaseUkPropertyURL = @{
