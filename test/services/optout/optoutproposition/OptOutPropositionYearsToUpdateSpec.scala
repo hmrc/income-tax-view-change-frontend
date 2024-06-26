@@ -67,9 +67,9 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
         val nextTaxYearOptOut = NextOptOutTaxYear(nyStatus, nextTaxYear, currentTaxYearOptOut)
 
         val intentYear = intent match {
-          case "PY" => previousTaxYearOptOut
-          case "CY" => currentTaxYearOptOut
-          case _ => nextTaxYearOptOut
+          case "PY" => previousTaxYear
+          case "CY" => currentTaxYear
+          case _ => nextTaxYear
         }
 
         val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
@@ -78,7 +78,7 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
         optOutData.isMultiYearOptOut shouldBe isMultiYearOptOut
         optOutData.isNoOptOutAvailable shouldBe !isOneYearOptOut && !isMultiYearOptOut
 
-        optOutData.optOutYearsToUpdate(intentYear.taxYear).map {
+        optOutData.optOutYearsToUpdate(intentYear).map {
           case _:PreviousOptOutTaxYear => "PY"
           case _:CurrentOptOutTaxYear => "CY"
           case _ => "NY"
