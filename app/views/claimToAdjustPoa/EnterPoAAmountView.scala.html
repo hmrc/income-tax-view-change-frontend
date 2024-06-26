@@ -53,10 +53,6 @@
     else controllers.routes.HomeController.show().url
 }
 
-@isFirstAdjustmentAttempt = @{
-    !viewModel.poaPreviouslyAdjusted
-}
-
 @getTableHeading = @{
     if(viewModel.poaPreviouslyAdjusted) {
         Some(Seq(
