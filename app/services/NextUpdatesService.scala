@@ -93,7 +93,8 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
     obligationsConnector.getAllObligations(fromDate, toDate).map {
-      case obligationsResponse: ObligationsModel => ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
+      case obligationsResponse: ObligationsModel =>
+        ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
       case error: NextUpdatesErrorModel => error
       case _ => NextUpdatesErrorModel(500, "Invalid response from connector")
     }
