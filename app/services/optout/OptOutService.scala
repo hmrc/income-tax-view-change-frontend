@@ -164,8 +164,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     val result = for {
       intentTaxYear <- OptionT(fetchSavedIntent())
-      intentOptOutTaxYear <- OptionT(Future.successful(optOutProposition.optOutTaxYearFor(intentTaxYear)))
-      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentOptOutTaxYear))))
+      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentTaxYear))))
       responsesSeqOfFutures  <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
       responsesSeq <- OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
       finalResponse <- OptionT(Future.successful(Option(findAnyFailOrFirstSuccess(responsesSeq))))

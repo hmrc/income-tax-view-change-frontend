@@ -48,11 +48,11 @@
 
 
 @getBusinessChangeHref = @{
-    if(isAgent){
-        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
-    } else {
-        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
-    }
+    controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(viewModel.incomeSourceId.toHash.hash),
+    SelfEmployment,
+    isAgent,
+    isChange = true
+    ).url
 }
 
 @getBusinessSubmitHref = @{
@@ -66,19 +66,21 @@
 
 @getPropertyChangeHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
-        if(isAgent){
-            controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
-        } else {
-            controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
-        }
+        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(
+            None,
+            UkProperty,
+            isAgent,
+            isChange = true
+        ).url
     } else {
-        if(isAgent){
-            controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
-        } else {
-            controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
+        controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(
+            None,
+            ForeignProperty,
+            isAgent,
+            isChange = true
+        ).url
         }
     }
-}
 
 @getPropertySubmitHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {

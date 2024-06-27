@@ -61,12 +61,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
     val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
 
-    (isAgent, isChange) match {
-      case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
-      case (false, _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
-      case (_, false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
-      case (_, _) => routes.IncomeSourceEndDateController.submitChangeAgent(hashedId, incomeSourceType)
-    }
+    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
+
   }
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
@@ -76,47 +72,15 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = false
-      )
-  }
+  def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
+            Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleRequest(
-        isAgent = true,
+        isAgent = isAgent,
         incomeSourceType = incomeSourceType,
         id = incomeSourceIdHashMaybe,
-        isChange = false
-      )
-  }
-
-  def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = true
-      )
-  }
-
-  def showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleRequest(
-        isAgent = true,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = true
+        isChange = isChange
       )
   }
 
@@ -160,47 +124,15 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         errorHandler(isAgent).showInternalServerError()
     }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleSubmitRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = false
-      )
-  }
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
+              Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+              val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
-        isAgent = true,
+        isAgent = isAgent,
         incomeSourceType = incomeSourceType,
         id = incomeSourceIdHashMaybe,
-        isChange = false
-      )
-  }
-
-  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleSubmitRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = true
-      )
-  }
-
-  def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-      handleSubmitRequest(
-        isAgent = true,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = true
+        isChange = isChange
       )
   }
 

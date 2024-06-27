@@ -30,6 +30,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
 import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.EnterPoAAmountView
+import controllers.claimToAdjustPoa.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +58,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
                 val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
                 )
-                Ok(view(filledForm, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))
+                Ok(view(filledForm, viewModel, isAgent, EnterPoAAmountController.submit(isAgent, mode)))
               case Left(ex) =>
                 Logger("application").error(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
                 showInternalServerError(isAgent)
@@ -86,7 +87,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, mode)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, EnterPoAAmountController.submit(isAgent, mode)))),
       validForm =>
         poaSessionService.setNewPoAAmount(validForm.amount).flatMap {
           case Left(ex) => Logger("application").error(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}")
@@ -100,7 +101,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     (viewModel.totalAmountLessThanPoa, viewModel.hasIncreased(newPoaAmount)) match {
       case (true, true) => hasIncreased(isAgent)
       case (true, _) => hasDecreased(isAgent, mode)
-      case _ => Future.successful(Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent)))
+      case _ => Future.successful(Redirect(CheckYourAnswersController.show(isAgent)))
     }
   }
 
@@ -109,7 +110,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       case Left(ex) => Logger("application").error(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
       case Right(_) =>
-        Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent))
+        Redirect(CheckYourAnswersController.show(isAgent))
     }
   }
 

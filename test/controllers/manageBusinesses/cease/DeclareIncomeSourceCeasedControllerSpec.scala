@@ -288,7 +288,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
 
   "DeclareIncomeSourceCeasedController.submit / DeclareIncomeSourceCeasedController.submitAgent" should {
     "return 200 OK" when {
-      def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+      def testSubmitReturnsOKAndSetsMongoData(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
@@ -297,8 +297,8 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
         val journeyType = JourneyType(Cease, incomeSourceType)
         val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
           (isAgent, incomeSourceType) match {
-            case (true, _) => controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
-            case (false, _) => controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
+            case (true, _) => controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType, isAgent, isChange).url
+            case (false, _) => controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType, isAgent, isChange).url
           }
         val result = submitCall(isAgent, incomeSourceType)
 
@@ -308,22 +308,22 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
       }
 
       "Sole Trader Business cease declaration is completed - Individual" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = false, SelfEmployment)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = false, isChange = false, SelfEmployment)
       }
       "Sole Trader Business cease declaration is completed - Agent" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = true, SelfEmployment)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = true, isChange = false, SelfEmployment)
       }
       "UK Property cease declaration is completed - Individual" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = false, UkProperty)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = false, isChange = false, UkProperty)
       }
       "UK Property cease declaration is completed - Agent" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = true, UkProperty)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = true, isChange = false, UkProperty)
       }
       "Foreign Property cease declaration is completed - Individual" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = false, ForeignProperty)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = false, isChange = false, ForeignProperty)
       }
       "Foreign Property cease declaration is completed - Agent" in {
-        testSubmitReturnsOKAndSetsMongoData(isAgent = true, ForeignProperty)
+        testSubmitReturnsOKAndSetsMongoData(isAgent = true, isChange = false, ForeignProperty)
       }
     }
 
