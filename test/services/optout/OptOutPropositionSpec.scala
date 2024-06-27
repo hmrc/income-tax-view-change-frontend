@@ -491,23 +491,25 @@ class OptOutPropositionSpec extends UnitSpec {
       val nextYear = NextOptOutTaxYear(toITSAStatus(nyStatus), taxYear = nextTaxYear, currentTaxYear = currentYear)
       val optOutProposition = OptOutProposition(previousYear, currentYear, nextYear)
 
-      val optionsPresented = expectedTaxYearsOffered.map(option => toTaxYear(option))
-      val expectedOptOut = expectedTaxYearsOptedOut.map(year => toTaxYear(year))
-
-      testOptOutScenario(optOutProposition, optionsPresented, valid, toTaxYear(customerIntent), expectedOptOut)
+      testOptOutScenario(optOutProposition,
+                         expectedTaxYearsOffered.map(toTaxYear),
+                         valid,
+                         toTaxYear(customerIntent),
+                         expectedTaxYearsOptedOut.map(toTaxYear)
+      )
     }
   }
 
   private def testOptOutScenario(optOutProposition: OptOutProposition,
-                                 optionsPresented: Seq[TaxYear],
+                                 expectedTaxYearsOffered: Seq[TaxYear],
                                  valid: Boolean,
                                  customerIntent: TaxYear,
-                                 expectedOptOut: Seq[TaxYear]) = {
+                                 expectedTaxYearsOptedOut: Seq[TaxYear]) = {
 
-    assert(optOutProposition.availableTaxYearsForOptOut === optionsPresented)
+    assert(optOutProposition.availableTaxYearsForOptOut === expectedTaxYearsOffered)
 
     if (valid) {
-      assert(optOutProposition.optOutYearsToUpdate(customerIntent).map(year => year.taxYear) === expectedOptOut)
+      assert(optOutProposition.optOutYearsToUpdate(customerIntent).map(year => year.taxYear) === expectedTaxYearsOptedOut)
     }
   }
 
