@@ -65,8 +65,8 @@
      id = Some("h1"))
 
     <p class="govuk-body" id="p1" >
-        @getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)
-        <b>@getMessage("bold", (poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
+        @getMessage("p1", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)
+        <b>@getMessage("bold", (viewModel.poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
     </p>
 
     @govukWarningText(WarningText(
@@ -95,7 +95,7 @@
 
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
-    @if(showIncreaseAfterPaymentContent){
+    @if(viewModel.showIncreaseAfterPaymentContent){
         <h3 class="govuk-heading-m">@getMessage("increase-after-payment.h1")</h3>
 
         @p(id = Some("p6")) {
@@ -114,7 +114,7 @@
         @govukButton(Button(
             id = Some("continue"),
             content = Text(getMessage("continue-button")),
-            href = Some(redirect)
+            href = Some(viewModel.redirect)
         ))
         <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>

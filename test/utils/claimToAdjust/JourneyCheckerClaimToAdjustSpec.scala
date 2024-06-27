@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.PoAAmendmentData
+import models.claimToAdjustPoa.{PoAAmendmentData, WhatYouNeedToKnowViewModel}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -58,11 +58,15 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
-  def successfulFutureOk: PoAAmendmentData => Future[Result] = _ =>
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, "")))
+  def successfulFutureOk: PoAAmendmentData => Future[Result] = _ => {
+    val viewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, "")
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, viewModel)))
+}
 
-  def successfulFutureOkAgent: PoAAmendmentData => Future[Result] = _ =>
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, "")))
+  def successfulFutureOkAgent: PoAAmendmentData => Future[Result] = _ => {
+    val viewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, "")
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, viewModel)))
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
