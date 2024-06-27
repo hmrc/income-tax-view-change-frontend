@@ -25,17 +25,16 @@ import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.DocumentType
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
+import models.chargeHistory._
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.{AuthenticatorPredicate, FallBackBackLinks}
@@ -56,11 +55,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        val financialDetailsConnector: FinancialDetailsConnector,
-                                        val chargeHistoryConnector: ChargeHistoryConnector,
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                        val chargeHistoryService: ChargeHistoryService,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val customNotFoundErrorView: CustomNotFoundError,
                                         val featureSwitchPredicate: FeatureSwitchPredicate)
@@ -155,7 +153,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference).map {
+    chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
+      chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
@@ -183,7 +182,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                 isAgent = isAgent,
                 isMFADebit = isMFADebit,
                 documentType = documentDetailWithDueDate.documentDetail.getDocType,
-                adjustmentHistory = getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
+                adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
               ))
 
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
@@ -222,46 +221,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String])
-                                   (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
-    if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
-        case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-        case errorResponse => Left(errorResponse)
-      }
-    } else {
-      Future.successful(Right(Nil))
-    }
-  }
-
-  def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): AdjustmentHistoryModel = {
-    chargeHistory match {
-      case Nil =>
-        val creation = AdjustmentModel(amount = documentDetail.originalAmount, adjustmentDate = Some(documentDetail.documentDate), reasonCode = "create")
-        AdjustmentHistoryModel(creation, List.empty)
-      case _ =>
-        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = "create")
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.filter(_.poaAdjustmentReason.isDefined), documentDetail.originalAmount)
-        val otherAdjustmentHistory: List[AdjustmentModel] = chargeHistory.filter(_.poaAdjustmentReason.isEmpty).map(
-          event => AdjustmentModel(event.totalAmount, Some(event.reversalDate), event.reasonCode)
-        )
-        val fullAdjustmentHistory: List[AdjustmentModel] = poaAdjustmentHistory ++ otherAdjustmentHistory
-        AdjustmentHistoryModel(creation, fullAdjustmentHistory.sortBy(_.adjustmentDate))
-    }
-  }
-
-  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
-    chargeHistory match {
-      case Nil => Nil
-      case ::(head, next) => AdjustmentModel(
-        adjustmentDate = Some(head.reversalDate),
-        reasonCode = head.reasonCode,
-        amount = next match {
-          case ::(nextHead, _) => nextHead.totalAmount
-          case Nil => finalAmount
-        }) :: adjustments(next, finalAmount)
-    }
-  }
 
   private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
