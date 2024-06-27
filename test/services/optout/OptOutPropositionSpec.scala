@@ -31,55 +31,66 @@ class OptOutPropositionSpec extends UnitSpec {
           This generator is currently ignored but can be reactivated to regenerate the test data if needed.
             - To reactivate generator, replace "ignore" with "in"
 
-          Selected first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
-            - to avoid cells with carriage returns in to make parsing easier.
-          Paste into a fresh spreadsheet to save as OptOutScenarios.tsv in project root directory.
-            - csv has issues with commas within cells, therefore use tsv to allow simple parsing
-          Running test generates formatted test data in console, based on the required scenarios.
-            - Used to update 'scenarios' in table based test below.
-       */
+        Selected first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
+          - to avoid cells with carriage returns in to make parsing easier.
+        Paste into a fresh spreadsheet to save as OptOutScenarios.tsv in project root directory.
+          - csv has issues with commas within cells, therefore use tsv to allow simple parsing
+        Running test generates formatted test data in console, based on the required scenarios.
+          - Used to update 'scenarios' in table based test below.
+     */
 
-      val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
+    val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
 
-      val lines = tsvOptOut.getLines().drop(2)
+    val lines = tsvOptOut.getLines().drop(2)
 
-      def parseOptionsPresented(option: String): Seq[String] = {
-        option match {
-          case "Nothing displayed" => Seq()
-          case "N/A" => Seq()
-          case _ => option.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
-        }
+    def parseOptionsPresented(option: String): Seq[String] = {
+      option match {
+        case "Nothing displayed" => Seq()
+        case "N/A" => Seq()
+        case _ => option.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
       }
+    }
 
-      def formatOptionPresented(options: Seq[String]) = {
-        "Seq(" ++ options.map(option => s"\"$option\"").mkString(", ") ++ ")"
-      }
+    def formatOptionPresented(options: Seq[String]) = {
+      "Seq(" ++ options.map(option => s"\"$option\"").mkString(", ") ++ ")"
+    }
 
-      def parseIsValid(valid: String): Boolean = {
-        valid == "Allowed"
-      }
+    def parseIsValid(valid: String): Boolean = {
+      valid == "Allowed"
+    }
 
-      def parseCustomerIntent(intent: String): String = {
-        intent.replaceAll("Customer wants to opt out from ", "")
-      }
+    def parseCustomerIntent(intent: String): String = {
+      intent.replaceAll("Customer wants to opt out from ", "")
+    }
 
-      def quote(input: String): String = {
-        "\"" ++ input ++ "\""
-      }
+    def quote(input: String): String = {
+      "\"" ++ input ++ "\""
+    }
 
-      def replaceEmptyWithSpace(input: String): String = {
-        if (input.isEmpty) " " else input
-      }
+    def replaceEmptyWithSpace(input: String): String = {
+      if (input.isEmpty) " " else input
+    }
 
-      // Print the extracted data
-      lines.foreach(line => {
-        val cells = line.split("\t").take(9).map(replaceEmptyWithSpace)
-        //println(cells.mkString("  --  "))
-        println(s"(${quote(cells(0))}, ${quote(cells(1))}, ${quote(cells(2))}, ${quote(cells(3))}, ${formatOptionPresented(parseOptionsPresented(cells(4)))}, ${quote(parseCustomerIntent(cells(5)))}, ${parseIsValid(cells(6))}, ${formatOptionPresented(parseOptionsPresented(cells(8)))}),")
-      })
+    // Print the extracted data
+    lines.foreach(line => {
+      val cells = line.split("\t").take(9).map(replaceEmptyWithSpace)
+      //println(cells.mkString("  --  "))
+      println(s"(${
+        Seq(
+          quote(cells(0)),
+          quote(cells(1)),
+          quote(cells(2)),
+          quote(cells(3)),
+          formatOptionPresented(parseOptionsPresented(cells(4))),
+          quote(parseCustomerIntent(cells(5))),
+          parseIsValid(cells(6)).toString,
+          formatOptionPresented(parseOptionsPresented(cells(8)))
+        ).mkString(", ")
+      }),")
+    })
 
-      // Close the CSV file
-      tsvOptOut.close()
+    // Close the tsv file
+    tsvOptOut.close()
   }
 
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(2021)
@@ -492,10 +503,10 @@ class OptOutPropositionSpec extends UnitSpec {
       val optOutProposition = OptOutProposition(previousYear, currentYear, nextYear)
 
       testOptOutScenario(optOutProposition,
-                         expectedTaxYearsOffered.map(toTaxYear),
-                         valid,
-                         toTaxYear(customerIntent),
-                         expectedTaxYearsOptedOut.map(toTaxYear)
+        expectedTaxYearsOffered.map(toTaxYear),
+        valid,
+        toTaxYear(customerIntent),
+        expectedTaxYearsOptedOut.map(toTaxYear)
       )
     }
   }
