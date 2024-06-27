@@ -19,6 +19,7 @@
 @import views.html.components._
 @import views.html.helpers.injected.InputHelper
 @import views.html.layouts.unifiedLayout
+@import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
 
 
 @this(
@@ -35,7 +36,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, showIncreaseAfterPaymentContent: Boolean, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -58,7 +59,7 @@
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true) {
 
-    <span class="govuk-caption-xl" id="caption">@getMessage("caption", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)</span>
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
 
     @h1(msg = getMessage("h1"),
      id = Some("h1"))
