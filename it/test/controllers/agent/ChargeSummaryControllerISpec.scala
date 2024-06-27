@@ -28,6 +28,7 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.claimToAdjustPoa.OtherIncomeLower
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -47,7 +48,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2023-04-05", -9000.0)
   )
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
-    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("002")))
+    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some(OtherIncomeLower.code)))
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
@@ -491,7 +492,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "totalAmount" -> 123456789012345.67,
           "reversalDate" -> "2020-02-24",
           "reversalReason" -> "amended return",
-          "poaAdjustmentReason" -> "002"
+          "poaAdjustmentReason" -> OtherIncomeLower.code
         ))))
   }
 
