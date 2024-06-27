@@ -44,7 +44,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   import Messages._
 
-  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1234, None, "adjustment"), List())
+  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), "adjustment"), List())
 
   class TestSetup(documentDetail: DocumentDetail,
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -155,6 +155,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
+    def firstPoaAdjusted = "You updated your first payment on account"
+    def secondPoaAdjusted = "You updated your second payment on account"
+
     val balancingChargeAmended: String = messages("chargeSummary.chargeHistory.amend.balancingCharge.text")
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
@@ -192,12 +195,16 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val amendedAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(
     creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "amended return"))
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "adjustment"))
+  )
+  val adjustmentHistoryWithBalancingCharge: AdjustmentHistoryModel = AdjustmentHistoryModel(
+    creationEvent = AdjustmentModel(1400, None, "create"),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "amend"))
   )
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
   val customerRequestAdjustmentHistory : AdjustmentHistoryModel = AdjustmentHistoryModel(
     creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "Customer Request"))
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "request"))
   )
 
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -625,7 +632,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display the charge creation item when history is found and allocations are disabled" in new TestSetup(documentDetailModel(outstandingAmount = 0),
         adjustmentHistory = amendedAdjustmentHistory, paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentHistoryAllocations]))) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "Unknown"
         document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
         document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
       }
@@ -633,16 +640,16 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display the correct message for an amended charge for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0), adjustmentHistory = amendedAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(1)").text() shouldBe "6 Jul 2018"
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(1)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe firstPoaAdjusted
         document.select("tbody tr:nth-child(2) td:nth-child(3)").text() shouldBe "£1,500.00"
       }
 
       "display the correct message for an amended charge for a payment on account 2 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("ITSA - POA 2")), adjustmentHistory = amendedAdjustmentHistory) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(2)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe secondPoaAdjusted
       }
 
-      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), adjustmentHistory = amendedAdjustmentHistory) {
+      "display the correct message for an amended charge for a balancing charge" in new TestSetup(documentDetailModel(outstandingAmount = 0, documentDescription = Some("TRM Amend Charge")), adjustmentHistory = adjustmentHistoryWithBalancingCharge) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
       }
