@@ -30,7 +30,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.mvc.MessagesControllerComponents
-import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
 import views.html.ChargeSummary
@@ -47,8 +47,7 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
   val auditingService: AuditingService = mock(classOf[AuditingService])
   val itvcErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
-  val financialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
-  val chargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+  val chargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
   val chargeSummaryView: ChargeSummary = mock(classOf[ChargeSummary])
   val retrievebtaNavPartial: NavBarPredicate = mock(classOf[NavBarPredicate])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
@@ -64,8 +63,8 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
   val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, authenticator, checkSessionTimeout, retrieveNinoWithIncomeSources,
-    financialDetailsService, auditingService, itvcErrorHandler, financialDetailsConnector, chargeHistoryConnector, chargeSummaryView,
-    retrievebtaNavPartial, incomeSourceDetailsService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
+    financialDetailsService, auditingService, itvcErrorHandler, chargeSummaryView, retrievebtaNavPartial, incomeSourceDetailsService,
+    chargeHistoryService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
 
   before {
     Mockito.reset(controller)
