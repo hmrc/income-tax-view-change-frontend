@@ -60,8 +60,9 @@ trait ClaimToAdjustHelper {
     _.sortBy(_.taxYear).reverse
 
   def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
-    documentDetails.exists(isPoA) &&
-      (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
+    documentDetails.exists { doc =>
+      isPoA(doc) && (doc.isPartPaid || doc.isPaid)
+    }
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail]): Option[PaymentOnAccountViewModel] = for {
     poaOneDocDetail         <- documentDetails.find(isPoAOne)
