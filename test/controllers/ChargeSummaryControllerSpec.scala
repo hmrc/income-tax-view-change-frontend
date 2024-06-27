@@ -62,7 +62,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
-              chargeHistoryResponse: Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]] = Right(List()),
+              chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
               isAgent: Boolean = false) {
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
     val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])

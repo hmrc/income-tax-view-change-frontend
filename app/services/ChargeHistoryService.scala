@@ -29,11 +29,11 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
 
   def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String],
                                     isChargeHistoryEnabled: Boolean, isCodingOutEnabled: Boolean)
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isChargeHistoryEnabled && !(isCodingOutEnabled && isPayeSelfAssessment)) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-        case errorResponse => Left(errorResponse)
+        case errorResponse: ChargesHistoryErrorModel => Left(errorResponse)
       }
     } else {
       Future.successful(Right(Nil))
@@ -57,16 +57,15 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   }
 
   private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
-    chargeHistory match {
-      case Nil => Nil
-      case ::(head, next) => AdjustmentModel(
-        adjustmentDate = Some(head.reversalDate),
-        reasonCode = head.reasonCode,
-        amount = next match {
-          case ::(nextHead, _) => nextHead.totalAmount
-          case Nil => finalAmount
-        }) :: adjustments(next, finalAmount)
-    }
+    chargeHistory.foldRight((finalAmount, List.empty[AdjustmentModel])) { (current, acc) =>
+      val (nextAmount, adjList) = acc
+      val newAdjustment = AdjustmentModel(
+        adjustmentDate = Some(current.reversalDate),
+        reasonCode = current.reasonCode,
+        amount = nextAmount
+      )
+      (current.totalAmount, newAdjustment :: adjList)
+    }._2
   }
 
 }
