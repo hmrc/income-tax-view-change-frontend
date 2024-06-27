@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPoa
+package testConstants.claimToAdjustPOA
 
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 
@@ -82,6 +84,12 @@ object ClaimToAdjustPOATestConstants {
     financialDetails = List.empty,
   )
 
+  def financialDetailsWithUnpaidPoAs(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
+    financialDetails = List(genericFinancialDetailPOA1(taxYearEnd, 150.00), genericFinancialDetailPOA2(taxYearEnd, 250.00))
+  )
+
   def genericUserPOADetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
@@ -120,6 +128,17 @@ object ClaimToAdjustPOATestConstants {
 
   def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
 
-
+  val testPoa1Maybe: Option[PaymentOnAccountViewModel] = Some(
+    PaymentOnAccountViewModel(
+      poaOneTransactionId = "poaOne-Id",
+      poaTwoTransactionId = "poaTwo-Id",
+      taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+      paymentOnAccountOne = 5000.00,
+      paymentOnAccountTwo = 5000.00,
+      poARelevantAmountOne = 5000.00,
+      poARelevantAmountTwo = 5000.00,
+      poAPartiallyPaid = false
+    )
+  )
 
 }

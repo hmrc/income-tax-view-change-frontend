@@ -27,7 +27,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPOATestConstants._
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -357,8 +357,6 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val taxYear:Int = 2023
 
-      val outstandingAmount:BigDecimal = 1250.0
-
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
         ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
@@ -372,7 +370,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         chargeHistoryDetails = Some(chargeHistories)
       ))
 
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelBothPoAsWithOutstandingAmount(taxYear, outstandingAmount))
+      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoAs(taxYear))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
@@ -380,7 +378,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PoAAmountViewModel(false, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
       }
     }
 
@@ -411,7 +409,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PoAAmountViewModel(true, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
       }
     }
 

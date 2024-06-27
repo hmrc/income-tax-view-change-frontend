@@ -17,7 +17,6 @@
 package models.creditsandrefunds
 
 import models.financialDetails._
-import play.api.i18n.Messages
 
 import java.time.LocalDate
 
@@ -26,33 +25,47 @@ sealed trait CreditRow {
   val creditType: CreditType
 }
 case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
-case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: LocalDate) extends CreditRow
+case class PaymentCreditRow(amount: BigDecimal,  date: LocalDate) extends CreditRow {
 
-case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
+  override val creditType: CreditType = PaymentType
 
-  val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
+}
+case class RefundRow(amount: BigDecimal) extends CreditRow {
+
+  override val creditType: CreditType = Repayment
+
+}
+
+case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balanceDetails: Option[BalanceDetails]) {
+
+  private val repayments: Seq[CreditRow] = balanceDetails.fold(Seq[RefundRow]())(details =>
+       Seq(details.firstPendingAmountRequested, details.secondPendingAmountRequested)
+        .flatten.sorted(Ordering.BigDecimal.reverse).map(amount => RefundRow(amount)))
+
+  private val creditsAndPayments: Seq[CreditRow] = sortCreditsByYear.flatMap(cc => {
     val (documentDetails, financialDetail) = cc
     val maybeCreditRow = for {
       creditType <- financialDetail.getCreditType
       amount <- documentDetails.documentDetail.paymentOrChargeCredit
     } yield {
       creditType match {
-        case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = documentDetails.dueDate.get)
+        case PaymentType => PaymentCreditRow(amount = amount, date = documentDetails.dueDate.get)
         case _ => CreditViewRow(amount = amount, creditType = creditType, taxYear = financialDetail.taxYear)
       }
     }
     maybeCreditRow
   })
 
-  def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+  val sortedCreditRows: Seq[CreditRow] = creditsAndPayments ++ repayments
+
+  private def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     val sortedCredits = creditCharges.sortBy {
       case (_, financialDetails) => financialDetails.taxYear
     }
     sortedCredits.reverse
   }
 
-  val sortedCreditCharges = sortCreditsByYear
-
+  val sortedCreditCharges: Seq[(DocumentDetailWithDueDate, FinancialDetail)] = sortCreditsByYear
 
 }
 

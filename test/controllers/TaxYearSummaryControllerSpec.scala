@@ -77,7 +77,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     authorisedFunctions = mockAuthService,
     retrieveBtaNavBar = app.injector.instanceOf[NavBarPredicate],
     auditingService = mockAuditingService,
-    claimToAdjustService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     featureSwitchPredicate = FeatureSwitchPredicate
   )(appConfig,

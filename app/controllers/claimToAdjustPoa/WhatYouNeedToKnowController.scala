@@ -19,18 +19,21 @@ package controllers.claimToAdjustPoa
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.core.NormalMode
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.ClaimToAdjustService
+import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, ClaimToAdjustUtils}
+import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.AuthenticatorPredicate
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedFunctions,
@@ -38,11 +41,12 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             auth: AuthenticatorPredicate,
                                             val claimToAdjustService: ClaimToAdjustService,
+                                            val poaSessionService: PaymentOnAccountSessionService,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils {
+  extends ClientConfirmedController with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
 
   def getRedirect(isAgent: Boolean, poa: PaymentOnAccountViewModel): String = {
     (if (poa.totalAmountLessThanPoa) {
@@ -54,26 +58,14 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      ifAdjustPoaIsEnabled(isAgent) {
-        {
-          for {
-            poaMaybe <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
-          } yield poaMaybe
-        }.value.flatMap {
-          case Right(Some(poa)) =>
-            val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))
-            Future.successful(Ok(view(isAgent, viewModel)))
-          case Left(ex) =>
-            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-            Future.successful(showInternalServerError(isAgent))
-          case Right(None) =>
-            Logger("application").error(s"No payment on account data found")
-            Future.successful(showInternalServerError(isAgent))
-        }
+      withSessionDataAndPoa() { (_, poa) =>
+        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))
+        EitherT.rightT(Ok(view(isAgent, viewModel)))
       } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent)
       }
   }
+
 }

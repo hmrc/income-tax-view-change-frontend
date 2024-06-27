@@ -2001,6 +2001,8 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for
 claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = If you’ve already made a payment and the adjusted amount is less than what you’ve paid, HMRC will add a credit to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
 
 # success
 
@@ -2015,6 +2017,16 @@ claimToAdjustPoa.success.check                          = Check
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
 
+## You Cannot Go Back!
+claimToAdjustPoa.youCannotGoBack.heading                 = You cannot go back
+claimToAdjustPoa.youCannotGoBack.para1                   = Your payments on account have been updated.
+claimToAdjustPoa.youCannotGoBack.para2                   = You can:
+claimToAdjustPoa.youCannotGoBack.bullet1Text             = check the
+claimToAdjustPoa.youCannotGoBack.bullet1Link             = status of your payments on account
+claimToAdjustPoa.youCannotGoBack.bullet2Text             = check
+claimToAdjustPoa.youCannotGoBack.bullet2Link             = what you owe
+claimToAdjustPoa.youCannotGoBack.bullet3Text             = go back to the
+claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 
 #######################################################################################################################
 ## Opt Out ##

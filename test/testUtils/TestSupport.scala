@@ -40,7 +40,7 @@ import play.api.{Configuration, Environment}
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -103,6 +103,11 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   val tsTestUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
+  )(FakeRequest())
+
+  val tsTestUserAgent: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
+    Some("1234567890"), Some("12345-credId"), Some(Agent), None
   )(FakeRequest())
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())

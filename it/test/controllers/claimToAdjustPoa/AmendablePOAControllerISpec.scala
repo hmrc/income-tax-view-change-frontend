@@ -113,7 +113,7 @@ class AmendablePOAControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK)
         )
-        await(sessionService.getMongo) shouldBe Right(Some(PoAAmendmentData()))
+        await(sessionService.getMongo) shouldBe Right(Some(PoAAmendmentData(None, None)))
       }
     }
     s"return status $SEE_OTHER and redirect to the home page" when {

@@ -22,13 +22,14 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
-import models.claimToAdjustPoa.{MainIncomeLower, PoAAmendmentData}
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import models.claimToAdjustPoa.PoAAmendmentData
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import services.PaymentOnAccountSessionService
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testNino}
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
@@ -42,7 +43,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
-  val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val postUrlTestName: String = routes.CheckYourAnswersController.submit(isAgent).url
   val url: String = "/adjust-poa/check-your-answers"
   private val validFinancialDetailsResponseBody: JsValue =
@@ -58,11 +58,12 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${
-      if (isAgent) {
-        "/agents"
-      } else ""
-    }$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(
+      s"""${
+        if (isAgent) {
+          "/agents"
+        } else ""
+      }$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   def post(url: String): WSResponse = {
@@ -128,6 +129,22 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(homeUrl)
+        )
+      }
+      "journeyCompleted flag is true and the user tries to access the page" in {
+        enable(AdjustPaymentsOnAccount)
+
+        setupGetFinancialDetails()
+
+        And("A session has been created with journeyCompleted flag set to true")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+
+        When(s"I call GET")
+        val res = get("/adjust-poa/check-your-answers")
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
         )
       }
     }
