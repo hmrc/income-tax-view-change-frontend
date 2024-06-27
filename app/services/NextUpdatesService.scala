@@ -24,6 +24,7 @@ import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, Tax
 import models.nextUpdates._
 import play.api.Logger
 import services.NextUpdatesService.{LastItem, QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
+import services.optout.{CurrentOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
@@ -99,11 +100,17 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   }
 
-  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear, offeredOptOutYears: Seq[TaxYear])
+  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear, optOutProposition: OptOutProposition)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
 
-    val sortedOffers = offeredOptOutYears.sortBy(_.startYear)
-    val isPreviousYear = sortedOffers.headOption.contains(queryTaxYear)
+    val isQueryTaxYearPreviousTaxYear = optOutProposition.availableOptOutYears.exists {
+      case y: PreviousOptOutTaxYear if y.taxYear == queryTaxYear => true
+      case _ => false
+    }
+    val isCurrentOptOutTaxYearOffered = optOutProposition.availableOptOutYears.exists {
+      case _: CurrentOptOutTaxYear => true
+      case _ => false
+    }
 
     def getQuarterlyUpdatesCountForTaxYear(taxYearToQuery: TaxYear): Future[QuarterlyUpdatesCountForTaxYear] = {
       getNextUpdates(taxYearToQuery.toFinancialYearStart, taxYearToQuery.toFinancialYearEnd).map {
@@ -113,9 +120,15 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       }
     }
 
-    val includeCountForOnwardYearsAsWell = isPreviousYear
-    if (includeCountForOnwardYearsAsWell) {
-      val responses = offeredOptOutYears.dropRight(LastItem).map(getQuarterlyUpdatesCountForTaxYear)
+    val isIncludeCountsForCurrentYear = isQueryTaxYearPreviousTaxYear && isCurrentOptOutTaxYearOffered
+
+    if (isIncludeCountsForCurrentYear) {
+
+      val sortedOffer = optOutProposition.availableTaxYearsForOptOut.sortBy(_.startYear)
+      val isDropLast = sortedOffer.size == 3
+      val yearsToProcess = if(isDropLast) sortedOffer.dropRight(LastItem) else sortedOffer
+
+      val responses = yearsToProcess.map(getQuarterlyUpdatesCountForTaxYear)
       Future.sequence(responses).map { counts =>
         counts.reduce((l, r) => QuarterlyUpdatesCountForTaxYear(queryTaxYear, l.count + r.count))
       }

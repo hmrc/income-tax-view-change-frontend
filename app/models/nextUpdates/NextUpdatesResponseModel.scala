@@ -26,8 +26,8 @@ import java.time.LocalDate
 
 case class ObligationStatus(code: String, name: String)
 object ObligationStatus {
-  val Open = ObligationStatus("O", "Open")
-  val Fulfilled = ObligationStatus("F", "Fulfilled")
+  val Open: ObligationStatus = ObligationStatus("O", "Open")
+  val Fulfilled: ObligationStatus = ObligationStatus("F", "Fulfilled")
 }
 
 sealed trait NextUpdatesResponseModel

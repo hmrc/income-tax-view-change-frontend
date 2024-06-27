@@ -18,11 +18,11 @@ package mocks.services
 
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponse
 import models.incomeSourceDetails.TaxYear
-import models.optout.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutMultiYearViewModel, OptOutOneYearViewModel}
-import org.mockito.ArgumentMatchers.{any, same}
+import models.optout._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optout.OptOutService
+import services.optout.{OptOutProposition, OptOutService}
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 
@@ -55,8 +55,8 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptOutService.getTaxYearsAvailableForOptOut()(any(), any(), any())).thenReturn(out)
   }
 
-  def mockGetSubmissionCountForTaxYear(in: Seq[TaxYear], out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
-    when(mockOptOutService.getQuarterlyUpdatesCountForTaxYear(same(in))(any(), any(), any())).thenReturn(out)
+  def mockGetSubmissionCountForTaxYear(out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
+    when(mockOptOutService.getQuarterlyUpdatesCountForOfferedYears(any[OptOutProposition])(any(), any(), any())).thenReturn(out)
   }
 
   def mockOptOutCheckPointPageViewModel(out: Future[Option[OptOutCheckpointViewModel]]): Unit = {
@@ -80,5 +80,9 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
 
   def mockFetchIntent(out: Future[Option[TaxYear]]): Unit = {
     when(mockOptOutService.fetchSavedIntent()(any(), any())).thenReturn(out)
+  }
+
+  def mockFetchOptOutProposition(out: Future[OptOutProposition]): Unit = {
+    when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(out)
   }
 }

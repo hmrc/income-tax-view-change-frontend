@@ -29,8 +29,8 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.CurrentOptOutTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.optout.{CurrentOptOutTaxYear, OptOutProposition, OptOutTestSupport}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optOut.OptOutChooseTaxYear
@@ -39,6 +39,8 @@ import scala.concurrent.Future
 
 class OptOutChooseTaxYearControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockFrontendAuthorisedFunctions with MockOptOutService {
+
+  val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
   val optOutChooseTaxYear: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
   val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
@@ -49,7 +51,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
-  val yearEnd = 2023
+  val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val nextTaxYear: TaxYear = currentTaxYear.nextYear
   val previousTaxYear: TaxYear = currentTaxYear.previousYear
@@ -61,9 +63,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val optOutYearsOfferedFuture: Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
 
   val counts: Future[QuarterlyUpdatesCountForTaxYearModel] = Future.successful(QuarterlyUpdatesCountForTaxYearModel(Seq(
-    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
-    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 1),
-    QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2025), 0)
+    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.head, 1),
+    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut(1), 1),
+    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.last, 0)
   )))
 
   val taxYears: Seq[TaxYear] =
@@ -96,7 +98,8 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
         mockFetchIntent(Future.successful(None))
-        mockGetSubmissionCountForTaxYear(optOutYearsOffered, counts)
+        mockGetSubmissionCountForTaxYear(counts)
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)
 
@@ -114,7 +117,8 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
         mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
-        mockGetSubmissionCountForTaxYear(optOutYearsOffered, counts)
+        mockGetSubmissionCountForTaxYear(counts)
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)
 
@@ -141,8 +145,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetTaxYearsAvailableForOptOut(futureTaxYears)
-        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -164,8 +169,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetTaxYearsAvailableForOptOut(futureTaxYears)
-        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -187,7 +193,8 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetTaxYearsAvailableForOptOut(futureTaxYears)
-        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockGetSubmissionCountForTaxYear(counts)
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -213,8 +220,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetTaxYearsAvailableForOptOut(futureTaxYears)
-        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -237,8 +245,9 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetTaxYearsAvailableForOptOut(futureTaxYears)
-        mockGetSubmissionCountForTaxYear(taxYears, counts)
+        mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
+        mockFetchOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 

@@ -73,7 +73,7 @@ object OptOutTestSupport {
     val NY = "NY"
   }
 
-  def buildOneYearOptOutDataForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildOneYearOptOutPropositionForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -90,7 +90,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildOneYearOptOutDataForCurrentYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildOneYearOptOutPropositionForCurrentYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -107,7 +107,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildOneYearOptOutDataForNextYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildOneYearOptOutPropositionForNextYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -124,7 +124,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildMultiYearOptOutData(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildThreeYearOptOutProposition(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear

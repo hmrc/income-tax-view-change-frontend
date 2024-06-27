@@ -36,7 +36,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
-import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
+import services.optout.OptOutTestSupport.{buildOneYearOptOutPropositionForCurrentYear, buildOneYearOptOutPropositionForNextYear, buildOneYearOptOutPropositionForPreviousYear}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -176,18 +176,20 @@ class OptOutServiceSpec extends UnitSpec
       "tax-payer made previous submissions for end-year 2023, 2024" should {
         "return count of submissions for each year" in {
 
+          val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+
           val offeredTaxYearsAndCountsTestSetup = Seq(
-            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2023), 1),
-            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2024), 1),
-            TaxYearAndCountOfSubmissionsForIt(TaxYear.forYearEnd(2025), 0)
+            TaxYearAndCountOfSubmissionsForIt(optOutProposition.availableTaxYearsForOptOut.head, 1),
+            TaxYearAndCountOfSubmissionsForIt(optOutProposition.availableTaxYearsForOptOut(1), 1),
+            TaxYearAndCountOfSubmissionsForIt(optOutProposition.availableTaxYearsForOptOut.last, 0)
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear), ArgumentMatchers.eq(offeredTaxYearsAndCountsTestSetup.map(_.taxYear)))(any(), any()))
+            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear), any[OptOutProposition])(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
-          val result = service.getQuarterlyUpdatesCountForTaxYear(offeredTaxYearsAndCountsTestSetup.map(_.taxYear))
+          val result = service.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
 
           val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
             QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
@@ -216,7 +218,7 @@ class OptOutServiceSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
-        val proposition = buildOneYearOptOutDataForPreviousYear(currentYear)
+        val proposition = buildOneYearOptOutPropositionForPreviousYear(currentYear)
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
         val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
@@ -242,7 +244,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val proposition = buildOneYearOptOutDataForCurrentYear(currentYear)
+        val proposition = buildOneYearOptOutPropositionForCurrentYear(currentYear)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
@@ -269,7 +271,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val proposition = buildOneYearOptOutDataForNextYear(currentYear)
+        val proposition = buildOneYearOptOutPropositionForNextYear(currentYear)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
@@ -295,7 +297,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
-        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -326,7 +328,7 @@ class OptOutServiceSpec extends UnitSpec
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
         ))
-        val proposition = OptOutTestSupport.buildOneYearOptOutDataForCurrentYear()
+        val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
