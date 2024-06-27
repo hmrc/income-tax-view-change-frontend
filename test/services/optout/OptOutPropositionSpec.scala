@@ -14,22 +14,78 @@
  * limitations under the License.
  */
 
-package services.optout.optouttaxyear
+package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
+import scala.io.Source
 
-class OptOutPropositionScenariosSpec extends UnitSpec {
+class OptOutPropositionSpec extends UnitSpec {
+
+  "Parse opt out scenarios from tsv file" ignore {
+      /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
+          This code can ingest the data and convert to parameters for table based test found below.
+          This generator is currently ignored but can be reactivated to regenerate the test data if needed.
+            - To reactivate generator, replace "ignore" with "in"
+
+          Selected first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
+            - to avoid cells with carriage returns in to make parsing easier.
+          Paste into a fresh spreadsheet to save as OptOutScenarios.tsv in project root directory.
+            - csv has issues with commas within cells, therefore use tsv to allow simple parsing
+          Running test generates formatted test data in console, based on the required scenarios.
+            - Used to update 'scenarios' in table based test below.
+       */
+
+      val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
+
+      val lines = tsvOptOut.getLines().drop(2)
+
+      def parseOptionsPresented(option: String): Seq[String] = {
+        option match {
+          case "Nothing displayed" => Seq()
+          case _ => option.replaceAll("\"", "").split("( and |, )").map(_.trim).toSeq
+        }
+      }
+
+      def formatOptionPresented(options: Seq[String]) = {
+        "Seq(" ++ options.map(option => s"\"$option\"").mkString(", ") ++ ")"
+      }
+
+      def parseIsValid(valid: String): Boolean = {
+        valid == "Allowed"
+      }
+
+      def parseCustomerIntent(intent: String): String = {
+        intent.replaceAll("Customer wants to opt out from ", "")
+      }
+
+      def quote(input: String): String = {
+        "\"" ++ input ++ "\""
+      }
+
+      def replaceEmptyWithSpace(input: String): String = {
+        if (input.isEmpty) " " else input
+      }
+
+      // Print the extracted data
+      lines.foreach(line => {
+        val cells = line.split("\t").take(7).map(replaceEmptyWithSpace)
+        //println(cells.mkString("  --  "))
+        println(s"(${quote(cells(0))}, ${quote(cells(1))}, ${quote(cells(2))}, ${quote(cells(3))}, ${formatOptionPresented(parseOptionsPresented(cells(4)))}, ${quote(parseCustomerIntent(cells(5)))}, ${parseIsValid(cells(6))}),")
+      })
+
+      // Close the CSV file
+      tsvOptOut.close()
+  }
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.previousYear
   val nextTaxYear: TaxYear = taxYear.nextYear
 
-  private val optOuts =
+  private val scenarios =
     Table(
       ("Crystallised", "CY-1", "CY", "CY+1", "Outcome", "Customer intent", "Valid"), // First tuple defines column names
       ("N", "M", "M", "M", Seq(), "CY-1", false),
@@ -418,24 +474,24 @@ class OptOutPropositionScenariosSpec extends UnitSpec {
       ("Y", "V", " ", "V", Seq("CY+1"), "CY-1", false),
     )
 
+  "check all required scenarios" in {
+    forAll(scenarios) { (isCrystallised: String,
+                       pyStatus: String,
+                       cyStatus: String,
+                       nyStatus: String,
+                       optionsPresented: Seq[String],
+                       customerIntent: String,
+                       valid: Boolean) =>
 
-  forAll(optOuts) { (isCrystallised: String,
-                     pyStatus: String,
-                     cyStatus: String,
-                     nyStatus: String,
-                     optionsPresented: Seq[String],
-                     customerIntent: String,
-                     valid: Boolean) =>
+      val previousYear = PreviousOptOutTaxYear(toITSAStatus(pyStatus), taxYear = previousTaxYear, isCrystallised == "Y")
+      val currentYear = CurrentOptOutTaxYear(toITSAStatus(cyStatus), taxYear = taxYear)
+      val nextYear = NextOptOutTaxYear(toITSAStatus(nyStatus), taxYear = nextTaxYear, currentTaxYear = currentYear)
 
-    val previousYear = PreviousOptOutTaxYear(toITSAStatus(pyStatus), taxYear = previousTaxYear, isCrystallised == "Y")
-    val currentYear = CurrentOptOutTaxYear(toITSAStatus(cyStatus), taxYear = taxYear)
-    val nextYear = NextOptOutTaxYear(toITSAStatus(nyStatus), taxYear = nextTaxYear, currentTaxYear = currentYear)
+      val optionPresented = optionsPresented.map(option => optionToTaxYear(option))
+      val proposition = OptOutProposition(previousYear, currentYear, nextYear).availableTaxYearsForOptOut
 
-    val optionPresented = optionsPresented.map(option => optionToTaxYear(option))
-    val proposition = OptOutProposition(previousYear, currentYear, nextYear).availableTaxYearsForOptOut
-
-    assert(proposition === optionPresented)
-
+      assert(proposition === optionPresented)
+    }
   }
 
   def optionToTaxYear(option: String): TaxYear = {
@@ -446,12 +502,10 @@ class OptOutPropositionScenariosSpec extends UnitSpec {
     }
   }
 
-
   def toITSAStatus(status: String): ITSAStatus = status match {
     case "M" => Mandated
     case "V" => Voluntary
     case "A" => Annual
     case " " => NoStatus
   }
-
 }
