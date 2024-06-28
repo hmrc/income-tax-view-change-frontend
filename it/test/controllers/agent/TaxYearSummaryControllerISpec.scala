@@ -215,7 +215,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#003",
-          Fulfilled.code
+          Fulfilled
         )
       )
     ),
@@ -229,7 +229,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
           periodKey = "#004",
-          Fulfilled.code
+          Fulfilled
         )
       )
     )

@@ -335,7 +335,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#003",
-          Fulfilled.code
+          Fulfilled
         ))
     ),
     NextUpdatesModel(
@@ -348,7 +348,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#004",
-          Fulfilled.code
+          Fulfilled
         ))
     )
   ))
@@ -850,7 +850,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
                 "#001",
-                Fulfilled.code
+                Fulfilled
               ))
             )
           ))
@@ -895,7 +895,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
                 "#001",
-                Fulfilled.code
+                Fulfilled
               ))
             )
           ))

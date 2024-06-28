@@ -29,7 +29,7 @@ object PreviousObligationsIntegrationTestConstants {
     incomeId,
     List(
       NextUpdateModel(
-        date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001", status = Fulfilled.code
+        date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001", status = Fulfilled
       )
     )
   )
@@ -38,7 +38,7 @@ object PreviousObligationsIntegrationTestConstants {
     incomeId,
     List(
       NextUpdateModel(
-        date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS", status = Fulfilled.code
+        date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS", status = Fulfilled
       )
     )
   )
@@ -47,7 +47,7 @@ object PreviousObligationsIntegrationTestConstants {
     testMtditid,
     List(
       NextUpdateModel(
-        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised", status = Fulfilled.code
+        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised", status = Fulfilled
       )
     )
   )

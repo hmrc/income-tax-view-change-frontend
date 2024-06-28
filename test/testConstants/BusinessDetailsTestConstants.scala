@@ -426,7 +426,7 @@ object BusinessDetailsTestConstants {
     obligationType = "notValidObligationType",
     dateReceived = None,
     periodKey = "#002",
-    ObligationStatus.Fulfilled.code
+    ObligationStatus.Fulfilled
   ))
 
   val alignedBusiness = BusinessDetailsModel(

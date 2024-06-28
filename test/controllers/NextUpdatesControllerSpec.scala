@@ -91,13 +91,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   )
 
   val obligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled.code))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled.code)))
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled)))
   ))
 
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled.code))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled.code)))
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled)))
   )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })

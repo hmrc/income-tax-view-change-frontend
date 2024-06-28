@@ -110,7 +110,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           obligationType = "Quarterly",
           dateReceived = Some(fixedDate),
           periodKey = "Quarterly",
-          Fulfilled.code
+          Fulfilled
         )
       )
     )

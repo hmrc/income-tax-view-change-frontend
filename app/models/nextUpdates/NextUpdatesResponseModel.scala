@@ -24,10 +24,10 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
-case class ObligationStatus(code: String, name: String)
+case class ObligationStatus(name: String)
 object ObligationStatus {
-  val Open: ObligationStatus = ObligationStatus("O", "Open")
-  val Fulfilled: ObligationStatus = ObligationStatus("F", "Fulfilled")
+  val Open: String = "Open"
+  val Fulfilled: String = "Fulfilled"
 }
 
 sealed trait NextUpdatesResponseModel
@@ -78,7 +78,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
     allDeadlinesWithSource()(mtdItUser)
       .filter(_.obligation.obligationType == "Quarterly")
-      .count(_.obligation.status == Fulfilled.name)
+      .count(_.obligation.status == Fulfilled)
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth

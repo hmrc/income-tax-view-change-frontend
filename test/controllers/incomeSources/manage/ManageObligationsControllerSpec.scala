@@ -88,7 +88,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "Quarterly",
       None,
       "#001",
-      Fulfilled.code
+      Fulfilled
     ),
       NextUpdateModel(
         LocalDate.of(2022, 7, 1),
@@ -97,7 +97,7 @@ class ManageObligationsControllerSpec extends TestSupport
         "Quarterly",
         None,
         "#002",
-        Fulfilled.code
+        Fulfilled
       )
     ))
   ))

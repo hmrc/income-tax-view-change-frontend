@@ -115,7 +115,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           obligationType = "Quarterly",
           dateReceived = Some(fixedDate),
           periodKey = "Quarterly",
-          Fulfilled.code
+          Fulfilled
         )
       )
     )

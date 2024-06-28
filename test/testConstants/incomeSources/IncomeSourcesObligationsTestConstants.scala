@@ -171,7 +171,7 @@ object IncomeSourcesObligationsTestConstants {
       "Quarterly",
       None,
       "#001",
-      status = Fulfilled.name
+      status = Fulfilled
     ),
       NextUpdateModel(
         LocalDate.of(taxYear2024, 1, 6),
@@ -180,7 +180,7 @@ object IncomeSourcesObligationsTestConstants {
         "Quarterly",
         None,
         "#002",
-        Fulfilled.name
+        Fulfilled
       )
     ))
   ))

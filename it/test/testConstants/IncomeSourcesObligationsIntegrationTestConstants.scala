@@ -53,7 +53,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       "Quarterly",
       None,
       "#001",
-      Fulfilled.code),
+      Fulfilled),
       NextUpdateModel(
         LocalDate.of(taxYear, 1, 6),
         LocalDate.of(taxYear, 4, 5),
@@ -61,7 +61,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
         "Quarterly",
         None,
         "#002",
-        Fulfilled.code
+        Fulfilled
       )
     ))
   ))

@@ -199,7 +199,7 @@ object PropertyDetailsTestConstants {
     periodKey = "#003",
     dateReceived = None,
     obligationType = "Crystallised",
-    status = Fulfilled.name
+    status = Fulfilled
   ))
 
   val testLatencyDetails = LatencyDetails(

@@ -147,7 +147,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled)
                   ))
               ))
 
@@ -218,7 +218,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled)
                   ))
               ))
 
@@ -286,7 +286,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   NextUpdatesModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
                     ))
                 ))
 
@@ -355,7 +355,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   NextUpdatesModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
                     ))
                 ))
 
@@ -427,8 +427,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled.code),
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled),
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", Fulfilled)
                   ))
               ))
 
@@ -516,7 +516,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled)
                   ))
               ))
 
@@ -587,7 +587,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               NextUpdatesModel(
                 identification = "testId",
                 obligations = List(
-                  NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                  NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled)
                 ))
             ))
 
@@ -655,7 +655,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled.code)
+                NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", Fulfilled)
               ))
           ))
 

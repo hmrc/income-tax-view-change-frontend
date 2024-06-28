@@ -171,7 +171,7 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#003",
-          Fulfilled.code
+          Fulfilled
         ))
     ),
     NextUpdatesModel(
@@ -184,7 +184,7 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
           periodKey = "#004",
-          Fulfilled.code
+          Fulfilled
         ))
     )
   ))

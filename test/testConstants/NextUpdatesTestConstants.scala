@@ -27,7 +27,7 @@ object NextUpdatesTestConstants {
 
   val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
 
-  def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey, Fulfilled.code)
+  def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey, Fulfilled)
 
   val testStartDate = LocalDate.of(2017, 7, 1)
 
@@ -38,7 +38,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002",
-    Fulfilled.code
+    Fulfilled
   ))
 
   val overdueObligation = fakeNextUpdatesModel(NextUpdateModel(
@@ -48,7 +48,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002",
-    Fulfilled.code
+    Fulfilled
   ))
 
   val openObligation = fakeNextUpdatesModel(NextUpdateModel(
@@ -58,7 +58,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#003",
-    Fulfilled.code
+    Fulfilled
   ))
 
 
@@ -69,7 +69,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002",
-    Fulfilled.code
+    Fulfilled
   ))
 
   val crystallisedObligation = fakeNextUpdatesModel(NextUpdateModel(
@@ -79,7 +79,7 @@ object NextUpdatesTestConstants {
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = "",
-    Fulfilled.code
+    Fulfilled
   ))
 
   val crystallisedObligationTwo = fakeNextUpdatesModel(NextUpdateModel(
@@ -89,7 +89,7 @@ object NextUpdatesTestConstants {
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = "",
-    Fulfilled.code
+    Fulfilled
   ))
 
 
@@ -110,7 +110,7 @@ object NextUpdatesTestConstants {
     "Quarterly",
     Some(LocalDate.of(2017, 4, 1)),
     "#001",
-    Fulfilled.code
+    Fulfilled
   )
 
   val previousObligationTwo: NextUpdateModel = NextUpdateModel(
@@ -120,7 +120,7 @@ object NextUpdatesTestConstants {
     "Quarterly",
     Some(LocalDate.of(2017, 7, 1)),
     "#002",
-    Fulfilled.code
+    Fulfilled
   )
 
   val previousObligationThree: NextUpdateModel = NextUpdateModel(
@@ -130,7 +130,7 @@ object NextUpdatesTestConstants {
     "Quarterly",
     Some(LocalDate.of(2018, 1, 30)),
     "#003",
-    Fulfilled.code
+    Fulfilled
   )
 
   val previousObligationFour: NextUpdateModel = NextUpdateModel(
@@ -140,7 +140,7 @@ object NextUpdatesTestConstants {
     "Quarterly",
     Some(LocalDate.of(2019, 1, 30)),
     "#004",
-    status = Fulfilled.code
+    status = Fulfilled
   )
 
 
@@ -151,7 +151,7 @@ object NextUpdatesTestConstants {
     "Crystallised",
     Some(LocalDate.of(2018, 1, 31)),
     "Crystallised",
-    status = Fulfilled.code
+    status = Fulfilled
   )
 
 
@@ -165,7 +165,7 @@ object NextUpdatesTestConstants {
     "due" -> "2017-10-30",
     "obligationType" -> "Quarterly",
     "periodKey" -> "#002",
-    "status" -> Fulfilled.code
+    "status" -> Fulfilled
   )
   val nextUpdateOpenJson = Json.obj(
     "start" -> "2017-07-01",
@@ -173,7 +173,7 @@ object NextUpdatesTestConstants {
     "due" -> "2017-10-31",
     "obligationType" -> "Quarterly",
     "periodKey" -> "#003",
-    "status" -> Fulfilled.code
+    "status" -> Fulfilled
   )
   val obligationsDataSuccessJson = Json.obj(
     "identification" -> testSelfEmploymentId,
@@ -204,7 +204,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002",
-    status = Fulfilled.name
+    status = Fulfilled
   ))
   val openQuarterlyObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
@@ -213,7 +213,7 @@ object NextUpdatesTestConstants {
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#003",
-    status = Fulfilled.name
+    status = Fulfilled
   ))
 
   val openCrystObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
@@ -223,7 +223,7 @@ object NextUpdatesTestConstants {
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = "",
-    status = Fulfilled.name
+    status = Fulfilled
   ))
 
 
