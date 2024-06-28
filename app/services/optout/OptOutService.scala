@@ -151,8 +151,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
-    def makeUpdateCalls(optOutYearsToUpdate: Seq[OptOutTaxYear]): Seq[Future[OptOutUpdateResponse]] = {
-      optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
+    def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear]): Seq[Future[OptOutUpdateResponse]] = {
+      optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear, user.nino, optOutUpdateReason))
     }
 
     def findAnyFailOrFirstSuccess(responses: Seq[OptOutUpdateResponse]): OptOutUpdateResponse = {
