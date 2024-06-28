@@ -30,12 +30,16 @@ case class ChargeHistoryModel(taxYear: String,
                               reversalReason: String,
                               poaAdjustmentReason: Option[String]) {
 
-  val reasonCode: String = reversalReason match {
-    case "amended return" => "amend"
-    case "Customer Request" => "request"
-    case error =>
-      Logger("application").error(s"Missing or non-matching history reason: $error found")
-      "unrecognisedReason"
+  val reasonCode: String = {
+    if (poaAdjustmentReason.isDefined) "adjustment"
+    else
+      reversalReason match {
+        case "amended return" => "amend"
+        case "Customer Request" => "request"
+        case error =>
+          Logger("application").error(s"Missing or non-matching history reason: $error found")
+          "unrecognisedReason"
+      }
   }
 
   private val POA1: String = "ITSA- POA 1"
