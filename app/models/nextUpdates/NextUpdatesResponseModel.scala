@@ -24,7 +24,6 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
-case class ObligationStatus(name: String)
 object ObligationStatus {
   val Open: String = "Open"
   val Fulfilled: String = "Fulfilled"
