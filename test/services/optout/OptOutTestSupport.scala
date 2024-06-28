@@ -54,25 +54,6 @@ object OptOutTestSupport {
     val PY_NY = Seq("PY", "NY")
   }
 
-  object ToBeUpdated {
-
-    val PY = Seq("PY")
-    val CY = Seq("CY")
-    val NY = Seq("NY")
-
-    val PY_CY_NY = Seq("PY", "CY", "NY")
-
-    val PY_CY = Seq("PY", "CY")
-    val CY_NY = Seq("CY", "NY")
-    val PY_NY = Seq("PY", "NY")
-  }
-
-  object Intent {
-    val PY = "PY"
-    val CY = "CY"
-    val NY = "NY"
-  }
-
   def buildOneYearOptOutDataForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
