@@ -43,16 +43,16 @@ class OptOutPropositionSpec extends UnitSpec {
 
     val lines = tsvOptOut.getLines().drop(2)
 
-    def parseOptionsPresented(option: String): Seq[String] = {
-      option match {
+    def parseTaxYears(taxYear: String): Seq[String] = {
+      taxYear match {
         case "Nothing displayed" => Seq()
         case "N/A" => Seq()
-        case _ => option.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
+        case _ => taxYear.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
       }
     }
 
-    def formatOptionPresented(options: Seq[String]) = {
-      "Seq(" ++ options.map(option => s"\"$option\"").mkString(", ") ++ ")"
+    def formatTaxYears(taxYears: Seq[String]) = {
+      "Seq(" ++ taxYears.map(option => s"\"$option\"").mkString(", ") ++ ")"
     }
 
     def parseIsValid(valid: String): Boolean = {
@@ -81,10 +81,10 @@ class OptOutPropositionSpec extends UnitSpec {
           quote(cells(1)),
           quote(cells(2)),
           quote(cells(3)),
-          formatOptionPresented(parseOptionsPresented(cells(4))),
+          formatTaxYears(parseTaxYears(cells(4))),
           quote(parseCustomerIntent(cells(5))),
           parseIsValid(cells(6)).toString,
-          formatOptionPresented(parseOptionsPresented(cells(8)))
+          formatTaxYears(parseTaxYears(cells(8)))
         ).mkString(", ")
       }),")
     })
