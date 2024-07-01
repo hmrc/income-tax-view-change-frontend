@@ -24,9 +24,8 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.Mockito
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, Succeeded}
@@ -142,32 +141,6 @@ class OptOutServiceSpec extends UnitSpec
       }
 
       f.futureValue shouldBe Succeeded
-    }
-  }
-
-  "OptOutService.getTaxYearsAvailableForOptOut" when {
-    "three years available for opt-out; end-year 2023, 2024, 2025" should {
-      "return three years" in {
-
-        val currentYearNum = 2024
-        val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
-        val previousTaxYear: TaxYear = currentTaxYear.previousYear
-        val nextTaxYear: TaxYear = currentTaxYear.nextYear
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
-
-        val result = service.getTaxYearsAvailableForOptOut()
-
-        result.futureValue shouldBe Seq(previousTaxYear, currentTaxYear, nextTaxYear)
-      }
     }
   }
 

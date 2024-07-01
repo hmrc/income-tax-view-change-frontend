@@ -96,7 +96,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
-        mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
         mockFetchIntent(Future.successful(None))
         mockGetSubmissionCountForTaxYear(counts)
         mockFetchOptOutProposition(Future.successful(optOutProposition))
@@ -115,7 +114,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
-        mockGetTaxYearsAvailableForOptOut(optOutYearsOfferedFuture)
         mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
         mockGetSubmissionCountForTaxYear(counts)
         mockFetchOptOutProposition(Future.successful(optOutProposition))
@@ -144,7 +142,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
-        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
         mockFetchOptOutProposition(Future.successful(optOutProposition))
@@ -168,7 +165,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
-        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
         mockFetchOptOutProposition(Future.successful(optOutProposition))
@@ -192,7 +188,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
-        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
         mockGetSubmissionCountForTaxYear(counts)
         mockFetchOptOutProposition(Future.successful(optOutProposition))
 
@@ -219,7 +214,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
-        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
         mockFetchOptOutProposition(Future.successful(optOutProposition))
@@ -244,7 +238,6 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
-        mockGetTaxYearsAvailableForOptOut(futureTaxYears)
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
         mockFetchOptOutProposition(Future.successful(optOutProposition))
