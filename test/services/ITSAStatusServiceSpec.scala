@@ -55,12 +55,20 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
     }
   }
 
-  "getStatusTillAvailableFutureYears" when {
-    "ITSAStatus is returned " should {
+  "get the ITSAStatus for each year from getStatusTillAvailableFutureYears" when {
+    "the tax year contains a status" should {
       "return a Map of TaxYear and Status" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearITSAStatusResponse))
         TestITSAStatusService.getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToStatus
+      }
+    }
+
+    "the tax years all have NO STATUS" should {
+      "return a Map of TaxYear and Status" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearITSAStatusWithUnknownResponse))
+        TestITSAStatusService.getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToUnknownStatus
       }
     }
   }

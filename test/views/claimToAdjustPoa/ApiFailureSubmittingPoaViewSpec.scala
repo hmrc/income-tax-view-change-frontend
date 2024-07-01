@@ -32,7 +32,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
       Jsoup.parse(
         contentAsString(
           view(
-            isAgent = isAgent,
+            isAgent = isAgent
           )
         )
       )

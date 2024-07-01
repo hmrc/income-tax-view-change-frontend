@@ -1,0 +1,103 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.incomeSourceDetails.TaxYear
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.PageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+
+@this(
+        mainTemplate: unifiedLayout,
+        p: p,
+        link: link,
+        govukBackLink : GovukBackLink,
+        hmrcPageHeading: HmrcPageHeading,
+        govukButton : GovukButton,
+        govukWarningText : GovukWarningText
+)
+
+@(
+        isAgent: Boolean,
+        poaTaxYear: TaxYear
+)(
+        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"claimToAdjustPoa.youCannotGoBack.$key", args: _*)
+}
+
+@tysLinkUrl = @{
+    if(isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
+    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
+}
+
+@wyoLinkUrl = @{
+    if(isAgent) controllers.routes.WhatYouOweController.showAgent.url
+    else controllers.routes.WhatYouOweController.show().url
+}
+
+@getHomeUrl = @{
+    if(isAgent) controllers.routes.HomeController.showAgent.url
+    else controllers.routes.HomeController.show().url
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = None,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+    ))
+
+    @p(id = Some("paragraph-text-1")){
+        @getMessage("para1")
+    }
+
+    @p(id = Some("paragraph-text-2")){
+        @getMessage("para2")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @getMessage("bullet1Text")
+            @link(link = tysLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet1Link", id = Some("link-1"))
+        }
+        </li>
+
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @getMessage("bullet2Text")
+            @link(link = wyoLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet2Link", id = Some("link-2"))
+        }
+        </li>
+
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @getMessage("bullet3Text")
+            @link(link = getHomeUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet3Link", id = Some("link-3"))
+        }
+        </li>
+    </ul>
+
+    <br>
+
+}

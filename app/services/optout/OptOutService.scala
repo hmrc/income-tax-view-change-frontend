@@ -21,7 +21,7 @@ import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -56,17 +56,36 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
+  def getStatusDetail(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): StatusDetail = {
+    val defaultStatusDetail = StatusDetail("Unknown", ITSAStatus.NoStatus, "Unknown")
+    statusMap.getOrElse(year, defaultStatusDetail)
+  }
+
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
                                       finalisedStatus: Boolean,
-                                      statusMap: Map[TaxYear, StatusDetail]): OptOutProposition = {
+                                      statusMap: Map[TaxYear, StatusDetail]
+                                     ): OptOutProposition = {
 
-    val previousYearOptOut = PreviousOptOutTaxYear(statusMap(previousYear).status, previousYear, finalisedStatus)
-    val currentTaxYearOptOut = CurrentOptOutTaxYear(statusMap(currentYear).status, currentYear)
-    val nextTaxYearOptOut = NextOptOutTaxYear(statusMap(nextYear).status, nextYear, currentTaxYearOptOut)
+    val previousYearOptOut = PreviousOptOutTaxYear(
+      status = getStatusDetail(previousYear, statusMap).status,
+      taxYear = previousYear,
+      crystallised = finalisedStatus
+    )
 
-    OptOutProposition(previousYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
+    val currentYearOptOut = CurrentOptOutTaxYear(
+      status = getStatusDetail(currentYear, statusMap).status,
+      taxYear = currentYear
+    )
+
+    val nextYearOptOut = NextOptOutTaxYear(
+      status = getStatusDetail(nextYear, statusMap).status,
+      taxYear = nextYear,
+      currentTaxYear = currentYearOptOut
+    )
+
+    OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
 
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
@@ -134,8 +153,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
-    def makeUpdateCalls(optOutYearsToUpdate: Seq[OptOutTaxYear]): Seq[Future[OptOutUpdateResponse]] = {
-      optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear.taxYear, user.nino, optOutUpdateReason))
+    def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear]): Seq[Future[OptOutUpdateResponse]] = {
+      optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.requestOptOutForTaxYear(optOutYear, user.nino, optOutUpdateReason))
     }
 
     def findAnyFailOrFirstSuccess(responses: Seq[OptOutUpdateResponse]): OptOutUpdateResponse = {
@@ -147,8 +166,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     val result = for {
       intentTaxYear <- OptionT(fetchSavedIntent())
-      intentOptOutTaxYear <- OptionT(Future.successful(optOutProposition.optOutTaxYearFor(intentTaxYear)))
-      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentOptOutTaxYear))))
+      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentTaxYear))))
       responsesSeqOfFutures  <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
       responsesSeq <- OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
       finalResponse <- OptionT(Future.successful(Option(findAnyFailOrFirstSuccess(responsesSeq))))

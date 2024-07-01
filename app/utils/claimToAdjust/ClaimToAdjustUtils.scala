@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.claimToAdjust
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
@@ -25,7 +25,7 @@ import play.api.mvc.Results.Redirect
 
 import scala.concurrent.Future
 
-trait ClaimToAdjustUtils extends FeatureSwitching{
+trait ClaimToAdjustUtils extends FeatureSwitching {
 
   def ifAdjustPoaIsEnabled(isAgent: Boolean)
                                   (block: => Future[Result])

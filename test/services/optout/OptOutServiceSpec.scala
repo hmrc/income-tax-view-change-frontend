@@ -25,8 +25,8 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Vol
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, Succeeded}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}

@@ -34,9 +34,11 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
   val isAgent = false
+
   private def homeUrl: String =
     if (isAgent) controllers.routes.HomeController.showAgent.url
-    else         controllers.routes.HomeController.show().url
+    else controllers.routes.HomeController.show().url
+
   private val testTaxYear = 2024
   private val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
   private val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
@@ -48,7 +50,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    if(isAgent) stubAuthorisedAgentUser(isAgent, clientMtdId = testMtditid)
+    if (isAgent) stubAuthorisedAgentUser(isAgent, clientMtdId = testMtditid)
 
     Given("Income Source Details with multiple business and property")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -58,12 +60,20 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
   }
 
   def get(url: String): WSResponse = {
-    IncomeTaxViewChangeFrontend.get(s"""${if (isAgent) {"/agents" } else ""}$url""", additionalCookies = clientDetailsWithConfirmation)
+    IncomeTaxViewChangeFrontend.get(s"""${
+      if (isAgent) {
+        "/agents"
+      } else ""
+    }$url""", additionalCookies = clientDetailsWithConfirmation)
   }
 
   def post(url: String): WSResponse = {
     IncomeTaxViewChangeFrontend.post(
-      uri = s"""${if (isAgent) {"/agents" } else ""}$url""",
+      uri = s"""${
+        if (isAgent) {
+          "/agents"
+        } else ""
+      }$url""",
       additionalCookies = clientDetailsWithConfirmation
     )(Map.empty)
   }
@@ -98,6 +108,21 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(SEE_OTHER),
           redirectURI(homeUrl)
+        )
+      }
+      "journeyCompleted flag is true and the user tries to access the page" in {
+        enable(AdjustPaymentsOnAccount)
+
+        stubFinancialDetailsResponse()
+
+        And("A session has been created with journeyCompleted flag set to true")
+        await(sessionService.setMongoData(Some(PoAAmendmentData(None, None, journeyCompleted = true))))
+
+        val res = get(url)
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
         )
       }
     }

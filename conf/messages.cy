@@ -974,6 +974,8 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Ma
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaethoch ddiweddaru eich taliad ar gyfrif cyntaf
+chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
 chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y Taliad Mantoli
@@ -982,10 +984,10 @@ chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
 
-chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 1 o 2
-chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
-chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
-chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y taliad ar gyfrif cyntaf
+chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer yr ail daliad ar gyfrif
+chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y taliad ar gyfrif cyntaf
+chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer yr ail daliad ar gyfrif
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
@@ -1951,6 +1953,8 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar g
 claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = Os ydych eisoes wedi gwneud taliad ac mae’r swm a addaswyd yn llai na’r hyn rydych wedi’i dalu, bydd CThEF yn ychwanegu credyd i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai’n ychwanegu credyd neu dâl am fod yn hwyr i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
 
 claimToAdjustPoa.apiFailure.heading                  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 claimToAdjustPoa.apiFailure.para1                    = Nid oedd modd diweddaru’ch taliadau ar gyfrif.
@@ -1972,6 +1976,17 @@ claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnae
 claimToAdjustPoa.success.check                      = Gwirio’r
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
+
+## You Cannot Go Back!
+claimToAdjustPoa.youCannotGoBack.heading                 = Ni allwch fynd yn ôl
+claimToAdjustPoa.youCannotGoBack.para1                   = Mae’ch taliadau ar gyfrif wedi’u diweddaru.
+claimToAdjustPoa.youCannotGoBack.para2                   = Gallwch wneud y canlynol:
+claimToAdjustPoa.youCannotGoBack.bullet1Text             = gwiriwch
+claimToAdjustPoa.youCannotGoBack.bullet1Link             = statws eich taliadau ar gyfrif
+claimToAdjustPoa.youCannotGoBack.bullet2Text             = gwiriwch
+claimToAdjustPoa.youCannotGoBack.bullet2Link             = yr hyn sydd arnoch
+claimToAdjustPoa.youCannotGoBack.bullet3Text             = ewch yn ôl i’r
+claimToAdjustPoa.youCannotGoBack.bullet3Link             = hafan
 
 #######################################################################################################################
 ## Opt Out ##

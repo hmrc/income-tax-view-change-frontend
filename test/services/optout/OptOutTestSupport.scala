@@ -17,7 +17,6 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 
 object OptOutTestSupport {
@@ -43,19 +42,6 @@ object OptOutTestSupport {
   object ToBeOffered {
 
     val NoOffers = Seq()
-
-    val PY = Seq("PY")
-    val CY = Seq("CY")
-    val NY = Seq("NY")
-
-    val PY_CY_NY = Seq("PY", "CY", "NY")
-
-    val PY_CY = Seq("PY", "CY")
-    val CY_NY = Seq("CY", "NY")
-    val PY_NY = Seq("PY", "NY")
-  }
-
-  object ToBeUpdated {
 
     val PY = Seq("PY")
     val CY = Seq("CY")

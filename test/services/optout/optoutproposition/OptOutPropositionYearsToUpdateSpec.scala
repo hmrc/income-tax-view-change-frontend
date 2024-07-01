@@ -16,10 +16,10 @@
 
 package services.optout.optoutproposition
 
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
-
 import services.optout.OptOutTestSupport._
 
 
@@ -27,24 +27,24 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
 
   val testCases = List(
 
-    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_CY_NY),
-    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY_NY),
-    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), previousTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(previousTaxYear, currentTaxYear, nextTaxYear)),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), currentTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(currentTaxYear, nextTaxYear)),
+    ((Crystallised.NO, Voluntary, Voluntary, Voluntary), nextTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(nextTaxYear)),
 
-    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_CY),
-    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY),
-    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), previousTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(previousTaxYear, currentTaxYear)),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), currentTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(currentTaxYear)),
+    ((Crystallised.NO, Voluntary, Voluntary, NoStatus), nextTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(nextTaxYear)),
 
-    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), Intent.CY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.CY_NY),
-    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
-    ((Crystallised.YES, Voluntary, Voluntary, NoStatus), Intent.NY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.NY),
+    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), currentTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(currentTaxYear, nextTaxYear)),
+    ((Crystallised.YES, Voluntary, Voluntary, Voluntary), nextTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(nextTaxYear)),
+    ((Crystallised.YES, Voluntary, Voluntary, NoStatus), nextTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(nextTaxYear)),
 
-    ((Crystallised.NO, Voluntary, Mandated, Voluntary), Intent.PY, (OneYearOptOut.NO, MultiYearOptOut.YES), ToBeUpdated.PY_NY),
-    ((Crystallised.NO, Voluntary, Mandated, NoStatus), Intent.PY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.PY),
-    ((Crystallised.NO, Voluntary, Mandated, Mandated), Intent.PY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.PY),
-    ((Crystallised.YES, Voluntary, Voluntary, Mandated), Intent.CY, (OneYearOptOut.YES, MultiYearOptOut.NO), ToBeUpdated.CY),
+    ((Crystallised.NO, Voluntary, Mandated, Voluntary), previousTaxYear, (OneYearOptOut.NO, MultiYearOptOut.YES), Seq(previousTaxYear, nextTaxYear)),
+    ((Crystallised.NO, Voluntary, Mandated, NoStatus), previousTaxYear, (OneYearOptOut.YES, MultiYearOptOut.NO), Seq(previousTaxYear)),
+    ((Crystallised.NO, Voluntary, Mandated, Mandated), previousTaxYear, (OneYearOptOut.YES, MultiYearOptOut.NO), Seq(previousTaxYear)),
+    ((Crystallised.YES, Voluntary, Voluntary, Mandated), currentTaxYear, (OneYearOptOut.YES, MultiYearOptOut.NO), Seq(currentTaxYear)),
 
-    ((Crystallised.YES, Voluntary, Mandated, Voluntary), Intent.NY, (OneYearOptOut.YES, OneYearOptOut.NO), ToBeUpdated.NY),
+    ((Crystallised.YES, Voluntary, Mandated, Voluntary), nextTaxYear, (OneYearOptOut.YES, OneYearOptOut.NO), Seq(nextTaxYear)),
 
   )
 
@@ -55,9 +55,9 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
   }
 
   def optOutPropositionUpdatesTest(crystallised: Boolean, pyStatus: ITSAStatus, cyStatus: ITSAStatus, nyStatus: ITSAStatus)
-                                  (intent: String)
+                                  (intent: TaxYear)
                                   (isOneYearOptOut: Boolean, isMultiYearOptOut: Boolean)
-                                  (expectedToUpdate: Seq[String]): Unit = {
+                                  (expectedToUpdate: Seq[TaxYear]): Unit = {
 
     s"update years ${expectedToUpdate.mkString(",")}" when {
       s"proposition is ${(crystallised, pyStatus, cyStatus, nyStatus)}" in {
@@ -66,23 +66,13 @@ class OptOutPropositionYearsToUpdateSpec extends UnitSpec {
         val currentTaxYearOptOut = CurrentOptOutTaxYear(cyStatus, currentTaxYear)
         val nextTaxYearOptOut = NextOptOutTaxYear(nyStatus, nextTaxYear, currentTaxYearOptOut)
 
-        val intentYear = intent match {
-          case "PY" => previousTaxYearOptOut
-          case "CY" => currentTaxYearOptOut
-          case _ => nextTaxYearOptOut
-        }
-
         val optOutData = OptOutProposition(previousTaxYearOptOut, currentTaxYearOptOut, nextTaxYearOptOut)
 
         optOutData.isOneYearOptOut shouldBe isOneYearOptOut
         optOutData.isMultiYearOptOut shouldBe isMultiYearOptOut
         optOutData.isNoOptOutAvailable shouldBe !isOneYearOptOut && !isMultiYearOptOut
 
-        optOutData.optOutYearsToUpdate(intentYear).map {
-          case _:PreviousOptOutTaxYear => "PY"
-          case _:CurrentOptOutTaxYear => "CY"
-          case _ => "NY"
-        }.sortBy(_.trim) shouldBe expectedToUpdate.sortBy(_.trim)
+        optOutData.optOutYearsToUpdate(intent) shouldBe expectedToUpdate
 
       }
     }

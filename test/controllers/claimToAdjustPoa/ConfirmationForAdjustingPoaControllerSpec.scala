@@ -53,7 +53,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
 
   object TestConfirmationForAdjustingPoaController extends ConfirmationForAdjustingPoaController(
     authorisedFunctions = mockAuthService,
-    ctaService = claimToAdjustService,
+    claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     ctaCalculationService = mockClaimToAdjustPoaCalculationService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -82,6 +82,27 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+    }
+    "redirect to the You Cannot Go Back page" when {
+      "FS is enabled and the journeyCompleted flag is set to true in session" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestConfirmationForAdjustingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestConfirmationForAdjustingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        status(resultAgent) shouldBe SEE_OTHER
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
       }
     }
     "return Ok" when {
@@ -216,7 +237,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetAmendablePoaViewModelFailure()
+        setupMockGetPaymentsOnAccountBuildFailure()
 
         val result = TestConfirmationForAdjustingPoaController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = TestConfirmationForAdjustingPoaController.submit(isAgent = true)(fakeRequestConfirmedClient())

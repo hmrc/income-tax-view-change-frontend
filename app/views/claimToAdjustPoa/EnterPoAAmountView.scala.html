@@ -157,6 +157,18 @@
         firstCellIsHeader = true
     ))
 
+    @if(viewModel.partiallyOrFullyPaidPoaExists && !viewModel.poaPreviouslyAdjusted) {
+        @govukInsetText(InsetText(
+            id = Some("insetText-firstAttempt"),
+            content = Text(getMessage("insetText.firstAttempt"))
+        ))
+    } else { @if(viewModel.partiallyOrFullyPaidPoaExists && viewModel.poaPreviouslyAdjusted) {
+        @govukInsetText(InsetText(
+            id = Some("insetText-secondAttempt"),
+            content = Text(getMessage("insetText.secondAttempt"))
+        ))
+    }}
+
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
         content = Text(getMessage("warning")),

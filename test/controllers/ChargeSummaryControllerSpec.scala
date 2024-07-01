@@ -26,19 +26,20 @@ import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{DateService, FinancialDetailsService}
+import services.{ChargeHistoryService, DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import utils.AuthenticatorPredicate
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 
@@ -57,19 +58,24 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
+  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, "amend"), List())
+
   class Setup(financialDetails: FinancialDetailsResponseModel,
-              chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
+              adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
+              chargeHistoryResponse: Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]] = Right(List()),
               isAgent: Boolean = false) {
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-    val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
-    val mockChargeHistoryConnector: ChargeHistoryConnector = mock(classOf[ChargeHistoryConnector])
+    val mockChargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
 
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))
 
-    when(mockChargeHistoryConnector.getChargeHistory(any(), any())(any()))
-      .thenReturn(Future.successful(chargeHistory))
+    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any(), any())(any(),any(),any()))
+      .thenReturn(Future.successful(chargeHistoryResponse))
+
+    when(mockChargeHistoryService.getAdjustmentHistory(any(),any()))
+      .thenReturn(adjustmentHistoryModel)
 
     mockBothIncomeSources()
     if (isAgent) {
@@ -84,11 +90,10 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       financialDetailsService,
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
-      mockFinancialDetailsConnector,
-      mockChargeHistoryConnector,
       app.injector.instanceOf[views.html.ChargeSummary],
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
+      mockChargeHistoryService,
       mockAuthService,
       app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
       app.injector.instanceOf[FeatureSwitchPredicate]
@@ -266,7 +271,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "load an error page" when {
 
       "the charge history response is an error" in new Setup(
-        financialDetailsModel(), chargeHistory = ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure")) {
+        financialDetailsModel(), chargeHistoryResponse = Left(ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure"))) {
         enable(ChargeHistory)
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
@@ -437,7 +442,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "load an error page" when {
 
       "the charge history response is an error" in new Setup(
-        financialDetailsModel(), chargeHistory = ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure"), isAgent = true) {
+        financialDetailsModel(), chargeHistoryResponse = Left(ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure")), isAgent = true) {
         enable(ChargeHistory)
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
 

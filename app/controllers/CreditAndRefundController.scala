@@ -35,8 +35,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
-import utils.CreditAndRefundUtils.UnallocatedCreditType
-import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
@@ -83,16 +81,14 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
         val isCutOverCreditsEnabled: Boolean = isEnabled(CutOverCredits)
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
           financialDetailsModel => financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails()
         )
 
-        val viewModel = CreditAndRefundViewModel(credits)
-        val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
+        val viewModel = CreditAndRefundViewModel(credits, balance)
         auditClaimARefund(balance, credits)
 
-        Ok(view(viewModel, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
+        Ok(view(viewModel, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
