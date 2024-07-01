@@ -26,22 +26,18 @@ import scala.io.Source
 class OptOutPropositionSpec extends UnitSpec {
 
   "Parse opt out scenarios from tsv file" ignore {
-      /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
-          This code can ingest the data and convert to parameters for table based test found below.
-          This generator is currently ignored but can be reactivated to regenerate the test data if needed.
-            - To reactivate generator, replace "ignore" with "in"
+    /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
+        This code can ingest the data and convert to parameters for table based test found below.
+        This generator is currently ignored but can be reactivated to regenerate the test data if needed.
+          - To reactivate generator, replace "ignore" with "in"
 
-        Selected first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
-          - to avoid cells with carriage returns in to make parsing easier.
-        Paste into a fresh spreadsheet to save as OptOutScenarios.tsv in project root directory.
-          - csv has issues with commas within cells, therefore use tsv to allow simple parsing
-        Running test generates formatted test data in console, based on the required scenarios.
-          - Used to update 'scenarios' in table based test below.
-     */
-
-    val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
-
-    val lines = tsvOptOut.getLines().drop(2)
+      Select first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
+        - to avoid cells that contain carriage returns as to make parsing easier.
+      Paste into a fresh spreadsheet and save as OptOutScenarios.tsv in project root directory.
+        - csv has issues with commas within cells, therefore use tsv to allow simple parsing.
+      Run the test to generate the formatted test data in the console, based on the required scenarios.
+        - Copy the scenarios output from the console and paste them into the data table "scenarios" to update the following test in this file.
+   */
 
     def parseTaxYears(taxYear: String): Seq[String] = {
       taxYear match {
@@ -51,36 +47,53 @@ class OptOutPropositionSpec extends UnitSpec {
       }
     }
 
-    def formatTaxYears(taxYears: Seq[String]) = {
-      "Seq(" ++ taxYears.map(option => s"\"$option\"").mkString(", ") ++ ")"
+    def formatTaxYears(taxYears: Seq[String]): String = {
+      "Seq(" + taxYears.map(option => s"\"$option\"").mkString(", ") + ")"
     }
 
-    def parseIsValid(valid: String): Boolean = {
-      valid == "Allowed"
-    }
+    def parseIsValid(valid: String): Boolean =
+      valid match {
+        case "Allowed" => true
+        case "N/A" => false
+        case _ => throw new RuntimeException("Unexpected entry in Valid column")
+      }
 
     def parseCustomerIntent(intent: String): String = {
       intent.replaceAll("Customer wants to opt out from ", "")
     }
 
     def quote(input: String): String = {
-      "\"" ++ input ++ "\""
+      "\"" + input + "\""
     }
 
-    def replaceEmptyWithSpace(input: String): String = {
-      if (input.isEmpty) " " else input
-    }
+    def parseCrystallisedStatus(input: String): String =
+      input match {
+        case "Y" => "Y"
+        case "N" => "N"
+        case _ => throw new RuntimeException(s"Unexpected Crystallised status data $input}")
+      }
 
-    // Print the extracted data
+    def parseItsaStatus(input: String): String =
+      input match {
+        case "A" => "A"
+        case "V" => "V"
+        case "M" => "M"
+        case "" => " "
+        case _ => throw new RuntimeException(s"Unexpected ITSA status data $input")
+      }
+
+    val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
+    val lines = tsvOptOut.getLines().drop(2)
+
     lines.foreach(line => {
-      val cells = line.split("\t").take(9).map(replaceEmptyWithSpace)
+      val cells = line.split("\t").take(9)
       //println(cells.mkString("  --  "))
       println(s"(${
         Seq(
-          quote(cells(0)),
-          quote(cells(1)),
-          quote(cells(2)),
-          quote(cells(3)),
+          quote(parseCrystallisedStatus(cells(0))),
+          quote(parseItsaStatus(cells(1))),
+          quote(parseItsaStatus(cells(2))),
+          quote(parseItsaStatus(cells(3))),
           formatTaxYears(parseTaxYears(cells(4))),
           quote(parseCustomerIntent(cells(5))),
           parseIsValid(cells(6)).toString,
@@ -89,7 +102,6 @@ class OptOutPropositionSpec extends UnitSpec {
       }),")
     })
 
-    // Close the tsv file
     tsvOptOut.close()
   }
 
