@@ -39,17 +39,42 @@ class OptOutPropositionSpec extends UnitSpec {
         - Copy the scenarios output from the console and paste them into the data table "scenarios" to update the following test in this file.
    */
 
-    def parseTaxYears(taxYear: String): Seq[String] = {
-      taxYear match {
+    val validTaxYears = Seq("CY-1", "CY", "CY+1")
+
+    def invalid(taxYear: String): Boolean = {
+      !validTaxYears.contains(taxYear)
+    }
+
+    def parseTaxYears(taxYears: String): Seq[String] = {
+      (taxYears match {
         case "Nothing displayed" => Seq()
         case "N/A" => Seq()
-        case _ => taxYear.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
-      }
+        case _ => taxYears.replaceAll("\"", "").split("( [aA]nd |, )").map(_.trim).toSeq
+      }).map(taxYear => {
+        if (invalid(taxYear)) throw new RuntimeException(s"Unexpected tax year - $taxYear")
+        taxYear
+      })
     }
 
     def formatTaxYears(taxYears: Seq[String]): String = {
       "Seq(" + taxYears.map(option => s"\"$option\"").mkString(", ") + ")"
     }
+
+    def parseCrystallisedStatus(input: String): String =
+      input match {
+        case "Y" => "Y"
+        case "N" => "N"
+        case _ => throw new RuntimeException(s"Unexpected Crystallised status data $input")
+      }
+
+    def parseItsaStatus(input: String): String =
+      input match {
+        case "A" => "A"
+        case "V" => "V"
+        case "M" => "M"
+        case "" => " "
+        case _ => throw new RuntimeException(s"Unexpected ITSA status data $input")
+      }
 
     def parseIsValid(valid: String): Boolean =
       valid match {
@@ -66,26 +91,12 @@ class OptOutPropositionSpec extends UnitSpec {
       "\"" + input + "\""
     }
 
-    def parseCrystallisedStatus(input: String): String =
-      input match {
-        case "Y" => "Y"
-        case "N" => "N"
-        case _ => throw new RuntimeException(s"Unexpected Crystallised status data $input}")
-      }
-
-    def parseItsaStatus(input: String): String =
-      input match {
-        case "A" => "A"
-        case "V" => "V"
-        case "M" => "M"
-        case "" => " "
-        case _ => throw new RuntimeException(s"Unexpected ITSA status data $input")
-      }
+    println("""("Crystallised", "CY-1", "CY", "CY+1", "Expected Opt Out years offered", "Customer intent", "Valid", "Expected Opt Out years"),""")
 
     val tsvOptOut = Source.fromFile("OptOutScenarios.tsv")
-    val lines = tsvOptOut.getLines().drop(2)
+    val rowsWithoutHeaders = tsvOptOut.getLines().drop(2)
 
-    lines.foreach(line => {
+    rowsWithoutHeaders.foreach(line => {
       val cells = line.split("\t").take(9)
       //println(cells.mkString("  --  "))
       println(s"(${
@@ -111,7 +122,7 @@ class OptOutPropositionSpec extends UnitSpec {
 
   private val scenarios =
     Table(
-      ("Crystallised", "CY-1", "CY", "CY+1", "Expected Opt Out years offered", "Customer intent", "Valid", "Expected Opt Out years"), // First tuple defines column names
+      ("Crystallised", "CY-1", "CY", "CY+1", "Expected Opt Out years offered", "Customer intent", "Valid", "Expected Opt Out years"),
       ("N", "M", "M", "M", Seq(), "CY-1", false, Seq()),
       ("Y", "M", "M", "M", Seq(), "CY-1", false, Seq()),
       ("N", "M", "M", "M", Seq(), "CY", false, Seq()),
