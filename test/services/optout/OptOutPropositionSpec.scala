@@ -520,7 +520,7 @@ class OptOutPropositionSpec extends UnitSpec {
     assert(optOutProposition.availableTaxYearsForOptOut === expectedTaxYearsOffered)
 
     if (valid) {
-      assert(optOutProposition.optOutYearsToUpdate(customerIntent).map(year => year.taxYear) === expectedTaxYearsOptedOut)
+      assert(optOutProposition.optOutYearsToUpdate(customerIntent) === expectedTaxYearsOptedOut)
     }
   }
 
