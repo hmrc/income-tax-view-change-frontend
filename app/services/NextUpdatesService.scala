@@ -23,8 +23,7 @@ import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.nextUpdates._
 import play.api.Logger
-import services.NextUpdatesService.{LastItem, QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
-import services.optout.{CurrentOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
+import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
@@ -34,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 object NextUpdatesService {
   case class QuarterlyUpdatesCountForTaxYear(taxYear: TaxYear, count: Int)
   private val noQuarterlyUpdates = 0
-  private val LastItem = 1
 }
 
 @Singleton
@@ -101,40 +99,12 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   }
 
-  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear, optOutProposition: OptOutProposition)
+  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
-
-    val isQueryTaxYearPreviousTaxYear = optOutProposition.availableOptOutYears.exists {
-      case y: PreviousOptOutTaxYear if y.taxYear == queryTaxYear => true
-      case _ => false
-    }
-    val isCurrentOptOutTaxYearOffered = optOutProposition.availableOptOutYears.exists {
-      case _: CurrentOptOutTaxYear => true
-      case _ => false
-    }
-
-    def getQuarterlyUpdatesCountForTaxYear(taxYearToQuery: TaxYear): Future[QuarterlyUpdatesCountForTaxYear] = {
-      getNextUpdates(taxYearToQuery.toFinancialYearStart, taxYearToQuery.toFinancialYearEnd).map {
-        case obligationsModel: ObligationsModel =>
-          QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
-        case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
-      }
-    }
-
-    val isIncludeCountsForCurrentYear = isQueryTaxYearPreviousTaxYear && isCurrentOptOutTaxYearOffered
-
-    if (isIncludeCountsForCurrentYear) {
-
-      val sortedOffer = optOutProposition.availableTaxYearsForOptOut.sortBy(_.startYear)
-      val isDropLast = sortedOffer.size == 3
-      val yearsToProcess = if(isDropLast) sortedOffer.dropRight(LastItem) else sortedOffer
-
-      val responses = yearsToProcess.map(getQuarterlyUpdatesCountForTaxYear)
-      Future.sequence(responses).map { counts =>
-        counts.reduce((l, r) => QuarterlyUpdatesCountForTaxYear(queryTaxYear, l.count + r.count))
-      }
-    } else {
-      getQuarterlyUpdatesCountForTaxYear(queryTaxYear)
+    getNextUpdates(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
+      case obligationsModel: ObligationsModel =>
+        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
+      case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
     }
   }
 

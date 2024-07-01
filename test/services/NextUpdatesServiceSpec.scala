@@ -66,9 +66,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
-          result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 6)
+          result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
       }
     }
@@ -93,7 +93,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -123,7 +123,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 2)
         }
@@ -150,7 +150,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -178,7 +178,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -206,9 +206,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
-          result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 6)
+          result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
       }
     }
@@ -234,7 +234,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -254,7 +254,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }
@@ -273,7 +273,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(NextUpdatesErrorModel(400, "some error"))
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(NextUpdatesErrorModel(400, "some error"))
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear, optOutProposition)
+          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }

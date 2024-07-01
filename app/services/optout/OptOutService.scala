@@ -226,11 +226,32 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                                               hc: HeaderCarrier,
                                               ec: ExecutionContext): Future[QuarterlyUpdatesCountForTaxYearModel] = {
 
-    val updateCountByTaxYear = proposition.availableTaxYearsForOptOut.map { optOutTaxYear =>
-      nextUpdatesService.getQuarterlyUpdatesCounts(optOutTaxYear, proposition)
+    val availableOptOutYears = proposition.availableOptOutYears
+    val isNextYearOffered = availableOptOutYears.exists {
+      case _: NextOptOutTaxYear => true
+      case _ => false
+    }
+    val sortedYears = availableOptOutYears.sortBy(_.taxYear.startYear)
+    val taxYears = sortedYears.map(_.taxYear)
+    val taxYearsToQuery = if(isNextYearOffered) taxYears.dropRight(LastItem) else taxYears
+
+    def adjustPreviousYearCountToIncludeCurrentYear(counts: Seq[QuarterlyUpdatesCountForTaxYear]): Seq[QuarterlyUpdatesCountForTaxYear] = {
+      val sum = counts.map(_.count).sum
+      Seq(counts.head.copy(count = sum), counts.last)
     }
 
-    Future.sequence(updateCountByTaxYear).map(QuarterlyUpdatesCountForTaxYearModel)
+    val updateCountByTaxYear = taxYearsToQuery.map { optOutTaxYear =>
+      nextUpdatesService.getQuarterlyUpdatesCounts(optOutTaxYear)
+    }
+
+    val isAdjustPreviousYearCountToIncludeCurrentYear = taxYearsToQuery.size == isPYAndCYOffered
+    if(isAdjustPreviousYearCountToIncludeCurrentYear) {
+      Future.sequence(updateCountByTaxYear).map { quarterlyUpdatesCounts =>
+        adjustPreviousYearCountToIncludeCurrentYear(quarterlyUpdatesCounts.sortBy(_.taxYear.startYear))
+      }.map(QuarterlyUpdatesCountForTaxYearModel)
+    } else {
+      Future.sequence(updateCountByTaxYear).map(QuarterlyUpdatesCountForTaxYearModel)
+    }
   }
 
 }
@@ -239,6 +260,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 object OptOutService {
 
   private val noQuarterlyUpdates = 0
+  private val LastItem = 1
+  private val isPYAndCYOffered = 2
 
   case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
 
