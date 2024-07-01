@@ -173,6 +173,33 @@ class OptOutServiceSpec extends UnitSpec
         }
       }
     }
+
+    "three years offered for opt-out; end-year 2023, 2025" when {
+      "tax-payer made previous submissions for end-year 2023" should {
+        "return count of submissions for each year" in {
+
+          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndNY()
+
+          val offeredTaxYearsAndCountsTestSetup = Seq(
+            TaxYearAndCountOfSubmissionsForIt(optOutProposition.availableTaxYearsForOptOut.head, 1),
+            TaxYearAndCountOfSubmissionsForIt(optOutProposition.availableTaxYearsForOptOut.last, 0)
+          )
+
+          offeredTaxYearsAndCountsTestSetup map { year =>
+            when(nextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+              .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
+          }
+
+          val result = service.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
+
+          val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1)
+          ))
+
+          result.futureValue shouldBe expectedResult
+        }
+      }
+    }
   }
 
   "OptOutService.makeOptOutUpdateRequestForYear" when {
