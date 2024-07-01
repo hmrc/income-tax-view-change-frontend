@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, Initia
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData, WhatYouNeedToKnowViewModel}
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.viewModel
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -63,11 +63,11 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
   def successfulFutureOk: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, viewModel)))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel)))
   }
 
   def successfulFutureOkAgent: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, viewModel)))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel)))
   }
 
 

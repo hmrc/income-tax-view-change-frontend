@@ -27,6 +27,7 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 
@@ -39,8 +40,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
 
   class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
-    val viewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, SelectYourReasonController.show(isAgent, NormalMode).url)
-    val view: Html = whatYouNeedToKnowView(isAgent, viewModel)
+    val view: Html = whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()

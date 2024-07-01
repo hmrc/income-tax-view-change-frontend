@@ -31,7 +31,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
-import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.viewModel
+import testConstants.claimToAdjustPOA.ClaimToAdjustPOATestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
@@ -60,10 +60,10 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
   def successfulFutureOk: PoAAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, viewModel)))
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false))))
 }
   def successfulFutureOkAgent: PoAAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, viewModel)))
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true))))
   }
 
   override def beforeEach(): Unit = {

@@ -21,6 +21,7 @@ import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import controllers.claimToAdjustPoa.SelectYourReasonController
+import controllers.claimToAdjustPoa.routes.SelectYourReasonController
 
 import java.time.LocalDate
 
@@ -143,9 +144,8 @@ object ClaimToAdjustPOATestConstants {
     )
   )
 
-  val isAgent: Boolean = false
-  val redirect = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
+  val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
-  val viewModel: WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, redirect)
+  def whatYouNeedToKnowViewModel(isAgent: Boolean): WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent = false, controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url)
 
 }
