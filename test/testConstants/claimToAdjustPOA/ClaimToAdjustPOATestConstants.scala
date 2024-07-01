@@ -16,9 +16,11 @@
 
 package testConstants.claimToAdjustPOA
 
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import controllers.claimToAdjustPoa.SelectYourReasonController
 
 import java.time.LocalDate
 
@@ -140,5 +142,10 @@ object ClaimToAdjustPOATestConstants {
       poAPartiallyPaid = false
     )
   )
+
+  val isAgent: Boolean = false
+  val redirect = controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url
+
+  val viewModel: WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(2023, 2024), showIncreaseAfterPaymentContent = false, redirect)
 
 }
