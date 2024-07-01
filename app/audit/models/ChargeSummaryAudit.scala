@@ -96,6 +96,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case Some("chargeSummary.chargeHistory.amend.paymentOnAccount1.text") => "Payment on account 1 of 2 reduced due to amended return"
     case Some("chargeSummary.chargeHistory.amend.paymentOnAccount2.text") => "Payment on account 2 of 2 reduced due to amended return"
     case Some("chargeSummary.chargeHistory.amend.balancingCharge.text") => "Remaining balance reduced due to amended return"
+    case Some("chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text") => "You updated your first payment on account"
+    case Some("chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text") => "You updated your second payment on account"
     case _ => s"Some unexpected message key: $key"
   }
 
