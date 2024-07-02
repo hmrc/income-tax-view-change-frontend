@@ -262,13 +262,13 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private val calculationMessagesDetail: Option[Seq[JsObject]] = optDetail(allowedCalcMessages.map(calcMessagesJson))
 
-  private val transitionalProfitDetail: Option[Seq[JsObject]] = optDetail(viewModel.transitionProfitRow match {
+  private val transitionalProfitDetail: Seq[JsObject] = viewModel.transitionProfitRow match {
     case Some(row) => Seq(transitionalProfitObject(row.incomeTaxCharged, row.totalTaxableProfit))
     case None => Seq.empty
-  })
+  }
 
   private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(viewModel.payPensionsProfitBands.getOrElse(Seq.empty)
-    .filter(_.income > 0).map(taxBandRateMessageJson) ++ transitionalProfitDetail.getOrElse(Seq.empty))
+    .filter(_.income > 0).map(taxBandRateMessageJson) ++ transitionalProfitDetail)
 
   private val savingsDetail: Option[Seq[JsObject]] = optDetail(viewModel.savingsAndGainsBands.getOrElse(Seq.empty)
     .filter(_.income > 0).map(taxBandRateMessageJson))
