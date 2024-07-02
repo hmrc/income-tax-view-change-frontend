@@ -19,8 +19,8 @@ package services
 import auth.MtdItUser
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.nextUpdates._
 import play.api.Logger
 import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
@@ -91,21 +91,23 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
     obligationsConnector.getAllObligations(fromDate, toDate).map {
-      case obligationsResponse: ObligationsModel => ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
+      case obligationsResponse: ObligationsModel =>
+        ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
       case error: NextUpdatesErrorModel => error
       case _ => NextUpdatesErrorModel(500, "Invalid response from connector")
     }
 
   }
 
-  def getQuarterlyUpdatesCounts(taxYear: TaxYear)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear]  = {
-    getNextUpdates(taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd).map {
+  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear)
+                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
+    getNextUpdates(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
-        QuarterlyUpdatesCountForTaxYear(taxYear, obligationsModel.submissionsCount)
-      case _ => QuarterlyUpdatesCountForTaxYear(taxYear, noQuarterlyUpdates)
+        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
+      case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
     }
   }
+
 
   def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
@@ -114,7 +116,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         Logger("application").error(
           s"Error: $message, code $code")
         Seq.empty
-      case NextUpdateModel(start, end, due, obligationType, _, periodKey) =>
+      case NextUpdateModel(start, end, due, obligationType, _, periodKey, _) =>
         Seq(DatesModel(start,
           end,
           due,

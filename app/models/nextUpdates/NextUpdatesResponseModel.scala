@@ -19,10 +19,15 @@ package models.nextUpdates
 import auth.MtdItUser
 import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
+import models.nextUpdates.ObligationStatus.Fulfilled
 import play.api.libs.json._
 
 import java.time.LocalDate
 
+object ObligationStatus {
+  val Open: String = "Open"
+  val Fulfilled: String = "Fulfilled"
+}
 
 sealed trait NextUpdatesResponseModel
 
@@ -69,8 +74,10 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
-  def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
-    allQuarterly.map(_.obligation.due).distinct.size
+  def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
+    allDeadlinesWithSource()(mtdItUser)
+      .filter(_.obligation.obligationType == "Quarterly")
+      .count(_.obligation.status == Fulfilled)
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth
@@ -111,7 +118,8 @@ case class NextUpdateModel(start: LocalDate,
                            due: LocalDate,
                            obligationType: String,
                            dateReceived: Option[LocalDate],
-                           periodKey: String) extends NextUpdatesResponseModel
+                           periodKey: String,
+                           status: String) extends NextUpdatesResponseModel
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
 

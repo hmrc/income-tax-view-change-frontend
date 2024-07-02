@@ -18,8 +18,7 @@ package mocks.connectors
 
 import connectors.ObligationsConnector
 import models.nextUpdates.NextUpdatesResponseModel
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{eq => matches}
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
@@ -37,18 +36,18 @@ trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockNextUpdates(response: NextUpdatesResponseModel): Unit = {
-    when(mockObligationsConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockObligationsConnector.getNextUpdates()(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
   def setupMockFulfilledObligations(response: NextUpdatesResponseModel): Unit = {
-    when(mockObligationsConnector.getFulfilledObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockObligationsConnector.getFulfilledObligations()(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
   def setupMockAllObligationsWithDates(from: LocalDate, to: LocalDate)(response: NextUpdatesResponseModel): Unit = {
     when(mockObligationsConnector.getAllObligations(
-      fromDate = matches(from), toDate = matches(to))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      fromDate = matches(from), toDate = matches(to))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }

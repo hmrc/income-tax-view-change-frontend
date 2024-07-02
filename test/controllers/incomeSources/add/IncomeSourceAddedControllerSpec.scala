@@ -27,6 +27,7 @@ import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSes
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -82,7 +83,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
       LocalDate.of(2022, 8, 2),
       "Quarterly",
       None,
-      "#001"
+      "#001",
+      Fulfilled
     ),
       NextUpdateModel(
         LocalDate.of(2022, 7, 1),
@@ -90,7 +92,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         LocalDate.of(2022, 8, 2),
         "Quarterly",
         None,
-        "#002"
+        "#002",
+        Fulfilled
       )
     ))
   ))

@@ -18,7 +18,8 @@ package testConstants.incomeSources
 
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.ObligationStatus.Fulfilled
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationStatus, ObligationsModel}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -169,7 +170,8 @@ object IncomeSourcesObligationsTestConstants {
       LocalDate.of(taxYear2023, 5, 5),
       "Quarterly",
       None,
-      "#001"
+      "#001",
+      status = Fulfilled
     ),
       NextUpdateModel(
         LocalDate.of(taxYear2024, 1, 6),
@@ -177,7 +179,8 @@ object IncomeSourcesObligationsTestConstants {
         LocalDate.of(taxYear2024, 5, 5),
         "Quarterly",
         None,
-        "#002"
+        "#002",
+        Fulfilled
       )
     ))
   ))

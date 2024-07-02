@@ -48,11 +48,11 @@ case class TaxYear(startYear: Int, endYear: Int) {
   def isBefore(taxYear: TaxYear): Boolean = this.startYear < taxYear.startYear
 
   private val April = 4
-  private val Sixths = 6
+  private val Sixth = 6
   private val Fifth = 5
 
   def toFinancialYearStart: LocalDate = {
-    LocalDate.of(this.startYear, April, Sixths)
+    LocalDate.of(this.startYear, April, Sixth)
   }
 
   def toFinancialYearEnd: LocalDate = {
