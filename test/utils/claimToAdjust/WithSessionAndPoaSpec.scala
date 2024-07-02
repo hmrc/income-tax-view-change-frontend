@@ -63,11 +63,11 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
   def successfulFutureOk: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel)))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
   }
 
   def successfulFutureOkAgent: (PoAAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel)))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
   }
 
 
