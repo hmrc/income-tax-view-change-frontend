@@ -112,4 +112,5 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       Option(document.getElementById("p6")) shouldBe None
     }
   }
+
 }
