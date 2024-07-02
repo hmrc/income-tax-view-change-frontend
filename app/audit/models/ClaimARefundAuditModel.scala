@@ -45,11 +45,13 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+    val taxYearString = s"${credit._1.documentDetail.taxYear} to ${credit._1.documentDetail.taxYear} tax year" //todo Should 1st year be -1? or 2nd year +1
+
     (creditType, credit._1.dueDate) match {
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
-      case (Some(RepaymentInterest), _) => "Credit from repayment interest"
+      case (Some(RepaymentInterest), _) => s"Credit from repayment interest - $taxYearString"
       case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if isPayment =>
         Logger("application").error("Missing or non-matching credit: not a valid payment date")

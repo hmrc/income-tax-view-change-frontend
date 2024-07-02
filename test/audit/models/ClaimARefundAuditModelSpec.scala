@@ -39,6 +39,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1200), originalAmount = BigDecimal(-1200), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1300), originalAmount = BigDecimal(-1300), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1350), originalAmount = BigDecimal(-1350), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1375), originalAmount = BigDecimal(-1375), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1400), originalAmount = BigDecimal(-1400), paymentLot = Some("paymentLot")),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1500), originalAmount = BigDecimal(-1500), paymentLot = Some("paymentLot"))
   )
@@ -73,6 +74,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
             Json.obj("description" -> "Credit from repayment interest - 2018 to 2019 tax year", "amount" -> 1350),
+            Json.obj("description" -> "Credit from repayment interest - 2018 to 2019 tax year", "amount" -> 1375),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
           ),
@@ -95,7 +97,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "refundDocuments" ->
           Json.arr())
     }
-    s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds" in {
+    s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit" in {
       claimARefundAuditFull(testMtdItAgentUser).detail shouldBe Json.obj(
         "nino" -> testMtdItAgentUser.nino,
         "mtditid" -> testMtdItAgentUser.mtditid,
@@ -111,7 +113,8 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
-            Json.obj("description" -> "Credit from repayment interest", "amount" -> 1350),
+            Json.obj("description" -> "Credit from repayment interest - 2018 to 2019 tax year", "amount" -> 1350),
+            Json.obj("description" -> "Credit from repayment interest - 2018 to 2019 tax year", "amount" -> 1375),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
           ),
