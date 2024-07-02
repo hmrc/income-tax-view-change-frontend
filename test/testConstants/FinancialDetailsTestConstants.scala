@@ -650,9 +650,7 @@ object FinancialDetailsTestConstants {
           transactionId = Some(id1040000124),
           taxYear = taxYear,
           mainType = "Payment on Account",
-          // TODO: MISUV-7559
-          //  mainTransaction = "0060",
-          mainTransaction = "4920",
+          mainTransaction = "0060",
           additionalSubItems = Seq(
             SubItem(
               amount = Some(500.0),
@@ -1345,13 +1343,9 @@ object FinancialDetailsTestConstants {
     financialDetails = List(
       FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("4905"), Some("BCC01"), totalAmount = Some(250), originalAmount = Some(250), outstandingAmount = Some(250), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail("2018", Some("SA Balancing Charge Credit"), Some("4905"), Some("BCC02"), totalAmount = Some(125), originalAmount = Some(125), outstandingAmount = Some(125), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail("2021", Some("Payment"), Some("4920"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("Payment"), Some("4930"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("Payment"), Some("4920"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-// TODO: MISUV-7559
-//      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-//      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-//      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("Payment"), Some("0060"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
       FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("4004"), Some("MFACREDIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("4004"), Some("MFACREDIT02"), totalAmount = Some(1000), originalAmount = Some(1000), outstandingAmount = Some(1000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail("2018", Some("ITSA PAYE in year Repayment"), Some("4011"), Some("MFACREDIT03"), totalAmount = Some(800), originalAmount = Some(800), outstandingAmount = Some(800), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
@@ -1597,9 +1591,7 @@ case class ANewCreditAndRefundViewModel(model: CreditAndRefundViewModel = Credit
 
   def withPayment(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "Payment", mainTransaction = "4920", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
-    // TODO: MISUV-7559
-    //      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "Payment", mainTransaction = "0060", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "Payment", mainTransaction = "0060", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
   }
 
   def get(): CreditAndRefundViewModel = model

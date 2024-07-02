@@ -66,6 +66,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
           balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(1.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
           creditDocuments = List(
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -500, outstandingAmount = -500, dueDate = Some(LocalDate.of(2022, 3, 29)), mainType = Some("Payment on Account"), mainTransaction=Some("0060")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("SA Balancing Charge Credit"), mainTransaction=Some("4905")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
@@ -78,7 +79,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest())))
 
-        res should have(
+          res should have(
           httpStatus(OK),
 
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + " " + testTaxYearTo),
@@ -94,10 +95,13 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£3.00 "
+            elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£500.00 " +
+              messagesAPI("credit-and-refund.payment") + " 29 March 2022" ),
+
+          elementTextBySelectorList("#main-content", "li:nth-child(7)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(7)", "p")(expectedValue = "£2.00 "
+          elementTextBySelectorList("#main-content", "li:nth-child(8)", "p")(expectedValue = "£2.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
           pageTitleIndividual("credit-and-refund.heading")
 
