@@ -167,6 +167,7 @@ class OptOutServiceSpec extends UnitSpec
           val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
             QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 2),
             QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 1),
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2025), 0),
           ))
 
           result.futureValue shouldBe expectedResult
@@ -193,7 +194,8 @@ class OptOutServiceSpec extends UnitSpec
           val result = service.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
 
           val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
-            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1)
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
+            QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2025), 0)
           ))
 
           result.futureValue shouldBe expectedResult
