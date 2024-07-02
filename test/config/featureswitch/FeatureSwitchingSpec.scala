@@ -17,12 +17,10 @@
 package config.featureswitch
 
 import auth.MtdItUser
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-import scala.annotation.nowarn
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 

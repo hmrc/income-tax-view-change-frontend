@@ -37,7 +37,6 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ForecastIncomeSummary
 
 import javax.inject.{Inject, Singleton}
-import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
