@@ -292,7 +292,8 @@ object NewCalcBreakdownItTestConstants {
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
-      )))),
+      )),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
@@ -538,7 +539,8 @@ object NewCalcBreakdownItTestConstants {
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
-      )))),
+      )),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
