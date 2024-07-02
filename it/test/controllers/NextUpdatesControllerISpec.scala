@@ -328,7 +328,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "show Internal Server Error page" when {
+    "show Next updates page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           enable(OptOut)
@@ -354,10 +354,72 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
           verifyNextUpdatesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
-          Then("show Internal Server Error Page")
+          Then("the view displays the correct title even if the OptOut fail")
           res should have(
-            httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleIndividual("standardError.heading", isErrorPage = true)
+            httpStatus(OK),
+            pageTitleIndividual("nextUpdates.heading")
+          )
+        }
+
+        "Calculation API Failure" in {
+          enable(OptOut)
+
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
+          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+
+
+          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+          AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+          Then("the view displays the correct title even if the OptOut fail")
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("nextUpdates.heading")
+          )
+        }
+
+        "ITSA Status API Failure and Calculation API Failure" in {
+          enable(OptOut)
+
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
+          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+
+
+          val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+          AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyNextUpdatesCall(testNino)
+          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+          Then("the view displays the correct title even if the OptOut fail")
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("nextUpdates.heading")
           )
         }
       }
