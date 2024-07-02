@@ -30,6 +30,8 @@
 @import enums.DocumentType
 @import enums.Poa1Charge
 @import enums.Poa2Charge
+@import models.chargeHistory.AdjustmentHistoryModel
+
 
 
 @this(
@@ -48,10 +50,10 @@
 )
 @(currentDate: LocalDate,
     documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
-    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
+    paymentBreakdown: List[FinancialDetail], paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean, documentType: DocumentType
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean, documentType: DocumentType, adjustmentHistory: AdjustmentHistoryModel
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -179,6 +181,13 @@
         case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
         case Poa2Charge => messages("chargeSummary.chargeHistory.Poa2heading")
         case _ => messages("chargeSummary.chargeHistory.heading")
+    }
+}
+
+@getCreationDate(date: Option[LocalDate]) = @{
+    date match {
+        case Some(value) => value.toLongDateShort
+        case None => messages("incomeSources.generic.unknown")
     }
 }
 
@@ -331,7 +340,7 @@
                 @if(!latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
-                            documentDetail.documentDate.toLongDateShort
+                            getCreationDate(adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
                             if (isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text") else
@@ -339,7 +348,7 @@
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
-                            documentDetail.originalAmount.toCurrency
+                            adjustmentHistory.creationEvent.amount.toCurrency
                         }</td>
                     </tr>
                 }
@@ -360,11 +369,11 @@
                     </tr>
                 }
 
-                @for(charge <- chargeHistory) {
+                @for(charge <- adjustmentHistory.adjustments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.reversalDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(documentDetail.documentDate).toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell">@{charge.totalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
             }

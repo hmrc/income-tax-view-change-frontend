@@ -43,7 +43,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     mongoLockRepository, lockId = "calc-poller",
     ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
 
-  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
+  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NO_CONTENT)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Any] = {

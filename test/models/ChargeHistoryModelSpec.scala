@@ -25,12 +25,19 @@ import java.time.LocalDate
 class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
   def testChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
+    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0, LocalDate.of(2021, 9, 9), reversalReason, None)
+  }
+  def testPoaChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
     ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0, LocalDate.of(2021, 9, 9), reversalReason, Some("001"))
   }
 
   "chargeHistoryModel" when {
 
     "calling .reasonCode" should {
+
+      "return a valid message key for a poa adjustment" in {
+        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe "adjustment"
+      }
 
       "return a valid message key for an amended reversal" in {
         testChargeHistoryModel("amended return").reasonCode shouldBe "amend"
