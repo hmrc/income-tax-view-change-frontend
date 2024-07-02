@@ -85,12 +85,12 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
       for {
         fs <- featureSwitchService.getAll
       } yield {
-        if (!isEnabledFromList(NavBarFs, fs)) {
+        if (!isEnabled(NavBarFs, fs)) {
           Future.successful(Right(request))
         } else {
           request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
             ifEmpty = retrieveOriginFromSessionAndHandleNavBar(request))(_ => {
-            saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabledFromList(NavBarFs, fs)).map(Left(_))
+            saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabled(NavBarFs, fs)).map(Left(_))
           })
         }
       }

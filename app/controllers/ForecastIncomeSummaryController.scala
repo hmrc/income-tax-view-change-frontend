@@ -71,7 +71,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     featureSwitchService.getAll.flatMap { fs =>
-      if (!isEnabledFromList(ForecastCalculation, fs)) {
+      if (!isEnabled(ForecastCalculation, fs)) {
         val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
         Future.successful(NotFound(errorTemplate))
       } else {

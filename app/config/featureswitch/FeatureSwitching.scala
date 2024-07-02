@@ -34,14 +34,10 @@ trait FeatureSwitching {
 
   def isEnabled(featureSwitch: FeatureSwitchName)
                  (implicit user: MtdItUser[_]): Boolean = {
-    if (appConfig.readFeatureSwitchesFromMongo) {
-      user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
-    } else {
-      isEnabledFromConfig(featureSwitch)
-    }
+      isEnabled(featureSwitch, user.featureSwitches)
   }
 
-  def isEnabledFromList(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
+  def isEnabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
      fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     } else {

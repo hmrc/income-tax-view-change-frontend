@@ -71,7 +71,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
       "a feature is disabled v2" in new FoldSetup {
         FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
-          isEnabled(featureSwitchName)(mtdItUser) || !isEnabledFromList(featureSwitchName,mtdItUser.featureSwitches)
+          isEnabled(featureSwitchName)(mtdItUser) || !isEnabled(featureSwitchName,mtdItUser.featureSwitches)
         } shouldBe true
 
       }
