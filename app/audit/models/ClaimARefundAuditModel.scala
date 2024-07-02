@@ -38,7 +38,7 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getAvailableCredit: Double = {
     balanceDetails.flatMap(_.availableCredit) match {
       case Some(_) => balanceDetails.get.availableCredit.get.toDouble.abs
-      case (_) => 0.00
+      case _ => 0.00
     }
   }
 
@@ -64,8 +64,8 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
 
   private lazy val creditDocumentsJson: Seq[JsObject] = {
     creditDocuments.map(credit => Json.obj(
-      ("description" -> getCreditType(credit)),
-      ("amount" -> credit._1.documentDetail.paymentOrChargeCredit)))
+      "description" -> getCreditType(credit),
+      "amount" -> credit._1.documentDetail.paymentOrChargeCredit))
   }
 
   private def getPendingRefundsJson(pendingRefund: Option[BigDecimal]): Seq[JsObject] = Seq(Json.obj() ++ Json.obj("description" -> "Refund in progress") ++
