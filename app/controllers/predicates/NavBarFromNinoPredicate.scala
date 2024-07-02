@@ -77,7 +77,6 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
                                         val executionContext: ExecutionContext,
                                         val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with SaveOriginAndRedirect {
 
-  @nowarn
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
@@ -86,12 +85,12 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
       for {
         fs <- featureSwitchService.getAll
       } yield {
-        if (isDisabled(NavBarFs, fs)) {
+        if (!isEnabledFromList(NavBarFs, fs)) {
           Future.successful(Right(request))
         } else {
           request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
             ifEmpty = retrieveOriginFromSessionAndHandleNavBar(request))(_ => {
-            saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs, fs)).map(Left(_))
+            saveOriginAndReturnToHomeWithoutQueryParams(request, !isEnabledFromList(NavBarFs, fs)).map(Left(_))
           })
         }
       }

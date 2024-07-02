@@ -66,11 +66,10 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
-  @nowarn
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     featureSwitchService.getAll.flatMap { fs =>
-      if (isDisabled(ForecastCalculation, fs)) {
+      if (!isEnabledFromList(ForecastCalculation, fs)) {
         val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
         Future.successful(NotFound(errorTemplate))
       } else {
