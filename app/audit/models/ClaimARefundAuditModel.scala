@@ -45,7 +45,7 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-    val taxYearString = s"${credit._1.documentDetail.taxYear} to ${credit._1.documentDetail.taxYear} tax year" //todo Should 1st year be -1? or 2nd year +1
+    val taxYearString = s"${credit._1.documentDetail.taxYear - 1} to ${credit._1.documentDetail.taxYear} tax year"
 
     (creditType, credit._1.dueDate) match {
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
