@@ -38,18 +38,20 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getAvailableCredit: Double = {
     balanceDetails.flatMap(_.availableCredit) match {
       case Some(_) => balanceDetails.get.availableCredit.get.toDouble.abs
-      case (_) => 0.00
+      case _ => 0.00
     }
   }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+    val taxYearString = s"${credit._1.documentDetail.taxYear - 1} to ${credit._1.documentDetail.taxYear} tax year"
+
     (creditType, credit._1.dueDate) match {
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
-      case (Some(RepaymentInterest), _) => "Credit from repayment interest"
+      case (Some(RepaymentInterest), _) => s"Credit from repayment interest - $taxYearString"
       case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if isPayment =>
         Logger("application").error("Missing or non-matching credit: not a valid payment date")
@@ -62,8 +64,8 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
 
   private lazy val creditDocumentsJson: Seq[JsObject] = {
     creditDocuments.map(credit => Json.obj(
-      ("description" -> getCreditType(credit)),
-      ("amount" -> credit._1.documentDetail.paymentOrChargeCredit)))
+      "description" -> getCreditType(credit),
+      "amount" -> credit._1.documentDetail.paymentOrChargeCredit))
   }
 
   private def getPendingRefundsJson(pendingRefund: Option[BigDecimal]): Seq[JsObject] = Seq(Json.obj() ++ Json.obj("description" -> "Refund in progress") ++
