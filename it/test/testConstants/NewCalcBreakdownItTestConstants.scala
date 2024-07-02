@@ -180,7 +180,8 @@ object NewCalcBreakdownItTestConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          incomeTaxChargedOnTransitionProfits = Some(700.00)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
@@ -443,7 +444,8 @@ object NewCalcBreakdownItTestConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          incomeTaxChargedOnTransitionProfits = Some(700.00)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
