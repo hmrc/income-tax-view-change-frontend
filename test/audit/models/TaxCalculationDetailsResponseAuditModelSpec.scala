@@ -112,6 +112,10 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
       Json.obj(
         "rateBand" -> "Basic rate (£12,500.00 at 20%)",
         "amount" -> 5000.99
+      ),
+      Json.obj(
+        "rateBand" -> "Transitional profit (£3,000.00)",
+        "amount" -> 700
       )
     ),
     "otherCharges" -> Json.arr(
