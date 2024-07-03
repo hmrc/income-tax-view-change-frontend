@@ -16,28 +16,29 @@
 
 package services
 
-import auth.MtdItUser
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.TaxYear
+import services.admin.FeatureSwitchServiceImpl
 
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
+class DateService @Inject()(
+                            featureSwitchService: FeatureSwitchServiceImpl
+                           )(implicit val frontendAppConfig: FrontendAppConfig,
+                           ) extends FeatureSwitching with DateServiceInterface {
   val appConfig: FrontendAppConfig = frontendAppConfig
 
   def getCurrentDate: LocalDate = {
-//    if (isEnabled(TimeMachineAddYear)) {
-//      frontendAppConfig.timeMachineAddYears.map(years =>
-//        LocalDate.now().plusYears(years)
-//      ).getOrElse(LocalDate.now())
-//    } else {
+    if (featureSwitchService.isTimeMachineEnabled) {
+      LocalDate.now().plusDays(1)
+    } else {
       LocalDate.now()
-//    }
+    }
   }
 
   def getCurrentTaxYearEnd: Int = {

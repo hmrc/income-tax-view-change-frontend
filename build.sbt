@@ -35,6 +35,12 @@ val compile = Seq(
   "uk.gov.hmrc" %% s"play-frontend-hmrc-$playVersion" % playFrontendHMRCVersion,
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0",
   "org.jsoup" % "jsoup" % jsoupVersion,
+  guice,
+  "com.typesafe.play" %% "play-guice" % "2.9.0-M2",
+  "com.typesafe.akka" %% "akka-actor-typed" % "2.6.20",
+  "com.typesafe.akka" %% "akka-slf4j" % "2.6.20",
+  "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.20",
+  "com.typesafe.play" %% "play-akka-http-server" % "2.9.0-M2"
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(

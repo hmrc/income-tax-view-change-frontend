@@ -16,27 +16,47 @@
 
 package services.admin
 
+import akka.actor.ActorSystem
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
 import repositories.admin.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchService @Inject()(
-                                      val featureSwitchRepository: FeatureSwitchRepository,
-                                      val authorisedFunctions: AuthorisedFunctions,
-                                      val appConfig: FrontendAppConfig)
-                                    (implicit val ec: ExecutionContext,
+class FeatureSwitchServiceImpl @Inject()(actorSystem: ActorSystem,
+                                         val featureSwitchRepository: FeatureSwitchRepository,
+                                         val authorisedFunctions: AuthorisedFunctions,
+                                         val appConfig: FrontendAppConfig)
+                                        (implicit val ec: ExecutionContext,
                                      mcc: MessagesControllerComponents,
                                      implicit val itvcErrorHandler: ItvcErrorHandler,
-                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with FeatureSwitching {
+                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with FeatureSwitchService with FeatureSwitching {
+
+
+  private val featureSwitchValue = new AtomicReference[Boolean](false)
+
+  // Schedule the periodic update
+  actorSystem.scheduler.scheduleAtFixedRate(0.seconds, 5.seconds)(new Runnable {
+    override def run(): Unit = fetchFeatureSwitchValue()
+  })(ec)
+
+  private def fetchFeatureSwitchValue(): Unit = {
+    featureSwitchRepository.getFeatureSwitch(AdjustPaymentsOnAccount).map { value =>
+      featureSwitchValue.set(value.exists(_.isEnabled))
+    }
+  }
+
+  def isTimeMachineEnabled: Boolean = featureSwitchValue.get()
+
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
     featureSwitchRepository
@@ -76,4 +96,8 @@ class FeatureSwitchService @Inject()(
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] =
     featureSwitchRepository.setFeatureSwitches(featureSwitches)
 
+}
+
+trait FeatureSwitchService {
+  def isTimeMachineEnabled: Boolean
 }

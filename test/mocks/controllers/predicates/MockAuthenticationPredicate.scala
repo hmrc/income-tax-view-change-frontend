@@ -22,7 +22,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth._
-import mocks.services.admin.MockFeatureSwitchService
+import mocks.services.admin.MockFeatureSwitchServiceImpl
 import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
@@ -30,7 +30,7 @@ import utils.AuthenticatorPredicate
 
 trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions
   with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler
-  with MockFeatureSwitchService with MockFeatureSwitchPredicate {
+  with MockFeatureSwitchServiceImpl with MockFeatureSwitchPredicate {
 
   val testAuthenticator = new AuthenticatorPredicate(checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,

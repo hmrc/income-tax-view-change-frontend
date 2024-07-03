@@ -22,7 +22,7 @@ import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
-                                        featureSwitchService: FeatureSwitchService)
+                                        featureSwitchService: FeatureSwitchServiceImpl)
                                        (implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig,
                                         ec: ExecutionContext)

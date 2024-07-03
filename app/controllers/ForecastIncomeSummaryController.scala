@@ -29,7 +29,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -52,7 +52,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val authorisedFunctions: AuthorisedFunctions,
-                                                val featureSwitchService: FeatureSwitchService)
+                                                val featureSwitchService: FeatureSwitchServiceImpl)
                                                (implicit val ec: ExecutionContext,
                                                 val languageUtils: LanguageUtils,
                                                 val appConfig: FrontendAppConfig,

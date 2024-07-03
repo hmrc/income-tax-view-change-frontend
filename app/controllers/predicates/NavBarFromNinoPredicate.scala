@@ -59,7 +59,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.twirl.api.Html
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.navBar.PtaPartial
@@ -72,7 +72,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarController,
                                         val ptaPartial: PtaPartial,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        val featureSwitchService: FeatureSwitchService)
+                                        val featureSwitchService: FeatureSwitchServiceImpl)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val executionContext: ExecutionContext,
                                         val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with SaveOriginAndRedirect {

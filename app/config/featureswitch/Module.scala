@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package config.featureswitch
 
-import controllers.predicates.FeatureSwitchPredicate
-import mocks.services._
-import mocks.services.admin.MockFeatureSwitchServiceImpl
-import testUtils.TestSupport
+import com.google.inject.AbstractModule
+import play.api.libs.concurrent.AkkaGuiceSupport
+import services.admin.{FeatureSwitchService, FeatureSwitchServiceImpl}
 
-trait MockFeatureSwitchPredicate extends TestSupport with MockFeatureSwitchServiceImpl with MockAsyncCacheApi {
-
-  object FeatureSwitchPredicate extends FeatureSwitchPredicate(featureSwitchService)(appConfig, ec, messagesApi)
-
+class Module extends AbstractModule with AkkaGuiceSupport {
+  override def configure(): Unit = {
+    // Bind the FeatureSwitchService to its implementation
+    bind(classOf[FeatureSwitchService]).to(classOf[FeatureSwitchServiceImpl]).asEagerSingleton()
+  }
 }

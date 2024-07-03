@@ -19,13 +19,13 @@ package controllers.admin
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FeatureSwitchesAdminController @Inject() (
-                                                 featureSwitchService: FeatureSwitchService,
+                                                 featureSwitchService: FeatureSwitchServiceImpl,
                                                  cc: ControllerComponents
                                                )(implicit ec: ExecutionContext)
   extends AbstractController(cc) {

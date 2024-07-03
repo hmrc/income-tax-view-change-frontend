@@ -24,7 +24,7 @@ import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.{Inject, Singleton}
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                        val authenticate: AuthenticationPredicate,
-                                       val featureSwitchService: FeatureSwitchService,
+                                       val featureSwitchService: FeatureSwitchServiceImpl,
                                        val authorisedFunctions: AuthorisedFunctions,
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val featureSwitchPredicate: FeatureSwitchPredicate,

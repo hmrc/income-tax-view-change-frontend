@@ -23,13 +23,13 @@ import models.admin
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchPredicate @Inject()(val featureSwitchService: FeatureSwitchService)
+class FeatureSwitchPredicate @Inject()(val featureSwitchService: FeatureSwitchServiceImpl)
                                       (implicit val appConfig: FrontendAppConfig,
                                        val executionContext: ExecutionContext,
                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {

@@ -27,9 +27,9 @@ import models.admin.{ForecastCalculation, NavBarFs}
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{charset, contentType, _}
+import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
-import services.admin.FeatureSwitchService
+import services.admin.FeatureSwitchServiceImpl
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
@@ -55,7 +55,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,
-    app.injector.instanceOf[FeatureSwitchService]
+    app.injector.instanceOf[FeatureSwitchServiceImpl]
   )(
     ec,
     languageUtils,
