@@ -16,11 +16,16 @@
 
 package models.optout
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import services.optout.OptOutProposition
 
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
+case class NextUpdatesQuarterlyReportingContentChecks(proposition: OptOutProposition) {
 
-  def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+  private val isCurrentYearMandatedOrVoluntary = proposition.currentTaxYear.status == Mandated || proposition.currentTaxYear.status == Voluntary
+  private val isPreviousYearMandatedOrVoluntary = proposition.previousTaxYear.status == Mandated || proposition.previousTaxYear.status == Voluntary
+  private val previousYearCrystallisedStatus = proposition.previousTaxYear.crystallised
+  private val showOptOutContent: Option[Unit] = if (isCurrentYearMandatedOrVoluntary || (isPreviousYearMandatedOrVoluntary && !previousYearCrystallisedStatus)) Some({}) else None
 
-  def showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+  val showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
+  val showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
 }

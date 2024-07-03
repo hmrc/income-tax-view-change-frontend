@@ -16,40 +16,58 @@
 
 package models.optout
 
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
+import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.TestSupport
 
 class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
+  def buildOptOutProposition(cyStatus: ITSAStatus, pyStatus: ITSAStatus, pyCrystallised: Boolean): OptOutProposition = {
+    val currentYear = TaxYear.forYearEnd(2024)
+    val previousYear = currentYear.previousYear
+    val nextYear = currentYear.nextYear
+
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(pyStatus, previousYear, crystallised = pyCrystallised)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(cyStatus, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
+
+    OptOutProposition(
+      previousTaxYearOptOut,
+      currentTaxYearOptOut,
+      extTaxYearOptOut
+    )
+  }
+
   "QuarterlyReportingContentChecks" when {
     "called showUpdateTypeDetailsSection" should {
       "return Some[Unit] indicating to show - update type detail section" in {
-        Seq((true, true, true),
-          (true, false, true),
-          (true, true, false),
-          (true, false, false),
-          (false, true, false)).foreach {
+        Seq((Voluntary, Mandated, true),
+          (Mandated, NoStatus, true),
+          (Mandated, Mandated, false),
+          (Voluntary, NoStatus, false),
+          (NoStatus, Voluntary, false)).foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+          case (cyStatus, pyStatus, pyCrystallised) =>
+
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
       }
 
       "return None indicating absence of - update type detail section" in {
-        Seq((false, false, true),
-          (false, false, false),
-          (false, true, true)).foreach {
+        Seq((NoStatus, NoStatus, true),
+          (NoStatus, NoStatus, false),
+          (NoStatus, Voluntary, true)).foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
+          case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
@@ -59,39 +77,38 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
     "called showUseCompatibleSoftwareSection" should {
       "return Some[Unit] indicating to show - update type detail section" in {
-        Seq((true, true, true),
-          (true, false, true),
-          (true, true, false),
-          (true, false, false),
-          (false, true, false)).foreach {
+        Seq((Voluntary, Mandated, true),
+          (Mandated, NoStatus, true),
+          (Mandated, Mandated, false),
+          (Voluntary, NoStatus, false),
+          (NoStatus, Voluntary, false)).foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+          case (cyStatus, pyStatus, pyCrystallised) =>
 
-            viewModel.showUpdateTypeDetailsSection shouldBe Some({})
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+
+            viewModel.showUseCompatibleSoftwareSection shouldBe Some({})
         }
       }
 
       "return None indicating absence of - update type detail section" in {
-        Seq((false, false, true),
-          (false, false, false),
-          (false, true, true)).foreach {
+        Seq((NoStatus, NoStatus, true),
+          (NoStatus, NoStatus, false),
+          (NoStatus, Voluntary, true)).foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
+          case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
 
-            viewModel.showUpdateTypeDetailsSection shouldBe None
+            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+
+            viewModel.showUseCompatibleSoftwareSection shouldBe None
         }
       }
+
+
     }
-
-
   }
 }

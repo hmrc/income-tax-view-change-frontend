@@ -79,7 +79,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     mockAuditingService,
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[OptOutService],
+    mockOptOutService,
     appConfig,
     mockAuthService,
     testAuthenticator
@@ -352,7 +352,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBusinessIncomeSourceError()
         mockSingleBusinessIncomeSourceWithDeadlines()
-        mockGetNextUpdatesQuarterlyReportingContentChecks(Future.failed(new Exception("api failure")))
+        mockNextUpdatesPageOptOutWithChecks(Future.failed(new Exception("api failure")))
         mockObligations
         val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR

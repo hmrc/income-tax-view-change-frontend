@@ -77,8 +77,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             auditNextUpdates(user, isAgent, origin)
 
             val optOutSetup = for {
-              checks <- optOutService.getNextUpdatesQuarterlyReportingContentChecks
-              optOutOneYearViewModel <- optOutService.nextUpdatesPageOptOutViewModel()
+              (optOutOneYearViewModel, checks) <- optOutService.nextUpdatesPageOptOutWithChecks()
               _ <- optOutService.resetSavedIntent()
             } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
 

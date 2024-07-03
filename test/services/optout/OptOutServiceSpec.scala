@@ -24,9 +24,8 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.Mockito
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, Succeeded}
@@ -37,7 +36,6 @@ import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport.{buildOneYearOptOutDataForCurrentYear, buildOneYearOptOutDataForNextYear, buildOneYearOptOutDataForPreviousYear}
-import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptOutJourney
@@ -624,49 +622,6 @@ class OptOutServiceSpec extends UnitSpec
           val response = service.nextUpdatesPageOptOutViewModel()
 
           response.failed.futureValue.getMessage shouldBe apiError
-        }
-      }
-    }
-
-    "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
-      "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
-
-          val expected = NextUpdatesQuarterlyReportingContentChecks(
-            currentYearItsaStatus = true,
-            previousYearItsaStatus = false,
-            previousYearCrystallisedStatus = Some(crystallised))
-
-          service.getNextUpdatesQuarterlyReportingContentChecks.futureValue shouldBe expected
-        }
-      }
-
-      "Calculation State for CY-1 is unavailable" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.failed(error))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
-
-          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
-            ex shouldBe a[RuntimeException]
-            ex.getMessage shouldBe error.getMessage
-          }
-        }
-      }
-
-      "ITSA Status from CY-1 till future years is unavailable" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
-
-          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
-            ex shouldBe a[RuntimeException]
-            ex.getMessage shouldBe error.getMessage
-          }
         }
       }
     }

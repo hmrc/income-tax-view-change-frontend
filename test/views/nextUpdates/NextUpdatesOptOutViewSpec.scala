@@ -18,12 +18,14 @@ package views.nextUpdates
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Voluntary}
 import models.nextUpdates._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import services.optout.OneYearOptOutFollowedByAnnual
+import services.optout._
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
@@ -33,20 +35,32 @@ import java.time.LocalDate
 
 class NextUpdatesOptOutViewSpec extends TestSupport {
 
+  def buildOptOutProposition(cyStatus: ITSAStatus, pyStatus: ITSAStatus, pyCrystallised: Boolean): OptOutProposition = {
+    val currentYear = TaxYear.forYearEnd(2024)
+    val previousYear = currentYear.previousYear
+    val nextYear = currentYear.nextYear
+
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(pyStatus, previousYear, crystallised = pyCrystallised)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(cyStatus, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
+
+    OptOutProposition(
+      previousTaxYearOptOut,
+      currentTaxYearOptOut,
+      extTaxYearOptOut
+    )
+  }
+
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
 
   class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true) {
 
     val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
-      currentYearItsaStatus = true,
-      previousYearItsaStatus = true,
-      previousYearCrystallisedStatus = Some(true))
+      buildOptOutProposition(ITSAStatus.Voluntary, ITSAStatus.Voluntary, pyCrystallised = true))
     else
       NextUpdatesQuarterlyReportingContentChecks(
-        currentYearItsaStatus = false,
-        previousYearItsaStatus = true,
-        previousYearCrystallisedStatus = Some(true))
+        buildOptOutProposition(ITSAStatus.NoStatus, ITSAStatus.Voluntary, pyCrystallised = true))
 
     val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
