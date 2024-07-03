@@ -76,14 +76,16 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
 
-            val optOutSetup = optOutService.getNextUpdatesQuarterlyReportingContentChecks.flatMap { checks =>
+            val optOutSetup = {
               for {
+                checks <- optOutService.getNextUpdatesQuarterlyReportingContentChecks
                 optOutOneYearViewModel <- optOutService.nextUpdatesPageOptOutViewModel()
                 _ <- optOutService.resetSavedIntent()
               } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
-            }.recoverWith { case ex =>
-              Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
-              Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin))) // Render view even on failure
+            }.recoverWith {
+              case ex =>
+                Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
+                Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin))) // Render view even on failure
             }
 
             optOutSetup
