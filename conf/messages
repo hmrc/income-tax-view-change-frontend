@@ -977,6 +977,8 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Payment on account 1 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Payment on account 2 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
+chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
+chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on payment on account 1 of 2
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on payment on account 2 of 2
@@ -2001,6 +2003,8 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for
 claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = If you’ve already made a payment and the adjusted amount is less than what you’ve paid, HMRC will add a credit to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
 
 # success
 

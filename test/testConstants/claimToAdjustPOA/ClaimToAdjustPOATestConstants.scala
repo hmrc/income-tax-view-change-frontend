@@ -16,9 +16,12 @@
 
 package testConstants.claimToAdjustPOA
 
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import controllers.claimToAdjustPoa.SelectYourReasonController
+import controllers.claimToAdjustPoa.routes.SelectYourReasonController
 
 import java.time.LocalDate
 
@@ -84,6 +87,12 @@ object ClaimToAdjustPOATestConstants {
     financialDetails = List.empty,
   )
 
+  def financialDetailsWithUnpaidPoAs(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
+    financialDetails = List(genericFinancialDetailPOA1(taxYearEnd, 150.00), genericFinancialDetailPOA2(taxYearEnd, 250.00))
+  )
+
   def genericUserPOADetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
@@ -134,5 +143,9 @@ object ClaimToAdjustPOATestConstants {
       poAPartiallyPaid = false
     )
   )
+
+  val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
+
+  def whatYouNeedToKnowViewModel(isAgent: Boolean, showIncreaseAfterPaymentContent: Boolean): WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url)
 
 }

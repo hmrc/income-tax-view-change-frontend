@@ -23,6 +23,7 @@ import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status
 import play.api.http.Status.OK
@@ -169,7 +170,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#003"
+          periodKey = "#003",
+          Fulfilled
         ))
     ),
     NextUpdatesModel(
@@ -181,7 +183,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#004"
+          periodKey = "#004",
+          Fulfilled
         ))
     )
   ))
