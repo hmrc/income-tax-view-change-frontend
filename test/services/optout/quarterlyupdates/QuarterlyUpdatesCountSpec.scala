@@ -32,10 +32,10 @@ import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutService, OptOutTestSupport}
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino
-import testConstants.NextUpdatesTestConstants.obligationsDataFromJson
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import services.optout.quarterlyupdates.BackendServiceJsonSamples.obligationsDataFromJson
 
 import java.time.LocalDate
 
