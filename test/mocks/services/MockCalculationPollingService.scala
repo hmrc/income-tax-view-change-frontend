@@ -51,7 +51,7 @@ trait MockCalculationPollingService extends UnitSpec with BeforeAndAfterEach {
 
   def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.OK)
 
-  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.NOT_FOUND)
+  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.NO_CONTENT)
 
   def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.INTERNAL_SERVER_ERROR)
 }

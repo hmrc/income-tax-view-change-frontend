@@ -69,10 +69,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         )
       }
       "calculation service returns retryable response back" in {
-        Given("Calculation service returns a 404 error response back during total duration of timeout interval")
+        Given("Calculation service returns a 204 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idThree", testTaxYear)(NOT_FOUND,
-          LiabilityCalculationError(NOT_FOUND, "not found"))
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idThree", testTaxYear)(NO_CONTENT,
+          LiabilityCalculationError(NO_CONTENT, "no content"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idThree"))
@@ -88,8 +88,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFour", testTaxYear)(NOT_FOUND,
-          LiabilityCalculationError(NOT_FOUND, "not found"))
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFour", testTaxYear)(NO_CONTENT,
+          LiabilityCalculationError(NO_CONTENT, "no content"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
@@ -113,9 +113,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
       }
       "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
-        Given("Calculation service returns a 404 error response back during total duration of timeout interval")
+        Given("Calculation service returns a 204 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", testTaxYear)(NOT_FOUND, LiabilityCalculationError(NOT_FOUND, "not found"))
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", testTaxYear)(NO_CONTENT,
+          LiabilityCalculationError(NO_CONTENT, "no content"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 

@@ -17,14 +17,11 @@
 package config.featureswitch
 
 import auth.MtdItUser
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-import scala.annotation.nowarn
-
-@nowarn
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
   val expectedDisabledFeatures: Set[FeatureSwitchName] = FeatureSwitchName.allFeatureSwitches
@@ -72,7 +69,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
       "a feature is disabled v2" in new FoldSetup {
         FeatureSwitchName.allFeatureSwitches.forall { featureSwitchName =>
-          isEnabled(featureSwitchName)(mtdItUser) || isDisabled(featureSwitchName,mtdItUser.featureSwitches)
+          isEnabled(featureSwitchName)(mtdItUser) || !isEnabled(featureSwitchName,mtdItUser.featureSwitches)
         } shouldBe true
 
       }

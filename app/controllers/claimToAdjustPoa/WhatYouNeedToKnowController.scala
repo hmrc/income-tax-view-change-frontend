@@ -21,6 +21,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.NormalMode
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import models.core.{Nino, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -57,7 +59,8 @@ class WhatYouNeedToKnowController @Inject()(val authorisedFunctions: AuthorisedF
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
-        EitherT.rightT(Ok(view(isAgent, poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))))
+        val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(isAgent, poa))
+        EitherT.rightT(Ok(view(isAgent, viewModel)))
       } recover {
         case ex: Exception =>
           Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
