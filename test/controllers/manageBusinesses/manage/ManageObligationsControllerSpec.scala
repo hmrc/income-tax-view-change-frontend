@@ -28,7 +28,8 @@ import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
+import models.nextUpdates.ObligationStatus.Fulfilled
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationStatus, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -92,7 +93,8 @@ class ManageObligationsControllerSpec extends TestSupport
       LocalDate.of(2022, 8, 2),
       "Quarterly",
       None,
-      "#001"
+      "#001",
+      Fulfilled
     ),
       NextUpdateModel(
         LocalDate.of(2022, 7, 1),
@@ -100,7 +102,8 @@ class ManageObligationsControllerSpec extends TestSupport
         LocalDate.of(2022, 8, 2),
         "Quarterly",
         None,
-        "#002"
+        "#002",
+        Fulfilled
       )
     ))
   ))

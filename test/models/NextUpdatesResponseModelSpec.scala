@@ -18,6 +18,7 @@ package models
 
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -201,13 +202,13 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
           nextUpdateModelWithIncomeTypeList) shouldBe Map(
           None -> List(
-            NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll",NextUpdateModel("2017-10-01","2018-10-30","2017-10-31","Crystallised",None,""))),
+            NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll",NextUpdateModel("2017-10-01","2018-10-30","2017-10-31","Crystallised",None,"", Fulfilled))),
           Some(QuarterTypeCalendar) -> List(
-            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002")),
-            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003"))),
+            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002", Fulfilled)),
+            NextUpdateModelWithIncomeType("nextUpdates.business", NextUpdateModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003", Fulfilled))),
           Some(QuarterTypeStandard) -> List (
-            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-01", "Quarterly", None, "#002")),
-            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003")))
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-01", "Quarterly", None, "#002", Fulfilled)),
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", NextUpdateModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003", Fulfilled)))
         )
       }
     }
