@@ -294,7 +294,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
               ))
           ))
 
@@ -333,7 +333,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
               ))
           ))
 
