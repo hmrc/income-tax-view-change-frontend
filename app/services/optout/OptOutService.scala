@@ -49,12 +49,12 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val nextYear = currentYear.nextYear
 
     val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear)
-    val statusDetailMapFuture: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear).map(
+      m => m.view.mapValues(_.status).toMap)
 
     for {
       finalisedStatus <- finalisedStatusFuture
-      statusDetailMap <- statusDetailMapFuture
-      statusMap =  statusDetailMap.view.mapValues(_.status).toMap
+      statusMap <- statusMapFuture
     }
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
@@ -97,19 +97,19 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val currentYear = TaxYear.forYearEnd(yearEnd)
     val previousYear = currentYear.previousYear
 
-    val finalisedStatusFuture: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-    val statusDetailMapFuture: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear).map(
+      m => m.view.mapValues(_.status).toMap)
+    val finalisedStatusFuture: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
-      statusDetailMap <- finalisedStatusFuture
-      statusMap = statusDetailMap.view.mapValues(_.status).toMap
+      statusMap <- statusMapFuture
       currentYearStatus = statusMap(currentYear)
       previousYearStatus = statusMap(previousYear)
-      calStatus <- statusDetailMapFuture
+      finalisedStatus <- finalisedStatusFuture
       optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
         currentYearStatus == Mandated || currentYearStatus == Voluntary,
         previousYearStatus == Mandated || previousYearStatus == Voluntary,
-        calStatus)
+        finalisedStatus)
     } yield optOutChecks
   }
 
