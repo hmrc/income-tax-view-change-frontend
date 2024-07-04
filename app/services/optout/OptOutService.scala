@@ -48,9 +48,12 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
+    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear)
+    val statusDetailMapFuture: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+
     for {
-      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
-      statusDetailMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+      finalisedStatus <- finalisedStatusFuture
+      statusDetailMap <- statusDetailMapFuture
       statusMap =  statusDetailMap.view.mapValues(_.status).toMap
     }
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
@@ -94,15 +97,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val currentYear = TaxYear.forYearEnd(yearEnd)
     val previousYear = currentYear.previousYear
 
-    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-    val previousYearCalcStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
+    val finalisedStatusFuture: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+    val statusDetailMapFuture: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
-      statusDetailMap <- taxYearITSAStatus
+      statusDetailMap <- finalisedStatusFuture
       statusMap = statusDetailMap.view.mapValues(_.status).toMap
       currentYearStatus = statusMap(currentYear)
       previousYearStatus = statusMap(previousYear)
-      calStatus <- previousYearCalcStatus
+      calStatus <- statusDetailMapFuture
       optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
         currentYearStatus == Mandated || currentYearStatus == Voluntary,
         previousYearStatus == Mandated || previousYearStatus == Voluntary,
