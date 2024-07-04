@@ -31,13 +31,30 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   val appConfig: FrontendAppConfig = frontendAppConfig
 
   def getCurrentDate: LocalDate = {
-//    if (isEnabled(TimeMachineAddYear)) {
-//      frontendAppConfig.timeMachineAddYears.map(years =>
-//        LocalDate.now().plusYears(years)
-//      ).getOrElse(LocalDate.now())
-//    } else {
+    // This if statement is for redundancy + clear code
+    if (frontendAppConfig.isTimeMachineEnabled) {
+      handleTimeMachine
+    } else {
       LocalDate.now()
-//    }
+    }
+  }
+
+  private def handleTimeMachine: LocalDate = {
+    (timeMachine.yearsToAdd, timeMachine.timeMachineSetDate) match {
+      case (Some(years), Some(date)) =>
+        LocalDate.now()
+          .plusYears(years)
+          .withMonth(date.month)
+          .withDayOfMonth(date.day)
+      case (Some(years), None) =>
+        LocalDate.now()
+          .plusYears(years)
+      case (None, Some(date)) =>
+        LocalDate.now()
+          .withMonth(date.month)
+          .withDayOfMonth(date.day)
+      case _ => LocalDate.now()
+    }
   }
 
   def getCurrentTaxYearEnd: Int = {

@@ -168,8 +168,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Auth variables
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
-  lazy val timeMachineAddYears: Option[Int] = Try { servicesConfig.getInt("time-machine.add-years") }.toOption
-
   lazy val ivUrl = servicesConfig.getString("identity-verification-frontend.host")
   lazy val relativeIVUpliftParams = servicesConfig.getBoolean("identity-verification-frontend.use-relative-params")
 
@@ -181,6 +179,14 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
-  lazy val readFeatureSwitchesFromMongo = servicesConfig.getBoolean("feature-switches.read-from-mongo")
+  lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
 
+  lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("time-machine.enable-time-machine")
+
+  lazy val isTimeMachineAddYearEnabled: Boolean = servicesConfig.getBoolean("time-machine.add-year.enable-time-machine-add-year")
+  lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-year.add-years")
+
+  lazy val isTimeMachineSetDateEnabled: Boolean = servicesConfig.getBoolean("time-machine.set-date.enable-time-machine-set-date")
+  lazy val timeMachineSetDateDay: Int = servicesConfig.getInt("time-machine.set-date.set-date-day")
+  lazy val timeMachineSetDateMonth: Int = servicesConfig.getInt("time-machine.set-date.set-date-month")
 }
