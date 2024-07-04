@@ -21,7 +21,7 @@ import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import repositories.UIJourneySessionDataRepository
@@ -98,13 +98,14 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val previousYearCalcStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
-      statusMap <- taxYearITSAStatus
-      isCurrentYearStatusMandatoryOrVoluntary = statusMap(currentYear).isMandatedOrVoluntary
-      isPreviousYearStatusMandatoryOrVoluntary = statusMap(previousYear).isMandatedOrVoluntary
+      statusDetailMap <- taxYearITSAStatus
+      statusMap = statusDetailMap.view.mapValues(_.status).toMap
+      currentYearStatus = statusMap(currentYear)
+      previousYearStatus = statusMap(previousYear)
       calStatus <- previousYearCalcStatus
       optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
-        isCurrentYearStatusMandatoryOrVoluntary,
-        isPreviousYearStatusMandatoryOrVoluntary,
+        currentYearStatus == Mandated || currentYearStatus == Voluntary,
+        previousYearStatus == Mandated || previousYearStatus == Voluntary,
         calStatus)
     } yield optOutChecks
   }
