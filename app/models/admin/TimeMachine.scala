@@ -25,29 +25,24 @@ case class TimeMachine(isTimeMachineEnabled: Boolean,
                       ) {
 
   val timeMachineSetDate: Option[TimeMachineDate] = {
-    if (isTimeMachineEnabled) {
-      if (isTimeMachineSetDateEnabled) {
-        Some(TimeMachineDate(
+    if (isTimeMachineEnabled && isTimeMachineSetDateEnabled) {
+      Some(
+        TimeMachineDate(
           day = setDay,
           month = setMonth
-        ))
-      } else {
-        None
-      }
+        )
+      )
     } else {
       None
     }
   }
 
   val yearsToAdd: Option[Int] = {
-    if (isTimeMachineEnabled) {
-      if (isTimeMachineAddYearEnabled) {
-        Some(addYears)
-      } else {
-        None
-      }
+    if (isTimeMachineEnabled && isTimeMachineAddYearEnabled) {
+      Some(addYears)
     } else {
       None
     }
   }
+
 }
