@@ -54,9 +54,9 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
-  def getStatusDetail(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): StatusDetail = {
+  private def getITSAStatus(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): ITSAStatus.ITSAStatus = {
     val defaultStatusDetail = StatusDetail("Unknown", ITSAStatus.NoStatus, "Unknown")
-    statusMap.getOrElse(year, defaultStatusDetail)
+    statusMap.getOrElse(year, defaultStatusDetail).status
   }
 
   private def createOptOutProposition(previousYear: TaxYear,
@@ -67,18 +67,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                                      ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
-      status = getStatusDetail(previousYear, statusMap).status,
+      status = getITSAStatus(previousYear, statusMap),
       taxYear = previousYear,
       crystallised = finalisedStatus
     )
 
     val currentYearOptOut = CurrentOptOutTaxYear(
-      status = getStatusDetail(currentYear, statusMap).status,
+      status = getITSAStatus(currentYear, statusMap),
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptOutTaxYear(
-      status = getStatusDetail(nextYear, statusMap).status,
+      status = getITSAStatus(nextYear, statusMap),
       taxYear = nextYear,
       currentTaxYear = currentYearOptOut
     )
