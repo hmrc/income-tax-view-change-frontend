@@ -21,6 +21,7 @@ import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import repositories.UIJourneySessionDataRepository
@@ -49,20 +50,21 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     for {
       finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
-      statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+      statusDetailMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+      statusMap =  statusDetailMap.view.mapValues(_.status).toMap
     }
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
-  private def getITSAStatus(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): ITSAStatus.ITSAStatus = {
-    statusMap.get(year).map(_.status).getOrElse(ITSAStatus.NoStatus)
+  private def getITSAStatus(year: TaxYear, statusMap: Map[TaxYear, ITSAStatus]): ITSAStatus = {
+    statusMap.getOrElse(year, ITSAStatus.NoStatus)
   }
 
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
                                       finalisedStatus: Boolean,
-                                      statusMap: Map[TaxYear, StatusDetail]
+                                      statusMap: Map[TaxYear, ITSAStatus]
                                      ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
