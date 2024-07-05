@@ -21,11 +21,14 @@ import enums.CodingOutType._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.JourneyType
 import models.incomeSourceDetails._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants._
 import testConstants.PaymentHistoryTestConstraints.oldBusiness1
 import testConstants.PropertyDetailsIntegrationTestConstants._
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object IncomeSourceIntegrationTestConstants {
 
@@ -346,6 +349,50 @@ object IncomeSourceIntegrationTestConstants {
     } else {
       otherwise
     }
+  }
+
+  private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+  private def documentDetailsPayment( transactionId: String,
+                                      amount: BigDecimal,
+                                      clearingDate: LocalDate): JsObject= {
+    Json.obj(
+      "taxYear" -> testTaxYear,
+      "transactionId" -> transactionId,
+      "documentDescription" -> "Payment on Account",
+      "outstandingAmount" -> amount,
+      "originalAmount" -> amount,
+      "documentDueDate" -> dateFormatter.format(clearingDate),
+      "effectiveDateOfPayment" -> dateFormatter.format(clearingDate),
+      "documentDate" -> dateFormatter.format(clearingDate),
+      "paymentLot" -> "081203010025",
+      "paymentLotItem" -> "000001",
+    )
+  }
+
+  private def financialDetailsPayment( transactionId: String,
+                                       amount: BigDecimal,
+                                       clearingDate: LocalDate,
+                                       clearingSapDocument: String): JsObject = {
+    Json.obj(
+      "taxYear" -> s"$testTaxYear",
+      "mainType" -> "Payment on Account",
+      "mainTransaction" -> "0060",
+      "transactionId" -> transactionId,
+      "chargeReference" -> "ABCD1234",
+      "originalAmount" -> amount,
+      "items" -> Json.arr(
+        Json.obj(
+          "subItemId" -> "001",
+          "amount" -> amount,
+          "clearingDate" -> dateFormatter.format(clearingDate),
+          "dueDate" -> dateFormatter.format(clearingDate)),
+          "paymentAmount" -> amount,
+          "paymentReference" -> "GF235687",
+          "paymentMethod" -> "Payment",
+          "clearingSAPDocument" -> clearingSapDocument
+      )
+    )
   }
 
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
@@ -1114,6 +1161,7 @@ object IncomeSourceIntegrationTestConstants {
       "secondPendingAmountRequested" -> 2.00
     ),
     "documentDetails" -> Json.arr(
+      documentDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt,3,29)),
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
@@ -1165,6 +1213,7 @@ object IncomeSourceIntegrationTestConstants {
       )
     ),
     "financialDetails" -> Json.arr(
+      financialDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt,3,29), "123456"),
       Json.obj(
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Cutover Credits",
