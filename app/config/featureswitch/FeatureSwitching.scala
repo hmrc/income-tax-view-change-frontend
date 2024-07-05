@@ -18,7 +18,7 @@ package config.featureswitch
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin.{FeatureSwitch, FeatureSwitchName, TimeMachine}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 
 trait FeatureSwitching {
 
@@ -33,13 +33,13 @@ trait FeatureSwitching {
   }
 
   def isEnabled(featureSwitch: FeatureSwitchName)
-                 (implicit user: MtdItUser[_]): Boolean = {
-      isEnabled(featureSwitch, user.featureSwitches)
+               (implicit user: MtdItUser[_]): Boolean = {
+    isEnabled(featureSwitch, user.featureSwitches)
   }
 
   def isEnabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
-     fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+      fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     } else {
       isEnabledFromConfig(featureSwitch)
     }
@@ -58,6 +58,7 @@ trait FeatureSwitching {
       disable(featureSwitchName)
     }
   }
+
   protected implicit class FeatureOps(feature: FeatureSwitchName)(implicit user: MtdItUser[_]) {
     def fold[T](ifEnabled: => T, ifDisabled: => T): T = {
       if (isEnabled(feature)) ifEnabled
@@ -74,12 +75,17 @@ trait FeatureSwitching {
   def timeMachine: TimeMachine = {
     TimeMachine(
       isTimeMachineEnabled = appConfig.isTimeMachineEnabled,
-      isTimeMachineAddYearEnabled = appConfig.isTimeMachineAddYearEnabled,
       addYears = appConfig.timeMachineAddYears,
-      isTimeMachineSetDateEnabled = appConfig.isTimeMachineSetDateEnabled,
-      setDay = appConfig.timeMachineSetDateDay,
-      setMonth = appConfig.timeMachineSetDateMonth
+      addDays = appConfig.timeMachineAddDays
     )
-
   }
+
+  case class TimeMachine(
+                                  isTimeMachineEnabled: Boolean,
+                                  addYears: Int,
+                                  addDays: Int
+                                )
+
 }
+
+
