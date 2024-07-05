@@ -18,7 +18,7 @@
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optout.NextUpdatesQuarterlyReportingContentChecks
+@import models.optout.NextUpdatesOptOutViewModel
 @import models.optout.OptOutViewModel
 @import models.optout.OptOutOneYearViewModel
 @import models.optout.OptOutMultiYearViewModel
@@ -37,8 +37,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, optOutViewModel: Option[OptOutViewModel],
-  checks:NextUpdatesQuarterlyReportingContentChecks,
+@(currentObligations: NextUpdatesViewModel, nextUpdatesOptOutViewModel: NextUpdatesOptOutViewModel,
   backUrl: String,
   isAgent: Boolean = false,
   origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -54,14 +53,14 @@
 
 	@h1(msg = "nextUpdates.heading")
 
-	@checks.showUpdateTypeDetailsSection.map { _ =>
+	@nextUpdatesOptOutViewModel.showUpdateTypeDetailsSection.map { _ =>
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
 	@p() {
 
 		@{
-			optOutViewModel.map {
+			nextUpdatesOptOutViewModel.optOutViewModel.map {
 
 				case m:OptOutOneYearViewModel =>
 					Html(
@@ -104,7 +103,7 @@
 	}
 
 
-	@checks.showUseCompatibleSoftwareSection.map { _ =>
+	@nextUpdatesOptOutViewModel.showUseCompatibleSoftwareSection.map { _ =>
 	    @h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
 	    @p(){
             <div id="updates-software-link" class="govuk-body app-get-help-link">

@@ -19,7 +19,7 @@ package models.optout
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import services.optout.OptOutProposition
 
-case class NextUpdatesQuarterlyReportingContentChecks(proposition: OptOutProposition) {
+case class NextUpdatesOptOutViewModel(proposition: OptOutProposition, optOutViewModel: Option[OptOutViewModel]) {
 
   private val isCurrentYearMandatedOrVoluntary = proposition.currentTaxYear.status == Mandated || proposition.currentTaxYear.status == Voluntary
   private val isPreviousYearMandatedOrVoluntary = proposition.previousTaxYear.status == Mandated || proposition.previousTaxYear.status == Voluntary

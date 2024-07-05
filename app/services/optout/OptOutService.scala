@@ -153,24 +153,20 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
-  def nextUpdatesPageOptOutViewModel(proposition: OptOutProposition)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Option[OptOutViewModel] = {
+  def getOptOutViewModel(proposition: OptOutProposition): Option[OptOutViewModel] = {
     proposition.optOutPropositionType.flatMap {
       case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
       case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
     }
   }
 
-  def nextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
-    fetchOptOutProposition().map(nextUpdatesPageOptOutViewModel)
+  def getOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
+    fetchOptOutProposition().map(getOptOutViewModel)
   }
 
-  def nextUpdatesPageOptOutWithChecks()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[(Option[OptOutViewModel], NextUpdatesQuarterlyReportingContentChecks)] = {
-
-    fetchOptOutProposition().map { proposition =>
-      (nextUpdatesPageOptOutViewModel(proposition),
-        NextUpdatesQuarterlyReportingContentChecks(proposition))
-    }
+  def getNextUpdatesOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[NextUpdatesOptOutViewModel] = {
+    fetchOptOutProposition().map(proposition => NextUpdatesOptOutViewModel(proposition, getOptOutViewModel(proposition)))
   }
 
   def optOutCheckPointPageViewModel()
@@ -184,7 +180,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes]): Future[Int] = {
       propositionType match {
-        case Some(p:OneYearOptOutProposition) =>
+        case Some(p: OneYearOptOutProposition) =>
           getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(p.intent.taxYear))
         case _ => Future.successful(noQuarterlyUpdates)
       }

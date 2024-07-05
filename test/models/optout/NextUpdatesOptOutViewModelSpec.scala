@@ -21,7 +21,7 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.TestSupport
 
-class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
+class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
   def buildOptOutProposition(cyStatus: ITSAStatus, pyStatus: ITSAStatus, pyCrystallised: Boolean): OptOutProposition = {
     val currentYear = TaxYear.forYearEnd(2024)
@@ -52,7 +52,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
             val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+            val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
@@ -67,7 +67,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
             val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+            val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
@@ -87,7 +87,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
             val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+            val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
             viewModel.showUseCompatibleSoftwareSection shouldBe Some({})
         }
@@ -102,7 +102,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
 
             val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
 
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(proposition)
+            val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
             viewModel.showUseCompatibleSoftwareSection shouldBe None
         }

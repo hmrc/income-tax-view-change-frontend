@@ -112,7 +112,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
   private def withOptOutQualifiedTaxYear(isAgent: Boolean)(code: TaxYear => Result)
                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    optOutService.nextUpdatesPageOptOutViewModel().map {
+    optOutService.getOptOutViewModel().map {
       case Some(OptOutOneYearViewModel(taxYear, _)) => code(taxYear)
       case _ =>
         Logger("application").error("No qualified tax year available for opt out")

@@ -21,7 +21,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Voluntary}
 import models.nextUpdates._
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
+import models.optout.{NextUpdatesOptOutViewModel, OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -56,18 +56,20 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   class Setup(currentObligations: NextUpdatesViewModel, quarterlyUpdateContentShow: Boolean = true) {
 
-    val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
-      buildOptOutProposition(ITSAStatus.Voluntary, ITSAStatus.Voluntary, pyCrystallised = true))
-    else
-      NextUpdatesQuarterlyReportingContentChecks(
-        buildOptOutProposition(ITSAStatus.NoStatus, ITSAStatus.Voluntary, pyCrystallised = true))
+    def nextUpdatesOptOutViewModel(optOutViewModel: Option[OptOutViewModel]): NextUpdatesOptOutViewModel = {
+      if (quarterlyUpdateContentShow) NextUpdatesOptOutViewModel(
+        buildOptOutProposition(ITSAStatus.Voluntary, ITSAStatus.Voluntary, pyCrystallised = true), optOutViewModel)
+      else
+        NextUpdatesOptOutViewModel(
+          buildOptOutProposition(ITSAStatus.NoStatus, ITSAStatus.Voluntary, pyCrystallised = true), optOutViewModel)
+    }
+
 
     val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))
+    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, nextUpdatesOptOutViewModel(Some(optOutOneYearViewModel)), "testBackURL")))
 
     val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
-    val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations,
-      Some(optOutMultiYearViewModel), checks, "testBackURL")))
+    val pageDocumentMultiYearOptOut: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, nextUpdatesOptOutViewModel(Some(optOutMultiYearViewModel)), "testBackURL")))
   }
 
   object obligationsMessages {

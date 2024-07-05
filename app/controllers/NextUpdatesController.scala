@@ -27,8 +27,8 @@ import models.nextUpdates._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.NextUpdatesService
 import services.optout.OptOutService
-import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
                                       nextUpdatesOptOutView: NextUpdatesOptOut,
-                                      incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
@@ -75,19 +74,14 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
             Future.successful(errorHandler.showInternalServerError())
           case (_, true) =>
             auditNextUpdates(user, isAgent, origin)
-
-            val optOutSetup = {
-              for {
-                (optOutOneYearViewModel, checks) <- optOutService.nextUpdatesPageOptOutWithChecks()
-                _ <- optOutService.resetSavedIntent()
-              } yield Ok(nextUpdatesOptOutView(viewModel, optOutOneYearViewModel, checks, backUrl.url, isAgent, origin))
-            }.recoverWith {
+            (for {
+              nextUpdatesOptOutViewModel <- optOutService.getNextUpdatesOptOutViewModel()
+              _ <- optOutService.resetSavedIntent()
+            } yield Ok(nextUpdatesOptOutView(viewModel, nextUpdatesOptOutViewModel, backUrl.url, isAgent, origin))).recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
                 Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, origin))) // Render view even on failure
             }
-
-            optOutSetup
 
           case (_, false) =>
             auditNextUpdates(user, isAgent, origin)

@@ -18,7 +18,7 @@ package services.optout
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
@@ -87,7 +87,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModel()
+        val result = service.getOptOutViewModel()
 
         result.futureValue.get.isInstanceOf[OptOutOneYearViewModel] shouldBe true
       }
@@ -124,7 +124,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModel()
+        val result = service.getOptOutViewModel()
 
         result.futureValue.get.isInstanceOf[OptOutMultiYearViewModel] shouldBe true
       }

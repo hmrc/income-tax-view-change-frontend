@@ -22,8 +22,8 @@ import models.optout._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optout.{OptOutProposition, OptOutService}
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.optout.{OptOutProposition, OptOutService}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -38,12 +38,12 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any()))
+    when(mockOptOutService.getOptOutViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 
   def mockNextUpdatesPageMultiYearOptOutViewModel(out: Future[Option[OptOutMultiYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any())).thenReturn(out)
+    when(mockOptOutService.getOptOutViewModel()(any(), any(), any())).thenReturn(out)
   }
 
   def mockGetSubmissionCountForTaxYear(out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
@@ -77,7 +77,7 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(out)
   }
 
-  def mockNextUpdatesPageOptOutWithChecks(out: Future[(Option[OptOutViewModel], NextUpdatesQuarterlyReportingContentChecks)]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutWithChecks()(any(), any(), any())).thenReturn(out)
+  def mockNextUpdatesPageOptOutWithChecks(out: Future[NextUpdatesOptOutViewModel]): Unit = {
+    when(mockOptOutService.getNextUpdatesOptOutViewModel()(any(), any(), any())).thenReturn(out)
   }
 }

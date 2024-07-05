@@ -25,7 +25,6 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Vol
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -346,7 +345,7 @@ class OptOutServiceSpec extends UnitSpec
 
   }
 
-  "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
+  "OptOutService.getOptOutViewModel" when {
 
     s"PY is $Voluntary, CY is $NoStatus, NY is $NoStatus and PY is NOT finalised" should {
 
@@ -365,7 +364,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.getOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
 
@@ -389,7 +388,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.getOptOutViewModel()
 
         response.futureValue shouldBe noOptOutOptionAvailable
       }
@@ -412,7 +411,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.getOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByMandated)))
       }
@@ -435,7 +434,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.getOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
       }
@@ -458,7 +457,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.getOptOutViewModel()
 
           val model = response.futureValue.get
 
@@ -486,7 +485,7 @@ class OptOutServiceSpec extends UnitSpec
 
             when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-            val response = service.nextUpdatesPageOptOutViewModel()
+            val response = service.getOptOutViewModel()
 
             val model = response.futureValue.get
             model match {
@@ -513,7 +512,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.getOptOutViewModel()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -536,7 +535,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.getOptOutViewModel()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -659,7 +658,6 @@ class OptOutServiceSpec extends UnitSpec
 
   }
 
-
   "OptOutService.optOutConfirmedPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
@@ -708,5 +706,88 @@ class OptOutServiceSpec extends UnitSpec
 
     }
 
+  }
+
+  "OptOutService.getNextUpdatesOptOutViewModel" when {
+    val CY = TaxYear.forYearEnd(2024)
+    val PY = CY.previousYear
+    val NY = CY.nextYear
+
+
+    "Multiyear OptOut proposition is available" should {
+      "return NextUpdatesOptOutViewModel" in {
+        val crystallisedPY = false;
+        val previousYear: TaxYear = PY
+        val proposition = OptOutTestSupport.buildThreeYearOptOutProposition(CY.endYear)
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          PY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          CY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          NY -> StatusDetail("", ITSAStatus.Voluntary, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+        val result = service.getNextUpdatesOptOutViewModel()
+
+
+        result.futureValue shouldBe NextUpdatesOptOutViewModel(proposition, Some(OptOutMultiYearViewModel()))
+      }
+    }
+
+    "One year OptOut proposition is available" should {
+      "return NextUpdatesOptOutViewModel" in {
+        val crystallisedPY = true;
+        val previousYear: TaxYear = PY
+        val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear(CY.endYear)
+        val optOutViewModel = OptOutOneYearViewModel(CY, Some(OneYearOptOutFollowedByMandated))
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          PY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          CY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          NY -> StatusDetail("", ITSAStatus.Mandated, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+        val result = service.getNextUpdatesOptOutViewModel()
+
+        result.futureValue shouldBe NextUpdatesOptOutViewModel(proposition, Some(optOutViewModel))
+      }
+    }
+
+    "return Failed future" when {
+      val exception = new Exception("failure");
+      "ITSA Status API fails" in {
+        val crystallisedPY = true;
+        val previousYear: TaxYear = PY
+        when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(exception))
+        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
+
+        val result = service.getNextUpdatesOptOutViewModel()
+
+        result.failed.futureValue shouldBe exception
+      }
+      "Calculation API fails" in {
+        val previousYear: TaxYear = PY
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
+          PY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          CY -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          NY -> StatusDetail("", ITSAStatus.Mandated, "")
+        )
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(exception))
+
+        val result = service.getNextUpdatesOptOutViewModel()
+
+        result.failed.futureValue shouldBe exception
+      }
+    }
   }
 }
