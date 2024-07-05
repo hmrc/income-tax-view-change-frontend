@@ -26,8 +26,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.nextUpdates.ObligationStatus.Fulfilled
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -106,7 +105,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -168,7 +167,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -213,7 +212,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -255,7 +254,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -294,7 +293,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -333,7 +332,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", Fulfilled)
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 

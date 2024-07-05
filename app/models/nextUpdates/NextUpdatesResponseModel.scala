@@ -19,15 +19,10 @@ package models.nextUpdates
 import auth.MtdItUser
 import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
-import models.nextUpdates.ObligationStatus.Fulfilled
+
 import play.api.libs.json._
 
 import java.time.LocalDate
-
-object ObligationStatus {
-  val Open: String = "Open"
-  val Fulfilled: String = "Fulfilled"
-}
 
 sealed trait NextUpdatesResponseModel
 
@@ -77,7 +72,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
     allDeadlinesWithSource()(mtdItUser)
       .filter(_.obligation.obligationType == "Quarterly")
-      .count(_.obligation.status == Fulfilled)
+      .count(_.obligation.status == StatusFulfilled)
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth
@@ -119,14 +114,14 @@ case class NextUpdateModel(start: LocalDate,
                            obligationType: String,
                            dateReceived: Option[LocalDate],
                            periodKey: String,
-                           status: String) extends NextUpdatesResponseModel
+                           status: ObligationStatus) extends NextUpdatesResponseModel
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
 
 case class NextUpdatesErrorModel(code: Int, message: String) extends NextUpdatesResponseModel
 
 object NextUpdateModel {
-  implicit val format: Format[NextUpdateModel] = Json.format[NextUpdateModel]
+  implicit val formatNextUpdateModel: Format[NextUpdateModel] = Json.format[NextUpdateModel]
 }
 
 object NextUpdatesModel {
@@ -135,4 +130,28 @@ object NextUpdatesModel {
 
 object NextUpdatesErrorModel {
   implicit val format: Format[NextUpdatesErrorModel] = Json.format[NextUpdatesErrorModel]
+}
+
+sealed trait ObligationStatus
+
+case object StatusOpen extends ObligationStatus {
+  override def toString: String = "Open"
+}
+case object StatusFulfilled extends ObligationStatus {
+  override def toString: String = "Fulfilled"
+}
+
+object ObligationStatus {
+  implicit val obligationStatusWrites: Writes[ObligationStatus] = Writes[ObligationStatus] {
+    case StatusOpen    => JsString("Open")
+    case StatusFulfilled => JsString("Fulfilled")
+  }
+
+  implicit val obligationStatusReads: Reads[ObligationStatus] = Reads[ObligationStatus] {
+    case JsString("Open")    => JsSuccess(StatusOpen)
+    case JsString("Fulfilled") => JsSuccess(StatusFulfilled)
+    case _                  => JsError("Unknown traffic light")
+  }
+
+  implicit val obligationStatusFormat: Format[ObligationStatus] = Format(obligationStatusReads, obligationStatusWrites)
 }
