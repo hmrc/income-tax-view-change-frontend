@@ -150,7 +150,7 @@ object ObligationStatus {
   implicit val obligationStatusReads: Reads[ObligationStatus] = Reads[ObligationStatus] {
     case JsString("Open")    => JsSuccess(StatusOpen)
     case JsString("Fulfilled") => JsSuccess(StatusFulfilled)
-    case _                  => JsError("Unknown traffic light")
+    case _                  => JsError("Unknown Obligation Status")
   }
 
   implicit val obligationStatusFormat: Format[ObligationStatus] = Format(obligationStatusReads, obligationStatusWrites)
