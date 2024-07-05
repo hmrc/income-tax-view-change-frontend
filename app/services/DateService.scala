@@ -20,6 +20,7 @@ import auth.MtdItUser
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.admin.TimeMachine
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
@@ -31,7 +32,7 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   val appConfig: FrontendAppConfig = frontendAppConfig
 
   def getCurrentDate: LocalDate = {
-    if (frontendAppConfig.isTimeMachineEnabled) {
+    if (isEnabledFromConfig(TimeMachine)) {
       LocalDate.now()
         .plusYears(timeMachine.addYears)
         .plusDays(timeMachine.addDays)

@@ -77,7 +77,7 @@ class DateServiceSpec extends TestSupport {
   }
 
   "The getCurrentDate method when TimeMachine FS is on" should {
-    "return the current date and time" in {
+    "return the current date and time when no additional time is added" in {
       setupGetCurrentTestMocks()
 
       val getCurrentDate = TestDateService.getCurrentDate
