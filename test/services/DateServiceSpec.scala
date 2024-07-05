@@ -53,14 +53,11 @@ class DateServiceSpec extends TestSupport {
     reset(appConfig)
   }
 
-  def setupGetCurrentTestMocks(timeMachineFS: Boolean = false, timeMachineAddYearFS: Boolean = false,
-                               addYears: Int = 0, timeMachineSetDateFS: Boolean = false, setDay: Int = 0, setMonth: Int = 0): Unit = {
+  def setupGetCurrentTestMocks(timeMachineFS: Boolean = false,
+                               addYears: Int = 0, addDays: Int = 0): Unit = {
     when(appConfig.isTimeMachineEnabled).thenReturn(timeMachineFS)
-    when(appConfig.isTimeMachineAddYearEnabled).thenReturn(timeMachineAddYearFS)
     when(appConfig.timeMachineAddYears).thenReturn(addYears)
-    when(appConfig.isTimeMachineSetDateEnabled).thenReturn(timeMachineSetDateFS)
-    when(appConfig.timeMachineSetDateDay).thenReturn(setDay)
-    when(appConfig.timeMachineSetDateMonth).thenReturn(setMonth)
+    when(appConfig.timeMachineAddDays).thenReturn(addDays)
   }
 
   def fixture(date: String) = new {
@@ -88,59 +85,58 @@ class DateServiceSpec extends TestSupport {
   }
 
   "The getCurrentDate method when TimeMachine FS is on" should {
-    "return the current date and time" when {
-      "the TimeMachineAddYear and TimeMachineSetDate FS are off" in {
+    "return the current date and time" in {
         setupGetCurrentTestMocks()
 
         val getCurrentDate = TestDateService.getCurrentDate
 
         getCurrentDate shouldBe LocalDate.now()
       }
-    }
+
     "return the current date plus a year" when {
-      "the TimeMachine is on, and we have set the TimeMachine to add an additional year" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, timeMachineAddYearFS = true, addYears = 2)
+      "the TimeMachine is set to add two additional years" in {
+        setupGetCurrentTestMocks(timeMachineFS = true, addYears = 2)
 
         val expectedDate = LocalDate.now().plusYears(2)
 
         TestDateService.getCurrentDate shouldBe expectedDate
       }
     }
-    "return a LocalDate of the current year, but on the 3rd of April" when {
-      "the TimeMachine is on, and we have set the TimeMachine to place us on the 3rd of April" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, timeMachineSetDateFS = true, setDay = 3, setMonth = 4)
+    "return a LocalDate of the current date, but 10 days in the future" in {
+      "we set the config to add 10 days to the current date" in {
+        setupGetCurrentTestMocks(timeMachineFS = true, addDays = 10)
 
-        val expectedDate = LocalDate.of(LocalDate.now().getYear, 4, 3)
+        val expectedDate = LocalDate.now().plusDays(10)
 
         TestDateService.getCurrentDate shouldBe expectedDate
       }
     }
-    "return a LocalDate of the current year, but on the 27th of August" when {
+    "return a LocalDate of the current date, but 10 days in the past" in {
+      "we set the config to subtract 10 days from the current date" in {
+        setupGetCurrentTestMocks(timeMachineFS = true, addDays = -10)
+
+        val expectedDate = LocalDate.now().plusDays(-10)
+
+        TestDateService.getCurrentDate shouldBe expectedDate
+      }
+    }
+    "return a LocalDate of the current date, but four years and 20 days in the past" in {
       "the TimeMachine is on, and we have set the TimeMachine to place us on the 27th of August" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, timeMachineSetDateFS = true, setDay = 27, setMonth = 8)
+        setupGetCurrentTestMocks(timeMachineFS = true, addYears = 4, addDays = 20)
 
-        val expectedDate = LocalDate.of(LocalDate.now().getYear, 8, 27)
+        val expectedDate = LocalDate.now().plusDays(20).plusYears(4)
 
         TestDateService.getCurrentDate shouldBe expectedDate
       }
     }
-  }
-  "return a LocalDate, two calendar years in the future time on the 9th of April" when {
-    "the TimeMachine is on, and we have set the TimeMachine to place us on a specific date with additional years" in {
-      setupGetCurrentTestMocks(timeMachineFS = true, timeMachineAddYearFS = true, addYears = 2, timeMachineSetDateFS = true, setDay = 9, setMonth = 4)
+    "return a LocalDate of the current date, but three years and 25 days in the past" in {
+      "the TimeMachine is on, and we have set the TimeMachine to place us on the 27th of August" in {
+        setupGetCurrentTestMocks(timeMachineFS = true, addYears = 4, addDays = 20)
 
-      val expectedDate = LocalDate.of(LocalDate.now.plusYears(2).getYear, 4, 9)
+        val expectedDate = LocalDate.now().plusDays(-25).plusYears(-3)
 
-      TestDateService.getCurrentDate shouldBe expectedDate
-    }
-  }
-  "return a LocalDate, three calendar years in the future time on the 27th of August" when {
-    "the TimeMachine is on, and we have set the TimeMachine to place us on a specific date with additional years" in {
-      setupGetCurrentTestMocks(timeMachineFS = true, timeMachineAddYearFS = true, addYears = 3, timeMachineSetDateFS = true, setDay = 27, setMonth = 8)
-
-      val expectedDate = LocalDate.of(LocalDate.now.plusYears(3).getYear, 8, 27)
-
-      TestDateService.getCurrentDate shouldBe expectedDate
+        TestDateService.getCurrentDate shouldBe expectedDate
+      }
     }
   }
 
