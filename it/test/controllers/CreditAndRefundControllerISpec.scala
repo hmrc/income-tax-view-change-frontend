@@ -42,7 +42,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "display the credit and refund page with all credits/refund types and audit event" when {
 
-      "a valid response is received and feature switches are enabled" in {
+        "a valid response is received and feature switches are enabled" in {
         enable(CreditsRefundsRepay)
         enable(CutOverCredits)
         enable(MFACreditsAndDebits)
@@ -70,7 +70,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Overpayment Relief"), mainTransaction=Some("4004"))
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Overpayment Relief"), mainTransaction=Some("4004")),
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("SA Repayment Supplement Credit"), mainTransaction=Some("6020"))
           )
         )(MtdItUser(
           testMtditid, testNino, None,

@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter
 case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
                                   creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
+  private val zeroBalance: Double = 0.00
   override val auditType: String = ClaimARefundResponse
   override val transactionName: String = ClaimARefund
 
@@ -38,22 +39,26 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getAvailableCredit: Double = {
     balanceDetails.flatMap(_.availableCredit) match {
       case Some(_) => balanceDetails.get.availableCredit.get.toDouble.abs
-      case _ => 0.00
+      case _ => zeroBalance
     }
   }
 
-  private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val creditType: Option[CreditType] = credit._2.getCreditType
-    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-    val taxYearString = s"${credit._1.documentDetail.taxYear - 1} to ${credit._1.documentDetail.taxYear} tax year"
+  case class Credit(documentDetailWithDueDate: DocumentDetailWithDueDate, financialDetail: FinancialDetail) {
+    def creditType: Option[CreditType] = financialDetail.getCreditType
+    def isPayment: Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined
+    def taxYearString: String = s"${documentDetailWithDueDate.documentDetail.taxYear - 1} to ${documentDetailWithDueDate.documentDetail.taxYear} tax year"
+    def dueDate: Option[LocalDate] = documentDetailWithDueDate.dueDate
+    def paymentLot: Option[String] = documentDetailWithDueDate.documentDetail.paymentLot
+  }
 
-    (creditType, credit._1.dueDate) match {
+  private def getCreditType(credit: Credit): String = {
+    (credit.creditType, credit.dueDate) match {
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
-      case (Some(RepaymentInterest), _) => s"Credit from repayment interest - $taxYearString"
-      case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
-      case (_, None) if isPayment =>
+      case (Some(RepaymentInterest), _) => s"Credit from repayment interest - ${credit.taxYearString}"
+      case (_, Some(date)) if credit.isPayment => s"Payment made on ${getFullDueDate(date)}"
+      case (_, None) if credit.isPayment =>
         Logger("application").error("Missing or non-matching credit: not a valid payment date")
         "unknownDate"
       case (_, _) =>
@@ -63,9 +68,13 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private lazy val creditDocumentsJson: Seq[JsObject] = {
-    creditDocuments.map(credit => Json.obj(
-      "description" -> getCreditType(credit),
-      "amount" -> credit._1.documentDetail.paymentOrChargeCredit))
+    creditDocuments.map { case (documentDetailWithDueDate, financialDetail) =>
+      val credit = Credit(documentDetailWithDueDate, financialDetail)
+      Json.obj(
+        "description" -> getCreditType(credit),
+        "amount" -> credit.documentDetailWithDueDate.documentDetail.paymentOrChargeCredit
+      )
+    }
   }
 
   private def getPendingRefundsJson(pendingRefund: Option[BigDecimal]): Seq[JsObject] = Seq(Json.obj() ++ Json.obj("description" -> "Refund in progress") ++
