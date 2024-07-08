@@ -24,8 +24,8 @@ case class NextUpdatesOptOutViewModel(proposition: OptOutProposition, optOutView
   private val isCurrentYearMandatedOrVoluntary = proposition.currentTaxYear.status == Mandated || proposition.currentTaxYear.status == Voluntary
   private val isPreviousYearMandatedOrVoluntary = proposition.previousTaxYear.status == Mandated || proposition.previousTaxYear.status == Voluntary
   private val previousYearCrystallisedStatus = proposition.previousTaxYear.crystallised
-  private val showOptOutContent: Option[Unit] = if (isCurrentYearMandatedOrVoluntary || (isPreviousYearMandatedOrVoluntary && !previousYearCrystallisedStatus)) Some({}) else None
+  private val showOptOutContent: Boolean = isCurrentYearMandatedOrVoluntary || (isPreviousYearMandatedOrVoluntary && !previousYearCrystallisedStatus)
 
-  val showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
-  val showUseCompatibleSoftwareSection: Option[Unit] = showOptOutContent
+  val showUpdateTypeDetailsSection: Boolean = showOptOutContent
+  val showUseCompatibleSoftwareSection: Boolean = showOptOutContent
 }

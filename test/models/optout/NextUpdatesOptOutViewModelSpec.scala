@@ -54,7 +54,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
-            viewModel.showUpdateTypeDetailsSection shouldBe Some({})
+            viewModel.showUpdateTypeDetailsSection shouldBe true
         }
       }
 
@@ -69,7 +69,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
-            viewModel.showUpdateTypeDetailsSection shouldBe None
+            viewModel.showUpdateTypeDetailsSection shouldBe false
         }
       }
     }
@@ -89,7 +89,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
-            viewModel.showUseCompatibleSoftwareSection shouldBe Some({})
+            viewModel.showUseCompatibleSoftwareSection shouldBe true
         }
       }
 
@@ -104,7 +104,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
-            viewModel.showUseCompatibleSoftwareSection shouldBe None
+            viewModel.showUseCompatibleSoftwareSection shouldBe false
         }
       }
 

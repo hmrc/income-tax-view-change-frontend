@@ -53,7 +53,7 @@
 
 	@h1(msg = "nextUpdates.heading")
 
-	@nextUpdatesOptOutViewModel.showUpdateTypeDetailsSection.map { _ =>
+	@if(nextUpdatesOptOutViewModel.showUpdateTypeDetailsSection){
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
@@ -103,7 +103,7 @@
 	}
 
 
-	@nextUpdatesOptOutViewModel.showUseCompatibleSoftwareSection.map { _ =>
+	@if(nextUpdatesOptOutViewModel.showUseCompatibleSoftwareSection){
 	    @h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
 	    @p(){
             <div id="updates-software-link" class="govuk-body app-get-help-link">
