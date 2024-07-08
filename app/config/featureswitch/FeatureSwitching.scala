@@ -73,5 +73,3 @@ trait FeatureSwitching {
   }
 
 }
-
-
