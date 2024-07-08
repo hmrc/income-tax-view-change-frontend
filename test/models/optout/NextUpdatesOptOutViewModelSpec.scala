@@ -16,28 +16,11 @@
 
 package models.optout
 
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
-import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
+import models.itsaStatus.ITSAStatus.{Mandated, NoStatus, Voluntary}
+import testConstants.OptOutTestConstants.buildOptOutProposition
 import testUtils.TestSupport
 
 class NextUpdatesOptOutViewModelSpec extends TestSupport {
-
-  def buildOptOutProposition(cyStatus: ITSAStatus, pyStatus: ITSAStatus, pyCrystallised: Boolean): OptOutProposition = {
-    val currentYear = TaxYear.forYearEnd(2024)
-    val previousYear = currentYear.previousYear
-    val nextYear = currentYear.nextYear
-
-    val previousTaxYearOptOut = PreviousOptOutTaxYear(pyStatus, previousYear, crystallised = pyCrystallised)
-    val currentTaxYearOptOut = CurrentOptOutTaxYear(cyStatus, currentYear)
-    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
-
-    OptOutProposition(
-      previousTaxYearOptOut,
-      currentTaxYearOptOut,
-      extTaxYearOptOut
-    )
-  }
 
   "QuarterlyReportingContentChecks" when {
     "called showUpdateTypeDetailsSection" should {
@@ -50,7 +33,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, Voluntary, pyCrystallised)
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
@@ -65,7 +48,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, Voluntary, pyCrystallised)
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
@@ -85,7 +68,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, Voluntary, pyCrystallised)
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 
@@ -100,7 +83,7 @@ class NextUpdatesOptOutViewModelSpec extends TestSupport {
 
           case (cyStatus, pyStatus, pyCrystallised) =>
 
-            val proposition = buildOptOutProposition(cyStatus, pyStatus, pyCrystallised)
+            val proposition = buildOptOutProposition(cyStatus, pyStatus, Voluntary, pyCrystallised)
 
             val viewModel = NextUpdatesOptOutViewModel(proposition, None)
 

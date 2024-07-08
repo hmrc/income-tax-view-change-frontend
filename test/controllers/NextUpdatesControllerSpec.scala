@@ -27,7 +27,7 @@ import models.nextUpdates.ObligationStatus.Fulfilled
 import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -36,6 +36,7 @@ import play.twirl.api.HtmlFormat
 import services.optout.OptOutService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.OptOutTestConstants.getNextUpdatesOptOutViewModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -93,6 +94,10 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled)))
   ))
 
+  private def getQuarterType(string: String) = {
+    if (string == "Quarterly") QuarterlyObligation else EopsObligation
+  }
+
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", Fulfilled))),
     NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled)))
@@ -100,17 +105,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
-  private def getQuarterType(string: String) = {
-    if (string == "Quarterly") QuarterlyObligation else EopsObligation
-  }
-
-  def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+  def mockObligations(previous: Boolean = true): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+    when(mockNextUpdatesService.getNextUpdates(matches(previous))(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
-  def mockNoObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+  def mockNoObligations(previous: Boolean = true): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+    when(mockNextUpdatesService.getNextUpdates(matches(previous))(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 
@@ -133,7 +134,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockObligations
+          mockObligations()
           mockViewModel
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(contentAsString(result))
@@ -157,7 +158,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
-          mockObligations
+          mockObligations()
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -180,7 +181,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-          mockObligations
+          mockObligations()
           val result = TestNextUpdatesController.show(origin = Some("PTA"))(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -203,7 +204,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockNoObligations
+          mockNoObligations()
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -226,7 +227,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
-          mockNoObligations
+          mockNoObligations()
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -250,7 +251,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           mockViewModel
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-          mockNoObligations
+          mockNoObligations()
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -331,7 +332,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
       mockSingleBusinessIncomeSourceError()
       mockSingleBusinessIncomeSourceWithDeadlines()
-      mockObligations
+      mockObligations()
       val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
@@ -345,16 +346,39 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
 
-    "the opt out feature switch is enabled and optOutService returns failed future" should {
-      s"show an INTERNAL SERVER ERROR page with HTTP ${Status.INTERNAL_SERVER_ERROR} Status " in {
-        enable(OptOut)
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        mockSingleBusinessIncomeSourceError()
-        mockSingleBusinessIncomeSourceWithDeadlines()
-        mockNextUpdatesPageOptOutWithChecks(Future.failed(new Exception("api failure")))
-        mockObligations
-        val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    "the opt out feature switch is enabled" when {
+      "the opt out feature switch is enabled" should {
+        s"show an Next update page" in {
+          enable(OptOut)
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          mockSingleBusinessIncomeSource()
+          setupMockNextUpdatesResult()(obligationsModel)
+          mockViewModel
+          mockGetNextUpdatesOptOutViewModel(Future.successful(getNextUpdatesOptOutViewModel))
+          mockResetSavedIntent(Future.successful(true))
+          mockObligations(false)
+          val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.OK
+          verify(mockOptOutService).getNextUpdatesOptOutViewModel()(any(), any(), any())
+        }
+      }
+      "optOutService returns failed future" should {
+        s"show an Next updates page without opt-out content" in {
+          enable(OptOut)
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          mockSingleBusinessIncomeSource()
+          setupMockNextUpdatesResult()(obligationsModel)
+          mockViewModel
+          mockGetNextUpdatesOptOutViewModel(Future.failed(new Exception("api failure")))
+          mockResetSavedIntent(Future.successful(true))
+          mockObligations(false)
+          val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.OK
+
+        }
       }
     }
   }
@@ -401,7 +425,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()
         mockViewModel
-        mockObligations
+        mockObligations()
         mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -413,7 +437,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
-        mockNoObligations
+        mockNoObligations()
         mockNoIncomeSourcesWithDeadlines()
         mockShowInternalServerError()
 

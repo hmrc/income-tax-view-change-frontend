@@ -37,7 +37,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: NextUpdatesViewModel, nextUpdatesOptOutViewModel: NextUpdatesOptOutViewModel,
+@(obligationsModel: NextUpdatesViewModel, optOutModel: NextUpdatesOptOutViewModel,
   backUrl: String,
   isAgent: Boolean = false,
   origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -53,14 +53,14 @@
 
 	@h1(msg = "nextUpdates.heading")
 
-	@if(nextUpdatesOptOutViewModel.showUpdateTypeDetailsSection){
+	@if(optOutModel.showUpdateTypeDetailsSection){
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
 	@p() {
 
 		@{
-			nextUpdatesOptOutViewModel.optOutViewModel.map {
+			optOutModel.optOutViewModel.map {
 
 				case m:OptOutOneYearViewModel =>
 					Html(
@@ -87,7 +87,7 @@
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 
-	@nextUpdatesHelper(currentObligations)
+	@nextUpdatesHelper(obligationsModel)
 
 	@p(){
 		@messages("nextUpdates.previousYears.textOne")
@@ -103,7 +103,7 @@
 	}
 
 
-	@if(nextUpdatesOptOutViewModel.showUseCompatibleSoftwareSection){
+	@if(optOutModel.showUseCompatibleSoftwareSection){
 	    @h3(msg = "nextUpdates.updates.software.heading", optId = Some("updates-software-heading"))
 	    @p(){
             <div id="updates-software-link" class="govuk-body app-get-help-link">
