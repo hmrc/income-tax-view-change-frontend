@@ -22,7 +22,7 @@ import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConne
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.admin.AdjustPaymentsOnAccount
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PoAAmountViewModel}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoAAmendmentData, PaymentOnAccountViewModel}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -61,24 +61,30 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
-  val poaViewModelDecreaseJourney = PoAAmountViewModel(
-    partiallyOrFullyPaidPoaExists = false,
-    poaPreviouslyAdjusted = false,
+  val poaViewModelDecreaseJourney = PaymentOnAccountViewModel(
+    poaPreviouslyAdjusted = None,
+    poaOneTransactionId = "poaOne-Id",
+    poaTwoTransactionId = "poaTwo-Id",
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 5000,
     totalAmountTwo = 5000,
     relevantAmountOne = 5000,
-    relevantAmountTwo = 5000
+    relevantAmountTwo = 5000,
+    poAPartiallyPaid = false,
+    poAFullyPaid = false
   )
 
-  val poaViewModelIncreaseJourney = PoAAmountViewModel( //Increase OR Decrease journey
-    partiallyOrFullyPaidPoaExists = false,
-    poaPreviouslyAdjusted = false,
+  val poaViewModelIncreaseJourney = PaymentOnAccountViewModel( //Increase OR Decrease journey
+    poaOneTransactionId = "poaOne-Id",
+    poaTwoTransactionId = "poaTwo-Id",
+    poaPreviouslyAdjusted = None,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 4000,
     totalAmountTwo = 4000,
     relevantAmountOne = 5000,
-    relevantAmountTwo = 5000
+    relevantAmountTwo = 5000,
+    poAPartiallyPaid = false,
+    poAFullyPaid = false
   )
 
   def getPostRequest(isAgent: Boolean, mode: Mode, poaAmount: String) = {

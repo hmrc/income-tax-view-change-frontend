@@ -22,15 +22,17 @@ case class PaymentOnAccountViewModel(
                              poaOneTransactionId: String,
                              poaTwoTransactionId: String,
                              taxYear: TaxYear,
-                             paymentOnAccountOne: BigDecimal,
-                             paymentOnAccountTwo: BigDecimal,
-                             poARelevantAmountOne: BigDecimal,
-                             poARelevantAmountTwo: BigDecimal,
-                             poAPartiallyPaid: Boolean
+                             totalAmountOne: BigDecimal,
+                             totalAmountTwo: BigDecimal,
+                             relevantAmountOne: BigDecimal,
+                             relevantAmountTwo: BigDecimal,
+                             poaPreviouslyAdjusted: Option[Boolean],
+                             poAPartiallyPaid: Boolean,
+                             poAFullyPaid: Boolean
                            ) {
 
-  val totalAmount: BigDecimal = paymentOnAccountOne + paymentOnAccountTwo
-  private val poaRelevantAmount = poARelevantAmountOne + poARelevantAmountTwo
+  val totalAmount: BigDecimal = totalAmountOne + totalAmountTwo
+  private val poaRelevantAmount = relevantAmountOne + relevantAmountTwo
 
   def totalAmountLessThanPoa: Boolean = {
     totalAmount < poaRelevantAmount
@@ -38,5 +40,7 @@ case class PaymentOnAccountViewModel(
 
   val partiallyPaidAndTotalAmountLessThanPoa: Boolean =
     poAPartiallyPaid && totalAmountLessThanPoa
+
+  val partiallyOrFullyPaidPoaExists: Boolean = poAPartiallyPaid || poAFullyPaid
 
 }

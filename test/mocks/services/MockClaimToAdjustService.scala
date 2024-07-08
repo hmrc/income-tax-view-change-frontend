@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
@@ -36,31 +36,20 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
     reset(mockClaimToAdjustService)
   }
 
-  val defaultPaymentOnAccountModel = PaymentOnAccountViewModel(
+  val defaultPaymentOnAccountModel: PaymentOnAccountViewModel = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",
     poaTwoTransactionId = "poaTwo-Id",
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-    paymentOnAccountOne = 5000.00,
-    paymentOnAccountTwo = 5000.00,
-    poARelevantAmountOne = 5000.00,
-    poARelevantAmountTwo = 5000.00,
-    poAPartiallyPaid = false
-  )
-
-  val defaultPaymentOnAccountViewModel = AmendablePoaViewModel(
-    poaOneTransactionId = "poaOne-Id",
-    poaTwoTransactionId = "poaTwo-Id",
-    taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-    paymentOnAccountOne = 5000.00,
-    paymentOnAccountTwo = 5000.00,
-    poARelevantAmountOne = 5000.00,
-    poARelevantAmountTwo = 5000.00,
+    totalAmountOne = 5000.00,
+    totalAmountTwo = 5000.00,
+    relevantAmountOne = 5000.00,
+    relevantAmountTwo = 5000.00,
     poAPartiallyPaid = false,
     poAFullyPaid = false,
-    poasHaveBeenAdjustedPreviously = false
+    poaPreviouslyAdjusted = Some(false)
   )
 
-  def setupMockGetPaymentOnAccountViewModel(data: AmendablePoaViewModel = defaultPaymentOnAccountViewModel): Unit =
+  def setupMockGetPaymentOnAccountViewModel(data: PaymentOnAccountViewModel = defaultPaymentOnAccountModel): Unit =
     when(mockClaimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(Right(data)))
 
@@ -88,14 +77,14 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
         )
       )
 
-  def setupMockGetPoaAmountViewModel(response: Either[Throwable, PoAAmountViewModel]): Unit = {
+  def setupMockGetPoaAmountViewModel(response: Either[Throwable, PaymentOnAccountViewModel]): Unit = {
     when(mockClaimToAdjustService
-      .getEnterPoAAmountViewModel(Nino(any()))(any(), any(), any()))
+      .getPoaViewModelWithAdjustmentReason(Nino(any()))(any(), any(), any()))
       .thenReturn(Future.successful(response))
   }
 
   def setupMockGetPoaAmountViewModelFailure(): Unit =
-    when(mockClaimToAdjustService.getEnterPoAAmountViewModel(Nino(any()))(any(), any(), any()))
+    when(mockClaimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(any()))(any(), any(), any()))
       .thenReturn(
         Future.successful(
           Left(

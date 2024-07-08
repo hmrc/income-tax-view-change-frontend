@@ -63,11 +63,13 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
       poaOneTransactionId = "poaOne-Id",
       poaTwoTransactionId = "poaTwo-Id",
       taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-      paymentOnAccountOne = 5000.00,
-      paymentOnAccountTwo = 5000.00,
-      poARelevantAmountOne = 5000.00,
-      poARelevantAmountTwo = 5000.00,
-      poAPartiallyPaid = false
+      totalAmountOne = 5000.00,
+      totalAmountTwo = 5000.00,
+      relevantAmountOne = 5000.00,
+      relevantAmountTwo = 5000.00,
+      poAPartiallyPaid = false,
+      poAFullyPaid = false,
+      poaPreviouslyAdjusted = None
     ))
 
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))

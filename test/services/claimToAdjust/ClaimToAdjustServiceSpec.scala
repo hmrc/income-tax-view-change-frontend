@@ -21,7 +21,7 @@ import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnecto
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.{AmendablePoaViewModel, PaymentOnAccountViewModel, PoAAmountViewModel}
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.test.FakeRequest
@@ -181,7 +181,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, false)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, None, false, false)))
         }
       }
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
@@ -194,7 +194,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
 
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, None, false, false)))
         }
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
@@ -204,7 +204,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val f = fixture(LocalDate.of(2024, 4, 1))
         val result = f.testClaimToAdjustService.getPoaForNonCrystallisedTaxYear(testUserNino)
         whenReady(result) {
-          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, false)))
+          result => result shouldBe Right(Some(PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2023, 2024), 150.00, 250.00, 100.00, 100.00, None, false, false)))
         }
       }
     }
@@ -268,15 +268,15 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          AmendablePoaViewModel(
+          PaymentOnAccountViewModel(
             poaOneTransactionId = "DOCID01",
             poaTwoTransactionId = "DOCID02",
             taxYear = TaxYear(taxYear - 1, taxYear),
-            poasHaveBeenAdjustedPreviously = true,
-            paymentOnAccountOne = 150.00,
-            paymentOnAccountTwo = 250.00,
-            poARelevantAmountOne = 100.00,
-            poARelevantAmountTwo = 100.00,
+            poaPreviouslyAdjusted = Some(true),
+            totalAmountOne = 150.00,
+            totalAmountTwo = 250.00,
+            relevantAmountOne = 100.00,
+            relevantAmountTwo = 100.00,
             poAPartiallyPaid = true,
             poAFullyPaid = false))
       }
@@ -308,15 +308,15 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       whenReady(result) {
         result => result shouldBe Right(
-          AmendablePoaViewModel(
+          PaymentOnAccountViewModel(
             poaOneTransactionId = "DOCID01",
             poaTwoTransactionId = "DOCID02",
             taxYear = TaxYear(taxYear - 1, taxYear),
-            poasHaveBeenAdjustedPreviously = true,
-            paymentOnAccountOne = 150.00,
-            paymentOnAccountTwo = 250.00,
-            poARelevantAmountOne = 100.00,
-            poARelevantAmountTwo = 100.00,
+            poaPreviouslyAdjusted = Some(true),
+            totalAmountOne = 150.00,
+            totalAmountTwo = 250.00,
+            relevantAmountOne = 100.00,
+            relevantAmountTwo = 100.00,
             poAPartiallyPaid = true,
             poAFullyPaid = true))
       }
@@ -374,11 +374,11 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
-      val result = f.testClaimToAdjustService.getEnterPoAAmountViewModel(testUserNino)
+      val result = f.testClaimToAdjustService.getPoaViewModelWithAdjustmentReason(testUserNino)
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(false, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, Some(true), false, false))
       }
     }
 
@@ -405,11 +405,11 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
 
-      val result = f.testClaimToAdjustService.getEnterPoAAmountViewModel(testUserNino)
+      val result = f.testClaimToAdjustService.getPoaViewModelWithAdjustmentReason(testUserNino)
 
       whenReady(result) {
         result => result shouldBe Right(
-          PoAAmountViewModel(true, true, TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00))
+          PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, Some(true), true, true))
       }
     }
 
@@ -431,7 +431,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       ))
 
       val f = fixture(LocalDate.of(taxYear, 8, 27))
-      val result = f.testClaimToAdjustService.getEnterPoAAmountViewModel(testUserNino)
+      val result = f.testClaimToAdjustService.getPoaViewModelWithAdjustmentReason(testUserNino)
 
       whenReady(result) {
         result => {
