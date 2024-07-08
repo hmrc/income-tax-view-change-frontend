@@ -44,7 +44,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
 
-  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: Int)
+  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
                              (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
 
     val body = OptOutUpdateRequest(taxYear = toApiFormat(taxYear), updateReason = updateReason)
