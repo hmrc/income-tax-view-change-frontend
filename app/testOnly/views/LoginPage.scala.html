@@ -28,7 +28,7 @@
         form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], currentDate: String)(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
     ITSAStatus.values.unsorted.map { status =>
@@ -44,6 +44,8 @@
     <script src="@testOnly.controllers.routes.TestOnlyAssetsController.at("optOutCustomData.js")"></script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
+
+    <h2>@currentDate</h2>
 
     @form(postAction) {
 

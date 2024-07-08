@@ -18,7 +18,7 @@ package config.featureswitch
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin.{FeatureSwitch, FeatureSwitchName, TimeMachine}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 
 trait FeatureSwitching {
 
@@ -71,20 +71,6 @@ trait FeatureSwitching {
       FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
-
-  def timeMachine: TimeMachineModel = {
-    TimeMachineModel(
-      isTimeMachineEnabled = isEnabledFromConfig(TimeMachine),
-      addYears = appConfig.timeMachineAddYears,
-      addDays = appConfig.timeMachineAddDays
-    )
-  }
-
-  case class TimeMachineModel(
-                                  isTimeMachineEnabled: Boolean,
-                                  addYears: Int,
-                                  addDays: Int
-                                )
 
 }
 

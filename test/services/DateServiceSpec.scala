@@ -18,8 +18,6 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import models.admin.NavBarFs
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api.test.FakeRequest
@@ -44,11 +42,6 @@ class DateServiceSpec extends TestSupport {
   )(FakeRequest())
 
   override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(appConfig)
-  }
-
-  override def afterEach(): Unit = {
     super.beforeEach()
     reset(appConfig)
   }

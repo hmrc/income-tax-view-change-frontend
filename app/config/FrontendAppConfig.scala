@@ -181,7 +181,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
 
-//  lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
+  lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("time-machine.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
 

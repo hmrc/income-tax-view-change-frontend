@@ -57,8 +57,6 @@ object FeatureSwitchName {
       JsSuccess(MFACreditsAndDebits)
     case name if name == JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case name if name == JsString(TimeMachine.name) =>
-      JsSuccess(TimeMachine)
     case name if name == JsString(CalendarQuarterTypes.name) =>
       JsSuccess(CalendarQuarterTypes)
     case name if name == JsString(IncomeSourcesNewJourney.name) =>
@@ -93,8 +91,7 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
-      PaymentHistoryRefunds, TimeMachine, CalendarQuarterTypes,
-      IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
+      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
 
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -154,12 +151,6 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override val name = "payment-history-refunds"
   override def toString: String = "Payment History Refunds"
 }
-
-case object TimeMachine extends FeatureSwitchName {
-  override val name = "time-machine"
-  override def toString: String = "Time Machine"
-}
-
 
 case object CalendarQuarterTypes extends FeatureSwitchName {
   override val name = "calendar-quarter-types"
