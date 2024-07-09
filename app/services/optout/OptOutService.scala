@@ -96,7 +96,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val previousYear = currentYear.previousYear
 
     val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-    val previousYearCalcStatus: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
+    val previousYearCalcStatus: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
       statusMap <- taxYearITSAStatus

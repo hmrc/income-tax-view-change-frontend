@@ -546,14 +546,14 @@ class OptOutServiceSpec extends UnitSpec
     "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
           setupMockGetCurrentTaxYearEnd(taxYear.endYear)
 
           val expected = NextUpdatesQuarterlyReportingContentChecks(
             currentYearItsaStatus = true,
             previousYearItsaStatus = false,
-            previousYearCrystallisedStatus = Some(crystallised))
+            previousYearCrystallisedStatus = crystallised)
 
           service.getNextUpdatesQuarterlyReportingContentChecks.futureValue shouldBe expected
         }
@@ -574,7 +574,7 @@ class OptOutServiceSpec extends UnitSpec
 
       "ITSA Status from CY-1 till future years is unavailable" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(Some(crystallised)))
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
           setupMockGetCurrentTaxYearEnd(taxYear.endYear)
 

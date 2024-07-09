@@ -33,7 +33,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+              previousYearCrystallisedStatus = previousYearCrystallised)
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
@@ -49,7 +49,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+              previousYearCrystallisedStatus = previousYearCrystallised)
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
@@ -69,7 +69,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+              previousYearCrystallisedStatus = previousYearCrystallised)
 
             viewModel.showUpdateTypeDetailsSection shouldBe Some({})
         }
@@ -85,7 +85,7 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = Some(previousYearCrystallised))
+              previousYearCrystallisedStatus = previousYearCrystallised)
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
