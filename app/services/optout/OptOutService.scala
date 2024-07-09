@@ -60,10 +60,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
-  private def getITSAStatus(year: TaxYear, statusMap: Map[TaxYear, ITSAStatus]): ITSAStatus = {
-    statusMap.getOrElse(year, ITSAStatus.NoStatus)
-  }
-
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
@@ -72,18 +68,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                                      ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
-      status = getITSAStatus(previousYear, statusMap),
+      status = statusMap(previousYear),
       taxYear = previousYear,
       crystallised = finalisedStatus
     )
 
     val currentYearOptOut = CurrentOptOutTaxYear(
-      status = getITSAStatus(currentYear, statusMap),
+      status = statusMap(currentYear),
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptOutTaxYear(
-      status = getITSAStatus(nextYear, statusMap),
+      status = statusMap(nextYear),
       taxYear = nextYear,
       currentTaxYear = currentYearOptOut
     )
@@ -116,7 +112,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
                                                          hc: HeaderCarrier,
                                                          ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =
-    itsaStatusService.getStatusTillAvailableFutureYears(previousYear).map(_.view.mapValues(_.status).toMap)
+    itsaStatusService.getStatusTillAvailableFutureYears(previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
 
   def makeOptOutUpdateRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     fetchOptOutProposition().flatMap { proposition =>
