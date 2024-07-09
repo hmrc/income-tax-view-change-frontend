@@ -94,8 +94,8 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", Fulfilled)))
   ))
 
-  private def getQuarterType(string: String) = {
-    if (string == "Quarterly") QuarterlyObligation else EopsObligation
+  private def getQuarterType(incomeType: String) = {
+    if (incomeType == "Quarterly") QuarterlyObligation else EopsObligation
   }
 
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
