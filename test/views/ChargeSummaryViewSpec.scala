@@ -19,10 +19,10 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
-import enums.OtherCharge
+import enums.{DocumentType, OtherCharge}
 import exceptions.MissingFieldException
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
-import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,6 +41,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
+  val viewModel: ChargeSummaryViewModel
 
   import Messages._
 
@@ -57,10 +58,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false,
+                  documentType: DocumentType,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
     val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType, adjustmentHistory = adjustmentHistory)
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit, documentType = documentDetail.getDocType, adjustmentHistory)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
