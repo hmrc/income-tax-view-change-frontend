@@ -142,7 +142,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
           isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
         } yield {
-          Some(List(isTY1Crystallised.get, isTY2Crystallised.get))
+          Some(List(isTY1Crystallised, isTY2Crystallised))
         }
       case _ =>
         Future.successful(None)

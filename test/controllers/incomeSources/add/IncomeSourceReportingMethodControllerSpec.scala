@@ -137,15 +137,15 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         .thenReturn(Future.successful(true))
   }
 
-  def setupMockIsTaxYearCrystallisedCall(scenario: Scenario): OngoingStubbing[Future[Option[Boolean]]] = scenario match {
+  def setupMockIsTaxYearCrystallisedCall(scenario: Scenario): OngoingStubbing[Future[Boolean]] = scenario match {
     case FIRST_YEAR_CRYSTALLISED =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(Some(true)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(true))
     case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(false))
     case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
     case _ =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
   }
 
   def setupMockUpdateIncomeSourceCall(numberOfSuccessResponses: Int): Unit = {
@@ -213,7 +213,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     }
   }
 
-  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
+  val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   for (isAgent <- Seq(true, false)) yield {
     for (incomeSourceType <- incomeSourceTypes) yield {
