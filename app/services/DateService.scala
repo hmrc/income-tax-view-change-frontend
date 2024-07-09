@@ -29,10 +29,10 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   val appConfig: FrontendAppConfig = frontendAppConfig
 
   def getCurrentDate: LocalDate = {
-    if (timeMachine.isTimeMachineEnabled) {
+    if (getTimeMachineConfig.isTimeMachineEnabled) {
       LocalDate.now()
-        .plusYears(timeMachine.addYears)
-        .plusDays(timeMachine.addDays)
+        .plusYears(getTimeMachineConfig.addYears)
+        .plusDays(getTimeMachineConfig.addDays)
     } else {
       LocalDate.now()
     }

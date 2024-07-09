@@ -20,15 +20,15 @@ trait TimeMachine {
 
   val appConfig: FrontendAppConfig
 
-  def timeMachine: TimeMachineModel = {
-    TimeMachineModel(
+  def getTimeMachineConfig: TimeMachineSettings = {
+    TimeMachineSettings(
       isTimeMachineEnabled = appConfig.isTimeMachineEnabled,
       addYears = appConfig.timeMachineAddYears,
       addDays = appConfig.timeMachineAddDays
     )
   }
 
-  case class TimeMachineModel(
+  case class TimeMachineSettings(
                                isTimeMachineEnabled: Boolean,
                                addYears: Int,
                                addDays: Int

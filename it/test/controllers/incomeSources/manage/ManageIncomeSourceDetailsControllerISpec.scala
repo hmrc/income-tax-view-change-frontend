@@ -24,6 +24,7 @@ import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -34,7 +35,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
+class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase with GuiceOneAppPerTest  {
 
   val manageSelfEmploymentShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
   val manageUKPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
@@ -71,7 +72,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
