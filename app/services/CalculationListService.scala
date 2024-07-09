@@ -77,10 +77,6 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
     }
 
-    isCrystallised.map {
-      case None        => false //when the flag is not present then default to false i.e not-crystallised
-      case Some(false) => false
-      case Some(true)  => true
-    }
+    isCrystallised.map(_.contains(true))
   }
 }
