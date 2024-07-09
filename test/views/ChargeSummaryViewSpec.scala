@@ -989,5 +989,4 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
     }
   }
-
 }
