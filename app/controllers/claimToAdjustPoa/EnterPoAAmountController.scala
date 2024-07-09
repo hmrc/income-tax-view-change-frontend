@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.{Increase, PoAAmountViewModel}
+import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel}
 import models.core.{CheckMode, Mode, Nino, NormalMode}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -53,7 +53,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
           withSessionData() { session =>
-            claimToAdjustService.getEnterPoAAmountViewModel(Nino(user.nino)).map {
+            claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).map {
               case Right(viewModel) =>
                 val filledForm = session.newPoAAmount.fold(EnterPoaAmountForm.form)(value =>
                   EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
@@ -74,7 +74,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
   def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       ifAdjustPoaIsEnabled(isAgent) {
-        claimToAdjustService.getEnterPoAAmountViewModel(Nino(request.nino)).flatMap {
+        claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(request.nino)).flatMap {
           case Right(viewModel) =>
             handleForm(viewModel, isAgent, mode)
           case Left(ex) =>
@@ -84,7 +84,7 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
       }
   }
 
-  def handleForm(viewModel: PoAAmountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleForm(viewModel: PaymentOnAccountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, isAgent, EnterPoAAmountController.submit(isAgent, mode)))),
@@ -97,8 +97,8 @@ class EnterPoAAmountController @Inject()(val authorisedFunctions: AuthorisedFunc
     )
   }
 
-  def getRedirect(viewModel: PoAAmountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
-    (viewModel.totalAmountLessThanPoa, viewModel.hasIncreased(newPoaAmount)) match {
+  def getRedirect(viewModel: PaymentOnAccountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+    (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
       case (true, true) => hasIncreased(isAgent)
       case (true, _) => hasDecreased(isAgent, mode)
       case _ => Future.successful(Redirect(CheckYourAnswersController.show(isAgent)))

@@ -58,17 +58,17 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
   }
 
   private def checkAndLogAPIDataSet(session: PoAAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
-    if (session.newPoAAmount.contains(poa.paymentOnAccountOne)) {
-      Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.paymentOnAccountOne}")
+    if (session.newPoAAmount.contains(poa.totalAmountOne)) {
+      Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.totalAmountOne}")
     }
     else {
-      Logger("application").error(s"Amount returned from API: ${poa.paymentOnAccountOne} does not equal amount in mongo: ${session.newPoAAmount}")
+      Logger("application").error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoAAmount}")
     }
   }
 
   private def setJourneyCompletedFlag(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
-      case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.paymentOnAccountOne)))
+      case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne)))
       case Left(ex) =>
         Logger("application").error(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}")
         Future.successful(showInternalServerError(isAgent))

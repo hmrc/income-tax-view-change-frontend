@@ -63,10 +63,10 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   }
 
   def isTaxYearCrystallised(taxYear: TaxYear)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    isTaxYearCrystallised(taxYear.endYear).map(_.getOrElse(false))
+    isTaxYearCrystallised(taxYear.endYear)
   }
 
-  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[Boolean]] = {
+  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Boolean] = {
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear >= currentTaxYearEnd
@@ -77,10 +77,6 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
     }
 
-    isCrystallised.map {
-      case None => Some(false)//when the flag is not present then default to false i.e not-crystallised
-      case Some(b) => Some(b)
-    }
+    isCrystallised.map(_.contains(true))
   }
-
 }

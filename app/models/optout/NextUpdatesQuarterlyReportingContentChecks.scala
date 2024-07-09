@@ -16,9 +16,9 @@
 
 package models.optout
 
-case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Option[Boolean]) {
+case class NextUpdatesQuarterlyReportingContentChecks(currentYearItsaStatus: Boolean, previousYearItsaStatus: Boolean, previousYearCrystallisedStatus: Boolean) {
 
-  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus.getOrElse(false))) Some({}) else None
+  private def showOptOutContent: Option[Unit] = if (currentYearItsaStatus || (previousYearItsaStatus && !previousYearCrystallisedStatus)) Some({}) else None
 
   def showUpdateTypeDetailsSection: Option[Unit] = showOptOutContent
 
