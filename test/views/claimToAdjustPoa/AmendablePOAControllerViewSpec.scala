@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import models.claimToAdjustPoa.AmendablePoaViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -26,7 +26,7 @@ import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 class AmendablePOAControllerViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Boolean = false) {
+  class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Option[Boolean] = None) {
 
     val amendablePaymentOnAccount: AmendablePaymentOnAccount = app.injector.instanceOf[AmendablePaymentOnAccount]
 
@@ -36,17 +36,17 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           amendablePaymentOnAccount(
             isAgent = isAgent,
             viewModel =
-              AmendablePoaViewModel(
+              PaymentOnAccountViewModel(
                 poaOneTransactionId = "poa-one-id",
                 poaTwoTransactionId = "poa-two-id",
                 taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-                paymentOnAccountOne = BigDecimal(3000.45),
-                paymentOnAccountTwo = BigDecimal(3000.45),
-                poARelevantAmountOne = BigDecimal(5000.50),
-                poARelevantAmountTwo = BigDecimal(5000.50),
-                poAPartiallyPaid = false,
-                poAFullyPaid = poAFullyPaid,
-                poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
+                totalAmountOne = BigDecimal(3000.45),
+                totalAmountTwo = BigDecimal(3000.45),
+                relevantAmountOne = BigDecimal(5000.50),
+                relevantAmountTwo = BigDecimal(5000.50),
+                partiallyPaid = false,
+                fullyPaid = poAFullyPaid,
+                previouslyAdjusted = poasHaveBeenAdjustedPreviously
               ),
           )
         )
@@ -81,7 +81,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£3,000.45"
       }
-      "render the first Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
+      "render the first Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = Some(true)) {
         document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
         document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
@@ -97,7 +97,7 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£3,000.45"
       }
-      "render the second Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
+      "render the second Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = Some(true)) {
         document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
         document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
         document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")

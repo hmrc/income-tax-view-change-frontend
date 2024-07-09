@@ -160,11 +160,11 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         Future.successful(None)
       case Some(LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator)) =>
         calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
-          case Some(true) =>
+          case true =>
             Future.successful {
               Some(IncomeSourceReportingMethodViewModel(latencyYear1 = None, latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
             }
-          case _ =>
+          case false =>
             Future.successful {
               Some(IncomeSourceReportingMethodViewModel(latencyYear1 = Some(LatencyYear(taxYear1, taxYear1LatencyIndicator)),
                 latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))

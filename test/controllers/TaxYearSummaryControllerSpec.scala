@@ -30,8 +30,7 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.ObligationStatus.Fulfilled
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -110,7 +109,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           obligationType = "Quarterly",
           dateReceived = Some(fixedDate),
           periodKey = "Quarterly",
-          Fulfilled
+          StatusFulfilled
         )
       )
     )
