@@ -80,9 +80,9 @@ class FeatureSwitchService @Inject()(
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchRepository.setFeatureSwitches(featureSwitches)
     } else {
-      featureSwitches.foreach(featureSwitch =>
-        setFS(featureSwitch._1, featureSwitch._2)
-      )
+      featureSwitches.foreach { case (featureSwitchName, state) =>
+        setFS(featureSwitchName, state)
+      }
       Future.successful((): Unit)
     }
   }
