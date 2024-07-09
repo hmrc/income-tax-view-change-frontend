@@ -28,9 +28,11 @@ import javax.inject.{Inject, Singleton}
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with TimeMachine {
   val appConfig: FrontendAppConfig = frontendAppConfig
 
-  def getCurrentDate: LocalDate = {
+  def now(): LocalDate = LocalDate.now()
+
+  override def getCurrentDate: LocalDate = {
     if (getTimeMachineConfig.isTimeMachineEnabled) {
-      LocalDate.now()
+      now()
         .plusYears(getTimeMachineConfig.addYears)
         .plusDays(getTimeMachineConfig.addDays)
     } else {
@@ -91,7 +93,9 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
 
 @ImplementedBy(classOf[DateService])
 trait DateServiceInterface {
-  def getCurrentDate: LocalDate
+
+  protected def now(): LocalDate
+  def getCurrentDate: LocalDate = now()
 
   def getCurrentTaxYear: TaxYear
 
