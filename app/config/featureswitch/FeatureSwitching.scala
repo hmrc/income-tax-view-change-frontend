@@ -34,20 +34,14 @@ trait FeatureSwitching {
 
   def isEnabled(featureSwitch: FeatureSwitchName)
                  (implicit user: MtdItUser[_]): Boolean = {
-    if (appConfig.readFeatureSwitchesFromMongo) {
-      user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
-    } else {
-      isEnabledFromConfig(featureSwitch)
-    }
+      isEnabled(featureSwitch, user.featureSwitches)
   }
 
-  @deprecated("Please use isEnabled instead, this function to be removed in the next releases", "1.1602.0")
-  def isDisabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
+  def isEnabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
-     !fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+     fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     } else {
-      sys.props.get(featureSwitch.name) orElse
-        appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_OFF
+      isEnabledFromConfig(featureSwitch)
     }
   }
 

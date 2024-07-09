@@ -100,6 +100,11 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     "amount" -> nicBand.amount
   )
 
+  private def transitionalProfitObject(incomeTaxCharged: BigDecimal, totalTaxableProfit: BigDecimal) = Json.obj(
+    "rateBand" -> s"Transitional profit (${totalTaxableProfit.toCurrencyString})",
+    "amount" -> incomeTaxCharged
+  )
+
   private def reductionTypeToString(reductionType: String): Option[String] =
     Some(reductionType) collect {
       case "vctSubscriptions" => "Venture Capital Trust relief"
@@ -257,8 +262,13 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private val calculationMessagesDetail: Option[Seq[JsObject]] = optDetail(allowedCalcMessages.map(calcMessagesJson))
 
+  private val transitionalProfitDetail: Seq[JsObject] = viewModel.transitionProfitRow match {
+    case Some(row) => Seq(transitionalProfitObject(row.incomeTaxCharged, row.totalTaxableProfit))
+    case None => Seq.empty
+  }
+
   private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(viewModel.payPensionsProfitBands.getOrElse(Seq.empty)
-    .filter(_.income > 0).map(taxBandRateMessageJson))
+    .filter(_.income > 0).map(taxBandRateMessageJson) ++ transitionalProfitDetail)
 
   private val savingsDetail: Option[Seq[JsObject]] = optDetail(viewModel.savingsAndGainsBands.getOrElse(Seq.empty)
     .filter(_.income > 0).map(taxBandRateMessageJson))

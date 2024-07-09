@@ -44,7 +44,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
     calculation = None)
 
-  val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
+  val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
   val testCalcId: String = "1234567890"
 
@@ -98,18 +98,18 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       }
     }
 
-    "when MongoLock is acquired and retryable response(404) is received from calculation service for all retries" should {
+    "when MongoLock is acquired and retryable response(204) is received from calculation service for all retries" should {
       "return a retryable(404) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNotFoundResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNoContentResponse)
 
         TestCalculationPollingService
           .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
-    "when MongoLock is acquired and retryable response(404) is received initially from calculation service and 200 after few seconds" should {
+    "when MongoLock is acquired and retryable response(204) is received initially from calculation service and 200 after few seconds" should {
       "return a retryable(404) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNotFoundResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNoContentResponse)
 
         val result = TestCalculationPollingService
           .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid)
