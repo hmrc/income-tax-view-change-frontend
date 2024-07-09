@@ -62,7 +62,7 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
   )
 
   val poaViewModelDecreaseJourney = PaymentOnAccountViewModel(
-    poaPreviouslyAdjusted = None,
+    previouslyAdjusted = None,
     poaOneTransactionId = "poaOne-Id",
     poaTwoTransactionId = "poaTwo-Id",
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
@@ -70,21 +70,21 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
     totalAmountTwo = 5000,
     relevantAmountOne = 5000,
     relevantAmountTwo = 5000,
-    poAPartiallyPaid = false,
-    poAFullyPaid = false
+    partiallyPaid = false,
+    fullyPaid = false
   )
 
   val poaViewModelIncreaseJourney = PaymentOnAccountViewModel( //Increase OR Decrease journey
     poaOneTransactionId = "poaOne-Id",
     poaTwoTransactionId = "poaTwo-Id",
-    poaPreviouslyAdjusted = None,
+    previouslyAdjusted = None,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 4000,
     totalAmountTwo = 4000,
     relevantAmountOne = 5000,
     relevantAmountTwo = 5000,
-    poAPartiallyPaid = false,
-    poAFullyPaid = false
+    partiallyPaid = false,
+    fullyPaid = false
   )
 
   def getPostRequest(isAgent: Boolean, mode: Mode, poaAmount: String) = {

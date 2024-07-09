@@ -54,7 +54,7 @@
 }
 
 @getTableHeading = @{
-    if(viewModel.poaPreviouslyAdjusted.contains(true)) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Some(Seq(
             HeadCell(
             ),
@@ -81,7 +81,7 @@
 }
 
 @getRow1 = @{
-    if(viewModel.poaPreviouslyAdjusted.contains(true)) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Seq(TableRow(
             content = Text(viewModel.relevantAmountOne.toCurrencyString),
             format = Some("numeric")
@@ -92,7 +92,7 @@
     }
 }
 @getRow2 = @{
-    if(viewModel.poaPreviouslyAdjusted.contains(true)) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Seq(TableRow(
             content = Text(viewModel.relevantAmountTwo.toCurrencyString),
             format = Some("numeric")
@@ -157,12 +157,12 @@
         firstCellIsHeader = true
     ))
 
-    @if(viewModel.partiallyOrFullyPaidPoaExists && !viewModel.poaPreviouslyAdjusted.contains(true)) {
+    @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
             content = Text(getMessage("insetText.firstAttempt"))
         ))
-    } else { @if(viewModel.partiallyOrFullyPaidPoaExists && viewModel.poaPreviouslyAdjusted.contains(true)) {
+    } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
             content = Text(getMessage("insetText.secondAttempt"))

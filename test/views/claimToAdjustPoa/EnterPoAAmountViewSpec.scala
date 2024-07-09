@@ -42,14 +42,14 @@ class EnterPoAAmountViewSpec extends TestSupport{
   def poAAmountViewModel(poaPreviouslyAdjusted: Option[Boolean] = Some(false), poaPartiallyPaid: Boolean = false) = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",
     poaTwoTransactionId = "poaTwo-Id",
-    poaPreviouslyAdjusted = poaPreviouslyAdjusted,
+    previouslyAdjusted = poaPreviouslyAdjusted,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 5000,
     totalAmountTwo = 5000,
     relevantAmountOne = 5000,
     relevantAmountTwo = 5000,
-    poAPartiallyPaid = poaPartiallyPaid,
-    poAFullyPaid = false
+    partiallyPaid = poaPartiallyPaid,
+    fullyPaid = false
   )
 
   val prePopulatedForm = Some(1200).fold(EnterPoaAmountForm.form)(value =>

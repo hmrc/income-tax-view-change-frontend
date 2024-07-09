@@ -81,9 +81,9 @@ trait ClaimToAdjustHelper {
       totalAmountTwo   = poaTwoDocDetail.originalAmount,
       relevantAmountOne  = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
       relevantAmountTwo  = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      poaPreviouslyAdjusted = poaPreviouslyAdjusted,
-      poAPartiallyPaid      = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      poAFullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
+      previouslyAdjusted = poaPreviouslyAdjusted,
+      partiallyPaid      = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+      fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
     )
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
@@ -167,9 +167,9 @@ trait ClaimToAdjustHelper {
       totalAmountTwo            = poaTwoDocDetail.originalAmount,
       relevantAmountOne           = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
       relevantAmountTwo           = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      poAPartiallyPaid               = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      poAFullyPaid                   = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
-      poaPreviouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
+      partiallyPaid               = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+      fullyPaid                   = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
+      previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
     )
   }) match {
     case Some(model) => Right(model)

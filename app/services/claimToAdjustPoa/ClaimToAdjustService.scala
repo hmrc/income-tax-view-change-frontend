@@ -87,7 +87,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     } yield (adjustmentReasonMaybe, finanicalAndPoaModelMaybe) match {
       case (Right(reason), Right(FinancialDetailsAndPoAModel(_, Some(model)))) =>
         Right(
-          model.copy(poaPreviouslyAdjusted = Some(reason.isDefined))
+          model.copy(previouslyAdjusted = Some(reason.isDefined))
         )
       case (Left(ex), _) => Left(ex)
       case (_, Left(ex)) => Left(ex)

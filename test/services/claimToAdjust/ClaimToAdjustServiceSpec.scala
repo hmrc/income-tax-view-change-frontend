@@ -272,13 +272,13 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
             poaOneTransactionId = "DOCID01",
             poaTwoTransactionId = "DOCID02",
             taxYear = TaxYear(taxYear - 1, taxYear),
-            poaPreviouslyAdjusted = Some(true),
+            previouslyAdjusted = Some(true),
             totalAmountOne = 150.00,
             totalAmountTwo = 250.00,
             relevantAmountOne = 100.00,
             relevantAmountTwo = 100.00,
-            poAPartiallyPaid = true,
-            poAFullyPaid = false))
+            partiallyPaid = true,
+            fullyPaid = false))
       }
     }
 
@@ -312,13 +312,13 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
             poaOneTransactionId = "DOCID01",
             poaTwoTransactionId = "DOCID02",
             taxYear = TaxYear(taxYear - 1, taxYear),
-            poaPreviouslyAdjusted = Some(true),
+            previouslyAdjusted = Some(true),
             totalAmountOne = 150.00,
             totalAmountTwo = 250.00,
             relevantAmountOne = 100.00,
             relevantAmountTwo = 100.00,
-            poAPartiallyPaid = true,
-            poAFullyPaid = true))
+            partiallyPaid = true,
+            fullyPaid = true))
       }
     }
 

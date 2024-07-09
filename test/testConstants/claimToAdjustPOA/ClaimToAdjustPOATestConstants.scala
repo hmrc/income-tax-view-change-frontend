@@ -140,9 +140,9 @@ object ClaimToAdjustPOATestConstants {
       totalAmountTwo = 5000.00,
       relevantAmountOne = 5000.00,
       relevantAmountTwo = 5000.00,
-      poAPartiallyPaid = false,
-      poAFullyPaid = false,
-      poaPreviouslyAdjusted = None
+      partiallyPaid = false,
+      fullyPaid = false,
+      previouslyAdjusted = None
     )
   )
 

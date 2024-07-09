@@ -102,7 +102,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(viewModel.poaPreviouslyAdjusted) {
+            if(viewModel.previouslyAdjusted) {
                 Seq(
                     SummaryListRow(
                         key = Key(
@@ -157,7 +157,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(viewModel.poaPreviouslyAdjusted) {
+            if(viewModel.previouslyAdjusted) {
                 Seq(
                     SummaryListRow(
                         key = Key(
