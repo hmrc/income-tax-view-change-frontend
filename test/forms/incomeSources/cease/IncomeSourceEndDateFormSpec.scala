@@ -264,7 +264,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       completedForm.data.get("income-source-end-date.year") shouldBe Some("")
       completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.monthAndYear.required"), List()))
     }
-    "bind with a date missing day, month and year fields" in {
+    "bind with a self-employed business stop date missing day, month and year fields" in {
       val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(SelfEmployment, Some(testSelfEmploymentId), false)(testUser)
       val formData = Map("income-source-end-date.day" -> "", "income-source-end-date.month" -> "", "income-source-end-date.year" -> "")
       val completedForm = form.bind(formData)
@@ -272,7 +272,27 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       completedForm.data.get("income-source-end-date.day") shouldBe Some("")
       completedForm.data.get("income-source-end-date.month") shouldBe Some("")
       completedForm.data.get("income-source-end-date.year") shouldBe Some("")
-      completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.dayMonthAndYear.required"), List()))
+      completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.dayMonthAndYear.required.se"), List()))
+    }
+    "bind with a UK property business stop date missing day, month and year fields" in {
+      val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(UkProperty, Some(testSelfEmploymentId), false)(testUser)
+      val formData = Map("income-source-end-date.day" -> "", "income-source-end-date.month" -> "", "income-source-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("income-source-end-date.day") shouldBe Some("")
+      completedForm.data.get("income-source-end-date.month") shouldBe Some("")
+      completedForm.data.get("income-source-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.dayMonthAndYear.required.uk"), List()))
+    }
+    "bind with a foreign property business stop date missing day, month and year fields" in {
+      val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(ForeignProperty, Some(testSelfEmploymentId), false)(testUser)
+      val formData = Map("income-source-end-date.day" -> "", "income-source-end-date.month" -> "", "income-source-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("income-source-end-date.day") shouldBe Some("")
+      completedForm.data.get("income-source-end-date.month") shouldBe Some("")
+      completedForm.data.get("income-source-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("income-source-end-date", List("dateForm.error.dayMonthAndYear.required.fp"), List()))
     }
   }
 }
