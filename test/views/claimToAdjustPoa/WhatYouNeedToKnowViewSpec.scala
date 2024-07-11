@@ -37,7 +37,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
   val testOpenUrlInNewTab: String =
-    "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
+    "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
   class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
     val view: Html = whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
