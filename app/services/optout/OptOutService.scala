@@ -21,6 +21,7 @@ import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, optOutUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout._
 import repositories.UIJourneySessionDataRepository
@@ -49,38 +50,40 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val previousYear = currentYear.previousYear
     val nextYear = currentYear.nextYear
 
+    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear)
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(previousYear)
+
     for {
-      finalisedStatus <- calculationListService.isTaxYearCrystallised(previousYear)
-      statusMap <- itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
+      finalisedStatus <- finalisedStatusFuture
+      statusMap <- statusMapFuture
     }
     yield createOptOutProposition(previousYear, currentYear, nextYear, finalisedStatus, statusMap)
   }
 
-  def getStatusDetail(year: TaxYear, statusMap: Map[TaxYear, StatusDetail]): StatusDetail = {
-    val defaultStatusDetail = StatusDetail("Unknown", ITSAStatus.NoStatus, "Unknown")
-    statusMap.getOrElse(year, defaultStatusDetail)
+  private def getITSAStatus(year: TaxYear, statusMap: Map[TaxYear, ITSAStatus]): ITSAStatus = {
+    statusMap.getOrElse(year, ITSAStatus.NoStatus)
   }
 
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
                                       finalisedStatus: Boolean,
-                                      statusMap: Map[TaxYear, StatusDetail]
+                                      statusMap: Map[TaxYear, ITSAStatus]
                                      ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
-      status = getStatusDetail(previousYear, statusMap).status,
+      status = getITSAStatus(previousYear, statusMap),
       taxYear = previousYear,
       crystallised = finalisedStatus
     )
 
     val currentYearOptOut = CurrentOptOutTaxYear(
-      status = getStatusDetail(currentYear, statusMap).status,
+      status = getITSAStatus(currentYear, statusMap),
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptOutTaxYear(
-      status = getStatusDetail(nextYear, statusMap).status,
+      status = getITSAStatus(nextYear, statusMap),
       taxYear = nextYear,
       currentTaxYear = currentYearOptOut
     )
@@ -95,20 +98,25 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val currentYear = TaxYear.forYearEnd(yearEnd)
     val previousYear = currentYear.previousYear
 
-    val taxYearITSAStatus: Future[Map[TaxYear, StatusDetail]] = itsaStatusService.getStatusTillAvailableFutureYears(previousYear)
-    val previousYearCalcStatus: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(previousYear)
+    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
-      statusMap <- taxYearITSAStatus
-      isCurrentYearStatusMandatoryOrVoluntary = statusMap(currentYear).isMandatedOrVoluntary
-      isPreviousYearStatusMandatoryOrVoluntary = statusMap(previousYear).isMandatedOrVoluntary
-      calStatus <- previousYearCalcStatus
+      statusMap <- statusMapFuture
+      currentYearStatus = statusMap(currentYear)
+      previousYearStatus = statusMap(previousYear)
+      finalisedStatus <- finalisedStatusFuture
       optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
-        isCurrentYearStatusMandatoryOrVoluntary,
-        isPreviousYearStatusMandatoryOrVoluntary,
-        calStatus)
+        currentYearStatus == Mandated || currentYearStatus == Voluntary,
+        previousYearStatus == Mandated || previousYearStatus == Voluntary,
+        finalisedStatus)
     } yield optOutChecks
   }
+
+  private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
+                                                         hc: HeaderCarrier,
+                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =
+    itsaStatusService.getStatusTillAvailableFutureYears(previousYear).map(_.view.mapValues(_.status).toMap)
 
   def makeOptOutUpdateRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     fetchOptOutProposition().flatMap { proposition =>
