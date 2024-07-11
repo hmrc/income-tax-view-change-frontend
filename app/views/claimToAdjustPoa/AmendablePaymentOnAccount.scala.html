@@ -135,10 +135,11 @@
         @getMessage("p2")
     }
 
-        @p(
-            id = Some("hint")) {
-            @getMessage("hint")
-        }
+    @h2(optId = Some("heading-example"), msg = getMessage("heading.example"))
+    @p(
+        id = Some("hint")) {
+        @getMessage("hint")
+    }
 
     @govukTable(Table(
         rows = Seq(

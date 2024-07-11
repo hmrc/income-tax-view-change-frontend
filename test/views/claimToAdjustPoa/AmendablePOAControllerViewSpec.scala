@@ -67,7 +67,8 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "render the hint" in new Setup(isAgent) {
+      "render the example heading and content" in new Setup(isAgent) {
+        document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
         document.getElementById("hint").text() shouldBe messages("paymentOnAccount.hint")
         document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
