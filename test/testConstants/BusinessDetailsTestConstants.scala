@@ -21,7 +21,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core._
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationStatus, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationStatus, ObligationsModel, StatusFulfilled}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
@@ -426,7 +426,7 @@ object BusinessDetailsTestConstants {
     obligationType = "notValidObligationType",
     dateReceived = None,
     periodKey = "#002",
-    ObligationStatus.Fulfilled
+    StatusFulfilled
   ))
 
   val alignedBusiness = BusinessDetailsModel(

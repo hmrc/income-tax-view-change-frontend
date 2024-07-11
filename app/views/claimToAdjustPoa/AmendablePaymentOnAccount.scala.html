@@ -22,7 +22,6 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.claimToAdjustPoa.PaymentOnAccountViewModel
-@import models.claimToAdjustPoa.AmendablePoaViewModel
 
 @this(
     p: p,
@@ -39,7 +38,7 @@
 
 @(
     isAgent: Boolean,
-    viewModel: AmendablePoaViewModel
+    viewModel: PaymentOnAccountViewModel
 )(
     implicit request: Request[_],
     user: MtdItUser[_],
@@ -103,7 +102,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(viewModel.poasHaveBeenAdjustedPreviously) {
+            if(viewModel.previouslyAdjusted) {
                 Seq(
                     SummaryListRow(
                         key = Key(
@@ -112,7 +111,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.poARelevantAmountOne.toCurrencyString)
+                            content = HtmlContent(viewModel.relevantAmountOne.toCurrencyString)
                         )
                     ),
                     SummaryListRow(
@@ -122,7 +121,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
                         )
                     )
                 )
@@ -135,7 +134,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
                         ),
                     )
                 )
@@ -158,7 +157,7 @@
 
     @govukSummaryList(SummaryList(
         rows =
-            if(viewModel.poasHaveBeenAdjustedPreviously) {
+            if(viewModel.previouslyAdjusted) {
                 Seq(
                     SummaryListRow(
                         key = Key(
@@ -167,7 +166,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.poARelevantAmountTwo.toCurrencyString)
+                            content = HtmlContent(viewModel.relevantAmountTwo.toCurrencyString)
                         )
                     ),
                     SummaryListRow(
@@ -177,7 +176,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.paymentOnAccountTwo.toCurrencyString)
+                            content = HtmlContent(viewModel.totalAmountTwo.toCurrencyString)
                         )
                     )
                 )
@@ -189,7 +188,7 @@
                         ),
                         value = Value(
                             classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.paymentOnAccountOne.toCurrencyString)
+                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
                         ),
                     )
                 )

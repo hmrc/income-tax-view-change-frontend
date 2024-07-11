@@ -99,7 +99,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val previousYear = currentYear.previousYear
 
     val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(previousYear)
-    val finalisedStatusFuture: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
+    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
 
     for {
       statusMap <- statusMapFuture
@@ -220,11 +220,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def optOutConfirmedPageViewModel()(implicit user: MtdItUser[_],
                                      hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
     fetchOptOutProposition().flatMap { proposition =>
-      fetchSavedIntent().map { intent =>
-        proposition.optOutPropositionType.flatMap {
-          case p: OneYearOptOutProposition => Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent.taxYear, state = p.state()))
-          case p: MultiYearOptOutProposition => intent.map(i => ConfirmedOptOutViewModel(optOutTaxYear = i, state = p.state()))
-        }
+        proposition.optOutPropositionType match {
+          case Some(p: OneYearOptOutProposition) => Future.successful(Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent.taxYear, state = p.state())))
+          case Some(p: MultiYearOptOutProposition) => fetchSavedIntent().map(_.map(taxYear => ConfirmedOptOutViewModel(taxYear, p.state())))
+          case _ =>  Future.successful(None)
       }
     }
   }

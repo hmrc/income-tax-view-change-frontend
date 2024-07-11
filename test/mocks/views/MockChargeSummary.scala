@@ -22,11 +22,13 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.ChargeSummary
+import models.chargeSummary.ChargeSummaryViewModel
 
 trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
   val chargeSummary: ChargeSummary = mock(classOf[ChargeSummary])
+  val viewModel: ChargeSummaryViewModel
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -34,7 +36,7 @@ trait MockChargeSummary extends BeforeAndAfterEach {
   }
 
   def mockChargeSummary()(response: Html): Unit = {
-    when(chargeSummary.apply(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
+    when(chargeSummary.apply(viewModel)(any(), any(), any()))
       .thenReturn(response)
   }
 

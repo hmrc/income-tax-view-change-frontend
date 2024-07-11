@@ -77,20 +77,20 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       val taxYearEnd = "2023"
       "returns Some(true)" in {
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFull)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(true)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe true
       }
       "returns Some(false)" in {
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFalseFull)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns None" in {
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns Some(false) given 204 response from 1404" in {
         val error = CalculationListErrorModel(NO_CONTENT, "not found")
         setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
@@ -104,20 +104,20 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       val testTaxYearRange = "23-24"
       "returns Some(true)" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(true)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe true
       }
       "returns Some(false)" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFalseFull)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns None" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns Some(false) given 204 response from 1896" in {
         val error = CalculationListErrorModel(NO_CONTENT, "not found")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
@@ -128,13 +128,13 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
     "for year 2024-25" should {
       "returns Some(false)" in {
         val taxYearEnd = "2025"
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
     }
     "for year 2025-26" should {
       "returns Some(false)" in {
         val taxYearEnd = "2026"
-        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
     }
   }

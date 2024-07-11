@@ -29,7 +29,7 @@ import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory._
-import models.chargeSummary.PaymentHistoryAllocations
+import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -164,34 +164,34 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
 
-          mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
+          val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+            currentDate = dateService.getCurrentDate,
+            documentDetailWithDueDate = documentDetailWithDueDate,
+            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+            gatewayPage = sessionGatewayPage,
+            paymentBreakdown = paymentBreakdown,
+            paymentAllocations = paymentAllocations,
+            payments = paymentsForAllYears,
+            chargeHistoryEnabled = isEnabled(ChargeHistory),
+            paymentAllocationEnabled = paymentAllocationEnabled,
+            latePaymentInterestCharge = isLatePaymentCharge,
+            codingOutEnabled = isEnabled(CodingOut),
+            btaNavPartial = user.btaNavPartial,
+            isAgent = isAgent,
+            isMFADebit = isMFADebit,
+            documentType = documentDetailWithDueDate.documentDetail.getDocType,
+            adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
+          )
+          mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
             case Right(_) =>
-              Ok(chargeSummaryView(
-                currentDate = dateService.getCurrentDate,
-                documentDetailWithDueDate = documentDetailWithDueDate,
-                backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-                gatewayPage = sessionGatewayPage,
-                paymentBreakdown = paymentBreakdown,
-                paymentAllocations = paymentAllocations,
-                payments = paymentsForAllYears,
-                chargeHistoryEnabled = isEnabled(ChargeHistory),
-                paymentAllocationEnabled = paymentAllocationEnabled,
-                latePaymentInterestCharge = isLatePaymentCharge,
-                codingOutEnabled = isEnabled(CodingOut),
-                btaNavPartial = user.btaNavPartial,
-                isAgent = isAgent,
-                isMFADebit = isMFADebit,
-                documentType = documentDetailWithDueDate.documentDetail.getDocType,
-                adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
-              ))
-
+              Ok(chargeSummaryView(viewModel))
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
           }
-
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
+
   }
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate)(implicit user: MtdItUser[_]): Either[ErrorCode, Boolean] = {

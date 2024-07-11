@@ -15,7 +15,7 @@
  *@
 
 @import forms.adjustPoa.EnterPoaAmountForm
-@import models.claimToAdjustPoa.PoAAmountViewModel
+@import models.claimToAdjustPoa.PaymentOnAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.helpers.injected.ErrorSummary
 @import _root_.implicits.ImplicitCurrencyFormatter._
@@ -42,7 +42,7 @@
         errorSummary: ErrorSummary
 )
 
-@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PoAAmountViewModel, isAgent: Boolean, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PaymentOnAccountViewModel, isAgent: Boolean, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.enterPoaAmount.$key", args: _*)
@@ -54,7 +54,7 @@
 }
 
 @getTableHeading = @{
-    if(viewModel.poaPreviouslyAdjusted) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Some(Seq(
             HeadCell(
             ),
@@ -81,7 +81,7 @@
 }
 
 @getRow1 = @{
-    if(viewModel.poaPreviouslyAdjusted) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Seq(TableRow(
             content = Text(viewModel.relevantAmountOne.toCurrencyString),
             format = Some("numeric")
@@ -92,7 +92,7 @@
     }
 }
 @getRow2 = @{
-    if(viewModel.poaPreviouslyAdjusted) {
+    if(viewModel.hasBeenPreviouslyAdjusted) {
         Seq(TableRow(
             content = Text(viewModel.relevantAmountTwo.toCurrencyString),
             format = Some("numeric")
@@ -157,12 +157,12 @@
         firstCellIsHeader = true
     ))
 
-    @if(viewModel.partiallyOrFullyPaidPoaExists && !viewModel.poaPreviouslyAdjusted) {
+    @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
             content = Text(getMessage("insetText.firstAttempt"))
         ))
-    } else { @if(viewModel.partiallyOrFullyPaidPoaExists && viewModel.poaPreviouslyAdjusted) {
+    } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
             content = Text(getMessage("insetText.secondAttempt"))

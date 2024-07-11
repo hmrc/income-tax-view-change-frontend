@@ -126,9 +126,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
-          .thenReturn(Future.successful(Some(false)))
+          .thenReturn(Future.successful(false))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
-          .thenReturn(Future.successful(Some(false)))
+          .thenReturn(Future.successful(false))
 
       case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2024)
@@ -144,9 +144,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
-          .thenReturn(Future.successful(Some(false)))
+          .thenReturn(Future.successful(false))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
-          .thenReturn(Future.successful(Some(false)))
+          .thenReturn(Future.successful(false))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
@@ -154,9 +154,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
-          .thenReturn(Future.successful(Some(true)))
+          .thenReturn(Future.successful(true))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
-          .thenReturn(Future.successful(Some(true)))
+          .thenReturn(Future.successful(true))
 
       case NON_ELIGIBLE_ITSA_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
