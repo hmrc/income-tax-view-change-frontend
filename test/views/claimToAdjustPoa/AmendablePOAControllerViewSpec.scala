@@ -68,10 +68,10 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "not render the hint if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        Option(document.getElementById("inset-text")).isDefined shouldBe false
+        Option(document.getElementById("paid-hint")).isDefined shouldBe false
       }
       "render the hint if any poAs are unpaid" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-inset-text").text() shouldBe messages("paymentOnAccount.inset-text")
+        document.getElementById("paid-hint").text() shouldBe messages("paymentOnAccount.paid-hint")
         document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "render the first Payment On Account Summary Card" in new Setup(isAgent) {
