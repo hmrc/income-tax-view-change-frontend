@@ -30,7 +30,7 @@ import services.DateService
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching{
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching {
 
   val dateMustBeCompleteSE = "dateForm.error.dayMonthAndYear.required.se"
   val dateMustBeCompleteUK = "dateForm.error.dayMonthAndYear.required.uk"
@@ -89,17 +89,17 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
           checkRequiredFields(incomeSourceType),
           validDate(dateMustNotBeInvalid(incomeSourceType, newIncomeSourceJourney))
         )).transform[LocalDate](
-        {
-          case (day, month, year) =>
-            LocalDate.of(year.toInt, month.toInt, day.toInt)
-        },
-        date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(firstError(dateConstraints: _*))
+          {
+            case (day, month, year) =>
+              LocalDate.of(year.toInt, month.toInt, day.toInt)
+          },
+          date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
+        ).verifying(firstError(dateConstraints: _*))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
   private def dateMustBeCompleteKey(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case  SelfEmployment => dateMustBeCompleteSE
+    case SelfEmployment => dateMustBeCompleteSE
     case UkProperty => dateMustBeCompleteUK
     case ForeignProperty => dateMustBeCompleteFP
   }
