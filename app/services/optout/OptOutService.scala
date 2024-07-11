@@ -114,9 +114,8 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     fetchOptOutProposition().flatMap { proposition =>
       proposition.optOutPropositionType.map {
         case _: OneYearOptOutProposition =>
-          saveIntent(intent = proposition.availableTaxYearsForOptOut.head)
-          makeOptOutUpdateRequest(proposition)
-        case _: MultiYearOptOutProposition => makeOptOutUpdateRequest(proposition)
+          makeOptOutUpdateRequest(proposition, Future.successful(proposition.availableTaxYearsForOptOut.headOption))
+        case _: MultiYearOptOutProposition => makeOptOutUpdateRequest(proposition, fetchSavedIntent())
       } getOrElse Future.successful(OptOutUpdateResponseFailure.defaultFailure())
     }
   }
@@ -150,7 +149,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     repository.set(data)
   }
 
-  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition)
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentFuture: Future[Option[TaxYear]])
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear]): Seq[Future[OptOutUpdateResponse]] = {
@@ -165,12 +164,11 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
 
     val result = for {
-      intentTaxYear <- OptionT(fetchSavedIntent())
-      yearsToUpdate <- OptionT(Future.successful(Option(optOutProposition.optOutYearsToUpdate(intentTaxYear))))
-      responsesSeqOfFutures  <- OptionT(Future.successful(Option(makeUpdateCalls(yearsToUpdate))))
+      intentTaxYear <- OptionT(intentFuture)
+      yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
+      responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
       responsesSeq <- OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
-      finalResponse <- OptionT(Future.successful(Option(findAnyFailOrFirstSuccess(responsesSeq))))
-    } yield finalResponse
+    } yield findAnyFailOrFirstSuccess(responsesSeq)
 
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
