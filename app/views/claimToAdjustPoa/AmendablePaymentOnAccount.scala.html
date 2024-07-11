@@ -32,6 +32,7 @@
         mainTemplate: unifiedLayout,
         continueButton: ContinueButton,
         govukInsetText: GovukInsetText,
+        govukTable: GovukTable,
         hmrcPageHeading: HmrcPageHeading,
         govukSummaryList: GovukSummaryList
 )
@@ -54,17 +55,58 @@
     else controllers.routes.HomeController.show().url
 }
 
-@getChargeSummaryUrl(id: String) = @{
-    if(isAgent) controllers.routes.ChargeSummaryController.showAgent(viewModel.taxYear.endYear, id).url
-    else controllers.routes.ChargeSummaryController.show(viewModel.taxYear.endYear, id).url
-}
-
 @getWhatYouNeedToKnowUrl = @{
     controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
-@partiallyOrFullyPaidPoaExists = @{
-    viewModel.partiallyOrFullyPaidPoaExists
+@getTableHeading = @{
+    if(viewModel.hasBeenPreviouslyAdjusted) {
+        Some(Seq(
+            HeadCell(
+            ),
+            HeadCell(
+                content = Text(getMessage("table-heading-created-amount.key")),
+                format = Some("numeric")
+            ),
+            HeadCell(
+                content = Text(getMessage("table-heading-adjusted-amount.key")),
+                format = Some("numeric")
+            )
+        ))
+    }
+    else {
+        Some(Seq(
+            HeadCell(
+            ),
+            HeadCell(
+                content = Text(getMessage("table-heading-created-amount.key")),
+                format = Some("numeric")
+            )
+        ))
+    }
+}
+
+@getRow1 = @{
+    if(viewModel.hasBeenPreviouslyAdjusted) {
+        Seq(TableRow(
+            content = Text(viewModel.relevantAmountOne.toCurrencyString),
+            format = Some("numeric")
+        ))
+    }
+    else {
+        Seq.empty
+    }
+}
+@getRow2 = @{
+    if(viewModel.hasBeenPreviouslyAdjusted) {
+        Seq(TableRow(
+            content = Text(viewModel.relevantAmountTwo.toCurrencyString),
+            format = Some("numeric")
+        ))
+    }
+    else {
+        Seq.empty
+    }
 }
 
 @mainTemplate(
@@ -93,120 +135,39 @@
         @getMessage("p2")
     }
 
-    @if(!partiallyOrFullyPaidPoaExists) {
         @p(
-            id = Some("paid-hint")) {
-            @getMessage("paid-hint")
+            id = Some("hint")) {
+            @getMessage("hint")
         }
-    }
 
-    @govukSummaryList(SummaryList(
-        rows =
-            if(viewModel.previouslyAdjusted) {
-                Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-created-amount.key")),
-                            classes = "govuk-!-width-two-thirds"
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.relevantAmountOne.toCurrencyString)
+    @govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(
+                    content = Text(getMessage("table-heading-1"))
+                )
+            ) ++ getRow1 ++
+                    Seq(
+                        TableRow(
+                            content = Text(viewModel.totalAmountOne.toCurrencyString),
+                            format = Some("numeric")
                         )
                     ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-adjusted-amount.key")),
-                            classes = "govuk-!-width-two-thirds"
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
+            Seq(
+                TableRow(
+                    content = Text(getMessage("table-heading-2"))
+                )
+            )
+                    ++ getRow2 ++
+                    Seq(
+                        TableRow(
+                            content = Text(viewModel.totalAmountOne.toCurrencyString),
+                            format = Some("numeric")
                         )
                     )
-                )
-            } else {
-                Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-full-amount.key")),
-                            classes = "govuk-!-width-two-thirds"
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
-                        ),
-                    )
-                )
-            },
-        card = Some(Card(
-            title = Some(CardTitle(
-                content = Text(getMessage("table-heading-1"))
-            )),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = getChargeSummaryUrl(viewModel.poaOneTransactionId),
-                        content = Text(getMessage("table-heading.link")),
-                        attributes = Map("id" -> "poa1-more-details-date-link")
-                    )
-                )
-            ))
-        ))
-    ))
-
-    @govukSummaryList(SummaryList(
-        rows =
-            if(viewModel.previouslyAdjusted) {
-                Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-created-amount.key")),
-                            classes = "govuk-!-width-two-thirds"
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.relevantAmountTwo.toCurrencyString)
-                        )
-                    ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-adjusted-amount.key")),
-                            classes = "govuk-!-width-two-thirds"
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.totalAmountTwo.toCurrencyString)
-                        )
-                    )
-                )
-            } else {
-                Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getMessage("table-heading-full-amount.key"))
-                        ),
-                        value = Value(
-                            classes = "govuk-summary-list__value govuk-table__cell--numeric",
-                            content = HtmlContent(viewModel.totalAmountOne.toCurrencyString)
-                        ),
-                    )
-                )
-            },
-        card = Some(Card(
-            title = Some(CardTitle(
-                content = Text(getMessage("table-heading-2"))
-            )),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = getChargeSummaryUrl(viewModel.poaTwoTransactionId),
-                        content = Text(getMessage("table-heading.link")),
-                        attributes = Map("id" -> "poa2-more-details-date-link")
-                    )
-                )
-            ))
-        ))
+        ),
+        head = getTableHeading,
+        firstCellIsHeader = true
     ))
 
     <div class="govuk-button-group govuk-!-padding-top-3">
