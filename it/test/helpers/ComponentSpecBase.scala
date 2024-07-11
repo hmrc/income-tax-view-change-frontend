@@ -73,6 +73,8 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
+  override protected def now(): LocalDate = LocalDate.of(2023, 4, 5)
+
   override def isBeforeLastDayOfTaxYear: Boolean = true
 
   override def getCurrentTaxYearEnd: Int = 2023

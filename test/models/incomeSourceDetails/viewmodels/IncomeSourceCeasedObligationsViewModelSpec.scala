@@ -17,6 +17,7 @@
 package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.SelfEmployment
+import forms.IncomeSourcesFormsSpec.currentDate
 import models.incomeSourceDetails.TaxYear
 import play.api.mvc.Call
 import services.DateServiceInterface
@@ -53,6 +54,8 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
   def mockDateService(currentDate: LocalDate = currentDate): DateServiceInterface = new DateServiceInterface {
 
     override def getCurrentDate: LocalDate = currentDate
+
+    override protected def now(): LocalDate = currentDate
 
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(currentDate.getYear)
 

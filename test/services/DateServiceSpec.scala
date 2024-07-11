@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, TimeMachine}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api.test.FakeRequest
@@ -32,7 +32,15 @@ class DateServiceSpec extends TestSupport {
 
   override implicit val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
-  object TestDateService extends DateService()
+  val mockDateServiceInterface: DateServiceInterface = mock(classOf[DateServiceInterface])
+
+  class TestDateService(isTimeMachineEnabled: Boolean = false, addYears: Int = 0, addDays: Int = 0) extends DateService() {
+    override def now(): LocalDate = fixedDate
+
+    override def getTimeMachineConfig: TimeMachineSettings = TimeMachineSettings(isTimeMachineEnabled = isTimeMachineEnabled, addYears, addDays)
+  }
+
+  val baseTestDateService = new TestDateService()
 
   def getTaxYearStartDate(year: Int): LocalDate = LocalDate.of(year, 4, 6)
 
@@ -46,13 +54,6 @@ class DateServiceSpec extends TestSupport {
     reset(appConfig)
   }
 
-  def setupGetCurrentTestMocks(timeMachineFS: Boolean = false,
-                               addYears: Int = 0, addDays: Int = 0): Unit = {
-    when(appConfig.isTimeMachineEnabled).thenReturn(timeMachineFS)
-    when(appConfig.timeMachineAddYears).thenReturn(addYears)
-    when(appConfig.timeMachineAddDays).thenReturn(addDays)
-  }
-
   def fixture(date: LocalDate) = new {
     val fakeTestDateService: DateService = new DateService() {
       override def getCurrentDate: LocalDate = date
@@ -61,66 +62,52 @@ class DateServiceSpec extends TestSupport {
 
   "The getCurrentDate method when TimeMachine FS is off" should {
     "return the current date and time" in {
-      setupGetCurrentTestMocks()
+      val getCurrentDate = new TestDateService().getCurrentDate
 
-      val getCurrentDate = TestDateService.getCurrentDate
-
-      getCurrentDate shouldBe LocalDate.now()
+      getCurrentDate shouldBe fixedDate
     }
   }
 
   "The getCurrentDate method when TimeMachine FS is on" should {
     "return the current date and time when no additional time is added" in {
-      setupGetCurrentTestMocks()
+      val getCurrentDate = new TestDateService(true).getCurrentDate
 
-      val getCurrentDate = TestDateService.getCurrentDate
-
-      getCurrentDate shouldBe LocalDate.now()
+      getCurrentDate shouldBe fixedDate
     }
 
     "return the current date plus a year" when {
       "the TimeMachine is set to add two additional years" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, addYears = 2)
+        val expectedDate = fixedDate.plusYears(2)
 
-        val expectedDate = LocalDate.now().plusYears(2)
-
-        TestDateService.getCurrentDate shouldBe expectedDate
+        new TestDateService(true, 2).getCurrentDate shouldBe expectedDate
       }
     }
     "return a LocalDate of the current date, but 10 days in the future" when {
       "we set the config to add 10 days to the current date" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, addDays = 10)
+        val expectedDate = fixedDate.plusDays(10)
 
-        val expectedDate = LocalDate.now().plusDays(10)
-
-        TestDateService.getCurrentDate shouldBe expectedDate
+        new TestDateService(true, 0, 10).getCurrentDate shouldBe expectedDate
       }
     }
     "return a LocalDate of the current date, but 10 days in the past" when {
       "we set the config to subtract 10 days from the current date" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, addDays = -10)
+        val expectedDate = fixedDate.plusDays(-10)
 
-        val expectedDate = LocalDate.now().plusDays(-10)
-
-        TestDateService.getCurrentDate shouldBe expectedDate
+        new TestDateService(true, 0, -10).getCurrentDate shouldBe expectedDate
       }
     }
-    "return a LocalDate of the current date, but four years and 20 days in the past" when {
+    "return a LocalDate of the fixed date, but four years and 20 days in the future" when {
       "the TimeMachine is on, and we have set the TimeMachine to place us on the 27th of August" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, addYears = 4, addDays = 20)
+        val expectedDate = fixedDate.plusDays(20).plusYears(4)
 
-        val expectedDate = LocalDate.now().plusDays(20).plusYears(4)
-
-        TestDateService.getCurrentDate shouldBe expectedDate
+        new TestDateService(true, 4, 20).getCurrentDate shouldBe expectedDate
       }
     }
     "return a LocalDate of the current date, but three years and 25 days in the past" when {
       "the TimeMachine is on, and we have set the TimeMachine to place us on the 27th of August" in {
-        setupGetCurrentTestMocks(timeMachineFS = true, addYears = -3, addDays = -25)
+        val expectedDate = fixedDate.plusDays(-25).plusYears(-3)
 
-        val expectedDate = LocalDate.now().plusDays(-25).plusYears(-3)
-
-        TestDateService.getCurrentDate shouldBe expectedDate
+        new TestDateService(true, -3, -25).getCurrentDate shouldBe expectedDate
       }
     }
   }
@@ -171,21 +158,21 @@ class DateServiceSpec extends TestSupport {
     "return 2020-04-05 (same year as business start year)" when {
       "business start date is 01/01/2020" in {
         val businessStartDate = LocalDate.of(2020, 1, 1)
-        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2020, 4, 5)
+        baseTestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2020, 4, 5)
       }
       "business start date is 05/04/2020 (last day of accounting period)" in {
         val businessStartDate = LocalDate.of(2020, 4, 5)
-        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2020, 4, 5)
+        baseTestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2020, 4, 5)
       }
     }
     "return 2021-04-05 (business start year + 1)" when {
       "business start date is 06/04/2020" in {
         val businessStartDate = LocalDate.of(2020, 4, 6)
-        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2021, 4, 5)
+        baseTestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2021, 4, 5)
       }
       "business start date is 23/07/2020" in {
         val businessStartDate = LocalDate.of(2020, 7, 23)
-        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2021, 4, 5)
+        baseTestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe LocalDate.of(2021, 4, 5)
       }
     }
   }
