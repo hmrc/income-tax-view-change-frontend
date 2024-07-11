@@ -1879,7 +1879,7 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Taliad ar gyfrif 
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Ail daliad ar gyfrif, wedi’i addasu: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Newid
 claimToAdjustPoa.checkYourAnswers.cancel                     = Canslo
-claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Cadarnhau a chyflwyno
+claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Cadarnhau a chadw
 
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod

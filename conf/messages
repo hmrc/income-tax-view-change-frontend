@@ -1983,7 +1983,7 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Adjusted first pa
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Adjusted second payment on account: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Change
 claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
-claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Confirm and submit
+claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 
 # Enter POA Amount
 claimToAdjustPoa.enterPoaAmount.caption                 = Adjust payments on account for {0} to {1} tax year

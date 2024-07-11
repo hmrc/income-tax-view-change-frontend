@@ -145,7 +145,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         status(result) shouldBe OK
         status(resultAgent) shouldBe OK
 
-        contentAsString(result).contains("Confirm and submit") shouldBe true
+        contentAsString(result).contains("Confirm and save") shouldBe true
       }
     }
 
