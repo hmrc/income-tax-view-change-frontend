@@ -209,17 +209,6 @@
             ))
     ))
 
-    @if(partiallyOrFullyPaidPoaExists) {
-        @h1_large(getMessage("h2"), id = Some("already-made-a-payment-heading"))
-        @p(id = Some("paragraph-3-additional-text")) { @getMessage("p3-additional-content") }
-        @p(id = Some("paragraph-4-text")) { @getMessage("p4") }
-        @h2(optId = Some("heading-example"), msg = getMessage("heading.example"))
-        @p(id = Some("paragraph-5-text")) { @getMessage("p5") }
-        @p(id = Some("paragraph-6-text")) { @getMessage("p6") }
-    } else {
-        @p(id = Some("paragraph-3-text")) { @getMessage("p3") }
-    }
-
     <div class="govuk-button-group govuk-!-padding-top-3">
         @govukButton(Button(
             id = Some("adjust-my-payments-button"),

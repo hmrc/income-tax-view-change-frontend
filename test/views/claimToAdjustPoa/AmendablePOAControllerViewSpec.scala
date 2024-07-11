@@ -106,27 +106,6 @@ class AmendablePOAControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe messages("paymentOnAccount.table-heading-adjusted-amount.key")
         document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(3).text() shouldBe "£3,000.45"
       }
-      "render the second paragraph text without additional content" in new Setup(isAgent) {
-        document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
-      }
-      "render the large heading if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("already-made-a-payment-heading").text() shouldBe messages("paymentOnAccount.h2")
-      }
-      "render the second paragraph text with additional content if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-3-additional-text").text() shouldBe messages("paymentOnAccount.p3-additional-content")
-      }
-      "render the third paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-4-text").text() shouldBe messages("paymentOnAccount.p4")
-      }
-      "render the Example h3 text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
-      }
-      "render the fourth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-5-text").text() shouldBe messages("paymentOnAccount.p5")
-      }
-      "render the fifth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-6-text").text() shouldBe messages("paymentOnAccount.p6")
-      }
       "render the Adjust my payments on account button" in new Setup(isAgent) {
         document.getElementById("adjust-my-payments-button").text() shouldBe messages("paymentOnAccount.button")
         document.getElementById("adjust-my-payments-button").getElementsByTag("a").attr("href") shouldBe getWhatYouNeedToKnowUrl(isAgent)
