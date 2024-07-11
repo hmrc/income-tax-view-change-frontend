@@ -102,11 +102,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       currentYearStatus = statusMap(currentYear)
       previousYearStatus = statusMap(previousYear)
       finalisedStatus <- finalisedStatusFuture
-      optOutChecks = NextUpdatesQuarterlyReportingContentChecks(
-        currentYearStatus == Mandated || currentYearStatus == Voluntary,
-        previousYearStatus == Mandated || previousYearStatus == Voluntary,
-        finalisedStatus)
-    } yield optOutChecks
+    } yield NextUpdatesQuarterlyReportingContentChecks(
+      currentYearStatus == Mandated || currentYearStatus == Voluntary,
+      previousYearStatus == Mandated || previousYearStatus == Voluntary,
+      finalisedStatus)
   }
 
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
