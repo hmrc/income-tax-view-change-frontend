@@ -87,11 +87,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       }).getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
-  private case class OptOutInitialState(finalisedStatus: Boolean,
-                                        previousYearItsaStatus: ITSAStatus,
-                                        currentYearItsaStatus: ITSAStatus,
-                                        nextYearItsaStatus: ITSAStatus)
-
   private def createOptOutProposition(previousYear: TaxYear,
                                       currentYear: TaxYear,
                                       nextYear: TaxYear,
@@ -328,5 +323,9 @@ object OptOutService {
     val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
 
+  private case class OptOutInitialState(finalisedStatus: Boolean,
+                                        previousYearItsaStatus: ITSAStatus,
+                                        currentYearItsaStatus: ITSAStatus,
+                                        nextYearItsaStatus: ITSAStatus)
 
 }
