@@ -73,6 +73,8 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
+  override protected def now(): LocalDate = LocalDate.of(2023, 4, 5)
+
   override def isBeforeLastDayOfTaxYear: Boolean = true
 
   override def getCurrentTaxYearEnd: Int = 2023
@@ -162,7 +164,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,
     "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false"
+    "feature-switches.read-from-mongo" -> "false",
+    "feature-switch.enable-time-machine" -> "false",
+    "time-machine.add-years" -> "0",
+    "time-machine.add-days" -> "0"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"

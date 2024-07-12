@@ -72,7 +72,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = JourneyType(Manage, incomeSourceType).toString)
