@@ -18,7 +18,8 @@ package models.optout
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OptOutSessionData(selectedOptOutYear: Option[String]) {
+case class OptOutSessionData(optOutContextData: Option[OptOutContextData],
+                             selectedOptOutYear: Option[String]) {
 
   val selectedOptOutYearField: String = "SelectedOptoutYear"
 

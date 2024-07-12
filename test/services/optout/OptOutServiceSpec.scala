@@ -35,7 +35,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
-import services.optout.OptOutTestSupport.{buildOneYearOptOutPropositionForCurrentYear, buildOneYearOptOutPropositionForNextYear, buildOneYearOptOutPropositionForPreviousYear}
+import services.optout.OptOutTestSupport.{buildOneYearOptOutPropositionForCurrentYear, buildOneYearOptOutPropositionForNextYear, buildOneYearOptOutPropositionForPreviousYear, buildOptOutContextData}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -108,20 +108,22 @@ class OptOutServiceSpec extends UnitSpec
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
         journeyType = OptOutJourney.Name,
-        optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(forYearEnd).toString)))
+        optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(forYearEnd).toString)))
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
 
       def reconfigureMock(): Future[Unit] = {
         Future {
+          // Hmm... should we be mocking the repository?
           Mockito.reset(repository)
 
+          // Are we just testing that mockito works here?
           when(repository.set(any())).thenReturn(Future.successful(true))
 
           val data = UIJourneySessionData(
             sessionId = hc.sessionId.get.value,
             journeyType = OptOutJourney.Name,
-            optOutSessionData = Some(OptOutSessionData(selectedOptOutYear = None))
+            optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = None))
           )
           when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
         }
@@ -131,7 +133,8 @@ class OptOutServiceSpec extends UnitSpec
         isSaved <- service.saveIntent(TaxYear.forYearEnd(forYearEnd))
         savedIntent <- service.fetchSavedIntent()
         _ <- reconfigureMock()
-        isReset <- service.resetSavedIntent()
+        // Does this test need more consistent data now we initialise the data with the context statuses?
+        isReset <- service.initialiseOptOutJourney(buildOneYearOptOutPropositionForPreviousYear(forYearEnd))
         noneIntent <- service.fetchSavedIntent()
       } yield {
         isSaved shouldBe true
@@ -345,6 +348,9 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
         val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
@@ -369,6 +375,9 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
 
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
         val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe noOptOutOptionAvailable
@@ -391,6 +400,9 @@ class OptOutServiceSpec extends UnitSpec
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
 
         val response = service.nextUpdatesPageOptOutViewModel()
 
@@ -415,6 +427,9 @@ class OptOutServiceSpec extends UnitSpec
 
         when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
+        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+        when(repository.set(any())).thenReturn(Future.successful(true))
+
         val response = service.nextUpdatesPageOptOutViewModel()
 
         response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
@@ -437,6 +452,9 @@ class OptOutServiceSpec extends UnitSpec
           when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+
+          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+          when(repository.set(any())).thenReturn(Future.successful(true))
 
           val response = service.nextUpdatesPageOptOutViewModel()
 
@@ -465,6 +483,9 @@ class OptOutServiceSpec extends UnitSpec
             when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
 
             when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+
+            when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+            when(repository.set(any())).thenReturn(Future.successful(true))
 
             val response = service.nextUpdatesPageOptOutViewModel()
 
@@ -585,24 +606,15 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"offer ${getTaxYearText(optOutTaxYear.taxYear)} with state $state" in {
 
-          val previousYear: TaxYear = PY
           when(mockDateService.getCurrentTaxYear).thenReturn(CY)
-
-          val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-            PY -> StatusDetail("", statusPY, ""),
-            CY -> StatusDetail("", statusCY, ""),
-            NY -> StatusDetail("", statusNY, "")
-          )
-          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
 
           when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val intent = optOutTaxYear
-          val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+          val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(crystallisedPY, statusPY, statusCY, statusNY)),
+                                                   Some(intent.toString)))
           val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
           when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
 
@@ -643,20 +655,11 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"offer ${getTaxYearText(intent)}" in {
 
-          val previousYear: TaxYear = PY
           when(mockDateService.getCurrentTaxYear).thenReturn(CY)
 
-          val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-            PY -> StatusDetail("", statusPY, ""),
-            CY -> StatusDetail("", statusCY, ""),
-            NY -> StatusDetail("", statusNY, "")
-          )
-          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-
-          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
-
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+          val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(crystallisedPY, statusPY, statusCY, statusNY)),
+                                                   Some(intent.toString)))
           val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
           when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
 
@@ -686,7 +689,6 @@ class OptOutServiceSpec extends UnitSpec
   "OptOutService.optOutConfirmedPageViewModel" when {
     val CY = TaxYear.forYearEnd(2024)
     val PY = CY.previousYear
-    val NY = CY.nextYear
     val previousOptOutTaxYear = PreviousOptOutTaxYear(Voluntary, PY, crystallised = false)
     val currentOptOutTaxYear = CurrentOptOutTaxYear(Voluntary, CY)
 
@@ -706,19 +708,11 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"return  $viewModel" in {
 
-          val previousYear: TaxYear = PY
           when(mockDateService.getCurrentTaxYear).thenReturn(CY)
 
-          val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-            PY -> StatusDetail("", statusPY, ""),
-            CY -> StatusDetail("", statusCY, ""),
-            NY -> StatusDetail("", statusNY, "")
-          )
-          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(crystallisedPY))
-
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          val optOutSessionData = OptOutSessionData(Some(viewModel.get.optOutTaxYear.toString))
+          val optOutSessionData = OptOutSessionData(Some(buildOptOutContextData(crystallisedPY, statusPY, statusCY, statusNY)),
+                                                    Some(viewModel.get.optOutTaxYear.toString))
           val sessionData = Some(UIJourneySessionData(hc.sessionId.get.value, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
           when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 

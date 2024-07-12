@@ -18,14 +18,17 @@ package controllers.agent.optOut
 
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{NoStatus, Voluntary}
+import models.optout.OptOutContextData.statusToString
+import models.optout.{OptOutContextData, OptOutSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
-import testConstants.CalculationListIntegrationTestConstants
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptOutJourney
 
 class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = true
@@ -45,16 +48,23 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
   val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repository.clearSession(testSessionId).futureValue shouldBe(true)
+  }
+
   s"calling GET $singleYearOptOutWarningPageGETUrl" should {
     "render single tax year opt out confirmation pager" when {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
+        stubOptOutInitialState(previousYearCrystallised = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val result = IncomeTaxViewChangeFrontend.getSingleYearOptOutWarning(clientDetailsWithConfirmation)
 
@@ -76,9 +86,10 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        stubOptOutInitialState(previousYearCrystallised = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(inValidForm)
 
@@ -100,9 +111,10 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        stubOptOutInitialState(previousYearCrystallised = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validYesForm)
 
@@ -121,9 +133,10 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        stubOptOutInitialState(previousYearCrystallised = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val result = IncomeTaxViewChangeFrontend.postSingleYearOptOutWarning(clientDetailsWithConfirmation)(validNoForm)
 
@@ -135,6 +148,22 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         )
       }
     }
+  }
+
+  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
+                                     previousYearStatus: ITSAStatus.Value,
+                                     currentYearStatus: ITSAStatus.Value,
+                                     nextYearStatus: ITSAStatus.Value): Unit = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        OptOutJourney.Name,
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(OptOutContextData(
+              previousYearCrystallised,
+              statusToString(previousYearStatus),
+              statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), None))))
   }
 
 }
