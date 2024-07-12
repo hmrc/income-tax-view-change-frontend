@@ -17,14 +17,17 @@
 package controllers.optOut
 
 import helpers.ComponentSpecBase
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus._
+import models.optout.OptOutContextData.statusToString
+import models.optout.{OptOutContextData, OptOutSessionData}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.CalculationListIntegrationTestConstants
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptOutJourney
 
 class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
@@ -37,15 +40,23 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   val summary = "If you opt out, you can submit your tax return through your HMRC online account or software."
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
 
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repository.clearSession(testSessionId).futureValue shouldBe(true)
+  }
+
   s"calling GET $confirmedOptOutPageUrl" should {
     s"render confirm single year opt out page $confirmedOptOutPageUrl" when {
       "User is authorised" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        stubOptOutInitialState(previousYearCrystallised = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = Mandated,
+          nextYearStatus = Mandated)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmedOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -56,6 +67,22 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
         )
       }
     }
+  }
+
+  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
+                                     previousYearStatus: ITSAStatus.Value,
+                                     currentYearStatus: ITSAStatus.Value,
+                                     nextYearStatus: ITSAStatus.Value): Unit = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        OptOutJourney.Name,
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(OptOutContextData(
+              previousYearCrystallised,
+              statusToString(previousYearStatus),
+              statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), None))))
   }
 
 }

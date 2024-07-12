@@ -42,8 +42,8 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(out)
   }
 
-  def mockNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any()))
+  def mockRecallNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
+    when(mockOptOutService.recallNextUpdatesPageOptOutViewModel()(any(), any(), any()))
       .thenReturn(out)
   }
 
@@ -71,14 +71,14 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockSaveIntent(in: TaxYear, out: Future[Boolean]): Unit = {
-    when(mockOptOutService.saveIntent(any[TaxYear])(any())).thenReturn(out)
+    when(mockOptOutService.saveIntent(any[TaxYear])(any(), any())).thenReturn(out)
   }
 
   def mockFetchIntent(out: Future[Option[TaxYear]]): Unit = {
     when(mockOptOutService.fetchSavedIntent()(any(), any())).thenReturn(out)
   }
 
-  def mockFetchOptOutProposition(out: Future[OptOutProposition]): Unit = {
-    when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(out)
+  def mockRecallOptOutProposition(out: Future[OptOutProposition]): Unit = {
+    when(mockOptOutService.recallOptOutProposition()(any(), any())).thenReturn(out)
   }
 }
