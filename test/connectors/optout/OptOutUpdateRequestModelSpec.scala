@@ -24,6 +24,46 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsValue, Json}
 import testUtils.UnitSpec
 
+class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
+
+  "The request model" should {
+    "be formatted to JSON correctly" in {
+      Json.toJson[OptOutUpdateRequest](requestObj) shouldBe requestJson
+    }
+    "be able to parse a JSON input as a string into the model" in {
+      Json.parse(requestJson.toString).as[OptOutUpdateRequest] shouldBe requestObj
+    }
+  }
+
+  "The success model" should {
+    "be formatted to JSON correctly" in {
+      Json.toJson[OptOutUpdateResponseSuccess](successObj) shouldBe successJson
+    }
+    "be able to parse a JSON input as a string into the model" in {
+      Json.parse(successJson.toString).as[OptOutUpdateResponseSuccess] shouldBe successObj
+    }
+  }
+
+  "The failure model" should {
+    "be formatted to JSON correctly" in {
+      Json.toJson[OptOutUpdateResponseFailure](failureObj) shouldBe failureJson
+    }
+    "be able to parse a JSON input as a string into the model" in {
+      Json.parse(failureJson.toString).as[OptOutUpdateResponseFailure] shouldBe failureObj
+    }
+  }
+
+  "The not-found failure model" should {
+    "be formatted to JSON correctly" in {
+      Json.toJson[OptOutUpdateResponseFailure](notFoundFailureObj) shouldBe notFoundFailureJson
+    }
+    "be able to parse a JSON input as a string into the model" in {
+      Json.parse(notFoundFailureJson.toString).as[OptOutUpdateResponseFailure] shouldBe notFoundFailureObj
+    }
+  }
+
+}
+
 object OptOutUpdateRequestModelSpec {
 
   val endYear = 2024
@@ -63,44 +103,4 @@ object OptOutUpdateRequestModelSpec {
       )
     )
   )
-}
-
-class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
-
-  "The request model" should {
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateRequest](requestObj) shouldBe requestJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
-      Json.parse(requestJson.toString).as[OptOutUpdateRequest] shouldBe requestObj
-    }
-  }
-
-  "The success model" should {
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseSuccess](successObj) shouldBe successJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
-      Json.parse(successJson.toString).as[OptOutUpdateResponseSuccess] shouldBe successObj
-    }
-  }
-
-  "The failure model" should {
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](failureObj) shouldBe failureJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
-      Json.parse(failureJson.toString).as[OptOutUpdateResponseFailure] shouldBe failureObj
-    }
-  }
-
-  "The not-found failure model" should {
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](notFoundFailureObj) shouldBe notFoundFailureJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
-      Json.parse(notFoundFailureJson.toString).as[OptOutUpdateResponseFailure] shouldBe notFoundFailureObj
-    }
-  }
-
 }
