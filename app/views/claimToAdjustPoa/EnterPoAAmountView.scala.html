@@ -59,8 +59,7 @@
             HeadCell(
             ),
             HeadCell(
-//                Acceptance Criteria 4
-                content = Text(getMessage("initialAmount")),
+                content = Text(getMessage("amountPreviousHeading")),
                 format = Some("numeric")
             ),
             HeadCell(
@@ -74,7 +73,7 @@
             HeadCell(
             ),
             HeadCell(
-                content = Text(getMessage("initialAmount")),
+                content = Text(getMessage("amountPreviousHeading")),
                 format = Some("numeric")
             )
         ))
@@ -121,7 +120,6 @@
         id = Some("h1"))
 
     <div id="bulletPoints">
-@*        Acceptance Criteria 1*@
         <p class="govuk-body" id="p1">@getMessage("p1")</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("bullet1")</li>
@@ -159,24 +157,23 @@
         firstCellIsHeader = true
     ))
 
-@*    Acceptance Criteria 3*@
     @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
-            content = Text(getMessage("insetText.firstAttempt"))
+            content = HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para1")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para2")}</p>
+                    |""".stripMargin)
         ))
     } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
             content = HtmlContent(s"""
-                    |<p class=govuk-body>${getMessage("insetText.secondAttempt")}</p>
-                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.part2")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para1")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para2")}</p>
                     |""".stripMargin)
         ))
     }}
-
-@*    Acceptance Criteria 2*@
-
 
     @form(action = postAction, Symbol("id") -> "poa-amount") {
 
