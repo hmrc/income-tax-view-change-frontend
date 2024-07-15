@@ -1909,7 +1909,7 @@ claimToAdjustPoa.confirmation.cancel                                    =   Cans
 
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
 claimToAdjustPoa.selectYourReason.h1                                    =   Dewiswch eich rheswm
-claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhesymau hyn yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
+claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhain yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   Os oes angen help arnoch i dalu’ch taliadau ar gyfrif,
 claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF (yn agor tab newydd)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
