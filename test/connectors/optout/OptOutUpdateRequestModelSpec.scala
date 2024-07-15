@@ -17,90 +17,97 @@
 package connectors.optout
 
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
-import connectors.optout.OptOutUpdateRequestModelSpec._
 import models.incomeSourceDetails.TaxYear
 import org.eclipse.jetty.http.HttpStatus.{INTERNAL_SERVER_ERROR_500, NO_CONTENT_204}
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsSuccess, JsValue, Json}
 import testUtils.UnitSpec
 
 class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
+  val endYear = 2024
+
   "The request model" should {
+
+    val requestObject = OptOutUpdateRequest(TaxYear.forYearEnd(endYear).toString, optOutUpdateReason)
+    val requestJson = Json.parse(
+      """
+        {
+          "taxYear": "2023-2024",
+          "updateReason": "10"
+        }
+        """.stripMargin)
+
     "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateRequest](requestObj) shouldBe requestJson
+      Json.toJson[OptOutUpdateRequest](requestObject) shouldBe requestJson
     }
     "be able to parse a JSON input as a string into the model" in {
-      Json.parse(requestJson.toString).as[OptOutUpdateRequest] shouldBe requestObj
+      requestJson.validate[OptOutUpdateRequest] shouldBe JsSuccess(requestObject)
     }
   }
 
   "The success model" should {
+    val successObject = OptOutUpdateResponseSuccess("123")
+    val successJson = Json.parse(
+      """
+        {
+          "correlationId": "123",
+          "statusCode": 204
+        }
+        """.stripMargin)
+
     "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseSuccess](successObj) shouldBe successJson
+      Json.toJson[OptOutUpdateResponseSuccess](successObject) shouldBe successJson
     }
     "be able to parse a JSON input as a string into the model" in {
-      Json.parse(successJson.toString).as[OptOutUpdateResponseSuccess] shouldBe successObj
+      successJson.validate[OptOutUpdateResponseSuccess] shouldBe JsSuccess(successObject)
     }
   }
 
   "The failure model" should {
+
+    val failureObject = OptOutUpdateResponseFailure.defaultFailure().copy(correlationId = "123")
+    val failureJson = Json.parse(
+      """
+        {
+          "correlationId": "123",
+          "statusCode": 500,
+          "failures": [{
+          "code": "INTERNAL_SERVER_ERROR",
+          "reason": "Request failed due to unknown error"
+          }]
+        }
+        """.stripMargin)
+
     "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](failureObj) shouldBe failureJson
+      Json.toJson[OptOutUpdateResponseFailure](failureObject) shouldBe failureJson
     }
     "be able to parse a JSON input as a string into the model" in {
-      Json.parse(failureJson.toString).as[OptOutUpdateResponseFailure] shouldBe failureObj
+      failureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(failureObject)
     }
   }
 
   "The not-found failure model" should {
+
+    val notFoundFailureObject = OptOutUpdateResponseFailure.notFoundFailure("123", "some url")
+    val notFoundFailureJson = Json.parse(
+      """
+        {
+          "correlationId": "123",
+          "statusCode": 500,
+          "failures": [{
+          "code": "INTERNAL_SERVER_ERROR",
+          "reason": "URI not found on target backed-end service, url: some url"
+          }]
+        }
+        """.stripMargin)
+
     "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](notFoundFailureObj) shouldBe notFoundFailureJson
+      Json.toJson[OptOutUpdateResponseFailure](notFoundFailureObject) shouldBe notFoundFailureJson
     }
     "be able to parse a JSON input as a string into the model" in {
-      Json.parse(notFoundFailureJson.toString).as[OptOutUpdateResponseFailure] shouldBe notFoundFailureObj
+      notFoundFailureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(notFoundFailureObject)
     }
   }
 
-}
-
-object OptOutUpdateRequestModelSpec {
-
-  val endYear = 2024
-
-  private val requestObj = OptOutUpdateRequest(TaxYear.forYearEnd(endYear).toString, optOutUpdateReason)
-  private val requestJson: JsValue = Json.obj(
-    "taxYear" -> "2023-2024",
-    "updateReason" -> "10",
-  )
-
-  private val successObj = OptOutUpdateResponseSuccess("123")
-  private val successJson: JsValue = Json.obj(
-    "correlationId" -> "123",
-    "statusCode" -> NO_CONTENT_204,
-  )
-
-  private val failureObj = OptOutUpdateResponseFailure.defaultFailure().copy(correlationId = "123")
-  private val failureJson: JsValue = Json.obj(
-    "correlationId" -> "123",
-    "statusCode" -> INTERNAL_SERVER_ERROR_500,
-    "failures" -> Json.arr(
-      Json.obj(
-        "code" -> "INTERNAL_SERVER_ERROR",
-        "reason" -> "Request failed due to unknown error",
-      )
-    )
-  )
-
-  private val notFoundFailureObj = OptOutUpdateResponseFailure.notFoundFailure("123", "some url")
-  private val notFoundFailureJson: JsValue = Json.obj(
-    "correlationId" -> "123",
-    "statusCode" -> INTERNAL_SERVER_ERROR_500,
-    "failures" -> Json.arr(
-      Json.obj(
-        "code" -> "INTERNAL_SERVER_ERROR",
-        "reason" -> "URI not found on target backed-end service, url: some url",
-      )
-    )
-  )
 }
