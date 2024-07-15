@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.manageBusinesses.add
+package views.manageBusinesses
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType, Manage}
@@ -43,10 +43,15 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
     lazy val view: HtmlFormat.Appendable = errorView(isAgent, subheadingContent)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
+    val manageLink: String =
+      if (isAgent) "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+      else "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+
     def checkManageContent: Assertion = {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe manageSubheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isEmpty shouldBe true
     }
@@ -57,6 +62,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -64,6 +70,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -71,6 +78,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -81,6 +89,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -88,6 +97,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -95,6 +105,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport {
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("subheading").text() shouldBe subheadingContent
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
