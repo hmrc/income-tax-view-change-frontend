@@ -59,6 +59,7 @@
             HeadCell(
             ),
             HeadCell(
+//                Acceptance Criteria 4
                 content = Text(getMessage("initialAmount")),
                 format = Some("numeric")
             ),
@@ -120,6 +121,7 @@
         id = Some("h1"))
 
     <div id="bulletPoints">
+@*        Acceptance Criteria 1*@
         <p class="govuk-body" id="p1">@getMessage("p1")</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("bullet1")</li>
@@ -128,12 +130,13 @@
     </div>
 
     @govukTable(Table(
+        head = getTableHeading,
         rows = Seq(
             Seq(
                 TableRow(
                     content = Text(getMessage("firstPayment"))
                 )
-            ) ++ getRow1 ++ 
+            ) ++ getRow1 ++
             Seq(
                 TableRow(
                     content = Text(viewModel.totalAmountOne.toCurrencyString),
@@ -153,10 +156,10 @@
                 )
             )
         ),
-        head = getTableHeading,
         firstCellIsHeader = true
     ))
 
+@*    Acceptance Criteria 3*@
     @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
@@ -165,15 +168,15 @@
     } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
-            content = Text(getMessage("insetText.secondAttempt"))
+            content = HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.part2")}</p>
+                    |""".stripMargin)
         ))
     }}
 
-    @govukWarningText(WarningText(
-        iconFallbackText = Some("Warning"),
-        content = Text(getMessage("warning")),
-        attributes = Map("id" -> "warning"))
-    )
+@*    Acceptance Criteria 2*@
+
 
     @form(action = postAction, Symbol("id") -> "poa-amount") {
 
