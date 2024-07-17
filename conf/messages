@@ -159,6 +159,9 @@ banner.recruitment.text                                         = Help improve t
 banner.recruitment.link                                         = Join our research panel by answering a few questions.
 banner.recruitment.dismiss                                      = No, thankyou.
 
+## List UTRs ##
+listUTRs.heading                                               = List UTRs
+
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
 taxYears.viewSummary                                            = View summary
