@@ -91,9 +91,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     val titleAgent: String = s"${messages("htmlTitle.agent", title)}"
     val titleIndividual: String = s"${messages("htmlTitle", title)}"
 
-    val selfEmployment: String = messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    val ukProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk")
-    val foreignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp")
+    val selfEmployment: String = messages("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
+    val ukProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
+    val foreignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
     val paragraphTextSelfEmployment: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmployment)
     val paragraphTextUkProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
     val paragraphTextForeignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)

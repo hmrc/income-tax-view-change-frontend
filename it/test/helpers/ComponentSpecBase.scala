@@ -952,11 +952,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddChangeBusinessAddress: WSResponse =
       get("/manage-your-businesses/add-sole-trader/change-business-address-lookup")
 
-    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-business-reporting-method-not-saved", session)
+    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-sole-trader/error-business-reporting-method-not-saved", session)
 
-    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-uk-property-reporting-method-not-saved", session)
+    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-uk-property/error-uk-property-reporting-method-not-saved", session)
 
-    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-foreign-property-reporting-method-not-saved", session)
+    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-foreign-property/error-foreign-property-reporting-method-not-saved", session)
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/manage-your-businesses/add/new-income-sources")
 

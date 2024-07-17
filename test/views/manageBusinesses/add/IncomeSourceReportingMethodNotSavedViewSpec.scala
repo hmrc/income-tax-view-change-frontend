@@ -31,9 +31,10 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   class TestSetup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
     val id = "testId"
 
-    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp")
-    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk")
+    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
+    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
+    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
+
 
     val action: Call = incomeSourceType match {
       case UkProperty =>

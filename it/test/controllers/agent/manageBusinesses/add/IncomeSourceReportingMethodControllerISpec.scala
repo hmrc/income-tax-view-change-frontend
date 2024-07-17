@@ -96,9 +96,9 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
   }
   lazy val uri: IncomeSourceType => String = {
-    case UkProperty => s"/manage-your-businesses/add/uk-property-reporting-method"
-    case ForeignProperty => s"/manage-your-businesses/add/foreign-property-reporting-method"
-    case SelfEmployment => s"/manage-your-businesses/add/business-reporting-method"
+    case UkProperty => s"/manage-your-businesses/add-uk-property/reporting-frequency"
+    case ForeignProperty => s"/manage-your-businesses/add-foreign-property/reporting-frequency"
+    case SelfEmployment => s"/manage-your-businesses/add-sole-trader/reporting-frequency"
   }
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
