@@ -19,8 +19,7 @@ package controllers.manageBusinesses.cease
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
-import enums.JourneyType.{Cease, JourneyType}
+import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -42,9 +41,9 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: A
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS(
     Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
-  }
+  )
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
