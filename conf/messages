@@ -1710,6 +1710,9 @@ incomeSources.add.incomeSourceReportingMethod.taxYear                   =   Tax 
 incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport        =   Choose annual reporting
 incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.incomeSourceReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
+incomeSources.add.incomeSourceReportingMethod.se.caption                =   Sole trader
+incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK property
+incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
 # manage uk property reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}

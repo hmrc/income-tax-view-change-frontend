@@ -25,14 +25,20 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
+@import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.ForeignProperty
+@import enums.IncomeSourceJourney.UkProperty
+@import enums.IncomeSourceJourney.SelfEmployment
 
 @this(
     mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
     inputHelper: InputHelper,
     continueButton: ContinueButton,
     formWithCSRF: FormWithCSRF,
@@ -44,7 +50,16 @@
     p:p
 )
 
-@(incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType, incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    incomeSourceType match {
+        case SelfEmployment => messages(s"incomeSources.add.incomeSourceReportingMethod.se.$key", args: _*)
+        case UkProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.uk.$key", args: _*)
+        case ForeignProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.$key", args: _*)
+    }
+}
+
 
 @renderChooseReportingMethodOptions(taxYear: String, taxYearSeq: String, isAnnualReporting: Boolean) = {
 
@@ -93,7 +108,12 @@
         form = incomeSourceReportingMethodForm
     )
 
-    @h1(messages("incomeSources.add.incomeSourceReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+    @hmrcPageHeading(PageHeading(
+        text = messages("incomeSources.add.incomeSourceReportingMethod.heading"),
+        headingClasses = Some("govuk-heading-xl margin-bottom-100"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
 
     @p() {
         @messages("incomeSources.add.incomeSourceReportingMethod.description1", incomeSourceReportingViewModel.latencyYear2.get.taxYear)

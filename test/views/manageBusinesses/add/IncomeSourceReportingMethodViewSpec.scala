@@ -34,6 +34,14 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
 
   val IncomeSourceReportingMethodView: IncomeSourceReportingMethod = app.injector.instanceOf[IncomeSourceReportingMethod]
 
+  def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
+    incomeSourceType match {
+      case SelfEmployment => messages(s"incomeSources.add.incomeSourceReportingMethod.se.$key")
+      case UkProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.uk.$key")
+      case ForeignProperty =>messages(s"incomeSources.add.incomeSourceReportingMethod.fp.$key")
+    }
+  }
+
   class Setup(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType) {
     val taxYear1 = "tax_year_1_reporting_method_tax_year"
     val taxYear2 = "tax_year_2_reporting_method_tax_year"
@@ -57,24 +65,25 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
 
     val postAction: Call = controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
-    lazy val viewTwoLatencyYears: HtmlFormat.Appendable = IncomeSourceReportingMethodView(form, viewModelTwoLatencyYears, postAction, isAgent)
-    lazy val viewOneLatencyYear: HtmlFormat.Appendable = IncomeSourceReportingMethodView(form, viewModelOneLatencyYear, postAction, isAgent)
-    lazy val viewTwoLatencyYearsWithError: HtmlFormat.Appendable = IncomeSourceReportingMethodView(formWithErrorScenario1, viewModelTwoLatencyYears, postAction, isAgent)
-    lazy val viewOneLatencyYearWithError: HtmlFormat.Appendable = IncomeSourceReportingMethodView(formWithErrorScenario2, viewModelOneLatencyYear, postAction, isAgent)
+    lazy val viewTwoLatencyYears: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType ,form, viewModelTwoLatencyYears, postAction, isAgent)
+    lazy val viewOneLatencyYear: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType, form, viewModelOneLatencyYear, postAction, isAgent)
+    lazy val viewTwoLatencyYearsWithError: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType, formWithErrorScenario1, viewModelTwoLatencyYears, postAction, isAgent)
+    lazy val viewOneLatencyYearWithError: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType, formWithErrorScenario2, viewModelOneLatencyYear, postAction, isAgent)
 
     lazy val documentWithTwoLatencyYears: Document = if (error) Jsoup.parse(contentAsString(viewTwoLatencyYearsWithError)) else Jsoup.parse(contentAsString(viewTwoLatencyYears))
     lazy val documentWithOneLatencyYear: Document = if (error) Jsoup.parse(contentAsString(viewOneLatencyYearWithError)) else Jsoup.parse(contentAsString(viewOneLatencyYear))
 
     def checkHeading(): Assertion = {
+      documentWithTwoLatencyYears.getElementsByClass("govuk-caption-l").text().contains(messages(getMessage(incomeSourceType, "caption")))
       documentWithTwoLatencyYears.getElementsByClass("govuk-heading-xl").text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.heading")
       documentWithTwoLatencyYears.getElementsByClass("govuk-heading-m").text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.chooseReport")
     }
 
     def checkContent(): Assertion = {
       val doc = documentWithTwoLatencyYears.getElementById("main-content")
-      doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description1", viewModelTwoLatencyYears.latencyYear2.get.taxYear)
-      doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description2")
-      doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description3")
+      doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description1", viewModelTwoLatencyYears.latencyYear2.get.taxYear)
+      doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description2")
+      doc.getElementsByTag("p").get(3).text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.description3")
       doc.getElementsByTag("ul").get(0).text() shouldBe Jsoup.parse(messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet1") + " " +
         messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet2") + " " + messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet3")).text()
     }

@@ -1683,6 +1683,9 @@ incomeSources.add.incomeSourceReportingMethod.taxYear                   =   Blwy
 incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
 incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.incomeSourceReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.add.incomeSourceReportingMethod.se.caption                =   Unig fasnachwr
+incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eiddo yn y DU
+incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
 # manage uk property reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}

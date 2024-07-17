@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import audit.AuditingService
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
@@ -172,7 +172,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
       val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-        routes.ReportingFrequencyController.show(isAgent, incomeSourceType).url
+        routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
       val viewModel = getViewModel(incomeSourceType, sessionData)
 
