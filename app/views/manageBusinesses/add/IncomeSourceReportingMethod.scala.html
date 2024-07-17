@@ -14,27 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.helpers.injected.ContinueButton
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.helpers.injected.RadioHelper
-@import views.helpers.RadioOption
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
-@import views.html.helpers.injected.InputHelper
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, FormWithCSRF, GovukInput, GovukRadios, Input, Legend, RadioItem, Radios, Text, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import enums.IncomeSourceJourney.IncomeSourceType
-@import enums.IncomeSourceJourney.ForeignProperty
-@import enums.IncomeSourceJourney.UkProperty
-@import enums.IncomeSourceJourney.SelfEmployment
+@import views.html.helpers.injected.{ContinueButton, ErrorSummary, InputHelper, RadioHelper}
+@import views.html.layouts.unifiedLayout
 
 @this(
     mainTemplate: unifiedLayout,
