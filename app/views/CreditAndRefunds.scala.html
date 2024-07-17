@@ -27,7 +27,7 @@
 @import cats.syntax.eq._
 @import models.creditsandrefunds.CreditAndRefundViewModel
 @import models.creditsandrefunds.{CreditRow, CreditViewRow, RefundRow, PaymentCreditRow}
-
+@import views.html.components.creditandrefund._
 
 @this(
 mainTemplate: unifiedLayout,
@@ -37,23 +37,14 @@ h1: h1,
 h2: h2,
 p: p,
 link: link,
+paymentViewRow: paymentViewRow,
+creditViewRow: creditViewRow,
+refundViewRow: refundViewRow,
 govukInsetText : GovukInsetText
 )
 @(viewModel: CreditAndRefundViewModel,
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
-@maybeBalancesDetails = @{
-    viewModel.balanceDetails.getOrElse(throw MissingFieldException("Balance"))
-}
-
-@maybeAvailableCredit = @{
-    maybeBalancesDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0))
-}
-
-@allocatedCredit = @{
-    maybeBalancesDetails.getAbsoluteAllocatedCreditAmount.getOrElse(BigDecimal(0))
-}
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
@@ -65,47 +56,32 @@ govukInsetText : GovukInsetText
 
 @getAvailableCreditContent = {
     @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id=Some("available-to-claim")) {
-        @messages("credit-and-refund.available-to-claim", maybeAvailableCredit.toCurrencyString)
+        @messages("credit-and-refund.available-to-claim", viewModel.availableCredit.toCurrencyString)
     }
 
-    @if(maybeAvailableCredit == 0) {
-
-        <h2 class="govuk-heading-s">
-            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-no-credits-1")</span>
-            @{
-                viewModel.balanceDetails.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
-            }
-            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits-2")</span>
-        </h2>
+    @if(viewModel.availableCredit == 0) @{
+<!--        <h2 class="govuk-heading-s">-->
+<!--            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-no-credits-1")</span>-->
+<!--            @{-->
+<!--                viewModel.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency-->
+<!--            }-->
+<!--            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits-2")</span>-->
+<!--        </h2>-->
     }
 }
 
 @renderCreditRow(creditRow: CreditRow) = {
-    <p class="govuk-heading-s">
-        @creditRow match {
-            case PaymentCreditRow(amount, date) => {
-                @amount.toCurrencyString
-                <span class="govuk-body">@messages("credit-and-refund.payment")
-                    @date.toLongDate
-                </span>
-            }
-            case CreditViewRow(amount, creditType, taxYear) => {
-                <span class="govuk-body">
-                    @messages(s"credit-and-refund.row.${creditType.key}-1")
-                </span>
-                @amount.toCurrencyString
-                <span class="govuk-body">
-                    @messages(s"credit-and-refund.row.${creditType.key}-2")
-                    @messages("credit-and-refund.tax-year", (taxYear.toInt - 1).toString, taxYear)
-                </span>
-            }
-            case RefundRow(amount) => {
-                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
-                @amount.toCurrencyString
-                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-2")</span>
-            }
+    @creditRow match {
+        case PaymentCreditRow(amount, date) => {
+            @paymentViewRow(amount, date)
         }
-    </p>
+        case CreditViewRow(amount, creditType, taxYear) => {
+            @creditViewRow(amount, creditType, taxYear)
+        }
+        case RefundRow(amount) => {
+            @refundViewRow(amount)
+        }
+    }
 }
 
 @getCreditAndRefundListContent = {
@@ -116,13 +92,13 @@ govukInsetText : GovukInsetText
             </span>
         </summary>
         <div class="govuk-details__text">
-            @if(viewModel.sortedCreditRows.size == 1) {
+            @if(viewModel.creditRows.size == 1) {
                 <div id="credits-list">
-                    @renderCreditRow(viewModel.sortedCreditRows.head)
+                    @renderCreditRow(viewModel.creditRows.head)
                 </div>
             } else {
                 <ul class="govuk-list govuk-list--bullet" id="credits-list">
-                    @for((credit, index) <- viewModel.sortedCreditRows.zipWithIndex) {
+                    @for(credit <- viewModel.creditRows) {
                         <li>
                             @renderCreditRow(credit)
                         </li>
@@ -135,10 +111,10 @@ govukInsetText : GovukInsetText
 
 @getReservedContent = {
     @p(){
-        @if(allocatedCredit != maybeAvailableCredit) {
-            @messages("credit-and-refund.upcoming-allocated-credit-1", allocatedCredit.toCurrencyString)
+        @if(viewModel.allocatedCredit != viewModel.availableCredit) {
+            @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.allocatedCredit.toCurrencyString)
         } else {
-            @messages("credit-and-refund.upcoming-allocated-credit-1-all", allocatedCredit.toCurrencyString)
+            @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
         }
         @link(
             link = getWhatYouOwe(isAgent),
@@ -152,18 +128,18 @@ govukInsetText : GovukInsetText
     @h2(messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
 
     @p(){
-        <span class="govuk-!-font-weight-bold">@messages("credit-and-refund.the-most-you-can-claim", maybeAvailableCredit.toCurrencyString)</span>
+        <span class="govuk-!-font-weight-bold">@messages("credit-and-refund.the-most-you-can-claim", viewModel.availableCredit.toCurrencyString)</span>
         @messages("credit-and-refund.does-not-include-refunds")
     }
 
-    @if(allocatedCredit != 0) {
-        @if(allocatedCredit >= maybeAvailableCredit) {
+    @if(viewModel.allocatedCredit != 0) {
+        @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
             @govukInsetText(InsetText(
                 content = Text(messages("credit-and-refund.if-you-claim-back-any"))
             ))
         } else {
             @govukInsetText(InsetText(
-                content = Text(messages("credit-and-refund.if-you-claim-back-more", (maybeAvailableCredit - allocatedCredit).toCurrencyString))
+                content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
             ))
         }
     }
@@ -183,32 +159,24 @@ govukInsetText : GovukInsetText
 
     @h1(msg = "credit-and-refund.heading")
 
-    @if(viewModel.balanceDetails.isDefined){
-        @getAvailableCreditContent
+    @getAvailableCreditContent
 
-        @getCreditAndRefundListContent
+    @getCreditAndRefundListContent
 
-        @if(maybeAvailableCredit != 0){
+    @if(viewModel.availableCredit != 0){
 
-            @if(allocatedCredit != 0) {
-                @getReservedContent
-            }
-
-            @getHowMuchCanIClaimContent
+        @if(viewModel.allocatedCredit != 0) {
+            @getReservedContent
         }
-    } else {
-        @p(){
-            @messages("credit-and-refund.no-credit")
-        }
+
+        @getHowMuchCanIClaimContent
     }
 
     @if(!isAgent) {
         <div class="govuk-button-group">
-            @if(viewModel.balanceDetails.isDefined){
-                @if(maybeAvailableCredit != 0){
-                    @link(link = s"${controllers.routes.CreditAndRefundController.startRefund().url}",
-                    messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
-                }
+            @if(viewModel.availableCredit != 0){
+                @link(link = s"${controllers.routes.CreditAndRefundController.startRefund().url}",
+                messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
             }
         </div>
     }

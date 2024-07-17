@@ -23,7 +23,9 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.financialDetails.BalanceDetails
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYearTo}
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
@@ -49,6 +51,22 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        // TODO: Create stub data with builders
+
+        val json =  Json.toJson(ANewCreditAndRefundModel()
+            .withAvailableCredit(5.0)
+            .withAllocatedCredit(45.0)
+            .withFirstRefund(3.0)
+            .withSecondRefund(2.0)
+            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
+            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
+            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
+            .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
+            .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
+            .get())
+
+        println(Json.prettyPrint(json))
 
         And("I wiremock stub a successful Financial Details response with credits and refunds")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
@@ -115,6 +133,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))
+
+
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
           testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, fixedDate.plusYears(1).toString))

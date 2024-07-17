@@ -145,12 +145,18 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   //FinancialDetails Stubs
   def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+  def financialDetailsCreditsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/credits/from/$from/to/$to"
 
   def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
 
   def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
                                         (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
+  }
+
+  def stubGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
+                                        (status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(financialDetailsCreditsUrl(nino, from, to), status, response.toString())
   }
 
   def verifyGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05", noOffcalls: Int = 1): Unit = {
