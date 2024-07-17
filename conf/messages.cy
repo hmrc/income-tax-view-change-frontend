@@ -1949,7 +1949,7 @@ claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r sw
 claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi talu eich taliad ar gyfrif cyntaf, bydd CThEF yn talu’r gwahaniaeth yn ôl i chi.
 claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2  = <b>Er enghraifft,</b> os ydych eisoes wedi talu £2,000 ar gyfer eich taliad ar gyfrif cyntaf a bod angen i chi leihau’r ddau daliad ar gyfrif i £1,500, bydd CThEF yn ychwanegu £500 at eich cyfrif ar gyfer y taliad cyntaf.
 claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai yn ychwanegu credyd neu dâl am fod yn hwyr at eich cyfrif, yn seiliedig ar y gwahaniaeth.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = <b>Er enghraifft,</b> os ydych eisoes wedi lleihau eich taliadau ar gyfrif i £2,000 ac wedi gwneud y taliad cyntaf. Os byddwch yn <b>lleihau’ch</b> taliadau ar gyfrif i £1,500, bydd CThEF yn ychwanegu credyd o £500. Os byddwch yn <b>cynyddu’ch</b> taliadau ar gyfrif i £2,500, bydd CThEF yn ychwanegu tâl am fod yn hwyr o £500.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = <b>Er enghraifft,</b> os ydych eisoes wedi lleihau eich taliadau ar gyfrif i £2,000 ac wedi gwneud y taliad cyntaf. Os byddwch yn <b>lleihau’</b>ch taliadau ar gyfrif i £1,500, bydd CThEF yn ychwanegu credyd o £500. Os byddwch yn <b>cynyddu’</b>ch taliadau ar gyfrif i £2,500, bydd CThEF yn ychwanegu tâl am fod yn hwyr o £500.
 
 # API Failure
 
