@@ -1899,18 +1899,17 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cans
 # confirmation
 
 claimToAdjustPoa.confirmation.caption                                   =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
-claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
-claimToAdjustPoa.confirmation.h1                                        =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod hyn yn wir
 claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
 claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
-claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chyflwyno
+claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chadw
 claimToAdjustPoa.confirmation.cancel                                    =   Canslo
 
 # select your reason
 
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
 claimToAdjustPoa.selectYourReason.h1                                    =   Dewiswch eich rheswm
-claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhesymau hyn yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
+claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhain yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   Os oes angen help arnoch i dalu’ch taliadau ar gyfrif,
 claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF (yn agor tab newydd)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .

@@ -18,16 +18,17 @@ package services.optout
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector, MockNextUpdatesService}
+import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.BeforeAndAfter
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
+import services.optout.OptOutTestSupport.buildOptOutContextData
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptOutJourney
@@ -64,22 +65,15 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
-        val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
         when(user.nino).thenReturn(taxableEntityId)
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Mandated, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Mandated, ""),
-        )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
-
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(Some(previousTaxYear.toString))
+        val optOutSessionData = OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)),
+                                                  Some(previousTaxYear.toString))
+
         val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 
@@ -101,22 +95,15 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
-        val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
         when(user.nino).thenReturn(taxableEntityId)
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
-
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(Some(previousTaxYear.toString))
+        val optOutSessionData = OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)),
+                                                  Some(previousTaxYear.toString))
+
         val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 
@@ -137,22 +124,15 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
-        val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
         when(user.nino).thenReturn(taxableEntityId)
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
-
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(Some(previousTaxYear.toString))
+        val optOutSessionData = OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)),
+                                                  Some(previousTaxYear.toString))
+
         val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 

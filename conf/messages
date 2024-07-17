@@ -1898,7 +1898,7 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canc
 
 claimToAdjustPoa.selectYourReason.title                                 =   Select Your Reason
 claimToAdjustPoa.selectYourReason.h1                                    =   Select your reason
-claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to proceed.
+claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to continue.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   If you need help paying for your payments on account,
 claimToAdjustPoa.selectYourReason.p2.link                               =   you can contact HMRC instead (opens in new tab)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
@@ -1944,11 +1944,10 @@ claimToAdjustPoa.apiFailure.bullet2Link              = homepage
 # Adjust payments on account
 
 claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
-claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
-claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.heading                                   =   Confirm this is true
 claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
 claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
-claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
+claimToAdjustPoa.confirmation.continue                                  =   Accept and save
 claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 
 

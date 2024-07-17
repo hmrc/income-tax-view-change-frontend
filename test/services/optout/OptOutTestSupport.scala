@@ -17,7 +17,9 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.optout.OptOutContextData
+import models.optout.OptOutContextData.statusToString
 
 object OptOutTestSupport {
 
@@ -160,6 +162,16 @@ object OptOutTestSupport {
       currentTaxYearOptOut,
       extTaxYearOptOut
     )
+  }
+
+  def buildOptOutContextData(crystallised: Boolean,
+                             statusPY: ITSAStatus,
+                             statusCY: ITSAStatus,
+                             statusNY: ITSAStatus): OptOutContextData = {
+    OptOutContextData(crystallised,
+      statusToString(statusPY),
+      statusToString(statusCY),
+      statusToString(statusNY))
   }
 
 }

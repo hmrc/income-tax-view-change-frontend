@@ -58,7 +58,7 @@ class OptOutMongoTestJourneyController @Inject()(
         case Some(_) =>
           sessionService.getMongo("OPTOUT").flatMap {
             case Right(Some(sessionDataOption)) =>
-                val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(valueOpt)))
+                val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(None, valueOpt)))
                 sessionService.setMongoData(optOutUIJourneySessionData).map { _ =>
                   Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
                 }
@@ -66,7 +66,7 @@ class OptOutMongoTestJourneyController @Inject()(
               val newSessionData = UIJourneySessionData(
                 sessionId = hc.sessionId.get.value,
                 journeyType = "OPTOUT",
-                optOutSessionData = Some(OptOutSessionData(valueOpt))
+                optOutSessionData = Some(OptOutSessionData(None, valueOpt))
               )
               sessionService.createSession("OPTOUT")
               sessionService.setMongoData(newSessionData).map { _ =>

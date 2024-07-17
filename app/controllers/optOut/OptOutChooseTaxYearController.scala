@@ -47,7 +47,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       for {
-        optOutProposition <- optOutService.fetchOptOutProposition()
+        optOutProposition <- optOutService.recallOptOutProposition()
         submissionCountForTaxYear <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
         intent <- optOutService.fetchSavedIntent()
       } yield {
@@ -66,7 +66,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       for {
-        optOutProposition <- optOutService.fetchOptOutProposition()
+        optOutProposition <- optOutService.recallOptOutProposition()
         quarterlyUpdatesCountModel <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
         cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
         formResult <- ConfirmOptOutMultiTaxYearChoiceForm(optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList).bindFromRequest().fold(

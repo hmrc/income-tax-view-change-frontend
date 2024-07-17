@@ -98,7 +98,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockFetchIntent(Future.successful(None))
         mockGetSubmissionCountForTaxYear(counts)
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)
 
@@ -116,7 +116,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
         mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
         mockGetSubmissionCountForTaxYear(counts)
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.show(isAgent)(requestGET)
 
@@ -144,7 +144,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -167,7 +167,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -189,7 +189,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
         mockNextUpdatesPageMultiYearOptOutViewModel(eligibleTaxYearResponse)
 
         mockGetSubmissionCountForTaxYear(counts)
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -216,7 +216,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(false))
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 
@@ -240,7 +240,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
 
         mockGetSubmissionCountForTaxYear(counts)
         mockSaveIntent(currentTaxYear, Future.successful(true))
-        mockFetchOptOutProposition(Future.successful(optOutProposition))
+        mockRecallOptOutProposition(Future.successful(optOutProposition))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOSTWithChoice)
 

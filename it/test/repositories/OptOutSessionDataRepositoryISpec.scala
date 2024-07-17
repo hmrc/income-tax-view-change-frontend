@@ -46,7 +46,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
 
         val currentYear = 2024
         val sessionId = "123"
-        val expectedOptOutSessionData = OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
+        val expectedOptOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
         val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
           journeyType = OptOutJourney.Name,
           optOutSessionData = Some(expectedOptOutSessionData))
@@ -95,7 +95,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
 
       val currentYear = 2025
       val sessionId = "xsession-12345"
-      val expectedOptOutSessionData = OptOutSessionData(selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
+      val expectedOptOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
       val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
         journeyType = OptOutJourney.Name,
         optOutSessionData = Some(expectedOptOutSessionData))
