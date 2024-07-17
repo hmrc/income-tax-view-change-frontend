@@ -90,10 +90,10 @@ GET          /agents/manage-your-businesses/add-foreign-property/change-business
 POST         /manage-your-businesses/add-foreign-property/change-business-start-date-check              controllers.manageBusinesses.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = false, isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/manage-your-businesses/add-foreign-property/change-business-start-date-check       controllers.manageBusinesses.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = true,  isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 
-GET          /manage-your-businesses/add/business-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /agents/manage-your-businesses/add/business-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /manage-your-businesses/add/business-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
-POST         /agents/manage-your-businesses/add/business-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
+GET          /manage-your-businesses/add-sole-trader/business-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/manage-your-businesses/add-sole-trader/business-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /manage-your-businesses/add-sole-trader/business-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
+POST         /agents/manage-your-businesses/add-sole-trader/business-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
 
 
 GET          /manage-your-businesses/add/uk-property-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
@@ -106,15 +106,15 @@ GET          /agents/manage-your-businesses/add/foreign-property-accounting-meth
 POST         /manage-your-businesses/add/foreign-property-accounting-method         controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 POST         /agents/manage-your-businesses/add/foreign-property-accounting-method  controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
 
-GET          /manage-your-businesses/add/foreign-property-added                       controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /agents/manage-your-businesses/add/foreign-property-added                controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /manage-your-businesses/add/foreign-property-added                       controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
-POST         /agents/manage-your-businesses/add/foreign-property-added                controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
+GET          /manage-your-businesses/add-foreign-property/foreign-property-added                       controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/manage-your-businesses/add-foreign-property/foreign-property-added                controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /manage-your-businesses/add-foreign-property/foreign-property-added                       controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
+POST         /agents/manage-your-businesses/add-foreign-property/foreign-property-added                controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
 
-GET          /manage-your-businesses/add/uk-property-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = UkProperty)
-GET          /agents/manage-your-businesses/add/uk-property-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
-POST         /manage-your-businesses/add/uk-property-added                          controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
-POST         /agents/manage-your-businesses/add/uk-property-added                   controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
+GET          /manage-your-businesses/add-uk-property/uk-property-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/manage-your-businesses/add-uk-property/uk-property-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /manage-your-businesses/add-uk-property/uk-property-added                          controllers.manageBusinesses.add.IncomeSourceAddedController.submit()
+POST         /agents/manage-your-businesses/add-uk-property/uk-property-added                   controllers.manageBusinesses.add.IncomeSourceAddedController.agentSubmit()
 
 GET          /manage-your-businesses/add/business-accounting-method                   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
 GET          /agents/manage-your-businesses/add/business-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
