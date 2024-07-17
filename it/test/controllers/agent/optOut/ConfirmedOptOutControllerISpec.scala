@@ -17,19 +17,22 @@
 package controllers.agent.optOut
 
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Mandated
+import models.itsaStatus.ITSAStatus._
+import models.optout.OptOutContextData.statusToString
+import models.optout.{OptOutContextData, OptOutSessionData}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
-import testConstants.CalculationListIntegrationTestConstants
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptOutJourney
 
 class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = true
   val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   val previousYear = currentTaxYear.addYears(-1)
@@ -38,6 +41,11 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
   val summary = "If you opt out, you can submit your tax return through your HMRC online account or software."
   val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repository.clearSession(testSessionId).futureValue shouldBe(true)
+  }
+
   s"calling GET $confirmedOptOutPageUrl" should {
     s"render $confirmedOptOutPageUrl" when {
       s"following year to opt-out year is $Mandated" when {
@@ -45,9 +53,11 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
           stubAuthorisedAgentUser(authorised = true)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+          stubOptOutInitialState(
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Mandated,
+            nextYearStatus = Mandated)
 
           val result = IncomeTaxViewChangeFrontend.getConfirmedOptOut(clientDetailsWithConfirmation)
           verifyIncomeSourceDetailsCall(testMtditid)
@@ -59,6 +69,22 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
         }
       }
     }
+  }
+
+  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
+                                     previousYearStatus: ITSAStatus.Value,
+                                     currentYearStatus: ITSAStatus.Value,
+                                     nextYearStatus: ITSAStatus.Value): Unit = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        OptOutJourney.Name,
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(OptOutContextData(
+              previousYearCrystallised,
+              statusToString(previousYearStatus),
+              statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), None))))
   }
 
 }

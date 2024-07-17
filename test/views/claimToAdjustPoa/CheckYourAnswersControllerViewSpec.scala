@@ -85,8 +85,8 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
         document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationForAdjustingPoaController.show(isAgent).url
       }
-      "render the Confirm and Submit button" in new Setup(isAgent = isAgent, poaReason = Increase) {
-        document.getElementById("confirm-and-submit-button").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.confirm-and-submit")
+      "render the Confirm and Save button" in new Setup(isAgent = isAgent, poaReason = Increase) {
+        document.getElementById("confirm-and-save-button").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.confirm-and-save")
       }
       "render the cancel link" in new Setup(isAgent) {
         document.getElementById("cancel-link").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.cancel")

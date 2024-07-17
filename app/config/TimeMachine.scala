@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package models.optout
+package config
 
-import play.api.libs.json.{Json, OFormat}
+trait TimeMachine {
 
-case class OptOutSessionData(optOutContextData: Option[OptOutContextData],
-                             selectedOptOutYear: Option[String]) {
+  val appConfig: FrontendAppConfig
 
-  val selectedOptOutYearField: String = "SelectedOptoutYear"
+  def getTimeMachineConfig: TimeMachineSettings = {
+    TimeMachineSettings(
+      isTimeMachineEnabled = appConfig.isTimeMachineEnabled,
+      addYears = appConfig.timeMachineAddYears,
+      addDays = appConfig.timeMachineAddDays
+    )
+  }
 
-  def getJSONKeyPath(name: String): String = s"optOutSessionData.$name"
-}
+  case class TimeMachineSettings(
+                               isTimeMachineEnabled: Boolean,
+                               addYears: Int,
+                               addDays: Int
+                             )
 
-object OptOutSessionData {
-  implicit val format: OFormat[OptOutSessionData] = Json.format[OptOutSessionData]
 }

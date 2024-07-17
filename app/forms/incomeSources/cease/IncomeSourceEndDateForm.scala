@@ -30,7 +30,8 @@ import services.DateService
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig) extends CustomConstraints with FeatureSwitching{
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit val appConfig: FrontendAppConfig)
+  extends CustomConstraints with FeatureSwitching {
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
@@ -47,13 +48,16 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
       s"$messagePrefix.$dateInvalid"
   }
 
-  def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
+  def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType): String = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
 
-  def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"
+  def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType): String =
+    s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"
 
-  def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType) = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
+  def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType): String =
+    s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)
+    (implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate
     val dateConstraints: List[Constraint[LocalDate]] = {
 
@@ -87,12 +91,12 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
           checkRequiredFields,
           validDate(dateMustNotBeInvalid(incomeSourceType, newIncomeSourceJourney))
         )).transform[LocalDate](
-        {
-          case (day, month, year) =>
-            LocalDate.of(year.toInt, month.toInt, day.toInt)
-        },
-        date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(firstError(dateConstraints: _*))
+          {
+            case (day, month, year) =>
+              LocalDate.of(year.toInt, month.toInt, day.toInt)
+          },
+          date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
+        ).verifying(firstError(dateConstraints: _*))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
@@ -114,5 +118,4 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
     case _ =>
       Valid
   }
-
 }

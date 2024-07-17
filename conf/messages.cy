@@ -1359,6 +1359,7 @@ dateForm.error.year.required                                        = Mae’n rh
 dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 dateForm.error.dayMonthAndYear.required.se                          = Nodwch y dyddiad y daeth eich busnes hunangyflogaeth i ben
 dateForm.error.dayMonthAndYear.required.uk                          = Nodwch y dyddiad y daeth eich busnes eiddo yn y DU i ben
 dateForm.error.dayMonthAndYear.required.fp                          = Nodwch y dyddiad y gwnaeth eich busnes eiddo tramor stopio
@@ -1853,20 +1854,12 @@ paymentOnAccount.p1                                  = Gallwch addasu’r ddau d
 paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
 paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = i fod yn is na’r flwyddyn dreth flaenorol.
-paymentOnAccount.inset-text                          = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un.
+paymentOnAccount.heading.example                     = Enghraifft
+paymentOnAccount.hint                                = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
 paymentOnAccount.table-heading-1                     = Taliad cyntaf ar gyfrif
-paymentOnAccount.table-heading.link                  = Rhagor o fanylion
-paymentOnAccount.table-heading-full-amount.key       = Y swm llawn
-paymentOnAccount.table-heading-created-amount.key    = Swm a gyfrifwyd gan CThEF
+paymentOnAccount.table-heading-created-amount.key    = Swm yn seiliedig ar fil treth blaenorol
 paymentOnAccount.table-heading-adjusted-amount.key   = Swm wedi’i addasu
 paymentOnAccount.table-heading-2                     = Ail daliad ar gyfrif
-paymentOnAccount.p3                                  = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall.
-paymentOnAccount.h2                                  = Os ydych wedi eisoes wedi gwneud taliad
-paymentOnAccount.p3-additional-content               = Mae’n rhaid addasu’r ddau daliad ar gyfrif ar yr un pryd. Ni allwch newid un heb newid y llall, hyd yn oed ar ôl i chi wneud y taliad ar gyfrif cyntaf.
-paymentOnAccount.p4                                  = Os ydych eisoes wedi gwneud eich taliad cyntaf, bydd CThEF yn ei ostwng ar eich cyfrif ac yn ychwanegu’r gwahaniaeth fel credyd.
-paymentOnAccount.heading.example                     = Enghraifft
-paymentOnAccount.p5                                  = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
-paymentOnAccount.p6                                  = Os ydych eisoes wedi talu’r taliad ar y gyfrif cyntaf (yn yr achos hwn, £2,000), bydd CThEF yn lleihau’r ddau daliad ar gyfrif i £1,500, ac yn ychwanegu credyd o £500 i’ch cyfrif am y taliad cyntaf.
 paymentOnAccount.button                              = Addasu fy nhaliadau ar gyfrif
 paymentOnAccount.cancel.link                         = Canslo
 
@@ -1879,7 +1872,7 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Taliad ar gyfrif 
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Ail daliad ar gyfrif, wedi’i addasu: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Newid
 claimToAdjustPoa.checkYourAnswers.cancel                     = Canslo
-claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Cadarnhau a chyflwyno
+claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Cadarnhau a chadw
 
 # what you need to know
 claimToAdjustPoa.whatYouNeedToKnow.heading                              = 	Yr hyn y mae angen i chi ei wybod
@@ -1906,18 +1899,17 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Cans
 # confirmation
 
 claimToAdjustPoa.confirmation.caption                                   =   Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
-claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
-claimToAdjustPoa.confirmation.h1                                        =   Cadarnhau bod y sefyllfa hon yn berthnasol i chi
+claimToAdjustPoa.confirmation.heading                                   =   Cadarnhau bod hyn yn wir
 claimToAdjustPoa.confirmation.p1                                        =   Rwyf o’r farn y bydd cyfanswm fy Nhreth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 ar gyfer y flwyddyn dreth hon, ar ôl didynnu treth wrth y ffynhonnell (er enghraifft, o dan TWE), yn llai na chyfanswm y llynedd.
 claimToAdjustPoa.confirmation.p2                                        =   Rwy’n credu na fydd yn rhaid i mi dalu unrhyw gyfraniadau Yswiriant Gwladol Dosbarth 4 neu Dreth Incwm (er enghraifft o dan TWE) eleni.
-claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chyflwyno
+claimToAdjustPoa.confirmation.continue                                  =   Derbyn a chadw
 claimToAdjustPoa.confirmation.cancel                                    =   Canslo
 
 # select your reason
 
 claimToAdjustPoa.selectYourReason.title                                 =   Dewiswch Eich Rheswm
 claimToAdjustPoa.selectYourReason.h1                                    =   Dewiswch eich rheswm
-claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhesymau hyn yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
+claimToAdjustPoa.selectYourReason.p1                                    =   Mae’n rhaid i’ch rheswm dros ostwng eich taliadau ar gyfrif fod yn un o’r rhesymau isod. Os nad oes un o’r rhain yn berthnasol i chi, ni fyddwch yn gallu mynd yn eich blaen.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   Os oes angen help arnoch i dalu’ch taliadau ar gyfrif,
 claimToAdjustPoa.selectYourReason.p2.link                               =   gallwch gysylltu â CThEF (yn agor tab newydd)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .

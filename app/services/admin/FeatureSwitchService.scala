@@ -66,7 +66,7 @@ class FeatureSwitchService @Inject()(
   }
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
-    Logger("application").info(s"set FeatureSwitch: name $FeatureSwitchName - state: $enabled")
+    Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
     } else {
@@ -76,8 +76,15 @@ class FeatureSwitchService @Inject()(
   }
 
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
-    Logger("application").info(s"set FeatureSwitches: $featureSwitches")
-    featureSwitchRepository.setFeatureSwitches(featureSwitches)
+    Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      featureSwitchRepository.setFeatureSwitches(featureSwitches)
+    } else {
+      featureSwitches.foreach { case (featureSwitchName, state) =>
+        setFS(featureSwitchName, state)
+      }
+      Future.successful((): Unit)
+    }
   }
 
 }

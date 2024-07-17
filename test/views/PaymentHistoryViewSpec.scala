@@ -44,6 +44,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     override def getCurrentDate: LocalDate = fixedDate
 
+    override protected def now(): LocalDate = fixedDate
+
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(fixedDate.getYear)
 
     override def getCurrentTaxYearEnd: Int = fixedDate.getYear + 1
@@ -64,6 +66,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
   }
 
   object PaymentHistoryMessages {

@@ -54,7 +54,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the  heading" in new Setup(isAgent = false, isAmountZero = true) {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.heading")
       }
 
       "have a 'Accept and submit' button" in new Setup(isAgent = false, isAmountZero = true) {
@@ -78,7 +78,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the  heading" in new Setup(isAgent = false, isAmountZero = false) {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.heading")
       }
 
       "have a 'Accept and submit' button" in new Setup(isAgent = false, isAmountZero = false) {
@@ -102,7 +102,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the  heading" in new Setup(isAgent = true, isAmountZero = false) {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.heading")
       }
 
       "have a 'Accept and submit' button" in new Setup(isAgent = true, isAmountZero = false) {
@@ -126,7 +126,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the  heading" in new Setup(isAgent = true, isAmountZero = true) {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.h1")
+        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.confirmation.heading")
       }
 
       "have a 'Accept and submit' button" in new Setup(isAgent = true, isAmountZero = true) {
