@@ -17,7 +17,9 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.optout.OptOutContextData
+import models.optout.OptOutContextData.statusToString
 
 object OptOutTestSupport {
 
@@ -54,7 +56,13 @@ object OptOutTestSupport {
     val PY_NY = Seq("PY", "NY")
   }
 
-  def buildOneYearOptOutDataForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  object Intent {
+    val PY = "PY"
+    val CY = "CY"
+    val NY = "NY"
+  }
+
+  def buildOneYearOptOutPropositionForPreviousYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -71,7 +79,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildOneYearOptOutDataForCurrentYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildOneYearOptOutPropositionForCurrentYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -88,7 +96,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildOneYearOptOutDataForNextYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildOneYearOptOutPropositionForNextYear(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -105,7 +113,7 @@ object OptOutTestSupport {
     )
   }
 
-  def buildMultiYearOptOutData(chosenCurrentYear: Int = 2024): OptOutProposition = {
+  def buildThreeYearOptOutProposition(chosenCurrentYear: Int = 2024): OptOutProposition = {
 
     val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
     val previousYear = currentYear.previousYear
@@ -120,6 +128,50 @@ object OptOutTestSupport {
       currentTaxYearOptOut,
       extTaxYearOptOut
     )
+  }
+
+  def buildTwoYearOptOutPropositionOfferingPYAndNY(chosenCurrentYear: Int = 2024): OptOutProposition = {
+
+    val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
+    val previousYear = currentYear.previousYear
+    val nextYear = currentYear.nextYear
+
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Mandated, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Voluntary, nextYear, currentTaxYearOptOut)
+
+    OptOutProposition(
+      previousTaxYearOptOut,
+      currentTaxYearOptOut,
+      extTaxYearOptOut
+    )
+  }
+
+  def buildTwoYearOptOutPropositionOfferingPYAndCY(chosenCurrentYear: Int = 2024): OptOutProposition = {
+
+    val currentYear = TaxYear.forYearEnd(chosenCurrentYear)
+    val previousYear = currentYear.previousYear
+    val nextYear = currentYear.nextYear
+
+    val previousTaxYearOptOut = PreviousOptOutTaxYear(Voluntary, previousYear,  crystallised = false)
+    val currentTaxYearOptOut = CurrentOptOutTaxYear(Voluntary, currentYear)
+    val extTaxYearOptOut = NextOptOutTaxYear(Mandated, nextYear, currentTaxYearOptOut)
+
+    OptOutProposition(
+      previousTaxYearOptOut,
+      currentTaxYearOptOut,
+      extTaxYearOptOut
+    )
+  }
+
+  def buildOptOutContextData(crystallised: Boolean,
+                             statusPY: ITSAStatus,
+                             statusCY: ITSAStatus,
+                             statusNY: ITSAStatus): OptOutContextData = {
+    OptOutContextData(crystallised,
+      statusToString(statusPY),
+      statusToString(statusCY),
+      statusToString(statusNY))
   }
 
 }

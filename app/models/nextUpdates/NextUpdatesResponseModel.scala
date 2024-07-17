@@ -19,10 +19,10 @@ package models.nextUpdates
 import auth.MtdItUser
 import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
+
 import play.api.libs.json._
 
 import java.time.LocalDate
-
 
 sealed trait NextUpdatesResponseModel
 
@@ -69,8 +69,10 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
-  def submissionsCount(implicit mtdItUser: MtdItUser[_]): Int =
-    allQuarterly.map(_.obligation.due).distinct.size
+  def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
+    allDeadlinesWithSource()(mtdItUser)
+      .filter(_.obligation.obligationType == "Quarterly")
+      .count(_.obligation.status == StatusFulfilled)
 
   def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
     val dayOfMonth = obligation.obligation.start.getDayOfMonth
@@ -111,14 +113,15 @@ case class NextUpdateModel(start: LocalDate,
                            due: LocalDate,
                            obligationType: String,
                            dateReceived: Option[LocalDate],
-                           periodKey: String) extends NextUpdatesResponseModel
+                           periodKey: String,
+                           status: ObligationStatus) extends NextUpdatesResponseModel
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
 
 case class NextUpdatesErrorModel(code: Int, message: String) extends NextUpdatesResponseModel
 
 object NextUpdateModel {
-  implicit val format: Format[NextUpdateModel] = Json.format[NextUpdateModel]
+  implicit val formatNextUpdateModel: Format[NextUpdateModel] = Json.format[NextUpdateModel]
 }
 
 object NextUpdatesModel {
@@ -127,4 +130,28 @@ object NextUpdatesModel {
 
 object NextUpdatesErrorModel {
   implicit val format: Format[NextUpdatesErrorModel] = Json.format[NextUpdatesErrorModel]
+}
+
+sealed trait ObligationStatus
+
+case object StatusOpen extends ObligationStatus {
+  override def toString: String = "Open"
+}
+case object StatusFulfilled extends ObligationStatus {
+  override def toString: String = "Fulfilled"
+}
+
+object ObligationStatus {
+  implicit val obligationStatusWrites: Writes[ObligationStatus] = Writes[ObligationStatus] {
+    case StatusOpen    => JsString("Open")
+    case StatusFulfilled => JsString("Fulfilled")
+  }
+
+  implicit val obligationStatusReads: Reads[ObligationStatus] = Reads[ObligationStatus] {
+    case JsString("Open")    => JsSuccess(StatusOpen)
+    case JsString("Fulfilled") => JsSuccess(StatusFulfilled)
+    case _                  => JsError("Unknown Obligation Status")
+  }
+
+  implicit val obligationStatusFormat: Format[ObligationStatus] = Format(obligationStatusReads, obligationStatusWrites)
 }

@@ -68,16 +68,18 @@ class SelectYourReasonControllerSpec extends MockAuthenticationPredicate with Te
       poaOneTransactionId = "poaOne-Id",
       poaTwoTransactionId = "poaTwo-Id",
       taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-      paymentOnAccountOne = 5000.00,
-      paymentOnAccountTwo = 5000.00,
-      poARelevantAmountOne = 5000.00,
-      poARelevantAmountTwo = 5000.00,
-      poAPartiallyPaid = false
+      totalAmountOne = 5000.00,
+      totalAmountTwo = 5000.00,
+      relevantAmountOne = 5000.00,
+      relevantAmountTwo = 5000.00,
+      partiallyPaid = false,
+      fullyPaid = false,
+      previouslyAdjusted = None
     ))
 
   val poaTotalLessThanRelevant: Option[PaymentOnAccountViewModel] = poa.map(_.copy(
-    paymentOnAccountOne = 1000.0,
-    paymentOnAccountTwo = 1000.0))
+    totalAmountOne = 1000.0,
+    totalAmountTwo = 1000.0))
 
   def setupTest(sessionResponse: Either[Throwable, Option[PoAAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
     enable(AdjustPaymentsOnAccount)

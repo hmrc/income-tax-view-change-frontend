@@ -19,10 +19,12 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
+import enums.GatewayPage.GatewayPage
 import enums.OtherCharge
 import exceptions.MissingFieldException
+import junit.extensions.TestSetup
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
-import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -58,11 +60,25 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
-    val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
-      paymentBreakdown, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
-      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit, documentType = documentDetail.getDocType, adjustmentHistory = adjustmentHistory)
+    val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+      currentDate = dateService.getCurrentDate,
+      documentDetailWithDueDate = DocumentDetailWithDueDate(documentDetail, dueDate),
+      backUrl = "testBackURL",
+      gatewayPage = None,
+      btaNavPartial = None,
+      paymentBreakdown = paymentBreakdown,
+      paymentAllocations = paymentAllocations,
+      payments = payments,
+      chargeHistoryEnabled = chargeHistoryEnabled,
+      paymentAllocationEnabled = paymentAllocationEnabled,
+      latePaymentInterestCharge = latePaymentInterestCharge,
+      codingOutEnabled = codingOutEnabled,
+      isAgent = isAgent,
+      isMFADebit  = isMFADebit,
+      adjustmentHistory = adjustmentHistory,
+      documentType =  documentDetail.getDocType)
+    val view: Html = chargeSummary(viewModel)
     val document: Document = Jsoup.parse(view.toString())
-
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
       val summaryListRow = document.select(s".govuk-summary-list:nth-of-type(1) .govuk-summary-list__row:nth-of-type($rowNumber)")
       summaryListRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
@@ -383,7 +399,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
         documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningLock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
         document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
-      }
+       }
 
       "display only the charge creation item when no history found for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("tbody tr").size() shouldBe 1
@@ -845,11 +861,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   }
 
   "The charge summary view when missing mandatory expected fields" should {
-    "throw a MissingFieldException" in {
+    "throw a MissingFieldException" in new TestSetup(documentDetailModel()) {
+      val exceptionViewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+        currentDate = dateService.getCurrentDate,
+        documentDetailWithDueDate = DocumentDetailWithDueDate(documentDetailModel(), None),
+        backUrl = "testBackURL",
+        gatewayPage = None,
+        btaNavPartial = None,
+        paymentBreakdown = paymentBreakdown,
+        paymentAllocations = List(),
+        payments = payments,
+        chargeHistoryEnabled = true,
+        paymentAllocationEnabled = false,
+        latePaymentInterestCharge = false,
+        codingOutEnabled = false,
+        isAgent = false,
+        isMFADebit  = false,
+        adjustmentHistory = defaultAdjustmentHistory,
+        documentType = OtherCharge)
       val thrownException = intercept[MissingFieldException] {
-        chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), payments, chargeHistoryEnabled = true, paymentAllocationEnabled = false, latePaymentInterestCharge = false,
-          codingOutEnabled = false, isAgent = false, isMFADebit = false, documentType = OtherCharge, adjustmentHistory = defaultAdjustmentHistory)
+
+        chargeSummary(exceptionViewModel)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }

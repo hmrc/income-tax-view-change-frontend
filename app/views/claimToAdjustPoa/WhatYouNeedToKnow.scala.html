@@ -19,6 +19,7 @@
 @import views.html.components._
 @import views.html.helpers.injected.InputHelper
 @import views.html.layouts.unifiedLayout
+@import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
 
 
 @this(
@@ -35,7 +36,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, showIncreaseAfterPaymentContent: Boolean, redirect: String)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent.url
@@ -48,7 +49,7 @@
 
 @newTabLinkHTML(link: String, linkText: String) = {
     <p class="govuk-body">
-        @linkText <a href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
+        @linkText <a href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
     </p>
 }
 
@@ -58,14 +59,14 @@
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true) {
 
-    <span class="govuk-caption-xl" id="caption">@getMessage("caption", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)</span>
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
 
     @h1(msg = getMessage("h1"),
      id = Some("h1"))
 
     <p class="govuk-body" id="p1" >
-        @getMessage("p1", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString)
-        <b>@getMessage("bold", (poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
+        @getMessage("p1", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)
+        <b>@getMessage("bold", (viewModel.poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
     </p>
 
     @govukWarningText(WarningText(
@@ -94,7 +95,7 @@
 
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
-    @if(showIncreaseAfterPaymentContent){
+    @if(viewModel.showIncreaseAfterPaymentContent){
         <h3 class="govuk-heading-m">@getMessage("increase-after-payment.h1")</h3>
 
         @p(id = Some("p6")) {
@@ -113,7 +114,7 @@
         @govukButton(Button(
             id = Some("continue"),
             content = Text(getMessage("continue-button")),
-            href = Some(redirect)
+            href = Some(viewModel.redirect)
         ))
         <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>

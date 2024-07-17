@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import models.claimToAdjustPoa.AmendablePoaViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -26,7 +26,7 @@ import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 class AmendablePOAControllerViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Boolean = false) {
+  class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Option[Boolean] = None) {
 
     val amendablePaymentOnAccount: AmendablePaymentOnAccount = app.injector.instanceOf[AmendablePaymentOnAccount]
 
@@ -36,17 +36,17 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           amendablePaymentOnAccount(
             isAgent = isAgent,
             viewModel =
-              AmendablePoaViewModel(
+              PaymentOnAccountViewModel(
                 poaOneTransactionId = "poa-one-id",
                 poaTwoTransactionId = "poa-two-id",
                 taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-                paymentOnAccountOne = BigDecimal(3000.45),
-                paymentOnAccountTwo = BigDecimal(3000.45),
-                poARelevantAmountOne = BigDecimal(5000.50),
-                poARelevantAmountTwo = BigDecimal(5000.50),
-                poAPartiallyPaid = false,
-                poAFullyPaid = poAFullyPaid,
-                poasHaveBeenAdjustedPreviously = poasHaveBeenAdjustedPreviously
+                totalAmountOne = BigDecimal(3000.45),
+                totalAmountTwo = BigDecimal(3000.45),
+                relevantAmountOne = BigDecimal(5000.50),
+                relevantAmountTwo = BigDecimal(5000.50),
+                partiallyPaid = false,
+                fullyPaid = poAFullyPaid,
+                previouslyAdjusted = poasHaveBeenAdjustedPreviously
               ),
           )
         )
@@ -67,65 +67,29 @@ class AmendablePOAControllerViewSpec extends TestSupport {
           )
         document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "not render the hint if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        Option(document.getElementById("inset-text")).isDefined shouldBe false
-      }
-      "render the hint if any poAs are unpaid" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-inset-text").text() shouldBe messages("paymentOnAccount.inset-text")
+      "render the example heading and content" in new Setup(isAgent) {
+        document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
+        document.getElementById("hint").text() shouldBe messages("paymentOnAccount.hint")
         document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
-      "render the first Payment On Account Summary Card" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
-        document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
-        document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
-        document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£3,000.45"
+      "render the Payment On Account Table" in new Setup(isAgent) {
+        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
+        val tableBody = document.getElementsByClass("govuk-table__body")
+        tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
+        tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£3,000.45"
+        tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-2")
+        tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£3,000.45"
       }
-      "render the first Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
-        document.getElementsByClass("govuk-summary-card__title").get(0).text() shouldBe messages("paymentOnAccount.table-heading-1")
-        document.getElementById("poa1-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
-        document.getElementById("poa1-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-one-id")
-        document.getElementsByClass("govuk-summary-list__key").get(0).text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(0).text() shouldBe "£5,000.50"
-        document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-adjusted-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£3,000.45"
-      }
-      "render the second Payment On Account Summary Card" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
-        document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
-        document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
-        document.getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe messages("paymentOnAccount.table-heading-full-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(1).text() shouldBe "£3,000.45"
-      }
-      "render the second Payment On Account Summary Card with two rows when POAs have been adjusted previously" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = true) {
-        document.getElementsByClass("govuk-summary-card__title").get(1).text() shouldBe messages("paymentOnAccount.table-heading-2")
-        document.getElementById("poa2-more-details-date-link").text() shouldBe messages("paymentOnAccount.table-heading.link")
-        document.getElementById("poa2-more-details-date-link").getElementsByTag("a").attr("href") shouldBe getChargeSummaryUrl(isAgent, "poa-two-id")
-        document.getElementsByClass("govuk-summary-list__key").get(2).text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(2).text() shouldBe "£5,000.50"
-        document.getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe messages("paymentOnAccount.table-heading-adjusted-amount.key")
-        document.getElementsByClass("govuk-summary-list__value govuk-summary-list__value govuk-table__cell--numeric").get(3).text() shouldBe "£3,000.45"
-      }
-      "render the second paragraph text without additional content" in new Setup(isAgent) {
-        document.getElementById("paragraph-3-text").text() shouldBe messages("paymentOnAccount.p3")
-      }
-      "render the large heading if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("already-made-a-payment-heading").text() shouldBe messages("paymentOnAccount.h2")
-      }
-      "render the second paragraph text with additional content if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-3-additional-text").text() shouldBe messages("paymentOnAccount.p3-additional-content")
-      }
-      "render the third paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-4-text").text() shouldBe messages("paymentOnAccount.p4")
-      }
-      "render the Example h3 text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
-      }
-      "render the fourth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-5-text").text() shouldBe messages("paymentOnAccount.p5")
-      }
-      "render the fifth paragraph text if poAs are partially or fully paid" in new Setup(isAgent, poAFullyPaid = true) {
-        document.getElementById("paragraph-6-text").text() shouldBe messages("paymentOnAccount.p6")
+      "render the Payment On Account Table with relevant amount when POA previously adjusted" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = Some(true)) {
+        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key") +
+          " " + messages("paymentOnAccount.table-heading-adjusted-amount.key")
+        val tableBody = document.getElementsByClass("govuk-table__body")
+        tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
+        tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£5,000.50"
+        tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe "£3,000.45"
+        tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-2")
+        tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£5,000.50"
+        tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe "£3,000.45"
       }
       "render the Adjust my payments on account button" in new Setup(isAgent) {
         document.getElementById("adjust-my-payments-button").text() shouldBe messages("paymentOnAccount.button")

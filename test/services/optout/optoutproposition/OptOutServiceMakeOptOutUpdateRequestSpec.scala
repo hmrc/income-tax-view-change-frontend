@@ -21,14 +21,15 @@ import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services._
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
-import org.mockito.ArgumentMatchers.{any, anyInt}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.UIJourneySessionDataRepository
 import services.optout.OptOutService
+import services.optout.OptOutTestSupport.buildOptOutContextData
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -74,13 +75,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.NoStatus, ""),
-        )
-        when(itsaStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
@@ -89,7 +83,9 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear.previousYear
-        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)),
+                                                 Some(intent.toString)))
+
         val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
         when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -112,13 +108,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(itsaStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
@@ -133,7 +122,9 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear.previousYear
-        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)),
+                                                 Some(intent.toString)))
+
         val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
         when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -156,20 +147,13 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         val nextTaxYear: TaxYear = currentTaxYear.nextYear
 
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
-        val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          TaxYear.forYearEnd(currentYear - 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          TaxYear.forYearEnd(currentYear + 1) -> StatusDetail("", ITSAStatus.Voluntary, ""),
-        )
-        when(itsaStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
-        when(calculationListService.isTaxYearCrystallised(currentTaxYear.previousYear)).thenReturn(Future.successful(false))
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseFailure.defaultFailure()
         ))
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseFailure.defaultFailure()
+          OptOutUpdateResponseSuccess(correlationId)
         ))
         when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
@@ -177,7 +161,9 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear.previousYear
-        val sessionData: Option[OptOutSessionData] = Some(OptOutSessionData(Some(intent.toString)))
+        val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)),
+                                                 Some(intent.toString)))
+
         val journeyData: UIJourneySessionData = UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = sessionData)
         when(repository.get(any[String], any[String])).thenReturn(Future.successful(Option(journeyData)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -187,7 +173,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         result.futureValue shouldBe OptOutUpdateResponseFailure.defaultFailure()
       }
     }
-
 
   }
 }

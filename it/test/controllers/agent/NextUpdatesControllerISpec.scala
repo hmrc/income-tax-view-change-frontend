@@ -26,7 +26,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -105,7 +105,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -167,7 +167,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -212,7 +212,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -243,7 +243,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
     }
 
-    "show Internal Server Error page" when {
+    "show Next updates page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           stubAuthorisedAgentUser(authorised = true)
@@ -254,7 +254,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -277,10 +277,88 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
           verifyNextUpdatesCall(testNino)
 
-          Then("show Internal Server Error Page")
+          Then("the next update view displays the correct title even if the OptOut fail")
           res should have(
-            httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleAgent("standardError.heading", isErrorPage = true)
+            httpStatus(OK),
+            pageTitleAgent("nextUpdates.heading")
+          )
+        }
+
+        "Calculation API Failure" in {
+          stubAuthorisedAgentUser(authorised = true)
+          enable(OptOut)
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+          val currentObligations: ObligationsModel = ObligationsModel(Seq(
+            NextUpdatesModel(
+              identification = "testId",
+              obligations = List(
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+              ))
+          ))
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetails
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligations
+          )
+          ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
+          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+
+
+          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          verifyNextUpdatesCall(testNino)
+
+          Then("the next update view displays the correct title even if the OptOut fail")
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("nextUpdates.heading")
+          )
+        }
+
+        "ITSA Status API Failure and Calculation API Failure" in {
+          stubAuthorisedAgentUser(authorised = true)
+          enable(OptOut)
+          val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+          val previousYear = currentTaxYear.addYears(-1)
+          val currentObligations: ObligationsModel = ObligationsModel(Seq(
+            NextUpdatesModel(
+              identification = "testId",
+              obligations = List(
+                NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+              ))
+          ))
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetails
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligations
+          )
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+
+
+          val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          verifyNextUpdatesCall(testNino)
+
+          Then("the next update view displays the correct title even if the OptOut fail")
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent("nextUpdates.heading")
           )
         }
       }

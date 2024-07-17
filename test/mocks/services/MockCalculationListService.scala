@@ -35,14 +35,14 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
   }
   def setupMockTaxYearNotCrystallised(): Unit =
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
-      .thenReturn(Future.successful(Some(false)))
+      .thenReturn(Future.successful(false))
 
-  def setupMockIsTaxYearCrystallisedCall(taxYear: Int)(out: Future[Option[Boolean]]): Unit = {
+  def setupMockIsTaxYearCrystallisedCall(taxYear: Int)(out: Future[Boolean]): Unit = {
     when(mockCalculationListService
       .isTaxYearCrystallised(ArgumentMatchers.eq(taxYear))(any, any))
       .thenReturn(out)
   }
   def setupMockTaxYearCrystallised(): Unit =
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
-      .thenReturn(Future.successful(Some(true)))
+      .thenReturn(Future.successful(true))
 }

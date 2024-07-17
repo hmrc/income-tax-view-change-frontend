@@ -27,7 +27,7 @@ import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MF
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -333,7 +333,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#003"
+          periodKey = "#003",
+          StatusFulfilled
         ))
     ),
     NextUpdatesModel(
@@ -345,7 +346,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           due = getCurrentTaxYearEnd,
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#004"
+          periodKey = "#004",
+          StatusFulfilled
         ))
     )
   ))
@@ -846,7 +848,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 LocalDate.of(2018, 2, 4),
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
-                "#001"
+                "#001",
+                StatusFulfilled
               ))
             )
           ))
@@ -890,7 +893,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 LocalDate.of(2018, 2, 4),
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
-                "#001"
+                "#001",
+                StatusFulfilled
               ))
             )
           ))

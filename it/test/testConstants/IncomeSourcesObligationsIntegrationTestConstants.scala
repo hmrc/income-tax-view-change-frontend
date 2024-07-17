@@ -17,7 +17,7 @@
 package testConstants
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 
 import java.time.LocalDate
 
@@ -51,14 +51,16 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       LocalDate.of(taxYear, 5, 5),
       "Quarterly",
       None,
-      "#001"),
+      "#001",
+      StatusFulfilled),
       NextUpdateModel(
         LocalDate.of(taxYear, 1, 6),
         LocalDate.of(taxYear, 4, 5),
         LocalDate.of(taxYear, 5, 5),
         "Quarterly",
         None,
-        "#002"
+        "#002",
+        StatusFulfilled
       )
     ))
   ))

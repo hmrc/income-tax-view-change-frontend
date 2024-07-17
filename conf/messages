@@ -1350,6 +1350,7 @@ dateForm.error.year.required                                        = The date m
 dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
+dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
 dateForm.error.dayMonthAndYear.required.se                          = Enter the date your self-employed business stopped
 dateForm.error.dayMonthAndYear.required.uk                          = Enter the date your UK property business stopped
 dateForm.error.dayMonthAndYear.required.fp                          = Enter the date your foreign property business stopped
@@ -1897,7 +1898,7 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canc
 
 claimToAdjustPoa.selectYourReason.title                                 =   Select Your Reason
 claimToAdjustPoa.selectYourReason.h1                                    =   Select your reason
-claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to proceed.
+claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to continue.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   If you need help paying for your payments on account,
 claimToAdjustPoa.selectYourReason.p2.link                               =   you can contact HMRC instead (opens in new tab)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
@@ -1943,11 +1944,10 @@ claimToAdjustPoa.apiFailure.bullet2Link              = homepage
 # Adjust payments on account
 
 claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
-claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
-claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.heading                                   =   Confirm this is true
 claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
 claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
-claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
+claimToAdjustPoa.confirmation.continue                                  =   Accept and save
 claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 
 
@@ -1957,20 +1957,12 @@ paymentOnAccount.p1                                  = You can adjust both payme
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
 paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
-paymentOnAccount.inset-text                          = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.
+paymentOnAccount.heading.example                     = Example
+paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
 paymentOnAccount.table-heading-1                     = First payment on account
-paymentOnAccount.table-heading.link                  = More details
-paymentOnAccount.table-heading-full-amount.key       = Full amount
-paymentOnAccount.table-heading-created-amount.key    = Amount created by HMRC
+paymentOnAccount.table-heading-created-amount.key    = Amount based on previous tax bill
 paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
 paymentOnAccount.table-heading-2                     = Second payment on account
-paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
-paymentOnAccount.h2                                  = If you’ve already made a payment
-paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
-paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
-paymentOnAccount.heading.example                     = Example
-paymentOnAccount.p5                                  = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
-paymentOnAccount.p6                                  = If you’ve already paid the first payment on account (in this case, £2,000), HMRC will reduce both payments on account to £1,500, and add £500 credit to your account for the first payment.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 
@@ -1983,7 +1975,7 @@ claimToAdjustPoa.checkYourAnswers.summary-list-1.value       = Adjusted first pa
 claimToAdjustPoa.checkYourAnswers.summary-list-2.value       = Adjusted second payment on account: {0}
 claimToAdjustPoa.checkYourAnswers.summary-list.change        = Change
 claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
-claimToAdjustPoa.checkYourAnswers.confirm-and-submit         = Confirm and submit
+claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 
 # Enter POA Amount
 claimToAdjustPoa.enterPoaAmount.caption                 = Adjust payments on account for {0} to {1} tax year

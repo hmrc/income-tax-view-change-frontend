@@ -17,7 +17,7 @@
 package views.claimToAdjustPoa
 
 import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.PoAAmountViewModel
+import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -39,14 +39,17 @@ class EnterPoAAmountViewSpec extends TestSupport{
 
   val cancelUrl: String = controllers.routes.HomeController.show().url
 
-  def poAAmountViewModel(poaPreviouslyAdjusted: Boolean = false, partiallyOrFullyPaidPoaExists: Boolean = false) = PoAAmountViewModel(
-    partiallyOrFullyPaidPoaExists = partiallyOrFullyPaidPoaExists,
-    poaPreviouslyAdjusted = poaPreviouslyAdjusted,
+  def poAAmountViewModel(poaPreviouslyAdjusted: Option[Boolean] = Some(false), poaPartiallyPaid: Boolean = false) = PaymentOnAccountViewModel(
+    poaOneTransactionId = "poaOne-Id",
+    poaTwoTransactionId = "poaTwo-Id",
+    previouslyAdjusted = poaPreviouslyAdjusted,
     taxYear = TaxYear.makeTaxYearWithEndYear(2024),
     totalAmountOne = 5000,
     totalAmountTwo = 5000,
     relevantAmountOne = 5000,
-    relevantAmountTwo = 5000
+    relevantAmountTwo = 5000,
+    partiallyPaid = poaPartiallyPaid,
+    fullyPaid = false
   )
 
   val prePopulatedForm = Some(1200).fold(EnterPoaAmountForm.form)(value =>
@@ -61,7 +64,7 @@ class EnterPoAAmountViewSpec extends TestSupport{
   val higherErrorForm = EnterPoaAmountForm.form.withError(EnterPoaAmountForm.amount, "claimToAdjustPoa.enterPoaAmount.higherError")
     .fill(EnterPoaAmountForm(7000))
 
-  class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PoAAmountViewModel = poAAmountViewModel()) {
+  class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PaymentOnAccountViewModel = poAAmountViewModel()) {
     val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoAAmountController.submit(isAgent, NormalMode))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
@@ -99,21 +102,21 @@ class EnterPoAAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("secondPayment")
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel().relevantAmountTwo.toCurrencyString
     }
-    "render the table with Initial and Adjusted amount for user who has decrease previously" in new Setup(viewModel = poAAmountViewModel(poaPreviouslyAdjusted = true)) {
+    "render the table with Initial and Adjusted amount for user who has decrease previously" in new Setup(viewModel = poAAmountViewModel(poaPreviouslyAdjusted = Some(true))) {
       document.getElementsByClass("govuk-table__head").text() shouldBe {msg("initialAmount") + " " + msg("adjustedAmount")}
       val tableBody = document.getElementsByClass("govuk-table__body")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
-      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = true).relevantAmountOne.toCurrencyString
-      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = true).totalAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).relevantAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).totalAmountOne.toCurrencyString
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("secondPayment")
-      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = true).relevantAmountTwo.toCurrencyString
-      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = true).totalAmountOne.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).relevantAmountTwo.toCurrencyString
+      tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).totalAmountOne.toCurrencyString
     }
-    "render the inset text specific to the first adjustment attempt" in new Setup(viewModel = poAAmountViewModel(partiallyOrFullyPaidPoaExists = true)) {
+    "render the inset text specific to the first adjustment attempt" in new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true)) {
       document.getElementById("insetText-firstAttempt").text() shouldBe msg("insetText.firstAttempt")
     }
     "render the inset text specific to the second adjustment attempt" in
-      new Setup(viewModel = poAAmountViewModel(partiallyOrFullyPaidPoaExists = true, poaPreviouslyAdjusted = true)) {
+      new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true, poaPreviouslyAdjusted = Some(true))) {
         document.getElementById("insetText-secondAttempt").text() shouldBe msg("insetText.secondAttempt")
       }
     "not render any inset text if poAs are unpaid" in new Setup(viewModel = poAAmountViewModel()) {

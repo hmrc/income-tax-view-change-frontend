@@ -41,12 +41,12 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val checks: NextUpdatesQuarterlyReportingContentChecks = if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
       currentYearItsaStatus = true,
       previousYearItsaStatus = true,
-      previousYearCrystallisedStatus = Some(true))
+      previousYearCrystallisedStatus = true)
     else
       NextUpdatesQuarterlyReportingContentChecks(
         currentYearItsaStatus = false,
         previousYearItsaStatus = true,
-        previousYearCrystallisedStatus = Some(true))
+        previousYearCrystallisedStatus = true)
 
     val optOutOneYearViewModel: OptOutOneYearViewModel = OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, Some(optOutOneYearViewModel), checks, "testBackURL")))

@@ -1210,6 +1210,15 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
+      ),
+      Json.obj(
+        "taxYear" -> taxYear.toInt,
+        "transactionId" -> "1040000129",
+        "documentDescription" -> "SA Repayment Supplement Credit",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29",
+        "effectiveDateOfPayment" -> dueDate
       )
     ),
     "financialDetails" -> Json.arr(
@@ -1295,7 +1304,24 @@ object IncomeSourceIntegrationTestConstants {
             "interestLock" -> interestLocks.head,
             "dunningLock" -> dunningLock.head
           ))
-      )
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Repayment Supplement Credit",
+        "mainTransaction" -> "6020",
+        "transactionId" -> "1040000129",
+        "chargeReference" -> "ABCD1239",
+        "chargeType" -> ITSA_NI,
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 2000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate),
+          Json.obj(
+            "interestLock" -> interestLocks.head,
+            "dunningLock" -> dunningLock.head
+          ))
+      ),
     )
   )
 

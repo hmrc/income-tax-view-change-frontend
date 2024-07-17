@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
-import models.nextUpdates.NextUpdateModel
+import models.nextUpdates.{NextUpdateModel, StatusFulfilled}
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
@@ -197,7 +197,8 @@ object PropertyDetailsTestConstants {
     due = LocalDate.of(2017, 10, 31),
     periodKey = "#003",
     dateReceived = None,
-    obligationType = "Crystallised"
+    obligationType = "Crystallised",
+    status = StatusFulfilled
   ))
 
   val testLatencyDetails = LatencyDetails(

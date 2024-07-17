@@ -27,7 +27,7 @@ import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSes
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -82,7 +82,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
       LocalDate.of(2022, 8, 2),
       "Quarterly",
       None,
-      "#001"
+      "#001",
+      StatusFulfilled
     ),
       NextUpdateModel(
         LocalDate.of(2022, 7, 1),
@@ -90,7 +91,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         LocalDate.of(2022, 8, 2),
         "Quarterly",
         None,
-        "#002"
+        "#002",
+        StatusFulfilled
       )
     ))
   ))
