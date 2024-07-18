@@ -306,13 +306,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/foreign-property-added",
+        uri = s"/manage-your-businesses/add-foreign-property/foreign-property-added",
         additionalCookies
       )
     }
 
     def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/foreign-property-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-foreign-property/foreign-property-added", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse =
@@ -448,13 +448,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/business-added",
+        uri = s"/manage-your-businesses/add-sole-trader/business-added",
         additionalCookies
       )
     }
 
     def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/business-added", additionalCookies)(Map.empty)
     }
 
     def getCheckCeaseUKPropertyAnswers(additionalCookies: Map[String, String]): WSResponse =

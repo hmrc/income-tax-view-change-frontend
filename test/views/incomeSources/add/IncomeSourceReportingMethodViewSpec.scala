@@ -27,7 +27,6 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.test.Helpers.contentAsString
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 

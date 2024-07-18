@@ -121,6 +121,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             getViewModel(incomeSourceType, IncomeSourceId(id)).map {
               case Some(viewModel) =>
                 Ok(view(
+                  incomeSourceType,
                   incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
                   incomeSourceReportingViewModel = viewModel,
                   postAction = submitUrl(isAgent, incomeSourceType),
@@ -166,8 +167,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
           case false =>
             Future.successful {
-              Some(IncomeSourceReportingMethodViewModel(latencyYear1 = Some(LatencyYear(taxYear1, taxYear1LatencyIndicator)),
-                latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
+              Some(IncomeSourceReportingMethodViewModel(latencyYear1 = Some(LatencyYear(taxYear1, taxYear1LatencyIndicator)), latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
             }
         }
       case _ =>
@@ -207,6 +207,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     getViewModel(incomeSourceType, id).map {
       case Some(viewModel) =>
         BadRequest(view(
+          incomeSourceType,
           incomeSourceReportingMethodForm = updatedForm,
           incomeSourceReportingViewModel = viewModel,
           postAction = submitUrl(isAgent, incomeSourceType),

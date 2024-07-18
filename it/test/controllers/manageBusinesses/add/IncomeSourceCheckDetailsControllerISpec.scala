@@ -42,11 +42,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType).url
 
-  val addBusinessReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, SelfEmployment).url
+  val addBusinessReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, SelfEmployment).url
 
-  val addForeignPropReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, ForeignProperty).url
+  val addForeignPropReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, ForeignProperty).url
 
-  val addUkPropReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, UkProperty).url
+  val addUkPropReportingFrequencyUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, UkProperty).url
 
   def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 

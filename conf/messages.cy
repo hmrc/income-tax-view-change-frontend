@@ -1250,11 +1250,14 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
 
-incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
-incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
-incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
-incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
+incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
+incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
+incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                 = unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                 = eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 = eiddo tramor
+incomeSources.add.error.reportingMethodNotSaved.se.caption                      = Unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk.caption                      = Eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp.caption                      = Eiddo tramor
 
 #######################################################################################################################
 ## Income Sources - Cease ##
@@ -1683,6 +1686,9 @@ incomeSources.add.incomeSourceReportingMethod.taxYear                   =   Blwy
 incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
 incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.incomeSourceReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.add.incomeSourceReportingMethod.se.caption                =   Unig fasnachwr
+incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eiddo yn y DU
+incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
 # manage uk property reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
