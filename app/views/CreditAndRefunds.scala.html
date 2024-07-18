@@ -159,17 +159,23 @@ govukInsetText : GovukInsetText
 
     @h1(msg = "credit-and-refund.heading")
 
-    @getAvailableCreditContent
+    @if(viewModel.hasCreditOrRefunds){
+        @getAvailableCreditContent
 
-    @getCreditAndRefundListContent
+        @getCreditAndRefundListContent
 
-    @if(viewModel.availableCredit != 0){
+        @if(viewModel.availableCredit != 0){
 
-        @if(viewModel.allocatedCredit != 0) {
-            @getReservedContent
+            @if(viewModel.allocatedCredit != 0) {
+                @getReservedContent
+            }
+
+            @getHowMuchCanIClaimContent
         }
-
-        @getHowMuchCanIClaimContent
+    } else {
+        @p(){
+            @messages("credit-and-refund.no-credit")
+        }
     }
 
     @if(!isAgent) {

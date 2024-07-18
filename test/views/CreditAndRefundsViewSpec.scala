@@ -255,9 +255,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-            "£1,000.00 credit from HMRC adjustment - 2017 to 2018 tax year"
-          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
             "£1,400.00 credit from HMRC adjustment - 2017 to 2018 tax year"
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            "£1,000.00 credit from HMRC adjustment - 2017 to 2018 tax year"
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
         }
 
@@ -275,9 +275,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.selectFirst("p").text shouldBe "£0.00 available to claim"
           layoutContent.select("p").get(1).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,000.00 $paymentText 15 May 2019"
-          layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
             s"£1,400.00 $paymentText 15 May 2019"
+          layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
+            s"£1,000.00 $paymentText 15 May 2019"
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
         }
     }

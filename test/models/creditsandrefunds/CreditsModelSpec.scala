@@ -35,28 +35,28 @@ class CreditsModelSpec extends UnitSpec {
       |  "availableCredit" : ${availableCredit},
       |  "allocatedCredit" : ${allocatedCredit},
       |  "transactions" : [ {
-      |    "creditType" : "refund",
+      |    "transactionType" : "refund",
       |    "amount" : 5
       |  }, {
-      |    "creditType" : "refund",
+      |    "transactionType" : "refund",
       |    "amount" : 5
       |  }, {
-      |    "creditType" : "cutOver",
+      |    "transactionType" : "cutOver",
       |    "amount" : 1,
       |    "taxYear" : "2023",
       |    "dueDate" : "2023-01-01"
       |  }, {
-      |    "creditType" : "balancingCharge",
+      |    "transactionType" : "balancingCharge",
       |    "amount" : 2,
       |    "taxYear" : "2024",
       |    "dueDate" : "2024-01-01"
       |  }, {
-      |    "creditType" : "mfa",
+      |    "transactionType" : "mfa",
       |    "amount" : 3,
       |    "taxYear" : "2021",
       |    "dueDate" : "2021-01-01"
       |  }, {
-      |    "creditType" : "repaymentInterest",
+      |    "transactionType" : "repaymentInterest",
       |    "amount" : 4,
       |    "taxYear" : "2022",
       |    "dueDate" : "2022-01-01"
@@ -65,27 +65,27 @@ class CreditsModelSpec extends UnitSpec {
       |""".stripMargin
 
   val allCreditsObj = CreditsModel(availableCredit, allocatedCredit, List(
-    Transaction(creditType = Repayment,
+    Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
       dueDate = None),
-    Transaction(creditType = Repayment,
+    Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
       dueDate = None),
-    Transaction(creditType = CutOverCreditType,
+    Transaction(transactionType = CutOverCreditType,
       amount = 1,
       taxYear = Some("2023"),
       dueDate = Some(dateInYear(2023))),
-    Transaction(creditType = BalancingChargeCreditType,
+    Transaction(transactionType = BalancingChargeCreditType,
       amount = 2,
       taxYear = Some("2024"),
       dueDate = Some(dateInYear(2024))),
-    Transaction(creditType = MfaCreditType,
+    Transaction(transactionType = MfaCreditType,
       amount = 3,
       taxYear = Some("2021"),
       dueDate = Some(dateInYear(2021))),
-    Transaction(creditType = RepaymentInterest,
+    Transaction(transactionType = RepaymentInterest,
       amount = 4,
       taxYear = Some("2022"),
       dueDate = Some(dateInYear(2022)))
@@ -137,7 +137,7 @@ class CreditsModelSpec extends UnitSpec {
           |  "availableCredit" : ${availableCredit},
           |  "allocatedCredit" : ${allocatedCredit},
           |  "transactions" : [ {
-          |    "creditType" : "invalid credit type",
+          |    "transactionType" : "invalid credit type",
           |    "amount" : 5
           |  } ]
           |}
@@ -149,7 +149,7 @@ class CreditsModelSpec extends UnitSpec {
       result match {
         case JsError(errors) =>
           errors.size shouldBe 1
-          s"${errors.head._1}" shouldBe s"""${(JsPath \ "transactions(0)" \ "creditType")}"""
+          s"${errors.head._1}" shouldBe s"""${(JsPath \ "transactions(0)" \ "transactionType")}"""
           errors.head._2.head.message shouldBe "Could not parse transactionType"
         case _ => fail("Model should have returned errors")
       }

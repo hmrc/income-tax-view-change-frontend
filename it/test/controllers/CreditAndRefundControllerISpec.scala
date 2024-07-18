@@ -21,26 +21,33 @@ import auth.MtdItUser
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
-import models.financialDetails.BalanceDetails
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYearTo}
-import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
+  val isAgent = false
+
   lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    if(isAgent){
+      stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
+    }
+  }
 
   "Navigating to /report-quarterly/income-and-expenses/view/credit-and-refunds" should {
 
-    val testTaxYear: Int = getCurrentTaxYearEnd.getYear
-    val testPreviousTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
+    val testTaxYear: Int = 2023
+    val testPreviousTaxYear: Int = 2022
 
     "display the credit and refund page with all credits/refund types and audit event" when {
 
@@ -50,71 +57,76 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         enable(MFACreditsAndDebits)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        IncomeTaxViewChangeStub
+          .stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse
+          .copy(yearOfMigration = Some(s"${testTaxYear}")))
 
-        // TODO: Create stub data with builders
+        val creditsModel = ANewCreditAndRefundModel()
+          .withAvailableCredit(5.0)
+          .withAllocatedCredit(45.0)
+          .withFirstRefund(3.0)
+          .withSecondRefund(2.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withPayment(LocalDate.of(testPreviousTaxYear, 3, 29), 500.0)
+          .withRepaymentInterest(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .get()
 
-        val json =  Json.toJson(ANewCreditAndRefundModel()
-            .withAvailableCredit(5.0)
-            .withAllocatedCredit(45.0)
-            .withFirstRefund(3.0)
-            .withSecondRefund(2.0)
-            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
-            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
-            .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
-            .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
-            .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 10000.0)
-            .get())
-
-        println(Json.prettyPrint(json))
+        val json =  Json.toJson(creditsModel)
 
         And("I wiremock stub a successful Financial Details response with credits and refunds")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYear.toString, fixedDate.plusYears(1).toString))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsCreditsByDateRange(
+          testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
+          json)
 
-        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
+        val res = isAgent match {
+          case true => IncomeTaxViewChangeFrontend.getCreditAndRefunds(isAgent = true, additionalCookies = clientDetailsWithConfirmation)
+          case false => IncomeTaxViewChangeFrontend.getCreditAndRefunds()
+        }
 
         Then("I verify Income Source Details was called")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         Then("I verify Financial Details was called")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+
+        val mtdUser = if(isAgent) {
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+            None, Some(Agent), Some("1"))(FakeRequest())
+        } else {
+          MtdItUser(
+            testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+            Some("12345-credId"), Some(Individual), None
+          )(FakeRequest())
+        }
 
         Then("I verify the audit event was as expected")
-        AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
-          balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(1.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
-          creditDocuments = List(
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -500, outstandingAmount = -500, dueDate = Some(LocalDate.of(2022, 3, 29)), mainType = Some("Payment on Account"), mainTransaction=Some("0060")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("SA Balancing Charge Credit"), mainTransaction=Some("4905")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Cutover Credits"), mainTransaction=Some("6110")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("ITSA Overpayment Relief"), mainTransaction=Some("4004")),
-            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = -2000, outstandingAmount = -2000, mainType = Some("SA Repayment Supplement Credit"), mainTransaction=Some("6020"))
-          )
-        )(MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some(Individual), None
-        )(FakeRequest())))
+        AuditStub.verifyAuditEvent(ClaimARefundAuditModel(creditsModel = creditsModel)(mtdUser))
 
           res should have(
           httpStatus(OK),
+          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
+            messagesAPI("credit-and-refund.row.repaymentInterest-2") + s" $testPreviousTaxYear to $testTaxYear tax year"),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.row.repaymentInterest-2") + " " + testTaxYearTo),
+          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
+            messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + s" $testPreviousTaxYear to $testTaxYear tax year"),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + " " + testTaxYearTo),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-adjustment-prt-1") + " " + testTaxYearTo),
+          elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
+            messagesAPI("credit-and-refund.credit-from-adjustment-prt-1") + s" $testPreviousTaxYear to $testTaxYear tax year"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" $testPreviousTaxYear to $testTaxYear tax year"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" ${testPreviousTaxYear - 1} to $testPreviousTaxYear tax year"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" ${testPreviousTaxYear - 1} to $testPreviousTaxYear tax year"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(7)", "p")(expectedValue = "£500.00 " +
             messagesAPI("credit-and-refund.payment") + " 29 March 2022" ),
@@ -124,8 +136,11 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
           elementTextBySelectorList("#main-content", "li:nth-child(9)", "p")(expectedValue = "£2.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-          pageTitleIndividual("credit-and-refund.heading")
-
+          if(isAgent) {
+            pageTitleAgent("credit-and-refund.heading")
+          } else {
+            pageTitleIndividual("credit-and-refund.heading")
+          }
         )
       }
     }
@@ -134,22 +149,83 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       "the feature switch is off" in {
         disable(CreditsRefundsRepay)
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-          propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse
+          .copy(yearOfMigration = Some(s"${testTaxYear}")))
 
+        val json =  Json.toJson(ANewCreditAndRefundModel()
+          .withAvailableCredit(5.0)
+          .withAllocatedCredit(45.0)
+          .withFirstRefund(3.0)
+          .withSecondRefund(2.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withPayment(LocalDate.of(testPreviousTaxYear, 3, 29), 500.0)
+          .withRepaymentInterest(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .get())
 
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, fixedDate.plusYears(1).toString))
+        And("I wiremock stub a successful Financial Details response with credits and refunds")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsCreditsByDateRange(
+          testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
+          json)
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
 
         res should have(
           httpStatus(OK),
           pageTitleIndividual(messagesAPI("error.custom.heading"))
+        )
+      }
+    }
+
+    "redirect to unauthorised page" when {
+      "the user is not authenticated" in {
+
+        if(isAgent) {
+          stubAuthorisedAgentUser(authorised = false)
+        } else {
+          isAuthorisedUser(authorised = false)
+        }
+
+        enable(CreditsRefundsRepay)
+        enable(CutOverCredits)
+        enable(MFACreditsAndDebits)
+
+        Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse
+          .copy(yearOfMigration = Some(s"${testTaxYear}")))
+
+        val creditsModel = ANewCreditAndRefundModel()
+          .withAvailableCredit(5.0)
+          .withAllocatedCredit(45.0)
+          .withFirstRefund(3.0)
+          .withSecondRefund(2.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
+          .withPayment(LocalDate.of(testPreviousTaxYear, 3, 29), 500.0)
+          .withRepaymentInterest(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
+          .get()
+
+        val json =  Json.toJson(creditsModel)
+
+        And("I wiremock stub a successful Financial Details response with credits and refunds")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsCreditsByDateRange(
+          testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
+          json)
+
+        val result = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
+
+        Then("The user is redirected to")
+        result should have(
+          httpStatus(SEE_OTHER),
         )
       }
     }

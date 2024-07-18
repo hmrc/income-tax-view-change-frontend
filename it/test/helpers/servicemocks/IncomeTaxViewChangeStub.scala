@@ -163,6 +163,10 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to), noOffcalls)
   }
 
+  def verifyGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05", noOffcalls: Int = 1): Unit = {
+    WiremockHelper.verifyGet(financialDetailsCreditsUrl(nino, from, to), noOffcalls)
+  }
+
   def stubGetFinancialsByDocumentId(nino: String, docNumber: String)(status: Int, response: JsValue): Unit =
     WiremockHelper.stubGet(getFinancialsByDocumentIdUrl(nino, docNumber), status, response.toString())
 

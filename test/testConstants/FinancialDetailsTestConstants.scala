@@ -1544,6 +1544,14 @@ object FinancialDetailsTestConstants {
 
 case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, Nil)) {
 
+  private def getTaxYear(localDate: LocalDate): Int = {
+    if(localDate.isBefore(LocalDate.of(localDate.getYear, 4, 4))) {
+      localDate.getYear
+    } else {
+      localDate.getYear  + 1
+    }
+  }
+
   def withAvailableCredit(availableCredit: BigDecimal): ANewCreditAndRefundModel = {
     ANewCreditAndRefundModel(model.copy(availableCredit = availableCredit))
   }
@@ -1554,7 +1562,7 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
 
   def withCutoverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(s"${dueDate.getYear}"), dueDate = Some(dueDate))))
+      Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(s"${getTaxYear(dueDate)}"), dueDate = Some(dueDate))))
   }
 
   def withFirstRefund(amount: BigDecimal) = {
@@ -1569,22 +1577,22 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
 
   def withBalancingChargeCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(BalancingChargeCreditType, outstandingAmount, taxYear = Some(s"${dueDate.getYear}"), dueDate = Some(dueDate))))
+      Transaction(BalancingChargeCreditType, outstandingAmount, taxYear = Some(s"${getTaxYear(dueDate)}"), dueDate = Some(dueDate))))
   }
 
   def withRepaymentInterest(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(RepaymentInterest, outstandingAmount, taxYear = Some(s"${dueDate.getYear}"), dueDate = Some(dueDate))))
+      Transaction(RepaymentInterest, outstandingAmount, taxYear = Some(s"${getTaxYear(dueDate)}"), dueDate = Some(dueDate))))
   }
 
   def withMfaCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(MfaCreditType, outstandingAmount, taxYear = Some(s"${dueDate.getYear}"), dueDate = Some(dueDate))))
+      Transaction(MfaCreditType, outstandingAmount, taxYear = Some(s"${getTaxYear(dueDate)}"), dueDate = Some(dueDate))))
   }
 
   def withPayment(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
-      Transaction(PaymentType, outstandingAmount, taxYear = Some(s"${dueDate.getYear}"), dueDate = Some(dueDate))))
+      Transaction(PaymentType, outstandingAmount, taxYear = Some(s"${getTaxYear(dueDate)}"), dueDate = Some(dueDate))))
   }
 
   def get(): CreditsModel = model

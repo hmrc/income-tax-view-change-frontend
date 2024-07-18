@@ -252,7 +252,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
+    def getCreditAndRefunds(isAgent: Boolean = false, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      if (isAgent) {
+        getWithHeaders("/agents/claim-refund",
+          HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
+          "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> testSessionId)
+      } else {
+        get("/claim-refund")
+      }
+    }
 
     def getTaxYears: WSResponse = get("/tax-years")
 
@@ -602,7 +611,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
+
+    def getCreditAndRefunds(isAgent: Boolean = false, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      isAgent match {
+        case true => buildClient("/agent/claim-refund")
+          .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
+          .get().futureValue
+        case false => get("/claim-refund")
+      }
+    }
 
     def getTaxYears: WSResponse = get("/tax-years")
 

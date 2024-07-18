@@ -18,6 +18,7 @@ package controllers
 
 
 import audit.AuditingService
+import audit.models.ClaimARefundAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -75,13 +76,12 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
-      case creditAndRefundModel: CreditsModel =>
+      case creditsModel: CreditsModel =>
         val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
         val isCutOverCreditsEnabled: Boolean = isEnabled(CutOverCredits)
-        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel)
+        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
 
-        // TODO: Update audit event
-        // auditClaimARefund(balance, credits)
+        auditClaimARefund(creditsModel)
 
         Ok(view(viewModel, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
@@ -135,12 +135,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
-//
-//  private def auditClaimARefund(balanceDetails: Option[BalanceDetails], creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])
-//                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-//
-//    auditingService.extendedAudit(ClaimARefundAuditModel(
-//      balanceDetails = balanceDetails,
-//      creditDocuments = creditDocuments))
-//  }
+
+  private def auditClaimARefund(creditsModel: CreditsModel)
+                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+
+    auditingService.extendedAudit(ClaimARefundAuditModel(creditsModel))
+  }
 }

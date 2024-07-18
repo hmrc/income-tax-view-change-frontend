@@ -30,7 +30,7 @@ object CreditRow {
 
   def fromTransaction(transaction: Transaction): Option[CreditRow] = {
 
-    transaction.creditType match {
+    transaction.transactionType match {
       case PaymentType =>
         transaction.dueDate.map(date =>
           PaymentCreditRow(
@@ -61,9 +61,15 @@ case class RefundRow(amount: BigDecimal) extends CreditRow {
 
 case class CreditAndRefundViewModel(availableCredit: BigDecimal,
                                     allocatedCredit: BigDecimal,
-                                    creditRows: List[CreditRow])
+                                    creditRows: List[CreditRow]) {
+  val hasCreditOrRefunds: Boolean = {
+    availableCredit > 0 || allocatedCredit > 0 || creditRows.nonEmpty
+  }
+}
 
 object CreditAndRefundViewModel {
+
+
 
   def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
@@ -78,15 +84,20 @@ object CreditAndRefundViewModel {
 
   private val orderCreditsFirstRepaymentsSecond: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) =>
     // all credits first
-    transactions.filter(_.creditType != Repayment) ++:
+    transactions.filter(_.transactionType != Repayment) ++:
       // then repayments sorted by amount, descending
-      transactions.filter(_.creditType == Repayment).sortBy(_.amount).reverse
+      transactions.filter(_.transactionType == Repayment).sortBy(_.amount).reverse
 
   private val removeNoRemainingCredit: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) =>
     transactions.filter(_.amount > 0)
 
-  private val orderByDescendingTaxYear: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) =>
-    transactions.sortBy(_.taxYear.map(_.toInt).getOrElse(0)).reverse
+  private val orderByDescendingTaxYear: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) => {
+    // sort by tax year, but maintain ordering within tax years
+    val groupedByTaxYear = transactions
+      .groupBy(_.taxYear.map(_.toInt).getOrElse(0))
+
+    groupedByTaxYear.keys.toList.sorted.reverse.flatMap(groupedByTaxYear.get).flatten
+  }
 }
 
 
