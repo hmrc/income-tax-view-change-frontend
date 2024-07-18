@@ -82,6 +82,7 @@ case class ChargeSummaryViewModel(
     key
   }
   val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
+  val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment
 }
 
 

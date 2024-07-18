@@ -180,7 +180,7 @@
         @codingOutMessage
     }
 
-    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isClass2Nic && !viewModel.documentDetail.isPayeSelfAssessment){
+    @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
         @p(){
             @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
         }
