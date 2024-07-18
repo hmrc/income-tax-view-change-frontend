@@ -132,7 +132,7 @@ viewModel: HomePageViewModel,
     @if(isAgent) {
         <div class="grid-row">
             <div class="column-full">
-                @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
+                @h1(msg = "your client’s income tax", classes = "govuk-heading-xl margin-bottom-zero", id = Some("income-tax-heading"))
 
                 @p(classes = "govuk-hint margin-bottom-zero") {
                     @user.saUtr.map { utr =>
@@ -163,7 +163,7 @@ viewModel: HomePageViewModel,
             <div class="column-full">
                 <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
                     <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-                    <span id="income-tax-heading">@messages("home.heading")</span>
+                    <span id="income-tax-heading">@messages("Your Income Tax")</span>
                 </h1>
 
                 @user.saUtr.map { utr =>
