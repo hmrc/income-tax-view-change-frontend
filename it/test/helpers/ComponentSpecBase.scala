@@ -960,11 +960,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/manage-your-businesses/add/new-income-sources")
 
-    def getCeaseSECannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-business-cannot-go-back")
+    def getCeaseSECannotGoBack(): WSResponse = get("/manage-your-businesses/cease-sole-trader/cease-business-cannot-go-back")
 
-    def getCeaseUKCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-uk-property-cannot-go-back")
+    def getCeaseUKCannotGoBack(): WSResponse = get("/manage-your-businesses/cease-uk-property/cease-uk-property-cannot-go-back")
 
-    def getCeaseFPCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-foreign-property-cannot-go-back")
+    def getCeaseFPCannotGoBack(): WSResponse = get("/manage-your-businesses/cease-foreign-property/cease-foreign-property-cannot-go-back")
 
     def getManageSECannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-business-cannot-go-back")
 

@@ -35,6 +35,10 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
     else controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
     lazy val view: HtmlFormat.Appendable = errorView(isAgent, incomeSourceType, postCall)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+    val manageLink: String =
+      if (isAgent) "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+      else "/report-quarterly/income-and-expenses/view/manage-your-businesses"
   }
 
   "ReportingMethodSetBackError - Individual" should {
@@ -44,6 +48,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -54,6 +59,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -64,6 +70,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -77,6 +84,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -87,6 +95,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -97,6 +106,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       document.getElementById("manage-message").text() shouldBe
         s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
