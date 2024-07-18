@@ -82,6 +82,9 @@ case class ChargeSummaryViewModel(
     key
   }
   val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
+
+
+  val paymentAllocationsOrChargeHistoryOnWithNoBalancingChargeIsZero : Boolean = chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty) && !isBalancingChargeZero
 }
 
 

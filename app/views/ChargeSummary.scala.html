@@ -261,7 +261,8 @@
         @paymentProcessingInfo
     }
 
-    @if((viewModel.chargeHistoryEnabled || (viewModel.paymentAllocationEnabled && viewModel.paymentAllocations.nonEmpty)) && !viewModel.isBalancingChargeZero ){
+    @if(viewModel.paymentAllocationsOrChargeHistoryOnWithNoBalancingChargeIsZero){
+
         @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
         } else {
