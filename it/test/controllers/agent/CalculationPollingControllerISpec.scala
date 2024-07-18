@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import controllers.agent.utils.SessionKeys._
+import controllers.agent.sessionUtils.SessionKeys._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._

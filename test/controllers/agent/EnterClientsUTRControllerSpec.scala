@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import config.AgentItvcErrorHandler
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate

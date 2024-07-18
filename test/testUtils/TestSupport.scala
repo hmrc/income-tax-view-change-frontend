@@ -19,7 +19,7 @@ package testUtils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import controllers.agent.utils
+import controllers.agent.sessionUtils
 import controllers.predicates.FeatureSwitchPredicate
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName.allFeatureSwitches
@@ -191,7 +191,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   )
 
   lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    utils.SessionKeys.clientUTR -> "1234567890"
+    sessionUtils.SessionKeys.clientUTR -> "1234567890"
   )
 
   lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
@@ -202,82 +202,82 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   )
 
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
-    utils.SessionKeys.clientFirstName -> "Test",
-    utils.SessionKeys.clientLastName -> "User",
-    utils.SessionKeys.clientUTR -> "1234567890",
-    utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-    utils.SessionKeys.clientNino -> testNino,
+    sessionUtils.SessionKeys.clientFirstName -> "Test",
+    sessionUtils.SessionKeys.clientLastName -> "User",
+    sessionUtils.SessionKeys.clientUTR -> "1234567890",
+    sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+    sessionUtils.SessionKeys.clientNino -> testNino,
   )
 
   def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     )
 
   def fakeRequestConfirmedClientTimeout(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithTimeoutSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     )
 
   def fakePostRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakePostRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     )
 
   def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withMethod("POST").withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     )
 
   def fakeRequestConfirmedClientwithFullBusinessDetails(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> testMtditid,
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     )
 
   def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> testMtditid,
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true",
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true",
       forms.utils.SessionKeys.calculationId -> "1234567890"
     )
 
   def fakeRequestConfirmedClientWithReferer(clientNino: String = "AA111111A", referer: String): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "Test",
-      utils.SessionKeys.clientLastName -> "User",
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true"
+      sessionUtils.SessionKeys.clientFirstName -> "Test",
+      sessionUtils.SessionKeys.clientLastName -> "User",
+      sessionUtils.SessionKeys.clientUTR -> "1234567890",
+      sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      sessionUtils.SessionKeys.clientNino -> clientNino,
+      sessionUtils.SessionKeys.confirmedClient -> "true"
     ).withHeaders(
       HeaderNames.REFERER -> referer
     )

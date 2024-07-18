@@ -34,6 +34,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.ForecastIncomeSummary
 
 import javax.inject.{Inject, Singleton}
@@ -41,25 +42,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: ForecastIncomeSummary,
-                                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                                val authenticate: AuthenticationPredicate,
-                                                val retrieveNino: NinoPredicate,
-                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                 val calculationService: CalculationService,
                                                 val auditingService: AuditingService,
-                                                val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val authorisedFunctions: AuthorisedFunctions,
-                                                val featureSwitchService: FeatureSwitchService)
+                                                val featureSwitchService: FeatureSwitchService,
+                                                auth: AuthenticatorPredicate)
                                                (implicit val ec: ExecutionContext,
                                                 val languageUtils: LanguageUtils,
                                                 val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
-
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ForecastIncomeSummaryController]${if (isAgent) "[agent]" else ""}[showIncomeSummary[$taxYear]]"
@@ -68,7 +63,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   }
 
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit user: MtdItUserWithNino[_]): Future[Result] = {
     featureSwitchService.getAll.flatMap { fs =>
       if (!isEnabled(ForecastCalculation, fs)) {
         val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
@@ -95,15 +90,14 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   }
 
   def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    action.async {
+    auth.authenticatedActionWithNino {
       implicit user =>
         handleRequest(taxYear, isAgent = false, origin)
     }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly)
+  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
+    implicit response =>
+        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(response.agent, response.request))
   }
 
   def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =

@@ -17,7 +17,7 @@
 package controllers.predicates.agent
 
 import cats.implicits._
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import controllers.agent.routes
 import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
 import controllers.predicates.IncomeTaxAgentUser

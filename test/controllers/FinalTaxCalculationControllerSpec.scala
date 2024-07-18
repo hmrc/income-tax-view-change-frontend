@@ -19,8 +19,8 @@ package controllers
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils
-import controllers.agent.utils.SessionKeys.clientNino
+import controllers.agent.sessionUtils
+import controllers.agent.sessionUtils.SessionKeys.clientNino
 import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -100,10 +100,10 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
     arn = None
-  )(FakeRequest().withSession(utils.SessionKeys.clientUTR -> "1234567890",
-    utils.SessionKeys.clientMTDID -> testMtditid,
-    utils.SessionKeys.clientNino -> clientNino,
-    utils.SessionKeys.confirmedClient -> "true",
+  )(FakeRequest().withSession(sessionUtils.SessionKeys.clientUTR -> "1234567890",
+    sessionUtils.SessionKeys.clientMTDID -> testMtditid,
+    sessionUtils.SessionKeys.clientNino -> clientNino,
+    sessionUtils.SessionKeys.confirmedClient -> "true",
     forms.utils.SessionKeys.calculationId -> "1234567890"))
 
   "handle show request" should(

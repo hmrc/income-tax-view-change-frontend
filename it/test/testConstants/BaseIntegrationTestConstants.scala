@@ -16,7 +16,7 @@
 
 package testConstants
 
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId

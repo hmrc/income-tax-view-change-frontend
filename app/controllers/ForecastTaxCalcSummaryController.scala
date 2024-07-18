@@ -33,6 +33,7 @@ import services.admin.FeatureSwitchService
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.ForecastTaxCalcSummary
 
 import javax.inject.{Inject, Singleton}
@@ -49,7 +50,8 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                 val featureSwitchService: FeatureSwitchService)
+                                                 val featureSwitchService: FeatureSwitchService,
+                                                 val auth: AuthenticatorPredicate)
                                                 (implicit val ec: ExecutionContext,
                                                  val languageUtils: LanguageUtils,
                                                  val appConfig: FrontendAppConfig,
@@ -90,15 +92,14 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     }
   }
 
-  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
+  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedActionWithNino {
     implicit user =>
       handleRequest(taxYear, isAgent = false, origin)
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly)
+  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
+    implicit response =>
+        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(response.agent, response.request), implicitly(response.hc), implicitly)
   }
 
   def backUrl(isAgent: Boolean, taxYear: Int, origin: Option[String]): String =

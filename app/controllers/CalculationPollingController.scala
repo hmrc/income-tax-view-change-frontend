@@ -28,21 +28,22 @@ import play.api.mvc._
 import services.CalculationPollingService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationPollingController @Inject()(authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             checkSessionTimeout: SessionTimeoutPredicate,
-                                             retrieveNino: NinoPredicate,
+class CalculationPollingController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                              pollCalculationService: CalculationPollingService,
                                              val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                             val auth: AuthenticatorPredicate)
                                             (implicit val appConfig: FrontendAppConfig,
                                              implicit override val mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext)
+                                             implicit val ec: ExecutionContext,
+                                             val languageUtils: LanguageUtils)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(origin: Option[String] = None,
@@ -51,7 +52,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
                     isAgent: Boolean,
                     successfulPollRedirect: Call,
                     calculationId: Option[String])
-                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     (calculationId, user.nino, user.mtditid) match {
       case (Some(calculationId), nino, mtditid) =>
         Logger("application").info(s"Polling started for $calculationId")
@@ -75,7 +76,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
   }
 
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino).async {
+    auth.authenticatedActionWithNino {
       implicit user =>
 
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
@@ -95,8 +96,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
     }
 
   def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit agent =>
+    auth.authenticatedActionWithNinoAgent { implicit response =>
 
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
           controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
@@ -110,8 +110,8 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           taxYear = taxYear,
           isAgent = true,
           successfulPollRedirect = successfulPollRedirect,
-          calculationId = request.session.get(SessionKeys.calculationId)
-        )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
+          calculationId = response.request.session.get(SessionKeys.calculationId)
+        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly)
 
     }
   }

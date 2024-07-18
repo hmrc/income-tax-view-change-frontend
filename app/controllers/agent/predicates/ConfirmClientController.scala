@@ -16,7 +16,7 @@
 
 package controllers.agent.predicates
 
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate

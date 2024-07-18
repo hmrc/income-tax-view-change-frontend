@@ -20,7 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName}
+import controllers.agent.sessionUtils.SessionKeys.{clientFirstName, clientLastName}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
@@ -99,7 +99,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async { implicit user =>
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
@@ -108,11 +108,11 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   }
 
-  def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit agent =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+  def agentSubmit(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
+    implicit response =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService)(response.agent, response.request, response.hc).flatMap { user =>
         val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-        agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
+        agentFinalDeclarationSubmit(taxYear, fullName)(user, response.hc)
       }
   }
 
@@ -150,7 +150,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
   def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
-                                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
