@@ -58,16 +58,6 @@ govukInsetText : GovukInsetText
     @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id=Some("available-to-claim")) {
         @messages("credit-and-refund.available-to-claim", viewModel.availableCredit.toCurrencyString)
     }
-
-    @if(viewModel.availableCredit == 0) @{
-<!--        <h2 class="govuk-heading-s">-->
-<!--            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-no-credits-1")</span>-->
-<!--            @{-->
-<!--                viewModel.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency-->
-<!--            }-->
-<!--            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits-2")</span>-->
-<!--        </h2>-->
-    }
 }
 
 @renderCreditRow(creditRow: CreditRow) = {
