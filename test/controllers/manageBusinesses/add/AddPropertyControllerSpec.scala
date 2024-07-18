@@ -58,6 +58,10 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
     else fakePostRequestWithActiveSession
   }
 
+  def getValidationErrorTabTitle(): String = {
+    s"${messages("htmlTitle.invalidInput", messages("manageBusinesses.type-of-property.heading"))}"
+  }
+
   for (isAgent <- Seq(true, false)) yield {
     s"AddPropertyController.show: isAgent = $isAgent" should {
       "redirect to the appropriate page" when {
@@ -125,6 +129,9 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody("INVALID" -> "INVALID"))
 
           status(result) shouldBe BAD_REQUEST
+
+          val document: Document = Jsoup.parse(contentAsString(result))
+          document.title shouldBe getValidationErrorTabTitle()
         }
         "an empty form is submitted" in {
           disableAllSwitches()
@@ -136,6 +143,9 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent).withFormUrlEncodedBody("" -> ""))
 
           status(result) shouldBe BAD_REQUEST
+
+          val document: Document = Jsoup.parse(contentAsString(result))
+          document.title shouldBe getValidationErrorTabTitle()
         }
         "no form is submitted" in {
           disableAllSwitches()

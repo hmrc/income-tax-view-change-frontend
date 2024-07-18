@@ -74,6 +74,10 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         s"${messages("htmlTitle", heading(incomeSourceType))}"
     }
 
+    def getValidationErrorTabTitle(incomeSourceType: IncomeSourceType): String = {
+      s"${messages("htmlTitle.invalidInput", heading(incomeSourceType))}"
+    }
+
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
       (incomeSourceType, isAgent, isChange) match {
         case (UkProperty, true, false) =>
@@ -423,7 +427,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        if(incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
+        if (incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
         if (isChange) {
           setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         } else {
@@ -539,6 +543,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.BAD_REQUEST
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe TestIncomeSourceEndDateController.getValidationErrorTabTitle(incomeSourceType)
 
       }
 

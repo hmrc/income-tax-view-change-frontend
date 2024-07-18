@@ -37,7 +37,7 @@
 }
 }
 
-@mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
+@mainTemplate(pageTitle = getMessage("heading"), form = Some(incomeSourceEndDateForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = incomeSourceEndDateForm

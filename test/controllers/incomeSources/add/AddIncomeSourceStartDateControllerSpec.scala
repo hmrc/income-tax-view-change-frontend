@@ -114,6 +114,10 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
     else fakePostRequestWithActiveSession
   }
 
+  def getValidationErrorTabTitle(incomeSourceType: IncomeSourceType): String = {
+    s"${messages("htmlTitle.invalidInput", messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))}"
+  }
+
   object TestAddIncomeSourceStartDateController extends AddIncomeSourceStartDateController(
     authorisedFunctions = mockAuthService,
     addIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate],
@@ -276,6 +280,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(postRequest(isAgent).withFormUrlEncodedBody("INVALID" -> "INVALID"))
 
             status(result) shouldBe BAD_REQUEST
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
           }
           "an empty form is submitted" in {
             disableAllSwitches()
@@ -287,6 +294,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(postRequest(isAgent).withFormUrlEncodedBody("" -> ""))
 
             status(result) shouldBe BAD_REQUEST
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
           }
           "no form is submitted" in {
             disableAllSwitches()

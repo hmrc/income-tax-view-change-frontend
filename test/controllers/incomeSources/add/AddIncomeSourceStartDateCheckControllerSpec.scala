@@ -127,6 +127,10 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     val title: String = s"${messages("htmlTitle", heading)}"
   }
 
+  def getValidationErrorTabTitle(): String = {
+    s"${messages("htmlTitle.invalidInput", messages("dateForm.check.heading"))}"
+  }
+
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
 
   def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
@@ -419,6 +423,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           ))
 
       status(result) shouldBe BAD_REQUEST
+
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe getValidationErrorTabTitle()
     }
 
     def submitRedirectWithAccPeriodRemovedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
