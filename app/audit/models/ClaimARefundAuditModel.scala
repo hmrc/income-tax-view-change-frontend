@@ -30,7 +30,6 @@ import java.time.format.DateTimeFormatter
 
 case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-//  private val zeroBalance: Double = 0.00
   override val auditType: String = ClaimARefundResponse
   override val transactionName: String = ClaimARefund
 

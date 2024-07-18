@@ -16,6 +16,7 @@
 
 package models.creditsandrefunds
 
+import models.core.ErrorModel
 import models.financialDetails._
 import play.api.libs.json._
 import testUtils.UnitSpec
@@ -91,15 +92,43 @@ class CreditsModelSpec extends UnitSpec {
       dueDate = Some(dateInYear(2022)))
   ))
 
-  "CreditAndRefundModel" should {
+  "httpParser" when {
 
-    "httpParser" in {
+    "response is successful should parse success model successfully" in {
       val response = CreditsModel.reads.read("", "", HttpResponse.apply(200, allCreditsJson))
       response.isRight shouldBe true
-//      response.forall(model => {
-//
-//      })
+      response match {
+        case Right(creditsModel: CreditsModel) =>
+          creditsModel shouldBe allCreditsObj
+        case _ =>
+          fail("Success response should be parsed successfully")
+      }
     }
+
+    val error =
+      """
+        |{
+        | "code": 500,
+        | "message": "Internal server error"
+        |}
+        |""".stripMargin
+
+    "response is unsuccessful should parse error model successfully" in {
+      val response = CreditsModel.reads.read("", "", HttpResponse.apply(500, error))
+      response.isLeft shouldBe true
+      response match {
+        case Left(errorModel: ErrorModel) =>
+          errorModel shouldBe ErrorModel(500, "Internal server error")
+        case _ =>
+          fail("Error response should be parsed successfully")
+      }
+    }
+  }
+
+
+  "CreditAndRefundModel" should {
+
+
 
     "parse from JSON correctly" in {
 

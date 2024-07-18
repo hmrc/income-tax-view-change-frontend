@@ -76,7 +76,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-      code.recover {
+    code.recover {
       case ex: Exception => handleError(s"request failed :: $ex", isAgent)
     }
   }

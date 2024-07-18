@@ -63,13 +63,11 @@ case class CreditAndRefundViewModel(availableCredit: BigDecimal,
                                     allocatedCredit: BigDecimal,
                                     creditRows: List[CreditRow]) {
   val hasCreditOrRefunds: Boolean = {
-    availableCredit > 0 || allocatedCredit > 0 || creditRows.nonEmpty
+    availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
   }
 }
 
 object CreditAndRefundViewModel {
-
-
 
   def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
