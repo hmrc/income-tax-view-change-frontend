@@ -48,20 +48,15 @@ object ChargeSummaryController {
   case class ErrorCode(message: String)
 }
 
-class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
-                                        val auth: AuthenticatorPredicate,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val chargeSummaryView: ChargeSummary,
-                                        val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val chargeHistoryService: ChargeHistoryService,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        val customNotFoundErrorView: CustomNotFoundError,
-                                        val featureSwitchPredicate: FeatureSwitchPredicate)
+                                        val customNotFoundErrorView: CustomNotFoundError)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
                                         val languageUtils: LanguageUtils,
@@ -69,9 +64,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
-
-  lazy val action: ActionBuilder[MtdItUser, AnyContent] =
-    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
@@ -117,7 +109,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   }
 
   def show(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
-    action.async {
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(taxYear, id, isLatePaymentCharge, isAgent = false, origin)
     }

@@ -87,6 +87,14 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
             authenticatedCodeBlock(AuthenticatorAgentResponse())
       }
   }
+  
+//  def authenticatedActionNoUser(authenticatedCodeBlock: Request[AnyContent] => Future[Result]): Action[AnyContent] = {
+//    Authenticated.async {
+//      implicit request =>
+//        implicit agent =>
+//          authenticatedCodeBlock(request)
+//    }
+//  }
 }
 
 case class AuthenticatorAgentResponse()(implicit val agent: IncomeTaxAgentUser,
