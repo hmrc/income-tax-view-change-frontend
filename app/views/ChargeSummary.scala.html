@@ -247,7 +247,7 @@
         }
     }
 
-    @if(!viewModel.isAgent && viewModel.documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)){
+    @if(viewModel.noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
         <div id="payment-link-@{viewModel.taxYearTo}">
             <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.documentDetail.remainingToPay.toPence, viewModel.origin)">
                 @messages("paymentDue.payNow")
@@ -257,11 +257,11 @@
         @paymentProcessingInfo
     }
 
-    @if(viewModel.isAgent && viewModel.documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)){
+    @if(viewModel.isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
         @paymentProcessingInfo
     }
 
-    @if((viewModel.chargeHistoryEnabled || (viewModel.paymentAllocationEnabled && viewModel.paymentAllocations.nonEmpty)) && !viewModel.isBalancingChargeZero ){
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
         @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
         } else {
@@ -280,7 +280,7 @@
 
             <tbody class = "govuk-table__body">
             @if(viewModel.chargeHistoryEnabled){
-                @if(!viewModel.latePaymentInterestCharge && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)) {
+                @if(viewModel.noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
