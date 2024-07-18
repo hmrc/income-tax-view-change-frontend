@@ -19,8 +19,9 @@ package models.chargeSummary
 import enums.DocumentType
 import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.twirl.api.Html
+import views.html.partials.chargeSummary.{ChargeSummaryHasDunningLocksOrLpiWithDunningLock, ChargeSummaryPaymentAllocation}
 
 import java.time.LocalDate
 
@@ -42,5 +43,45 @@ case class ChargeSummaryViewModel(
                                    isMFADebit: Boolean,
                                    documentType: DocumentType,
                                    adjustmentHistory: AdjustmentHistoryModel
-                                 )
+                                 ) {
+
+  val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
+  val dueDate = documentDetailWithDueDate.dueDate
+  val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
+  val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
+  val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
+
+
+
+  val currentTaxYearEnd = {
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
+
+  val whatYouOweUrl = {
+    if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
+    else controllers.routes.WhatYouOweController.show(origin).url
+  }
+
+  val hasPaymentBreakdown = {
+    documentDetail.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
+  }
+
+  val taxYearFrom = documentDetail.taxYear - 1
+  val taxYearTo = documentDetail.taxYear
+
+  val taxYearFromCodingOut = s"${documentDetail.taxYear.toInt + 1}"
+  val taxYearToCodingOut = s"${documentDetail.taxYear.toInt + 2}"
+
+  val pageTitle: String = {
+    val key = (latePaymentInterestCharge, isMFADebit) match {
+      case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+      case (_, true) => s"chargeSummary.hmrcAdjustment.text"
+      case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    }
+    key
+  }
+  val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
+}
+
 

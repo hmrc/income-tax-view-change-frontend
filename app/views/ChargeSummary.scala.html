@@ -46,44 +46,6 @@
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
-@documentDetail = @{viewModel.documentDetailWithDueDate.documentDetail}
-
-@dueDate = @{viewModel.documentDetailWithDueDate.dueDate}
-
-@currentTaxYearEnd = @{
-    if (viewModel.currentDate.isBefore(LocalDate.of(viewModel.currentDate.getYear, 4, 6))) viewModel.currentDate.getYear
-    else viewModel.currentDate.getYear + 1
-}
-
-@whatYouOweUrl = @{
-    if(viewModel.isAgent) controllers.routes.WhatYouOweController.showAgent.url
-    else controllers.routes.WhatYouOweController.show(viewModel.origin).url
-}
-
-@hasDunningLocks = @{ viewModel.paymentBreakdown.exists(_.dunningLockExists) }
-
-@hasInterestLocks = @{ viewModel.paymentBreakdown.exists(_.interestLockExists) }
-
-@hasAccruedInterest = @{ viewModel.paymentBreakdown.exists(_.hasAccruedInterest) }
-
-@hasPaymentBreakdown = @{
-    documentDetail.hasLpiWithDunningLock || (viewModel.paymentBreakdown.nonEmpty && hasDunningLocks) || (viewModel.paymentBreakdown.nonEmpty && hasInterestLocks)
-}
-
-@taxYearFrom = @{(documentDetail.taxYear - 1)}
-@taxYearTo = @{documentDetail.taxYear}
-
-@taxYearFromCodingOut = @{(documentDetail.taxYear.toInt + 1).toString}
-@taxYearToCodingOut = @{(documentDetail.taxYear.toInt + 2).toString}
-@pageTitle = @{
-    val key = (viewModel.latePaymentInterestCharge, viewModel.isMFADebit) match {
-        case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-        case (_, true) => s"chargeSummary.hmrcAdjustment.text"
-        case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}"
-    }
-    messages(key)
-}
-
 @getPoaExplanationContent = {
     <div>
         @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
@@ -98,9 +60,9 @@
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
         @messages("chargeSummary.check-paye-tax-code-1")
-        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
+        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@viewModel.currentTaxYearEnd">
             @messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom.toString, taxYearTo.toString)
+        @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
     }
 }
 
@@ -129,7 +91,7 @@
 
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", taxYearFrom.toString, taxYearTo.toString)
+        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
     }
 }
 
@@ -162,8 +124,6 @@
     }
 }
 
-@isBalancingChargeZero = @{documentDetail.isBalancingChargeZero(viewModel.codingOutEnabled)}
-
 @chargeHistoryHeading = @{
     viewModel.documentType match {
         case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
@@ -179,26 +139,21 @@
     }
 }
 
-@mainTemplate(pageTitle = pageTitle, backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
+@mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
-    @if(hasDunningLocks || documentDetail.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(documentDetail, dueDate, viewModel.latePaymentInterestCharge, appConfig)
+    @if(viewModel.hasDunningLocks || viewModel.documentDetail.hasLpiWithDunningLock) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.documentDetail, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
     }
 
     <h1 class="govuk-heading-xl">
         @{
-            val taxYearStartDate = toTaxYearStartDate(taxYearFrom).toLongDate
-            val taxYearEndDate = toTaxYearEndDate(taxYearTo).toLongDate
+            val taxYearStartDate = toTaxYearStartDate(viewModel.taxYearFrom).toLongDate
+            val taxYearEndDate = toTaxYearEndDate(viewModel.taxYearTo).toLongDate
             <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
         }
         @{
-            val key = (viewModel.latePaymentInterestCharge, viewModel.isMFADebit) match {
-                case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-                case (_, true) => s"chargeSummary.hmrcAdjustment.text"
-                case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}"
-            }
-            messages(key)
+            messages(viewModel.pageTitle)
         }
     </h1>
 
@@ -209,7 +164,7 @@
         }
     }
 
-    @if(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment){
+    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
@@ -217,7 +172,7 @@
         @codingOutMessage
     }
 
-    @if(viewModel.codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
+    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isCancelledPayeSelfAssessment){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
@@ -225,55 +180,55 @@
         @codingOutMessage
     }
 
-    @if(viewModel.codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment){
+    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isClass2Nic && !viewModel.documentDetail.isPayeSelfAssessment){
         @p(){
-            @messages("chargeSummary.nic2TaxYear", taxYearFrom.toString, taxYearTo.toString)
+            @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
         }
     }
 
     <dl class="govuk-summary-list">
-        @if(!(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
+        @if(!(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)) {
             @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
                 viewModel.documentDetailWithDueDate,
-                documentDetail,
+                viewModel.documentDetail,
                 viewModel.latePaymentInterestCharge,
                 viewModel.codingOutEnabled,
-                taxYearFromCodingOut,
-                taxYearToCodingOut,
+                viewModel.taxYearFromCodingOut,
+                viewModel.taxYearToCodingOut,
                 appConfig)
         }
     </dl>
 
-    @if(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+    @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment) {
         @chargeSummaryCodingOut(
-            documentDetail,
+            viewModel.documentDetail,
             viewModel.codingOutEnabled,
-            taxYearFromCodingOut,
-            taxYearToCodingOut,
+            viewModel.taxYearFromCodingOut,
+            viewModel.taxYearToCodingOut,
             viewModel.latePaymentInterestCharge
         )
     }
 
-    @if(hasPaymentBreakdown && !isBalancingChargeZero) {
+    @if(viewModel.hasPaymentBreakdown && !viewModel.isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
             viewModel.documentDetailWithDueDate,
             viewModel.paymentBreakdown,
             viewModel.latePaymentInterestCharge,
-            documentDetail,
+            viewModel.documentDetail,
             chargeSummaryLpiCharge,
             viewModel.isAgent
         )
     }
 
-    @if(hasInterestLocks && hasAccruedInterest) {
+    @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.interestLocks.text-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.interestLocks.text")
             }
 
@@ -282,32 +237,32 @@
         @p(){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
-                <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText-agent")</a>
+                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText-agent")</a>
                 @messages("chargeSummary.whatYouOwe.textTwo-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
+                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
                 @messages("chargeSummary.whatYouOwe.textTwo")
             }
         }
     }
 
-    @if(!viewModel.isAgent && documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment)){
-        <div id="payment-link-@{taxYearTo}">
-            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, viewModel.origin)">
+    @if(!viewModel.isAgent && viewModel.documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)){
+        <div id="payment-link-@{viewModel.taxYearTo}">
+            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.documentDetail.remainingToPay.toPence, viewModel.origin)">
                 @messages("paymentDue.payNow")
-                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", taxYearFrom.toString, taxYearTo.toString)</span>
+                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)</span>
             </a>
         </div>
         @paymentProcessingInfo
     }
 
-    @if(viewModel.isAgent && documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment)){
+    @if(viewModel.isAgent && viewModel.documentDetail.remainingToPay > 0 && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)){
         @paymentProcessingInfo
     }
 
-    @if((viewModel.chargeHistoryEnabled || (viewModel.paymentAllocationEnabled && viewModel.paymentAllocations.nonEmpty)) && !isBalancingChargeZero ){
-        @if(hasPaymentBreakdown && documentDetail.isNotCodingOutDocumentDetail) {
+    @if((viewModel.chargeHistoryEnabled || (viewModel.paymentAllocationEnabled && viewModel.paymentAllocations.nonEmpty)) && !viewModel.isBalancingChargeZero ){
+        @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
         } else {
             <h2 class="govuk-heading-l">@chargeHistoryHeading</h2>
@@ -325,14 +280,14 @@
 
             <tbody class = "govuk-table__body">
             @if(viewModel.chargeHistoryEnabled){
-                @if(!viewModel.latePaymentInterestCharge && !(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
+                @if(!viewModel.latePaymentInterestCharge && !(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment)) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
                             if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text") else
-                                messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
+                                messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
@@ -343,31 +298,31 @@
 
                 @if(viewModel.latePaymentInterestCharge) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.interestEndDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey()}")</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
 
-                @if(viewModel.codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+                @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFromCodingOut, taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell">@{documentDetail.originalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.documentDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
+                        <td class="govuk-table__cell">@{viewModel.documentDetail.originalAmount.toCurrency}</td>
                     </tr>
                 }
 
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(documentDetail.documentDate).toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey()}")</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.adjustmentDate.getOrElse(viewModel.documentDetail.documentDate).toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.documentDetail.getChargeTypeKey()}")</td>
                         <td class="govuk-table__cell">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
             }
 
             @if(viewModel.paymentAllocationEnabled && !viewModel.latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.documentDetailWithDueDate, viewModel.isAgent, viewModel.isMFADebit, None, taxYearFromCodingOut, taxYearToCodingOut)
+                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.documentDetailWithDueDate, viewModel.isAgent, viewModel.isMFADebit, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
             }
             </tbody>
         </table>
