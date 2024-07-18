@@ -59,7 +59,7 @@
             HeadCell(
             ),
             HeadCell(
-                content = Text(getMessage("initialAmount")),
+                content = Text(getMessage("amountPreviousHeading")),
                 format = Some("numeric")
             ),
             HeadCell(
@@ -73,7 +73,7 @@
             HeadCell(
             ),
             HeadCell(
-                content = Text(getMessage("initialAmount")),
+                content = Text(getMessage("amountPreviousHeading")),
                 format = Some("numeric")
             )
         ))
@@ -128,12 +128,13 @@
     </div>
 
     @govukTable(Table(
+        head = getTableHeading,
         rows = Seq(
             Seq(
                 TableRow(
                     content = Text(getMessage("firstPayment"))
                 )
-            ) ++ getRow1 ++ 
+            ) ++ getRow1 ++
             Seq(
                 TableRow(
                     content = Text(viewModel.totalAmountOne.toCurrencyString),
@@ -153,27 +154,26 @@
                 )
             )
         ),
-        head = getTableHeading,
         firstCellIsHeader = true
     ))
 
     @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
-            content = Text(getMessage("insetText.firstAttempt"))
+            content = HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para1")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para2")}</p>
+                    |""".stripMargin)
         ))
     } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
-            content = Text(getMessage("insetText.secondAttempt"))
+            content = HtmlContent(s"""
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para1")}</p>
+                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para2")}</p>
+                    |""".stripMargin)
         ))
     }}
-
-    @govukWarningText(WarningText(
-        iconFallbackText = Some("Warning"),
-        content = Text(getMessage("warning")),
-        attributes = Map("id" -> "warning"))
-    )
 
     @form(action = postAction, Symbol("id") -> "poa-amount") {
 

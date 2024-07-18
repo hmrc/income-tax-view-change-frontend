@@ -141,7 +141,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
           httpStatus(OK)
         )
         lazy val document: Document = Jsoup.parse(res.body)
-        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
       }
       "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
         enable(AdjustPaymentsOnAccount)
@@ -169,7 +169,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
           httpStatus(OK)
         )
         lazy val document: Document = Jsoup.parse(res.body)
-        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
       }
       "User is authorised and has previously adjusted their PoA" in {
         enable(AdjustPaymentsOnAccount)
@@ -202,7 +202,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
 
         lazy val document: Document = Jsoup.parse(res.body)
         document.getElementsByClass("govuk-table__head").text() shouldBe {
-          msg("initialAmount") + " " + msg("adjustedAmount")
+          msg("amountPreviousHeading") + " " + msg("adjustedAmount")
         }
       }
     }
@@ -473,7 +473,7 @@ class EnterPoAAmountControllerISpec extends ComponentSpecBase {
           httpStatus(OK)
         )
         lazy val document: Document = Jsoup.parse(res.body)
-        document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+        document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
         document.getElementsByClass("govuk-input").attr("value") shouldBe "100"
       }
     }
