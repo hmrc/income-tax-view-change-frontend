@@ -16,11 +16,11 @@
 
 package controllers.manageBusinesses.add
 
-import models.admin.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -145,7 +145,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown UK property added page")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add/uk-property-added")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
@@ -170,7 +170,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown a error page")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add/uk-property-added")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -189,7 +189,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
 
         Then(s"user is redirected to $HomeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add/uk-property-added")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-uk-property/uk-property-added")
 
         result should have(
           httpStatus(SEE_OTHER),

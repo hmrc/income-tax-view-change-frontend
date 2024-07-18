@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
 
-class IncomeSourceCeasedBackErrorView extends TestSupport{
+class IncomeSourceCeasedBackErrorViewSpec extends TestSupport{
 
   val errorView: IncomeSourceCeasedBackError = app.injector.instanceOf[IncomeSourceCeasedBackError]
 
@@ -32,6 +32,10 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
 
     lazy val view: HtmlFormat.Appendable = errorView(isAgent, incomeSourceType)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+    val manageLink: String =
+      if (isAgent) "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+      else "/report-quarterly/income-and-expenses/view/manage-your-businesses"
   }
 
   "IncomeSourceCeasedBackError - Individual" should {
@@ -39,6 +43,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.sole-trader-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -46,6 +51,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.uk-property-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -53,6 +59,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.foreign-property-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -63,6 +70,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.sole-trader-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -70,6 +78,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.uk-property-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -77,6 +86,7 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
       document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
       document.getElementById("heading").text() shouldBe messages("cannotGoBack.foreign-property-ceased")
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("manage-link").attr("href") shouldBe manageLink
       document.getElementById("home-link").text() shouldBe messages("cannotGoBack.homeLink")
       Option(document.getElementById("back")).isDefined shouldBe false
     }

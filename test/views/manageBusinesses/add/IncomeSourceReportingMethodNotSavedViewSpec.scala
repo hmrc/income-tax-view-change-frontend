@@ -28,12 +28,21 @@ import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
 
+  def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
+    incomeSourceType match {
+      case SelfEmployment => messages(s"incomeSources.add.error.reportingMethodNotSaved.se.$key")
+      case UkProperty => messages(s"incomeSources.add.error.reportingMethodNotSaved.uk.$key")
+      case ForeignProperty =>messages(s"incomeSources.add.error.reportingMethodNotSaved.fp.$key")
+    }
+  }
+
   class TestSetup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
     val id = "testId"
 
-    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp")
-    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk")
+    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
+    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
+    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
+
 
     val action: Call = incomeSourceType match {
       case UkProperty =>
@@ -52,6 +61,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
 
   "IncomeSourceReportingMethodNotSave - Individual" should {
     "render self employment - error page" in new TestSetup(isAgent = false, incomeSourceType = SelfEmployment) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(SelfEmployment, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
@@ -59,6 +69,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new TestSetup(isAgent = false, incomeSourceType = UkProperty) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(UkProperty, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
@@ -66,6 +77,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new TestSetup(isAgent = false, incomeSourceType = ForeignProperty) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(ForeignProperty, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
@@ -75,6 +87,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   }
   "IncomeSourceReportingMethodNotSave - Agent" should {
     "render self employment - error page" in new TestSetup(isAgent = true, incomeSourceType = SelfEmployment) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(SelfEmployment, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
@@ -82,6 +95,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new TestSetup(isAgent = true, incomeSourceType = UkProperty) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(UkProperty, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
@@ -89,6 +103,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new TestSetup(isAgent = true, incomeSourceType = ForeignProperty) {
+      document.getElementsByClass("govuk-caption-l").text().contains (getMessage(ForeignProperty, "caption"))
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")

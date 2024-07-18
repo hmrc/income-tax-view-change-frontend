@@ -213,6 +213,10 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     }
   }
 
+  def getValidationErrorTabTitle(): String = {
+    s"${messages("htmlTitle.invalidInput", heading)}"
+  }
+
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   for (isAgent <- Seq(true, false)) yield {
@@ -428,6 +432,9 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
               }
             }
             status(result) shouldBe BAD_REQUEST
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe getValidationErrorTabTitle()
           }
 
           s"invalid form input on the ${getTestTitleIncomeSourceType(incomeSourceType)} page" in {

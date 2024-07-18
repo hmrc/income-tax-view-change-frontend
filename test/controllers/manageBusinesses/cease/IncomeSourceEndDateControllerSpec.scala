@@ -30,8 +30,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
-import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -72,6 +70,10 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         s"${messages("htmlTitle.agent", heading(incomeSourceType))}"
       else
         s"${messages("htmlTitle", heading(incomeSourceType))}"
+    }
+
+    def getValidationErrorTabTitle(incomeSourceType: IncomeSourceType): String = {
+      s"${messages("htmlTitle.invalidInput", heading(incomeSourceType))}"
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
@@ -486,6 +488,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
           status(result) shouldBe BAD_REQUEST
 
+          val document: Document = Jsoup.parse(contentAsString(result))
+          document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
         }
 
         "the form is not completed successfully" when {

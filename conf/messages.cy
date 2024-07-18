@@ -1250,11 +1250,14 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
 
-incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
-incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
-incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
-incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
+incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
+incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
+incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                 = unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                 = eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 = eiddo tramor
+incomeSources.add.error.reportingMethodNotSaved.se.caption                      = Unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk.caption                      = Eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp.caption                      = Eiddo tramor
 
 #######################################################################################################################
 ## Income Sources - Cease ##
@@ -1683,6 +1686,9 @@ incomeSources.add.incomeSourceReportingMethod.taxYear                   =   Blwy
 incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
 incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.incomeSourceReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.add.incomeSourceReportingMethod.se.caption                =   Unig fasnachwr
+incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eiddo yn y DU
+incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
 # manage uk property reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
@@ -1930,10 +1936,10 @@ claimToAdjustPoa.selectYourReason.error.required                        =   Dewi
 
 claimToAdjustPoa.enterPoaAmount.caption                 = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 claimToAdjustPoa.enterPoaAmount.heading                 = Nodwch swm newydd
-claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hafal i hanner swm disgwyliedig eich bil treth. Mae’ch bil treth yn cynnwys y canlynol:
+claimToAdjustPoa.enterPoaAmount.p1                      = Dylai pob taliad ar gyfrif fod yn hanner swm eich bil treth disgwyliedig, sy’n cynnwys:
 claimToAdjustPoa.enterPoaAmount.bullet1                 = Treth Incwm
 claimToAdjustPoa.enterPoaAmount.bullet2                 = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-claimToAdjustPoa.enterPoaAmount.initialAmount           = Swm cychwynnol
+claimToAdjustPoa.enterPoaAmount.amountPreviousHeading   = Swm yn seiliedig ar fil treth blaenorol
 claimToAdjustPoa.enterPoaAmount.adjustedAmount          = Swm wedi’i addasu
 claimToAdjustPoa.enterPoaAmount.firstPayment            = Taliad cyntaf ar gyfrif
 claimToAdjustPoa.enterPoaAmount.secondPayment           = Ail daliad ar gyfrif
@@ -1945,8 +1951,12 @@ claimToAdjustPoa.enterPoaAmount.emptyError              = Nodwch swm newydd ar g
 claimToAdjustPoa.enterPoaAmount.sameError               = Mae’n rhaid i swm pob taliad ar gyfrif fod yn wahanol i’r swm presennol ({0})
 claimToAdjustPoa.enterPoaAmount.higherError             = Mae’n rhaid i swm pob taliad ar gyfrif fod yn llai na’r swm a gyfrifwyd gan CThEF yn wreiddiol ({0})
 claimToAdjustPoa.enterPoaAmount.invalidError            = Mae’n rhaid i’r swm fod yn rhif, megis 1000 neu 1000.00
-claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = Os ydych eisoes wedi gwneud taliad ac mae’r swm a addaswyd yn llai na’r hyn rydych wedi’i dalu, bydd CThEF yn ychwanegu credyd i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai’n ychwanegu credyd neu dâl am fod yn hwyr i’ch cyfrif, yn seiliedig ar y gwahaniaeth.
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi talu eich taliad ar gyfrif cyntaf, bydd CThEF yn talu’r gwahaniaeth yn ôl i chi.
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2  = <b>Er enghraifft,</b> os ydych eisoes wedi talu £2,000 ar gyfer eich taliad ar gyfrif cyntaf a bod angen i chi leihau’r ddau daliad ar gyfrif i £1,500, bydd CThEF yn ychwanegu £500 at eich cyfrif ar gyfer y taliad cyntaf.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = <b>Bydd y ddau daliad ar gyfrif yn cael eu newid.</b> Os ydych eisoes wedi gwneud taliad, bydd CThEF naill ai yn ychwanegu credyd neu dâl am fod yn hwyr at eich cyfrif, yn seiliedig ar y gwahaniaeth.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = <b>Er enghraifft,</b> os ydych eisoes wedi lleihau eich taliadau ar gyfrif i £2,000 ac wedi gwneud y taliad cyntaf. Os byddwch yn <b>lleihau’</b>ch taliadau ar gyfrif i £1,500, bydd CThEF yn ychwanegu credyd o £500. Os byddwch yn <b>cynyddu’</b>ch taliadau ar gyfrif i £2,500, bydd CThEF yn ychwanegu tâl am fod yn hwyr o £500.
+
+# API Failure
 
 claimToAdjustPoa.apiFailure.heading                  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 claimToAdjustPoa.apiFailure.para1                    = Nid oedd modd diweddaru’ch taliadau ar gyfrif.
