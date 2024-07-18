@@ -54,21 +54,28 @@ class CreditServiceSpec extends TestSupport {
 
   "CreditService.getCreditCharges method" should {
     "return a list of financial details credit charges" when {
+
       "a successful response is received in all tax year calls" in {
 
         when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2023), any())(any(), any()))
           .thenReturn(Future.successful(Right(
             ANewCreditAndRefundModel()
+              .withFirstRefund(10)
+              .withSecondRefund(20)
               .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
               .get())))
 
         when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2024), any())(any(), any()))
           .thenReturn(Future.successful(Right(
             ANewCreditAndRefundModel()
+              .withFirstRefund(10)
+              .withSecondRefund(20)
               .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
               .get())))
 
         new TestCreditService().getAllCredits(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
+          .withFirstRefund(10)
+          .withSecondRefund(20)
           .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
           .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
           .get()

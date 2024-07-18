@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.core.ErrorModel
 import models.creditsandrefunds.CreditsModel
+import models.financialDetails.Repayment
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +36,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
                     hc: HeaderCarrier): Future[CreditsModel] = {
 
     val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
-      x.copy(transactions = x.transactions :++ y.transactions)
+      x.copy(transactions = x.transactions :++ y.transactions.filterNot(_.transactionType == Repayment))
 
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")

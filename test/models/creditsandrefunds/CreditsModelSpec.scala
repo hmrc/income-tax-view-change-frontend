@@ -19,6 +19,7 @@ package models.creditsandrefunds
 import models.core.ErrorModel
 import models.financialDetails._
 import play.api.libs.json._
+import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
@@ -128,8 +129,6 @@ class CreditsModelSpec extends UnitSpec {
 
   "CreditAndRefundModel" should {
 
-
-
     "parse from JSON correctly" in {
 
       val result: JsResult[CreditsModel] = Json.parse(allCreditsJson)
@@ -141,6 +140,7 @@ class CreditsModelSpec extends UnitSpec {
         case _ => fail("Model did not validate correctly")
       }
     }
+
 
     "write to JSON correctly" in {
 

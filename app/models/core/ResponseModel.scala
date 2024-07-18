@@ -17,15 +17,20 @@
 package models.core
 
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{Format, JsSuccess}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.libs.json.{Format, JsSuccess, JsValue}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+
+import scala.util.Try
+
 
 object ResponseModel {
 
   trait SuccessModel
 
   object InvalidJson extends ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON" )
+
+  object NotFound extends ErrorModel(NOT_FOUND, "Not found" )
 
   object UnexpectedError extends ErrorModel(INTERNAL_SERVER_ERROR, "Unexpected error")
 
@@ -34,25 +39,50 @@ object ResponseModel {
   abstract class AResponseReads[T <: SuccessModel] extends HttpReads[ResponseModel[T]] {
 
     implicit val format: Format[T]
+
     override def read(method: String, url: String, response: HttpResponse): ResponseModel[T] = {
-      response.status match {
-        case OK =>
-          response.json.validate[T] match {
-            case JsSuccess(model, _) =>
-              Right(model)
-            case _ =>
-              Logger("application").warn(s"Unable to parse success response")
-              Left(InvalidJson)
-          }
-        case _ =>
-          response.json.validate[ErrorModel] match {
-            case JsSuccess(model, _) =>
-              Left(model)
-            case _ =>
-              Logger("application").warn(s"Unable to parse failure response")
-              Left(InvalidJson)
-          }
+
+      def logInvalidResponse(): ResponseModel[T] = {
+        Logger("application").warn(s"Unable to parse response")
+        Left(InvalidJson)
       }
+
+      def validateAndReturnSuccess(jsValue: JsValue) = {
+        jsValue.validate[T] match {
+          case JsSuccess(model, _) =>
+            Right(model)
+          case _ =>
+            logInvalidResponse()
+        }
+      }
+
+      def validateAndReturnError(jsValue: JsValue) = {
+        jsValue.validate[ErrorModel] match {
+          case JsSuccess(model, _) =>
+            Left(model)
+          case _ =>
+            logInvalidResponse()
+        }
+      }
+
+      def applyToJsonBody(func: JsValue => ResponseModel[T]) = {
+        for {
+          jsValue <- Try(response.json)
+        } yield {
+          func(jsValue)
+        }
+      }
+
+      val responseTry: Try[ResponseModel[T]] = response.status match {
+        case OK =>
+          applyToJsonBody(validateAndReturnSuccess)
+        case NOT_FOUND =>
+          Try[ResponseModel[T]](Left(NotFound))
+        case _ =>
+          applyToJsonBody(validateAndReturnError)
+      }
+
+      responseTry.getOrElse(logInvalidResponse())
     }
   }
 }
