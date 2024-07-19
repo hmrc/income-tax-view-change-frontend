@@ -29,7 +29,7 @@
 @(isAgent: Boolean, subheadingContent: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getManageUrl = @{
-    controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
 }
 
 @getHomeUrl = @{

@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
     mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
     h1: h1,
     p: p,
     link: link,
@@ -28,20 +30,25 @@
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@incomeSourceTypeText = @{
-  incomeSourceType match {
-    case _: SelfEmployment.type => messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    case _: UkProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.uk")
-    case _: ForeignProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.fp")
-  }
+@getMessage(key: String, args: String*) = @{
+    incomeSourceType match {
+        case SelfEmployment => messages(s"incomeSources.add.error.reportingMethodNotSaved.se.$key", args: _*)
+        case UkProperty => messages(s"incomeSources.add.error.reportingMethodNotSaved.uk.$key", args: _*)
+        case ForeignProperty => messages(s"incomeSources.add.error.reportingMethodNotSaved.fp.$key", args: _*)
+    }
 }
 
 @mainTemplate(pageTitle = messages("incomeSources.add.error.standardError"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
+    @hmrcPageHeading(PageHeading(
+        text = messages("incomeSources.add.error.standardError"),
+        headingClasses = Some("govuk-heading-l margin-bottom-100"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
 
     @p(id = Some("paragraph-1")){
-        @messages("incomeSources.add.error.reportingMethodNotSaved.p1", incomeSourceTypeText)
+        @messages("incomeSources.add.error.reportingMethodNotSaved.p1", getMessage("incomeSource"))
     }
 
     @p(id = Some("paragraph-2")){

@@ -87,7 +87,7 @@
     )
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.add.incomeSourceReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+@mainTemplate(pageTitle = messages("incomeSources.add.incomeSourceReportingMethod.heading"), form = Some(incomeSourceReportingMethodForm), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = incomeSourceReportingMethodForm
