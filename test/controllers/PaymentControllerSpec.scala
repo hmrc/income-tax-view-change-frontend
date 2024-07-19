@@ -54,11 +54,10 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
     (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
     val testController = new PaymentController(
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockPayApiConnector,
       mockAuditingService,
-      mockAuthService
+      mockAuthService,
+      testAuthenticator
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],

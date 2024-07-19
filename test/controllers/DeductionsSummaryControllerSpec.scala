@@ -39,15 +39,12 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   val allowancesAndDeductionsServiceNameAgent: String = messages("htmlTitle.agent", messages("deduction_breakdown.heading"))
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[NinoPredicate],
     mockCalculationService,
     mockAuditingService,
     app.injector.instanceOf[views.html.DeductionBreakdown],
-    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
+    testAuthenticator,
     app.injector.instanceOf[AgentItvcErrorHandler]
   )(
     appConfig,

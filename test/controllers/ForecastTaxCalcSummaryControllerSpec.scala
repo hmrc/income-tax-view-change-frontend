@@ -38,16 +38,13 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
 
   object TestForecastTaxCalcSummaryController extends ForecastTaxCalcSummaryController(
     app.injector.instanceOf[ForecastTaxCalcSummary],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     mockAuditingService,
     mockCalculationService,
-    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,
-    app.injector.instanceOf[FeatureSwitchService]
+    app.injector.instanceOf[FeatureSwitchService],
+    testAuthenticator
   )(
     ec,
     languageUtils,

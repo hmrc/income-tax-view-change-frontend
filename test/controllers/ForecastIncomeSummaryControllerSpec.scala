@@ -41,21 +41,16 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val forecastIncomeView: ForecastIncomeSummary = app.injector.instanceOf[ForecastIncomeSummary]
-  //val mockFeatureSwitchService = mock(classOf[FeatureSwitchService])
 
   object TestIncomeSummaryController extends ForecastIncomeSummaryController(
     app.injector.instanceOf[ForecastIncomeSummary],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
-    MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,
-    app.injector.instanceOf[FeatureSwitchService]
+    app.injector.instanceOf[FeatureSwitchService],
+    testAuthenticator
   )(
     ec,
     languageUtils,
