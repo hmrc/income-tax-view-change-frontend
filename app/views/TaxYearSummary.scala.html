@@ -196,7 +196,7 @@
         @p()(content = Html(messages("tax-year-summary.payments.no-payments")))
     } else {
         <table class="govuk-table" id="payments-table">
-            <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.TEST")</caption>
+            <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.payments")</caption>
             @paymentsTableHead("payments-table-head")
             <tbody>
             @for((documentDetailWithDueDate, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
