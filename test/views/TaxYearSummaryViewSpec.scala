@@ -300,14 +300,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val forecastNoDataNote: String = messages("forecast_taxCalc.noForecast.text")
     val unattendedCalcPara: String = s"! Warning ${messages("tax-year-summary.tax-calculation.unattended-calc")}"
     val taxCalculationNoDataNote: String = messages("tax-year-summary.tax-calculation.no-calc.note")
-    val payments: String = messages("tax-year-summary.payments")
+    val charges: String = messages("tax-year-summary.charges")
     val updates: String = messages("tax-year-summary.updates")
     val income: String = messages("tax-year-summary.income")
     val section: String = messages("tax-year-summary.section")
     val allowancesAndDeductions: String = messages("tax-year-summary.deductions")
     val totalIncomeDue: String = messages("tax-year-summary.taxable-income")
     val incomeTaxNationalInsuranceDue: String = messages("tax-year-summary.tax-due")
-    val paymentType: String = messages("tax-year-summary.payments.payment-type")
+    val chargeType: String = messages("tax-year-summary.payments.charge-type")
     val dueDate: String = messages("tax-year-summary.payments.due-date")
     val amount: String = messages("tax-year-summary.payments.amount")
     val paymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
@@ -435,7 +435,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
-        layoutContent.selectHead("""a[href$="#payments"]""").text shouldBe payments
+        layoutContent.selectHead("""a[href$="#payments"]""").text shouldBe charges
         layoutContent.selectHead("""a[href$="#updates"]""").text shouldBe updates
       }
 
@@ -588,7 +588,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#paymentTypeHeading").text shouldBe paymentType
+        layoutContent.selectHead("#paymentTypeHeading").text shouldBe chargeType
         layoutContent.selectHead("#paymentDueDateHeading").text shouldBe dueDate
         layoutContent.selectHead("#paymentAmountHeading").text shouldBe amount
       }
@@ -610,7 +610,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
         layoutContent.selectHead("#payments p").text shouldBe noPaymentsDue
-        layoutContent.h2.selectFirst("h2").text().contains(payments)
+        layoutContent.h2.selectFirst("h2").text().contains(charges)
         layoutContent.selectHead("#payments").doesNotHave("table")
       }
 

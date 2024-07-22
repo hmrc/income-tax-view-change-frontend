@@ -51,8 +51,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val dropDownInfo: String = messages("whatYouOwe.dropdown.info")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
-  val paymentType: String = messages("tax-year-summary.payments.payment-type")
-  val taxYearSummary: String = messages("whatYouOwe.tableHead.tax-year-summary")
+  val chargeType: String = messages("tax-year-summary.payments.charge-type")
+  val taxYear: String = messages("whatYouOwe.tableHead.tax-year")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
   val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")} ${messages("pagehelp.opensInNewTabText")}"
   val paymentProcessingBullet2: String = messages("whatYouOwe.payments-made-bullet-2")
@@ -427,8 +427,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have the Balancing Payment title " in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
-          remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
-          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYearSummary
+          remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
+          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
           remainingBalanceHeader.select("th").last().text() shouldBe amountDue
         }
         "Balancing Payment row data exists and should not contain hyperlink and overdue tag " in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
@@ -523,8 +523,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         s"have the Balancing Payment header and table data" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
-          remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
-          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYearSummary
+          remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
+          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
           remainingBalanceHeader.select("th").last().text() shouldBe amountDue
 
           val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
@@ -671,8 +671,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           charges = whatYouOweDataWithOverdueDataAndInterest()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
-          remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
-          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYearSummary
+          remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
+          remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
           remainingBalanceHeader.select("th").last().text() shouldBe amountDue
 
           val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
@@ -711,8 +711,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
-            overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-            overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+            overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+            overdueTableHeader.select("th").get(2).text() shouldBe taxYear
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
@@ -743,8 +743,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
-            overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-            overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+            overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+            overdueTableHeader.select("th").get(2).text() shouldBe taxYear
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
@@ -772,8 +772,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
-            overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-            overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+            overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+            overdueTableHeader.select("th").get(2).text() shouldBe taxYear
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
@@ -800,8 +800,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
-          overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-          overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+          overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+          overdueTableHeader.select("th").get(2).text() shouldBe taxYear
           overdueTableHeader.select("th").last().text() shouldBe amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
@@ -828,8 +828,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
-          overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-          overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+          overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+          overdueTableHeader.select("th").get(2).text() shouldBe taxYear
           overdueTableHeader.select("th").last().text() shouldBe amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
@@ -959,8 +959,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
           val overdueTableHeader: Element = pageDocument.select("tr").first()
           overdueTableHeader.select("th").first().text() shouldBe dueDate
-          overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-          overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+          overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+          overdueTableHeader.select("th").get(2).text() shouldBe taxYear
           overdueTableHeader.select("th").last().text() shouldBe amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
@@ -1011,8 +1011,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
         val remainingBalanceHeader: Element = pageDocument.select("tr").first()
         remainingBalanceHeader.select("th").first().text() shouldBe dueDate
-        remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
-        remainingBalanceHeader.select("th").get(2).text() shouldBe taxYearSummary
+        remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
+        remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
         remainingBalanceHeader.select("th").last().text() shouldBe amountDue
 
         val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
@@ -1027,8 +1027,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have overdue table header and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").get(0)
         overdueTableHeader.select("th").first().text() shouldBe dueDate
-        overdueTableHeader.select("th").get(1).text() shouldBe paymentType
-        overdueTableHeader.select("th").get(2).text() shouldBe taxYearSummary
+        overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+        overdueTableHeader.select("th").get(2).text() shouldBe taxYear
         overdueTableHeader.select("th").last().text() shouldBe amountDue
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
         overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
