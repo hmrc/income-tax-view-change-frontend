@@ -16,6 +16,8 @@
 
 package models.financialDetails
 
+import play.api.libs.json._
+
 sealed trait CreditType {
   val key: String
 }
@@ -70,4 +72,22 @@ object CreditType {
       case _ => None
     }
   }
+
+  implicit val write: Writes[CreditType] = new Writes[CreditType] {
+    def writes(transactionType: CreditType): JsValue = {
+      JsString(transactionType.key)
+    }
+  }
+
+  val read: Reads[CreditType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+    case MfaCreditType.key => MfaCreditType
+    case CutOverCreditType.key => CutOverCreditType
+    case BalancingChargeCreditType.key => BalancingChargeCreditType
+    case RepaymentInterest.key => RepaymentInterest
+    case PaymentType.key => PaymentType
+    case Repayment.key => Repayment
+  }
+
+  implicit val format: Format[CreditType] = Format( read, write)
+
 }

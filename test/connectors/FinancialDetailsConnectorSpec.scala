@@ -35,12 +35,11 @@ package connectors
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import mocks.MockHttp
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
-import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -52,13 +51,14 @@ import testConstants.OutstandingChargesTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
+  val mockHttpV2 = mock[HttpClientV2]
   trait Setup {
     val baseUrl = "http://localhost:9999"
     def getAppConfig(): FrontendAppConfig =
@@ -66,7 +66,7 @@ class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockA
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new FinancialDetailsConnector(httpClientMock, getAppConfig())
+    val connector = new FinancialDetailsConnector(httpClientMock, mockHttpV2, getAppConfig())
   }
 
   "getOutstandingChargesUrl" should {

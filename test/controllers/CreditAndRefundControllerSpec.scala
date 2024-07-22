@@ -31,12 +31,13 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.{CreditService, DateService, RepaymentService}
-import testConstants.BaseTestConstants
+import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYearTo}
 import testConstants.FinancialDetailsTestConstants._
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
@@ -85,8 +86,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -105,8 +108,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -125,8 +130,22 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundChargeAllCreditTypes)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 250.0)
+            .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 125.0)
+            .withPayment(LocalDate.parse("2022-08-16"), 100.0)
+            .withPayment(LocalDate.parse("2022-08-16"), 500.0)
+            .withPayment(LocalDate.parse("2022-08-16"), 300.0)
+            .withMfaCredit(LocalDate.of(2019, 5, 15), 100.0)
+            .withMfaCredit(LocalDate.of(2019, 5, 15), 1000.0)
+            .withMfaCredit(LocalDate.of(2019, 5, 15), 800.0)
+            .withCutoverCredit(LocalDate.of(2019, 5, 15), 200.0)
+            .withCutoverCredit(LocalDate.of(2019, 5, 15), 2000.0)
+            .withCutoverCredit(LocalDate.of(2019, 5, 15), 700.0)
+            .withFirstRefund(4.0)
+            .withSecondRefund(2.0)
+            .get()))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -175,8 +194,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         val expectedContent: String = controller.customNotFoundErrorView().toString()
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditCharge)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
@@ -203,9 +224,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
@@ -222,8 +245,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
+
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
 
@@ -239,8 +265,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
+          ANewCreditAndRefundModel()
+            .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+            .get()))
+
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Left(new InternalError)))
 
