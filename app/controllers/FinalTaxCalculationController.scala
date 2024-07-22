@@ -41,23 +41,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
                                               view: FinalTaxCalculationView,
-                                              checkSessionTimeout: SessionTimeoutPredicate,
-                                              authenticate: AuthenticationPredicate,
-                                              retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: NavBarPredicate,
                                               implicit val appConfig: FrontendAppConfig,
-                                              val auth: AuthenticatorPredicate,
-                                              val featureSwitchPredicate: FeatureSwitchPredicate
+                                              val auth: AuthenticatorPredicate
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
-
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar
-
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
@@ -108,17 +99,22 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   }
 
-  def agentSubmit(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
-    implicit response =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService)(response.agent, response.request, response.hc).flatMap { user =>
-        val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-        agentFinalDeclarationSubmit(taxYear, fullName)(user, response.hc)
-      }
-  }
+//  def agentSubmit(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) { user =>
+//    val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
+//    agentFinalDeclarationSubmit(taxYear, fullName)(user)
+//  }
+
+    def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
+      implicit agent =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+          val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
+          agentFinalDeclarationSubmit(taxYear, fullName)(user)
+        }
+    }
 
 
   def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
-                                         (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                                 (implicit user: MtdItUser[AnyContent]): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
@@ -150,7 +146,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
   def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)

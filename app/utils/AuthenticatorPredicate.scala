@@ -47,7 +47,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def authenticatedAction(isAgent: Boolean)
-                         (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+                         (authenticatedCodeBlock: MtdItUser[AnyContent] => Future[Result]): Action[AnyContent] = {
     if (isAgent) {
       Authenticated.async {
         implicit request =>
@@ -98,6 +98,6 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
 }
 
 case class AuthenticatorAgentResponse()(implicit val agent: IncomeTaxAgentUser,
-                                      implicit val request: Request[AnyContent],
-                                      implicit val hc: HeaderCarrier,
-                                      implicit val messages: Messages)
+                                        implicit val request: Request[AnyContent],
+                                        implicit val hc: HeaderCarrier,
+                                        implicit val messages: Messages)

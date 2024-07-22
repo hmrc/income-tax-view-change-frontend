@@ -42,8 +42,17 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val ec: ExecutionContext)
   extends ConfirmClientController with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
+//  def show: Action[AnyContent] = Authenticated.async { implicit request =>
+//    implicit user =>
+//      Future.successful(Ok(confirmClient(
+//        clientName = fetchClientName,
+//        clientUtr = fetchClientUTR,
+//        postAction = routes.ConfirmClientUTRController.submit,
+//        backUrl = backUrl
+//      )))
+//  }
+
+  def show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
       Future.successful(Ok(confirmClient(
         clientName = fetchClientName,
         clientUtr = fetchClientUTR,
