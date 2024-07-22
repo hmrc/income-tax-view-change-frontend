@@ -22,7 +22,6 @@ import auth.MtdItUserWithNino
 import config._
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation._

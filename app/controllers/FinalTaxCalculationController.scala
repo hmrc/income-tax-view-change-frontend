@@ -21,7 +21,6 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.sessionUtils.SessionKeys.{clientFirstName, clientLastName}
-import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import models.finalTaxCalculation.TaxReturnRequestModel

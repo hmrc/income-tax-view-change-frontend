@@ -21,10 +21,8 @@ import audit.models.ChargeSummaryAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}

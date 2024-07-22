@@ -18,11 +18,10 @@ package controllers
 
 import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.FrontendAuthorisedFunctions
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.PayApiConnector
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.mvc._

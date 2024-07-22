@@ -16,22 +16,19 @@
 
 package controllers
 
-import audit.AuditingService
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.AuthenticatorPredicate
 import views.html.notMigrated.NotMigratedUser
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.Logger
-import utils.AuthenticatorPredicate
 
 @Singleton
 class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,

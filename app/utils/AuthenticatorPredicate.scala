@@ -16,13 +16,13 @@
 
 package utils
 
-import auth.{MtdItUser, MtdItUserBase, MtdItUserOptionNino, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import services.IncomeSourceDetailsService
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -71,21 +71,23 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
   }
 
   def authenticatedActionWithNino(authenticatedCodeBlock: MtdItUserWithNino[_] => Future[Result]): Action[AnyContent] = {
-      (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
+    (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
+      authenticatedCodeBlock(user)
+    }
   }
+
   def authenticatedActionOptionNino(authenticatedCodeBlock: MtdItUserOptionNino[_] => Future[Result]): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate).async { implicit user =>
       authenticatedCodeBlock(user)
     }
   }
+
   def authenticatedActionWithNinoAgent(authenticatedCodeBlock: AuthenticatorAgentResponse => Future[Result]): Action[AnyContent] = {
-      Authenticated.async {
-        implicit request =>
-          implicit agent =>
-            authenticatedCodeBlock(AuthenticatorAgentResponse())
-      }
+    Authenticated.async {
+      implicit request =>
+        implicit agent =>
+          authenticatedCodeBlock(AuthenticatorAgentResponse())
+    }
   }
 }
 

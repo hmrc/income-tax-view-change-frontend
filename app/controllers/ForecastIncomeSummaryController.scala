@@ -22,7 +22,6 @@ import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.admin.ForecastCalculation
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -32,7 +31,6 @@ import play.api.mvc._
 import services.admin.FeatureSwitchService
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.AuthenticatorPredicate
 import views.html.ForecastIncomeSummary
