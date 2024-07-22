@@ -31,13 +31,13 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
   val foreignPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
 
   object TestConstants {
-    val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se")
+    val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
     val seParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmployment)
 
-    val ukProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.uk")
+    val ukProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
     val ukParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
 
-    val foreignProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.fp")
+    val foreignProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
     val foreignParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
     val continueButtonText: String = messagesAPI("base.continue")
