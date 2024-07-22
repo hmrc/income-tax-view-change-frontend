@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._

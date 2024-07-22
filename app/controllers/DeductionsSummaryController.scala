@@ -22,7 +22,6 @@ import auth.MtdItUserWithNino
 import config._
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation._
@@ -34,22 +33,19 @@ import services.CalculationService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.TaxCalcFallBackBackLink
+import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
 import views.html.DeductionBreakdown
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                            val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            val retrieveNino: NinoPredicate,
+class DeductionsSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val calculationService: CalculationService,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
-                                            val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler,
+                                            val auth: AuthenticatorPredicate,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -80,7 +76,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
   }
 
   def showDeductionsSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
+    auth.authenticatedActionWithNino {
       implicit user =>
         handleRequest(
           origin = origin,
@@ -91,13 +87,12 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     }
 
   def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit agent =>
+    auth.authenticatedActionWithNinoAgent { implicit response =>
         handleRequest(
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true
-        )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
+        )(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly, response.messages)
     }
   }
 

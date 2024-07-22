@@ -21,10 +21,11 @@ import audit.models.ConfirmClientDetailsAuditModel
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ConfirmClientController
-import controllers.agent.utils.SessionKeys
+import sessionUtils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.AuthenticatorPredicate
 import views.html.agent.confirmClient
 
 import javax.inject.{Inject, Singleton}
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authorisedFunctions: AuthorisedFunctions,
-                                           val auditingService: AuditingService)
+                                           val auditingService: AuditingService,
+                                           val auth: AuthenticatorPredicate)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,

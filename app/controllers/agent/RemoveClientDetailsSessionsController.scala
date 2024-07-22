@@ -19,16 +19,18 @@ package controllers.agent
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.AuthenticatorPredicate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: AuthorisedFunctions)
+class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: AgentItvcErrorHandler,
@@ -36,8 +38,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
 
-  def show: Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
+  def show: Action[AnyContent] = auth.authenticatedActionWithNinoAgent { implicit response =>
       Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
         .removingFromSession(
           SessionKeys.clientFirstName,
@@ -45,7 +46,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
           SessionKeys.clientMTDID,
           SessionKeys.clientUTR,
           SessionKeys.clientNino
-        ))
+        )(response.request))
 
   }
 }

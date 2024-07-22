@@ -19,11 +19,9 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch._
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -51,20 +49,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
-                                         authenticate: AuthenticationPredicate,
                                          calculationService: CalculationService,
-                                         checkSessionTimeout: SessionTimeoutPredicate,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         retrieveNinoWithIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                          nextUpdatesService: NextUpdatesService,
                                          auth: AuthenticatorPredicate,
                                          messagesApi: MessagesApi,
                                          val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
-                                         val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService,
-                                         val featureSwitchPredicate: FeatureSwitchPredicate,
                                          claimToAdjustService: ClaimToAdjustService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
@@ -72,9 +65,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
-
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSourcesNoCache andThen featureSwitchPredicate andThen retrieveBtaNavBar
 
   private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
@@ -262,7 +252,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       errorHandler.showInternalServerError()
   }
 
-  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
         handleRequest(taxYear, origin, isAgent = false)

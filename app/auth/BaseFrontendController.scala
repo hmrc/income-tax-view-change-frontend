@@ -17,7 +17,7 @@
 package auth
 
 import config.AgentItvcErrorHandler
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate._
 import controllers.predicates.IncomeTaxUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.MissingAgentReferenceNumber
