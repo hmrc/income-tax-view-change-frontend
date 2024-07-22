@@ -126,7 +126,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
       "an unconventional error occurs" in {
         when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
           .thenReturn(Future.successful(testCalcError))
-        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user)
+        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -135,7 +135,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
       "supplied a user with no UTR" in {
         when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
           .thenReturn(Future.successful(testCalcResponse))
-        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user)
+        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }

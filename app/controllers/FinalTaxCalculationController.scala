@@ -101,13 +101,13 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       implicit agent =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
           val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-          agentFinalDeclarationSubmit(taxYear, fullName)(user)
+          agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
         }
     }
 
 
   def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
-                                 (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+                                 (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
