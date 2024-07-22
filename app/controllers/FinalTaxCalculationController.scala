@@ -94,15 +94,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
-
     finalDeclarationSubmit(taxYear, fullNameOptional)
-
   }
-
-//  def agentSubmit(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) { user =>
-//    val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-//    agentFinalDeclarationSubmit(taxYear, fullName)(user)
-//  }
 
     def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
       implicit agent =>
