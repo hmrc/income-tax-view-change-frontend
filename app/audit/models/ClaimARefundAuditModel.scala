@@ -20,6 +20,7 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
+import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails._
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -27,31 +28,30 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
-                                  creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  private val zeroBalance: Double = 0.00
   override val auditType: String = ClaimARefundResponse
   override val transactionName: String = ClaimARefund
 
   private def getFullDueDate(dueDate: LocalDate) = s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
 
   private def getAvailableCredit: Double = {
-    balanceDetails.flatMap(_.availableCredit) match {
-      case Some(_) => balanceDetails.get.availableCredit.get.toDouble.abs
-      case _ => zeroBalance
+    creditsModel.availableCredit.abs.toDouble
+  }
+
+  case class Credit(transaction: Transaction) {
+    def creditType: Option[CreditType] = Some(transaction.transactionType)
+    def isPayment: Boolean = transaction.transactionType == PaymentType
+    def taxYearString: String = {
+      transaction.taxYear.map(_.toInt)
+        .map(taxYear => s"${taxYear - 1} to ${taxYear} tax year"
+      ).getOrElse("")
     }
+
+    def dueDate: Option[LocalDate] = transaction.dueDate
   }
 
-  case class Credit(documentDetailWithDueDate: DocumentDetailWithDueDate, financialDetail: FinancialDetail) {
-    def creditType: Option[CreditType] = financialDetail.getCreditType
-    def isPayment: Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined
-    def taxYearString: String = s"${documentDetailWithDueDate.documentDetail.taxYear - 1} to ${documentDetailWithDueDate.documentDetail.taxYear} tax year"
-    def dueDate: Option[LocalDate] = documentDetailWithDueDate.dueDate
-    def paymentLot: Option[String] = documentDetailWithDueDate.documentDetail.paymentLot
-  }
-
-  private def getCreditType(credit: Credit): String = {
+  private def getCreditDescription(credit: Credit): String = {
     (credit.creditType, credit.dueDate) match {
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
@@ -68,32 +68,26 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private lazy val creditDocumentsJson: Seq[JsObject] = {
-    creditDocuments.map { case (documentDetailWithDueDate, financialDetail) =>
-      val credit = Credit(documentDetailWithDueDate, financialDetail)
-      Json.obj(
-        "description" -> getCreditType(credit),
-        "amount" -> credit.documentDetailWithDueDate.documentDetail.paymentOrChargeCredit
-      )
-    }
+    creditsModel.transactions.filterNot(_.transactionType == Repayment)
+      .map(transaction => {
+        val credit = Credit(transaction)
+        Json.obj(
+          "description" -> getCreditDescription(credit),
+          "amount" -> transaction.amount
+        )
+      })
   }
 
-  private def getPendingRefundsJson(pendingRefund: Option[BigDecimal]): Seq[JsObject] = Seq(Json.obj() ++ Json.obj("description" -> "Refund in progress") ++
-    Json.obj("amount" -> pendingRefund.get.abs))
+  private def getPendingRefundsJson(pendingRefund: BigDecimal):JsObject =
+    Json.obj(
+      "description" -> "Refund in progress",
+      "amount" -> pendingRefund.abs )
 
-  private lazy val refundDocumentsJson: Seq[JsObject] = {
-    val firstPendingRefundExists = balanceDetails.map(balanceDetails => balanceDetails.firstPendingAmountRequested.isDefined)
-    val secondPendingRefundExists = balanceDetails.map(balanceDetails => balanceDetails.secondPendingAmountRequested.isDefined)
-
-    (firstPendingRefundExists, secondPendingRefundExists) match {
-      case (Some(true), Some(true)) =>
-        getPendingRefundsJson(balanceDetails.get.firstPendingAmountRequested) ++ getPendingRefundsJson(balanceDetails.get.secondPendingAmountRequested)
-      case (Some(false), Some(true)) =>
-        getPendingRefundsJson(balanceDetails.get.secondPendingAmountRequested)
-      case (Some(true), Some(false)) =>
-        getPendingRefundsJson(balanceDetails.get.firstPendingAmountRequested)
-      case (_, _) => Seq()
-    }
-  }
+  private lazy val refundDocumentsJson: Seq[JsObject] =
+    creditsModel.transactions
+      .filter(_.transactionType == Repayment)
+      .map(_.amount)
+      .map(getPendingRefundsJson)
 
   val claimARefundDetail: JsObject = {
     Json.obj(

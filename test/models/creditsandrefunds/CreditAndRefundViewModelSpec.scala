@@ -17,25 +17,25 @@
 package models.creditsandrefunds
 
 import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType, RepaymentInterest}
-import testConstants.ANewCreditAndRefundViewModel
+import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class CreditAndRefundViewModelTest extends UnitSpec {
+class CreditAndRefundViewModelSpec extends UnitSpec {
 
   "sorted credit rows" should {
 
    "return credits in reverse date order" in {
 
-     val model = ANewCreditAndRefundViewModel()
-       .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = -1.0)
-       .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = -2.0)
-       .withMfaCredit(dueDate = dateInYear(2021), outstandingAmount = -3.0)
-       .withRepaymentInterest(dueDate = dateInYear(2022), outstandingAmount = -4.0)
+     val model = ANewCreditAndRefundModel()
+       .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = 1.0)
+       .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
+       .withMfaCredit(dueDate = dateInYear(2021), outstandingAmount = 3.0)
+       .withRepaymentInterest(dueDate = dateInYear(2022), outstandingAmount = 4.0)
        .get()
 
-     val rows = model.sortedCreditRows
+     val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
      rows shouldBe List(
        CreditViewRow(2.0, BalancingChargeCreditType, "2024"),
@@ -47,12 +47,12 @@ class CreditAndRefundViewModelTest extends UnitSpec {
 
     "return refunds in reverse order of amount" in {
 
-      val model = ANewCreditAndRefundViewModel()
-               .withFirstRefundRequest(10.0)
-               .withSecondRefundRequest(20.0)
+      val model = ANewCreditAndRefundModel()
+               .withFirstRefund(10.0)
+               .withSecondRefund(20.0)
                .get()
 
-      val rows = model.sortedCreditRows
+      val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
       rows shouldBe List(
         RefundRow(20.0),
@@ -62,14 +62,14 @@ class CreditAndRefundViewModelTest extends UnitSpec {
 
     "return refunds after credits" in {
 
-      val model = ANewCreditAndRefundViewModel()
-        .withFirstRefundRequest(10.0)
-        .withSecondRefundRequest(20.0)
-        .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = -1.0)
-        .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = -2.0)
+      val model = ANewCreditAndRefundModel()
+        .withFirstRefund(10.0)
+        .withSecondRefund(20.0)
+        .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = 1.0)
+        .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
         .get()
 
-      val rows = model.sortedCreditRows
+      val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
       rows shouldBe List(
         CreditViewRow(2.0, BalancingChargeCreditType, "2024"),
@@ -81,14 +81,14 @@ class CreditAndRefundViewModelTest extends UnitSpec {
 
     "filter out credits with no outstanding amount" in {
 
-      val model = ANewCreditAndRefundViewModel()
-        .withFirstRefundRequest(10.0)
-        .withSecondRefundRequest(20.0)
+      val model = ANewCreditAndRefundModel()
+        .withFirstRefund(10.0)
+        .withSecondRefund(20.0)
         .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = 0.0)
-        .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = -2.0)
+        .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
         .get()
 
-      val rows = model.sortedCreditRows
+      val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
       rows shouldBe List(
         CreditViewRow(2.0, BalancingChargeCreditType, "2024"),

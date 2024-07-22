@@ -17,17 +17,21 @@
 package services
 
 import auth.MtdItUser
+import connectors.FinancialDetailsConnector
+import models.core.ErrorModel
 import models.financialDetails._
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
-import services.CreditService.maybeBalanceDetails
+import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CreditServiceSpec extends TestSupport {
@@ -36,7 +40,7 @@ class CreditServiceSpec extends TestSupport {
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
-    incomeSources = singleBusinessIncomeWithCurrentYear,
+    incomeSources = businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1 }")),
     btaNavPartial = None,
     saUtr = Some("1234567890"),
     credId = Some("credId"),
@@ -44,27 +48,46 @@ class CreditServiceSpec extends TestSupport {
     None
   )(FakeRequest())
 
-  val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  val mockFinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
 
-  object service extends CreditService(mockFinancialDetailsService)
+ class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
 
   "CreditService.getCreditCharges method" should {
     "return a list of financial details credit charges" when {
+
       "a successful response is received in all tax year calls" in {
 
-        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2023), any())(any(), any()))
+          .thenReturn(Future.successful(Right(
+            ANewCreditAndRefundModel()
+              .withFirstRefund(10)
+              .withSecondRefund(20)
+              .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+              .get())))
 
-        service.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe List(financialDetailCreditAndRefundCharge)
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2024), any())(any(), any()))
+          .thenReturn(Future.successful(Right(
+            ANewCreditAndRefundModel()
+              .withFirstRefund(10)
+              .withSecondRefund(20)
+              .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+              .get())))
+
+        new TestCreditService().getAllCredits(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
+          .withFirstRefund(10)
+          .withSecondRefund(20)
+          .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+          .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+          .get()
       }
     }
 
     "handle an error" when {
       "the financial service has returned an error in all tax year calls" in {
-        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "INTERNAL_SERVER ERROR"))))
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
 
-        val result = service.getCreditCharges()(headerCarrier, mtdItUser).failed.futureValue
+        val result = new TestCreditService().getAllCredits(mtdItUser, headerCarrier).failed.futureValue
 
         result shouldBe an[Exception]
         result.getMessage shouldBe "Error response while getting Unpaid financial details"
@@ -72,19 +95,4 @@ class CreditServiceSpec extends TestSupport {
     }
   }
 
-  "CreditService.maybeBalanceDetails method" should {
-    "return an some of balance details" when {
-      "a successful response is received in all tax year calls" in {
-
-        maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)) shouldBe Some(financialDetailCreditAndRefundCharge.balanceDetails)
-      }
-    }
-
-    "return none" when {
-      "a successful response is received in all tax year calls but it returns an empty list" in {
-
-        maybeBalanceDetails(List.empty) shouldBe None
-      }
-    }
-  }
 }

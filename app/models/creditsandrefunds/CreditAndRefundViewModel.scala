@@ -20,54 +20,82 @@ import models.financialDetails._
 
 import java.time.LocalDate
 
+
 sealed trait CreditRow {
   val amount: BigDecimal
   val creditType: CreditType
 }
+
+object CreditRow {
+
+  def fromTransaction(transaction: Transaction): Option[CreditRow] = {
+
+    transaction.transactionType match {
+      case PaymentType =>
+        transaction.dueDate.map(date =>
+          PaymentCreditRow(
+            amount = transaction.amount,
+            date = date))
+      case Repayment =>
+        Some(RefundRow(amount = transaction.amount))
+      case creditType =>
+        transaction.taxYear.map(year =>
+          CreditViewRow(
+            amount = transaction.amount,
+            creditType = creditType,
+            taxYear = year))
+    }
+  }
+}
+
 case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
+
 case class PaymentCreditRow(amount: BigDecimal,  date: LocalDate) extends CreditRow {
 
   override val creditType: CreditType = PaymentType
-
 }
 case class RefundRow(amount: BigDecimal) extends CreditRow {
 
   override val creditType: CreditType = Repayment
-
 }
 
-case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balanceDetails: Option[BalanceDetails]) {
+case class CreditAndRefundViewModel(availableCredit: BigDecimal,
+                                    allocatedCredit: BigDecimal,
+                                    creditRows: List[CreditRow]) {
+  val hasCreditOrRefunds: Boolean = {
+    availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
+  }
+}
 
-  private val repayments: Seq[CreditRow] = balanceDetails.fold(Seq[RefundRow]())(details =>
-       Seq(details.firstPendingAmountRequested, details.secondPendingAmountRequested)
-        .flatten.sorted(Ordering.BigDecimal.reverse).map(amount => RefundRow(amount)))
+object CreditAndRefundViewModel {
 
-  private val creditsAndPayments: Seq[CreditRow] = sortCreditsByYear.flatMap(cc => {
-    val (documentDetails, financialDetail) = cc
-    val maybeCreditRow = for {
-      creditType <- financialDetail.getCreditType
-      amount <- documentDetails.documentDetail.paymentOrChargeCredit
-    } yield {
-      creditType match {
-        case PaymentType => PaymentCreditRow(amount = amount, date = documentDetails.dueDate.get)
-        case _ => CreditViewRow(amount = amount, creditType = creditType, taxYear = financialDetail.taxYear)
-      }
-    }
-    maybeCreditRow
-  })
-
-  val sortedCreditRows: Seq[CreditRow] = creditsAndPayments ++ repayments
-
-  private def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-    val sortedCredits = creditCharges.sortBy {
-      case (_, financialDetails) => financialDetails.taxYear
-    }
-    sortedCredits.reverse
+  def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
+    CreditAndRefundViewModel(
+      availableCredit = model.availableCredit,
+      allocatedCredit = model.allocatedCredit,
+      creditRows =
+        (removeNoRemainingCredit andThen
+          orderByDescendingTaxYear andThen
+          orderCreditsFirstRepaymentsSecond).apply(model.transactions).flatMap(CreditRow.fromTransaction)
+    )
   }
 
-  val sortedCreditCharges: Seq[(DocumentDetailWithDueDate, FinancialDetail)] = sortCreditsByYear
+  private val orderCreditsFirstRepaymentsSecond: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) =>
+    // all credits first
+    transactions.filter(_.transactionType != Repayment) ++:
+      // then repayments sorted by amount, descending
+      transactions.filter(_.transactionType == Repayment).sortBy(_.amount).reverse
 
+  private val removeNoRemainingCredit: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) =>
+    transactions.filter(_.amount > 0)
+
+  private val orderByDescendingTaxYear: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) => {
+    // sort by tax year, but maintain ordering within tax years
+    val groupedByTaxYear = transactions
+      .groupBy(_.taxYear.map(_.toInt).getOrElse(0))
+
+    groupedByTaxYear.keys.toList.sorted.reverse.flatMap(groupedByTaxYear.get).flatten
+  }
 }
-
 
 

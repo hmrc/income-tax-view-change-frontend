@@ -19,11 +19,10 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
-import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -77,17 +76,6 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
           val creditDocDetails: List[DocumentDetail] = financialDetails.documentDetails.filter(_.credit.isDefined)
-          if (creditDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = creditDocDetails)) else None
-      }
-    }
-  }
-
-  def getAllCreditChargesandPaymentsFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetails.map { chargesWithYears =>
-      chargesWithYears.flatMap {
-        case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
-        case (_, financialDetails: FinancialDetailsModel) =>
-          val creditDocDetails: List[DocumentDetail] = financialDetails.documentDetails.filter(_.paymentOrChargeCredit.isDefined)
           if (creditDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = creditDocDetails)) else None
       }
     }
