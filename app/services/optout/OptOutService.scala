@@ -116,23 +116,14 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
                                                     hc: HeaderCarrier,
                                                     ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
-    val yearEnd = dateService.getCurrentTaxYearEnd
-    val currentYear = TaxYear.forYearEnd(yearEnd)
-    val previousYear = currentYear.previousYear
-
-    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(previousYear)
-    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear.endYear)
-
-    for {
-      statusMap <- statusMapFuture
-      finalisedStatus <- finalisedStatusFuture
-    } yield {
-      val currentYearStatus = statusMap(currentYear)
-      val previousYearStatus = statusMap(previousYear)
-      NextUpdatesQuarterlyReportingContentChecks(
-        currentYearStatus == Mandated || currentYearStatus == Voluntary,
-        previousYearStatus == Mandated || previousYearStatus == Voluntary,
-        finalisedStatus)
+    fetchOptOutProposition().map { oop => {
+        val currentYearStatus = oop.currentTaxYear.status
+        val previousYearStatus = oop.previousTaxYear.status
+        NextUpdatesQuarterlyReportingContentChecks(
+          currentYearStatus == Mandated || currentYearStatus == Voluntary,
+          previousYearStatus == Mandated || previousYearStatus == Voluntary,
+          oop.previousTaxYear.crystallised)
+      }
     }
   }
 

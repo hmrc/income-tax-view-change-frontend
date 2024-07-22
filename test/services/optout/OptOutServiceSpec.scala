@@ -547,9 +547,9 @@ class OptOutServiceSpec extends UnitSpec
     "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(crystallised))
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
+          setupMockGetCurrentTaxYearEnd(taxYear)
 
           val expected = NextUpdatesQuarterlyReportingContentChecks(
             currentYearItsaStatus = true,
@@ -562,9 +562,9 @@ class OptOutServiceSpec extends UnitSpec
 
       "Calculation State for CY-1 is unavailable" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.failed(error))
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.failed(error))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
+          setupMockGetCurrentTaxYearEnd(taxYear)
 
           service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
             ex shouldBe a[RuntimeException]
@@ -575,9 +575,9 @@ class OptOutServiceSpec extends UnitSpec
 
       "ITSA Status from CY-1 till future years is unavailable" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear.endYear)(Future.successful(crystallised))
+          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-          setupMockGetCurrentTaxYearEnd(taxYear.endYear)
+          setupMockGetCurrentTaxYearEnd(taxYear)
 
           service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
             ex shouldBe a[RuntimeException]
