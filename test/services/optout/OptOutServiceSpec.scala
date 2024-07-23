@@ -346,7 +346,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        allowWriteOfOptOutDataToMongoToSucceed
+        allowWriteOfOptOutDataToMongoToSucceed()
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -370,7 +370,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, true)
 
-        allowWriteOfOptOutDataToMongoToSucceed
+        allowWriteOfOptOutDataToMongoToSucceed()
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -393,7 +393,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        allowWriteOfOptOutDataToMongoToSucceed
+        allowWriteOfOptOutDataToMongoToSucceed()
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -416,7 +416,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        allowWriteOfOptOutDataToMongoToSucceed
+        allowWriteOfOptOutDataToMongoToSucceed()
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -439,7 +439,7 @@ class OptOutServiceSpec extends UnitSpec
 
           stubCrystallisedStatus(previousYear, false)
 
-          allowWriteOfOptOutDataToMongoToSucceed
+          allowWriteOfOptOutDataToMongoToSucceed()
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -467,7 +467,7 @@ class OptOutServiceSpec extends UnitSpec
 
             stubCrystallisedStatus(previousYear, false)
 
-            allowWriteOfOptOutDataToMongoToSucceed
+            allowWriteOfOptOutDataToMongoToSucceed()
 
             val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -528,7 +528,7 @@ class OptOutServiceSpec extends UnitSpec
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
           // Because we're saving the status as well as building view models...
-          allowWriteOfOptOutDataToMongoToSucceed
+          allowWriteOfOptOutDataToMongoToSucceed()
 
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
