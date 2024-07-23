@@ -351,9 +351,9 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
 
       }
     }
@@ -378,9 +378,9 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue shouldBe noOptOutOptionAvailable
+        response.futureValue._2 shouldBe noOptOutOptionAvailable
       }
     }
 
@@ -404,9 +404,9 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByMandated)))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByMandated)))
       }
     }
 
@@ -430,9 +430,9 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
 
-        val response = service.nextUpdatesPageOptOutViewModel()
+        val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
       }
     }
 
@@ -456,9 +456,9 @@ class OptOutServiceSpec extends UnitSpec
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           when(repository.set(any())).thenReturn(Future.successful(true))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModels()
 
-          val model = response.futureValue.get
+          val model = response.futureValue._2.get
 
           model match {
             case m: OptOutOneYearViewModel =>
@@ -487,9 +487,9 @@ class OptOutServiceSpec extends UnitSpec
             when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
             when(repository.set(any())).thenReturn(Future.successful(true))
 
-            val response = service.nextUpdatesPageOptOutViewModel()
+            val response = service.nextUpdatesPageOptOutViewModels()
 
-            val model = response.futureValue.get
+            val model = response.futureValue._2.get
             model match {
               case m: OptOutOneYearViewModel =>
                 m.oneYearOptOutTaxYear shouldBe TaxYear.forYearEnd(currentYear)
@@ -514,7 +514,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModels()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -537,16 +537,20 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.nextUpdatesPageOptOutViewModel()
+          val response = service.nextUpdatesPageOptOutViewModels()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
       }
     }
 
-    "OptOutService.getNextUpdatesQuarterlyReportingContentChecks" when {
+    "OptOutService.nextUpdatesPageOptOutViewModels" when {
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
+          // Because we're saving the status as well as building view models...
+          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+          when(repository.set(any())).thenReturn(Future.successful(true))
+
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
           setupMockGetCurrentTaxYearEnd(taxYear)
@@ -556,7 +560,7 @@ class OptOutServiceSpec extends UnitSpec
             previousYearItsaStatus = false,
             previousYearCrystallisedStatus = crystallised)
 
-          service.getNextUpdatesQuarterlyReportingContentChecks.futureValue shouldBe expected
+          service.nextUpdatesPageOptOutViewModels().futureValue._1 shouldBe expected
         }
       }
 
@@ -566,7 +570,7 @@ class OptOutServiceSpec extends UnitSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
           setupMockGetCurrentTaxYearEnd(taxYear)
 
-          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
+          service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }
@@ -579,7 +583,7 @@ class OptOutServiceSpec extends UnitSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
           setupMockGetCurrentTaxYearEnd(taxYear)
 
-          service.getNextUpdatesQuarterlyReportingContentChecks.failed.map { ex =>
+          service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }

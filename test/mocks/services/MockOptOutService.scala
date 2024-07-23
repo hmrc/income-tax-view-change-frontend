@@ -37,8 +37,8 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     reset(mockOptOutService)
   }
 
-  def mockGetNextUpdatesQuarterlyReportingContentChecks(out: Future[NextUpdatesQuarterlyReportingContentChecks]): Unit = {
-    when(mockOptOutService.getNextUpdatesQuarterlyReportingContentChecks(any(), any(), any()))
+  def mockGetNextUpdatesPageOptOutViewModels(out: Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])]): Unit = {
+    when(mockOptOutService.nextUpdatesPageOptOutViewModels()(any(), any(), any()))
       .thenReturn(out)
   }
 

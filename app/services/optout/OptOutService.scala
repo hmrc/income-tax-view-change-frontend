@@ -113,13 +113,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
 
-  def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
-                                                    hc: HeaderCarrier,
-                                                    ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
-    fetchOptOutProposition()
-      .map(oop => nextUpdatesQuarterlyReportingContentChecks(oop))
-  }
-
   private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {
     val currentYearStatus = oop.currentTaxYear.status
     val previousYearStatus = oop.previousTaxYear.status
@@ -217,13 +210,15 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
-  def nextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
+  def nextUpdatesPageOptOutViewModels()(implicit user: MtdItUser[_],
+                                        hc: HeaderCarrier,
+                                        ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])] = {
     // Should we fetch the opt out initial state here? It would simplify initialising the journey.
     fetchOptOutProposition().flatMap(oop => {
       // Is there a better way to manage failure of initialiseOptOutJourney()...? handle the boolean?
       initialiseOptOutJourney(oop).map(_ => oop)
     }).map { proposition =>
-      nextUpdatesOptOutViewModel(proposition)
+      (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
     }
   }
 
