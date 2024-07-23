@@ -335,18 +335,12 @@ class OptOutServiceSpec extends UnitSpec
 
       "offer PY as OptOut Option" in {
 
-        val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-        stubCurrentTaxYear(currentYear)
-
-        stubItsaStatuses(
-          previousYear, Voluntary,
-          currentYear, NoStatus,
-          nextYear, NoStatus)
-
-        stubCrystallisedStatus(previousYear, false)
-
-        allowWriteOfOptOutDataToMongoToSucceed()
+        stubOptOut(
+          currentTaxYearEnd = 2024,
+          previousYearCrystallisedStatus = false,
+          previousTaxYearStatus = Voluntary,
+          currentTaxYearStatus = NoStatus,
+          nextTaxYearStatus = NoStatus)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -359,18 +353,12 @@ class OptOutServiceSpec extends UnitSpec
 
       "offer No OptOut Option" in {
 
-        val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-        stubCurrentTaxYear(currentYear)
-
-        stubItsaStatuses(
-          previousYear, Voluntary,
-          currentYear, NoStatus,
-          nextYear, NoStatus)
-
-        stubCrystallisedStatus(previousYear, true)
-
-        allowWriteOfOptOutDataToMongoToSucceed()
+        stubOptOut(
+          currentTaxYearEnd = 2024,
+          previousYearCrystallisedStatus = true,
+          previousTaxYearStatus = Voluntary,
+          currentTaxYearStatus = NoStatus,
+          nextTaxYearStatus = NoStatus)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -382,18 +370,12 @@ class OptOutServiceSpec extends UnitSpec
 
       "offer CY OptOut Option" in {
 
-        val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-        stubCurrentTaxYear(currentYear)
-
-        stubItsaStatuses(
-          previousYear, NoStatus,
-          currentYear, Voluntary,
-          nextYear, Mandated)
-
-        stubCrystallisedStatus(previousYear, false)
-
-        allowWriteOfOptOutDataToMongoToSucceed()
+        stubOptOut(
+          currentTaxYearEnd = 2024,
+          previousYearCrystallisedStatus = false,
+          previousTaxYearStatus = NoStatus,
+          currentTaxYearStatus = Voluntary,
+          nextTaxYearStatus = Mandated)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -405,18 +387,12 @@ class OptOutServiceSpec extends UnitSpec
 
       "offer NY OptOut Option" in {
 
-        val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-        stubCurrentTaxYear(currentYear)
-
-        stubItsaStatuses(
-          previousYear, NoStatus,
-          currentYear, NoStatus,
-          nextYear, Voluntary)
-
-        stubCrystallisedStatus(previousYear, false)
-
-        allowWriteOfOptOutDataToMongoToSucceed()
+        stubOptOut(
+          currentTaxYearEnd = 2024,
+          previousYearCrystallisedStatus = false,
+          previousTaxYearStatus = NoStatus,
+          currentTaxYearStatus = NoStatus,
+          nextTaxYearStatus = Voluntary)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -428,18 +404,12 @@ class OptOutServiceSpec extends UnitSpec
       s"PY : PY is $Voluntary, CY is $Mandated, NY is $Mandated and PY is NOT crystallised" should {
         s"offer PY OptOut Option with a warning as following year (CY) is $Mandated " in {
 
-          val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-          stubCurrentTaxYear(currentYear)
-
-          stubItsaStatuses(
-            previousYear, Voluntary,
-            currentYear, Mandated,
-            nextYear, Mandated)
-
-          stubCrystallisedStatus(previousYear, false)
-
-          allowWriteOfOptOutDataToMongoToSucceed()
+          val (previousYear, _, _) = stubOptOut(
+            currentTaxYearEnd = 2024,
+            previousYearCrystallisedStatus = false,
+            previousTaxYearStatus = Voluntary,
+            currentTaxYearStatus = Mandated,
+            nextTaxYearStatus = Mandated)
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -456,18 +426,12 @@ class OptOutServiceSpec extends UnitSpec
         s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
           s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
 
-            val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
-
-            stubCurrentTaxYear(currentYear)
-
-            stubItsaStatuses(
-              previousYear, Mandated,
-              currentYear, Voluntary,
-              nextYear, Mandated)
-
-            stubCrystallisedStatus(previousYear, false)
-
-            allowWriteOfOptOutDataToMongoToSucceed()
+            val (_, currentYear, _) = stubOptOut(
+              currentTaxYearEnd = 2024,
+              previousYearCrystallisedStatus = false,
+              previousTaxYearStatus = Mandated,
+              currentTaxYearStatus = Voluntary,
+              nextTaxYearStatus = Mandated)
 
             val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -708,6 +672,28 @@ class OptOutServiceSpec extends UnitSpec
 
     }
 
+  }
+
+  private def stubOptOut(currentTaxYearEnd: Int,
+                         previousYearCrystallisedStatus: Boolean,
+                         previousTaxYearStatus: Value,
+                         currentTaxYearStatus: Value,
+                         nextTaxYearStatus: Value): (TaxYear, TaxYear, TaxYear) = {
+
+    val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = currentTaxYearEnd)
+
+    stubCurrentTaxYear(currentYear)
+
+    stubItsaStatuses(
+      previousYear, previousTaxYearStatus,
+      currentYear, currentTaxYearStatus,
+      nextYear, nextTaxYearStatus)
+
+    stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
+
+    allowWriteOfOptOutDataToMongoToSucceed()
+
+    (previousYear, currentYear, nextYear)
   }
 
   private def taxYears(currentTaxYearEnd: Int): (TaxYear, TaxYear, TaxYear) = {
