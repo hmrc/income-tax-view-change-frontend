@@ -43,8 +43,8 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
     def creditType: Option[CreditType] = Some(transaction.transactionType)
     def isPayment: Boolean = transaction.transactionType == PaymentType
     def taxYearString: String = {
-      transaction.taxYear.map(_.toInt)
-        .map(taxYear => s"${taxYear - 1} to ${taxYear} tax year"
+      transaction.taxYear
+        .map(taxYear => s"${taxYear.startYear} to ${taxYear.endYear} tax year"
       ).getOrElse("")
     }
 

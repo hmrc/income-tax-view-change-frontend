@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.FinancialDetailsConnector
 import models.core.ErrorModel
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -57,7 +58,7 @@ class CreditServiceSpec extends TestSupport {
 
       "a successful response is received in all tax year calls" in {
 
-        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2023), any())(any(), any()))
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2023)), any())(any(), any()))
           .thenReturn(Future.successful(Right(
             ANewCreditAndRefundModel()
               .withFirstRefund(10)
@@ -65,7 +66,7 @@ class CreditServiceSpec extends TestSupport {
               .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
               .get())))
 
-        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(2024), any())(any(), any()))
+        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any()))
           .thenReturn(Future.successful(Right(
             ANewCreditAndRefundModel()
               .withFirstRefund(10)
@@ -94,5 +95,4 @@ class CreditServiceSpec extends TestSupport {
       }
     }
   }
-
 }

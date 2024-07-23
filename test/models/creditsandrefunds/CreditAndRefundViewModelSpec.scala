@@ -17,6 +17,7 @@
 package models.creditsandrefunds
 
 import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType, RepaymentInterest}
+import models.incomeSourceDetails.TaxYear
 import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 
@@ -38,10 +39,10 @@ class CreditAndRefundViewModelSpec extends UnitSpec {
      val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
      rows shouldBe List(
-       CreditViewRow(2.0, BalancingChargeCreditType, "2024"),
-       CreditViewRow(1.0, CutOverCreditType, "2023"),
-       CreditViewRow(4.0, RepaymentInterest, "2022"),
-       CreditViewRow(3.0, MfaCreditType, "2021")
+       CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
+       CreditViewRow(1.0, CutOverCreditType, TaxYear.forYearEnd(2023)),
+       CreditViewRow(4.0, RepaymentInterest, TaxYear.forYearEnd(2022)),
+       CreditViewRow(3.0, MfaCreditType, TaxYear.forYearEnd(2021))
      )
    }
 
@@ -72,8 +73,8 @@ class CreditAndRefundViewModelSpec extends UnitSpec {
       val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
       rows shouldBe List(
-        CreditViewRow(2.0, BalancingChargeCreditType, "2024"),
-        CreditViewRow(1.0, CutOverCreditType, "2023"),
+        CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
+        CreditViewRow(1.0, CutOverCreditType, TaxYear.forYearEnd(2023)),
         RefundRow(20.0),
         RefundRow(10.0)
       )
@@ -91,7 +92,7 @@ class CreditAndRefundViewModelSpec extends UnitSpec {
       val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
       rows shouldBe List(
-        CreditViewRow(2.0, BalancingChargeCreditType, "2024"),
+        CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
         RefundRow(20.0),
         RefundRow(10.0)
       )
