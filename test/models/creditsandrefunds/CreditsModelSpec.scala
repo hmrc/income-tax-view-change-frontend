@@ -18,8 +18,8 @@ package models.creditsandrefunds
 
 import models.core.ErrorModel
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.libs.json._
-import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
@@ -45,22 +45,22 @@ class CreditsModelSpec extends UnitSpec {
       |  }, {
       |    "transactionType" : "cutOver",
       |    "amount" : 1,
-      |    "taxYear" : "2023",
+      |    "taxYear" : 2023,
       |    "dueDate" : "2023-01-01"
       |  }, {
       |    "transactionType" : "balancingCharge",
       |    "amount" : 2,
-      |    "taxYear" : "2024",
+      |    "taxYear" : 2024,
       |    "dueDate" : "2024-01-01"
       |  }, {
       |    "transactionType" : "mfa",
       |    "amount" : 3,
-      |    "taxYear" : "2021",
+      |    "taxYear" : 2021,
       |    "dueDate" : "2021-01-01"
       |  }, {
       |    "transactionType" : "repaymentInterest",
       |    "amount" : 4,
-      |    "taxYear" : "2022",
+      |    "taxYear" : 2022,
       |    "dueDate" : "2022-01-01"
       |  } ]
       |}
@@ -77,19 +77,19 @@ class CreditsModelSpec extends UnitSpec {
       dueDate = None),
     Transaction(transactionType = CutOverCreditType,
       amount = 1,
-      taxYear = Some("2023"),
+      taxYear = Some(TaxYear.forYearEnd(2023)),
       dueDate = Some(dateInYear(2023))),
     Transaction(transactionType = BalancingChargeCreditType,
       amount = 2,
-      taxYear = Some("2024"),
+      taxYear = Some(TaxYear.forYearEnd(2024)),
       dueDate = Some(dateInYear(2024))),
     Transaction(transactionType = MfaCreditType,
       amount = 3,
-      taxYear = Some("2021"),
+      taxYear = Some(TaxYear.forYearEnd(2021)),
       dueDate = Some(dateInYear(2021))),
     Transaction(transactionType = RepaymentInterest,
       amount = 4,
-      taxYear = Some("2022"),
+      taxYear = Some(TaxYear.forYearEnd(2022)),
       dueDate = Some(dateInYear(2022)))
   ))
 

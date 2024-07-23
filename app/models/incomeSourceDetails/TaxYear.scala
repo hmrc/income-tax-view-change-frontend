@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import play.api.libs.json.{Format, JsError, JsNumber, Reads}
 import services.DateServiceInterface
 
 import java.time.LocalDate
@@ -63,6 +64,15 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
 object TaxYear {
 
+  implicit val format: Format[TaxYear] = Format(
+    fjs = Reads[TaxYear](
+      _.validate[Int]
+        .filter(JsError("Could not parse tax year"))(v => TaxYear.isValidYear(s"$v"))
+        .map(TaxYear.forYearEnd)
+    ),
+    tjs = (o: TaxYear) => JsNumber(o.endYear))
+
+
   private def isValidYear(year: String): Boolean =
     year.length == 4 &&
       year.forall(_.isDigit) &&
@@ -85,6 +95,14 @@ object TaxYear {
           TaxYear(yearOne.toInt, yearTwo.toInt)
         )
       case _ => None
+    }
+  }
+
+  def getTaxYear(localDate: LocalDate): TaxYear = {
+    if(localDate.isBefore(LocalDate.of(localDate.getYear, 4, 6))) {
+      TaxYear.forYearEnd(localDate.getYear)
+    } else {
+      TaxYear.forYearEnd(localDate.getYear  + 1)
     }
   }
 

@@ -22,6 +22,7 @@ import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
@@ -32,6 +33,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
 
+import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -98,11 +100,11 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
 
   }
 
-  def getCreditsAndRefund(taxYear: Int, nino: String)
+  def getCreditsAndRefund(taxYear: TaxYear, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
-    val dateFrom: String = (taxYear - 1).toString + "-04-06"
-    val dateTo: String = taxYear.toString + "-04-05"
+    val dateFrom: String = taxYear.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
+    val dateTo: String = taxYear.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
 
     val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")
