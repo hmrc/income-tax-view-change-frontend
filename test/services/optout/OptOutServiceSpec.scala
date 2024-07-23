@@ -342,9 +342,9 @@ class OptOutServiceSpec extends UnitSpec
         stubOptOut(
           currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
-          previousTaxYearStatus = Voluntary,
-          currentTaxYearStatus = NoStatus,
-          nextTaxYearStatus = NoStatus)
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -360,9 +360,9 @@ class OptOutServiceSpec extends UnitSpec
         stubOptOut(
           currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = true,
-          previousTaxYearStatus = Voluntary,
-          currentTaxYearStatus = NoStatus,
-          nextTaxYearStatus = NoStatus)
+          previousYearStatus = Voluntary,
+          currentYearStatus = NoStatus,
+          nextYearStatus = NoStatus)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -377,9 +377,9 @@ class OptOutServiceSpec extends UnitSpec
         stubOptOut(
           currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
-          previousTaxYearStatus = NoStatus,
-          currentTaxYearStatus = Voluntary,
-          nextTaxYearStatus = Mandated)
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Mandated)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -394,9 +394,9 @@ class OptOutServiceSpec extends UnitSpec
         stubOptOut(
           currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
-          previousTaxYearStatus = NoStatus,
-          currentTaxYearStatus = NoStatus,
-          nextTaxYearStatus = Voluntary)
+          previousYearStatus = NoStatus,
+          currentYearStatus = NoStatus,
+          nextYearStatus = Voluntary)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -411,9 +411,9 @@ class OptOutServiceSpec extends UnitSpec
           stubOptOut(
             currentTaxYear = taxYear2023_2024,
             previousYearCrystallisedStatus = false,
-            previousTaxYearStatus = Voluntary,
-            currentTaxYearStatus = Mandated,
-            nextTaxYearStatus = Mandated)
+            previousYearStatus = Voluntary,
+            currentYearStatus = Mandated,
+            nextYearStatus = Mandated)
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -433,9 +433,9 @@ class OptOutServiceSpec extends UnitSpec
             stubOptOut(
               currentTaxYear = taxYear2023_2024,
               previousYearCrystallisedStatus = false,
-              previousTaxYearStatus = Mandated,
-              currentTaxYearStatus = Voluntary,
-              nextTaxYearStatus = Mandated)
+              previousYearStatus = Mandated,
+              currentYearStatus = Voluntary,
+              nextYearStatus = Mandated)
 
             val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -680,18 +680,18 @@ class OptOutServiceSpec extends UnitSpec
 
   private def stubOptOut(currentTaxYear: TaxYear,
                          previousYearCrystallisedStatus: Boolean,
-                         previousTaxYearStatus: Value,
-                         currentTaxYearStatus: Value,
-                         nextTaxYearStatus: Value): Unit = {
+                         previousYearStatus: Value,
+                         currentYearStatus: Value,
+                         nextYearStatus: Value): Unit = {
 
     val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
 
     stubCurrentTaxYear(currentYear)
 
     stubItsaStatuses(
-      previousYear, previousTaxYearStatus,
-      currentYear, currentTaxYearStatus,
-      nextYear, nextTaxYearStatus)
+      previousYear, previousYearStatus,
+      currentYear, currentYearStatus,
+      nextYear, nextYearStatus)
 
     stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
 
