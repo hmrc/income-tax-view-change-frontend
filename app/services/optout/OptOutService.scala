@@ -228,17 +228,17 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
   private def nextUpdatesOptOutViewModel(proposition: OptOutProposition): Option[OptOutViewModel] = {
-    proposition.optOutPropositionType.flatMap {
-      case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
-      case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
+    proposition.optOutPropositionType.map {
+      case p: OneYearOptOutProposition => OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state())
+      case _: MultiYearOptOutProposition => OptOutMultiYearViewModel()
     }
   }
 
   def recallNextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
     recallOptOutProposition().map { proposition =>
-      proposition.optOutPropositionType.flatMap {
-        case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
-        case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
+      proposition.optOutPropositionType.map {
+        case p: OneYearOptOutProposition => OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state())
+        case _: MultiYearOptOutProposition => OptOutMultiYearViewModel()
       }
     }
   }
