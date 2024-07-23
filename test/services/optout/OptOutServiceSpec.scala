@@ -346,8 +346,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        allowWriteOfOptOutDataToMongoToSucceed
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -371,8 +370,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, true)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        allowWriteOfOptOutDataToMongoToSucceed
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -395,8 +393,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        allowWriteOfOptOutDataToMongoToSucceed
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -419,8 +416,7 @@ class OptOutServiceSpec extends UnitSpec
 
         stubCrystallisedStatus(previousYear, false)
 
-        when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.set(any())).thenReturn(Future.successful(true))
+        allowWriteOfOptOutDataToMongoToSucceed
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -443,8 +439,7 @@ class OptOutServiceSpec extends UnitSpec
 
           stubCrystallisedStatus(previousYear, false)
 
-          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.set(any())).thenReturn(Future.successful(true))
+          allowWriteOfOptOutDataToMongoToSucceed
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -472,8 +467,7 @@ class OptOutServiceSpec extends UnitSpec
 
             stubCrystallisedStatus(previousYear, false)
 
-            when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-            when(repository.set(any())).thenReturn(Future.successful(true))
+            allowWriteOfOptOutDataToMongoToSucceed
 
             val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -534,8 +528,7 @@ class OptOutServiceSpec extends UnitSpec
       "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
         "return NextUpdatesQuarterlyReportingContentCheck" in {
           // Because we're saving the status as well as building view models...
-          when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.set(any())).thenReturn(Future.successful(true))
+          allowWriteOfOptOutDataToMongoToSucceed
 
           setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
@@ -737,6 +730,11 @@ class OptOutServiceSpec extends UnitSpec
 
   private def stubCrystallisedStatus(taxYear: TaxYear, crystallisedStatus: Boolean): Unit = {
     when(mockCalculationListService.isTaxYearCrystallised(taxYear)).thenReturn(Future.successful(crystallisedStatus))
+  }
+
+  private def allowWriteOfOptOutDataToMongoToSucceed(): Unit = {
+    when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
+    when(repository.set(any())).thenReturn(Future.successful(true))
   }
 
 }
