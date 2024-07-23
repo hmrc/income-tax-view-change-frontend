@@ -116,15 +116,17 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def getNextUpdatesQuarterlyReportingContentChecks(implicit user: MtdItUser[_],
                                                     hc: HeaderCarrier,
                                                     ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
-    fetchOptOutProposition().map { oop => {
-        val currentYearStatus = oop.currentTaxYear.status
-        val previousYearStatus = oop.previousTaxYear.status
-        NextUpdatesQuarterlyReportingContentChecks(
-          currentYearStatus == Mandated || currentYearStatus == Voluntary,
-          previousYearStatus == Mandated || previousYearStatus == Voluntary,
-          oop.previousTaxYear.crystallised)
-      }
-    }
+    fetchOptOutProposition()
+      .map(oop => nextUpdatesQuarterlyReportingContentChecks(oop))
+  }
+
+  private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {
+    val currentYearStatus = oop.currentTaxYear.status
+    val previousYearStatus = oop.previousTaxYear.status
+    NextUpdatesQuarterlyReportingContentChecks(
+      currentYearStatus == Mandated || currentYearStatus == Voluntary,
+      previousYearStatus == Mandated || previousYearStatus == Voluntary,
+      oop.previousTaxYear.crystallised)
   }
 
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
@@ -221,10 +223,14 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       // Is there a better way to manage failure of initialiseOptOutJourney()...? handle the boolean?
       initialiseOptOutJourney(oop).map(_ => oop)
     }).map { proposition =>
-      proposition.optOutPropositionType.flatMap {
-        case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
-        case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
-      }
+      nextUpdatesOptOutViewModel(proposition)
+    }
+  }
+
+  private def nextUpdatesOptOutViewModel(proposition: OptOutProposition): Option[OptOutViewModel] = {
+    proposition.optOutPropositionType.flatMap {
+      case p: OneYearOptOutProposition => Some(OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state()))
+      case _: MultiYearOptOutProposition => Some(OptOutMultiYearViewModel())
     }
   }
 
