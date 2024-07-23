@@ -682,7 +682,7 @@ class OptOutServiceSpec extends UnitSpec
                          previousYearCrystallisedStatus: Boolean,
                          previousTaxYearStatus: Value,
                          currentTaxYearStatus: Value,
-                         nextTaxYearStatus: Value): (TaxYear, TaxYear, TaxYear) = {
+                         nextTaxYearStatus: Value): Unit = {
 
     val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
 
@@ -696,8 +696,6 @@ class OptOutServiceSpec extends UnitSpec
     stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
 
     allowWriteOfOptOutDataToMongoToSucceed()
-
-    (previousYear, currentYear, nextYear)
   }
 
   private def taxYears(currentYear: TaxYear): (TaxYear, TaxYear, TaxYear) = {
