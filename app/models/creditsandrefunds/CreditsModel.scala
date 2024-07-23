@@ -45,23 +45,6 @@ case class Transaction(transactionType: CreditType,
                        dueDate: Option[LocalDate])
 
 object Transaction {
-//
-//  val reads: Reads[Transaction] =
-//     ((__ \ "transactionType").read[CreditType] and
-//      (__ \ "amount").read[BigDecimal] and
-//      (__ \  "taxYear").readNullable[TaxYear] and
-//      (__ \ "dueDate").readNullable[LocalDate])(Transaction.apply _)
-//
-//
-//
-//  implicit val write: Writes[Transaction] =
-//    ((__ \ "transactionType").write[CreditType] and
-//      (__ \ "amount").write[BigDecimal] and
-//      (__ \  "taxYear").writeNullable[TaxYear] and
-//      (__ \ "dueDate").writeNullable[LocalDate])(unlift(Transaction.unapply))
-
-
-
   implicit val format: OFormat[Transaction] = Json.format[Transaction]
 }
 
