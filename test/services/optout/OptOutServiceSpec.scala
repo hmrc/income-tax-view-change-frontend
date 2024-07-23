@@ -337,7 +337,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+        stubCurrentTaxYear(currentYear)
 
         stubItsaStatuses(
           previousYear, Voluntary,
@@ -361,7 +361,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+        stubCurrentTaxYear(currentYear)
 
         stubItsaStatuses(
           previousYear, Voluntary,
@@ -384,7 +384,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+        stubCurrentTaxYear(currentYear)
 
         stubItsaStatuses(
           previousYear, NoStatus,
@@ -407,7 +407,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+        stubCurrentTaxYear(currentYear)
 
         stubItsaStatuses(
           previousYear, NoStatus,
@@ -430,7 +430,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+          stubCurrentTaxYear(currentYear)
 
           stubItsaStatuses(
             previousYear, Voluntary,
@@ -458,7 +458,7 @@ class OptOutServiceSpec extends UnitSpec
 
             val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-            when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+            stubCurrentTaxYear(currentYear)
 
             stubItsaStatuses(
               previousYear, Mandated,
@@ -490,7 +490,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+          stubCurrentTaxYear(currentYear)
 
           when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
@@ -508,7 +508,7 @@ class OptOutServiceSpec extends UnitSpec
 
           val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+          stubCurrentTaxYear(currentYear)
 
           stubItsaStatuses(
             previousYear, NoStatus,
@@ -589,7 +589,7 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"offer ${getTaxYearText(optOutTaxYear.taxYear)} with state $state" in {
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+          stubCurrentTaxYear(CY)
 
           when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
@@ -638,7 +638,7 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"offer ${getTaxYearText(intent)}" in {
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+          stubCurrentTaxYear(CY)
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val sessionData = Some(OptOutSessionData(Some(buildOptOutContextData(crystallisedPY, statusPY, statusCY, statusNY)),
@@ -691,7 +691,7 @@ class OptOutServiceSpec extends UnitSpec
       s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
         s"return  $viewModel" in {
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(CY)
+          stubCurrentTaxYear(CY)
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           val optOutSessionData = OptOutSessionData(Some(buildOptOutContextData(crystallisedPY, statusPY, statusCY, statusNY)),
@@ -715,6 +715,10 @@ class OptOutServiceSpec extends UnitSpec
     val previousYear = currentYear.previousYear
     val nextTaxYear = TaxYear.forYearEnd(currentTaxYearEnd + 1)
     (previousYear, currentYear, nextTaxYear)
+  }
+
+  private def stubCurrentTaxYear(currentYear: TaxYear): Unit = {
+    when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
   }
 
   private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
