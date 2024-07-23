@@ -35,7 +35,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
-import services.optout.OptOutTestSupport.{buildOneYearOptOutPropositionForCurrentYear, buildOneYearOptOutPropositionForNextYear, buildOneYearOptOutPropositionForPreviousYear, buildOptOutContextData}
+import services.optout.OptOutTestSupport._
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -78,6 +78,10 @@ class OptOutServiceSpec extends UnitSpec
 
   implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
+
+  val taxYear2022_2023 = TaxYear.forYearEnd(2023)
+  val taxYear2023_2024 = taxYear2022_2023.nextYear
+  val taxYear2024_2025 = taxYear2023_2024.nextYear
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.previousYear
@@ -336,7 +340,7 @@ class OptOutServiceSpec extends UnitSpec
       "offer PY as OptOut Option" in {
 
         stubOptOut(
-          currentTaxYearEnd = 2024,
+          currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
           previousTaxYearStatus = Voluntary,
           currentTaxYearStatus = NoStatus,
@@ -344,7 +348,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2023), None))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2022_2023, None))
 
       }
     }
@@ -354,7 +358,7 @@ class OptOutServiceSpec extends UnitSpec
       "offer No OptOut Option" in {
 
         stubOptOut(
-          currentTaxYearEnd = 2024,
+          currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = true,
           previousTaxYearStatus = Voluntary,
           currentTaxYearStatus = NoStatus,
@@ -371,7 +375,7 @@ class OptOutServiceSpec extends UnitSpec
       "offer CY OptOut Option" in {
 
         stubOptOut(
-          currentTaxYearEnd = 2024,
+          currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
           previousTaxYearStatus = NoStatus,
           currentTaxYearStatus = Voluntary,
@@ -379,7 +383,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByMandated)))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2023_2024, Some(OneYearOptOutFollowedByMandated)))
       }
     }
 
@@ -388,7 +392,7 @@ class OptOutServiceSpec extends UnitSpec
       "offer NY OptOut Option" in {
 
         stubOptOut(
-          currentTaxYearEnd = 2024,
+          currentTaxYear = taxYear2023_2024,
           previousYearCrystallisedStatus = false,
           previousTaxYearStatus = NoStatus,
           currentTaxYearStatus = NoStatus,
@@ -396,7 +400,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(TaxYear.forYearEnd(2025), Some(NextYearOptOut)))
+        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2024_2025, Some(NextYearOptOut)))
       }
     }
 
@@ -404,8 +408,8 @@ class OptOutServiceSpec extends UnitSpec
       s"PY : PY is $Voluntary, CY is $Mandated, NY is $Mandated and PY is NOT crystallised" should {
         s"offer PY OptOut Option with a warning as following year (CY) is $Mandated " in {
 
-          val (previousYear, _, _) = stubOptOut(
-            currentTaxYearEnd = 2024,
+          stubOptOut(
+            currentTaxYear = taxYear2023_2024,
             previousYearCrystallisedStatus = false,
             previousTaxYearStatus = Voluntary,
             currentTaxYearStatus = Mandated,
@@ -417,7 +421,7 @@ class OptOutServiceSpec extends UnitSpec
 
           model match {
             case m: OptOutOneYearViewModel =>
-              m.oneYearOptOutTaxYear shouldBe previousYear
+              m.oneYearOptOutTaxYear shouldBe taxYear2022_2023
               m.showWarning shouldBe true
             case _ => fail("model should be OptOutOneYearViewModel")
           }
@@ -426,8 +430,8 @@ class OptOutServiceSpec extends UnitSpec
         s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
           s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
 
-            val (_, currentYear, _) = stubOptOut(
-              currentTaxYearEnd = 2024,
+            stubOptOut(
+              currentTaxYear = taxYear2023_2024,
               previousYearCrystallisedStatus = false,
               previousTaxYearStatus = Mandated,
               currentTaxYearStatus = Voluntary,
@@ -438,7 +442,7 @@ class OptOutServiceSpec extends UnitSpec
             val model = response.futureValue._2.get
             model match {
               case m: OptOutOneYearViewModel =>
-                m.oneYearOptOutTaxYear shouldBe currentYear
+                m.oneYearOptOutTaxYear shouldBe taxYear2023_2024
                 m.showWarning shouldBe true
               case _ => fail("model should be OptOutOneYearViewModel")
             }
@@ -452,7 +456,7 @@ class OptOutServiceSpec extends UnitSpec
 
         "return default response" in {
 
-          val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
+          val (previousYear, currentYear, nextYear) = taxYears(currentYear = taxYear2023_2024)
 
           stubCurrentTaxYear(currentYear)
 
@@ -470,7 +474,7 @@ class OptOutServiceSpec extends UnitSpec
 
         "return default response" in {
 
-          val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = 2024)
+          val (previousYear, currentYear, nextYear) = taxYears(currentYear = taxYear2023_2024)
 
           stubCurrentTaxYear(currentYear)
 
@@ -674,13 +678,13 @@ class OptOutServiceSpec extends UnitSpec
 
   }
 
-  private def stubOptOut(currentTaxYearEnd: Int,
+  private def stubOptOut(currentTaxYear: TaxYear,
                          previousYearCrystallisedStatus: Boolean,
                          previousTaxYearStatus: Value,
                          currentTaxYearStatus: Value,
                          nextTaxYearStatus: Value): (TaxYear, TaxYear, TaxYear) = {
 
-    val (previousYear, currentYear, nextYear) = taxYears(currentTaxYearEnd = currentTaxYearEnd)
+    val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
 
     stubCurrentTaxYear(currentYear)
 
@@ -696,10 +700,9 @@ class OptOutServiceSpec extends UnitSpec
     (previousYear, currentYear, nextYear)
   }
 
-  private def taxYears(currentTaxYearEnd: Int): (TaxYear, TaxYear, TaxYear) = {
-    val currentYear = TaxYear.forYearEnd(currentTaxYearEnd)
+  private def taxYears(currentYear: TaxYear): (TaxYear, TaxYear, TaxYear) = {
     val previousYear = currentYear.previousYear
-    val nextTaxYear = TaxYear.forYearEnd(currentTaxYearEnd + 1)
+    val nextTaxYear = currentTaxYear.nextYear
     (previousYear, currentYear, nextTaxYear)
   }
 
