@@ -344,7 +344,7 @@ class OptOutServiceSpec extends UnitSpec
           currentYear, NoStatus,
           nextYear, NoStatus)
 
-        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+        mockCrystallisedStatus(previousYear, false)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -369,7 +369,7 @@ class OptOutServiceSpec extends UnitSpec
           currentYear, NoStatus,
           nextYear, NoStatus)
 
-        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(true))
+        mockCrystallisedStatus(previousYear, true)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -393,7 +393,7 @@ class OptOutServiceSpec extends UnitSpec
           currentYear, Voluntary,
           nextYear, Mandated)
 
-        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+        mockCrystallisedStatus(previousYear, false)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -417,7 +417,7 @@ class OptOutServiceSpec extends UnitSpec
           currentYear, NoStatus,
           nextYear, Voluntary)
 
-        when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+        mockCrystallisedStatus(previousYear, false)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.set(any())).thenReturn(Future.successful(true))
@@ -441,7 +441,7 @@ class OptOutServiceSpec extends UnitSpec
             currentYear, Mandated,
             nextYear, Mandated)
 
-          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+          mockCrystallisedStatus(previousYear, false)
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
           when(repository.set(any())).thenReturn(Future.successful(true))
@@ -470,7 +470,7 @@ class OptOutServiceSpec extends UnitSpec
               currentYear, Voluntary,
               nextYear, Mandated)
 
-            when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+            mockCrystallisedStatus(previousYear, false)
 
             when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
             when(repository.set(any())).thenReturn(Future.successful(true))
@@ -500,7 +500,7 @@ class OptOutServiceSpec extends UnitSpec
 
           when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.successful(false))
+          mockCrystallisedStatus(previousYear, false)
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -733,6 +733,10 @@ class OptOutServiceSpec extends UnitSpec
       nextYear -> StatusDetail("", nextYearStatus, "")
     )
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
+  }
+
+  private def mockCrystallisedStatus(taxYear: TaxYear, crystallisedStatus: Boolean): Unit = {
+    when(mockCalculationListService.isTaxYearCrystallised(taxYear)).thenReturn(Future.successful(crystallisedStatus))
   }
 
 }
