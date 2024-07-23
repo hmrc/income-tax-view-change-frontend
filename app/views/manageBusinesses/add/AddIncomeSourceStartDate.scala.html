@@ -16,7 +16,6 @@
 
 @import views.html.layouts.unifiedLayout
 @import enums.IncomeSourceJourney.IncomeSourceType
-@import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import java.time.LocalDate
@@ -84,7 +83,14 @@
             .withHint(
                 Hint(
                     id = Some(s"$messagesPrefix-hint"),
-                    content = HtmlContent(s"<br><div>${getMessage("hint")}</div></br><div>${getMessage("hint2")}</div></br><div>${messages("dateForm.hint")}</div>")
+                    content = HtmlContent(
+                        s"""<br>
+                           |<div> ${getMessage("hint")} </div>
+                           |</br>
+                           |<div> ${getMessage("hint2")} </div>
+                           |</br>
+                           |<div> ${messages("dateForm.hint")} </div>""".stripMargin
+                    )
                 )
             )
         )
