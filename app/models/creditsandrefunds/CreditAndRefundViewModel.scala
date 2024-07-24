@@ -17,6 +17,7 @@
 package models.creditsandrefunds
 
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 
@@ -48,7 +49,7 @@ object CreditRow {
   }
 }
 
-case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
+case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: TaxYear) extends CreditRow
 
 case class PaymentCreditRow(amount: BigDecimal,  date: LocalDate) extends CreditRow {
 
@@ -92,7 +93,7 @@ object CreditAndRefundViewModel {
   private val orderByDescendingTaxYear: (List[Transaction]) => List[Transaction] = (transactions: List[Transaction]) => {
     // sort by tax year, but maintain ordering within tax years
     val groupedByTaxYear = transactions
-      .groupBy(_.taxYear.map(_.toInt).getOrElse(0))
+      .groupBy(_.taxYear.map(_.endYear).getOrElse(0))
 
     groupedByTaxYear.keys.toList.sorted.reverse.flatMap(groupedByTaxYear.get).flatten
   }

@@ -18,7 +18,9 @@ package models.creditsandrefunds
 
 import models.core.ResponseModel.{AResponseReads, SuccessModel}
 import models.financialDetails._
-import play.api.libs.json.{Format, Json, OFormat}
+import models.incomeSourceDetails.TaxYear
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.LocalDate
 
@@ -39,7 +41,7 @@ object CreditsModel {
 
 case class Transaction(transactionType: CreditType,
                        amount: BigDecimal,
-                       taxYear: Option[String],
+                       taxYear: Option[TaxYear],
                        dueDate: Option[LocalDate])
 
 object Transaction {
