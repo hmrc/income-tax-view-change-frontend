@@ -335,7 +335,7 @@ class OptOutServiceSpec extends UnitSpec
 
   "OptOutService.nextUpdatesPageOneYearOptOutViewModel" when {
 
-    s"PY is $Voluntary, CY is $NoStatus, NY is $NoStatus and PY is NOT finalised" should {
+    "PY is Voluntary, CY is NoStatus, NY is NoStatus and PY is NOT finalised" should {
 
       "offer PY as OptOut Option" in {
 
@@ -353,7 +353,7 @@ class OptOutServiceSpec extends UnitSpec
       }
     }
 
-    s"PY is $Voluntary, CY is $NoStatus NY is $NoStatus and PY is finalised" should {
+    "PY is Voluntary, CY is NoStatus NY is NoStatus and PY is finalised" should {
 
       "offer No OptOut Option" in {
 
@@ -370,7 +370,7 @@ class OptOutServiceSpec extends UnitSpec
       }
     }
 
-    s"PY is $NoStatus, CY is $Voluntary, NY is $Mandated" should {
+    "PY is NoStatus, CY is Voluntary, NY is Mandated" should {
 
       "offer CY OptOut Option" in {
 
@@ -387,7 +387,7 @@ class OptOutServiceSpec extends UnitSpec
       }
     }
 
-    s"PY is $NoStatus, CY is $NoStatus, NY is $Voluntary" should {
+    "PY is NoStatus, CY is NoStatus, NY is Voluntary" should {
 
       "offer NY OptOut Option" in {
 
@@ -405,8 +405,8 @@ class OptOutServiceSpec extends UnitSpec
     }
 
     "Single Year OptOut" when {
-      s"PY : PY is $Voluntary, CY is $Mandated, NY is $Mandated and PY is NOT crystallised" should {
-        s"offer PY OptOut Option with a warning as following year (CY) is $Mandated " in {
+      "PY : PY is Voluntary, CY is Mandated, NY is Mandated and PY is NOT crystallised" should {
+        "offer PY OptOut Option with a warning as following year (CY) is Mandated " in {
 
           stubOptOut(
             currentTaxYear = taxYear2023_2024,
@@ -427,8 +427,8 @@ class OptOutServiceSpec extends UnitSpec
           }
 
         }
-        s"CY : PY is $Mandated, CY is $Voluntary, NY is $Mandated " should {
-          s"offer CY OptOut Option with a warning as following year (NY) is $Mandated " in {
+        "CY : PY is Mandated, CY is Voluntary, NY is Mandated " should {
+          "offer CY OptOut Option with a warning as following year (NY) is Mandated " in {
 
             stubOptOut(
               currentTaxYear = taxYear2023_2024,
