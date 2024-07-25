@@ -109,8 +109,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       for {
         financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
         haveBeenAdjusted <- EitherT {
-          isSubsequentAdjustment(chargeHistoryConnector,
-            financialDetailsMaybe.flatMap(_.financialDetails.headOption.map(_.chargeReference)).flatten)
+          isSubsequentAdjustment(chargeHistoryConnector, financialDetailsMaybe.flatMap(_.financialDetails.headOption.map(_.chargeReference)).flatten)
         }
         maybeAmendableViewModel <- EitherT {
           Future.successful {
@@ -128,7 +127,11 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
+        case financialDetails: FinancialDetailsModel =>
+          if (financialDetails.financialDetails.headOption.exists(_.chargeReference.isDefined))
+            Right(Some(financialDetails))
+          else
+            Left(new Exception("Failed to retrieve non-crystallised financial details"))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }
