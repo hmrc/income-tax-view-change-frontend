@@ -84,7 +84,7 @@ object ClaimToAdjustPOATestConstants {
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2024), genericDocumentDetailPOA2(2024)),
-    financialDetails = List.empty,
+    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00)),
   )
 
   def financialDetailsWithUnpaidPoAs(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
@@ -96,7 +96,7 @@ object ClaimToAdjustPOATestConstants {
   def genericUserPOADetails(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd), genericDocumentDetailPOA2(taxYearEnd)),
-    financialDetails = List.empty,
+    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00)),
   )
 
   def genericUserPOADetailsPOA1Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
@@ -126,7 +126,7 @@ object ClaimToAdjustPOATestConstants {
   val userNoPOADetails: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List.empty,
-    financialDetails = List.empty,
+    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00)),
   )
 
   def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
