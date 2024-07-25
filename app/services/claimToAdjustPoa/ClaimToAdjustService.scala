@@ -107,7 +107,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
     {
       for {
-        financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
+        financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetailsWithPoa(nino))
         haveBeenAdjusted <- EitherT {
           isSubsequentAdjustment(chargeHistoryConnector, financialDetailsMaybe.flatMap(_.financialDetails.headOption.map(_.chargeReference)).flatten)
         }
@@ -122,7 +122,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   //TODO: Merge the two functions below, lots of code duplication
-  private def getNonCrystallisedFinancialDetails(nino: Nino)
+  private def getNonCrystallisedFinancialDetailsWithPoa(nino: Nino)
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
@@ -132,6 +132,18 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
             Right(Some(financialDetails))
           else
             Left(new Exception("Failed to retrieve non-crystallised financial details"))
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
+        case _ => Right(None)
+      }
+    }
+  }
+
+  private def getNonCrystallisedFinancialDetails(nino: Nino)
+                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
+    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
+      case None => Future.successful(Right(None))
+      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }

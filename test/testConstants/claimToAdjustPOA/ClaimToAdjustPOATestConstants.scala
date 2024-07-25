@@ -20,8 +20,6 @@ import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowView
 import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import controllers.claimToAdjustPoa.SelectYourReasonController
-import controllers.claimToAdjustPoa.routes.SelectYourReasonController
 
 import java.time.LocalDate
 
@@ -114,19 +112,19 @@ object ClaimToAdjustPOATestConstants {
   val userPOADetails2023OnlyPOA1: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2023)),
-    financialDetails = List.empty,
+    financialDetails = List.empty
   )
 
   val userPOADetails2023OnlyPOA2: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA2(2023)),
-    financialDetails = List.empty,
+    financialDetails = List.empty
   )
 
   val userNoPOADetails: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List.empty,
-    financialDetails = List(genericFinancialDetailPOA1(2023, 150.00)),
+    financialDetails = List.empty
   )
 
   def financialDetailsErrorModel(errorCode: Int = 404): FinancialDetailsErrorModel = FinancialDetailsErrorModel(errorCode, "There was an error...")
