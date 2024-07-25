@@ -1078,7 +1078,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
         if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
         setupMFADebitsTests()
-        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString))
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString), MFADebitsEnabled)
       }
 
       def setupMFADebitsTests(): Unit = {
@@ -1110,8 +1110,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      def verifyMFADebitsResults(result: WSResponse): Any = {
-        val auditDD = if (isEnabled(MFACreditsAndDebits)(csbTestUser)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+      def verifyMFADebitsResults(result: WSResponse, mfaDebitsEnabled: Boolean): Any = {
+        val auditDD = if (mfaDebitsEnabled) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1134,7 +1134,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
 
-        if (isEnabled(MFACreditsAndDebits)(csbTestUser)) {
+        if (mfaDebitsEnabled) {
           result should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),

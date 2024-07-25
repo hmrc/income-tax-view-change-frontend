@@ -655,7 +655,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         setupMFADebitsTests()
 
         And("The expected result is returned")
-        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation), MFADebitsEnabled)
       }
 
       def setupMFADebitsTests(): Unit = {
@@ -690,8 +690,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      def verifyMFADebitsResults(result: WSResponse): Any = {
-        val auditDD = if (isEnabled(MFACreditsAndDebits)(testUser)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+      def verifyMFADebitsResults(result: WSResponse, mfaDebitsEnabled: Boolean): Any = {
+        val auditDD = if (mfaDebitsEnabled) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -712,7 +712,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         }
 
 
-        if (isEnabled(MFACreditsAndDebits)(testUser)) {
+        if (mfaDebitsEnabled) {
           result should have(
             httpStatus(OK),
             pageTitleAgent("tax-year-summary.heading"),
