@@ -17,6 +17,7 @@
 package services.claimToAdjustPoa
 
 import auth.MtdItUser
+import cats.data.NonEmptyList
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
@@ -117,7 +118,7 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
+  protected def checkCrystallisation(nino: Nino, taxYearList: NonEmptyList[TaxYear])
                                     (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
                                      calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
     taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
@@ -131,13 +132,14 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def getPoaAdjustableTaxYears(implicit dateService: DateServiceInterface): List[TaxYear] = {
+  // Sorted NonEmptyList with the TaxYear's
+  protected def getPoaAdjustableTaxYears(implicit dateService: DateServiceInterface): NonEmptyList[TaxYear] = {
     if (dateService.isAfterTaxReturnDeadlineButBeforeTaxYearEnd) {
-      List(
+      NonEmptyList.one(
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
       )
     } else {
-      List(
+      NonEmptyList.of(
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd).addYears(-1),
         TaxYear.makeTaxYearWithEndYear(dateService.getCurrentTaxYearEnd)
       ).sortBy(_.endYear)
