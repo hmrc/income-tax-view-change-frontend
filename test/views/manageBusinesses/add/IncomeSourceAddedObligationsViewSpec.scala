@@ -43,7 +43,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val tableHeading2: String = "Deadline"
     val prevYearsHeading: String = "Previous tax years"
     val prevYearsText: String = "You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than"
-    val buttonText: String = "Your income sources"
+    val viewAllBusinessesText: String = "View all your businesses"
   }
 
   val testId: String = "XAIS00000000005"
@@ -62,17 +62,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None)
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None)
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None, day, day.minusYears(1))
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None, day, day.minusYears(1))
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None)
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None)
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None, day, day.minusYears(1))
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None, day, day.minusYears(1))
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
 
-  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
 
   val addIncomeSourceShowURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
@@ -177,8 +177,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
 
-    "render the your income sources button" in new Setup(validCallWithData) {
-      document.getElementById("continue-button").text() shouldBe (IncomeSourceAddedMessages.buttonText)
+    "render the view all your business link" in new Setup(validCallWithData) {
+      document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
     }
 
     s"has GET form action to $addIncomeSourceShowURL" in new Setup(validCallWithData) {
@@ -285,8 +285,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
 
-    "render the your income sources button" in new Setup(validAgentCallWithData) {
-      document.getElementById("continue-button").text() shouldBe (IncomeSourceAddedMessages.buttonText)
+    "render the view all your businesses link" in new Setup(validAgentCallWithData) {
+      document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
     }
 
     s"has GET form action to $addIncomeSourceShowAgentURL" in new Setup(validAgentCallWithData) {
