@@ -22,6 +22,7 @@
 @import models.incomeSourceDetails.viewmodels._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import java.time.LocalDate
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,11 +31,9 @@
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         errorSummary: ErrorSummary,
-        govukTable: GovukTable
-
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, dateStarted: LocalDate)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -95,6 +94,10 @@
                 getMessage("foreign-property.h1"),
                 getMessage("foreign-property.base"))
     }
+}
+
+@getManageUrl = @{
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
 }
 
 
@@ -193,9 +196,9 @@
             </div>
         }
 
-        <div class="govuk-!-margin-top-8">
-        @continueButton(Some(getMessage("income-sources-button")))
-        </div>
+        <p class="govuk-link govuk-body">
+            <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
+        </p>
 
     }
 }
