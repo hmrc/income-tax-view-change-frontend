@@ -32,6 +32,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,24 +63,34 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
-      (for {
-        incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-        (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
-      } yield {
-        handleSuccess(
-          isAgent = isAgent,
-          businessName = businessName,
-          incomeSourceType = incomeSourceType,
-          incomeSourceId = incomeSourceIdModel,
-          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
-        )
-      }) getOrElse {
-        Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
+    withIncomeSourcesFS {
+      sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+        case Right(Some(sessionData)) =>
+          (for {
+            incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
+            (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
+          } yield {
+            handleSuccess(
+              isAgent = isAgent,
+              businessName = businessName,
+              incomeSourceType = incomeSourceType,
+              incomeSourceId = incomeSourceIdModel,
+              showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
+              sessionData = sessionData
+            )
+          }) getOrElse {
+            Logger("application").error(
+              s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+            Future.successful {
+              errorHandler(isAgent).showInternalServerError()
+            }
+          }
+        case _ =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
       }
     } recover {
       case ex: Exception =>
@@ -90,29 +101,24 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                    showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
-      case Right(Some(sessionData)) =>
-        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-        sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
-          incomeSourceType match {
-            case SelfEmployment =>
-              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-                Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-              }
-            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
-            }
+                    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+    val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+    sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
+      uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted) match {
+        case Some(dateStarted) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType, currentDate = dateService.getCurrentDate, dateStarted = dateStarted))
           }
-        }
-      case _ =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+      }
     }
   }
 
