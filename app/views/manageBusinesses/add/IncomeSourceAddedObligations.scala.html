@@ -31,6 +31,8 @@
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         errorSummary: ErrorSummary,
+        govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
 )
 
 @(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, dateStarted: LocalDate)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -100,6 +102,19 @@
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
 }
 
+@getNextUpdatesUrl = @{
+    if(isAgent) {
+        controllers.routes.NextUpdatesController.showAgent.url
+    } else {
+        controllers.routes.NextUpdatesController.show().url
+    }
+}
+
+
+@constructInsetTextMessage(message: String) = {
+    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(message + " " + getMessage("obligation.inset.warning.text", (sources.currentTaxYear - 1).toString, sources.currentTaxYear.toString))))
+}
+
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
@@ -117,6 +132,18 @@
             </label>
         </h2>
 
+        @if(sources.getNumberOfOverdueObligations(currentDate) == 1){
+            @constructInsetTextMessage(getMessage("obligation.inset.single.text", s"${currentDate.toLongDateNoDay}"))
+        }
+        @if(sources.getNumberOfOverdueObligations(currentDate) > 1){
+            @constructInsetTextMessage(getMessage("obligation.inset.multiple.text", s"${currentDate.toLongDateNoDay}", sources.getNumberOfOverdueObligations(currentDate).toString))
+        }
+
+        @if(sources.getNumberOfOverdueObligations(currentDate) > 0){
+            <p class="govuk-link govuk-body">
+                <a href=@getNextUpdatesUrl>@getMessage("obligation.view-updates-overdue.text")</a>
+            </p>
+        }
 
         @if(sources.quarterlyObligationsDates.nonEmpty) {
             <div class="box-simple" id="quarterly">

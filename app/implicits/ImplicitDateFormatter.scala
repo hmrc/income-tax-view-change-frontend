@@ -43,6 +43,11 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
       dt.split(" ")(0) + " " + dt.split(" ")(1)
     }
 
+    def toLongDateNoDay: String = {
+      val dt = languageUtils.Dates.formatDate(d)(messages)
+      dt.split(" ")(1) + " " + dt.split(" ")(2)
+    }
+
     def toLongDateShort: String = {
       val shortFormattedDate = d.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
       val shortDay = shortFormattedDate.split(" ").head

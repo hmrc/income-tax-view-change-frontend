@@ -1667,6 +1667,11 @@ business-added.table.heading-2                          = Deadline
 business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-added.view-all-businesses                      = View all your businesses
+business-added.obligation.inset.single.text             = As your business started in {0}, you have <b>1 overdue update</b>.
+business-added.obligation.inset.multiple.text           = As your business started in {0}, you have <b>{1} overdue updates</b>.
+business-added.obligation.inset.warning.text            = You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
+business-added.obligation.view-updates-overdue.text     = View your overdue and upcoming updates
 
 
 ## You cannot go back - Your business has been added page ##

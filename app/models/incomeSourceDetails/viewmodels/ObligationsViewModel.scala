@@ -19,7 +19,12 @@ package models.incomeSourceDetails.viewmodels
 import java.time.LocalDate
 
 final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
-                                      finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean)
+                                      finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean) {
+
+  def getNumberOfOverdueObligations(currentDate: LocalDate): Int =
+    quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(currentDate))).size +
+    finalDeclarationDates.count(_.inboundCorrespondenceDue.isBefore(currentDate))
+}
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
                             inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)
