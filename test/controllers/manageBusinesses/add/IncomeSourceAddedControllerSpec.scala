@@ -169,6 +169,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               mockISDS(incomeSourceType)
 
               when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
+              when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
 
               when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
                 Future(IncomeSourcesObligationsTestConstants.viewModel))
