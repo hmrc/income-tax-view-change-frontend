@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import cats.data.EitherT
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
@@ -37,19 +38,31 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
 
+//  def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
+//    for {
+//      res <- getNonCrystallisedFinancialDetails(nino)
+//    } yield res match {
+//      case Right(Some(financialDetails)) =>
+//        val x = arePoAPaymentsPresent(financialDetails.documentDetails)
+//        Right(x)
+//      case Right(None) => Right(None)
+//      case Left(ex) =>
+//        Logger("application").error(s"There was an error getting FinancialDetailsModel" +
+//          s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
+//        Left(ex)
+//    }
+//  }
+
+  // TODO: Logging -> to be moved to consumer level
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-    for {
-      res <- getNonCrystallisedFinancialDetails(nino)
-    } yield res match {
-      case Right(Some(financialDetails)) =>
-        val x = arePoAPaymentsPresent(financialDetails.documentDetails)
-        Right(x)
-      case Right(None) => Right(None)
-      case Left(ex) =>
-        Logger("application").error(s"There was an error getting FinancialDetailsModel" +
-          s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
-        Left(ex)
-    }
+    {
+      for {
+        fdMaybe2 <- EitherT(getNonCrystallisedFinancialDetails(nino))
+        maybeTaxYear <- EitherT.fromOptionF[Future, Throwable, Option[TaxYear]](
+          Future.successful { fdMaybe2.map(x => arePoAPaymentsPresent(x.documentDetails))},
+            new Exception("There was an error getting FinancialDetailsModel::arePoAPaymentsPresent"))
+      } yield maybeTaxYear
+    }.value
   }
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
