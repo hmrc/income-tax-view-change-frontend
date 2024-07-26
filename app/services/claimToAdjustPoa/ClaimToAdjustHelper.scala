@@ -23,7 +23,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -63,6 +63,9 @@ trait ClaimToAdjustHelper {
   def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
     documentDetails.exists(isPoA) &&
       (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
+
+  protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+                                                 poaModel: Option[PaymentOnAccountViewModel])
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail], poaPreviouslyAdjusted: Option[Boolean] = None): Option[PaymentOnAccountViewModel] = for {
     poaOneDocDetail         <- documentDetails.find(isPoAOne)
@@ -186,6 +189,19 @@ trait ClaimToAdjustHelper {
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
+    }
+  }
+
+  // TODO: re-write with the use of EitherT
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
+    financialPoaDetails match {
+      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+        finDetails.financialDetails.headOption match {
+          case Some(detail) => Right(Some(detail))
+          case None => Left(new Exception("No financial details found for this charge"))
+        }
+      case Right(_) => Right(None)
+      case Left(ex) => Left(ex)
     }
   }
 }
