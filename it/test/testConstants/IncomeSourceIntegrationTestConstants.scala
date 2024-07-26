@@ -1138,7 +1138,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> "2019",
         "documentId" -> documentId,
         "documentDate" -> "2018-02-14",
-        "documentDescription" -> "ITSA - POA 1",
+        "documentDescription" -> "ITSA- POA 1",
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
         "reversalReason" -> "Customer Request",
