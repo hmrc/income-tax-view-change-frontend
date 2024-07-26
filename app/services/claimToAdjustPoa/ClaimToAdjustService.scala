@@ -23,7 +23,6 @@ import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.{FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
-import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import services.claimToAdjustPoa.ClaimToAdjustHelper
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,8 +36,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      val calculationListConnector: CalculationListConnector,
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
+  private case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+                                                 poaModel: Option[PaymentOnAccountViewModel])
 
-  // TODO: Logging -> to be moved to consumer level
   def getPoaTaxYearForEntryPoint(nino: Nino)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     {
@@ -65,7 +65,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }.value
   }
 
-  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel])(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+  private def getPoaAdjustmentReason(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel])
+                                    (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     financialPoaDetails match {
       case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
         finDetails.financialDetails.headOption match {
@@ -81,7 +82,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def getPoaViewModelWithAdjustmentReason(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
+  def getPoaViewModelWithAdjustmentReason(nino: Nino)
+                                         (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
     for {
       finanicalAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
       adjustmentReasonMaybe <- getPoaAdjustmentReason(finanicalAndPoaModelMaybe)
@@ -97,7 +99,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   //TODO: Merge the two functions below, lots of code duplication
-  private def getNonCrystallisedFinancialDetails(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
+  private def getNonCrystallisedFinancialDetails(nino: Nino)
+                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -108,7 +111,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
+  private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)
+                                                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoAModel]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(FinancialDetailsAndPoAModel(None, None)))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
@@ -135,5 +139,3 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 }
 
-private case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
-                                               poaModel: Option[PaymentOnAccountViewModel])
