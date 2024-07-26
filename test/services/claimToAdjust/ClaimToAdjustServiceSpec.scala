@@ -351,7 +351,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     }
   }
 
-  "getEnterPoAAmountViewModel" should {
+  "getPoaViewModelWithAdjustmentReason" should {
 
     "return a future right with PoAAmountViewModel when POAs are unpaid" in {
 
@@ -438,6 +438,37 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
           result.isLeft shouldBe true
           result.left.exists(_.getMessage == "No financial details found for this charge") shouldBe true
         }
+      }
+    }
+
+    "return a future right with PoAAmountViewModel when POAs are not at the head of the list of charges" in {
+
+      val taxYear: Int = 2023
+
+      val chargeHistoriesNoPoaAtHead: List[ChargeHistoryModel] = List(
+        chargeHistoryModelNoPOA(taxYear),
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+
+      setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+
+      setupGetChargeHistory(testNino, Some("ABCD1234"))(ChargesHistoryModel(
+        idType = "NINO",
+        idValue = testNino,
+        regimeType = "ITSA",
+        chargeHistoryDetails = Some(chargeHistoriesNoPoaAtHead)
+      ))
+
+      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsWithUnpaidPoAs(taxYear))
+
+      val f = fixture(LocalDate.of(taxYear, 8, 27))
+
+      val result = f.testClaimToAdjustService.getPoaViewModelWithAdjustmentReason(testUserNino)
+
+      whenReady(result) {
+        result =>
+          result shouldBe Right(
+            PaymentOnAccountViewModel("DOCID01", "DOCID02", TaxYear(2022, 2023), 150.00, 250.00, 100.00, 100.00, Some(true), false, false))
       }
     }
   }
