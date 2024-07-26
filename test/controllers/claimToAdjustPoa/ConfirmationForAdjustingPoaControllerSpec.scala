@@ -192,8 +192,8 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         val result = TestConfirmationForAdjustingPoaController.submit(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestConfirmationForAdjustingPoaController.submit(isAgent = true)(fakeRequestConfirmedClient())
 
-        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent = false).url)
-        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent = true).url)
+        redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = false).url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = true).url)
       }
     }
     "redirect to API error page" when {

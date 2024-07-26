@@ -16,7 +16,7 @@
 
 package controllers.agent.claimToAdjustPoa
 
-class PaymentsOnAccountAdjustedControllerISpec extends controllers.claimToAdjustPoa.PaymentsOnAccountAdjustedControllerISpec {
+class PoaAdjustedControllerISpec extends controllers.claimToAdjustPoa.PoaAdjustedControllerISpec {
 
   override val isAgent = true
 

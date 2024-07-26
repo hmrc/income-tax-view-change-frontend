@@ -31,12 +31,12 @@ import services.{DateService, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
+import views.html.claimToAdjustPoa.PoaAdjustedView
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicate
+class PoaAdjustedControllerSpec extends MockAuthenticationPredicate
   with TestSupport
   with MockClaimToAdjustService
   with MockCalculationListService
@@ -46,13 +46,13 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
   val mockPOASessionService = mock(classOf[PaymentOnAccountSessionService])
   val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestController extends PaymentsOnAccountAdjustedController(
+  object TestController extends PoaAdjustedController(
     authorisedFunctions = mockAuthService,
     claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    view = app.injector.instanceOf[PaymentsOnAccountAdjustedView],
+    view = app.injector.instanceOf[PoaAdjustedView],
     poaSessionService = mockPOASessionService,
     dateService = mockDateService
   )(
@@ -64,7 +64,7 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
   val startOfTaxYear: LocalDate = LocalDate.of(2024,4,7)
   val endOfTaxYear: LocalDate = LocalDate.of(2025,4,4)
 
-  "PaymentsOnAccountAdjustedController.show" should {
+  "PoaAdjustedController.show" should {
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
         enable(AdjustPaymentsOnAccount)

@@ -29,21 +29,21 @@ import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionServi
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import utils.AuthenticatorPredicate
-import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
+import views.html.claimToAdjustPoa.PoaAdjustedView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                    val view: PaymentsOnAccountAdjustedView,
-                                                    val poaSessionService: PaymentOnAccountSessionService,
-                                                    val claimToAdjustService: ClaimToAdjustService,
-                                                    auth: AuthenticatorPredicate,
-                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    val dateService: DateService)
-                                                   (implicit val appConfig: FrontendAppConfig,
+class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                      val view: PoaAdjustedView,
+                                      val poaSessionService: PaymentOnAccountSessionService,
+                                      val claimToAdjustService: ClaimToAdjustService,
+                                      auth: AuthenticatorPredicate,
+                                      implicit val itvcErrorHandler: ItvcErrorHandler,
+                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      val dateService: DateService)
+                                     (implicit val appConfig: FrontendAppConfig,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val ec: ExecutionContext)
   extends ClientConfirmedController with ClaimToAdjustUtils with WithSessionAndPoa {
@@ -80,6 +80,6 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
 
   private def showOverdueCharges(poaTaxYear: TaxYear, reason: Option[SelectYourReason]): Boolean = {
     val poaOneDeadline = LocalDate.of(poaTaxYear.startYear, 1, 31)
-    dateService.getCurrentDate.isAfter(poaOneDeadline) && reason == Some(Increase)
+    dateService.getCurrentDate.isAfter(poaOneDeadline) && reason.contains(Increase)
   }
 }

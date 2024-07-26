@@ -23,11 +23,11 @@ import org.jsoup.nodes.Document
 import play.api.i18n._
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
+import views.html.claimToAdjustPoa.PoaAdjustedView
 
-class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
+class PoaAdjustedViewSpec extends TestSupport{
 
-  val paymentsOnAccountAdjustedView: PaymentsOnAccountAdjustedView = app.injector.instanceOf[PaymentsOnAccountAdjustedView]
+  val poaAdjustedView: PoaAdjustedView = app.injector.instanceOf[PoaAdjustedView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
@@ -35,7 +35,7 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
   val poaTotalAmount: BigDecimal = 2000.00
 
   class Setup(isAgent: Boolean, showOverDue: Boolean = false) {
-    val view: Html = paymentsOnAccountAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount, showOverDue)
+    val view: Html = poaAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount, showOverDue)
     val document: Document = Jsoup.parse(view.toString())
   }
 
@@ -55,7 +55,7 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
     }
   }
 
-  "The PaymentsOnAccountAdjusted page" when {
+  "The PoaAdjusted page" when {
     "a user loads the page" should {
       "render the heading" in new Setup(isAgent = false) {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.success.h1"))
@@ -91,7 +91,7 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
     }
   }
 
-  "The PaymentsOnAccountAdjusted page" when {
+  "The PoaAdjusted page" when {
     "an agent loads the page" should {
       "render the heading" in new Setup(isAgent = true) {
         document.title shouldBe msgs("htmlTitle.agent", msgs("claimToAdjustPoa.success.h1"))
