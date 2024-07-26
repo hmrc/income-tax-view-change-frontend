@@ -90,7 +90,7 @@ trait ClaimToAdjustHelper {
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
       case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
-        case Some(detailsList) => Right(detailsList.headOption)
+        case Some(detailsList) => Right(extractPoaChargeHistory(detailsList))
         case None => Right(None)
       }
       case ChargesHistoryErrorModel(code, message) =>
@@ -187,5 +187,10 @@ trait ClaimToAdjustHelper {
         Logger("application").error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
+  }
+
+  private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
+    // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
   }
 }
