@@ -2022,6 +2022,9 @@ claimToAdjustPoa.success.afterLinkText                  = to see the changes you
 claimToAdjustPoa.success.check                          = Check
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
+claimToAdjustPoa.success.overdueTitle                   = Overdue charges
+claimToAdjustPoa.success.overdueText1                   = You now have overdue charges that need to be paid. Check
+claimToAdjustPoa.success.overdueText2                   = for more details.
 
 ## You Cannot Go Back!
 claimToAdjustPoa.youCannotGoBack.heading                 = You cannot go back

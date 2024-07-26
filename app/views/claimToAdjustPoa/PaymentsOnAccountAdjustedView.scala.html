@@ -24,10 +24,11 @@
         mainTemplate: unifiedLayout,
         govukPanel: GovukPanel,
         p: p,
+        h2: h2,
         link: link,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, poaTotalAmount: BigDecimal)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.success.$key", args: _*)
@@ -64,13 +65,20 @@
     @p(id = Some("p3"))(Html(getMessage("checkYour") + link(link = taxYearSummaryUrl,
         outerMessage = " " + getMessage("afterLinkText"),
         messageKey = getMessage("link", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString),
-        id = Some("link")).toString()))
+        id = Some("TYSLink")).toString()))
 
-    @p(id = Some("p4"))(Html(getMessage("check") + link(link = whatYouOweUrl,
-        outerMessage = " " + getMessage("forUpcomingCharges"),
-        messageKey = getMessage("whatYouOwe"),
-        id = Some("link")).toString()))
-
+    @if(showOverdueCharges){
+        @h2(optId = Some("overdueTitle"), msg = getMessage("overdueTitle"))
+        @p(id = Some("p4"))(Html(getMessage("overdueText1") + link(link = whatYouOweUrl,
+            outerMessage = " " + getMessage("overdueText2"),
+            messageKey = getMessage("whatYouOwe"),
+            id = Some("WYOLink")).toString()))
+    }else{
+        @p(id = Some("p4"))(Html(getMessage("check") + link(link = whatYouOweUrl,
+            outerMessage = " " + getMessage("forUpcomingCharges"),
+            messageKey = getMessage("whatYouOwe"),
+            id = Some("WYOLink")).toString()))
+    }
 }
 
 
