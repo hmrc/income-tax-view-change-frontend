@@ -34,8 +34,8 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
   val taxYear: TaxYear = TaxYear(2023, 2024)
   val poaTotalAmount: BigDecimal = 2000.00
 
-  class Setup(isAgent: Boolean) {
-    val view: Html = paymentsOnAccountAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount)
+  class Setup(isAgent: Boolean, showOverDue: Boolean = false) {
+    val view: Html = paymentsOnAccountAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount, showOverDue)
     val document: Document = Jsoup.parse(view.toString())
   }
 
@@ -72,12 +72,18 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
         document.getElementById("p3").text shouldBe
           msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
             msgs("claimToAdjustPoa.success.afterLinkText")
-        document.getElementById("p3").getElementById("link").attr("href") shouldBe taxYearSummaryUrl(false)
+        document.getElementById("p3").getElementById("TYSLink").attr("href") shouldBe taxYearSummaryUrl(false)
       }
-      "render the final paragraph" in new Setup(isAgent = false) {
+      "render the final paragraph when no overdue charges" in new Setup(isAgent = false) {
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
-        document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(false)
+        document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(false)
+      }
+      "render overdue charges section when overdue charges" in new Setup(isAgent = false, showOverDue = true) {
+        document.getElementById("overdueTitle").text shouldBe msgs("claimToAdjustPoa.success.overdueTitle")
+        document.getElementById("p4").text shouldBe
+          msgs("claimToAdjustPoa.success.overdueText1") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.overdueText2")
+        document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(false)
       }
       "Not display a back button" in new Setup(isAgent = false) {
         Option(document.getElementById("back")).isDefined shouldBe false
@@ -102,12 +108,18 @@ class PaymentsOnAccountAdjustedViewSpec extends TestSupport{
         document.getElementById("p3").text shouldBe
           msgs("claimToAdjustPoa.success.checkYour") + " " + msgs("claimToAdjustPoa.success.link", taxYear.startYear.toString, taxYear.endYear.toString) + " " +
             msgs("claimToAdjustPoa.success.afterLinkText")
-        document.getElementById("p3").getElementById("link").attr("href") shouldBe taxYearSummaryUrl(true)
+        document.getElementById("p3").getElementById("TYSLink").attr("href") shouldBe taxYearSummaryUrl(true)
       }
-      "render the final paragraph" in new Setup(isAgent = true) {
+      "render the final paragraph when no overdue charges" in new Setup(isAgent = true) {
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
-        document.getElementById("p4").getElementById("link").attr("href") shouldBe whatYouOweUrl(true)
+        document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(true)
+      }
+      "render overdue charges section when overdue charges" in new Setup(isAgent = true, showOverDue = true) {
+        document.getElementById("overdueTitle").text shouldBe msgs("claimToAdjustPoa.success.overdueTitle")
+        document.getElementById("p4").text shouldBe
+          msgs("claimToAdjustPoa.success.overdueText1") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.overdueText2")
+        document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(true)
       }
       "Not display a back button" in new Setup(isAgent = true) {
         Option(document.getElementById("back")).isDefined shouldBe false
