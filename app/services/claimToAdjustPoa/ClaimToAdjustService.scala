@@ -57,10 +57,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   def getPoaTaxYearForEntryPoint(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
     {
       for {
-        fdMaybe2 <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        maybeTaxYear <- EitherT.fromOptionF[Future, Throwable, Option[TaxYear]](
-          Future.successful { fdMaybe2.map(x => arePoAPaymentsPresent(x.documentDetails))},
-            new Exception("There was an error getting FinancialDetailsModel::arePoAPaymentsPresent"))
+        fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
+        maybeTaxYear <- EitherT.right[Throwable](Future.successful { fdMaybe.flatMap(x => arePoAPaymentsPresent(x.documentDetails))})
       } yield maybeTaxYear
     }.value
   }
