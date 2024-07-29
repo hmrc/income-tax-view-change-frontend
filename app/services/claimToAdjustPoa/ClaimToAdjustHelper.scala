@@ -23,7 +23,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails.DocumentDetail
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -33,6 +33,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO: This part of the logic expected to be moved within BE
+// TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
 trait ClaimToAdjustHelper {
 
   private val POA1: String = "ITSA- POA 1"
@@ -48,6 +50,9 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
+  private val isPoA: DocumentDetail => Boolean = documentDetail =>
+    isPoAOne(documentDetail) || isPoATwo(documentDetail)
+
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
@@ -55,8 +60,9 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
-  protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
-                                                 poaModel: Option[PaymentOnAccountViewModel])
+  def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
+    documentDetails.exists(isPoA) &&
+      (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail], poaPreviouslyAdjusted: Option[Boolean] = None): Option[PaymentOnAccountViewModel] = for {
     poaOneDocDetail         <- documentDetails.find(isPoAOne)
@@ -186,18 +192,5 @@ trait ClaimToAdjustHelper {
   private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
     // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
     chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
-  }
-
-  // TODO: re-write with the use of EitherT
-  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
-    financialPoaDetails match {
-      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
-        finDetails.financialDetails.headOption match {
-          case Some(detail) => Right(Some(detail))
-          case None => Left(new Exception("No financial details found for this charge"))
-        }
-      case Right(_) => Right(None)
-      case Left(ex) => Left(ex)
-    }
   }
 }
