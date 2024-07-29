@@ -89,13 +89,13 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     financialDetails = List.empty
   )
 
-   def financialDetailsModelBothPoAsWithOutstandingAmount(taxYear: Int, outstandingAmount: BigDecimal): FinancialDetailsModel = {
-     val poaFinancialDetailsModel = genericUserPOADetails(taxYear)
-     poaFinancialDetailsModel
-       .copy(
-         documentDetails = poaFinancialDetailsModel.documentDetails.map(_.copy(outstandingAmount = outstandingAmount)),
-         financialDetails = List(genericFinancialDetailPOA1(taxYear, outstandingAmount), genericFinancialDetailPOA2(taxYear, outstandingAmount)))
-   }
+  def financialDetailsModelBothPoAsWithOutstandingAmount(taxYear: Int, outstandingAmount: BigDecimal): FinancialDetailsModel = {
+    val poaFinancialDetailsModel = genericUserPOADetails(taxYear)
+    poaFinancialDetailsModel
+      .copy(
+        documentDetails = poaFinancialDetailsModel.documentDetails.map(_.copy(outstandingAmount = outstandingAmount)),
+        financialDetails = List(genericFinancialDetailPOA1(taxYear, outstandingAmount), genericFinancialDetailPOA2(taxYear, outstandingAmount)))
+  }
 
   "getPoaTaxYearForEntryPoint method" should {
     "return a future of a right with an option containing a TaxYear" when {
@@ -235,9 +235,9 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
   "getAmendablePoaViewModel" should {
     "return a future right with AmendablePoaViewModel when POAs are unpaid" in {
 
-      val taxYear:Int = 2023
+      val taxYear: Int = 2023
 
-      val outstandingAmount:BigDecimal = 1250.0
+      val outstandingAmount: BigDecimal = 1250.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
@@ -258,25 +258,25 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val result = f.testClaimToAdjustService.getAmendablePoaViewModel(testUserNino)
 
       result.futureValue shouldBe Right(
-          PaymentOnAccountViewModel(
-            poaOneTransactionId = "DOCID01",
-            poaTwoTransactionId = "DOCID02",
-            taxYear = TaxYear(taxYear - 1, taxYear),
-            previouslyAdjusted = Some(true),
-            totalAmountOne = 150.00,
-            totalAmountTwo = 250.00,
-            relevantAmountOne = 100.00,
-            relevantAmountTwo = 100.00,
-            partiallyPaid = true,
-            fullyPaid = false))
-      }
+        PaymentOnAccountViewModel(
+          poaOneTransactionId = "DOCID01",
+          poaTwoTransactionId = "DOCID02",
+          taxYear = TaxYear(taxYear - 1, taxYear),
+          previouslyAdjusted = Some(true),
+          totalAmountOne = 150.00,
+          totalAmountTwo = 250.00,
+          relevantAmountOne = 100.00,
+          relevantAmountTwo = 100.00,
+          partiallyPaid = true,
+          fullyPaid = false))
+    }
 
 
     "return a future right with AmendablePoaViewModel when POAs are paid" in {
 
-      val taxYear:Int = 2023
+      val taxYear: Int = 2023
 
-      val outstandingAmount:BigDecimal = 0.0
+      val outstandingAmount: BigDecimal = 0.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
@@ -297,23 +297,23 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val result = f.testClaimToAdjustService.getAmendablePoaViewModel(testUserNino)
 
       result.futureValue shouldBe Right(
-          PaymentOnAccountViewModel(
-            poaOneTransactionId = "DOCID01",
-            poaTwoTransactionId = "DOCID02",
-            taxYear = TaxYear(taxYear - 1, taxYear),
-            previouslyAdjusted = Some(true),
-            totalAmountOne = 150.00,
-            totalAmountTwo = 250.00,
-            relevantAmountOne = 100.00,
-            relevantAmountTwo = 100.00,
-            partiallyPaid = true,
-            fullyPaid = true))
+        PaymentOnAccountViewModel(
+          poaOneTransactionId = "DOCID01",
+          poaTwoTransactionId = "DOCID02",
+          taxYear = TaxYear(taxYear - 1, taxYear),
+          previouslyAdjusted = Some(true),
+          totalAmountOne = 150.00,
+          totalAmountTwo = 250.00,
+          relevantAmountOne = 100.00,
+          relevantAmountTwo = 100.00,
+          partiallyPaid = true,
+          fullyPaid = true))
 
     }
 
     "return a future left with an exception when an exception is thrown" in {
 
-      val taxYear:Int = 2023
+      val taxYear: Int = 2023
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -343,7 +343,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
     "return a future right with PoAAmountViewModel when POAs are unpaid" in {
 
-      val taxYear:Int = 2023
+      val taxYear: Int = 2023
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
@@ -370,9 +370,9 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
     "return a future right with PoAAmountViewModel when POAs are paid" in {
 
-      val taxYear:Int = 2023
+      val taxYear: Int = 2023
 
-      val outstandingAmount:BigDecimal = 0.0
+      val outstandingAmount: BigDecimal = 0.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
