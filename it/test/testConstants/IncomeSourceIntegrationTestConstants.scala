@@ -315,7 +315,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear,
         "transactionId" -> "1040000123",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"
@@ -426,7 +426,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -437,7 +437,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -541,7 +541,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -551,7 +551,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -657,7 +657,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -672,7 +672,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -747,7 +747,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -761,7 +761,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -896,7 +896,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000126",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1017,7 +1017,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1027,7 +1027,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1129,6 +1129,9 @@ object IncomeSourceIntegrationTestConstants {
     "message" -> "ERROR MESSAGE"
   )
 
+  private val poa1Description: String = "ITSA- POA 1"
+  private val poa2Description: String = "ITSA - POA 2"
+
   def testChargeHistoryJson(mtdBsa: String, documentId: String, amount: BigDecimal): JsValue = Json.obj(
     "idType" -> "MTDBSA",
     "idValue" -> mtdBsa,
@@ -1138,7 +1141,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> "2019",
         "documentId" -> documentId,
         "documentDate" -> "2018-02-14",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
         "reversalReason" -> "Customer Request",
@@ -1178,7 +1181,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1187,7 +1190,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1355,7 +1358,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
-        "documentDescription" -> "ITSA- POA 1",
+        "documentDescription" -> poa1Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -1364,7 +1367,7 @@ object IncomeSourceIntegrationTestConstants {
       Json.obj(
         "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
-        "documentDescription" -> "ITSA - POA 2",
+        "documentDescription" -> poa2Description,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
