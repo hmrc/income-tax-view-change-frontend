@@ -23,7 +23,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -59,6 +59,9 @@ trait ClaimToAdjustHelper {
 
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
+
+  protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+                                                   poaModel: Option[PaymentOnAccountViewModel])
 
   def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
     documentDetails.exists(isPoA) &&
@@ -193,4 +196,18 @@ trait ClaimToAdjustHelper {
     // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
     chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
   }
+
+  // TODO: re-write with the use of EitherT
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
+    financialPoaDetails match {
+      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+        finDetails.financialDetails.headOption match {
+          case Some(detail) => Right(Some(detail))
+          case None => Left(new Exception("No financial details found for this charge"))
+        }
+      case Right(_) => Right(None)
+      case Left(ex) => Left(ex)
+    }
+  }
+
 }
