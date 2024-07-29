@@ -76,9 +76,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   def getPoaViewModelWithAdjustmentReason(nino: Nino)
         (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
     for {
-      financialAndPoModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
-      adjustmentReasonMaybe <- getPoaAdjustmentReason(financialAndPoModelMaybe)
-    } yield (adjustmentReasonMaybe, financialAndPoModelMaybe) match {
+      financialAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
+      adjustmentReasonMaybe <- getPoaAdjustmentReason(financialAndPoaModelMaybe)
+    } yield (adjustmentReasonMaybe, financialAndPoaModelMaybe) match {
       case (Right(reason), Right(FinancialDetailsAndPoAModel(_, Some(model)))) =>
         Right(
           model.copy(previouslyAdjusted = Some(reason.isDefined))
