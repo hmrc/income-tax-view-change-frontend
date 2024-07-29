@@ -22,6 +22,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import controllers.claimToAdjustPoa.SelectYourReasonController
 import controllers.claimToAdjustPoa.routes.SelectYourReasonController
+import models.chargeHistory.ChargeHistoryModel
 
 import java.time.LocalDate
 
@@ -149,5 +150,7 @@ object ClaimToAdjustPOATestConstants {
   val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
   def whatYouNeedToKnowViewModel(isAgent: Boolean, showIncreaseAfterPaymentContent: Boolean): WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url)
+
+  def chargeHistoryModelNoPOA(taxYear: Int): ChargeHistoryModel = ChargeHistoryModel(s"${taxYear.toString}", "1040000124", LocalDate.of(taxYear, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", None)
 
 }
