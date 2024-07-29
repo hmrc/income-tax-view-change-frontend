@@ -33,8 +33,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO: This part of the logic expected to be moved within BE
-// TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
 trait ClaimToAdjustHelper {
 
   private val POA1: String = "ITSA- POA 1"
@@ -50,19 +48,12 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val isPoA: DocumentDetail => Boolean = documentDetail =>
-    isPoAOne(documentDetail) || isPoATwo(documentDetail)
-
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
-
-  def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
-    documentDetails.exists(isPoA) &&
-      (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
 
   protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
                                                  poaModel: Option[PaymentOnAccountViewModel])
@@ -93,7 +84,7 @@ trait ClaimToAdjustHelper {
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
       case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
-        case Some(detailsList) => Right(detailsList.headOption)
+        case Some(detailsList) => Right(extractPoaChargeHistory(detailsList))
         case None => Right(None)
       }
       case ChargesHistoryErrorModel(code, message) =>
@@ -190,6 +181,11 @@ trait ClaimToAdjustHelper {
         Logger("application").error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
+  }
+
+  private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
+    // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
   }
 
   // TODO: re-write with the use of EitherT
