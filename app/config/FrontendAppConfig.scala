@@ -22,7 +22,6 @@ import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
-import scala.util.Try
 
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
@@ -158,6 +157,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // API timeout
 
   lazy val claimToAdjustTimeout: Int = servicesConfig.getInt("claim-to-adjust.timeout")
+
+  // enrolment-store-proxy url
+  lazy val enrolmentStoreProxyUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
   //Translation
   def languageMap: Map[String, Lang] = Map(

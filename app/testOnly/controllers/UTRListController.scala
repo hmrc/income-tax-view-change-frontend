@@ -18,47 +18,55 @@ package testOnly.controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import connectors.RawResponseReads
 import controllers.agent.predicates.ClientConfirmedController
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import testOnly.models.Identifier
+import testOnly.services.EnrolmentService
+import testOnly.utils.UserRepository
 import testOnly.views.html.ListUTRs
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, groupIdentifier}
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import utils.AuthenticatorPredicate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRListController @Inject()(listUTRsView: ListUTRs,
+class UTRListController @Inject()(
+                                   listUTRsView: ListUTRs,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                  val http: HttpClient,
-                                   val auth: AuthenticatorPredicate)
-                                  (implicit val appConfig: FrontendAppConfig,
+                                   enrolmentService: EnrolmentService,
+                                   userRepository: UserRepository,
+                                   val auth: AuthenticatorPredicate
+                                 )(implicit
+                                   val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
                                    val itvcErrorHandler: AgentItvcErrorHandler
-                                  ) extends ClientConfirmedController with I18nSupport with FeatureSwitching with RawResponseReads {
+                                 ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def listUTRs(): Action[AnyContent] = Action.async {
-    implicit request: Request[_] =>
-      authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {
-        case _ ~ _ ~ groupId =>
-          Logger("application").info(s"${Console.YELLOW} agent groupid found: $groupId" + Console.WHITE)
-          val host = "https://enrolment-store-proxy.protected.mdtp"
-//          val host = "http://localhost:7775"
-          val url = s"${host}/enrolment-store-proxy/enrolment-store/groups/${groupId.get.replace("testGroupId-", "")}/enrolments?type=delegated"
-          http.GET[HttpResponse](url)(httpReads, hc, ec).flatMap(response => {
-            Logger("application").info(response.json.toString())
-            Future.successful(Ok(listUTRsView(
-              utrs = List("asdf"))))
-          })
+  def listUTRs(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {
+      case _ ~ _ ~ groupIdOpt =>
+        groupIdOpt.map { groupId =>
+          enrolmentService.fetchEnrolments(groupId).flatMap {
+            case Right(enrolmentsResponse) =>
+              val agentMTDITIDs = enrolmentsResponse.enrolments.flatMap(_.identifiers.collect {
+                case Identifier("MTDITID", value) => value
+              })
 
-      }
+              userRepository.findAll().map { userRecords =>
+                val matchedRecords = enrolmentService.filterUserRecords(userRecords.toList, agentMTDITIDs)
+                Ok(listUTRsView(utrs = matchedRecords))
+              }
 
+            case Left(errorMessage) =>
+              Future.successful(InternalServerError(errorMessage))
+          }
+        }.getOrElse {
+          Future.successful(InternalServerError("Group ID not found"))
+        }
+    }
   }
-
 }
