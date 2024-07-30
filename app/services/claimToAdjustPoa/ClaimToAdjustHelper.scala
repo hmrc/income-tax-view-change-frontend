@@ -91,8 +91,8 @@ trait ClaimToAdjustHelper {
                 taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
                 totalAmountOne = poaOneDocDetail.originalAmount,
                 totalAmountTwo = poaTwoDocDetail.originalAmount,
-                relevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-                relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
+                relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
+                relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.get,
                 previouslyAdjusted = poaPreviouslyAdjusted,
                 partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
                 fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
