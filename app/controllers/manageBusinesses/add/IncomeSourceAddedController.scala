@@ -24,7 +24,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, journeyIsCompleteLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, journeyIsCompleteCombinedLens, journeyIsCompleteLens}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -95,11 +95,10 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
       val uiJourneySessionData: UIJourneySessionData =
-        addIncomeSourceDataLens.replace(
-          sessionData.addIncomeSourceData
-            .map(journeyIsCompleteLens.replace(true.some)).some
-            .getOrElse(AddIncomeSourceData().some)
-        )(sessionData)
+        sessionData.addIncomeSourceData match {
+          case Some(_) => journeyIsCompleteCombinedLens.replace(true.some)(sessionData)
+          case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData().some)
+        }
 
       sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
         nextUpdatesService

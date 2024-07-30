@@ -110,6 +110,12 @@ object AddIncomeSourceData {
       case Some(data) => Some(data.copy(dateStarted = optStr))
       case None => None
     }))
+
+  val journeyIsCompleteCombinedLens: Lens[UIJourneySessionData, Option[Boolean]] =
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[Boolean]](_.flatMap(_.journeyIsComplete))(optStr => {
+      case Some(data) => Some(data.copy(journeyIsComplete = optStr))
+      case None => None
+    }))
 }
 
 case class SensitiveAddIncomeSourceData(
