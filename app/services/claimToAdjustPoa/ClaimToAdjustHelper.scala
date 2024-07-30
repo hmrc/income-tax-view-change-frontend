@@ -18,7 +18,6 @@ package services.claimToAdjustPoa
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
-import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
@@ -33,8 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO: This part of the logic expected to be moved within BE
-// TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
+
 trait ClaimToAdjustHelper {
 
   private val POA1: String = "ITSA- POA 1"
@@ -177,32 +175,43 @@ trait ClaimToAdjustHelper {
   }
 
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
-                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = (for {
-    poaOneDocDetail <- documentDetails.find(isPoAOne)
-    poaTwoDocDetail <- documentDetails.find(isPoATwo)
-    latestDocumentDetail = poaTwoDocDetail
-    poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-    taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-    poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
-    if poasAreBeforeDeadline
+                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
+    val res  = for {
+      poaOneDocDetail <- documentDetails.find(isPoAOne)
+      poaTwoDocDetail <- documentDetails.find(isPoATwo)
+      latestDocumentDetail = poaTwoDocDetail
+      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+      taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
+      poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+      if poasAreBeforeDeadline
   } yield {
-    PaymentOnAccountViewModel(
-      poaOneTransactionId = poaOneDocDetail.transactionId,
-      poaTwoTransactionId = poaTwoDocDetail.transactionId,
-      taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      totalAmountOne = poaOneDocDetail.originalAmount,
-      totalAmountTwo = poaTwoDocDetail.originalAmount,
-      relevantAmountOne = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
-      previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
-    )
-  }) match {
-    case Some(model) => Right(model)
-    case None =>
-      Logger("application").error("Failed to create AmendablePoaViewModel")
-      Left(new Exception("Failed to create AmendablePoaViewModel"))
+      if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
+        Right(
+          PaymentOnAccountViewModel(
+            poaOneTransactionId = poaOneDocDetail.transactionId,
+            poaTwoTransactionId = poaTwoDocDetail.transactionId,
+            taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+            totalAmountOne = poaOneDocDetail.originalAmount,
+            totalAmountTwo = poaTwoDocDetail.originalAmount,
+            relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
+            relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.get,
+            partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+            fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
+            previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
+          )
+        )
+      } else {
+        val errors: List[String] = List(
+          poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
+          poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
+        ).filterNot(_.isEmpty)
+        Left(new Exception(errors.mkString("-")))
+      }
+    }
+    res match {
+      case Some(e) => e
+      case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
+    }
   }
 
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
