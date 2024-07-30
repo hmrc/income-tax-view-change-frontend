@@ -17,13 +17,12 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
-import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
-import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -34,7 +33,10 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.AddIncomeSourceStartDate
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedLens}
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +45,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    val sessionService: SessionService,
+                                                   form: AddIncomeSourceStartDateFormProvider,
                                                    auth: AuthenticatorPredicate)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -99,7 +102,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       val filledForm = dateStartedOpt match {
         case Some(date) =>
-          form(messagesPrefix).fill(DateFormElement(date))
+          form(messagesPrefix).fill(date)
         case None => form(messagesPrefix)
       }
 
@@ -155,7 +158,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       errorHandler.showInternalServerError()
   }
 
-  def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
+  def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
@@ -163,27 +166,16 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         case _ => InitialPage
       }
     }) { sessionData =>
+
+      val addIncomeSourceData = sessionData.addIncomeSourceData
+
       sessionService.setMongoData(
-        sessionData.addIncomeSourceData match {
-          case Some(_) =>
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    dateStarted = Some(formData.date)
-                  )
-                )
-            )
-          case None =>
-            sessionData.copy(
-              addIncomeSourceData =
-                Some(
-                  AddIncomeSourceData(
-                    dateStarted = Some(formData.date)
-                  )
-                )
-            )
-        }
+        addIncomeSourceDataLens.replace(
+          addIncomeSourceData match {
+            case Some(_) => addIncomeSourceData.map(dateStartedLens.replace(formData.some))
+            case None    => AddIncomeSourceData(dateStarted = formData.some).some
+          }
+        )(sessionData)
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
@@ -208,6 +200,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       case (false, true, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
       case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = isChange)
       case (_, _, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = isAgent)
-      }).url
+    }).url
   }
 }
