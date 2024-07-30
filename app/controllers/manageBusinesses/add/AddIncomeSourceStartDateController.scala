@@ -166,15 +166,13 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       }
     }) { sessionData =>
 
-      val addIncomeSourceData = sessionData.addIncomeSourceData
-
       sessionService.setMongoData(
         addIncomeSourceDataLens.replace(
-          addIncomeSourceData match {
-            case Some(_) => addIncomeSourceData.map(dateStartedLens.replace(formData.date.some))
-            case None => AddIncomeSourceData(dateStarted = formData.date.some).some
-          }
+          sessionData.addIncomeSourceData
+            .map(dateStartedLens.replace(formData.date.some))
+            .getOrElse(AddIncomeSourceData(dateStarted = formData.date.some)).some
         )(sessionData)
+
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

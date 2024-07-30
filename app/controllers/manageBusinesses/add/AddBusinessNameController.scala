@@ -116,18 +116,18 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
               getPostAction(isAgent, isChange),
               getBackUrl(isAgent, isChange)))
           },
-        formData =>
+        formData => {
           sessionService.setMongoData(
             addIncomeSourceDataLens.replace(
-              addIncomeSourceData match {
-                case Some(_) => addIncomeSourceData.map(businessNameLens.replace(formData.name.some))
-                case None    => AddIncomeSourceData(businessName = formData.name.some).some
-              }
+              addIncomeSourceData
+                .map(businessNameLens.replace(formData.name.some))
+                .getOrElse(AddIncomeSourceData(businessName = formData.name.some)).some
             )(sessionData)
-          ) flatMap {
-            case true  => Future.successful(Redirect(getRedirect(isAgent, isChange)))
-            case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
-          }
+          )
+        } flatMap {
+          case true => Future.successful(Redirect(getRedirect(isAgent, isChange)))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+        }
       )
     }
   }.recover {
