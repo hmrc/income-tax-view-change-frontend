@@ -171,7 +171,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       sessionService.setMongoData(
         addIncomeSourceDataLens.replace(
           addIncomeSourceData match {
-            case Some(_) => addIncomeSourceData.map(dateStartedLens.replace(formData.some))
+            case Some(_) => addIncomeSourceData.map(dateStartedLens.replace(formData.date.some))
             case None => AddIncomeSourceData(dateStarted = formData.date.some).some
           }
         )(sessionData)
