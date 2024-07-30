@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -33,6 +34,7 @@ import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBu
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.AddIncomeSourceStartDate
 import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedLens}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -164,27 +166,16 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         case _ => InitialPage
       }
     }) { sessionData =>
+
+      val addIncomeSourceData = sessionData.addIncomeSourceData
+
       sessionService.setMongoData(
-        sessionData.addIncomeSourceData match {
-          case Some(_) =>
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    dateStarted = Some(formData)
-                  )
-                )
-            )
-          case None =>
-            sessionData.copy(
-              addIncomeSourceData =
-                Some(
-                  AddIncomeSourceData(
-                    dateStarted = Some(formData)
-                  )
-                )
-            )
-        }
+        addIncomeSourceDataLens.replace(
+          addIncomeSourceData match {
+            case Some(_) => addIncomeSourceData.map(dateStartedLens.replace(formData.some))
+            case None    => AddIncomeSourceData(dateStarted = formData.some).some
+          }
+        )(sessionData)
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

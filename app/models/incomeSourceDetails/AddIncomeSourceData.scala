@@ -83,6 +83,7 @@ object AddIncomeSourceData {
 
   val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
   val businessNameLens: Lens[AddIncomeSourceData, Option[String]] = GenLens[AddIncomeSourceData](_.businessName)
+  val dateStartedLens: Lens[AddIncomeSourceData, Option[LocalDate]] = GenLens[AddIncomeSourceData](_.dateStarted)
 }
 
 case class SensitiveAddIncomeSourceData(
