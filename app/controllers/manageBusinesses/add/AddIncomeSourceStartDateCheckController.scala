@@ -190,15 +190,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
 
     sessionData.addIncomeSourceData match {
       case Some(addIncomeSourceData) =>
-        val updatedAddIncomeSourceData = addIncomeSourceData.copy(
-          accountingPeriodStartDate = None,
-          accountingPeriodEndDate = None,
-          dateStarted = None
-        )
         val journeySessionData: UIJourneySessionData =
-          sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
+          sessionData.copy(
+            addIncomeSourceData = Some(addIncomeSourceData.sanitiseDates)
+          )
 
-        sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(backUrl)))
+        sessionService.setMongoData(journeySessionData).flatMap(
+          _ => Future.successful(Redirect(backUrl))
+        )
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")

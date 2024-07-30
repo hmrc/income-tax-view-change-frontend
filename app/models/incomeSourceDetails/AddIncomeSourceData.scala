@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import forms.models.DateFormElement
 import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.crypto.json.JsonEncryption
@@ -83,6 +84,7 @@ object AddIncomeSourceData {
 
   val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
   val businessNameLens: Lens[AddIncomeSourceData, Option[String]] = GenLens[AddIncomeSourceData](_.businessName)
+  val dateStartedLens: Lens[AddIncomeSourceData, Option[DateFormElement]] = GenLens[AddIncomeSourceData](_.dateStarted)
 }
 
 case class SensitiveAddIncomeSourceData(
