@@ -17,12 +17,14 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, journeyIsCompleteLens}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,6 +33,7 @@ import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesSe
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,8 +51,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             val ec: ExecutionContext,
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
-
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -91,35 +92,31 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
                     showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
-      case Right(Some(sessionData)) =>
-        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-        sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
-          incomeSourceType match {
-            case SelfEmployment =>
-              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-                Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-              }
-            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
-            }
+    withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+
+      val uiJourneySessionData: UIJourneySessionData =
+        addIncomeSourceDataLens.replace(
+          sessionData.addIncomeSourceData
+            .map(journeyIsCompleteLens.replace(true.some)).some
+            .getOrElse(AddIncomeSourceData().some)
+        )(sessionData)
+
+      sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
+        nextUpdatesService
+          .getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears)
+          .map { viewModel =>
+            Ok(obligationsView(viewModel, isAgent, incomeSourceType, businessName))
           }
-        }
-      case _ =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
+      }
     }
   }
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
+    val redirectUrl = (if (isAgent) AddIncomeSourceController.showAgent() else AddIncomeSourceController.show()).url
     Future.successful(Redirect(redirectUrl))
   }
+
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
