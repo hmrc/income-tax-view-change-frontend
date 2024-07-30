@@ -61,8 +61,8 @@ class PoaAdjustedControllerSpec extends MockAuthenticationPredicate
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
-  val startOfTaxYear: LocalDate = LocalDate.of(2024,4,7)
-  val endOfTaxYear: LocalDate = LocalDate.of(2025,4,4)
+  val startOfTaxYear: LocalDate = LocalDate.of(2023,4,7)
+  val endOfTaxYear: LocalDate = LocalDate.of(2024,4,4)
 
   "PoaAdjustedController.show" should {
     "return Ok" when {

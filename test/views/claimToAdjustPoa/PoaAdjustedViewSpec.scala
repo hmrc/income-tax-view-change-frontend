@@ -74,7 +74,8 @@ class PoaAdjustedViewSpec extends TestSupport{
             msgs("claimToAdjustPoa.success.afterLinkText")
         document.getElementById("p3").getElementById("TYSLink").attr("href") shouldBe taxYearSummaryUrl(false)
       }
-      "render the final paragraph when no overdue charges" in new Setup(isAgent = false) {
+      "render the final paragraph when no overdue charges without extra heading" in new Setup(isAgent = false) {
+        Option(document.getElementById("overdueTitle")) shouldBe None
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.forUpcomingCharges")
         document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(false)

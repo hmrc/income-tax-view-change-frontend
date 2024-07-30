@@ -52,7 +52,7 @@ class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctio
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
-        EitherT.liftF(setJourneyCompletedFlag(isAgent, poa, session))
+        EitherT.liftF(handleView(isAgent, poa, session))
       } recover {
         case ex: Exception =>
           Logger("application").error(if (isAgent) "[Agent]" else "" + s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
@@ -69,7 +69,7 @@ class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctio
     }
   }
 
-  private def setJourneyCompletedFlag(isAgent: Boolean, poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleView(isAgent: Boolean, poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
@@ -79,7 +79,7 @@ class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctio
   }
 
   private def showOverdueCharges(poaTaxYear: TaxYear, reason: Option[SelectYourReason]): Boolean = {
-    val poaOneDeadline = LocalDate.of(poaTaxYear.startYear, 1, 31)
+    val poaOneDeadline = LocalDate.of(poaTaxYear.endYear, 1, 31)
     dateService.getCurrentDate.isAfter(poaOneDeadline) && reason.contains(Increase)
   }
 }
