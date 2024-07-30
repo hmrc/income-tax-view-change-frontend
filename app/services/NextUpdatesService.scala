@@ -116,13 +116,6 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         Logger("application").error(
           s"Error: $message, code $code")
         Seq.empty
-      case NextUpdateModel(start, end, due, obligationType, _, periodKey, _) =>
-        Seq(DatesModel(start,
-          end,
-          due,
-          periodKey,
-          isFinalDec = false,
-          obligationType = obligationType))
       case model: ObligationsModel =>
         Seq(model.obligations.flatMap(nextUpdatesModel => nextUpdatesModel.currentCrystDeadlines) map {
           source =>

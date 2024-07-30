@@ -579,3 +579,4 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
   }
 }
+

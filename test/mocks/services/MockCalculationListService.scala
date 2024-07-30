@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -37,7 +38,7 @@ trait MockCalculationListService extends UnitSpec with BeforeAndAfterEach {
     when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any()))
       .thenReturn(Future.successful(false))
 
-  def setupMockIsTaxYearCrystallisedCall(taxYear: Int)(out: Future[Boolean]): Unit = {
+  def setupMockIsTaxYearCrystallisedCall(taxYear: TaxYear)(out: Future[Boolean]): Unit = {
     when(mockCalculationListService
       .isTaxYearCrystallised(ArgumentMatchers.eq(taxYear))(any, any))
       .thenReturn(out)
