@@ -1974,6 +1974,9 @@ claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnae
 claimToAdjustPoa.success.check                      = Gwirio’r
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
+claimToAdjustPoa.success.overdueTitle               = Taliadau am fod yn hwyr
+claimToAdjustPoa.success.overdueText1               = Bellach, mae gennych daliadau am fod yn hwyr sydd angen eu talu. Gwiriwch yr
+claimToAdjustPoa.success.overdueText2               = i gael rhagor o wybodaeth.
 
 ## You Cannot Go Back!
 claimToAdjustPoa.youCannotGoBack.heading                 = Ni allwch fynd yn ôl
