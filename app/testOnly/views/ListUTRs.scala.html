@@ -18,22 +18,29 @@
 @import views.html.layouts.unifiedLayout
 
 @this(
-        mainTemplate: unifiedLayout,
-        h1: h1,
-        p: p,
-        link: link,
-        appConfig: config.FrontendAppConfig
+mainTemplate: unifiedLayout,
+h1: h1,
+p: p,
+link: link,
+appConfig: config.FrontendAppConfig
 )
 
-@(utrs: List[String])(implicit request: Request[_], messages: Messages)
+@(utrs: List[(String, String, String)])(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    pageTitle = messages("listUTRs.heading "),
-    isAgent = true,
-    useFallbackBackLink = true
+pageTitle = messages("List of Agent UTRs"),
+isAgent = true,
+useFallbackBackLink = true
 ) {
 
-    @h1(msg = "listUTRs.heading ", id = Some("heading"))
+@h1(msg = "List of Agent UTRs ", id = Some("heading"))
+
+
+<ul>
+ @for((utr, nino, mtdid) <- utrs) {
+  <li>UTR: @utr, NINO: @nino, MTDITID: @mtdid</li>
+ }
+</ul>
 
 
 }
