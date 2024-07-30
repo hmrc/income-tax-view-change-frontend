@@ -19,6 +19,7 @@ package controllers.manageBusinesses.add
 import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -26,6 +27,7 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceAddedLens}
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -138,9 +140,13 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   }
 
   private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceAdded = Some(true))
-    val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+    val uiJourneySessionData: UIJourneySessionData =
+      addIncomeSourceDataLens.replace(
+        sessionData.addIncomeSourceData
+          .map(incomeSourceAddedLens.replace(Some(true)))
+          .getOrElse(AddIncomeSourceData()).some
+      )(sessionData)
 
     sessionService.setMongoData(uiJourneySessionData)
   }
