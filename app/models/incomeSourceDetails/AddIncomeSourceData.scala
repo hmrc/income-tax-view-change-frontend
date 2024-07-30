@@ -90,6 +90,7 @@ object AddIncomeSourceData {
   val journeyIsCompleteLens:         Lens[AddIncomeSourceData, Option[Boolean]]              = GenLens[AddIncomeSourceData](_.journeyIsComplete)
   val incomeSourceIdLens:            Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.incomeSourceId)
   val incomeSourceAddedLens:         Lens[AddIncomeSourceData, Option[Boolean]]              = GenLens[AddIncomeSourceData](_.incomeSourceAdded)
+  val accountingMethodLens:          Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.incomeSourcesAccountingMethod)
 }
 
 case class SensitiveAddIncomeSourceData(

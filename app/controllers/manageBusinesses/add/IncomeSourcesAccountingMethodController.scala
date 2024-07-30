@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -24,6 +25,7 @@ import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingMethodLens, addIncomeSourceDataLens}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -64,16 +66,12 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       }
       cashOrAccrualsRecords.headOption match {
         case Some(cashOrAccrualsField) =>
+
           sessionService.setMongoData(
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    incomeSourcesAccountingMethod =
-                      Some(fromApiField(cashOrAccrualsField).name)
-                  )
-                )
-            )
+            addIncomeSourceDataLens.replace(
+              sessionData.addIncomeSourceData
+                .map(accountingMethodLens.replace(fromApiField(cashOrAccrualsField).name.some))
+            )(sessionData)
           ) flatMap {
             case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
             case false => throw new Exception("Failed to set mongo data")
@@ -154,16 +152,12 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
         ))),
         validatedInput => {
           val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
+
           sessionService.setMongoData(
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    incomeSourcesAccountingMethod =
-                      Some(accountingMethod)
-                  )
-                )
-            )
+            addIncomeSourceDataLens.replace(
+              sessionData.addIncomeSourceData
+                .map(accountingMethodLens.replace(accountingMethod.some))
+            )(sessionData)
           ) flatMap {
             case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
             case false => throw new Exception("Failed to set mongo data")
