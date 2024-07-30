@@ -25,6 +25,7 @@ val currentScalaVersion = "2.13.12"
 val playVersion = "play-30"
 
 scalacOptions += "-feature"
+Global / scalacOptions += "-Ymacro-annotations"
 
 val compile = Seq(
   ws,
@@ -34,6 +35,8 @@ val compile = Seq(
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
   "uk.gov.hmrc" %% s"play-frontend-hmrc-$playVersion" % playFrontendHMRCVersion,
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0",
+  "dev.optics" %% "monocle-core" % "3.2.0",
+  "dev.optics" %% "monocle-macro" % "3.2.0",
   "org.jsoup" % "jsoup" % jsoupVersion,
 )
 
