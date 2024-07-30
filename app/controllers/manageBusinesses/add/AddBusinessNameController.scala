@@ -17,13 +17,15 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, businessNameLens}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -58,7 +60,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
     routes.AddBusinessNameController.submit(isAgent, isChange)
-    }
+  }
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
     (isAgent, isChange) match {
@@ -104,6 +106,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     withSessionData(JourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
+      val addIncomeSourceData = sessionData.addIncomeSourceData
 
       BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
         formWithErrors =>
@@ -113,41 +116,26 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
               getPostAction(isAgent, isChange),
               getBackUrl(isAgent, isChange)))
           },
-        formData => {
+        formData =>
           sessionService.setMongoData(
-            sessionData.addIncomeSourceData match {
-              case Some(_) =>
-                sessionData.copy(
-                  addIncomeSourceData =
-                    sessionData.addIncomeSourceData.map(
-                      _.copy(
-                        businessName = Some(formData.name)
-                      )
-                    )
-                )
-              case None =>
-                sessionData.copy(
-                  addIncomeSourceData =
-                    Some(
-                      AddIncomeSourceData(
-                        businessName = Some(formData.name)
-                      )
-                    )
-                )
-            }
+            addIncomeSourceDataLens.replace(
+              addIncomeSourceData match {
+                case Some(_) => addIncomeSourceData.map(businessNameLens.replace(formData.name.some))
+                case None    => AddIncomeSourceData(businessName = formData.name.some).some
+              }
+            )(sessionData)
           ) flatMap {
             case true  => Future.successful(Redirect(getRedirect(isAgent, isChange)))
             case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
-        }
       )
     }
   }.recover {
-  case ex =>
-    Logger("application")
-      .error(s"${ex.getMessage} - ${ex.getCause}")
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
-}
+    case ex =>
+      Logger("application")
+        .error(s"${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
+  }
 
 }

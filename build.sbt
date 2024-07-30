@@ -25,6 +25,7 @@ val currentScalaVersion = "2.13.12"
 val playVersion = "play-30"
 
 scalacOptions += "-feature"
+Global / scalacOptions += "-Ymacro-annotations"
 
 val compile = Seq(
   ws,
@@ -48,6 +49,8 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus"      %% "scalacheck-1-15"         % "3.2.11.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion"  % bootstrapPlayVersion % "test",
   caffeine,
+  "dev.optics" %% "monocle-core" % "3.2.0",
+  "dev.optics" %% "monocle-macro" % "3.2.0",
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0"
 )
 
