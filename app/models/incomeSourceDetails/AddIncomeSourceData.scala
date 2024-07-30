@@ -82,9 +82,11 @@ object AddIncomeSourceData {
 
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 
-  val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
-  val businessNameLens: Lens[AddIncomeSourceData, Option[String]] = GenLens[AddIncomeSourceData](_.businessName)
-  val dateStartedLens: Lens[AddIncomeSourceData, Option[LocalDate]] = GenLens[AddIncomeSourceData](_.dateStarted)
+  val addIncomeSourceDataLens:       Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
+  val businessNameLens:              Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.businessName)
+  val dateStartedLens:               Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.dateStarted)
+  val accountingPeriodStartDateLens: Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodStartDate)
+  val accountingPeriodEndDateLens:   Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodEndDate)
 }
 
 case class SensitiveAddIncomeSourceData(
