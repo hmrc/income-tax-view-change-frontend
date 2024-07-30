@@ -25,7 +25,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData.businessTradeCombinedLens
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeLens
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -116,7 +116,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
             },
           validForm =>
             sessionService.setMongoData(
-              businessTradeCombinedLens
+              businessTradeLens
                 .replace(validForm.trade.some)(sessionData)
             ) flatMap {
               case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))

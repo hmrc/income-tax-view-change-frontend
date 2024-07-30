@@ -27,7 +27,7 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedCombinedLens, dateStartedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedLens, dateStartedLens}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -168,7 +168,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
       sessionService.setMongoData(
         sessionData.addIncomeSourceData match {
-          case Some(_) => dateStartedCombinedLens.replace(formData.date.some)(sessionData)
+          case Some(_) => dateStartedLens.replace(formData.date.some)(sessionData)
           case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData(dateStarted = formData.date.some).some)
         }
       ) flatMap {

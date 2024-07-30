@@ -26,7 +26,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceIdCombinedLens, incomeSourceIdLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceIdLens, incomeSourceIdLens}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
 import play.api.Logger
@@ -187,7 +187,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               )
 
               sessionService.setMongoData(
-                incomeSourceIdCombinedLens.replace(id.some)(sessionData)
+                incomeSourceIdLens.replace(id.some)(sessionData)
               ) flatMap {
                 case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

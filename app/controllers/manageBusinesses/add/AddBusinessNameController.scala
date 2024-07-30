@@ -24,7 +24,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, businessNameCombinedLens, businessNameLens, combinedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, businessNameLens, businessNameLens, combinedLens}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
@@ -119,7 +119,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
         formData => {
           sessionService.setMongoData(
             addIncomeSourceData match {
-              case Some(_) => businessNameCombinedLens.replace(formData.name.some)(sessionData)
+              case Some(_) => businessNameLens.replace(formData.name.some)(sessionData)
               case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData(businessName = formData.name.some).some)
             }
           )
