@@ -128,6 +128,12 @@ object AddIncomeSourceData {
       case Some(data) => Some(data.copy(incomeSourceAdded = optStr))
       case None => None
     }))
+
+  val accountingMethodCombinedLens: Lens[UIJourneySessionData, Option[String]] =
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.incomeSourcesAccountingMethod))(optStr => {
+      case Some(data) => Some(data.copy(incomeSourcesAccountingMethod = optStr))
+      case None => None
+    }))
 }
 
 case class SensitiveAddIncomeSourceData(

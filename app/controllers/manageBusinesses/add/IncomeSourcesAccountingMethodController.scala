@@ -25,7 +25,7 @@ import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingMethodLens, addIncomeSourceDataLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingMethodCombinedLens, accountingMethodLens, addIncomeSourceDataLens}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -154,10 +154,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
 
           sessionService.setMongoData(
-            addIncomeSourceDataLens.replace(
-              sessionData.addIncomeSourceData
-                .map(accountingMethodLens.replace(accountingMethod.some))
-            )(sessionData)
+            accountingMethodCombinedLens.replace(accountingMethod.some)(sessionData)
           ) flatMap {
             case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
             case false => throw new Exception("Failed to set mongo data")
