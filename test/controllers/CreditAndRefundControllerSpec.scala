@@ -19,6 +19,7 @@ package controllers
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
+import exceptions.RepaymentStartJourneyException
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
@@ -27,21 +28,25 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalatest.RecoverMethods.recoverToExceptionIf
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.{CreditService, DateService, RepaymentService}
-import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYearTo}
 import testConstants.FinancialDetailsTestConstants._
+import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with FeatureSwitching {
+class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate
+  with MockNavBarEnumFsPredicate
+  with MockFrontendAuthorisedFunctions
+  with FeatureSwitching {
 
 
   trait Setup {
@@ -52,7 +57,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,
       retrieveBtaNavBar = MockNavBarPredicate,
-      authenticate = MockAuthenticationPredicate,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -271,11 +275,12 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
             .get()))
 
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(Left(new InternalError)))
+          .thenReturn(Future.successful(Left(RepaymentStartJourneyException(500, "Internal Error"))))
 
-        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        recoverToExceptionIf[RepaymentStartJourneyException] {
+          controller.startRefund()(fakeRequestWithActiveSession)
+        }.map( ex => ex.getMessage shouldBe "Repayment journey start error with response code: 500 and message: Internal Error")
+          .futureValue
       }
 
       "CreditsRefundsRepay FS is disabled" in new Setup {

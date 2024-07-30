@@ -17,13 +17,9 @@
 package controllers
 
 import config.featureswitch.FeatureSwitching
-import config.FrontendAppConfig
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import implicits.ImplicitDateFormatter
-import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.views.agent.MockTaxYears
 import org.mockito.Mockito.mock
 import play.api.http.Status
@@ -34,7 +30,6 @@ import play.twirl.api.HtmlFormat
 import services.CalculationService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.TaxYears
@@ -42,8 +37,9 @@ import views.html.TaxYears
 import scala.concurrent.Future
 
 class TaxYearsControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockTaxYears with ImplicitDateFormatter with TestSupport with FeatureSwitching {
+  with MockTaxYears
+  with ImplicitDateFormatter
+  with FeatureSwitching {
 
   val calculationService: CalculationService = mock(classOf[CalculationService])
 
@@ -56,19 +52,25 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
-    mockItvcErrorHandler,
+    itvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler],
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
 
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
       "and firstAccountingPeriodEndDate is missing from income sources" should {
-        "return an Internal Server Error (500)" in {
+        "throws an Exception" in {
 
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-          lazy val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          assertThrows[RuntimeException] {
+            val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
+            result.futureValue
+          }
         }
       }
 

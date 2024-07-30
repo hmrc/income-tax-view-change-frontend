@@ -19,18 +19,17 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
+import models.admin._
 import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -278,6 +277,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "hit the recover block and redirect to the internal server error page" in {
         enable(AdjustPaymentsOnAccount)
         mockSingleBusinessIncomeSource()
+        mockFinancialDetailsSuccess()
         setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
@@ -601,7 +601,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
       "the calculation returned from the calculation service was an error" should {
         "return the internal server error page" in {
+          enable(AdjustPaymentsOnAccount)
+
           mockSingleBusinessIncomeSource()
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel
+          )
           mockCalculationErrorNew(testMtditid)
 
           val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSession)

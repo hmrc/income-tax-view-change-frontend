@@ -32,6 +32,8 @@ import utils.AuthenticatorPredicate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+class PaymentJourneyException(msg: String) extends RuntimeException(msg)
+
 @Singleton
 class PaymentController @Inject()(payApiConnector: PayApiConnector,
                                   val auditingService: AuditingService,
@@ -53,14 +55,15 @@ class PaymentController @Inject()(payApiConnector: PayApiConnector,
       case Some(utr) =>
         payApiConnector.startPaymentJourney(utr, paymentAmountInPence, isAgent).map {
           case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case PaymentJourneyErrorResponse(status, message) => throw new Exception(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
-          case _: PaymentJourneyResponse => throw new Exception("Failed to start payments journey due to downstream response")
+          case PaymentJourneyErrorResponse(status, message) => throw new PaymentJourneyException(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
+          case _: PaymentJourneyResponse => throw new PaymentJourneyException("Failed to start payments journey due to downstream response")
         }
       case _ =>
         Logger("application").error("Failed to start payments journey due to missing UTR")
-        Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
+        Future.failed(new PaymentJourneyException("Failed to start payments journey due to missing UTR"))
     }
   }
+
 
   def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedActionOptionNino {
     implicit user =>

@@ -52,12 +52,11 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
           } yield response match {
             case Right(financialDetails: CreditsModel) => Some(financialDetails)
             case Left(error: ErrorModel) if error.code != NOT_FOUND =>
-              throw new Exception("Error response while getting Unpaid financial details")
+              throw new Exception(s"${error.code} response while retrieving credit and refunds - ${error.message}")
             case _ => None
           }
       })
       .map(_.flatten)
       .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
-//      .map(_.reduce(mergeCreditAndRefundModels))
   }
 }

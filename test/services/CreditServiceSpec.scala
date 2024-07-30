@@ -91,7 +91,7 @@ class CreditServiceSpec extends TestSupport {
         val result = new TestCreditService().getAllCredits(mtdItUser, headerCarrier).failed.futureValue
 
         result shouldBe an[Exception]
-        result.getMessage shouldBe "Error response while getting Unpaid financial details"
+        result.getMessage shouldBe "500 response while retrieving credit and refunds - INTERNAL_SERVER ERROR"
       }
     }
   }

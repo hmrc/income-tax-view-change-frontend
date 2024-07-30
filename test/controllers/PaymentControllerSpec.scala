@@ -16,15 +16,10 @@
 
 package controllers
 
-import audit.AuditingService
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testCredId, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtrId, testUserTypeAgent}
-import testConstants.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
 import connectors.PayApiConnector
 import controllers.agent.sessionUtils
-import controllers.predicates.SessionTimeoutPredicate
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -32,9 +27,13 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
+import org.scalatest.RecoverMethods.recoverToExceptionIf
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testCredId, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtrId, testUserTypeAgent}
+import testConstants.PaymentDataTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
@@ -94,21 +93,26 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
       "an SA UTR is missing from the user" in new SetupTestPaymentController(isAgent = false, Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        recoverToExceptionIf[PaymentJourneyException](result).map { rt =>
+          rt.getMessage shouldBe "Failed to start payments journey due to missing UTR"
+        }
       }
-
 
       "an error response is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.successful(
         PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message"))) {
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        val result = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+        recoverToExceptionIf[PaymentJourneyException](result).map { rt =>
+          rt.getMessage shouldBe "Failed to start payments journey due to downstream response, status: 500, message: Error Message"
+        }
       }
 
       "an exception is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.failed(new Exception("Exception Message"))) {
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        recoverToExceptionIf[PaymentJourneyException](result).map { rt =>
+          rt.getMessage shouldBe "Exception Message"
+        }
       }
     }
   }

@@ -26,7 +26,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, DateServiceInterface, IncomeSourceDetailsService, RepaymentService}
@@ -43,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
                                           val retrieveBtaNavBar: NavBarPredicate,
-                                          val authenticate: AuthenticationPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -73,20 +71,17 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getAllCredits map {
-      case _ if !isEnabled(CreditsRefundsRepay) =>
-        Ok(customNotFoundErrorView()(user, messages))
-      case creditsModel: CreditsModel =>
+
+    if(!isEnabled(CreditsRefundsRepay) ) {
+      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+    } else {
+      creditService.getAllCredits map { creditsModel: CreditsModel =>
         val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
         val isCutOverCreditsEnabled: Boolean = isEnabled(CutOverCredits)
         val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
-
         auditClaimARefund(creditsModel)
-
         Ok(view(viewModel, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
-      case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}Invalid response from financial transactions")
-        itvcErrorHandler.showInternalServerError()
+      }
     }
   }
 
@@ -120,19 +115,19 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getAllCredits flatMap {
-      case _ if !isEnabled(CreditsRefundsRepay) =>
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
 
-      case financialDetailsModel: CreditsModel =>
-        repaymentService.start(user.nino, Some(financialDetailsModel.availableCredit)) map {
-          case Right(nextUrl) =>
-            Redirect(nextUrl)
-          case Left(_) =>
-            itvcErrorHandler.showInternalServerError()
-        }
-      case _ => Logger("application").error("")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+    if (!isEnabled(CreditsRefundsRepay)) {
+      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+    } else {
+      creditService.getAllCredits flatMap {
+        financialDetailsModel: CreditsModel =>
+          repaymentService.start(user.nino, Some(financialDetailsModel.availableCredit)).map {
+            case Right(nextUrl) =>
+              Redirect(nextUrl)
+            case Left(ex) =>
+              throw ex
+          }
+      }
     }
   }
 

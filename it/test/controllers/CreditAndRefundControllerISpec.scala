@@ -56,17 +56,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .get()
 
-  val mtdUser = if(isAgent) {
-    MtdItUser(testMtditid, testNino, None,
-      multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-      None, Some(Agent), Some("1"))(FakeRequest())
-  } else {
-    MtdItUser(
-      testMtditid, testNino, None,
-      multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-      Some("12345-credId"), Some(Individual), None
-    )(FakeRequest())
-  }
+
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -172,22 +162,12 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     "redirect to custom not found page" when {
 
-      "the feature switch is off" in {
-        disable(CreditsRefundsRepay)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse
-          .copy(yearOfMigration = Some(s"${testTaxYear}")))
-
-
-        And("I wiremock stub a successful Financial Details response with credits and refunds")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsCreditsByDateRange(
-          testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          Json.toJson(validResponseModel))
-
-        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+      "the feature switch is off" in new CustomFinancialDetailsResponse(
+        Seq(FinancialDetailsResponse(
+          taxYear = testTaxYear,
+          code = OK,
+          json = Json.toJson(validResponseModel))),
+        enableCreditAndRefunds = false) {
 
         res should have(
           httpStatus(OK),
@@ -217,7 +197,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       "an invalid response from the API is received" in new CustomFinancialDetailsResponse(
         Seq(FinancialDetailsResponse(
           taxYear = testTaxYear,
-          code = INTERNAL_SERVER_ERROR,
+          code = OK,
           json = Json.parse("""{ "invalid": "json" }""")))) {
 
         res should have(
@@ -281,11 +261,26 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
     case class FinancialDetailsResponse(taxYear: Int, code: Int, json: JsValue)
 
-    class CustomFinancialDetailsResponse(responses: Seq[FinancialDetailsResponse]) {
+    class CustomFinancialDetailsResponse(responses: Seq[FinancialDetailsResponse],
+                                         enableCreditAndRefunds: Boolean = true) {
 
-      enable(CreditsRefundsRepay)
+      if(enableCreditAndRefunds) {
+        enable(CreditsRefundsRepay)
+      }
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
+
+      val mtdUser = if(isAgent) {
+        MtdItUser(testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+          None, Some(Agent), Some("1"))(FakeRequest())
+      } else {
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+          Some("12345-credId"), Some(Individual), None
+        )(FakeRequest())
+      }
 
       Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
       IncomeTaxViewChangeStub
@@ -308,9 +303,10 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       Then("I verify Income Source Details was called")
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      Then("I verify Financial Details was called")
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
-
+      if(enableCreditAndRefunds) {
+        Then("I verify Financial Details was called")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+      }
     }
   }
 }

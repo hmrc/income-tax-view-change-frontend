@@ -40,5 +40,4 @@ class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
     messagesApi.preferred(request)("standardError.heading"),
     messagesApi.preferred(request)("standardError.message")
   ))
-
 }
