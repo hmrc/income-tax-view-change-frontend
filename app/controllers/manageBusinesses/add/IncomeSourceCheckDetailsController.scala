@@ -19,12 +19,14 @@ package controllers.manageBusinesses.add
 import audit.AuditingService
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceIdLens}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
 import play.api.Logger
@@ -183,15 +185,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               auditingService.extendedAudit(
                 CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
               )
+
               sessionService.setMongoData(
-                sessionData.copy(
-                  addIncomeSourceData =
-                    sessionData.addIncomeSourceData.map(
-                      _.copy(
-                        incomeSourceId = Some(id)
-                      )
-                    )
-                )
+                addIncomeSourceDataLens.replace(
+                  sessionData.addIncomeSourceData
+                    .map(incomeSourceIdLens.replace(id.some))
+                )(sessionData)
+
               ) flatMap {
                 case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
