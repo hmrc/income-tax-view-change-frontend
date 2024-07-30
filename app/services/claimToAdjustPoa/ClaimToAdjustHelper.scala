@@ -103,7 +103,7 @@ trait ClaimToAdjustHelper {
           val errors: List[String] = List(
             poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
             poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
-          )
+          ).filterNot(_.isEmpty)
           Left(new Exception(errors.mkString("-")))
         }
       }
