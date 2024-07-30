@@ -141,12 +141,6 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
-
-## Recruitment Banner ##
-banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn
-banner.recruitment.link                                         = Ymuno â’n panel ymchwil drwy ateb ambell gwestiwn.
-banner.recruitment.dismiss                                      = Na, dim diolch.
-
 ## Tax Years Page ##
 taxYears.heading                                               = Mlynyddoedd treth
 taxYears.viewSummary                                           = Gweld crynodeb
