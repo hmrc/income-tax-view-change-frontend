@@ -176,12 +176,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(response).headOption
-    val successUrl = successUrl(incomeSourceType, isAgent, isChange)
 
     (formResponse, incomeSourceType) match {
       case (Some(`responseNo`),               _) => removeDateFromSessionAndGoBack(incomeSourceType, isAgent, isChange, sessionData)
-      case (Some(`responseYes`), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
-      case (Some(`responseYes`),              _) => Future.successful(Redirect(successUrl))
+      case (Some(`responseYes`), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, incomeSourceType, isAgent, isChange, sessionData)
+      case (Some(`responseYes`),              _) => Future.successful(Redirect(successUrl(incomeSourceType, isAgent, isChange)))
       case _ =>
         Logger("application").error(s"Unexpected response, isAgent = $isAgent")
         Future.successful(showInternalServerError(isAgent))
@@ -207,24 +206,28 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
     }
   }
 
-  private def updateAccountingPeriodForSE(incomeSourceStartDate: LocalDate, successUrl: String, isAgent: Boolean, sessionData: UIJourneySessionData)
+  private def updateAccountingPeriodForSE(incomeSourceStartDate: LocalDate,
+                                          incomeSourceType: IncomeSourceType,
+                                          isAgent: Boolean,
+                                          isChange: Boolean,
+                                          sessionData: UIJourneySessionData)
                                          (implicit request: Request[_]): Future[Result] = {
 
     val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
 
     sessionData.addIncomeSourceData match {
-      case data: Option[AddIncomeSourceData] =>
+      case Some(_) =>
 
         val updatedAddIncomeSourceData =
           addIncomeSourceDataLens.replace(
-            data
+            sessionData.addIncomeSourceData
               .map(accountingPeriodStartDateLens.replace(incomeSourceStartDate.some))
               .map(accountingPeriodEndDateLens.replace(accountingPeriodEndDate.some))
           )(sessionData)
 
         sessionService.setMongoData(updatedAddIncomeSourceData)
           .flatMap(_ =>
-            Future.successful(Redirect(successUrl))
+            Future.successful(Redirect(successUrl(incomeSourceType, isAgent, isChange)))
           )
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")
