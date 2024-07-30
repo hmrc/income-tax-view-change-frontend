@@ -88,7 +88,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                     </a>
                     @if(payment.isCredit) {
                     <br>
-                    <a class="govuk-text" style="font-size: 16.5px;">
+                    <a class="govuk-body-s">
                         @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
                     }
