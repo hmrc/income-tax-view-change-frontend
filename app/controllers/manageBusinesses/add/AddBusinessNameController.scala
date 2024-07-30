@@ -24,8 +24,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, businessNameLens, businessNameLens, combinedLens}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameLens
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
