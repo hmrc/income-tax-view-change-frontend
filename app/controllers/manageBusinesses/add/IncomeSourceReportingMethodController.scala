@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceAddedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceAddedCombinedLens, incomeSourceAddedLens}
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -141,14 +141,12 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData)(implicit hc: HeaderCarrier): Future[Boolean] = {
 
-    val uiJourneySessionData: UIJourneySessionData =
-      addIncomeSourceDataLens.replace(
-        sessionData.addIncomeSourceData
-          .map(incomeSourceAddedLens.replace(Some(true)))
-          .getOrElse(AddIncomeSourceData()).some
-      )(sessionData)
-
-    sessionService.setMongoData(uiJourneySessionData)
+      sessionService.setMongoData(
+        sessionData.addIncomeSourceData match {
+          case Some(_) => incomeSourceAddedCombinedLens.replace(true.some)(sessionData)
+          case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData().some)
+        }
+    )
   }
 
 
