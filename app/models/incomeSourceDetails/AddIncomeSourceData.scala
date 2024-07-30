@@ -91,6 +91,12 @@ object AddIncomeSourceData {
   val incomeSourceIdLens:            Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.incomeSourceId)
   val incomeSourceAddedLens:         Lens[AddIncomeSourceData, Option[Boolean]]              = GenLens[AddIncomeSourceData](_.incomeSourceAdded)
   val accountingMethodLens:          Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.incomeSourcesAccountingMethod)
+
+  val businessNameCombinedLens: Lens[UIJourneySessionData, Option[String]] =
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.businessName))(optStr => {
+      case Some(data) => Some(data.copy(businessName = optStr))
+      case None => None
+    }))
 }
 
 case class SensitiveAddIncomeSourceData(
