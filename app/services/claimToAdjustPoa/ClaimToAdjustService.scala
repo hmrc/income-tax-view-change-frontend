@@ -64,7 +64,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   }
 
   def getPoaViewModelWithAdjustmentReason(nino: Nino)
-                                         (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
+                                         (implicit hc: HeaderCarrier,
+                                          user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
     for {
       financialAndPoaModelMaybe <- getPoaModelAndFinancialDetailsForNonCrystallised(nino)
       adjustmentReasonMaybe <- getPoaAdjustmentReason(financialAndPoaModelMaybe)

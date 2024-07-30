@@ -63,6 +63,9 @@ trait ClaimToAdjustHelper {
   protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
+  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
+                                                        chargeReference: Option[String])
+
   def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
     documentDetails.exists(isPoA) &&
       (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
@@ -200,28 +203,20 @@ trait ClaimToAdjustHelper {
   // TODO: re-write with the use of EitherT
   protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
     financialPoaDetails match {
-      case Right(model) => modelToFinancialDetail(model)
+      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+        finDetails.financialDetails.headOption match {
+          case Some(detail) => Right(Some(detail))
+          case None => Left(new Exception("No financial details found for this charge"))
+        }
+      case Right(_) => Right(None)
       case Left(ex) => Left(ex)
     }
   }
 
-  protected def modelToFinancialDetail(model: FinancialDetailsAndPoAModel): Either[Throwable, Option[FinancialDetail]] = {
-    model match {
-      case FinancialDetailsAndPoAModel(Some(finDetails), _) =>
-        finDetails.financialDetails.headOption match {
-          case Some(detail) => Right(Some(detail))
-          case None =>
-            Left(new Exception("No financial details found for this charge"))
-        }
-      case _ => Right(None)
-    }
-  }
-
-  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail], chargeReference: Option[String])
-
-  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable , FinancialDetailAndChargeRefMaybe] = {
+  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
     financialDetailModel match {
-      case Some(FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
+      case Some(
+      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
         Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
       case _ =>
         Left(new Exception("Failed to retrieve non-crystallised financial details"))
