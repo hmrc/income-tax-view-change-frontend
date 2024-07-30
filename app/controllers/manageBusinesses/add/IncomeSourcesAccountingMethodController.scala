@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -169,21 +170,21 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-    else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+    if (isAgent) IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+    else         IncomeSourceCheckDetailsController.show(incomeSourceType)
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
+    IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (false, false, SelfEmployment) => AddBusinessAddressController.show(isChange)
+      case (_,     false, SelfEmployment) => AddBusinessAddressController.showAgent(isChange)
+      case (_,     false,              _) => AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+      case (false, _,                  _) => IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_,     _,                  _) => IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 
