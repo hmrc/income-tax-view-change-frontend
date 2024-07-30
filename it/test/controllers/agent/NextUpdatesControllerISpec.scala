@@ -365,7 +365,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     }
   }
 
-
   "API#1171 GetBusinessDetails Caching" when {
     "caching should be DISABLED" in {
       testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 2,
