@@ -25,7 +25,7 @@ import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingMethodLens, accountingMethodLens, addIncomeSourceDataLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingMethodLens, addIncomeSourceDataLens}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -69,9 +69,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
         case Some(cashOrAccrualsField) =>
 
           sessionService.setMongoData(
-            addIncomeSourceDataLens.replace(
-              sessionData.addIncomeSourceData
-                .map(accountingMethodLens.replace(fromApiField(cashOrAccrualsField).name.some))
+            accountingMethodLens.replace(
+              fromApiField(cashOrAccrualsField).name.some
             )(sessionData)
           ) flatMap {
             case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))

@@ -21,10 +21,10 @@ import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, journeyIsCompleteLens, journeyIsCompleteLens}
+import models.incomeSourceDetails.AddIncomeSourceData.journeyIsCompleteLens
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport

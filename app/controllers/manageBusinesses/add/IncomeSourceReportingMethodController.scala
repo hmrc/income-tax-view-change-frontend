@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, incomeSourceAddedLens, incomeSourceAddedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.incomeSourceAddedLens
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}

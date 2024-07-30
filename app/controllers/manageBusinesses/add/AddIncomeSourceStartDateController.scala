@@ -27,7 +27,7 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedLens, dateStartedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedLens
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
