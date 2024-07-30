@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -24,6 +25,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeCombinedLens
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -114,14 +116,8 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
             },
           validForm =>
             sessionService.setMongoData(
-              sessionData.copy(
-                addIncomeSourceData =
-                  sessionData.addIncomeSourceData.map(
-                    _.copy(
-                      businessTrade = Some(validForm.trade)
-                    )
-                  )
-              )
+              businessTradeCombinedLens
+                .replace(validForm.trade.some)(sessionData)
             ) flatMap {
               case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

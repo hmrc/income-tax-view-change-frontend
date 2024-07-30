@@ -84,6 +84,7 @@ object AddIncomeSourceData {
 
   val addIncomeSourceDataLens:       Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
   val businessNameLens:              Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.businessName)
+  val businessTradeLens:             Lens[AddIncomeSourceData, Option[String]]               = GenLens[AddIncomeSourceData](_.businessTrade)
   val dateStartedLens:               Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.dateStarted)
   val accountingPeriodStartDateLens: Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodStartDate)
   val accountingPeriodEndDateLens:   Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodEndDate)
@@ -95,6 +96,18 @@ object AddIncomeSourceData {
   val businessNameCombinedLens: Lens[UIJourneySessionData, Option[String]] =
     addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.businessName))(optStr => {
       case Some(data) => Some(data.copy(businessName = optStr))
+      case None => None
+    }))
+
+  val businessTradeCombinedLens: Lens[UIJourneySessionData, Option[String]] =
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.businessTrade))(optStr => {
+      case Some(data) => Some(data.copy(businessTrade = optStr))
+      case None => None
+    }))
+
+  val dateStartedCombinedLens: Lens[UIJourneySessionData, Option[LocalDate]] =
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[LocalDate]](_.flatMap(_.dateStarted))(optStr => {
+      case Some(data) => Some(data.copy(dateStarted = optStr))
       case None => None
     }))
 }

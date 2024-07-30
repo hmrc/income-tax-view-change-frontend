@@ -27,7 +27,7 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{addIncomeSourceDataLens, dateStartedCombinedLens, dateStartedLens}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -167,12 +167,10 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }) { sessionData =>
 
       sessionService.setMongoData(
-        addIncomeSourceDataLens.replace(
-          sessionData.addIncomeSourceData
-            .map(dateStartedLens.replace(formData.date.some))
-            .getOrElse(AddIncomeSourceData(dateStarted = formData.date.some)).some
-        )(sessionData)
-
+        sessionData.addIncomeSourceData match {
+          case Some(_) => dateStartedCombinedLens.replace(formData.date.some)(sessionData)
+          case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData(dateStarted = formData.date.some).some)
+        }
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
