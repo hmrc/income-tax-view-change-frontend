@@ -21,10 +21,44 @@ import java.time.LocalDate
 final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
                                       finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean) {
 
-  def getNumberOfOverdueObligations(currentDate: LocalDate): Int =
-    quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(currentDate))).size +
+  def getOverdueObligationsMessageComponents(currentDate: LocalDate): OverdueObligationsMessageComponents = {
+    val overdueAnnual = getNumberOfOverdueAnnualObligations(currentDate)
+    val overdueQuarterly = getNumberOfOverdueQuarterlyObligations(currentDate)
+    if (overdueAnnual > 0 && overdueQuarterly > 0) {
+      // For hybrid reporting, or at least a year of overdue quarterly obligations that has final declarations
+      OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text",
+        Seq((overdueAnnual + overdueQuarterly).toString, (currentTaxYear - 1).toString, currentTaxYear.toString))
+    } else {
+      (overdueAnnual, overdueQuarterly) match {
+        case (1, 0) =>
+          OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
+        case (a, 0) if a > 1 =>
+          OverdueObligationsMessageComponents("obligation.inset.multiple-annual-overdue.text", Seq(a.toString))
+        case (0, 1) =>
+          OverdueObligationsMessageComponents(
+            "obligation.inset.single-quarterly-overdue.text",
+            Seq((currentTaxYear - 1).toString, currentTaxYear.toString)
+          )
+        case (0, q) if q > 1 =>
+          OverdueObligationsMessageComponents(
+            "obligation.inset.multiple-quarterly-overdue.text",
+            Seq(q.toString, (q * 3).toString, (currentTaxYear - 1).toString, currentTaxYear.toString)
+          )
+        case _ => OverdueObligationsMessageComponents("", Seq())
+      }
+    }
+  }
+
+  def getNumberOfOverdueAnnualObligations(currentDate: LocalDate): Int = {
     finalDeclarationDates.count(_.inboundCorrespondenceDue.isBefore(currentDate))
+  }
+
+  def getNumberOfOverdueQuarterlyObligations(currentDate: LocalDate): Int = {
+    quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(currentDate))).size
+  }
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
                             inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)
+
+final case class OverdueObligationsMessageComponents(messageKey: String, args: Seq[String])
