@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -32,7 +32,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -101,23 +100,16 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData
+  )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
     sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
-      uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted) match {
-        case Some(dateStarted) =>
-          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType, currentDate = dateService.getCurrentDate, dateStarted = dateStarted))
-          }
-        case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
+      nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+        Ok(obligationsView(
+          businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType, currentDate = dateService.getCurrentDate
+        ))
       }
     }
   }

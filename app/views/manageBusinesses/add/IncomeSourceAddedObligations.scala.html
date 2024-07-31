@@ -35,7 +35,7 @@
         govukInsetText: GovukInsetText,
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, dateStarted: LocalDate)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -110,11 +110,9 @@
     }
 }
 
-
-@constructInsetTextMessage(message: String) = {
-    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(message + " " + getMessage("obligation.inset.warning.text", (sources.currentTaxYear - 1).toString, sources.currentTaxYear.toString))))
+@getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
+    messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
-
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
@@ -132,17 +130,12 @@
             </label>
         </h2>
 
-        @if(sources.getNumberOfOverdueObligations(currentDate) == 1){
-            @constructInsetTextMessage(getMessage("obligation.inset.single.text", s"${currentDate.toLongDateNoDay}"))
-        }
-        @if(sources.getNumberOfOverdueObligations(currentDate) > 1){
-            @constructInsetTextMessage(getMessage("obligation.inset.multiple.text", s"${currentDate.toLongDateNoDay}", sources.getNumberOfOverdueObligations(currentDate).toString))
-        }
+        @if(sources.getOverdueObligationsMessageComponents(currentDate).messageKey.nonEmpty) {
+            @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate)))))
 
-        @if(sources.getNumberOfOverdueObligations(currentDate) > 0){
-            <p class="govuk-link govuk-body">
-                <a href=@getNextUpdatesUrl>@getMessage("obligation.view-updates-overdue.text")</a>
-            </p>
+            <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
+                <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
+            </div>
         }
 
         @if(sources.quarterlyObligationsDates.nonEmpty) {
