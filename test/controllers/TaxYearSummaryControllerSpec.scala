@@ -601,7 +601,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
       "the calculation returned from the calculation service was an error" should {
         "return the internal server error page" in {
+          enable(AdjustPaymentsOnAccount)
           mockSingleBusinessIncomeSource()
+
+          mockFinancialDetailsSuccess()
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
+            response = testObligtionsModel)
+
           mockCalculationErrorNew(testMtditid)
 
           val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSession)
