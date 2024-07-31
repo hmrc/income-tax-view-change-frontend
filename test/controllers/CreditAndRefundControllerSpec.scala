@@ -17,8 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import exceptions.RepaymentStartJourneyException
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -56,15 +55,12 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
 
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       creditService = mockCreditService,
       repaymentService = mockRepaymentService,
       auditingService = mockAuditingService,
-      auth = testAuthenticator
+      auth = testAuthenticator,
+      view = app.injector.instanceOf[CreditAndRefunds],
+      customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       dateService = app.injector.instanceOf[DateService],
@@ -72,8 +68,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       ec = ec,
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      view = app.injector.instanceOf[CreditAndRefunds],
-      customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )
   }
 
@@ -257,9 +251,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
 
-        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+        recoverToExceptionIf[AgentStartingRefundException] {
+          controller.startRefund()(fakeRequestWithActiveSession)
+        }.map( ex => ex.getMessage shouldBe "Agent tried to start refund").futureValue
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
       "RepaymentJourneyErrorResponse is returned" in  new Setup {

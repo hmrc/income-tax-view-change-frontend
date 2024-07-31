@@ -56,8 +56,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     .withCutoverCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .get()
 
-
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     if(isAgent){

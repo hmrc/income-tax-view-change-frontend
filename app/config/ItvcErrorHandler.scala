@@ -16,22 +16,31 @@
 
 package config
 
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
+import scala.concurrent.Future
 
 trait ShowInternalServerError {
   def showInternalServerError()(implicit request: Request[_]): Result
 }
 
 class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
-                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
+                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with Logging with I18nSupport with ShowInternalServerError {
 
+  private def logError(request: RequestHeader, ex: Throwable): Unit =
+    logger.error(s"Error for (${request.method}) [${request.uri}] -> ${ex.getClass.getSimpleName}: ${ex.getMessage}")
+
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    logError(request, exception)
+    Future.successful(resolveError(request, exception))
+  }
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, isAgent = false)
 
