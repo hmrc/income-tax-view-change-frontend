@@ -142,6 +142,14 @@ object IncomeSourcesObligationsTestConstants {
   val quarterlyObligationDatesFull = Seq(quarterlyDatesYearOne, quarterlyDatesYearTwo, quarterlyDatesYearThree)
   val quarterlyObligationDatesSimple = Seq(quarterlyDatesYearOneSimple, quarterlyDatesYearTwoSimple, quarterlyDatesYearThreeSimple)
 
+  val singleYearTwoQuarterlyDates = Seq(Seq(
+    DatesModel(startDateQ1_2022, endDateQ1_2022, endDateQ1_2022.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
+    DatesModel(startDateQ2_2022, endDateQ2_2022, endDateQ2_2022.plusMonths(1), "#002", isFinalDec = false, obligationType = "Quarterly"),
+  ))
+
+  val previousYearsQuarterlyObligationDates = Seq(quarterlyDatesYearOne, quarterlyDatesYearTwo)
+  val currentAndPreviousYearsQuarterlyObligationDates = Seq(quarterlyDatesYearTwo, quarterlyDatesYearThree)
+
   val viewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDates = quarterlyObligationDatesFull,
     finalDeclarationDates = Seq(

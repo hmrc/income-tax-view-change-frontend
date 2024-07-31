@@ -16,12 +16,12 @@
 
 package views.manageBusinesses.add
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.twirl.api.Html
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
 import testUtils.ViewSpec
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
@@ -44,6 +44,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val prevYearsHeading: String = "Previous tax years"
     val prevYearsText: String = "You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than"
     val viewAllBusinessesText: String = "View all your businesses"
+    val insetSingleOverdueUpdateText: (String, Int) => String = (month, year) => s"As your business started in $month $year, you have 1 overdue update."
+    val insetMultipleOverdueUpdateText: (String, Int, Int) => String = (month, year, overdueUpdates) => s"As your business started in $month $year, you have $overdueUpdates overdue updates."
+    val insetWarningOverdueUpdatesText: Int => String = startTaxYear => s"You must make sure that you have sent all the required income and expenses for tax years earlier than $startTaxYear to ${startTaxYear + 1}."
   }
 
   val testId: String = "XAIS00000000005"
@@ -52,8 +55,11 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day = LocalDate.of(2022, 1, 1)
+  val dayForOverdueObligations = LocalDate.of(2022, 8, 6)
 
   val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val multipleFinalDeclarationDates = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised"),
+    DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised"))
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
@@ -62,20 +68,86 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None, day, day.minusYears(1))
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None, day, day.minusYears(1))
+  val viewModelWithSingleQuarterlyOverdue: ObligationsViewModel = ObligationsViewModel(
+    Seq(quarterlyDatesYearOneSimple),
+    Seq(),
+    2023,
+    showPrevTaxYears = true
+  )
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None, day, day.minusYears(1))
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None, day, day.minusYears(1))
+  val viewModelWithSameYearQuarterlyOverdue: ObligationsViewModel = ObligationsViewModel(
+    singleYearTwoQuarterlyDates,
+    Seq(),
+    2023,
+    showPrevTaxYears = true
+  )
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
+  val viewModelWithCurrentAndPreviousYearsQuarterlyOverdue: ObligationsViewModel = ObligationsViewModel(
+    currentAndPreviousYearsQuarterlyObligationDates,
+    Seq(finalDeclarationDates),
+    2023,
+    showPrevTaxYears = true
+  )
 
-  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day, day.minusYears(1))
+  val viewModelWithPreviousYearsQuarterlyOverdue: ObligationsViewModel = ObligationsViewModel(
+    previousYearsQuarterlyObligationDates,
+    multipleFinalDeclarationDates,
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val viewModelWithSingleOverdueAnnualObligation: ObligationsViewModel = ObligationsViewModel(
+    Seq(),
+    Seq(finalDeclarationDates),
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val viewModelWithMultipleOverdueAnnualObligations: ObligationsViewModel = ObligationsViewModel(
+    Seq(),
+    multipleFinalDeclarationDates,
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val viewModelWithHybridReportingOverdue: ObligationsViewModel = ObligationsViewModel(
+    Seq(quarterlyDatesYearOne),
+    multipleFinalDeclarationDates,
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val emptyOverdueObligationsContent: (String, Seq[String]) = ("", Seq())
+
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None, day)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None, day)
+
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None, day)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None, day)
+
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"), day)
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"), day)
+
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day)
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day)
+
+  private def overdueObligationsData(viewModel: ObligationsViewModel, incomeSourceType: IncomeSourceType): Html =
+    view(viewModel, isAgent = false, incomeSourceType, Some("Test Name"), dayForOverdueObligations)
+
+  val validCallWithData2: Html = view(viewModelWithCurrentAndPreviousYearsQuarterlyOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
+  val validCallWithData3: Html = view(viewModelWithPreviousYearsQuarterlyOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
+
+  val validAnnualCallWithData: Html = view(viewModelWithSingleOverdueAnnualObligation, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
+  val validAnnualCallWithData2: Html = view(viewModelWithMultipleOverdueAnnualObligations, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
+
+  val validHybridCallWithData: Html = view(viewModelWithHybridReportingOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
+  val validAgentHybridCallWithData: Html = view(viewModelWithHybridReportingOverdue, isAgent = true, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1))
 
   val addIncomeSourceShowURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
+
+  val nextUpdatesUrl = controllers.routes.NextUpdatesController.show().url
+  val nextUpdatesAgentUrl = controllers.routes.NextUpdatesController.showAgent.url
 
   "Income Source Added Obligations - Individual" should {
     "Display the correct banner message and heading" when {
@@ -127,6 +199,73 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
+    }
+
+    "Not display inset warning text because there are no overdue obligations" in new Setup(validCallWithData) {
+      withClue("Inset text was present when it should not have been.")(Option(document.getElementById("warning-inset")).isDefined shouldBe false)
+    }
+
+    "Display the correct inset warning text" when {
+      "There is a single overdue quartlerly obligation in the current tax year" in new Setup(overdueObligationsData(viewModelWithSingleQuarterlyOverdue, SelfEmployment)) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2022 to 2023 tax year. You must submit these updates with all required income and expenses through your compatible software."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There are multiple overdue quarterly obligations in the current tax year" in new Setup(overdueObligationsData(viewModelWithSameYearQuarterlyOverdue, SelfEmployment)) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates for the first 6 months of the 2022 to 2023 tax year. You must submit these updates with all required income and expenses through your compatible software."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There are multiple overdue quarterly obligations across multiple tax years including the current tax year" in new Setup(validCallWithData2) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 6 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2022 to 2023."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There are multiple overdue quarterly obligations across multiple tax years not including the current tax year" in new Setup(validCallWithData3) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 10 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2022 to 2023."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There is a single overdue annual obligation in the previous tax year" in new Setup(validAnnualCallWithData) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There are multiple overdue annual obligations from previous tax years" in new Setup(validAnnualCallWithData2) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates. You must submit your yearly tax return and pay the tax you owe."
+          case None => fail("No inset text was found")
+        }
+      }
+
+      "There are overdue annual and quarterly obligations from previous tax years" in new Setup(validHybridCallWithData) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 6 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2022 to 2023."
+          case None => fail("No inset text was found")
+        }
+      }
+    }
+
+    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validHybridCallWithData) {
+      Option(document.getElementById("view-overdue-upcoming-updates")) match {
+        case Some(link) =>
+          link.text() shouldBe "View your overdue and upcoming updates"
+          link.getElementsByTag("a").first().attr("href") shouldBe nextUpdatesUrl
+        case None => fail("No link was found")
+      }
+    }
+    "Not display the view overdue and upcoming updates link when the user does not have them" in new Setup(validCallWithData) {
+      Option(document.getElementById("view-overdue-upcoming-updates")).isDefined shouldBe false
     }
 
     "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
@@ -234,6 +373,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
         subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
       }
+    }
+
+    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validAgentHybridCallWithData) {
+      Option(document.getElementById("view-overdue-upcoming-updates")) match {
+        case Some(link) =>
+          link.text() shouldBe "View your overdue and upcoming updates"
+          link.getElementsByTag("a").first().attr("href") shouldBe nextUpdatesAgentUrl
+        case None => fail("No link was found")
+      }
+    }
+    "Not display the view overdue and upcoming updates link when the user does not have them" in new Setup(validAgentCallWithData) {
+      Option(document.getElementById("view-overdue-upcoming-updates")).isDefined shouldBe false
     }
 
     "Display quarterly obligations if the user has them" in new Setup(validAgentCallWithData) {
