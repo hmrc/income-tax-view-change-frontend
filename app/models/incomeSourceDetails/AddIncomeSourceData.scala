@@ -99,14 +99,14 @@ object AddIncomeSourceData {
     }))
 
   val dateStartedLens: Lens[UIJourneySessionData, Option[LocalDate]] =
-    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[LocalDate]](_.flatMap(_.dateStarted))(optStr => {
-      case Some(data) => Some(data.copy(dateStarted = optStr))
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[LocalDate]](_.flatMap(_.dateStarted))(optDate => {
+      case Some(data) => Some(data.copy(dateStarted = optDate))
       case None => None
     }))
 
   val journeyIsCompleteLens: Lens[UIJourneySessionData, Option[Boolean]] =
-    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[Boolean]](_.flatMap(_.journeyIsComplete))(optStr => {
-      case Some(data) => Some(data.copy(journeyIsComplete = optStr))
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[Boolean]](_.flatMap(_.journeyIsComplete))(optBool => {
+      case Some(data) => Some(data.copy(journeyIsComplete = optBool))
       case None => None
     }))
 
@@ -117,8 +117,8 @@ object AddIncomeSourceData {
     }))
 
   val incomeSourceAddedLens: Lens[UIJourneySessionData, Option[Boolean]] =
-    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[Boolean]](_.flatMap(_.incomeSourceAdded))(optStr => {
-      case Some(data) => Some(data.copy(incomeSourceAdded = optStr))
+    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[Boolean]](_.flatMap(_.incomeSourceAdded))(optBool => {
+      case Some(data) => Some(data.copy(incomeSourceAdded = optBool))
       case None => None
     }))
 
