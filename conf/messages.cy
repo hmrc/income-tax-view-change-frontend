@@ -1625,20 +1625,22 @@ business-added.uk-property.base                         = wedi cael ei ychwanegu
 business-added.sole-trader.head                        = Ychwanegwyd
 business-added.sole-trader.base                        = i’ch cyfrif
 
-business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
-business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business-added.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
-business-added.table.heading-1                          = Blwyddyn dreth
-business-added.table.heading-2                          = Dyddiad cau
-business-added.income-sources-button                    = Eich ffynonellau incwm
-business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
-business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-business-added.view-all-businesses                      = Bwrw golwg dros eich busnesau
-business-added.obligation.inset.single.text             = Gan fod eich busnes wedi dechrau ym mis {0}, mae gennych <b>{1} diweddariad sy’n hwyr</b>.
-business-added.obligation.inset.multiple.text           = Gan fod eich busnes wedi dechrau ym mis {0}, mae gennych <b>{1} ddiweddariad sy’n hwyr</b>.
-business-added.obligation.inset.warning.text            = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {0} i {1}.
-business-added.obligation.view-updates-overdue.text     = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+business-added.quarterly-heading                                       = Anfon diweddariadau chwarterol
+business-added.quarterly-p1                                            = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+business-added.final-declaration-heading                               = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+business-added.final-declaration-text                                  = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+business-added.table.heading-1                                         = Blwyddyn dreth
+business-added.table.heading-2                                         = Dyddiad cau
+business-added.income-sources-button                                   = Eich ffynonellau incwm
+business-added.previous-tax-years-heading                              = Blynyddoedd treth blaenorol
+business-added.previous-tax-years-t1                                   = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+business-added.view-all-businesses                                     = Bwrw golwg dros eich busnesau
+business-added.obligation.inset.single-annual-overdue.text             =
+business-added.obligation.inset.multiple-annual-overdue.text           =
+business-added.obligation.inset.multiple-hybrid-overdue.text           =
+business-added.obligation.inset.single-quarterly-overdue.text          =
+business-added.obligation.inset.multiple-quarterly-overdue.text        =
+business-added.obligation.view-overdue-upcoming-updates.text           =
 
 
 ## You cannot go back - Your business has been added page ##
