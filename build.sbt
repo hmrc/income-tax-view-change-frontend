@@ -92,7 +92,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
   .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
-    Test / Keys.fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml",
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
   )
@@ -101,7 +100,7 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true
   )
   .settings(
-    Test / Keys.fork := true,
+    Test / Keys.fork := false,
     scalaVersion := currentScalaVersion,
     scalacOptions += "-Wconf:src=routes/.*:s",
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
