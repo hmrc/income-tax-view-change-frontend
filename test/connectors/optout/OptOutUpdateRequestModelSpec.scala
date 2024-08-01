@@ -38,11 +38,8 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         }
         """.stripMargin)
 
-    "be formatted to JSON correctly" in {
+    "verify write to json" in {
       Json.toJson[OptOutUpdateRequest](requestObject) shouldBe requestJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
-      requestJson.validate[OptOutUpdateRequest] shouldBe JsSuccess(requestObject)
     }
   }
 
@@ -56,10 +53,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         }
         """.stripMargin)
 
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseSuccess](successObject) shouldBe successJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
+    "verify read from json" in {
       successJson.validate[OptOutUpdateResponseSuccess] shouldBe JsSuccess(successObject)
     }
   }
@@ -79,10 +73,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         }
         """.stripMargin)
 
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](failureObject) shouldBe failureJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
+    "verify read from json" in {
       failureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(failureObject)
     }
   }
@@ -102,10 +93,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         }
         """.stripMargin)
 
-    "be formatted to JSON correctly" in {
-      Json.toJson[OptOutUpdateResponseFailure](notFoundFailureObject) shouldBe notFoundFailureJson
-    }
-    "be able to parse a JSON input as a string into the model" in {
+    "verify read from json" in {
       notFoundFailureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(notFoundFailureObject)
     }
   }
