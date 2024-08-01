@@ -51,8 +51,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
         obligation.periodKey shouldBe "#002"
       }
 
-      "have status as open" in {
-        obligation.status shouldBe StatusOpen
+      "have status as fulfilled" in {
+        obligation.status shouldBe StatusFulfilled
       }
 
       "have the obligation type 'Quarterly'" in {
@@ -80,8 +80,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
         obligation.periodKey shouldBe "#003"
       }
 
-      "have the obligation status of open" in {
-        obligation.status shouldBe StatusOpen
+      "have the obligation status of fulfilled" in {
+        obligation.status shouldBe StatusFulfilled
       }
 
       "have the obligation type 'Quarterly'" in {

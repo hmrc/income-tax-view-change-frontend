@@ -106,12 +106,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   }
 
   def mockObligations: OngoingStubbing[Future[ObligationsResponseModel]] = {
-    when(mockNextUpdatesService.getOpenObligations(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
   def mockNoObligations: OngoingStubbing[Future[ObligationsResponseModel]] = {
-    when(mockNextUpdatesService.getOpenObligations(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 
@@ -153,7 +153,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
         }
 
-        "successfully retrieves a set of Property NextUpdates and Previous from the NextUpdates service" should {
+        "successfully retrieves a set of Property obligations from the NextUpdates service" should {
 
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
@@ -204,7 +204,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -227,7 +226,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -251,7 +249,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           mockViewModel
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 

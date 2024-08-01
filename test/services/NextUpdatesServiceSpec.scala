@@ -388,18 +388,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
   }
 
-  "The NextUpdatesService.getNextUpdates method" when {
+  "The NextUpdatesService.getOpenObligations method" when {
 
     "a valid list of Next Updates is returned from the connector" should {
 
       "return a valid list of Next Updates" in {
         setupMockNextUpdates(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
         TestNextUpdatesService.getOpenObligations().futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
-      }
-
-      "return a valid list of previous Next Updates" in {
-        setupMockFulfilledObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
-        TestNextUpdatesService.getOpenObligations(previous = true).futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
 
@@ -408,11 +403,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "return the error" in {
         setupMockNextUpdates(obligationsDataErrorModel)
         TestNextUpdatesService.getOpenObligations().futureValue shouldBe obligationsDataErrorModel
-      }
-
-      "return the error for previous deadlines" in {
-        setupMockFulfilledObligations(obligationsDataErrorModel)
-        TestNextUpdatesService.getOpenObligations(previous = true).futureValue shouldBe obligationsDataErrorModel
       }
     }
   }
@@ -430,7 +420,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             GroupedObligationsModel("idOne", List(previousObligation))
           )))
 
-          val result = TestNextUpdatesService.getOpenObligations(
+          val result = TestNextUpdatesService.getAllObligationsWithinDateRange(
             fromDate = fixedDate.minusDays(1),
             toDate = fixedDate.plusDays(2)
           ).futureValue
@@ -452,7 +442,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           GroupedObligationsModel("idTwo", List(currentObligation(fixedDate.plusDays(3))))
         )))
 
-        val result = TestNextUpdatesService.getOpenObligations(
+        val result = TestNextUpdatesService.getAllObligationsWithinDateRange(
           fromDate = fixedDate.minusDays(1),
           toDate = fixedDate.plusDays(1)
         ).futureValue
@@ -469,7 +459,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             to = fixedDate.plusDays(2)
           )(ObligationsErrorModel(INTERNAL_SERVER_ERROR, "not found"))
 
-          val result = TestNextUpdatesService.getOpenObligations(
+          val result = TestNextUpdatesService.getAllObligationsWithinDateRange(
             fromDate = fixedDate.minusDays(1),
             toDate = fixedDate.plusDays(2)
           ).futureValue
@@ -491,7 +481,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C", StatusFulfilled)
         ))
       ))
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
@@ -503,7 +493,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       enable(IncomeSources)
 
       val nextModel: ObligationsErrorModel = ObligationsErrorModel(1, "fail")
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
@@ -530,7 +520,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
         ))
       ))
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
@@ -560,7 +550,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
         ))
       ))
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
@@ -583,7 +573,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
         ))
       ))
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)

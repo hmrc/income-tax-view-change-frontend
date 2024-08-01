@@ -150,7 +150,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       2023,
       showPrevTaxYears = true
     )))
-    when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
+    when(mockNextUpdatesService.getOpenObligations()(any(), any())).
       thenReturn(Future(testObligationsModel))
   }
 
@@ -177,7 +177,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       2023,
       showPrevTaxYears = true
     )))
-    when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
+    when(mockNextUpdatesService.getOpenObligations()(any(), any())).
       thenReturn(Future(testObligationsModel))
   }
 
