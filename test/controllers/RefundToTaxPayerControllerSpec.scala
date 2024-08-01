@@ -41,6 +41,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disableAllSwitches()
   }
 
   override def afterEach(): Unit = {
