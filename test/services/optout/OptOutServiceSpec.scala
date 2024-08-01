@@ -28,7 +28,7 @@ import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito._
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfter, Succeeded}
+import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
@@ -67,6 +67,7 @@ class OptOutServiceSpec extends UnitSpec
   with MockITSAStatusService
   with MockCalculationListService
   with MockDateService
+  with OneInstancePerTest
   with MockITSAStatusUpdateConnector {
 
   implicit val defaultPatience: PatienceConfig =
@@ -92,10 +93,6 @@ class OptOutServiceSpec extends UnitSpec
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService,
     mockCalculationListService, nextUpdatesService, mockDateService, repository)
-
-  before {
-    reset(optOutConnector, mockITSAStatusService, mockCalculationListService, mockDateService, user, hc, repository)
-  }
 
   val noOptOutOptionAvailable: Option[Nothing] = None
 
