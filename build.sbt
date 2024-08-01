@@ -130,7 +130,7 @@ lazy val it = project
   .settings(majorVersion := 1)
   .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
-    testForkedParallel := true
+    testForkedParallel := false
   )
   .settings(
     libraryDependencies ++= appDependenciesIt
