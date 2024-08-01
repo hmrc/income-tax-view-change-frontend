@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.obligations
 
 import java.time.LocalDate
 
-sealed trait NextUpdateStatus
+case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
 
-case class Overdue(dueDate: LocalDate) extends NextUpdateStatus
-
-case class Open(dueDate: LocalDate) extends NextUpdateStatus
+case class DeadlineViewModel(obligationType: ObligationType,
+                             standardAndCalendar: Boolean,
+                             deadline: LocalDate,
+                             standardQuarters: Seq[ObligationWithIncomeType],
+                             calendarQuarters: Seq[ObligationWithIncomeType]) {}

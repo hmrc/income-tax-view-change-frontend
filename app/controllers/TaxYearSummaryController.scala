@@ -31,7 +31,7 @@ import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -192,7 +192,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   private def withObligationsModel(taxYear: Int, isAgent: Boolean)(f: ObligationsModel => Future[Result])
                                   (implicit user: MtdItUser[_]): Future[Result] = {
-    nextUpdatesService.getOpenObligations(
+    nextUpdatesService.getAllObligationsWithinDateRange(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     ) flatMap {

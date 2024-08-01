@@ -22,7 +22,7 @@ import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR

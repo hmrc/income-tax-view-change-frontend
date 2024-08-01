@@ -17,35 +17,35 @@
 package testConstants
 
 import java.time.LocalDate
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 
 object PreviousObligationsIntegrationTestConstants {
 
   private val date: LocalDate = LocalDate.of(2017, 1, 1)
 
-  def previousQuarterlyObligation(incomeId: String): NextUpdatesModel = NextUpdatesModel(
+  def previousQuarterlyObligation(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(
     incomeId,
     List(
-      NextUpdateModel(
+      SingleObligationModel(
         date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001", status = StatusFulfilled
       )
     )
   )
 
-  def previousEOPSObligation(incomeId: String): NextUpdatesModel = NextUpdatesModel(
+  def previousEOPSObligation(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(
     incomeId,
     List(
-      NextUpdateModel(
+      SingleObligationModel(
         date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS", status = StatusFulfilled
       )
     )
   )
 
-  val previousCrystallisationObligation: NextUpdatesModel = NextUpdatesModel(
+  val previousCrystallisationObligation: GroupedObligationsModel = GroupedObligationsModel(
     testMtditid,
     List(
-      NextUpdateModel(
+      SingleObligationModel(
         date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised", status = StatusFulfilled
       )
     )

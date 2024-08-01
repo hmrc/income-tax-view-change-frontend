@@ -27,7 +27,7 @@ import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSes
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -76,7 +76,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(testSelfEmploymentId, List(NextUpdateModel(
+    GroupedObligationsModel(testSelfEmploymentId, List(SingleObligationModel(
       LocalDate.of(2022, 7, 1),
       LocalDate.of(2022, 7, 2),
       LocalDate.of(2022, 8, 2),
@@ -85,7 +85,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
       "#001",
       StatusFulfilled
     ),
-      NextUpdateModel(
+      SingleObligationModel(
         LocalDate.of(2022, 7, 1),
         LocalDate.of(2022, 7, 2),
         LocalDate.of(2022, 8, 2),

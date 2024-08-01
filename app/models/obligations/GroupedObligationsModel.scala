@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.obligations
 
-import java.time.LocalDate
+import play.api.libs.json.{Format, Json}
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
+case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
+  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallised")
+    .sortBy(_.start.toEpochDay)
+}
 
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[NextUpdateModelWithIncomeType],
-                             calendarQuarters: Seq[NextUpdateModelWithIncomeType]) {}
+object GroupedObligationsModel {
+  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
+}

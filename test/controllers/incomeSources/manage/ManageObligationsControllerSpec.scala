@@ -27,7 +27,7 @@ import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsResponseModel, ObligationsModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -80,7 +80,7 @@ class ManageObligationsControllerSpec extends TestSupport
   val testId = "XAIS00000000001"
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel("123", List(NextUpdateModel(
+    GroupedObligationsModel("123", List(SingleObligationModel(
       LocalDate.of(2022, 7, 1),
       LocalDate.of(2022, 7, 2),
       LocalDate.of(2022, 8, 2),
@@ -89,7 +89,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "#001",
       StatusFulfilled
     ),
-      NextUpdateModel(
+      SingleObligationModel(
         LocalDate.of(2022, 7, 1),
         LocalDate.of(2022, 7, 2),
         LocalDate.of(2022, 8, 2),
@@ -113,7 +113,7 @@ class ManageObligationsControllerSpec extends TestSupport
   )
   private val propertyDetailsModelForeign = propertyDetailsModelUK.copy(incomeSourceType = Some("foreign-property"))
 
-  def setUpBusiness(isAgent: Boolean): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+  def setUpBusiness(isAgent: Boolean): OngoingStubbing[Future[ObligationsResponseModel]] = {
     setupMockAuthorisationSuccess(isAgent)
 
     val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
@@ -142,7 +142,7 @@ class ManageObligationsControllerSpec extends TestSupport
       thenReturn(Future(testObligationsModel))
   }
 
-  def setUpProperty(isAgent: Boolean, isUkProperty: Boolean): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+  def setUpProperty(isAgent: Boolean, isUkProperty: Boolean): OngoingStubbing[Future[ObligationsResponseModel]] = {
     setupMockAuthorisationSuccess(isAgent)
 
     if (isUkProperty) {

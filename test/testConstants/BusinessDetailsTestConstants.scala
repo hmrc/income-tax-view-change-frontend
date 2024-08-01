@@ -21,7 +21,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core._
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationStatus, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationStatus, ObligationsModel, StatusFulfilled}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
@@ -419,7 +419,7 @@ object BusinessDetailsTestConstants {
     cashOrAccruals = true
   )
 
-  val businessNotValidObligationType = fakeNextUpdatesModel(NextUpdateModel(
+  val businessNotValidObligationType = fakeNextUpdatesModel(SingleObligationModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2017, 10, 30),
@@ -479,8 +479,8 @@ object BusinessDetailsTestConstants {
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val obligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+  val obligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
   val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
-    Seq(NextUpdatesModel(testSelfEmploymentId, List(businessNotValidObligationType))))
+    Seq(GroupedObligationsModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
 }

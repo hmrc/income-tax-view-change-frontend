@@ -18,7 +18,7 @@ package testConstants
 
 import testConstants.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
 import testConstants.NextUpdatesTestConstants.nextUpdatesDataPropertySuccessModel
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
   val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,
