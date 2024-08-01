@@ -27,15 +27,16 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
+import services.{DateService, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
+import views.html.claimToAdjustPoa.PoaAdjustedView
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicate
+class PoaAdjustedControllerSpec extends MockAuthenticationPredicate
   with TestSupport
   with MockClaimToAdjustService
   with MockCalculationListService
@@ -43,22 +44,27 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
   with MockFinancialDetailsConnector {
 
   val mockPOASessionService = mock(classOf[PaymentOnAccountSessionService])
+  val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestController extends PaymentsOnAccountAdjustedController(
+  object TestController extends PoaAdjustedController(
     authorisedFunctions = mockAuthService,
     claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    view = app.injector.instanceOf[PaymentsOnAccountAdjustedView],
-    poaSessionService = mockPOASessionService
+    view = app.injector.instanceOf[PoaAdjustedView],
+    poaSessionService = mockPOASessionService,
+    dateService = mockDateService
   )(
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     ec = app.injector.instanceOf[ExecutionContext]
   )
 
-  "PaymentsOnAccountAdjustedController.show" should {
+  val startOfTaxYear: LocalDate = LocalDate.of(2023,4,7)
+  val endOfTaxYear: LocalDate = LocalDate.of(2024,4,4)
+
+  "PoaAdjustedController.show" should {
     "return Ok" when {
       "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
         enable(AdjustPaymentsOnAccount)
@@ -66,6 +72,8 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
+
+        when(mockDateService.getCurrentDate).thenReturn(startOfTaxYear)
 
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
         when(mockPOASessionService.getMongo(any(),any())).thenReturn(Future(Right(Some(PoAAmendmentData(newPoAAmount = Some(1200))))))
@@ -89,8 +97,10 @@ class PaymentsOnAccountAdjustedControllerSpec extends MockAuthenticationPredicat
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
+        when(mockDateService.getCurrentDate).thenReturn(endOfTaxYear)
+
         when(mockPOASessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoAAmendmentData(None, newPoAAmount = Some(1200), journeyCompleted = true)))))
+        when(mockPOASessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoAAmendmentData(None, newPoAAmount = Some(5000), journeyCompleted = true)))))
 
         setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()

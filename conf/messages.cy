@@ -141,12 +141,6 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
-
-## Recruitment Banner ##
-banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn
-banner.recruitment.link                                         = Ymuno â’n panel ymchwil drwy ateb ambell gwestiwn.
-banner.recruitment.dismiss                                      = Na, dim diolch.
-
 ## Tax Years Page ##
 taxYears.heading                                               = Mlynyddoedd treth
 taxYears.viewSummary                                           = Gweld crynodeb
@@ -1984,6 +1978,9 @@ claimToAdjustPoa.success.afterLinkText              = i weld y newidiadau a wnae
 claimToAdjustPoa.success.check                      = Gwirio’r
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
+claimToAdjustPoa.success.overdueTitle               = Taliadau am fod yn hwyr
+claimToAdjustPoa.success.overdueText1               = Bellach, mae gennych daliadau am fod yn hwyr sydd angen eu talu. Gwiriwch yr
+claimToAdjustPoa.success.overdueText2               = i gael rhagor o wybodaeth.
 
 ## You Cannot Go Back!
 claimToAdjustPoa.youCannotGoBack.heading                 = Ni allwch fynd yn ôl

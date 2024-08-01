@@ -18,12 +18,11 @@ package services.claimToAdjustPoa
 
 import auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
-import exceptions.MissingFieldException
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -33,8 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO: This part of the logic expected to be moved within BE
-// TODO: plain models like: TaxYear and PaymentOnAccountViewModel will be return via new connector
+
 trait ClaimToAdjustHelper {
 
   private val POA1: String = "ITSA- POA 1"
@@ -60,37 +58,64 @@ trait ClaimToAdjustHelper {
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
     _.sortBy(_.taxYear).reverse
 
+  protected case class FinancialDetailsAndPoAModel(financialDetails: Option[FinancialDetailsModel],
+                                                   poaModel: Option[PaymentOnAccountViewModel])
+
+  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
+                                                        chargeReference: Option[String])
+
   def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
     documentDetails.exists(isPoA) &&
       (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
 
-  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail], poaPreviouslyAdjusted: Option[Boolean] = None): Option[PaymentOnAccountViewModel] = for {
-    poaOneDocDetail         <- documentDetails.find(isPoAOne)
-    poaTwoDocDetail         <- documentDetails.find(isPoATwo)
-    latestDocumentDetail     = poaTwoDocDetail
-    poaTwoDueDate           <- poaTwoDocDetail.documentDueDate
-    taxReturnDeadline        = getTaxReturnDeadline(poaTwoDueDate)
-    poasAreBeforeDeadline    = poaTwoDueDate isBefore taxReturnDeadline
-    if poasAreBeforeDeadline
-  } yield
-    PaymentOnAccountViewModel(
-      poaOneTransactionId   = poaOneDocDetail.transactionId,
-      poaTwoTransactionId   = poaTwoDocDetail.transactionId,
-      taxYear               = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      totalAmountOne   = poaOneDocDetail.originalAmount,
-      totalAmountTwo   = poaTwoDocDetail.originalAmount,
-      relevantAmountOne  = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      relevantAmountTwo  = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      previouslyAdjusted = poaPreviouslyAdjusted,
-      partiallyPaid      = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
-    )
+  def getPaymentOnAccountModel(documentDetails: List[DocumentDetail],
+                               poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
+    {
+      for {
+        poaOneDocDetail <- documentDetails.find(isPoAOne)
+        poaTwoDocDetail <- documentDetails.find(isPoATwo)
+        latestDocumentDetail = poaTwoDocDetail
+        poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+        taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
+        poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+        if poasAreBeforeDeadline
+      } yield {
+        if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
+          Right(
+            Some(
+              PaymentOnAccountViewModel(
+                poaOneTransactionId = poaOneDocDetail.transactionId,
+                poaTwoTransactionId = poaTwoDocDetail.transactionId,
+                taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+                totalAmountOne = poaOneDocDetail.originalAmount,
+                totalAmountTwo = poaTwoDocDetail.originalAmount,
+                relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
+                relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.get,
+                previouslyAdjusted = poaPreviouslyAdjusted,
+                partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+                fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid
+              )
+            )
+          )
+        } else {
+          val errors: List[String] = List(
+            poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
+            poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
+          ).filterNot(_.isEmpty)
+          Left(new Exception(errors.mkString("-")))
+        }
+      }
+    } match {
+      case Some(res) => res
+      case None => Right(None)
+    }
+  }
 
   protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
       case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
-        case Some(detailsList) => Right(detailsList.headOption)
+        case Some(detailsList) => Right(extractPoaChargeHistory(detailsList))
         case None => Right(None)
       }
       case ChargesHistoryErrorModel(code, message) =>
@@ -150,42 +175,82 @@ trait ClaimToAdjustHelper {
   }
 
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
-                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = (for {
-    poaOneDocDetail         <- documentDetails.find(isPoAOne)
-    poaTwoDocDetail         <- documentDetails.find(isPoATwo)
-    latestDocumentDetail     = poaTwoDocDetail
-    poaTwoDueDate           <- poaTwoDocDetail.documentDueDate
-    taxReturnDeadline        = getTaxReturnDeadline(poaTwoDueDate)
-    poasAreBeforeDeadline    = poaTwoDueDate isBefore taxReturnDeadline
-    if poasAreBeforeDeadline
+                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
+    val res  = for {
+      poaOneDocDetail <- documentDetails.find(isPoAOne)
+      poaTwoDocDetail <- documentDetails.find(isPoATwo)
+      latestDocumentDetail = poaTwoDocDetail
+      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+      taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
+      poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+      if poasAreBeforeDeadline
   } yield {
-    PaymentOnAccountViewModel(
-      poaOneTransactionId            = poaOneDocDetail.transactionId,
-      poaTwoTransactionId            = poaTwoDocDetail.transactionId,
-      taxYear                        = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-      totalAmountOne            = poaOneDocDetail.originalAmount,
-      totalAmountTwo            = poaTwoDocDetail.originalAmount,
-      relevantAmountOne           = poaOneDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      relevantAmountTwo           = poaTwoDocDetail.poaRelevantAmount.getOrElse(throw MissingFieldException("DocumentDetail.poaRelevantAmount")),
-      partiallyPaid               = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-      fullyPaid                   = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
-      previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
-    )
-  }) match {
-    case Some(model) => Right(model)
-    case None        =>
-      Logger("application").error("Failed to create AmendablePoaViewModel")
-      Left(new Exception("Failed to create AmendablePoaViewModel"))
+      if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
+        Right(
+          PaymentOnAccountViewModel(
+            poaOneTransactionId = poaOneDocDetail.transactionId,
+            poaTwoTransactionId = poaTwoDocDetail.transactionId,
+            taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+            totalAmountOne = poaOneDocDetail.originalAmount,
+            totalAmountTwo = poaTwoDocDetail.originalAmount,
+            relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
+            relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.get,
+            partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
+            fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
+            previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
+          )
+        )
+      } else {
+        val errors: List[String] = List(
+          poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
+          poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
+        ).filterNot(_.isEmpty)
+        Left(new Exception(errors.mkString("-")))
+      }
+    }
+    res match {
+      case Some(e) => e
+      case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
+    }
   }
 
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
       case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoA).exists(_.poaAdjustmentReason.isDefined) => Right(true)
-      case ChargesHistoryModel(_, _, _, _)                                                                                => Right(false)
+      case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
+
+  private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
+    // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoA)
+  }
+
+  // TODO: re-write with the use of EitherT
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoAModel]): Either[Throwable, Option[FinancialDetail]] = {
+    financialPoaDetails match {
+      case Right(FinancialDetailsAndPoAModel(Some(finDetails), _)) =>
+        finDetails.financialDetails.headOption match {
+          case Some(detail) => Right(Some(detail))
+          case None => Left(new Exception("No financial details found for this charge"))
+        }
+      case Right(_) => Right(None)
+      case Left(ex) => Left(ex)
+    }
+  }
+
+  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
+    financialDetailModel match {
+      case Some(
+      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
+        Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
+      case _ =>
+        Left(new Exception("Failed to retrieve non-crystallised financial details"))
+    }
+  }
+
 }

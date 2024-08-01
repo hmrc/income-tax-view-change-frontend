@@ -203,7 +203,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(PaymentsOnAccountAdjustedController.show(isAgent).url)
+          redirectURI(PoaAdjustedController.show(isAgent).url)
         )
       }
     }

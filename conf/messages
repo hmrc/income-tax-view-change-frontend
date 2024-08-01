@@ -153,12 +153,6 @@ home.overdue.message.dunningLock.false                          = You have overd
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
-
-## Recruitment Banner ##
-banner.recruitment.text                                         = Help improve this service
-banner.recruitment.link                                         = Join our research panel by answering a few questions.
-banner.recruitment.dismiss                                      = No, thankyou.
-
 ## List UTRs ##
 listUTRs.heading                                               = List UTRs
 
@@ -2026,6 +2020,9 @@ claimToAdjustPoa.success.afterLinkText                  = to see the changes you
 claimToAdjustPoa.success.check                          = Check
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
+claimToAdjustPoa.success.overdueTitle                   = Overdue charges
+claimToAdjustPoa.success.overdueText1                   = You now have overdue charges that need to be paid. Check
+claimToAdjustPoa.success.overdueText2                   = for more details.
 
 ## You Cannot Go Back!
 claimToAdjustPoa.youCannotGoBack.heading                 = You cannot go back
