@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import exceptions.RepaymentStartJourneyException
+import exceptions.{IndividualException, RepaymentStartJourneyException}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
@@ -251,7 +251,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
 
-        recoverToExceptionIf[AgentStartingRefundException] {
+        recoverToExceptionIf[IndividualException] {
           controller.startRefund()(fakeRequestWithActiveSession)
         }.map( ex => ex.getMessage shouldBe "Agent tried to start refund").futureValue
 
@@ -272,7 +272,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Left(RepaymentStartJourneyException(500, "Internal Error"))))
 
-        recoverToExceptionIf[RepaymentStartJourneyException] {
+        recoverToExceptionIf[IndividualException] {
           controller.startRefund()(fakeRequestWithActiveSession)
         }.map( ex => ex.getMessage shouldBe "Repayment journey start error with response code: 500 and message: Internal Error")
           .futureValue

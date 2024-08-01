@@ -19,6 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import exceptions.AgentException
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
@@ -44,7 +45,6 @@ import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import uk.gov.hmrc.http.InternalServerException
 import views.html.TaxYearSummary
 
 import java.time.LocalDate
@@ -751,7 +751,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockErrorIncomeSource()
         mockShowInternalServerError()
         val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient()).failed.futureValue
-        result shouldBe an[InternalServerException]
+        result shouldBe an[AgentException]
         result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }

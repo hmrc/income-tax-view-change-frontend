@@ -18,6 +18,7 @@ package controllers
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
@@ -30,7 +31,6 @@ import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrieval
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
 
@@ -282,7 +282,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockErrorIncomeSource()
         mockShowInternalServerError()
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestConfirmedClient()).failed.futureValue
-        result shouldBe an[InternalServerException]
+        result shouldBe an[AgentException]
         result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }

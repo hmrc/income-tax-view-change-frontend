@@ -18,6 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import exceptions.AgentException
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.views.agent.MockTaxYears
@@ -31,7 +32,6 @@ import services.CalculationService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import uk.gov.hmrc.http.InternalServerException
 import views.html.TaxYears
 
 import scala.concurrent.Future
@@ -137,7 +137,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         mockShowInternalServerError()
 
         val result = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient()).failed.futureValue
-        result shouldBe an[InternalServerException]
+        result shouldBe an[AgentException]
         result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }

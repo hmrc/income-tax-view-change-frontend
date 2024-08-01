@@ -19,6 +19,7 @@ package controllers
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -33,7 +34,6 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtdit
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
 import views.html.IncomeBreakdown
 
 import scala.concurrent.Future
@@ -145,7 +145,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
         setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockShowInternalServerError()
         val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
-        exception shouldBe an[InternalServerException]
+        exception shouldBe an[AgentException]
         exception.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
 

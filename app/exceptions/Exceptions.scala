@@ -16,6 +16,21 @@
 
 package exceptions
 
+class IndividualException(exception: Throwable) extends RuntimeException {
+
+  override def getCause: Throwable = exception
+
+  override def getMessage: String = exception.getMessage
+
+}
+class AgentException(exception: Throwable) extends RuntimeException {
+
+  override def getCause: Throwable = exception
+
+  override def getMessage: String = exception.getMessage
+
+}
+
 case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
 
 case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")

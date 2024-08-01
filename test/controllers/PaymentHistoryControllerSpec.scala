@@ -19,6 +19,7 @@ package controllers
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
+import exceptions.AgentException
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -179,10 +180,8 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-        result.failed.futureValue shouldBe an[InternalServerException]
-
+        result.failed.futureValue shouldBe an[AgentException]
       }
-
     }
 
     "Failing to retrieve income sources" should {
@@ -190,7 +189,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue shouldBe an[AgentException]
       }
     }
 
