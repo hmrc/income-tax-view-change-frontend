@@ -140,7 +140,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                    incomeSourceType: IncomeSourceType,
                                    incomeSourceIdMaybe: Option[IncomeSourceId],
                                    redirectAction: Call)(
-                                    implicit headerCarrier: HeaderCarrier) = {
+                                    implicit headerCarrier: HeaderCarrier): Future[Result] = {
     (incomeSourceType, incomeSourceIdMaybe) match {
       case (SelfEmployment, Some(incomeSourceId)) =>
         val result = Redirect(redirectAction)
@@ -149,12 +149,12 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
             CeaseIncomeSourceData.dateCeasedField -> validatedInput.date.toString,
             CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
           ), JourneyType(Cease, incomeSourceType)
-        ).flatMap {
+        )(headerCarrier, ec).flatMap {
           case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
-            s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+            s"Failed to set end date value in session storage. incomeSourceType: " +
+              s"$incomeSourceType, incomeSourceType: $incomeSourceType"))
         }
-
       case _ =>
         val propertyEndDate = validatedInput.date.toString
         val result = Redirect(redirectAction)
