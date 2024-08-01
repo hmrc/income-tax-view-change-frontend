@@ -106,12 +106,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   }
 
   def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations(matches(true))(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
   def mockNoObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations(matches(true))(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 

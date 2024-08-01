@@ -42,7 +42,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   }
 
   def setupMockNextUpdatesResult()(response: NextUpdatesResponseModel): Unit = {
-    when(mockNextUpdatesService.getNextUpdates(any())(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations(any())(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
@@ -72,7 +72,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   }
 
   def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: NextUpdatesResponseModel): Unit = {
-    when(mockNextUpdatesService.getNextUpdates(matches(fromDate), matches(toDate))(any(), any()))
+    when(mockNextUpdatesService.getOpenObligations(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 

@@ -36,21 +36,17 @@ class ObligationsConnector @Inject()(val http: HttpClient,
                                      val appConfig: FrontendAppConfig
                                     )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getReportDeadlinesUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
+  def getOpenObligationsUrl(nino: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/open-obligations"
   }
 
-  def getFulfilledObligationsUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
+  def getAllObligationsDateRangeUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
-  def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
-  }
+  def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-  def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
-
-    val url = getReportDeadlinesUrl(mtdUser.nino)
+    val url = getOpenObligationsUrl(mtdUser.nino)
     Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -90,50 +86,10 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def getFulfilledObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
-
-    val url = getFulfilledObligationsUrl(mtdUser.nino)
-    Logger("application").debug(s"GET $url")
-
-    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ObligationsModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
-            },
-            valid => {
-              valid.obligations.foreach { data =>
-                auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
-              }
-              valid
-            }
-          )
-        case NOT_FOUND | FORBIDDEN =>
-          Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-          ObligationsModel(Seq.empty)
-        case status =>
-          if (status >= 500) {
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
-          }
-          NextUpdatesErrorModel(response.status, response.body)
-      }
-    } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
-        NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
-    }
-
-  }
-
-  def getAllObligations(fromDate: LocalDate, toDate: LocalDate)
+  def getAllObligationsDateRange(fromDate: LocalDate, toDate: LocalDate)
                        (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getAllObligationsUrl(fromDate, toDate, mtdUser.nino)
+    val url = getAllObligationsDateRangeUrl(fromDate, toDate, mtdUser.nino)
     Logger("application").debug(s"GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>

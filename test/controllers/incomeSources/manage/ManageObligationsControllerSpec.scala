@@ -138,7 +138,7 @@ class ManageObligationsControllerSpec extends TestSupport
       2023,
       showPrevTaxYears = true
     )))
-    when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+    when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
       thenReturn(Future(testObligationsModel))
   }
 
@@ -165,7 +165,7 @@ class ManageObligationsControllerSpec extends TestSupport
       2023,
       showPrevTaxYears = true
     )))
-    when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+    when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
       thenReturn(Future(testObligationsModel))
   }
 
@@ -332,7 +332,7 @@ class ManageObligationsControllerSpec extends TestSupport
           2023,
           showPrevTaxYears = true
         )))
-        when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+        when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 

@@ -39,7 +39,7 @@ object NextUpdatesService {
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
-    getNextUpdates().map {
+    getOpenObligations().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         Right(deadlines.obligations.flatMap(_.obligations.map(_.due)))
       case ObligationsModel(obligations) if obligations.isEmpty => Right(Seq.empty)
@@ -50,7 +50,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   }
 
   def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
-    getNextUpdates().map {
+    getOpenObligations().map {
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
@@ -68,15 +68,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     }
   }
 
-  def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
-    if (previous) {
-      Logger("application").debug(s"Requesting previous Next Updates for nino: ${mtdUser.nino}")
-      obligationsConnector.getFulfilledObligations()
-    } else {
-      Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
-      obligationsConnector.getNextUpdates()
-    }
-  }
+
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
     obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
@@ -88,20 +80,23 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     }.filter(deadline => deadline.obligationType != EopsObligation)
   }
 
-  def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+  def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+    Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
+    obligationsConnector.getOpenObligations()
+  }
 
-    obligationsConnector.getAllObligations(fromDate, toDate).map {
+  def getAllObligationsWithinDateRange(fromDate: LocalDate, toDate: LocalDate)(
+    implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+    obligationsConnector.getAllObligationsDateRange(fromDate, toDate).map {
       case obligationsResponse: ObligationsModel =>
         ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
       case error: NextUpdatesErrorModel => error
-      case _ => NextUpdatesErrorModel(500, "Invalid response from connector")
     }
-
   }
 
   def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
-    getNextUpdates(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
+    getAllObligationsWithinDateRange(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
         QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
       case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
@@ -111,7 +106,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
-    getNextUpdates() map {
+    getOpenObligations() map {
       case NextUpdatesErrorModel(code, message) =>
         Logger("application").error(
           s"Error: $message, code $code")

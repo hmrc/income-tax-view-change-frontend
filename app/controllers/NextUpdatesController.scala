@@ -65,7 +65,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                     (implicit user: MtdItUser[_]): Future[Result] =
     hasAnyIncomeSource {
       for {
-        nextUpdates <- nextUpdatesService.getNextUpdates().map {
+        nextUpdates <- nextUpdatesService.getOpenObligations().map {
           case obligations: ObligationsModel => obligations
           case _ => ObligationsModel(Nil)
         }

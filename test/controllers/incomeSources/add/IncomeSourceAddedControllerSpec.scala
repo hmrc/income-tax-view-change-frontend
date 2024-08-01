@@ -173,7 +173,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
                 Future(IncomeSourcesObligationsTestConstants.viewModel))
 
-              when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+              when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
                 thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
               mockMongo(incomeSourceType)
@@ -237,7 +237,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockISDS(incomeSourceType)
               mockMongo(incomeSourceType)
-              when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+              when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
                 thenReturn(Future(testObligationsModel))
 
               val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
@@ -262,7 +262,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                 )), List.empty)
                 setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
                 setupMockGetIncomeSourceDetails()(sources)
-                when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+                when(mockNextUpdatesService.getOpenObligations(any())(any(), any())).
                   thenReturn(Future(testObligationsModel))
                 mockProperty()
                 mockMongo(incomeSourceType)

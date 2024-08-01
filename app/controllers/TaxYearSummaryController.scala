@@ -192,7 +192,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   private def withObligationsModel(taxYear: Int, isAgent: Boolean)(f: ObligationsModel => Future[Result])
                                   (implicit user: MtdItUser[_]): Future[Result] = {
-    nextUpdatesService.getNextUpdates(
+    nextUpdatesService.getOpenObligations(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     ) flatMap {
