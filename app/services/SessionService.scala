@@ -16,6 +16,7 @@
 
 package services
 
+import cats.data.EitherT
 import config.FrontendAppConfig
 import enums.JourneyType._
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
@@ -114,6 +115,32 @@ class SessionService @Inject()(
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
     )
+  }
+
+  def setMongoKey(kv: Map[String, String], journeyType: JourneyType)
+                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+    kv.map{ kv_ =>
+      journeyType.operation match {
+              case Add => (kv_._2, AddIncomeSourceData.getJSONKeyPath(kv_._1))
+              case Manage => (kv_._2, ManageIncomeSourceData.getJSONKeyPath(kv_._1) )
+              case Cease => (kv_._2, CeaseIncomeSourceData.getJSONKeyPath(kv_._1) )
+            }
+    }.toList
+        // we will return only final success in the result or first failure
+      .foldLeft( Future.successful[Either[Throwable, Boolean]]( Right(false) )) { (acc, kv) =>
+          acc.flatMap {
+            case Right(_) =>
+              uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(
+                result => result.wasAcknowledged() match {
+                  case true => Right(true)
+                  case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+                }
+              )
+            case Left(ex) =>
+              Future.successful(Left(ex))
+          }
+      }
   }
 
   def deleteMongoData(journeyType: JourneyType)

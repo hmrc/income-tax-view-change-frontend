@@ -73,15 +73,15 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
-            Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+  Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = isChange
-      )
+    handleRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      isChange = isChange
+    )
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
@@ -125,15 +125,15 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
     }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
-              Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-              val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+  Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleSubmitRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        isChange = isChange
-      )
+    handleSubmitRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      isChange = isChange
+    )
   }
 
   private def handleValidatedInput(validatedInput: DateFormElement,
@@ -145,21 +145,15 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       case (SelfEmployment, Some(incomeSourceId)) =>
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(
-          CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
+          Map[String, String](
+            CeaseIncomeSourceData.dateCeasedField -> validatedInput.date.toString,
+            CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
+          ), JourneyType(Cease, incomeSourceType)
         ).flatMap {
-          case Right(_) =>
-            sessionService.setMongoKey(
-              CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
-            ).flatMap {
-              case Right(_) => Future.successful(result)
-              case Left(_) => Future.failed(new Error(
-                s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
-            }
-
+          case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
             s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
         }
-
       case _ =>
         val propertyEndDate = validatedInput.date.toString
         val result = Redirect(redirectAction)
