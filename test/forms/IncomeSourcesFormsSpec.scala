@@ -57,6 +57,8 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
+    override protected def now(): LocalDate = currentDate
   }
 
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)

@@ -19,7 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.creditsandrefunds.CreditAndRefundViewModel
+import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -27,7 +27,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundViewModel
+import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditAndRefunds
 
@@ -58,20 +58,22 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val linkAgentPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
 
   class TestSetup(
-              creditAndRefundViewModel: CreditAndRefundViewModel,
-              isAgent: Boolean = false,
-              backUrl: String = "testString",
-              isMFACreditsAndDebitsEnabled: Boolean = false,
-              isCutOverCreditsEnabled: Boolean = false,
-              welshLang: Boolean  = false) {
+                   creditAndRefundModel: CreditsModel,
+                   isAgent: Boolean = false,
+                   backUrl: String = "testString",
+                   isMFACreditsAndDebitsEnabled: Boolean = false,
+                   isCutOverCreditsEnabled: Boolean = false,
+                   welshLang: Boolean  = false) {
 
     val testMessages: Messages = if(welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
 
+    val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel)
+
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
-        creditAndRefundViewModel,
+        viewModel,
         isAgent = isAgent,
         backUrl,
         isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled,
@@ -86,7 +88,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display bulleted list" when {
 
       "there are multiple credits or payments" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(2800.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), -1400.0)
           .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
@@ -96,20 +98,20 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       }
 
       "there are multiple refund requests" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
-          .withFirstRefundRequest(700.0)
-          .withSecondRefundRequest(700.0)
+          .withFirstRefund(700.0)
+          .withSecondRefund(700.0)
           .get(),
         isCutOverCreditsEnabled = true) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
 
       "there is a single credit and single refund request" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
-          .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
-          .withFirstRefundRequest(700.0)
+          .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
+          .withFirstRefund(700.0)
           .get(),
         isCutOverCreditsEnabled = true) {
         document.select("ul#credits-list").isDefined shouldBe true
@@ -119,27 +121,27 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "not display bulleted list" when {
 
       "there is a single credit" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(2800.0)
-          .withMfaCredit(LocalDate.of(2019, 5, 15), -1400.0)
+          .withMfaCredit(LocalDate.of(2019, 5, 15), 1400.0)
           .get(),
         isCutOverCreditsEnabled = true) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
       "there is a single payment" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
-          .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
+          .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
           .get(),
         isCutOverCreditsEnabled = true) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
       "there is a single refund request" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
-          .withFirstRefundRequest(700.0)
+          .withFirstRefund(700.0)
           .get(),
         isCutOverCreditsEnabled = true) {
         document.select("ul#credits-list").isEmpty shouldBe true
@@ -150,13 +152,14 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "there is a refund for full amount" in
         new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
-            .withFirstRefundRequest(6.0)
-            .withPayment(LocalDate.of(2019, 5, 15), -6.0)
+          creditAndRefundModel = ANewCreditAndRefundModel()
+            .withFirstRefund(6.0)
+            .withPayment(LocalDate.of(2019, 5, 15), 6.0)
             .withAvailableCredit(0.0)
             .get(),
           isCutOverCreditsEnabled = true
         ) {
+
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.selectFirst("p").text shouldBe "£0.00 available to claim"
@@ -167,7 +170,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "there is no available credit or refunds" in
         new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel().get(),
+          creditAndRefundModel = ANewCreditAndRefundModel().get(),
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -175,7 +178,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "there is available credit but no allocated credit" in new TestSetup(
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(500.0)
           .get()) {
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -191,7 +194,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "there is allocated credit" which {
 
         "is more than available credit" in new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+          creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(500.0)
             .withAllocatedCredit(600.0)
             .get()
@@ -207,7 +210,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
         "is less than available credit" in new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+          creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(500.0)
             .withAllocatedCredit(100.0)
             .get()) {
@@ -222,7 +225,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
         "is equal to available credit" in new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+          creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(500.0)
             .withAllocatedCredit(500.0)
             .get()
@@ -240,10 +243,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "there are multiple MFA credits sorted by tax year" in
         new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
-            .withFirstRefundRequest(4.50)
-            .withMfaCredit(dueDate = LocalDate.of(2018, 1, 1), -1400.0)
-            .withMfaCredit(dueDate = LocalDate.of(2018, 2, 1), -1000.0)
+          creditAndRefundModel = ANewCreditAndRefundModel()
+            .withFirstRefund(4.50)
+            .withMfaCredit(dueDate = LocalDate.of(2018, 1, 1), 1400.0)
+            .withMfaCredit(dueDate = LocalDate.of(2018, 2, 1), 1000.0)
             .withAvailableCredit(0.0)
             .get(),
           isMFACreditsAndDebitsEnabled = true
@@ -252,17 +255,17 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-            "£1,000.00 credit from HMRC adjustment - 2017 to 2018 tax year"
-          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
             "£1,400.00 credit from HMRC adjustment - 2017 to 2018 tax year"
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            "£1,000.00 credit from HMRC adjustment - 2017 to 2018 tax year"
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
         }
 
       "there are multiple refunds claimed for full amount" in new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
-            .withFirstRefundRequest(4.50)
-            .withPayment(dueDate = LocalDate.of(2019, 5, 15), -1400.0)
-            .withPayment(dueDate = LocalDate.of(2019, 5, 15), -1000.0)
+          creditAndRefundModel = ANewCreditAndRefundModel()
+            .withFirstRefund(4.50)
+            .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1400.0)
+            .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1000.0)
             .withAvailableCredit(0.0)
             .get(),
           isCutOverCreditsEnabled = true
@@ -272,9 +275,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.selectFirst("p").text shouldBe "£0.00 available to claim"
           layoutContent.select("p").get(1).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,000.00 $paymentText 15 May 2019"
-          layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
             s"£1,400.00 $paymentText 15 May 2019"
+          layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
+            s"£1,000.00 $paymentText 15 May 2019"
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
         }
     }
@@ -283,15 +286,15 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "language is English" in
         new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+          creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(1200.0)
             .withAllocatedCredit(10.0)
-            .withFirstRefundRequest(20.0)
-            .withSecondRefundRequest(40.0)
-            .withCutoverCredit(LocalDate.of(2023, 1, 1), -100.0)
-            .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), -200.0)
-            .withRepaymentInterest(LocalDate.of(2020, 1, 1), -400.0)
-            .withMfaCredit(LocalDate.of(2019, 1, 1), -500.0)
+            .withFirstRefund(20.0)
+            .withSecondRefund(40.0)
+            .withCutoverCredit(LocalDate.of(2023, 1, 1), 100.0)
+            .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
+            .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
+            .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
             .get(),
           isMFACreditsAndDebitsEnabled = true,
           isCutOverCreditsEnabled = true,
@@ -312,12 +315,12 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "language is Welsh" in
         new TestSetup(
-          creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+          creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(1200.0)
-            .withCutoverCredit(LocalDate.of(2023, 1, 1), -100.0)
-            .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), -200.0)
-            .withRepaymentInterest(LocalDate.of(2020, 1, 1), -400.0)
-            .withMfaCredit(LocalDate.of(2019, 1, 1), -500.0)
+            .withCutoverCredit(LocalDate.of(2023, 1, 1), 100.0)
+            .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
+            .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
+            .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
             .get(),
           isMFACreditsAndDebitsEnabled = true,
           isCutOverCreditsEnabled = true,
@@ -342,7 +345,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "correct data is provided" in new TestSetup(
         isAgent = true,
         isCutOverCreditsEnabled = true,
-        creditAndRefundViewModel = ANewCreditAndRefundViewModel()
+        creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(500.0)
           .get()
       ) {

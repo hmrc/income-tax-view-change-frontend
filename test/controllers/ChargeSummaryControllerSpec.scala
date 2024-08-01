@@ -83,20 +83,15 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     }
 
     val controller = new ChargeSummaryController(
-      MockAuthenticationPredicate,
       testAuthenticator,
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockIncomeSourceDetailsPredicate,
       financialDetailsService,
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[views.html.ChargeSummary],
-      app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
       mockChargeHistoryService,
       mockAuthService,
-      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
-      app.injector.instanceOf[FeatureSwitchPredicate]
+      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[DateService],

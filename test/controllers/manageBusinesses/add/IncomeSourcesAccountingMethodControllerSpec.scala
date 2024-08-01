@@ -78,6 +78,10 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
       s"${messages("htmlTitle", getHeading(incomeSourceType))}"
   }
 
+  def getValidationErrorTabTitle(incomeSourceType: IncomeSourceType): String = {
+    s"${messages("htmlTitle.invalidInput", getHeading(incomeSourceType))}"
+  }
+
   def getRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
     if (isAgent) fakeRequestConfirmedClient()
     else fakeRequestWithActiveSession
@@ -296,7 +300,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.BAD_REQUEST
-        document.title shouldBe getTitle(incomeSourceType, isAgent)
+        document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
         result.futureValue.session.get(AddIncomeSourceData.incomeSourcesAccountingMethodField) shouldBe None
       }
     }

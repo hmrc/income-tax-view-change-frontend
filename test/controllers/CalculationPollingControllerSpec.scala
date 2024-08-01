@@ -26,21 +26,21 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testUtils.TestSupport
+import uk.gov.hmrc.play.language.LanguageUtils
 
 class CalculationPollingControllerSpec extends TestSupport with MockCalculationPollingService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestCalculationPollingController extends CalculationPollingController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[NinoPredicate],
     mockCalculationPollingService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    testAuthenticator
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
-    ec)
+    ec,
+    app.injector.instanceOf[LanguageUtils])
 
   "The CalculationPollingController.calculationPoller(year) action" when {
     "Called with an Unauthenticated User" should {

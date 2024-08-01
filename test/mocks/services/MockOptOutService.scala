@@ -37,18 +37,14 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     reset(mockOptOutService)
   }
 
-  def mockGetNextUpdatesQuarterlyReportingContentChecks(out: Future[NextUpdatesQuarterlyReportingContentChecks]): Unit = {
-    when(mockOptOutService.getNextUpdatesQuarterlyReportingContentChecks(any(), any(), any()))
+  def mockGetNextUpdatesPageOptOutViewModels(out: Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])]): Unit = {
+    when(mockOptOutService.nextUpdatesPageOptOutViewModels()(any(), any(), any()))
       .thenReturn(out)
   }
 
-  def mockNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any()))
+  def mockRecallNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
+    when(mockOptOutService.recallNextUpdatesPageOptOutViewModel()(any(), any(), any()))
       .thenReturn(out)
-  }
-
-  def mockNextUpdatesPageMultiYearOptOutViewModel(out: Future[Option[OptOutMultiYearViewModel]]): Unit = {
-    when(mockOptOutService.nextUpdatesPageOptOutViewModel()(any(), any(), any())).thenReturn(out)
   }
 
   def mockGetSubmissionCountForTaxYear(out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
@@ -71,14 +67,14 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockSaveIntent(in: TaxYear, out: Future[Boolean]): Unit = {
-    when(mockOptOutService.saveIntent(any[TaxYear])(any())).thenReturn(out)
+    when(mockOptOutService.saveIntent(any[TaxYear])(any(), any())).thenReturn(out)
   }
 
   def mockFetchIntent(out: Future[Option[TaxYear]]): Unit = {
     when(mockOptOutService.fetchSavedIntent()(any(), any())).thenReturn(out)
   }
 
-  def mockFetchOptOutProposition(out: Future[OptOutProposition]): Unit = {
-    when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(out)
+  def mockRecallOptOutProposition(out: Future[OptOutProposition]): Unit = {
+    when(mockOptOutService.recallOptOutProposition()(any(), any())).thenReturn(out)
   }
 }

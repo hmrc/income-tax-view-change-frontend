@@ -20,6 +20,7 @@ import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.views.agent.MockConfirmClient
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -29,12 +30,14 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 
 class RemoveClientDetailsSessionsControllerSpec extends TestSupport
   with MockConfirmClient
+  with MockAuthenticationPredicate
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
   with MockItvcErrorHandler {
 
   object TestRemoveClientDetailsSessionsController extends RemoveClientDetailsSessionsController(
-    mockAuthService
+    mockAuthService,
+    testAuthenticator
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,

@@ -152,7 +152,7 @@
 @paymentsTableHead(headId: String) = {
     <thead class="govuk-table__head" id="@headId">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header" id="paymentTypeHeading">@messages("tax-year-summary.payments.payment-type")</th>
+            <th scope="col" class="govuk-table__header" id="paymentTypeHeading">@messages("tax-year-summary.payments.charge-type")</th>
             <th scope="col" class="govuk-table__header" id="paymentDueDateHeading">@messages("tax-year-summary.payments.due-date")</th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric" id="paymentAmountHeading">@messages("tax-year-summary.payments.amount")</th>
         </tr>
@@ -191,7 +191,7 @@
 }
 
 @paymentsContent = {
-    @h2(msg = messages("tax-year-summary.payments"), classes = "govuk-heading-l")
+    @h2(msg = messages("tax-year-summary.charges"), classes = "govuk-heading-l")
     @if(viewModel.charges.isEmpty){
         @p()(content = Html(messages("tax-year-summary.payments.no-payments")))
     } else {

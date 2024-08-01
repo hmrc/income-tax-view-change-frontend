@@ -22,7 +22,6 @@ import auth.{FrontendAuthorisedFunctions, MtdItUserWithNino}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.admin.ForecastCalculation
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -33,6 +32,7 @@ import services.admin.FeatureSwitchService
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.ForecastTaxCalcSummary
 
 import javax.inject.{Inject, Singleton}
@@ -40,24 +40,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView: ForecastTaxCalcSummary,
-                                                 val checkSessionTimeout: SessionTimeoutPredicate,
-                                                 val authenticate: AuthenticationPredicate,
-                                                 val retrieveNino: NinoPredicate,
                                                  val auditingService: AuditingService,
                                                  val calculationService: CalculationService,
-                                                 val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                 val featureSwitchService: FeatureSwitchService)
+                                                 val featureSwitchService: FeatureSwitchService,
+                                                 val auth: AuthenticatorPredicate)
                                                 (implicit val ec: ExecutionContext,
                                                  val languageUtils: LanguageUtils,
                                                  val appConfig: FrontendAppConfig,
                                                  mcc: MessagesControllerComponents,
                                                  implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
-
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
@@ -90,15 +85,14 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     }
   }
 
-  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
+  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedActionWithNino {
     implicit user =>
       handleRequest(taxYear, isAgent = false, origin)
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly)
+  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedActionWithNinoAgent {
+    implicit response =>
+        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(response.agent, response.request), response.hc, implicitly)
   }
 
   def backUrl(isAgent: Boolean, taxYear: Int, origin: Option[String]): String =

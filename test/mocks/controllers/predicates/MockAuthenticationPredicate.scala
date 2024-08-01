@@ -19,7 +19,7 @@ package mocks.controllers.predicates
 import audit.mocks.MockAuditingService
 import auth.FrontEndHeaderExtractor
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth._
 import mocks.services.admin.MockFeatureSwitchService
@@ -39,7 +39,8 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     retrieveBtaNavBar = MockNavBarPredicate,
     featureSwitchPredicate = FeatureSwitchPredicate,
     retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    incomeSourceDetailsService = mockIncomeSourceDetailsService)(
+    incomeSourceDetailsService = mockIncomeSourceDetailsService,
+    retrieveNino = app.injector.instanceOf[NinoPredicate])(
     app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(

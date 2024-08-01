@@ -16,10 +16,8 @@
 
 package services
 
-import auth.MtdItUser
 import com.google.inject.ImplementedBy
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import config.{FrontendAppConfig, TimeMachine}
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
@@ -27,17 +25,19 @@ import java.time.Month.{APRIL, JANUARY}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with TimeMachine {
   val appConfig: FrontendAppConfig = frontendAppConfig
 
-  def getCurrentDate: LocalDate = {
-//    if (isEnabled(TimeMachineAddYear)) {
-//      frontendAppConfig.timeMachineAddYears.map(years =>
-//        LocalDate.now().plusYears(years)
-//      ).getOrElse(LocalDate.now())
-//    } else {
-      LocalDate.now()
-//    }
+  override protected def now(): LocalDate = LocalDate.now()
+
+  override def getCurrentDate: LocalDate = {
+    if (getTimeMachineConfig.isTimeMachineEnabled) {
+      now()
+        .plusYears(getTimeMachineConfig.addYears)
+        .plusDays(getTimeMachineConfig.addDays)
+    } else {
+      now()
+    }
   }
 
   def getCurrentTaxYearEnd: Int = {
@@ -89,10 +89,14 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     val yearEnd = getCurrentTaxYearEnd
     TaxYear.forYearEnd(yearEnd)
   }
+
 }
 
 @ImplementedBy(classOf[DateService])
 trait DateServiceInterface {
+
+  protected def now(): LocalDate
+
   def getCurrentDate: LocalDate
 
   def getCurrentTaxYear: TaxYear

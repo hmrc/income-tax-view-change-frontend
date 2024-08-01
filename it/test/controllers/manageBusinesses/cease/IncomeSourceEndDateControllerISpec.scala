@@ -36,6 +36,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val isAgent: Boolean = false
 
+  val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+
   val dateBusinessShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(testSelfEmploymentId), SelfEmployment, isAgent, isChange = false).url
   val dateBusinessSubmitUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment , isAgent, isChange = false).url
   val dateBusinessShowChangeUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(testSelfEmploymentId), SelfEmployment, isAgent, isChange = true).url
@@ -78,10 +80,12 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   s"calling GET $dateBusinessShowUrl" should {
     "render the Date Business Ceased Page" when {
-      "User is authorised" in {
+      "User is authorised with session data" in {
         Given("I wiremock stub a successful Income Source Details response with a business")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE")))
 
         When(s"I call GET $dateBusinessShowUrl")
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getBusinessEndDate
@@ -92,6 +96,23 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
           elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
           elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+
+    "redirect to the Manage Your Businesses Landing Page" when {
+      "User is authorised without session data" in {
+        Given("I wiremock stub a successful Income Source Details response with a business")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        When(s"I call GET $dateBusinessShowUrl")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getBusinessEndDate
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(manageBusinessesUrl)
         )
       }
     }
@@ -216,10 +237,12 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   s"calling GET $dateUKPropertyShowUrl" should {
     "render the Date UK Property Ceased Page" when {
-      "User is authorised" in {
+      "User is authorised with session data" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
 
         When(s"I call GET $dateUKPropertyShowUrl")
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getUKPropertyEndDate
@@ -230,6 +253,23 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText(UkProperty)),
           elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+
+    "redirect to the Manage Your Businesses Landing Page" when {
+      "User is authorised without session data" in {
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $dateUKPropertyShowUrl")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getUKPropertyEndDate
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(manageBusinessesUrl)
         )
       }
     }
@@ -346,10 +386,12 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   s"calling GET $dateForeignPropertyShowUrl" should {
     "render the Date Foreign Property Ceased Page" when {
-      "User is authorised" in {
+      "User is authorised with session data" in {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
 
         When(s"I call GET $dateForeignPropertyShowUrl")
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyEndDate
@@ -360,6 +402,23 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
           elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+
+    "redirect to the Manage Your Businesses Landing Page" when {
+      "User is authorised without session data" in {
+        Given("I wiremock stub a successful Income Source Details response with Foreign property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        When(s"I call GET $dateForeignPropertyShowUrl")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getForeignPropertyEndDate
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(manageBusinessesUrl)
         )
       }
     }

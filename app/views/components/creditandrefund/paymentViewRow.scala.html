@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers.agent.claimToAdjustPoa
+@import views.html.components._
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import java.time.LocalDate
 
-class PaymentsOnAccountAdjustedControllerISpec extends controllers.claimToAdjustPoa.PaymentsOnAccountAdjustedControllerISpec {
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-  override val isAgent = true
+@(amount: BigDecimal, date: LocalDate)(implicit messages: Messages)
 
-}
+@import implicitDateFormatter.longDate
+
+<p class="govuk-heading-s">
+ @amount.toCurrencyString
+ <span class="govuk-body">@messages("credit-and-refund.payment")
+     @date.toLongDate
+ </span>
+</p>

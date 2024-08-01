@@ -18,7 +18,7 @@ package controllers.agent.predicates
 
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
@@ -64,7 +64,7 @@ trait ClientConfirmedController extends BaseAgentController {
   }
 
   def getMtdItUserWithNino()(
-    implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): MtdItUserWithNino[AnyContent] = {
+    implicit user: IncomeTaxAgentUser, request: Request[AnyContent]): MtdItUserWithNino[AnyContent] = {
     MtdItUserWithNino(
       mtditid = getClientMtditid, nino = getClientNino, userName = getClientName,
       saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber

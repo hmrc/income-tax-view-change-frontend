@@ -498,18 +498,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val result = TestNextUpdatesService.getObligationDates("123")
       result.futureValue shouldBe expectedResult
     }
-    "return the correct set of dates given a NextUpdateModel" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-
-      val day: LocalDate = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C", StatusFulfilled)
-      when(mockObligationsConnector.getNextUpdates()(any(), any())).
-        thenReturn(Future(nextModel))
-
-      val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
-    }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
       enable(IncomeSources)

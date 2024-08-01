@@ -65,21 +65,16 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   object TestTaxYearSummaryController extends TaxYearSummaryController(
     taxYearSummaryView = taxYearSummaryView,
-    authenticate = MockAuthenticationPredicate,
     calculationService = mockCalculationService,
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     financialDetailsService = mockFinancialDetailsService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    retrieveNinoWithIncomeSourcesNoCache = MockIncomeSourceDetailsPredicateNoCache,
     nextUpdatesService = mockNextUpdatesService,
     messagesApi = messagesApi,
     languageUtils = languageUtils,
     authorisedFunctions = mockAuthService,
-    retrieveBtaNavBar = app.injector.instanceOf[NavBarPredicate],
     auditingService = mockAuditingService,
     claimToAdjustService = mockClaimToAdjustService,
     auth = testAuthenticator,
-    featureSwitchPredicate = FeatureSwitchPredicate
   )(appConfig,
     app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],

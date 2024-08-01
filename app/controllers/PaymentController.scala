@@ -18,37 +18,34 @@ package controllers
 
 import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth.FrontendAuthorisedFunctions
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.PayApiConnector
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import utils.AuthenticatorPredicate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                  val authenticate: AuthenticationPredicate,
-                                  payApiConnector: PayApiConnector,
+class PaymentController @Inject()(payApiConnector: PayApiConnector,
                                   val auditingService: AuditingService,
-                                  val authorisedFunctions: FrontendAuthorisedFunctions
+                                  val authorisedFunctions: FrontendAuthorisedFunctions,
+                                  val auth: AuthenticatorPredicate
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
                                    val itvcErrorHandler: AgentItvcErrorHandler) extends ClientConfirmedController {
 
-  val action: ActionBuilder[MtdItUserOptionNino, AnyContent] = checkSessionTimeout andThen authenticate
-
   def handleHandoff(mtditid: String, nino: Option[String], saUtr: Option[String], credId: Option[String],
                     userType: Option[AffinityGroup], paymentAmountInPence: Long, isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit request: Request[_], ec: ExecutionContext): Future[Result] = {
+                   (implicit request: Request[_]): Future[Result] = {
     auditingService.extendedAudit(
       InitiatePayNowAuditModel(mtditid, nino, saUtr, credId, userType)
     )
@@ -65,14 +62,13 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
     }
   }
 
-  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = action.async {
+  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedActionOptionNino {
     implicit user =>
       handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, amountInPence, isAgent = false, origin = origin)
   }
 
-  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
-    implicit request =>
-      implicit user =>
-        handleHandoff(getClientMtditid, Some(getClientNino), getClientUtr, user.credId, Some(Agent), paymentAmountInPence, isAgent = true)
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => auth.authenticatedActionWithNinoAgent {
+    implicit response =>
+        handleHandoff(getClientMtditid(response.request), Some(getClientNino(response.request)), getClientUtr(response.request), response.agent.credId, Some(Agent), paymentAmountInPence, isAgent = true)(response.request)
   }
 }

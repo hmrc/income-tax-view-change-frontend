@@ -33,13 +33,13 @@ trait FeatureSwitching {
   }
 
   def isEnabled(featureSwitch: FeatureSwitchName)
-                 (implicit user: MtdItUser[_]): Boolean = {
-      isEnabled(featureSwitch, user.featureSwitches)
+               (implicit user: MtdItUser[_]): Boolean = {
+    isEnabled(featureSwitch, user.featureSwitches)
   }
 
   def isEnabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
-     fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+      fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     } else {
       isEnabledFromConfig(featureSwitch)
     }
@@ -58,6 +58,7 @@ trait FeatureSwitching {
       disable(featureSwitchName)
     }
   }
+
   protected implicit class FeatureOps(feature: FeatureSwitchName)(implicit user: MtdItUser[_]) {
     def fold[T](ifEnabled: => T, ifDisabled: => T): T = {
       if (isEnabled(feature)) ifEnabled
@@ -70,4 +71,5 @@ trait FeatureSwitching {
       FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
+
 }

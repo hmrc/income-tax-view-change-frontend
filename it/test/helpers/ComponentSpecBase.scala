@@ -73,6 +73,8 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
+  override protected def now(): LocalDate = LocalDate.of(2023, 4, 5)
+
   override def isBeforeLastDayOfTaxYear: Boolean = true
 
   override def getCurrentTaxYearEnd: Int = 2023
@@ -162,7 +164,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,
     "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false"
+    "feature-switches.read-from-mongo" -> "false",
+    "feature-switch.enable-time-machine" -> "false",
+    "time-machine.add-years" -> "0",
+    "time-machine.add-days" -> "0"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -247,7 +252,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
+    def getCreditAndRefunds(isAgent: Boolean = false, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      if (isAgent) {
+        getWithHeaders("/agents/claim-refund",
+          HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
+          "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> testSessionId)
+      } else {
+        get("/claim-refund")
+      }
+    }
 
     def getTaxYears: WSResponse = get("/tax-years")
 
@@ -597,7 +611,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
+
+    def getCreditAndRefunds(isAgent: Boolean = false, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      isAgent match {
+        case true => buildClient("/agent/claim-refund")
+          .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
+          .get().futureValue
+        case false => get("/claim-refund")
+      }
+    }
 
     def getTaxYears: WSResponse = get("/tax-years")
 
@@ -721,7 +743,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyAddedObligations: WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/foreign-property-added"
+        uri = s"/manage-your-businesses/add-foreign-property/foreign-property-added"
       )
     }
 
@@ -745,7 +767,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/foreign-property-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-foreign-property/foreign-property-added", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
@@ -851,12 +873,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessObligations: WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/business-added"
+        uri = s"/manage-your-businesses/add-sole-trader/business-added"
       )
     }
 
     def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/business-added", additionalCookies)(Map.empty)
     }
 
     def getCheckCeaseUKPropertyAnswers: WSResponse =
@@ -947,19 +969,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddChangeBusinessAddress: WSResponse =
       get("/manage-your-businesses/add-sole-trader/change-business-address-lookup")
 
-    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-business-reporting-method-not-saved", session)
+    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-sole-trader/error-business-reporting-method-not-saved", session)
 
-    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-uk-property-reporting-method-not-saved", session)
+    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-uk-property/error-uk-property-reporting-method-not-saved", session)
 
-    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-foreign-property-reporting-method-not-saved", session)
+    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add-foreign-property/error-foreign-property-reporting-method-not-saved", session)
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/manage-your-businesses/add/new-income-sources")
 
-    def getCeaseSECannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-business-cannot-go-back")
+    def getCeaseSECannotGoBack(): WSResponse = get("/manage-your-businesses/cease-sole-trader/cease-business-cannot-go-back")
 
-    def getCeaseUKCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-uk-property-cannot-go-back")
+    def getCeaseUKCannotGoBack(): WSResponse = get("/manage-your-businesses/cease-uk-property/cease-uk-property-cannot-go-back")
 
-    def getCeaseFPCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-foreign-property-cannot-go-back")
+    def getCeaseFPCannotGoBack(): WSResponse = get("/manage-your-businesses/cease-foreign-property/cease-foreign-property-cannot-go-back")
 
     def getManageSECannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-business-cannot-go-back")
 

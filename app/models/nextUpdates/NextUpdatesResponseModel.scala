@@ -114,7 +114,7 @@ case class NextUpdateModel(start: LocalDate,
                            obligationType: String,
                            dateReceived: Option[LocalDate],
                            periodKey: String,
-                           status: ObligationStatus) extends NextUpdatesResponseModel
+                           status: ObligationStatus)
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
 

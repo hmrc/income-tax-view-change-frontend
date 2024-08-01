@@ -22,18 +22,26 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
+import testUtils.ViewSpec
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
 
+  def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
+    incomeSourceType match {
+      case SelfEmployment => messages(s"incomeSources.add.error.reportingMethodNotSaved.se.$key")
+      case UkProperty => messages(s"incomeSources.add.error.reportingMethodNotSaved.uk.$key")
+      case ForeignProperty =>messages(s"incomeSources.add.error.reportingMethodNotSaved.fp.$key")
+    }
+  }
+
   class TestSetup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
     val id = "testId"
 
-    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp")
-    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk")
+    val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
+    val ukPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
+    val foreignPropertyText: String = messages("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
 
     val action: Call = incomeSourceType match {
       case UkProperty =>

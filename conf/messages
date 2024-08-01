@@ -153,11 +153,8 @@ home.overdue.message.dunningLock.false                          = You have overd
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
-
-## Recruitment Banner ##
-banner.recruitment.text                                         = Help improve this service
-banner.recruitment.link                                         = Join our research panel by answering a few questions.
-banner.recruitment.dismiss                                      = No, thankyou.
+## List UTRs ##
+listUTRs.heading                                               = List UTRs
 
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
@@ -190,6 +187,7 @@ tax-year-summary.tax-calculation.no-calc                           = No calculat
 tax-year-summary.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update.
 tax-year-summary.tax-calculation.unattended-calc                   = We’ve updated the calculation for you. Check your record-keeping software for more details.
 tax-year-summary.payments                                          = Payments
+tax-year-summary.charges                                           = Charges
 tax-year-summary.forecast                                          = Forecast
 tax-year-summary.updates                                           = Updates
 tax-year-summary.income                                            = Income
@@ -197,6 +195,7 @@ tax-year-summary.deductions                                        = Allowances 
 tax-year-summary.taxable-income                                    = Total income on which tax is due
 tax-year-summary.tax-due                                           = Self Assessment tax amount
 tax-year-summary.payments.payment-type                             = Payment type
+tax-year-summary.payments.charge-type                              = Charge type
 tax-year-summary.payments.due-date                                 = Due date
 tax-year-summary.payments.amount                                   = Amount
 tax-year-summary.payments.paymentOnAccount1.text                   = First payment on account
@@ -831,8 +830,8 @@ whatYouOwe.pay-now-aria                                            = Pay now for
 whatYouOwe.pre-mtd-year                                            = {0} to {1}
 whatYouOwe.pre-mtd-digital                                         = (Pre-Making Tax Digital)
 whatYouOwe.tableHead.due-date                                      = Due date
-whatYouOwe.tableHead.payment-type                                  = Payment type
-whatYouOwe.tableHead.tax-year-summary                              = Tax year summary
+whatYouOwe.tableHead.charge-type                                   = Charge type
+whatYouOwe.tableHead.tax-year                                      = Tax year
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = First payment on account
 whatYouOwe.paymentOnAccount2.text							       = Second payment on account
@@ -1228,11 +1227,14 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
 incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
 
-incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ’view and manage income sources’.
-incomeSources.add.error.reportingMethodNotSaved.se                  = sole trader
-incomeSources.add.error.reportingMethodNotSaved.uk                  = UK property
-incomeSources.add.error.reportingMethodNotSaved.fp                  = foreign property
+incomeSources.add.error.reportingMethodNotSaved.p1                               = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
+incomeSources.add.error.reportingMethodNotSaved.p2                               = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ’view and manage income sources’.
+incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                  = sole trader
+incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                  = UK property
+incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                  = foreign property
+incomeSources.add.error.reportingMethodNotSaved.se.caption                       = Sole trader
+incomeSources.add.error.reportingMethodNotSaved.uk.caption                       = UK property
+incomeSources.add.error.reportingMethodNotSaved.fp.caption                       = Foreign property
 
 #######################################################################################################################
 ## Income Sources - Cease ##
@@ -1710,6 +1712,9 @@ incomeSources.add.incomeSourceReportingMethod.taxYear                   =   Tax 
 incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport        =   Choose annual reporting
 incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.incomeSourceReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
+incomeSources.add.incomeSourceReportingMethod.se.caption                =   Sole trader
+incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK property
+incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
 # manage uk property reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}
@@ -1898,7 +1903,7 @@ claimToAdjustPoa.whatYouNeedToKnow.cancel                               =   Canc
 
 claimToAdjustPoa.selectYourReason.title                                 =   Select Your Reason
 claimToAdjustPoa.selectYourReason.h1                                    =   Select your reason
-claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to proceed.
+claimToAdjustPoa.selectYourReason.p1                                    =   You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, you will not be able to continue.
 claimToAdjustPoa.selectYourReason.p2.a                                  =   If you need help paying for your payments on account,
 claimToAdjustPoa.selectYourReason.p2.link                               =   you can contact HMRC instead (opens in new tab)
 claimToAdjustPoa.selectYourReason.p2.b                                  =   .
@@ -1944,11 +1949,10 @@ claimToAdjustPoa.apiFailure.bullet2Link              = homepage
 # Adjust payments on account
 
 claimToAdjustPoa.confirmation.caption                                   =   Adjust payments on account for {0} to {1} tax year
-claimToAdjustPoa.confirmation.heading                                   =   Confirm this situation applies to you
-claimToAdjustPoa.confirmation.h1                                        =   Confirm this situation applies to you
+claimToAdjustPoa.confirmation.heading                                   =   Confirm this is true
 claimToAdjustPoa.confirmation.p1                                        =   I believe that the total of my Income Tax and Class 4 National Insurance contributions, after tax deducted at source (for example under PAYE), for this tax year will be less than the previous year.
 claimToAdjustPoa.confirmation.p2                                        =   I believe I will not have to pay any Income Tax or Class 4 National Insurance contributions, or my Income Tax will be deducted at source (for example under PAYE) this year.
-claimToAdjustPoa.confirmation.continue                                  =   Accept and submit
+claimToAdjustPoa.confirmation.continue                                  =   Accept and save
 claimToAdjustPoa.confirmation.cancel                                    =   Cancel
 
 
@@ -1958,20 +1962,12 @@ paymentOnAccount.p1                                  = You can adjust both payme
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
 paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
-paymentOnAccount.inset-text                          = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments to £1,500 each.
+paymentOnAccount.heading.example                     = Example
+paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
 paymentOnAccount.table-heading-1                     = First payment on account
-paymentOnAccount.table-heading.link                  = More details
-paymentOnAccount.table-heading-full-amount.key       = Full amount
-paymentOnAccount.table-heading-created-amount.key    = Amount created by HMRC
+paymentOnAccount.table-heading-created-amount.key    = Amount based on previous tax bill
 paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
 paymentOnAccount.table-heading-2                     = Second payment on account
-paymentOnAccount.p3                                  = Both payments on account need to be adjusted at the same time. You can’t change one without the other.
-paymentOnAccount.h2                                  = If you’ve already made a payment
-paymentOnAccount.p3-additional-content               = Both payments on account need to be adjusted at the same time. You can’t change one without the other, even after you’ve paid the first payment on account.
-paymentOnAccount.p4                                  = If you’ve already made your first payment, HMRC will reduce it on your account and add the difference as credit.
-paymentOnAccount.heading.example                     = Example
-paymentOnAccount.p5                                  = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
-paymentOnAccount.p6                                  = If you’ve already paid the first payment on account (in this case, £2,000), HMRC will reduce both payments on account to £1,500, and add £500 credit to your account for the first payment.
 paymentOnAccount.button                              = Adjust my payments on account
 paymentOnAccount.cancel.link                         = Cancel
 
@@ -1987,25 +1983,26 @@ claimToAdjustPoa.checkYourAnswers.cancel                     = Cancel
 claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 
 # Enter POA Amount
-claimToAdjustPoa.enterPoaAmount.caption                 = Adjust payments on account for {0} to {1} tax year
-claimToAdjustPoa.enterPoaAmount.heading                 = Enter a new amount
-claimToAdjustPoa.enterPoaAmount.p1                      = Each payment on account should be half the amount of your expected tax bill. Your tax bill is made up of:
-claimToAdjustPoa.enterPoaAmount.bullet1                 = Income Tax
-claimToAdjustPoa.enterPoaAmount.bullet2                 = Class 4 National Insurance contributions (opens in new tab)
-claimToAdjustPoa.enterPoaAmount.initialAmount           = Initial amount
-claimToAdjustPoa.enterPoaAmount.adjustedAmount          = Adjusted amount
-claimToAdjustPoa.enterPoaAmount.firstPayment            = First payment on account
-claimToAdjustPoa.enterPoaAmount.secondPayment           = Second payment on account
-claimToAdjustPoa.enterPoaAmount.warning                 = You may have to pay interest if you reduce your payments on account too much and underpay
-claimToAdjustPoa.enterPoaAmount.howMuch                 = How much should each payment on account be?
-claimToAdjustPoa.enterPoaAmount.howMuchHint             = Enter half the amount you think your final tax bill will be
-claimToAdjustPoa.enterPoaAmount.cancel                  = Cancel
-claimToAdjustPoa.enterPoaAmount.emptyError              = Enter a new amount for each payment on account
-claimToAdjustPoa.enterPoaAmount.sameError               = The amount for each payment on account must be different from the current amount ({0})
-claimToAdjustPoa.enterPoaAmount.higherError             = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
-claimToAdjustPoa.enterPoaAmount.invalidError            = The amount must be a number, like 1000 or 1000.00
-claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt  = If you’ve already made a payment and the adjusted amount is less than what you’ve paid, HMRC will add a credit to your account, based on the difference.
-claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt = If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.caption                       = Adjust payments on account for {0} to {1} tax year
+claimToAdjustPoa.enterPoaAmount.heading                       = Enter a new amount
+claimToAdjustPoa.enterPoaAmount.p1                            = Each payment on account should be half the amount of your expected tax bill, which includes:
+claimToAdjustPoa.enterPoaAmount.bullet1                       = Income Tax
+claimToAdjustPoa.enterPoaAmount.bullet2                       = Class 4 National Insurance contributions (opens in new tab)
+claimToAdjustPoa.enterPoaAmount.amountPreviousHeading         = Amount based on previous tax bill
+claimToAdjustPoa.enterPoaAmount.adjustedAmount                = Adjusted amount
+claimToAdjustPoa.enterPoaAmount.firstPayment                  = First payment on account
+claimToAdjustPoa.enterPoaAmount.secondPayment                 = Second payment on account
+claimToAdjustPoa.enterPoaAmount.howMuch                       = How much should each payment on account be?
+claimToAdjustPoa.enterPoaAmount.howMuchHint                   = Enter half the amount you think your final tax bill will be
+claimToAdjustPoa.enterPoaAmount.cancel                        = Cancel
+claimToAdjustPoa.enterPoaAmount.emptyError                    = Enter a new amount for each payment on account
+claimToAdjustPoa.enterPoaAmount.sameError                     = The amount for each payment on account must be different from the current amount ({0})
+claimToAdjustPoa.enterPoaAmount.higherError                   = The amount for each payment on account must be lower than the amount initially created by HMRC ({0})
+claimToAdjustPoa.enterPoaAmount.invalidError                  = The amount must be a number, like 1000 or 1000.00
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para1  = <b>Both payments on account will be changed.</b> If you’ve already paid your first payment on account, HMRC will pay you back the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.firstAttempt.para2  = <b>For example,</b> if you’ve already paid £2,000 for your first payment on account and need to reduce both payments on account to £1,500, HMRC will add £500 to your account for the first payment.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para1 = <b>Both payments on account will be changed.</b> If you’ve already made a payment, HMRC will add either a credit or an overdue charge to your account, based on the difference.
+claimToAdjustPoa.enterPoaAmount.insetText.secondAttempt.para2 = <b>For example,</b> let’s say you’ve already reduced your payments on account to £2,000 and paid the first payment. If you <b>reduce</b> your payments on account to £1,500, HMRC will add £500 credit. If you <b>increase</b> your payments on account to £2,500, HMRC will add an overdue charge of £500.
 
 # success
 
@@ -2019,6 +2016,9 @@ claimToAdjustPoa.success.afterLinkText                  = to see the changes you
 claimToAdjustPoa.success.check                          = Check
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
+claimToAdjustPoa.success.overdueTitle                   = Overdue charges
+claimToAdjustPoa.success.overdueText1                   = You now have overdue charges that need to be paid. Check
+claimToAdjustPoa.success.overdueText2                   = for more details.
 
 ## You Cannot Go Back!
 claimToAdjustPoa.youCannotGoBack.heading                 = You cannot go back

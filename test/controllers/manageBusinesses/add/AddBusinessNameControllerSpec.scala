@@ -28,6 +28,8 @@ import mocks.services.{MockClientDetailsService, MockSessionService}
 import models.admin.IncomeSources
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers._
 import play.api.http.Status
@@ -71,6 +73,10 @@ class AddBusinessNameControllerSpec extends TestSupport
 
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+
+  def getValidationErrorTabTitle(): String = {
+    s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading"))}"
+  }
 
   for (isAgent <- Seq(true, false)) yield {
     for (isChange <- Seq(true, false)) yield {
@@ -242,6 +248,9 @@ class AddBusinessNameControllerSpec extends TestSupport
 
               status(result) mustBe BAD_REQUEST
               contentAsString(result) must include("Enter your name or the name of your business")
+
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe getValidationErrorTabTitle()
             }
 
             "Business name is too long" in {

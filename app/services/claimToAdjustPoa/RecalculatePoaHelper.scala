@@ -54,7 +54,7 @@ trait RecalculatePoaHelper extends ClientConfirmedController with FeatureSwitchi
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent))
           case Right(_) =>
-            Redirect(controllers.claimToAdjustPoa.routes.PaymentsOnAccountAdjustedController.show(isAgent))
+            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent))
         }
       case PoAAmendmentData(_, _, _) =>
         Future.successful(showInternalServerError(isAgent))

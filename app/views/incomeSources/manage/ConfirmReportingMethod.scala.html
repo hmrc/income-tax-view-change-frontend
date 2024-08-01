@@ -69,6 +69,7 @@
 }
 
 @mainTemplate(pageTitle = getMessage(s"heading.$newReportingMethod"),
+    form = Some(form),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {

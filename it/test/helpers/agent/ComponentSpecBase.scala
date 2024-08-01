@@ -89,7 +89,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "auditing.enabled" -> "true",
     "microservice.services.contact-frontend.host" -> mockHost,
     "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false"
+    "feature-switches.read-from-mongo" -> "false",
+    "feature-switch.enable-time-machine" -> "false",
+    "time-machine.add-years" -> "0",
+    "time-machine.add-days" -> "0"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -303,13 +306,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/foreign-property-added",
+        uri = s"/manage-your-businesses/add-foreign-property/foreign-property-added",
         additionalCookies
       )
     }
 
     def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/foreign-property-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-foreign-property/foreign-property-added", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse =
@@ -445,13 +448,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/manage-your-businesses/add/business-added",
+        uri = s"/manage-your-businesses/add-sole-trader/business-added",
         additionalCookies
       )
     }
 
     def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/business-added", additionalCookies)(Map.empty)
     }
 
     def getCheckCeaseUKPropertyAnswers(additionalCookies: Map[String, String]): WSResponse =

@@ -21,26 +21,29 @@ import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.AfterSubmissionPage
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoAAmendmentData}
+import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoAAmendmentData, SelectYourReason}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
 import utils.AuthenticatorPredicate
-import views.html.claimToAdjustPoa.PaymentsOnAccountAdjustedView
+import views.html.claimToAdjustPoa.PoaAdjustedView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                                    val view: PaymentsOnAccountAdjustedView,
-                                                    val poaSessionService: PaymentOnAccountSessionService,
-                                                    val claimToAdjustService: ClaimToAdjustService,
-                                                    auth: AuthenticatorPredicate,
-                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                   (implicit val appConfig: FrontendAppConfig,
+class PoaAdjustedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                      val view: PoaAdjustedView,
+                                      val poaSessionService: PaymentOnAccountSessionService,
+                                      val claimToAdjustService: ClaimToAdjustService,
+                                      auth: AuthenticatorPredicate,
+                                      implicit val itvcErrorHandler: ItvcErrorHandler,
+                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      val dateService: DateService)
+                                     (implicit val appConfig: FrontendAppConfig,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val ec: ExecutionContext)
   extends ClientConfirmedController with ClaimToAdjustUtils with WithSessionAndPoa {
@@ -49,7 +52,7 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
     implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
-        EitherT.liftF(setJourneyCompletedFlag(isAgent, poa))
+        EitherT.liftF(handleView(isAgent, poa, session))
       } recover {
         case ex: Exception =>
           Logger("application").error(if (isAgent) "[Agent]" else "" + s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
@@ -66,12 +69,17 @@ class PaymentsOnAccountAdjustedController @Inject()(val authorisedFunctions: Aut
     }
   }
 
-  private def setJourneyCompletedFlag(isAgent: Boolean, poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleView(isAgent: Boolean, poa: PaymentOnAccountViewModel, session: PoAAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
-      case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne)))
+      case Right(_) => Future.successful(Ok(view(isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
         Logger("application").error(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}")
         Future.successful(showInternalServerError(isAgent))
     }
+  }
+
+  private def showOverdueCharges(poaTaxYear: TaxYear, reason: Option[SelectYourReason]): Boolean = {
+    val poaOneDeadline = LocalDate.of(poaTaxYear.endYear, 1, 31)
+    dateService.getCurrentDate.isAfter(poaOneDeadline) && reason.contains(Increase)
   }
 }

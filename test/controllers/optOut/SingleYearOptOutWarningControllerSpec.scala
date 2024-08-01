@@ -61,7 +61,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+        mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
         val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
         status(result) shouldBe Status.OK
@@ -71,7 +71,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "there is no tax year eligible for opt out" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -80,7 +80,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "opt out service fails" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(failedResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestGET)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -93,7 +93,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "Yes response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
@@ -109,7 +109,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "No response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
@@ -124,7 +124,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "invalid response is submitted" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.submit(isAgent = isAgent)(
             requestPOST.withFormUrlEncodedBody(
@@ -138,7 +138,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "there is no tax year eligible for opt out" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -147,7 +147,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
         "opt out service fails" in {
           setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockNextUpdatesPageOneYearOptOutViewModel(failedResponse)
+          mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
           val result: Future[Result] = TestSingleYearOptOutWarningController.show(isAgent = isAgent)(requestPOST)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR

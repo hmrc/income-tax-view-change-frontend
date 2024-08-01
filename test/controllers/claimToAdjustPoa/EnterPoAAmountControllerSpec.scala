@@ -17,7 +17,7 @@
 package controllers.claimToAdjustPoa
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.utils
+import controllers.agent.sessionUtils
 import mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -92,12 +92,12 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
       FakeRequest(POST, routes.EnterPoAAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
-          utils.SessionKeys.clientFirstName -> "Test",
-          utils.SessionKeys.clientLastName -> "User",
-          utils.SessionKeys.clientUTR -> "1234567890",
-          utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-          utils.SessionKeys.clientNino -> "AA111111A",
-          utils.SessionKeys.confirmedClient -> "true"
+          sessionUtils.SessionKeys.clientFirstName -> "Test",
+          sessionUtils.SessionKeys.clientLastName -> "User",
+          sessionUtils.SessionKeys.clientUTR -> "1234567890",
+          sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
+          sessionUtils.SessionKeys.clientNino -> "AA111111A",
+          sessionUtils.SessionKeys.confirmedClient -> "true"
         )
     }
     else {

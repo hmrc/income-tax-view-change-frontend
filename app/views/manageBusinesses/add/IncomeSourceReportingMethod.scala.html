@@ -14,25 +14,19 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.helpers.injected.ContinueButton
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.helpers.injected.RadioHelper
-@import views.helpers.RadioOption
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
-@import views.html.helpers.injected.InputHelper
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, FormWithCSRF, GovukInput, GovukRadios, Input, Legend, RadioItem, Radios, Text, _}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-
+@import views.html.helpers.injected.{ContinueButton, ErrorSummary, InputHelper, RadioHelper}
+@import views.html.layouts.unifiedLayout
 
 @this(
     mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
     inputHelper: InputHelper,
     continueButton: ContinueButton,
     formWithCSRF: FormWithCSRF,
@@ -44,7 +38,16 @@
     p:p
 )
 
-@(incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType, incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    incomeSourceType match {
+        case SelfEmployment => messages(s"incomeSources.add.incomeSourceReportingMethod.se.$key", args: _*)
+        case UkProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.uk.$key", args: _*)
+        case ForeignProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.fp.$key", args: _*)
+    }
+}
+
 
 @renderChooseReportingMethodOptions(taxYear: String, taxYearSeq: String, isAnnualReporting: Boolean) = {
 
@@ -87,13 +90,18 @@
     )
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.add.incomeSourceReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+@mainTemplate(pageTitle = messages("incomeSources.add.incomeSourceReportingMethod.heading"), form = Some(incomeSourceReportingMethodForm), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = incomeSourceReportingMethodForm
     )
 
-    @h1(messages("incomeSources.add.incomeSourceReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+    @hmrcPageHeading(PageHeading(
+        text = messages("incomeSources.add.incomeSourceReportingMethod.heading"),
+        headingClasses = Some("govuk-heading-xl margin-bottom-100"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
 
     @p() {
         @messages("incomeSources.add.incomeSourceReportingMethod.description1", incomeSourceReportingViewModel.latencyYear2.get.taxYear)

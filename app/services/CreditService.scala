@@ -18,28 +18,45 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import connectors.FinancialDetailsConnector
+import models.core.ErrorModel
+import models.creditsandrefunds.CreditsModel
+import models.financialDetails.Repayment
+import models.incomeSourceDetails.TaxYear
+import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
-class CreditService @Inject()(val financialDetailsService: FinancialDetailsService)
+class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                              implicit val dateService: DateServiceInterface)
                              (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
+  def getAllCredits(implicit user: MtdItUser[_],
+                    hc: HeaderCarrier): Future[CreditsModel] = {
 
-  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[FinancialDetailsModel]] = {
-    financialDetailsService.getAllCreditChargesandPaymentsFinancialDetails.map {
-      case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("Error response while getting Unpaid financial details")
-      case financialDetails: List[FinancialDetailsResponseModel] => financialDetails.asInstanceOf[List[FinancialDetailsModel]]
-    }
+    val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
+      x.copy(transactions = x.transactions :++ y.transactions.filterNot(_.transactionType == Repayment))
+
+    Logger("application").debug(
+      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+
+    Future.sequence(
+        user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
+          Logger("application").debug(s"Getting financial details for TaxYear: ${taxYearInt}")
+          for {
+            taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
+            response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
+          } yield response match {
+            case Right(financialDetails: CreditsModel) => Some(financialDetails)
+            case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+              throw new Exception("Error response while getting Unpaid financial details")
+            case _ => None
+          }
+      })
+      .map(_.flatten)
+      .map(_.reduce(mergeCreditAndRefundModels))
   }
-}
-object CreditService {
-  def maybeBalanceDetails(financialDetailsModels: List[FinancialDetailsModel]): Option[BalanceDetails] =
-    financialDetailsModels match {
-      case financialDetailsModel: List[FinancialDetailsModel] if financialDetailsModels.nonEmpty =>
-        financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-      case _ => None
-    }
 }

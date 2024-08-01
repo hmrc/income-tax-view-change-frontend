@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -31,16 +31,17 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
 class ConfirmClientUTRControllerSpec extends TestSupport
-  with MockAuthenticationPredicate
   with MockConfirmClient
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
+  with MockAuthenticationPredicate
   with MockItvcErrorHandler {
 
   object TestConfirmClientUTRController extends ConfirmClientUTRController(
     confirmClient,
     mockAuthService,
-    mockAuditingService
+    mockAuditingService,
+    testAuthenticator
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,

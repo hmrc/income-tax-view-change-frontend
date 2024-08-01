@@ -18,27 +18,37 @@ package connectors
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.core.Nino
+import models.core.ResponseModel.{ResponseModel, UnexpectedError}
+import models.core.{CorrelationId, Nino}
+import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
 
+import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsConnector @Inject()(val http: HttpClient,
+                                          val httpv2: HttpClientV2,
                                           val appConfig: FrontendAppConfig
                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getChargesUrl(nino: String, from: String, to: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+  }
+
+  def getCreditAndRefundUrl(nino: String, from: String, to: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/credits/from/$from/to/$to"
   }
 
   def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String = {
@@ -90,6 +100,31 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
 
   }
 
+  def getCreditsAndRefund(taxYear: TaxYear, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+
+    val dateFrom: String = taxYear.toFinancialYearStart.format(DateTimeFormatter.ISO_DATE)
+    val dateTo: String = taxYear.toFinancialYearEnd.format(DateTimeFormatter.ISO_DATE)
+
+    val url = getCreditAndRefundUrl(nino, dateFrom, dateTo)
+    Logger("application").debug(s"GET $url")
+
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    val correlationId = CorrelationId.fromHeaderCarrier(hc)
+      .getOrElse(CorrelationId())
+
+    httpv2
+      .get(url"$url")
+      .setHeader(correlationId.asHeader())
+      .execute[ResponseModel[CreditsModel]]
+      .recover {
+        case e =>
+          Logger("application").error(e.getMessage)
+          Left(UnexpectedError)
+      }
+  }
+
   // TODO: MFA Credits
   def getFinancialDetails(taxYear: Int, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
@@ -126,7 +161,6 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
         Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
-
   }
 
   def getOutstandingCharges(idType: String, idNumber: String, taxYear: String)

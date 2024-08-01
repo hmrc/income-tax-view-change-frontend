@@ -82,8 +82,6 @@ class EnterPoAAmountViewSpec extends TestSupport{
 
       document.getElementById("bulletPoints").text() shouldBe {msg("p1") + " " + msg("bullet1") + " " + msg("bullet2")}
 
-      document.getElementById("warning").text shouldBe {"! Warning " + msg("warning")}
-
       document.getElementById("poa-amount").text shouldBe {msg("howMuch") + " " + msg("howMuchHint") + " £ " +
         msgs("base.continue") + " " + msg("cancel")}
 
@@ -95,7 +93,7 @@ class EnterPoAAmountViewSpec extends TestSupport{
       document.getElementById("cancel").attr("href") shouldBe cancelUrl
     }
     "render the table with only Initial Amount for user on first visit" in new Setup(viewModel = poAAmountViewModel()) {
-      document.getElementsByClass("govuk-table__head").text() shouldBe msg("initialAmount")
+      document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
       val tableBody = document.getElementsByClass("govuk-table__body")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel().relevantAmountOne.toCurrencyString
@@ -103,7 +101,7 @@ class EnterPoAAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel().relevantAmountTwo.toCurrencyString
     }
     "render the table with Initial and Adjusted amount for user who has decrease previously" in new Setup(viewModel = poAAmountViewModel(poaPreviouslyAdjusted = Some(true))) {
-      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("initialAmount") + " " + msg("adjustedAmount")}
+      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("amountPreviousHeading") + " " + msg("adjustedAmount")}
       val tableBody = document.getElementsByClass("govuk-table__body")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).relevantAmountOne.toCurrencyString
@@ -113,11 +111,13 @@ class EnterPoAAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).totalAmountOne.toCurrencyString
     }
     "render the inset text specific to the first adjustment attempt" in new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true)) {
-      document.getElementById("insetText-firstAttempt").text() shouldBe msg("insetText.firstAttempt")
+      val expectedText: String = (msg("insetText.firstAttempt.para1") + " " + msg("insetText.firstAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
+      document.getElementById("insetText-firstAttempt").text() shouldBe expectedText
     }
     "render the inset text specific to the second adjustment attempt" in
       new Setup(viewModel = poAAmountViewModel(poaPartiallyPaid = true, poaPreviouslyAdjusted = Some(true))) {
-        document.getElementById("insetText-secondAttempt").text() shouldBe msg("insetText.secondAttempt")
+        val expectedText: String = (msg("insetText.secondAttempt.para1") + " " + msg("insetText.secondAttempt.para2")).replaceAll("<b>", "").replaceAll("</b>", "")
+        document.getElementById("insetText-secondAttempt").text() shouldBe expectedText
       }
     "not render any inset text if poAs are unpaid" in new Setup(viewModel = poAAmountViewModel()) {
       document.getElementsByClass("govuk-inset-text").toArray().isEmpty shouldBe true

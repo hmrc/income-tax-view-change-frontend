@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import controllers.agent.utils.SessionKeys
+import controllers.agent.sessionUtils.SessionKeys
 import helpers.FeedbackConnectorStub
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub

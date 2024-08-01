@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.DateService
@@ -30,8 +31,8 @@ trait MockDateService extends UnitSpec with BeforeAndAfterEach {
     reset(mockDateService)
   }
 
-  def setupMockGetCurrentTaxYearEnd(out: Int): Unit = {
-    when(mockDateService.getCurrentTaxYearEnd).thenReturn(out)
+  def setupMockGetCurrentTaxYearEnd(taxYear: TaxYear): Unit = {
+    when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
   }
 
 }

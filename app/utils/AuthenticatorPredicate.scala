@@ -16,16 +16,17 @@
 
 package utils
 
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc._
 import services.IncomeSourceDetailsService
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +39,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val featureSwitchPredicate: FeatureSwitchPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                       val retrieveNino: NinoPredicate,
                                        val incomeSourceDetailsService: IncomeSourceDetailsService)
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
@@ -45,7 +47,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def authenticatedAction(isAgent: Boolean)
-                         (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+                         (authenticatedCodeBlock: MtdItUser[AnyContent] => Future[Result]): Action[AnyContent] = {
     if (isAgent) {
       Authenticated.async {
         implicit request =>
@@ -57,7 +59,8 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                 authenticatedCodeBlock(mtdItUser
                   .copy(featureSwitches = fss)(mtdItUser))
               }
-            }.flatten }
+            }.flatten
+            }
       }
 
     } else
@@ -66,4 +69,29 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
         authenticatedCodeBlock(user)
       }
   }
+
+  def authenticatedActionWithNino(authenticatedCodeBlock: MtdItUserWithNino[_] => Future[Result]): Action[AnyContent] = {
+    (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
+      authenticatedCodeBlock(user)
+    }
+  }
+
+  def authenticatedActionOptionNino(authenticatedCodeBlock: MtdItUserOptionNino[_] => Future[Result]): Action[AnyContent] = {
+    (checkSessionTimeout andThen authenticate).async { implicit user =>
+      authenticatedCodeBlock(user)
+    }
+  }
+
+  def authenticatedActionWithNinoAgent(authenticatedCodeBlock: AuthenticatorAgentResponse => Future[Result]): Action[AnyContent] = {
+    Authenticated.async {
+      implicit request =>
+        implicit agent =>
+          authenticatedCodeBlock(AuthenticatorAgentResponse())
+    }
+  }
 }
+
+case class AuthenticatorAgentResponse()(implicit val agent: IncomeTaxAgentUser,
+                                        implicit val request: Request[AnyContent],
+                                        implicit val hc: HeaderCarrier,
+                                        implicit val messages: Messages)

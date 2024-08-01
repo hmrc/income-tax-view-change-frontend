@@ -20,8 +20,11 @@ import auth.MtdItUser
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
+import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants._
 import testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
+
+import java.time.LocalDate
 
 class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
 
@@ -43,13 +46,27 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1400), originalAmount = BigDecimal(-1400), paymentLot = Some("paymentLot")),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1500), originalAmount = BigDecimal(-1500), paymentLot = Some("paymentLot"))
   )
-  def claimARefundAuditFull(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(
-    balanceDetails = Some(balanceDetailsFull),
-    creditDocuments = creditDocuments)(user)
 
-  def claimARefundAuditMin(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(
-    balanceDetails = Some(balanceDetailsMin),
-    creditDocuments = List.empty)(user)
+  val model = ANewCreditAndRefundModel()
+    .withAvailableCredit(7600.0)
+    .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 100.0)
+    .withMfaCredit(LocalDate.of(2019, 5, 15), 1000.0)
+    .withMfaCredit(LocalDate.of(2019, 5, 15), 1100.0)
+    .withCutoverCredit(LocalDate.of(2019, 5, 15), 1200.0)
+    .withCutoverCredit(LocalDate.of(2019, 5, 15), 1300.0)
+    .withRepaymentInterest(LocalDate.of(2019, 5, 15), 1350.0)
+    .withRepaymentInterest(LocalDate.of(2019, 5, 15), 1375.0)
+    .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
+    .withPayment(LocalDate.of(2019, 5, 15), 1500.0)
+    .withFirstRefund(100.0)
+    .withSecondRefund(150.0)
+    .get()
+
+  def claimARefundAuditFull(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel =
+    ClaimARefundAuditModel(model)(user)
+
+  def claimARefundAuditMin(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel =
+    ClaimARefundAuditModel(ANewCreditAndRefundModel().get())(user)
 
   "ClaimARefundAuditModel" should {
     s"have the correct transaction name of '$transactionName'" in {
@@ -73,8 +90,8 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
-            Json.obj("description" -> "Credit from repayment interest - 2017 to 2018 tax year", "amount" -> 1350),
-            Json.obj("description" -> "Credit from repayment interest - 2017 to 2018 tax year", "amount" -> 1375),
+            Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1350),
+            Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1375),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
           ),
@@ -113,8 +130,8 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
-            Json.obj("description" -> "Credit from repayment interest - 2017 to 2018 tax year", "amount" -> 1350),
-            Json.obj("description" -> "Credit from repayment interest - 2017 to 2018 tax year", "amount" -> 1375),
+            Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1350),
+            Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1375),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
             Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
           ),

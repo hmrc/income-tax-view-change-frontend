@@ -18,13 +18,13 @@ package services.optout
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.{ITSAStatus, StatusDetail}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutSessionData}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
@@ -54,6 +54,10 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
 
   val sessionIdValue = "123"
 
+  before {
+    reset(optOutConnector, nextUpdatesService, repository, user, hc)
+  }
+
   "OptOutService.makeOptOutUpdateRequest" when {
 
     "one year available for opt-out; end-year 2023" should {
@@ -79,17 +83,18 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(Some(previousTaxYear.toString))
+        val optOutSessionData = OptOutSessionData(None, Some(previousTaxYear.toString))
         val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
+        when(repository.set(any())).thenReturn(Future.successful(true))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModel()
+        val result = service.nextUpdatesPageOptOutViewModels()
 
-        result.futureValue.get.isInstanceOf[OptOutOneYearViewModel] shouldBe true
+        result.futureValue._2.get.isInstanceOf[OptOutOneYearViewModel] shouldBe true
       }
     }
 
@@ -116,17 +121,18 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutSessionData = OptOutSessionData(Some(previousTaxYear.toString))
+        val optOutSessionData = OptOutSessionData(None, Some(previousTaxYear.toString))
         val sessionData = Some(UIJourneySessionData(sessionIdValue, OptOutJourney.Name, optOutSessionData = Some(optOutSessionData)))
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
+        when(repository.set(any())).thenReturn(Future.successful(true))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess(correlationId)
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModel()
+        val result = service.nextUpdatesPageOptOutViewModels()
 
-        result.futureValue.get.isInstanceOf[OptOutMultiYearViewModel] shouldBe true
+        result.futureValue._2.get.isInstanceOf[OptOutMultiYearViewModel] shouldBe true
       }
     }
   }

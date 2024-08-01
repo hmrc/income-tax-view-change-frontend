@@ -19,9 +19,9 @@ package testConstants
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import models.creditDetailModel.CreditDetailModel
-import models.creditsandrefunds.CreditAndRefundViewModel
-import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
+import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
@@ -1543,58 +1543,52 @@ object FinancialDetailsTestConstants {
 
 }
 
-case class ANewCreditAndRefundViewModel(model: CreditAndRefundViewModel = CreditAndRefundViewModel(List(), None)) {
+case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, Nil)) {
 
-  def withAvailableCredit(availableCredit: BigDecimal): ANewCreditAndRefundViewModel = {
-    val balanceDetails = model.balanceDetails.getOrElse(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
-      .copy(availableCredit = Some(availableCredit))
-    ANewCreditAndRefundViewModel(model.copy(model.creditCharges, Some(balanceDetails)))
+  def withAvailableCredit(availableCredit: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(availableCredit = availableCredit))
   }
 
-  def withAllocatedCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundViewModel = {
-    val balanceDetails = model.balanceDetails.getOrElse(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
-      .copy(allocatedCredit = Some(allocatedCredit))
-    ANewCreditAndRefundViewModel(model.copy(model.creditCharges, Some(balanceDetails)))
-  }
-
-  def withFirstRefundRequest(amount: BigDecimal): ANewCreditAndRefundViewModel = {
-    val balanceDetails = model.balanceDetails.getOrElse(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
-      .copy(firstPendingAmountRequested = Some(amount))
-    ANewCreditAndRefundViewModel(model.copy(model.creditCharges, Some(balanceDetails)))
-  }
-
-  def withSecondRefundRequest(amount: BigDecimal): ANewCreditAndRefundViewModel = {
-    val balanceDetails = model.balanceDetails.getOrElse(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
-      .copy(secondPendingAmountRequested = Some(amount))
-    ANewCreditAndRefundViewModel(model.copy(model.creditCharges, Some(balanceDetails)))
+  def withAllocatedCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(allocatedCredit = allocatedCredit))
   }
 
   def withCutoverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "ITSA Cutover Credits", mainTransaction = "6110", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate))))
+  }
+
+  def withFirstRefund(amount: BigDecimal) = {
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(Repayment, amount, taxYear = None, None)))
+  }
+
+  def withSecondRefund(amount: BigDecimal) = {
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(Repayment, amount, taxYear = None, None)))
   }
 
   def withBalancingChargeCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "SA Balancing Charge Credit", mainTransaction = "4905", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(BalancingChargeCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate))))
   }
 
   def withRepaymentInterest(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "SA Repayment Supplement Credit", mainTransaction = "6020", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(RepaymentInterest, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate))))
   }
 
   def withMfaCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "ITSA Overpayment Relief", mainTransaction = "4004", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(MfaCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate))))
   }
 
   def withPayment(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
-    ANewCreditAndRefundViewModel(model.copy(creditCharges = model.creditCharges :+ CreditAndRefundConstants
-      .documentAndFinancialDetailWithCreditType(taxYear = dueDate.getYear, mainType = "Payment", mainTransaction = "0060", originalAmount = -1000.0, outstandingAmount = outstandingAmount, dueDate = dueDate)))
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(PaymentType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate))))
   }
 
-  def get(): CreditAndRefundViewModel = model
+  def get(): CreditsModel = model
 }
 
 object CreditAndRefundConstants {

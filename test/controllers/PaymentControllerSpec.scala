@@ -23,7 +23,7 @@ import testConstants.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
 import connectors.PayApiConnector
-import controllers.agent.utils
+import controllers.agent.sessionUtils
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -54,11 +54,10 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
     (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
     val testController = new PaymentController(
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockPayApiConnector,
       mockAuditingService,
-      mockAuthService
+      mockAuthService,
+      testAuthenticator
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],
@@ -143,7 +142,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
       val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(
-        fakeRequestWithActiveSession.withSession(utils.SessionKeys.clientMTDID -> "XAIT00000000015"))
+        fakeRequestWithActiveSession.withSession(sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015"))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
     }

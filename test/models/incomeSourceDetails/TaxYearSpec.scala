@@ -17,11 +17,50 @@
 package models.incomeSourceDetails
 
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, Json}
 import testUtils.{TestSupport, UnitSpec}
 
 import java.time.LocalDate
 
 class TaxYearSpec extends UnitSpec with TestSupport {
+
+  "format" when {
+
+    val startYear = 2022
+    val endYear = 2023
+
+    "reading a valid tax year" should {
+      "return tax year from end year number" in {
+        val validTaxYear = JsNumber(endYear)
+        validTaxYear.validate[TaxYear] shouldBe JsSuccess(TaxYear(startYear, endYear))
+      }
+    }
+
+    "reading an invalid tax year" should {
+      "return a validation error for non-integer numbers" in {
+        val taxYearWithDecimalPlaces = JsNumber(2023.21)
+        taxYearWithDecimalPlaces.validate[TaxYear] shouldBe JsError("error.expected.int")
+      }
+
+      "return a validation error for non numeric types" in {
+        val taxYearAsString = JsString(s"$endYear")
+        taxYearAsString.validate[TaxYear] shouldBe JsError("error.expected.jsnumber")
+      }
+
+      "return a validation error integers that fail tax year validation" in {
+        val taxYearAsString = JsNumber(20)
+        taxYearAsString.validate[TaxYear] shouldBe JsError("Could not parse tax year")
+      }
+
+    }
+
+    "writing a valid tax year" should {
+      "return a JsNumber with the end year" in {
+        val taxYear = TaxYear(startYear, endYear)
+        Json.toJson(taxYear) shouldBe JsNumber(endYear)
+      }
+    }
+  }
 
   "currentTaxYearMinusOne method" when {
     "invoked on a TaxYear object" should {

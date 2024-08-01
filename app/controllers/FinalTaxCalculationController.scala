@@ -20,8 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName}
-import controllers.predicates._
+import controllers.agent.sessionUtils.SessionKeys.{clientFirstName, clientLastName}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -41,23 +40,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
                                               view: FinalTaxCalculationView,
-                                              checkSessionTimeout: SessionTimeoutPredicate,
-                                              authenticate: AuthenticationPredicate,
-                                              retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: NavBarPredicate,
                                               implicit val appConfig: FrontendAppConfig,
-                                              val auth: AuthenticatorPredicate,
-                                              val featureSwitchPredicate: FeatureSwitchPredicate
+                                              val auth: AuthenticatorPredicate
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
-
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSources andThen featureSwitchPredicate andThen retrieveBtaNavBar
-
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
@@ -99,26 +89,24 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async { implicit user =>
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
-
     finalDeclarationSubmit(taxYear, fullNameOptional)
-
   }
 
-  def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit agent =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
-        val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-        agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
-      }
-  }
+    def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
+      implicit agent =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+          val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
+          agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
+        }
+    }
 
 
   def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
-                                         (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                                 (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
@@ -150,7 +138,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
   def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
-                                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)

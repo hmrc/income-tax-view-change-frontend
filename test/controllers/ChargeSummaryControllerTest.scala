@@ -41,19 +41,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with BeforeAndAfter {
 
-  val authenticate: AuthenticationPredicate = mock(classOf[AuthenticationPredicate])
-  val checkSessionTimeout: SessionTimeoutPredicate = mock(classOf[SessionTimeoutPredicate])
-  val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate = mock(classOf[IncomeSourceDetailsPredicate])
   val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
   val auditingService: AuditingService = mock(classOf[AuditingService])
   val itvcErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   val chargeHistoryService: ChargeHistoryService = mock(classOf[ChargeHistoryService])
   val chargeSummaryView: ChargeSummary = mock(classOf[ChargeSummary])
-  val retrievebtaNavPartial: NavBarPredicate = mock(classOf[NavBarPredicate])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
   val authorisedFunctions: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
   val customNotFoundErrorView: CustomNotFoundError = mock(classOf[CustomNotFoundError])
-  val featureSwitchPredicate: FeatureSwitchPredicate = mock(classOf[FeatureSwitchPredicate])
   val authenticator: AuthenticatorPredicate = mock(classOf[AuthenticatorPredicate])
 
   implicit val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
@@ -62,9 +57,9 @@ class ChargeSummaryControllerTest extends AnyWordSpecLike with Matchers with Bef
   implicit val  mcc: MessagesControllerComponents = mock(classOf[MessagesControllerComponents])
   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
-  val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticate, authenticator, checkSessionTimeout, retrieveNinoWithIncomeSources,
-    financialDetailsService, auditingService, itvcErrorHandler, chargeSummaryView, retrievebtaNavPartial, incomeSourceDetailsService,
-    chargeHistoryService, authorisedFunctions, customNotFoundErrorView, featureSwitchPredicate))
+  val controller: ChargeSummaryController = spy(new ChargeSummaryController(authenticator,
+    financialDetailsService, auditingService, itvcErrorHandler, chargeSummaryView, incomeSourceDetailsService,
+    chargeHistoryService, authorisedFunctions, customNotFoundErrorView))
 
   before {
     Mockito.reset(controller)
