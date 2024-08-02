@@ -20,7 +20,6 @@ import mocks.connectors.MockChargeHistoryConnector
 import models.chargeHistory._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
-import org.scalatest.exceptions.TestFailedException
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import testUtils.TestSupport
@@ -56,6 +55,9 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
   )
 
   "ChargeHistoryService.chargeHistoryResponse" should {
+
+
+
     "return a Right(Nil)" when {
       "the conditions are not met" in {
         val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = true, isPayeSelfAssessment = true,
@@ -103,85 +105,76 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
         val res = TestChargeHistoryService.getAdjustmentHistory(Nil, unchangedDocumentDetail)
         res shouldBe desiredAdjustments
       }
-      "there is a charge history" in {
-        val desiredAdjustments = AdjustmentHistoryModel(
-          creationEvent = AdjustmentModel(2500, None, "create"),
-          adjustments = List(
-            AdjustmentModel(2000, Some(LocalDate.of(2024, 2, 10)), "adjustment"),
-            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), "adjustment")
-          )
+      "there is a charge history" when {
+
+        val chargeHistoryList: List[ChargeHistoryModel] = List(
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 3), "ITSA - POA 2", 1400, LocalDate.of(2024, 8, 3), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1500, LocalDate.of(2024, 8, 2), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1879.93, LocalDate.of(2024, 7, 19), "Reversal", Some(MainIncomeLower.code))
+        )
+
+        val adjustedDocumentDetail: DocumentDetail = DocumentDetail(
+          2024, "12345", Some("ITSA - POA 2"), None, 1300, 1879.93, LocalDate.of(2024, 8, 3)
         )
 
         val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
-        res shouldBe desiredAdjustments
-      }
 
+        // creation amount should be equal to original amount, and amount on first charge history model
 
-        "should generate models with correct values, dates and ordering" in {
+        val sortedChargeHistory = chargeHistoryList.sortBy(_.reversalDate).reverse
 
-          val chargeHistoryList: List[ChargeHistoryModel] = List(
-            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 3), "ITSA - POA 2", 1400, LocalDate.of(2024, 8, 3), "Reversal", Some(MainIncomeLower.code)),
-            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1500, LocalDate.of(2024, 8, 2), "Reversal", Some(MainIncomeLower.code)),
-            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1879.93, LocalDate.of(2024, 7, 19), "Reversal", Some(MainIncomeLower.code))
-          )
+        "creation amount should be document details original amount" in {
+          res.creationEvent.amount shouldBe adjustedDocumentDetail.originalAmount
+        }
 
-          val adjustedDocumentDetail: DocumentDetail = DocumentDetail(
-            2024, "12345", Some("ITSA - POA 2"), None, 1300, 1879.93, LocalDate.of(2024, 8, 3)
-          )
+        // because the first chargeHistoryModel amount is the amount from before the first adjustment
+        "creation amount should match first ChargeHistoryModel amount" in {
+          res.creationEvent.amount shouldBe sortedChargeHistory.head.totalAmount
+        }
 
-          val desiredAdjustments = AdjustmentHistoryModel(
-            creationEvent = AdjustmentModel(1879.93, None, "create"),
-            adjustments = List(
-              AdjustmentModel(1500.00, Some(LocalDate.of(2024, 7, 19)), "adjustment"),
-              AdjustmentModel(1400.00, Some(LocalDate.of(2024, 8, 2)), "adjustment"),
-              AdjustmentModel(1300.00, Some(LocalDate.of(2024, 8, 3)), "adjustment"),
-            )
-          )
+        "creation date should be unknown" in {
+          res.creationEvent.adjustmentDate shouldBe None
+        }
 
-          val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
-          assertThrows[TestFailedException] {
-            res shouldBe desiredAdjustments
-          }
+        "first adjustment date should match the first ChargeHistoryModel date" in {
+          res.adjustments.head.adjustmentDate.get shouldBe sortedChargeHistory.head.reversalDate
+        }
 
-          // creation amount should be equal to original amount, and amount on first charge history model
+        // because amount in ChargeHistoryModel is the amount from before change
+        "first adjustment amount should match the second ChargeHistoryModel amount" in {
+          res.adjustments.head.amount shouldBe sortedChargeHistory(1).totalAmount
+        }
 
-          val sortedChargeHistory = chargeHistoryList.sortBy(_.reversalDate).reverse
+        "second adjustment date should match the second ChargeHistoryModel date" in {
+          res.adjustments(1).adjustmentDate.get shouldBe sortedChargeHistory(1).reversalDate
+        }
 
-          assertThrows[TestFailedException] {
-            res.creationEvent.amount shouldBe adjustedDocumentDetail.originalAmount
-            res.creationEvent.amount shouldBe sortedChargeHistory.head.totalAmount
-            res.creationEvent.adjustmentDate shouldBe None
-          }
+        // because amount in ChargeHistoryModel is the amount from before change
+        "second adjustment amount should match the third ChargeHistoryModel amount" in {
+          res.adjustments(1).amount shouldBe sortedChargeHistory(2).totalAmount
+        }
 
-          // first adjustment should have the first date
+        "third adjustment date should match the third ChargeHistoryModel date" in {
+          res.adjustments(2).adjustmentDate.get shouldBe sortedChargeHistory(2).reversalDate
+        }
 
-          assertThrows[TestFailedException] {
-            res.adjustments.head.adjustmentDate shouldBe sortedChargeHistory.head.reversalDate
-            res.adjustments.head.amount shouldBe sortedChargeHistory(1).totalAmount
-          }
+        // because the final value that the charge was adjusted to comes from the current value of the charge
+        // not sure what field this would be as outstandingAmount would have any payments reflected, so this would
+        // need to be poaRelevantAmount? Or totalAmount...?
 
-          assertThrows[TestFailedException] {
-            res.adjustments(1).adjustmentDate shouldBe sortedChargeHistory(1).reversalDate
-            res.adjustments(1).amount shouldBe sortedChargeHistory(2).totalAmount
-          }
+        "third adjustment amount should match the current value of the charge" in {
+          res.adjustments(2).amount shouldBe adjustedDocumentDetail.outstandingAmount
+        }
 
-          assertThrows[TestFailedException] {
-            // final row should have most recent update, with same date as DocumentDetail
-            res.adjustments(2).adjustmentDate shouldBe sortedChargeHistory(2).reversalDate
-            // outstandingAmount would have any payments reflected, so this would need to be poaRelevantAmount? Or...?
-            res.adjustments(2).amount shouldBe adjustedDocumentDetail.outstandingAmount
-          }
-
-          // Logic in getAdjustmentHistory is sensitive to ordering when adjustment dates are different
+        "getAdjustmentHistory should not be sensitive to ordering where dates are different" in {
           val resDifferentOrder = TestChargeHistoryService.getAdjustmentHistory(chargeHistory = List(
             chargeHistoryList(1),
             chargeHistoryList(2),
             chargeHistoryList.head
           ), documentDetail = adjustedDocumentDetail)
 
-          assertThrows[TestFailedException] {
-            res shouldBe resDifferentOrder
-          }
+          res shouldBe resDifferentOrder
+        }
       }
     }
   }
