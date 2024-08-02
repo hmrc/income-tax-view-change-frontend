@@ -60,7 +60,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
-              log.error(s"Json validation error parsing itsa-status update response, error \n$invalid")
+              log.error(s"Json validation error parsing itsa-status update response, error $invalid")
               OptOutUpdateResponseFailure.defaultFailure()
             },
             valid => {

@@ -48,8 +48,7 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[List[ITSAStatusResponseModel]].fold(
             invalid => {
-              val invalidJsonString = Json.prettyPrint(JsError.toJson(invalid))
-              Logger("application").error(s"Json validation error parsing itsa-status response, error \n$invalidJsonString")
+              Logger("application").error(s"Json validation error parsing itsa-status response, error $invalid")
               Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response"))
             },
             valid => Right(valid)
