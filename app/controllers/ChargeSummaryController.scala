@@ -174,7 +174,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           )
           mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
             case Right(_) =>
-              Ok(chargeSummaryView(viewModel))
+              Ok(chargeSummaryV§iew(viewModel))
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
           }
         }

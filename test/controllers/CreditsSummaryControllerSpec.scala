@@ -227,21 +227,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-
-    "Called with an Authenticated HMRC-MTD-IT User" when {
-      "provided with a negative tax year" should {
-        "return Internal Service Error (500)" in {
-
-          mockCreditHistoryService(creditAndRefundCreditDetailListMultipleChargesMFA)
-          mockPropertyIncomeSource()
-
-//          val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
-
-//           TODO: This doesn't return an error?
-//           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
-    }
   }
 
   "The CreditsSummaryController.showAgentCreditsSummary(year) action" when {
