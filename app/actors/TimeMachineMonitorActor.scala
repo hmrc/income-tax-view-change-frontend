@@ -51,6 +51,8 @@ class TimeMachineMonitorActor(val config: Configuration,
       .getFeatureSwitch(TimeMachine)
       .flatMap { res =>
         Logger("application").info(s"TimeMachineMonitorActor -> response from FeatureSwitchRepository ${res}")
+
+        // TODO: add logic to apply Config reload/invalidate on the actual change!!!!
         if (res.map(_.isEnabled).getOrElse(false)) {
           Logger("application").info("TimeMachineMonitorActor -> attempt to set to True")
           System.setProperty("feature-switch.enable-time-machine", "true")
@@ -60,7 +62,9 @@ class TimeMachineMonitorActor(val config: Configuration,
           val fsTimeMachine = newConfig.getString("enable-time-machine")
           Logger("application").info(s"TimeMachineMonitorActor -> $fsTimeMachine")
         } else {
-          Logger("application").info("TimeMachineMonitorActor -> is False in mongo")
+          System.setProperty("feature-switch.enable-time-machine", "false")
+          ConfigFactory.invalidateCaches()
+          Logger("application").info("TimeMachineMonitorActor -> set TimeMachine to false")
         }
         Future.successful(())
       }
