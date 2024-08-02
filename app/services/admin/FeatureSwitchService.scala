@@ -42,7 +42,7 @@ class FeatureSwitchService @Inject()(
                                      implicit val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with FeatureSwitching {
 
-  val timeMachineActor = system.actorOf(TimeMachineMonitorActor.props(config), "timeMachine-actor")
+  val timeMachineActor = system.actorOf(TimeMachineMonitorActor.props(config, featureSwitchRepository), "timeMachine-actor")
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
     featureSwitchRepository

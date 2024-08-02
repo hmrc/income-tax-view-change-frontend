@@ -67,6 +67,8 @@ object FeatureSwitchName {
       JsSuccess(OptOut)
     case name if name == JsString(AdjustPaymentsOnAccount.name) =>
       JsSuccess(AdjustPaymentsOnAccount)
+    case name if name == JsString(TimeMachine.name) =>
+      JsSuccess(TimeMachine)
     case _ => JsError("Invalid feature switch name")
   }
 
@@ -91,7 +93,8 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
-      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
+      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney,
+      IncomeSources, OptOut, AdjustPaymentsOnAccount, TimeMachine)
 
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -175,6 +178,11 @@ case object OptOut extends FeatureSwitchName {
 case object AdjustPaymentsOnAccount extends FeatureSwitchName {
   override val name: String = s"adjust-payments-on-account"
   override val toString: String = "Adjust Payments On Account"
+}
+
+case object TimeMachine extends FeatureSwitchName {
+  override val name: String = s"time-machine"
+  override val toString: String = "Time-Machine"
 }
 
 object FeatureSwitchMongoFormats {

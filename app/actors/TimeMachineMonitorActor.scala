@@ -17,46 +17,73 @@
 package actors
 
 import com.typesafe.config.ConfigFactory
+import models.admin.TimeMachine
 import org.apache.pekko.actor.{Actor, Props}
+import org.apache.pekko.pattern.pipe
 import play.api.{Configuration, Logger}
 import repositories.admin.FeatureSwitchRepository
+
+import scala.concurrent.Future
 
 object TimeMachineMonitorActor {
   def props(config: Configuration, featureSwitchRepository: FeatureSwitchRepository): Props =
     Props[TimeMachineMonitorActor](new TimeMachineMonitorActor(config, featureSwitchRepository))
+
   private case object Realod
+
+  private case object WaitForNew
 }
 
 // TODO: avoid using classical Actors / use Typed version instead
-class TimeMachineMonitorActor(val config: Configuration) extends Actor  {
+class TimeMachineMonitorActor(val config: Configuration,
+                              val featureSwitchRepository: FeatureSwitchRepository) extends Actor {
+
   import TimeMachineMonitorActor._
   import scala.concurrent.duration._
 
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+
   context.system.scheduler.scheduleOnce(5.seconds, self, Realod)(context.dispatcher)
 
-  def receive = {
-    case Realod  =>
-      Logger("application").info("TimeMachineMonitorActor -> reload")
+  def getTimeMachineFs(): Future[Unit] = {
 
-      // TODO: call FeatureSwitch Service
-      System.setProperty("feature-switch.enable-time-machine", "true")
-      ConfigFactory.invalidateCaches()
-      val cfg = ConfigFactory.load(config.underlying)
-      val newConfig = cfg.getConfig("feature-switch")
-      val fsTimeMachine = newConfig.getString("enable-time-machine")
-      Logger("application").info(s"TimeMachineMonitorActor -> $fsTimeMachine")
-
-
-
-      context.system.scheduler.scheduleOnce(5.seconds, self, Realod)(context.dispatcher)
+    featureSwitchRepository
+      .getFeatureSwitch(TimeMachine)
+      .flatMap { res =>
+        Logger("application").info(s"TimeMachineMonitorActor -> response from FeatureSwitchRepository ${res}")
+        if (res.map(_.isEnabled).getOrElse(false)) {
+          Logger("application").info("TimeMachineMonitorActor -> attempt to set to True")
+          System.setProperty("feature-switch.enable-time-machine", "true")
+          ConfigFactory.invalidateCaches()
+          val cfg = ConfigFactory.load(config.underlying)
+          val newConfig = cfg.getConfig("feature-switch")
+          val fsTimeMachine = newConfig.getString("enable-time-machine")
+          Logger("application").info(s"TimeMachineMonitorActor -> $fsTimeMachine")
+        } else {
+          Logger("application").info("TimeMachineMonitorActor -> is False in mongo")
+        }
+        Future.successful(())
+      }
   }
 
-  /*
+  def receive = {
+    case WaitForNew =>
+      Logger("application").info("TimeMachineMonitorActor -> waitForNew")
+      context.system.scheduler.scheduleOnce(5.seconds, self, Realod)(context.dispatcher)
+    case Realod =>
+      Logger("application").info("TimeMachineMonitorActor -> reload")
+      getTimeMachineFs()
+        .map(_ => WaitForNew).pipeTo(self)
 
-System.setProperty("a.b.c", "100")
-ConfigFactory.invalidateCaches()
-val config = ConfigFactory.load("sample1")
-config.getDouble("a.b.c") should be (100.0)
+    // TODO: call FeatureSwitch Service
+    //      System.setProperty("feature-switch.enable-time-machine", "true")
+    //      ConfigFactory.invalidateCaches()
+    //      val cfg = ConfigFactory.load(config.underlying)
+    //      val newConfig = cfg.getConfig("feature-switch")
+    //      val fsTimeMachine = newConfig.getString("enable-time-machine")
+    //      Logger("application").info(s"TimeMachineMonitorActor -> $fsTimeMachine")
 
-   */
+
+  }
+
 }
