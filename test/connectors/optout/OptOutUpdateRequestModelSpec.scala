@@ -18,9 +18,8 @@ package connectors.optout
 
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
-import org.eclipse.jetty.http.HttpStatus.{INTERNAL_SERVER_ERROR_500, NO_CONTENT_204}
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json.{JsSuccess, JsValue, Json}
+import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
 class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
@@ -68,7 +67,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
           "statusCode": 500,
           "failures": [{
           "code": "INTERNAL_SERVER_ERROR",
-          "reason": "Request failed due to unknown error"
+          "reason": "Request failed due to unknown reason"
           }]
         }
         """.stripMargin)
