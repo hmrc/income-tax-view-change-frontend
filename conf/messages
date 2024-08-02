@@ -715,6 +715,10 @@ not_enrolled.sign-up.link                                       = sign up for Ma
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
 
+global.error.InternalServerError500.title                       = Sorry, there is a problem with the service
+global.error.InternalServerError500.heading                     = Sorry, there is a problem with the service
+global.error.InternalServerError500.message                     = Try again later.
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed

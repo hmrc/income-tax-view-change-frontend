@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -27,12 +27,9 @@ import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
-import testConstants.BusinessDetailsTestConstants.testMtdItId
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
 import views.html.TaxCalcBreakdown
 
 class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -53,6 +50,11 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     languageUtils,
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
 
   "showTaxDueSummary" when {
 
@@ -118,7 +120,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         mockShowInternalServerError()
 
         val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
-        result shouldBe an[InternalServerException]
+        result shouldBe an[AgentException]
         result.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }

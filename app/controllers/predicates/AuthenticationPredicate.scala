@@ -21,8 +21,9 @@ import audit.models.IvUpliftRequiredAuditModel
 import auth._
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.BaseController
+import exceptions.IndividualException
 import models.OriginEnum
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
@@ -46,7 +47,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
                                         val auditingService: AuditingService,
                                         val headerExtractor: HeaderExtractor
                                        )
-  extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
+  extends AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] with FeatureSwitching {
 
   override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
@@ -83,8 +84,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
         Logger("application").info("Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
-        Logger("application").error(s"Unexpected Error Caught. Show ISE.\n$s\n", s)
-        itvcErrorHandler.showInternalServerError()
+        Logger("application").error(s"Unexpected Error Caught. Throwing.\n$s\n", s)
+        throw new IndividualException(s)
     }
   }
 

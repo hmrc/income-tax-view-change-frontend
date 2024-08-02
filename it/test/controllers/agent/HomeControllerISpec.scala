@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSources, IncomeSourcesNewJourney}
@@ -730,7 +730,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitleIndividual(titleTechError, isErrorPage = true)
+        pageTitleIndividual(titleProbWithService, isErrorPage = true)
       )
     }
   }

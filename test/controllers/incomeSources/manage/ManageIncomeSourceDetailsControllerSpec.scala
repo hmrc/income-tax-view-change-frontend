@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
+import exceptions.NoIncomeSourceFound
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
@@ -31,6 +32,7 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
+import org.scalatest.RecoverMethods.recoverToExceptionIf
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -883,20 +885,31 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "User has no income source of the called type" in {
         mockAndBasicSetup(ERROR_TESTING)
         mockUKPropertyIncomeSource()
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+
         val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
-        status(resultSE) shouldBe Status.INTERNAL_SERVER_ERROR
+        recoverToExceptionIf[NoIncomeSourceFound](resultSE).map { rt =>
+          rt.getMessage shouldBe s"User has no matching incomeSources. Hash: <$incomeSourceIdHash>"
+        }
 
         mockAndBasicSetup(ERROR_TESTING)
         mockSingleBusinessIncomeSource()
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+
         val resultUk: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
-        status(resultUk) shouldBe Status.INTERNAL_SERVER_ERROR
+        recoverToExceptionIf[NoIncomeSourceFound](resultUk).map { rt =>
+          rt.getMessage shouldBe s"User has no matching incomeSources. Hash: <$incomeSourceIdHash>"
+        }
 
         mockAndBasicSetup(ERROR_TESTING)
         mockSingleBusinessIncomeSource()
-        val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
-        status(resultFP) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
 
+        val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
+        recoverToExceptionIf[NoIncomeSourceFound](resultFP).map { rt =>
+          rt.getMessage shouldBe s"User has no matching incomeSources. Hash: <$incomeSourceIdHash>"
+        }
+      }
     }
   }
 }

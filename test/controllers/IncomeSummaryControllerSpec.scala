@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -31,10 +31,9 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
 import views.html.IncomeBreakdown
 
 import scala.concurrent.Future
@@ -63,6 +62,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disableAllSwitches()
   }
 
   "showIncomeSummary" when {
@@ -145,7 +145,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
         setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockShowInternalServerError()
         val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
-        exception shouldBe an[InternalServerException]
+        exception shouldBe an[AgentException]
         exception.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
 

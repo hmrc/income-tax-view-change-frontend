@@ -21,6 +21,7 @@ import controllers.agent.sessionUtils.SessionKeys
 import controllers.predicates.AuthPredicate._
 import controllers.predicates.IncomeTaxUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.MissingAgentReferenceNumber
+import exceptions.AgentException
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -56,7 +57,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
       Redirect(controllers.routes.SignInController.signIn)
     case _: NotFoundException =>
       NotFound(itvcErrorHandler.notFoundTemplate(request))
-    case ex => throw ex
+    case ex => throw new AgentException(ex)
   }
 
   protected trait AuthenticatedActions[User <: IncomeTaxUser] {

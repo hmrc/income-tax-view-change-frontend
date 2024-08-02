@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits}
@@ -554,7 +554,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       }
     }
-    " [IT-AGENT-TEST-2.3] return a technical difficulties page to the user" when {
+    " [IT-AGENT-TEST-2.3] return an error page to the user" when {
       " [IT-AGENT-TEST-2.3.1] there was a problem retrieving the client's income sources" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -567,7 +567,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError, isErrorPage = true)
+          pageTitleIndividual(titleProbWithService, isErrorPage = true)
         )
 
       }
@@ -588,7 +588,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
+          pageTitleAgent(titleProbWithService, isErrorPage = true)
         )
       }
       " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
@@ -612,7 +612,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
+          pageTitleAgent(titleProbWithService, isErrorPage = true)
         )
 
       }
@@ -643,7 +643,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer, isErrorPage = true)
+          pageTitleAgent(titleProbWithService, isErrorPage = true)
         )
       }
     }

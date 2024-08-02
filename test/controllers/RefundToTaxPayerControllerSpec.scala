@@ -20,6 +20,7 @@ import audit.mocks.MockAuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockRepaymentHistoryConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -29,7 +30,6 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
-import uk.gov.hmrc.http.InternalServerException
 import views.html.RefundToTaxPayer
 
 import java.time.LocalDate
@@ -41,6 +41,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disableAllSwitches()
   }
 
   override def afterEach(): Unit = {
@@ -263,7 +264,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         mockErrorIncomeSource()
 
         val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue shouldBe an[AgentException]
       }
 
     }
@@ -275,7 +276,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         mockErrorIncomeSource()
 
         val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
-        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue shouldBe an[AgentException]
       }
     }
 

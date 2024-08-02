@@ -16,21 +16,51 @@
 
 package config
 
+import exceptions.{AgentException, IndividualException}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
+import scala.concurrent.Future
+import scala.language.implicitConversions
 
 trait ShowInternalServerError {
   def showInternalServerError()(implicit request: Request[_]): Result
 }
 
 class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
-                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
+                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with Logging with I18nSupport with ShowInternalServerError {
+
+  private implicit def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
+
+  private def logError(request: RequestHeader, ex: Throwable): Unit = {
+    val prefix = ex match {
+      case _ :AgentException => "Agent "
+      case _ :IndividualException => "Individual "
+      case _ => ""
+    }
+    logger.error(s"${prefix}Error for (${request.method}) [${request.uri}] -> ${ex.getCause.getClass.getSimpleName}: ${ex.getMessage}")
+  }
+
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    logError(request, exception)
+
+    val isAgent = exception match {
+      case e :AgentException => true
+      case _ => false
+    }
+
+    Future.successful(InternalServerError(errorTemplate(
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.message"),
+      isAgent = isAgent)(rhToRequest(request), messagesApi.preferred(request))))
+  }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, isAgent = false)
@@ -40,5 +70,4 @@ class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
     messagesApi.preferred(request)("standardError.heading"),
     messagesApi.preferred(request)("standardError.message")
   ))
-
 }

@@ -128,7 +128,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleInternalServer: String = "standardError.heading"
   val titleTechError = "Sorry, we are experiencing technical difficulties - 500"
   val titleNotFound = "Page not found - 404"
-  val titleProbWithService = "There is a problem with the service"
+  val titleProbWithService = "Sorry, there is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
   implicit val csbTestUser: MtdItUser[_] = MtdItUser(

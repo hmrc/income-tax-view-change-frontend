@@ -19,6 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import exceptions.AgentException
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -543,7 +544,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
         val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
 
-        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue shouldBe an[AgentException]
         result.failed.futureValue.getMessage shouldBe "IncomeSourceDetailsModel not created"
       }
     }
