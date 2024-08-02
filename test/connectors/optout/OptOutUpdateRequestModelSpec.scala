@@ -44,7 +44,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
   }
 
   "The success model" should {
-    val successObject = OptOutUpdateResponseSuccess("123")
+    val successObject = OptOutUpdateResponseSuccess()
     val successJson = Json.parse(
       """
         {

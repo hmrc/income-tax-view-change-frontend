@@ -73,14 +73,14 @@ class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with B
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
         val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
-        val apiResponse = OptOutUpdateResponseSuccess("123", NO_CONTENT)
+        val apiResponse = OptOutUpdateResponseSuccess()
         val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
 
         setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
         val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, optOutUpdateReason)
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess("123", NO_CONTENT)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess()
 
       }
     }

@@ -77,7 +77,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 
-  val optOutUpdateResponseSuccess: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseSuccess("123"))
+  val optOutUpdateResponseSuccess: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseSuccess())
   val optOutUpdateResponseFailure: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseFailure.defaultFailure())
 
 

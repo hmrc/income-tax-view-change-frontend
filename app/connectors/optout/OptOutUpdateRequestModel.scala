@@ -26,7 +26,7 @@ object OptOutUpdateRequestModel {
   case class OptOutUpdateRequest(taxYear: String, updateReason: String)
   sealed trait OptOutUpdateResponse
 
-  case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
   case class OptOutUpdateResponseFailure(failures: List[ErrorItem]) extends OptOutUpdateResponse
 

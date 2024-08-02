@@ -19,10 +19,9 @@ package connectors.optout
 import config.FrontendAppConfig
 import connectors.RawResponseReads
 import connectors.optout.ITSAStatusUpdateConnector._
+import connectors.optout.OptOutUpdateRequestModel._
 import models.incomeSourceDetails.TaxYear
-import OptOutUpdateRequestModel._
 import play.api.Logger
-import play.api.libs.json.{JsError, Json}
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -53,17 +52,15 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
     http.PUT[OptOutUpdateRequest, HttpResponse](
       buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
     ).map { response =>
-      val correlationId = response.headers.get(CorrelationIdHeader).map(_.head).getOrElse(s"Unknown_$CorrelationIdHeader")
       response.status match {
-        case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
+        case Status.NO_CONTENT => OptOutUpdateResponseSuccess()
         case Status.NOT_FOUND =>
           log.error(s"response status: ${response.status}")
           OptOutUpdateResponseFailure.notFoundFailure(buildRequestUrlWith(taxableEntityId))
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
-              val invalidJsonString = Json.prettyPrint(JsError.toJson(invalid))
-              log.error(s"Json validation error parsing itsa-status update response, error \n$invalidJsonString")
+              log.error(s"Json validation error parsing itsa-status update response, error \n$invalid")
               OptOutUpdateResponseFailure.defaultFailure()
             },
             valid => {
