@@ -75,7 +75,8 @@ class TimeMachineMonitorActor(val config: Configuration,
       getTimeMachineFs()
         .map(_ => WaitForNew).pipeTo(self)
 
-    // TODO: call FeatureSwitch Service
+    // Original example how to reload TypeSafe config
+    //  https://stackoverflow.com/questions/52557484/how-to-refresh-application-conf-at-runtime
     //      System.setProperty("feature-switch.enable-time-machine", "true")
     //      ConfigFactory.invalidateCaches()
     //      val cfg = ConfigFactory.load(config.underlying)
