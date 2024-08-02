@@ -54,9 +54,7 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
     ).map { response =>
       response.status match {
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess()
-        case Status.NOT_FOUND =>
-          log.error(s"response status: ${response.status}")
-          OptOutUpdateResponseFailure.notFoundFailure(buildRequestUrlWith(taxableEntityId))
+
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
@@ -65,6 +63,9 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
             },
             valid => {
               log.error(s"response status: ${response.status}")
+              if(response.status == Status.NOT_FOUND) {
+                log.error(s"Not found error from itsa-status update response, error $valid")
+              }
               valid
             }
           )
