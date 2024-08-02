@@ -16,11 +16,13 @@
 
 package services.admin
 
+import actors.TimeMachineMonitorActor
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.admin.{FeatureSwitch, FeatureSwitchName}
-import play.api.Logger
+import org.apache.pekko.actor.ActorSystem
+import play.api.{Configuration, Logger}
 import play.api.mvc.MessagesControllerComponents
 import repositories.admin.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -32,11 +34,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchService @Inject()(
                                       val featureSwitchRepository: FeatureSwitchRepository,
                                       val authorisedFunctions: AuthorisedFunctions,
-                                      val appConfig: FrontendAppConfig)
+                                      val appConfig: FrontendAppConfig,
+                                      val config: Configuration,
+                                      system: ActorSystem)
                                     (implicit val ec: ExecutionContext,
                                      mcc: MessagesControllerComponents,
                                      implicit val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with FeatureSwitching {
+
+  val timeMachineActor = system.actorOf(TimeMachineMonitorActor.props(config), "timeMachine-actor")
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
     featureSwitchRepository
