@@ -661,6 +661,10 @@ not_enrolled.sign-up.link                                       = gofrestru ar g
 ## Standard Error Page ##
 standardError.heading                                           = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 standardError.message                                           = Rhowch gynnig arall arni yn nes ymlaen.
+global.error.InternalServerError500.title                       = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+global.error.InternalServerError500.heading                     = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+global.error.InternalServerError500.message                     = Rhowch gynnig arall arni yn nes ymlaen.
+
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA

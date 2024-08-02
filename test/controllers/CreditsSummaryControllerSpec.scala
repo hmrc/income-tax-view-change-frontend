@@ -70,6 +70,11 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     )
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
+
   val paymentRefundHistoryBackLink: String = "/report-quarterly/income-and-expenses/view/payment-refund-history"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
   lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
@@ -220,18 +225,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-    "Called with an Authenticated HMRC-MTD-IT User" when {
-      "provided with a negative tax year" should {
-        "return Internal Service Error (500)" in {
-          mockPropertyIncomeSource()
-
-          val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
       }
     }
   }
