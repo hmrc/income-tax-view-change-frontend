@@ -16,38 +16,91 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import models.incomeSourceDetails.TaxYear
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
 class ObligationsViewModelSpec extends UnitSpec {
-  val currentDate: LocalDate = LocalDate.of(2024, 1, 10)
-  val currentTaxYear: Int = currentDate.getYear
+  val withinFirstQuarter: LocalDate = LocalDate.of(2024, 3, 10)
+  val afterFirstQuarterDeadline = LocalDate.of(2024, 5, 10)
+  val afterSecondQuarterDeadline = LocalDate.of(2024, 8, 10)
+  val after2023_2024FinalDeclarationDeadline = LocalDate.of(2025, 2, 10)
 
-  val baseObligationsViewModel: ObligationsViewModel = ObligationsViewModel(Seq(), Seq(), currentTaxYear, showPrevTaxYears = true)
+  val taxYear2022_2023FinalDeclaration: DatesModel = DatesModel(
+    inboundCorrespondenceFrom = startDateTaxYear2022,
+    inboundCorrespondenceTo = endDateTaxYear2022,
+    inboundCorrespondenceDue = crystallisedDeadlineTaxYear2022,
+    periodKey = "C",
+    isFinalDec = true,
+    obligationType = "Crystallised"
+  )
+
+  val taxYear2023_2024FinalDeclaration: DatesModel = DatesModel(
+    inboundCorrespondenceFrom = startDateTaxYear2023,
+    inboundCorrespondenceTo = endDateTaxYear2023,
+    inboundCorrespondenceDue = crystallisedDeadlineTaxYear2023,
+    periodKey = "C",
+    isFinalDec = true,
+    obligationType = "Crystallised"
+  )
+
+  val taxYear2024_2025FinalDeclaration: DatesModel = DatesModel(
+    inboundCorrespondenceFrom = startDateTaxYear2024,
+    inboundCorrespondenceTo = endDateTaxYear2024,
+    inboundCorrespondenceDue = crystallisedDeadlineTaxYear2024,
+    periodKey = "C",
+    isFinalDec = true,
+    obligationType = "Crystallised"
+  )
+
+  val taxYear2022QuarterlyObligationDates: Seq[DatesModel] = quarterlyDatesYearOne
+  val taxYear2023QuarterlyObligationDates: Seq[DatesModel] = quarterlyDatesYearTwo
+  val taxYear2024QuarterlyObligationDates: Seq[DatesModel] = quarterlyDatesYearThree
+
+  val viewModelDefaultCurrentTaxYear: TaxYear = TaxYear(2023, 2024)
+
+  private def constructObligationsViewModel(
+    quarterlyObligationsDates: Seq[Seq[DatesModel]] = Seq(Seq()),
+    finalDeclarationDates: Seq[DatesModel] = Seq(),
+    currentTaxYear: TaxYear = viewModelDefaultCurrentTaxYear,
+    showPrevTaxYears: Boolean = true
+  ): ObligationsViewModel =
+    ObligationsViewModel(
+      quarterlyObligationsDates = quarterlyObligationsDates,
+      finalDeclarationDates = finalDeclarationDates,
+      currentTaxYear = currentTaxYear.endYear,
+      showPrevTaxYears = showPrevTaxYears
+    )
 
   "getNumberOfOverdueAnnualObligations" should {
     "correctly return the number of overdue final declarations" when {
       "there are no final declarations" in {
-        baseObligationsViewModel.getNumberOfOverdueAnnualObligations(currentDate) shouldBe 0
+        val viewModel = constructObligationsViewModel()
+
+        viewModel.getNumberOfOverdueAnnualObligations(withinFirstQuarter) shouldBe 0
       }
 
       "there are no overdue final declarations" in {
-        val currentYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(1), currentDate, currentDate.plusYears(1), "C", isFinalDec = true, "")
-        baseObligationsViewModel.copy(finalDeclarationDates = Seq(currentYearFinalDeclaration)).getNumberOfOverdueAnnualObligations(currentDate) shouldBe 0
+        val viewModel = constructObligationsViewModel(finalDeclarationDates = Seq(taxYear2023_2024FinalDeclaration))
+
+        viewModel.getNumberOfOverdueAnnualObligations(withinFirstQuarter) shouldBe 0
       }
 
       "there are both overdue and non-overdue final declarations" in {
-        val previousYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(2).minusDays(1), currentDate.minusYears(1).minusDays(1), currentDate.minusDays(1), "C", isFinalDec = true, "Crystallised")
-        val currentYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(1), currentDate, currentDate.plusYears(1), "C", isFinalDec = true, "")
-        baseObligationsViewModel.copy(finalDeclarationDates = Seq(previousYearFinalDeclaration, currentYearFinalDeclaration)).getNumberOfOverdueAnnualObligations(currentDate) shouldBe 1
+        val viewModel = constructObligationsViewModel(finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration))
+
+        viewModel.getNumberOfOverdueAnnualObligations(withinFirstQuarter) shouldBe 1
       }
 
       "there are overdue final declarations as well as overdue quarterly obligations" in {
-        val previousYearFinalDeclaration1: DatesModel = DatesModel(currentDate.minusYears(3), currentDate.minusYears(2), currentDate.minusYears(1).minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousYearFinalDeclaration2: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(1), currentDate.minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousYearQ1Obligation: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(2).plusMonths(3), currentDate.minusYears(2).plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(Seq(previousYearQ1Obligation)), finalDeclarationDates = Seq(previousYearFinalDeclaration1, previousYearFinalDeclaration2)).getNumberOfOverdueAnnualObligations(currentDate) shouldBe 2
+        val viewModel = constructObligationsViewModel(
+          quarterlyObligationsDates = Seq(taxYear2023QuarterlyObligationDates),
+          finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration)
+        )
+
+        viewModel.getNumberOfOverdueAnnualObligations(withinFirstQuarter) shouldBe 1
       }
     }
   }
@@ -55,41 +108,30 @@ class ObligationsViewModelSpec extends UnitSpec {
   "getNumberOfOverdueQuarterlyObligations" should {
     "correctly return the number of overdue quarterly obligations" when {
       "there are no quarterly obligations" in {
-        baseObligationsViewModel.getNumberOfOverdueQuarterlyObligations(currentDate) shouldBe 0
+        val viewModel = constructObligationsViewModel()
+
+        viewModel.getNumberOfOverdueQuarterlyObligations(withinFirstQuarter) shouldBe 0
       }
 
       "there are no overdue quarterly obligations" in {
-        val currentYearQ1Obligation: DatesModel = DatesModel(currentDate, currentDate.plusMonths(3), currentDate.plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val currentYearQ2Obligation: DatesModel = DatesModel(currentDate.plusMonths(3).plusDays(1), currentDate.plusMonths(6).plusDays(1), currentDate.plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(Seq(currentYearQ1Obligation, currentYearQ2Obligation))).getNumberOfOverdueQuarterlyObligations(currentDate) shouldBe 0
+        val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates))
+
+        viewModel.getNumberOfOverdueQuarterlyObligations(withinFirstQuarter) shouldBe 0
       }
 
       "there are both overdue and non-overdue quarterly obligations" in {
-        val previousYearQ1Obligation: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(2).plusMonths(3), currentDate.minusYears(2).plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val previousYearQ2Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(3).plusDays(1), currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val previousYearQ3Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(2).plusMonths(10).plusDays(1), "#003", isFinalDec = false, "Quarterly")
-        val previousYearQ4Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(1).plusDays(1), currentDate.minusYears(1).plusMonths(1).plusDays(1), "#004", isFinalDec = false, "Quarterly")
-        val previousYearObligations: Seq[DatesModel] = Seq(previousYearQ1Obligation, previousYearQ2Obligation, previousYearQ3Obligation, previousYearQ4Obligation)
+        val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2023QuarterlyObligationDates, taxYear2024QuarterlyObligationDates))
 
-        val currentYearQ1Obligation: DatesModel = DatesModel(currentDate, currentDate.plusMonths(3), currentDate.plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val currentYearQ2Obligation: DatesModel = DatesModel(currentDate.plusMonths(3).plusDays(1), currentDate.plusMonths(6).plusDays(1), currentDate.plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val currentYearObligations: Seq[DatesModel] = Seq(currentYearQ1Obligation, currentYearQ2Obligation)
-
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(previousYearObligations, currentYearObligations)).getNumberOfOverdueQuarterlyObligations(currentDate) shouldBe 4
+        viewModel.getNumberOfOverdueQuarterlyObligations(afterSecondQuarterDeadline) shouldBe 6
       }
 
       "there are overdue quarterly obligations as well as overdue final declarations" in {
-        val previousYearQ1Obligation: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(2).plusMonths(3), currentDate.minusYears(2).plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val previousYearQ2Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(3).plusDays(1), currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val previousYearQ3Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(2).plusMonths(10).plusDays(1), "#003", isFinalDec = false, "Quarterly")
-        val previousYearQ4Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(1).plusDays(1), currentDate.minusYears(1).plusMonths(1).plusDays(1), "#004", isFinalDec = false, "Quarterly")
-        val previousYearObligations: Seq[DatesModel] = Seq(previousYearQ1Obligation, previousYearQ2Obligation, previousYearQ3Obligation, previousYearQ4Obligation)
+        val viewModel = constructObligationsViewModel(
+          quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates),
+          finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration)
+        )
 
-        val previousYearFinalDeclaration1: DatesModel = DatesModel(currentDate.minusYears(3), currentDate.minusYears(2), currentDate.minusYears(1).minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousYearFinalDeclaration2: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(1), currentDate.minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousFinalDeclarations: Seq[DatesModel] = Seq(previousYearFinalDeclaration1, previousYearFinalDeclaration2)
-
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(previousYearObligations), finalDeclarationDates = previousFinalDeclarations).getNumberOfOverdueQuarterlyObligations(currentDate) shouldBe 4
+        viewModel.getNumberOfOverdueQuarterlyObligations(afterSecondQuarterDeadline) shouldBe 2
       }
     }
   }
@@ -97,74 +139,72 @@ class ObligationsViewModelSpec extends UnitSpec {
   "getOverdueObligationsMessageComponents" should {
     "return empty message components" when {
       "there are no overdue obligations" in {
-        val currentYearQ1Obligation: DatesModel = DatesModel(currentDate, currentDate.plusMonths(3), currentDate.plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val currentYearQ2Obligation: DatesModel = DatesModel(currentDate.plusMonths(3).plusDays(1), currentDate.plusMonths(6).plusDays(1), currentDate.plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
+        val viewModel = constructObligationsViewModel(
+          quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates),
+          finalDeclarationDates = Seq(taxYear2023_2024FinalDeclaration)
+        )
 
-        val currentYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(1), currentDate, currentDate.plusYears(1), "C", isFinalDec = true, "")
-        val obligationsViewModel = baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(Seq(currentYearQ1Obligation, currentYearQ2Obligation)), finalDeclarationDates = Seq(currentYearFinalDeclaration))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("", Seq())
 
-        val expectedMessageComponents: OverdueObligationsMessageComponents = OverdueObligationsMessageComponents("", Seq())
-
-        obligationsViewModel.getOverdueObligationsMessageComponents(currentDate) shouldBe expectedMessageComponents
+        viewModel.getOverdueObligationsMessageComponents(withinFirstQuarter) shouldBe expectedMessageComponents
       }
     }
 
     "return the correct message components" when {
       "there is only one overdue quarterly obligation" in {
-        val currentYearQ1Obligation: DatesModel = DatesModel(currentDate.minusMonths(6), currentDate.minusMonths(3), currentDate.minusMonths(2), "#001", isFinalDec = false, "Quarterly")
-        val currentYearQ2Obligation: DatesModel = DatesModel(currentDate.minusMonths(3).plusDays(1), currentDate.plusDays(1), currentDate.plusMonths(1).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val currentYearObligations: Seq[DatesModel] = Seq(currentYearQ1Obligation, currentYearQ2Obligation)
+        val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates))
 
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(currentYearObligations)).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.single-quarterly-overdue.text", Seq("2023", "2024"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single-quarterly-overdue.text", Seq("2023", "2024"))
+
+        viewModel.getOverdueObligationsMessageComponents(afterFirstQuarterDeadline) shouldBe expectedMessageComponents
       }
 
-      "there are multiple overdue quarterly obligations" in {
-        val currentYearQ1Obligation: DatesModel = DatesModel(currentDate.minusMonths(9), currentDate.minusMonths(6), currentDate.minusMonths(5), "#001", isFinalDec = false, "Quarterly")
-        val currentYearQ2Obligation: DatesModel = DatesModel(currentDate.minusMonths(6), currentDate.minusMonths(3), currentDate.minusMonths(2), "#002", isFinalDec = false, "Quarterly")
-        val currentYearQ3Obligation: DatesModel = DatesModel(currentDate.minusMonths(3).plusDays(1), currentDate.plusDays(1), currentDate.plusMonths(1).plusDays(1), "#003", isFinalDec = false, "Quarterly")
-        val currentYearObligations: Seq[DatesModel] = Seq(currentYearQ1Obligation, currentYearQ2Obligation, currentYearQ3Obligation)
+      "there are multiple overdue quarterly obligations in the current tax year" in {
+        val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates))
 
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(currentYearObligations)).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.multiple-quarterly-overdue.text", Seq("2", "6","2023", "2024"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-quarterly-overdue.text", Seq("2", "6", "2023", "2024"))
+
+        viewModel.getOverdueObligationsMessageComponents(afterSecondQuarterDeadline) shouldBe expectedMessageComponents
       }
 
       "there are quarterly obligations from the previous tax year that also have an associated final declaration" in {
-        val previousYearQ1Obligation: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(2).plusMonths(3), currentDate.minusYears(2).plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val previousYearQ2Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(3).plusDays(1), currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val previousYearQ3Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(2).plusMonths(10).plusDays(1), "#003", isFinalDec = false, "Quarterly")
-        val previousYearQ4Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(1).plusDays(1), currentDate.minusYears(1).plusMonths(1).plusDays(1), "#004", isFinalDec = false, "Quarterly")
-        val previousYearObligations: Seq[DatesModel] = Seq(previousYearQ1Obligation, previousYearQ2Obligation, previousYearQ3Obligation, previousYearQ4Obligation)
+        val viewModel = constructObligationsViewModel(
+          quarterlyObligationsDates = Seq(taxYear2023QuarterlyObligationDates),
+          finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration) // Due date of this is the due date for the quarterly reporting 2023 final declaration
+        )
 
-        val previousYearFinalDeclaration2: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(1), currentDate.minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousFinalDeclarations: Seq[DatesModel] = Seq(previousYearFinalDeclaration2)
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text", Seq("5", "2023", "2024"))
 
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(previousYearObligations), finalDeclarationDates = previousFinalDeclarations).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text", Seq("5", "2023", "2024"))
+        viewModel.getOverdueObligationsMessageComponents(withinFirstQuarter) shouldBe expectedMessageComponents
       }
 
       "there is only one overdue final declaration" in {
-        val previousYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(2).minusDays(1), currentDate.minusYears(1).minusDays(1), currentDate.minusDays(1), "C", isFinalDec = true, "Crystallised")
-        val currentYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(1), currentDate, currentDate.plusYears(1), "C", isFinalDec = true, "")
-        baseObligationsViewModel.copy(finalDeclarationDates = Seq(previousYearFinalDeclaration, currentYearFinalDeclaration)).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
+        val viewModel = constructObligationsViewModel(finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration))
+
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
+
+        viewModel.getOverdueObligationsMessageComponents(withinFirstQuarter) shouldBe expectedMessageComponents
       }
 
       "there are multiple overdue final declarations" in {
-        val previousYearFinalDeclaration1: DatesModel = DatesModel(currentDate.minusYears(3).minusDays(1), currentDate.minusYears(2).minusDays(1), currentDate.minusYears(1).minusDays(1), "C", isFinalDec = true, "Crystallised")
-        val previousYearFinalDeclaration2: DatesModel = DatesModel(currentDate.minusYears(2).minusDays(1), currentDate.minusYears(1).minusDays(1), currentDate.minusDays(1), "C", isFinalDec = true, "Crystallised")
-        val currentYearFinalDeclaration: DatesModel = DatesModel(currentDate.minusYears(1), currentDate, currentDate.plusYears(1), "C", isFinalDec = true, "")
-        baseObligationsViewModel.copy(finalDeclarationDates = Seq(previousYearFinalDeclaration1, previousYearFinalDeclaration2, currentYearFinalDeclaration)).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.multiple-annual-overdue.text", Seq("2"))
+        val viewModel = constructObligationsViewModel(
+          finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration, taxYear2024_2025FinalDeclaration)
+        )
+
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-annual-overdue.text", Seq("2"))
+
+        viewModel.getOverdueObligationsMessageComponents(after2023_2024FinalDeclarationDeadline) shouldBe expectedMessageComponents
       }
 
       "there is hybrid reporting including overdue quarterly obligations and final declarations" in {
-        val previousYearQ1Obligation: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(2).plusMonths(3), currentDate.minusYears(2).plusMonths(4), "#001", isFinalDec = false, "Quarterly")
-        val previousYearQ2Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(3).plusDays(1), currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(7).plusDays(1), "#002", isFinalDec = false, "Quarterly")
-        val previousYearQ3Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(6).plusDays(1), currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(2).plusMonths(10).plusDays(1), "#003", isFinalDec = false, "Quarterly")
-        val previousYearQ4Obligation: DatesModel = DatesModel(currentDate.minusYears(2).plusMonths(9).plusDays(1), currentDate.minusYears(1).plusDays(1), currentDate.minusYears(1).plusMonths(1).plusDays(1), "#004", isFinalDec = false, "Quarterly")
-        val previousYearObligations: Seq[DatesModel] = Seq(previousYearQ1Obligation, previousYearQ2Obligation, previousYearQ3Obligation, previousYearQ4Obligation)
+        val viewModel = constructObligationsViewModel(
+          quarterlyObligationsDates = Seq(taxYear2024QuarterlyObligationDates),
+          finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration)
+        )
 
-        val previousYearFinalDeclaration1: DatesModel = DatesModel(currentDate.minusYears(3), currentDate.minusYears(2), currentDate.minusYears(1).minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousYearFinalDeclaration2: DatesModel = DatesModel(currentDate.minusYears(2), currentDate.minusYears(1), currentDate.minusMonths(1), "C", isFinalDec = true, "Crystallised")
-        val previousFinalDeclarations: Seq[DatesModel] = Seq(previousYearFinalDeclaration1, previousYearFinalDeclaration2)
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text", Seq("6", "2023", "2024"))
 
-        baseObligationsViewModel.copy(quarterlyObligationsDates = Seq(previousYearObligations), finalDeclarationDates = previousFinalDeclarations).getOverdueObligationsMessageComponents(currentDate) shouldBe OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text", Seq("6", "2023", "2024"))
+        viewModel.getOverdueObligationsMessageComponents(after2023_2024FinalDeclarationDeadline) shouldBe expectedMessageComponents
       }
     }
   }

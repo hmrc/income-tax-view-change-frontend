@@ -106,7 +106,7 @@ object IncomeSourcesObligationsTestConstants {
 
   val crystallisedDeadlineTaxYear2022 = LocalDate.of(2024, 1, 31)
   val crystallisedDeadlineTaxYear2023 = LocalDate.of(2025, 1, 31)
-  val crystallisedlineTaxYear2024 = LocalDate.of(2026, 1, 31)
+  val crystallisedDeadlineTaxYear2024 = LocalDate.of(2026, 1, 31)
 
   val quarterlyDatesYearOne = Seq(
     DatesModel(startDateQ1_2022, endDateQ1_2022, endDateQ1_2022.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
@@ -154,7 +154,7 @@ object IncomeSourcesObligationsTestConstants {
     quarterlyObligationsDates = quarterlyObligationDatesFull,
     finalDeclarationDates = Seq(
       DatesModel(startDateTaxYear2023, endDateTaxYear2023, crystallisedDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised"),
-      DatesModel(startDateTaxYear2024, endDateTaxYear2024, crystallisedlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
+      DatesModel(startDateTaxYear2024, endDateTaxYear2024, crystallisedDeadlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
     ),
     currentTaxYear = taxYear2023,
     showPrevTaxYears = true
