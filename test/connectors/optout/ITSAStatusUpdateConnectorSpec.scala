@@ -50,7 +50,7 @@ import ITSAStatusUpdateConnector._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ITSAStatusUpdateConnectorTest extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
+class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])

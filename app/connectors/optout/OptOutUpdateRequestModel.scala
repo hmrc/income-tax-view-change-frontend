@@ -31,9 +31,9 @@ object OptOutUpdateRequestModel {
   case class OptOutUpdateResponseFailure(failures: List[ErrorItem]) extends OptOutUpdateResponse
 
   object OptOutUpdateResponseFailure {
-    def defaultFailure(): OptOutUpdateResponseFailure =
+    def defaultFailure(message: String = "unknown reason"): OptOutUpdateResponseFailure =
       OptOutUpdateResponseFailure(
-        List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown error"))
+        List(ErrorItem("INTERNAL_SERVER_ERROR", s"Request failed due to $message"))
       )
 
     def notFoundFailure(url: String): OptOutUpdateResponseFailure =
