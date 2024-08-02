@@ -306,7 +306,6 @@ class OptOutServiceSpec extends UnitSpec
 
       "return failure response for made update request" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
@@ -315,7 +314,7 @@ class OptOutServiceSpec extends UnitSpec
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+          OptOutUpdateResponseFailure(errorItems)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
@@ -324,7 +323,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(correlationId, BAD_REQUEST, errorItems)
+        result.futureValue shouldBe OptOutUpdateResponseFailure(errorItems)
       }
     }
 

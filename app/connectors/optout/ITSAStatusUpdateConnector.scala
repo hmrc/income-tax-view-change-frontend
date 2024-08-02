@@ -22,6 +22,7 @@ import connectors.optout.ITSAStatusUpdateConnector._
 import models.incomeSourceDetails.TaxYear
 import OptOutUpdateRequestModel._
 import play.api.Logger
+import play.api.libs.json.{JsError, Json}
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -57,16 +58,17 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
         case Status.NO_CONTENT => OptOutUpdateResponseSuccess(correlationId)
         case Status.NOT_FOUND =>
           log.error(s"response status: ${response.status}")
-          OptOutUpdateResponseFailure.notFoundFailure(correlationId, buildRequestUrlWith(taxableEntityId))
+          OptOutUpdateResponseFailure.notFoundFailure(buildRequestUrlWith(taxableEntityId))
         case _ =>
           response.json.validate[OptOutUpdateResponseFailure].fold(
             invalid => {
-              log.error(s"Json validation error parsing itsa-status update response, error $invalid")
-              OptOutUpdateResponseFailure.defaultFailure(correlationId)
+              val invalidJsonString = Json.prettyPrint(JsError.toJson(invalid))
+              log.error(s"Json validation error parsing itsa-status update response, error \n$invalidJsonString")
+              OptOutUpdateResponseFailure.defaultFailure()
             },
             valid => {
               log.error(s"response status: ${response.status}")
-              valid.copy(correlationId = correlationId, statusCode = response.status)
+              valid
             }
           )
       }

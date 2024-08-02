@@ -29,18 +29,18 @@ object OptOutUpdateRequestModel {
   }
   case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
-  case class OptOutUpdateResponseFailure(correlationId: String, statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseFailure(failures: List[ErrorItem]) extends OptOutUpdateResponse {
+    val statusCode: Int = INTERNAL_SERVER_ERROR
+  }
 
   object OptOutUpdateResponseFailure {
-    def defaultFailure(correlationId: String = "unknown"): OptOutUpdateResponseFailure =
-      OptOutUpdateResponseFailure(correlationId,
-        INTERNAL_SERVER_ERROR,
+    def defaultFailure(): OptOutUpdateResponseFailure =
+      OptOutUpdateResponseFailure(
         List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown error"))
       )
 
-    def notFoundFailure(correlationId: String = "unknown", url: String): OptOutUpdateResponseFailure =
-      OptOutUpdateResponseFailure(correlationId,
-        INTERNAL_SERVER_ERROR,
+    def notFoundFailure(url: String): OptOutUpdateResponseFailure =
+      OptOutUpdateResponseFailure(
         List(ErrorItem("INTERNAL_SERVER_ERROR", s"URI not found on target backed-end service, url: $url"))
       )
   }

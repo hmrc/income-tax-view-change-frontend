@@ -78,7 +78,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 
   val optOutUpdateResponseSuccess: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseSuccess("123"))
-  val optOutUpdateResponseFailure: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseFailure.defaultFailure("123"))
+  val optOutUpdateResponseFailure: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseFailure.defaultFailure())
 
 
   def oneYearShowTest(isAgent: Boolean): Unit = {

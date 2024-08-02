@@ -60,7 +60,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
   "The failure model" should {
 
-    val failureObject = OptOutUpdateResponseFailure.defaultFailure().copy(correlationId = "123")
+    val failureObject = OptOutUpdateResponseFailure.defaultFailure()
     val failureJson = Json.parse(
       """
         {
@@ -80,15 +80,13 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
   "The not-found failure model" should {
 
-    val notFoundFailureObject = OptOutUpdateResponseFailure.notFoundFailure("123", "some url")
+    val notFoundFailureObject = OptOutUpdateResponseFailure.notFoundFailure("some url")
     val notFoundFailureJson = Json.parse(
       """
         {
-          "correlationId": "123",
-          "statusCode": 500,
           "failures": [{
-          "code": "INTERNAL_SERVER_ERROR",
-          "reason": "URI not found on target backed-end service, url: some url"
+            "code": "INTERNAL_SERVER_ERROR",
+            "reason": "URI not found on target backed-end service, url: some url"
           }]
         }
         """.stripMargin)
