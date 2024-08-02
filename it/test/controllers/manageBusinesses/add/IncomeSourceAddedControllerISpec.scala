@@ -42,7 +42,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
   val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
-  val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
+  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
 
@@ -106,7 +106,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(OK),
           pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
         )
       }
     }
@@ -227,7 +227,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(OK),
           pageTitleIndividual(expectedText),
-          elementTextByID("continue-button")(continueButtonText)
+          elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
         )
       }
     }
