@@ -17,9 +17,10 @@
 package services
 
 import mocks.connectors.MockChargeHistoryConnector
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.chargeHistory._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
+import org.scalatest.exceptions.TestFailedException
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import testUtils.TestSupport
@@ -113,6 +114,74 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
 
         val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
         res shouldBe desiredAdjustments
+      }
+
+
+        "should generate models with correct values, dates and ordering" in {
+
+          val chargeHistoryList: List[ChargeHistoryModel] = List(
+            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 3), "ITSA - POA 2", 1400, LocalDate.of(2024, 8, 3), "Reversal", Some(MainIncomeLower.code)),
+            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1500, LocalDate.of(2024, 8, 2), "Reversal", Some(MainIncomeLower.code)),
+            ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1879.93, LocalDate.of(2024, 7, 19), "Reversal", Some(MainIncomeLower.code))
+          )
+
+          val adjustedDocumentDetail: DocumentDetail = DocumentDetail(
+            2024, "12345", Some("ITSA - POA 2"), None, 1300, 1879.93, LocalDate.of(2024, 8, 3)
+          )
+
+          val desiredAdjustments = AdjustmentHistoryModel(
+            creationEvent = AdjustmentModel(1879.93, None, "create"),
+            adjustments = List(
+              AdjustmentModel(1500.00, Some(LocalDate.of(2024, 7, 19)), "adjustment"),
+              AdjustmentModel(1400.00, Some(LocalDate.of(2024, 8, 2)), "adjustment"),
+              AdjustmentModel(1300.00, Some(LocalDate.of(2024, 8, 3)), "adjustment"),
+            )
+          )
+
+          val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryList, adjustedDocumentDetail)
+          assertThrows[TestFailedException] {
+            res shouldBe desiredAdjustments
+          }
+
+          // creation amount should be equal to original amount, and amount on first charge history model
+
+          val sortedChargeHistory = chargeHistoryList.sortBy(_.reversalDate).reverse
+
+          assertThrows[TestFailedException] {
+            res.creationEvent.amount shouldBe adjustedDocumentDetail.originalAmount
+            res.creationEvent.amount shouldBe sortedChargeHistory.head.totalAmount
+            res.creationEvent.adjustmentDate shouldBe None
+          }
+
+          // first adjustment should have the first date
+
+          assertThrows[TestFailedException] {
+            res.adjustments.head.adjustmentDate shouldBe sortedChargeHistory.head.reversalDate
+            res.adjustments.head.amount shouldBe sortedChargeHistory(1).totalAmount
+          }
+
+          assertThrows[TestFailedException] {
+            res.adjustments(1).adjustmentDate shouldBe sortedChargeHistory(1).reversalDate
+            res.adjustments(1).amount shouldBe sortedChargeHistory(2).totalAmount
+          }
+
+          assertThrows[TestFailedException] {
+            // final row should have most recent update, with same date as DocumentDetail
+            res.adjustments(2).adjustmentDate shouldBe sortedChargeHistory(2).reversalDate
+            // outstandingAmount would have any payments reflected, so this would need to be poaRelevantAmount? Or...?
+            res.adjustments(2).amount shouldBe adjustedDocumentDetail.outstandingAmount
+          }
+
+          // Logic in getAdjustmentHistory is sensitive to ordering when adjustment dates are different
+          val resDifferentOrder = TestChargeHistoryService.getAdjustmentHistory(chargeHistory = List(
+            chargeHistoryList(1),
+            chargeHistoryList(2),
+            chargeHistoryList.head
+          ), documentDetail = adjustedDocumentDetail)
+
+          assertThrows[TestFailedException] {
+            res shouldBe resDifferentOrder
+          }
       }
     }
   }
