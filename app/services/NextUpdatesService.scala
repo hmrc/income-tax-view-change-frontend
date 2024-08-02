@@ -118,8 +118,8 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         },
           model.obligations
             .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
-            .flatMap(obligation => obligation.obligations.map(nextUpdateModel =>
-              DatesModel(nextUpdateModel.start, nextUpdateModel.end, nextUpdateModel.due, nextUpdateModel.periodKey, isFinalDec = false, obligationType = nextUpdateModel.obligationType)))
+            .flatMap(obligation => obligation.obligations.map(obligation =>
+              DatesModel(obligation.start, obligation.end, obligation.due, obligation.periodKey, isFinalDec = false, obligationType = obligation.obligationType)))
         ).flatten
     }
   }
