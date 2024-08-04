@@ -105,15 +105,6 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
       throw MissingFieldException("Obligations : No upcoming quarterly update found")
     )
   }
-
-  def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {
-    finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))
-  }
-
-  def isHybridReporting: Boolean = {
-    quarterlyObligationsDates.flatten.nonEmpty
-  }
-
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,

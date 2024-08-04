@@ -37,7 +37,6 @@
 )
 
 @(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean, reportingMethod: String)(implicit messages: Messages, user: auth.MtdItUser[_])
-@import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
     messages(s"business-added.$key", args: _*)
@@ -118,20 +117,12 @@
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
-    @getQuarterlyUpdateDate(sources: ObligationsViewModel, currentDate: LocalDate) = @{
-        try {
-            Some(sources.getFirstUpcomingQuarterlyDate(currentDate))
-        } catch {
-            case e: MissingFieldException => None
-        }
-    }
+@getQuarterlyUpdateDate = @{
+ sources.getFirstUpcomingQuarterlyDate(currentDate)
+}
 
 @getFinalDecDate = @{
     sources.getFinalDeclarationDate(currentDate)
-}
-
-@getTaxYear = @{
-    sources.currentTaxYear
 }
 
 @mainTemplate(pageTitle = getPageTitle,
@@ -164,48 +155,27 @@
         </h2>
 
 
-        @reportingMethod
-
-        @if(reportingMethod == "Hybrid" | reportingMethod == "Quarterly") {
-            <ul class="govuk-list govuk-list--bullet">
-                @getQuarterlyUpdateDate(sources, currentDate).map { quarterlyUpdate =>
-                    <li id="quarterly-list">
-                        @getMessage("next-quarterly-obligation-text-1", (getTaxYear - 1).toString, getTaxYear.toString)
-                        <span class="govuk-!-font-weight-bold">
-                            @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
-                        </span>
-                            @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
-                    </li>
-                }.getOrElse {
-                    <li id="quarterly-list">
-                        @getMessage("no-quarterly-obligation")
-                    </li>
+        <ul class="govuk-list govuk-list--bullet">
+        @if(sources.getFirstUpcomingQuarterlyDate(currentDate).nonEmpty) {
+            <li>
+                @getQuarterlyUpdateDate.map { quarterlyUpdate =>
+                    @getMessage("next-quarterly-obligation-text-1", quarterlyUpdate.inboundCorrespondenceFrom.getYear.toString, quarterlyUpdate.inboundCorrespondenceDue.getYear.toString)
+                    <span class="govuk-!-font-weight-bold">
+                        @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
+                    </span>
+                    @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
                 }
-
-                @getFinalDecDate.map { finalDecDate =>
-                    <li id="obligations-list">
-                        @getMessage("final-dec-text", (getTaxYear - 1).toString, getTaxYear.toString)
-                        <span class="govuk-!-font-weight-bold">
-                            @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
-                        </span>
-                }.getOrElse {
-                    <li id="quarterly-list">
-                        @getMessage("no-quarterly-obligation")
-                    </li>
-                }
-            </ul>
+            </li>
         }
-
-        @if(reportingMethod == "Annual"){
-            <p class="govuk-body" id="final-declaration">
+            <li>
                 @getFinalDecDate.map { finalDecDate =>
                     @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
                     <span class="govuk-!-font-weight-bold">
                         @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
                     </span>
                 }
-            </p>
-        }
+            </li>
+        </ul>
 
         <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
             <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
