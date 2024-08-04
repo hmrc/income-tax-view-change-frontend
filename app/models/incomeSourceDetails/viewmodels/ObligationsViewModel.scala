@@ -104,6 +104,10 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))
   }
 
+  def isHybridReporting: Boolean = {
+    quarterlyObligationsDates.flatten.nonEmpty
+  }
+
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
