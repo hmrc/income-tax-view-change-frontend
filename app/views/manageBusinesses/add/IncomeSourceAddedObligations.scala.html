@@ -42,13 +42,6 @@
     messages(s"business-added.$key", args: _*)
 }
 
-@getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-    val startYear = (quarterly.head.inboundCorrespondenceFrom.getYear)
-    val endYear = (quarterly.head.inboundCorrespondenceFrom.getYear + 1)
-    s"${getMessage("table.heading-1")} $startYear ${getMessage("to")} $endYear"
-}
-
-
 @getPageTitle = @{
 
     incomeSourceType match {
@@ -186,95 +179,10 @@
         }
 
 
-
-
-
-
-
         <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
             <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
         </div>
 
-
-
-        @if(sources.quarterlyObligationsDates.nonEmpty) {
-            <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
-
-
-                @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                    @govukTable(Table(
-                        rows = quarterlyPeriods.map { quarterlyPeriod =>
-                            Seq(
-                                TableRow(
-                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
-                                ),
-                                TableRow(
-                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
-                                )
-                            )
-                        },
-                        head = Some(Seq(
-                            HeadCell(
-                                content = Text(getQuarterlyTableHeading(quarterlyPeriods))
-                            ),
-                            HeadCell(
-                                content = Text(getMessage("table.heading-2"))
-                            )
-                        )),
-                        caption = None,
-                        firstCellIsHeader = false
-                    ))
-                }
-            </div>
-        }
-
-        @if(sources.finalDeclarationDates.nonEmpty) {
-            <div class="box-simple" id="finalDeclaration">
-                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-                <p class="govuk-body"> @getMessage("final-declaration-text") </p>
-
-                @govukTable(Table(
-                    rows = sources.finalDeclarationDates.map { finalDecDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${finalDecDate.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.getYear.toString}")
-                            ),
-                            TableRow(
-                                content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading-1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading-2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-        }
-
-        @if(sources.showPrevTaxYears) {
-            <div class="box-simple" id="prevYears">
-                <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
-                <p class="govuk-body">
-                @{
-                    val head = getMessage("previous-tax-years-t1")
-                    val to = getMessage("to")
-                    val fromYear = sources.currentTaxYear - 1
-                    val toYear = sources.currentTaxYear
-
-                    s"""$head $fromYear $to $toYear."""
-                }
-                </p>
-            </div>
-        }
 
         <div class="govuk-link govuk-body" id="view-all-businesses-link">
             <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
