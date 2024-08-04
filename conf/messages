@@ -1683,6 +1683,15 @@ business-added.next-quarterly-obligation-text-2  = for the quarterly period {0} 
 business-added.final-dec-text = Your tax return for the {0} to {1} tax year is due by
 business-added.final-dec-date = {0}
 
+business-added.quarterly-opt-out-text-1 = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business-added.quarterly-opt-out-link = your reporting frequency
+business-added.quarterly-opt-out-text-2 = page.
+
+business-added.quarterly-opt-out-hybrid-text-1 = Depending on your circumstances, you may be able to
+business-added.quarterly-opt-out-hybrid-link = view and change your reporting frequency
+business-added.quarterly-opt-out-hybrid-text-2 = for all your businesses.
+
+business-added.submit-software =
 
 
 ## You cannot go back - Your business has been added page ##

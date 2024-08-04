@@ -103,6 +103,10 @@
     }
 }
 
+@getReportingFrequencyUrl = @{
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+}
+
 @getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
@@ -187,6 +191,13 @@
         <div class="govuk-link govuk-body" id="view-all-businesses-link">
             <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
         </div>
+
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency-hybrid">
+            @getMessage("quarterly-opt-out-hybrid-text-1")
+            <a href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
+            @getMessage("quarterly-opt-out-hybrid-text-2")
+        </div>
+
 
     }
 }
