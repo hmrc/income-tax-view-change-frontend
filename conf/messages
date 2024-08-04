@@ -1691,8 +1691,14 @@ business-added.quarterly-opt-out-hybrid-text-1 = Depending on your circumstances
 business-added.quarterly-opt-out-hybrid-link = view and change your reporting frequency
 business-added.quarterly-opt-out-hybrid-text-2 = for all your businesses.
 
-business-added.submit-software =
+business-added.submit-software-text = Submit updates in software
+business-added.submit-software-quarterly-text = For any tax year you are reporting quarterly, you will need
+business-added.submit-software-quarterly-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+business-added.submit-software-annual-text = When reporting annually, you can file your yearly return as normal.
 
+business-added.submit-tax-return = Submit your tax return
+business-added.submit-tax-return-text = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business-added.submit-tax-return-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 ## You cannot go back - Your business has been added page ##
 

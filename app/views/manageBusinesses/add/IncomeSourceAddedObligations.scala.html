@@ -107,6 +107,9 @@
     controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 }
 
+@getSoftwareUrl = @{
+    "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+}
 @getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
@@ -197,6 +200,27 @@
             <a href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
             @getMessage("quarterly-opt-out-hybrid-text-2")
         </div>
+
+        @if(!sources.isHybridReporting){
+            <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
+
+            <div class="govuk-body">
+                <p>@getMessage("submit-software-quarterly-text")
+                    <a href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
+                </p>
+            </div>
+        }
+
+
+        @if(sources.isHybridReporting){
+            <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-tax-return")</h2>
+
+            <div class="govuk-body">
+                <p>@getMessage("submit-tax-return-text")
+                    <a href=@getSoftwareUrl>@getMessage("submit-tax-return-link")</a>
+                </p>
+            </div>
+        }
 
 
     }
