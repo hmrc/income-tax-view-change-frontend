@@ -114,6 +114,14 @@
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
+@getQuarterlyUpdateDate = @{
+ sources.getFirstUpcomingQuarterlyDate(currentDate)
+}
+
+@getFinalDecDate = @{
+    sources.getFinalDeclarationDate(currentDate)
+}
+
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
@@ -125,8 +133,8 @@
         </div>
 
         <h2 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("text")
+            <label class="govuk-heading-m govuk-!-margin-top-8">
+            @getMessage("deadlines")
             </label>
         </h2>
 
@@ -137,6 +145,29 @@
                 @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(quarterlyObligationsDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
                 @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(finalDeclarationDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
             }
+
+        <ul class="govuk-list govuk-list--bullet">
+        @if(sources.getFirstUpcomingQuarterlyDate(currentDate).nonEmpty) {
+            <li>
+                @getQuarterlyUpdateDate.map { quarterlyUpdate =>
+                    @getMessage("next-quarterly-obligation-text-1", quarterlyUpdate.inboundCorrespondenceFrom.getYear.toString, quarterlyUpdate.inboundCorrespondenceDue.getYear.toString)
+                    <span class="govuk-!-font-weight-bold">
+                        @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
+                    </span>
+                    @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
+                }
+            </li>
+        }
+            <li>
+                @getFinalDecDate.map { finalDecDate =>
+                    @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
+                    <span class="govuk-!-font-weight-bold">
+                        @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    </span>
+                }
+            </li>
+        </ul>
+
 
             <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
                 <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>

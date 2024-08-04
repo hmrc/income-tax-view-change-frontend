@@ -92,6 +92,18 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
         OverdueObligationsMessageComponents("", Seq())
     }
   }
+
+  def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): Option[DatesModel] = {
+    quarterlyObligationsDates.flatten
+      .filter(_.inboundCorrespondenceFrom.isAfter(currentDate))
+      .sortBy(_.inboundCorrespondenceFrom)
+      .headOption
+  }
+
+  def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {
+    finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))
+  }
+
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
