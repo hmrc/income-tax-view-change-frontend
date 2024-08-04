@@ -95,16 +95,21 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
   }
 
-  def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): DatesModel = {
-    val nextQuarterlyUpdate = quarterlyObligationsDates.flatten
+  def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): Option[DatesModel] = {
+    quarterlyObligationsDates.flatten
       .filter(_.inboundCorrespondenceFrom.isAfter(currentDate))
       .sortBy(_.inboundCorrespondenceFrom)
       .headOption
-
-    nextQuarterlyUpdate.getOrElse(
-      throw MissingFieldException("Obligations : No upcoming quarterly update found")
-    )
   }
+
+  def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {
+    finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))
+  }
+
+  def isHybridReporting: Boolean = {
+    quarterlyObligationsDates.flatten.nonEmpty
+  }
+
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
