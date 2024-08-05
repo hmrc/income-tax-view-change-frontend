@@ -100,16 +100,32 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData
-  )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+                    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
     sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
-      nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(
-          businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType, currentDate = dateService.getCurrentDate
-        ))
+      uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted) match {
+        case Some(dateStarted) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
+            val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
+            Ok(obligationsView(
+              businessName = businessName,
+              sources = viewModel,
+              isAgent = isAgent,
+              incomeSourceType = incomeSourceType,
+              currentDate = dateService.getCurrentDate,
+              isBusinessHistoric = isBusinessHistoric
+            ))
+          }
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
       }
     }
   }
