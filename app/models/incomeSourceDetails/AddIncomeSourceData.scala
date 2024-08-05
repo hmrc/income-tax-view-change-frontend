@@ -34,6 +34,8 @@ case class AddIncomeSourceData(
                                 address:                       Option[Address]   = None,
                                 countryCode:                   Option[String]    = None,
                                 incomeSourcesAccountingMethod: Option[String]    = None,
+                                reportingMethodTaxYear1:       Option[String]    = None,
+                                reportingMethodTaxYear2:       Option[String]    = None,
                                 incomeSourceAdded:             Option[Boolean]   = None,
                                 journeyIsComplete:             Option[Boolean]   = None
                               ) {
@@ -49,6 +51,8 @@ case class AddIncomeSourceData(
       address                       .map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
       countryCode                   .map(SensitiveString),
       incomeSourcesAccountingMethod .map(SensitiveString),
+      reportingMethodTaxYear1       .map(SensitiveString),
+      reportingMethodTaxYear2       .map(SensitiveString),
       incomeSourceAdded             .map(SensitiveBoolean),
       journeyIsComplete             .map(SensitiveBoolean)
     )
@@ -72,6 +76,8 @@ object AddIncomeSourceData {
   val addressField:                       String = "address"
   val countryCodeField:                   String = "countryCode"
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
+  val reportingMethodTaxYear1Field:       String = "reportingMethodTaxYear1"
+  val reportingMethodTaxYear2Field:       String = "reportingMethodTaxYear2"
   val journeyIsCompleteField:             String = "journeyIsComplete"
   val incomeSourceAddedField:             String = "incomeSourceAdded"
 
@@ -90,6 +96,8 @@ case class SensitiveAddIncomeSourceData(
                                          address:                       Option[SensitiveAddress] = None,
                                          countryCode:                   Option[SensitiveString]  = None,
                                          incomeSourcesAccountingMethod: Option[SensitiveString]  = None,
+                                         reportingMethodTaxYear1:       Option[SensitiveString]  = None,
+                                         reportingMethodTaxYear2:       Option[SensitiveString]  = None,
                                          incomeSourceAdded:             Option[SensitiveBoolean] = None,
                                          journeyIsComplete:             Option[SensitiveBoolean] = None
                                        ) {
@@ -105,6 +113,8 @@ case class SensitiveAddIncomeSourceData(
       address                       .map(_.decrypted),
       countryCode                   .map(_.decryptedValue),
       incomeSourcesAccountingMethod .map(_.decryptedValue),
+      reportingMethodTaxYear1       .map(_.decryptedValue),
+      reportingMethodTaxYear2       .map(_.decryptedValue),
       incomeSourceAdded             .map(_.decryptedValue),
       journeyIsComplete             .map(_.decryptedValue)
     )
@@ -132,6 +142,8 @@ object SensitiveAddIncomeSourceData {
       ~ (__ \ "address"                      ).formatNullable[SensitiveAddress]
       ~ (__ \ "countryCode"                  ).formatNullable[SensitiveString]
       ~ (__ \ "incomeSourcesAccountingMethod").formatNullable[SensitiveString]
+      ~ (__ \ "reportingMethodTaxYear1"      ).formatNullable[SensitiveString]
+      ~ (__ \ "reportingMethodTaxYear2"      ).formatNullable[SensitiveString]
       ~ (__ \ "incomeSourceAdded"            ).formatNullable[SensitiveBoolean]
       ~ (__ \ "journeyIsComplete"            ).formatNullable[SensitiveBoolean]
       )(SensitiveAddIncomeSourceData.apply, unlift(SensitiveAddIncomeSourceData.unapply)

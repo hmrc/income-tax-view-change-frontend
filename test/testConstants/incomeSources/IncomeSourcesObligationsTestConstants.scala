@@ -64,6 +64,8 @@ object IncomeSourcesObligationsTestConstants {
   val taxYear2022 = 2022
   val taxYear2023 = 2023
   val taxYear2024 = 2024
+  val taxYear2025 = 2025
+
 
   val (startDateQ1_2022, endDateQ1_2022,
   startDateQ2_2022, endDateQ2_2022,
@@ -79,6 +81,11 @@ object IncomeSourcesObligationsTestConstants {
   startDateQ2_2024, endDateQ2_2024,
   startDateQ3_2024, endDateQ3_2024,
   startDateQ4_2024, endDateQ4_2024) = generateQuarterDates(taxYear2024)
+
+  val (startDateQ1_2025, endDateQ1_2025,
+  startDateQ2_2025, endDateQ2_2025,
+  startDateQ3_2025, endDateQ3_2025,
+  startDateQ4_2025, endDateQ4_2025) = generateQuarterDates(taxYear2025)
 
   val q1Text_2022 = formatQuarterText(startDateQ1_2022, endDateQ1_2022)
   val q2Text_2022 = formatQuarterText(startDateQ2_2022, endDateQ2_2022)
@@ -142,6 +149,16 @@ object IncomeSourcesObligationsTestConstants {
     DatesModel(startDateQ4_2024, endDateQ4_2024, endDateQ4_2024.plusMonths(1), "#004", isFinalDec = false, obligationType = "Quarterly")
   )
 
+  val quarterlyDatesYearFour = Seq(
+    DatesModel(startDateQ1_2025, endDateQ1_2025, endDateQ1_2025.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
+    DatesModel(startDateQ2_2025, endDateQ2_2025, endDateQ2_2025.plusMonths(1), "#002", isFinalDec = false, obligationType = "Quarterly"),
+    DatesModel(startDateQ3_2025, endDateQ3_2025, endDateQ3_2025.plusMonths(1), "#003", isFinalDec = false, obligationType = "Quarterly"),
+    DatesModel(startDateQ4_2025, endDateQ4_2025, endDateQ4_2025.plusMonths(1), "#004", isFinalDec = false, obligationType = "Quarterly")
+  )
+
+  val annualDatesYearOneSimple = Seq(
+    DatesModel(startDateQ1_2022, endDateQ1_2022, endDateQ1_2022.plusMonths(1), "#001", isFinalDec = true, obligationType = "Annual"),
+  )
   val (taxYear2022_2023q1startDate, taxYear2022_2023q1endDate,
       taxYear2022_2023q2startDate, taxYear2022_2023q2endDate,
       taxYear2022_2023q3startDate, taxYear2022_2023q3endDate,

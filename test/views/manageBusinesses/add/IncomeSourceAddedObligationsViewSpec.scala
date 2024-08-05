@@ -34,8 +34,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val h1UKProperty: String = "UK property"
     val h1SelfEmployment: String = "Test Name"
     val headingBase: String = "has been added to your account"
-    val h2Content: String = "What you must do"
-    val quarterlyHeading: String = "Send quarterly updates"
+    val submitSoftware: String = "Submit updates in software"
+    val deadlinesHeading: String = "Your revised deadlines"
     val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
     val finalDecHeading: String = "Submit final declarations and pay your tax"
     val finalDecText: String = "You must submit your final declarations and pay the tax you owe by the deadline."
@@ -67,6 +67,28 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     2023,
     showPrevTaxYears = true
   )
+
+  val viewModelWithQuarterlyObligations: ObligationsViewModel = ObligationsViewModel(
+    Seq(quarterlyDatesYearThreeSimple),
+    Seq(),
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val viewModelWithAnnualObligations: ObligationsViewModel = ObligationsViewModel(
+    Seq(),
+    Seq(finalDeclarationDates),
+    2023,
+    showPrevTaxYears = true
+  )
+
+  val viewModelWithHybridReporting: ObligationsViewModel = ObligationsViewModel(
+    Seq(quarterlyDatesYearFour),
+    Seq(finalDeclarationDates),
+    2023,
+    showPrevTaxYears = true
+  )
+
 
   val viewModelWithSingleQuarterlyOverdue: ObligationsViewModel = ObligationsViewModel(
     Seq(quarterlyDatesYearOneSimple),
@@ -131,6 +153,12 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
   val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
 
+  val validCallWithAnnualData: Html = view(viewModelWithAnnualObligations, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
+  val validAgentCallWithAnnualData: Html = view(viewModelWithAnnualObligations, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
+
+  val validCallWithQuarterlyData: Html = view(viewModelWithQuarterlyObligations, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
+  val validAgentCallWithQuarterlyData: Html = view(viewModelWithQuarterlyObligations, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false)
+
   val validCallWithData2: Html = view(viewModelWithCurrentAndPreviousYearsQuarterlyOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = false)
   val validCallWithData3: Html = view(viewModelWithPreviousYearsQuarterlyOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = true)
 
@@ -144,6 +172,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val validHybridCallWithData: Html = view(viewModelWithHybridReportingOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = false)
   val validAgentHybridCallWithData: Html = view(viewModelWithHybridReportingOverdue, isAgent = true, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = false)
+
+  val validHybridCallWithDataOverdue: Html = view(viewModelWithHybridReportingOverdue, isAgent = false, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = false)
+  val validAgentHybridCallWithDataOverdue: Html = view(viewModelWithHybridReportingOverdue, isAgent = true, SelfEmployment, Some("Test Name"), LocalDate.of(2024, 6, 1), isBusinessHistoric = false)
+
 
   val addIncomeSourceShowURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
@@ -166,7 +198,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -181,7 +213,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -196,11 +228,15 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
     }
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
+    }
+
+    "Display the correct heading for deadlines" in new Setup(validCallWithData) {
+      document.getElementById("deadlines").text.contains(IncomeSourceAddedMessages.deadlinesHeading)
     }
 
     "Not display inset warning text because there are no overdue obligations" in new Setup(validCallWithData) {
@@ -249,9 +285,16 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case None => fail("No inset text was found")
         }
       }
+
+      "There are overdue annual and quarterly obligations from previous tax years" in new Setup(validHybridCallWithDataOverdue) {
+        Option(document.getElementById("warning-inset")) match {
+          case Some(insetText) => insetText.text() shouldBe "You have 6 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2022 to 2023."
+          case None => fail("No inset text was found")
+        }
+      }
     }
 
-    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validHybridCallWithData) {
+    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validHybridCallWithDataOverdue) {
       Option(document.getElementById("view-overdue-upcoming-updates")) match {
         case Some(link) =>
           link.text() shouldBe "View your overdue and upcoming updates"
@@ -265,7 +308,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
-      quarterlySection.text() should include(IncomeSourceAddedMessages.quarterlyHeading)
+      quarterlySection.text() should include(IncomeSourceAddedMessages.deadlinesHeading)
       quarterlySection.text() should include(IncomeSourceAddedMessages.quarterlyText)
 
       val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
@@ -285,6 +328,26 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       tableContent.text() should include("6 January 2024 to 5 April 2024")
       tableContent.text() should include("5 May 2024")
     }
+
+    "Display obligations with quarterly reporting" in new Setup(validCallWithQuarterlyData) {
+      val quarterlyReporting: Element = document.getElementById("obligations-list")
+      quarterlyReporting.text() should include("Your next quarterly update for the 2023 to 2024 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
+
+    }
+
+    "Display obligations with annual reporting" in new Setup(validCallWithAnnualData) {
+      val annualReporting: Element = document.getElementById("final-declaration")
+      annualReporting.text() should include("Your tax return for the 2023 to 2024 tax year is due by 31 January 2025")
+    }
+
+    "Display obligations with HYBRID reporting frequency" in new Setup(validHybridCallWithData){
+      val quarterlyReporting: Element = document.getElementById("quarterly-list")
+      val annualReporting: Element = document.getElementById("obligations-list")
+      quarterlyReporting.text() should include("Your next quarterly update for the 2023 to 2024 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
+      annualReporting.text() should include("Your tax return for the 2023 to 2024 tax year is due by 31 January 2025")
+    }
+
+
 
     "Display final declaration obligations if the user has them" in new Setup(validCallWithData) {
       val finalDecSection: Element = layoutContent.getElementById("finalDeclaration")
@@ -336,7 +399,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -351,7 +414,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -366,11 +429,11 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
     }
 
-    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validAgentHybridCallWithData) {
+    "Display the correct view overdue and upcoming updates link if the user has them" in new Setup(validAgentHybridCallWithDataOverdue) {
       Option(document.getElementById("view-overdue-upcoming-updates")) match {
         case Some(link) =>
           link.text() shouldBe "View your overdue and upcoming updates"
@@ -384,7 +447,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     "Display quarterly obligations if the user has them" in new Setup(validAgentCallWithData) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
-      quarterlySection.text() should include(IncomeSourceAddedMessages.quarterlyHeading)
+      quarterlySection.text() should include(IncomeSourceAddedMessages.deadlinesHeading)
       quarterlySection.text() should include(IncomeSourceAddedMessages.quarterlyText)
 
       val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")

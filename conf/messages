@@ -1645,6 +1645,7 @@ incomeSources.add.foreign-property-check-details.accounting-method          = Fo
 incomeSources.add.foreign-property-check-details.change                     = Change
 
 # business added page - h1 intentionally empty
+business-added.text                                     = What you must do
 business-added.deadlines                                = Your revised deadlines
 business-added.to                                       =  to
 
