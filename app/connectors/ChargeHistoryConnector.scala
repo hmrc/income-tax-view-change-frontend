@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, StringContextOps}
 
 import javax.inject.Inject
-import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeHistoryConnector @Inject()(val http: HttpClient,
