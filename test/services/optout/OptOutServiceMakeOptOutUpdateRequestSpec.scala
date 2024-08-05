@@ -26,6 +26,7 @@ import models.optout.OptOutSessionData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.BeforeAndAfter
+import play.api.http.Status.NO_CONTENT
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.optout.OptOutTestSupport.buildOptOutContextData
@@ -60,7 +61,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
     "one year available for opt-out; end-year 2023" should {
       "return successful response" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
@@ -78,19 +78,18 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess("123", 204)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
     "three years available for opt-out; end-year 2023, 2024, 2025" should {
       "return successful response" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
@@ -108,12 +107,12 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(repository.get(any(), any())).thenReturn(Future.successful(sessionData))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess("123", 204)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(204)
       }
     }
 

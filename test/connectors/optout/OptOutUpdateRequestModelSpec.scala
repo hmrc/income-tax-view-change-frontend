@@ -18,9 +18,8 @@ package connectors.optout
 
 import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
-import org.eclipse.jetty.http.HttpStatus.{INTERNAL_SERVER_ERROR_500, NO_CONTENT_204}
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json.{JsSuccess, JsValue, Json}
+import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
 class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
@@ -44,7 +43,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
   }
 
   "The success model" should {
-    val successObject = OptOutUpdateResponseSuccess("123")
+    val successObject = OptOutUpdateResponseSuccess()
     val successJson = Json.parse(
       """
         {
@@ -60,7 +59,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
   "The failure model" should {
 
-    val failureObject = OptOutUpdateResponseFailure.defaultFailure().copy(correlationId = "123")
+    val failureObject = OptOutUpdateResponseFailure.defaultFailure()
     val failureJson = Json.parse(
       """
         {
@@ -68,33 +67,13 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
           "statusCode": 500,
           "failures": [{
           "code": "INTERNAL_SERVER_ERROR",
-          "reason": "Request failed due to unknown error"
+          "reason": "Request failed due to unknown reason"
           }]
         }
         """.stripMargin)
 
     "verify read from json" in {
       failureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(failureObject)
-    }
-  }
-
-  "The not-found failure model" should {
-
-    val notFoundFailureObject = OptOutUpdateResponseFailure.notFoundFailure("123", "some url")
-    val notFoundFailureJson = Json.parse(
-      """
-        {
-          "correlationId": "123",
-          "statusCode": 500,
-          "failures": [{
-          "code": "INTERNAL_SERVER_ERROR",
-          "reason": "URI not found on target backed-end service, url: some url"
-          }]
-        }
-        """.stripMargin)
-
-    "verify read from json" in {
-      notFoundFailureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(notFoundFailureObject)
     }
   }
 
