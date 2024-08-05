@@ -77,22 +77,4 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
     }
   }
 
-  "The not-found failure model" should {
-
-    val notFoundFailureObject = OptOutUpdateResponseFailure.notFoundFailure("some url")
-    val notFoundFailureJson = Json.parse(
-      """
-        {
-          "failures": [{
-            "code": "INTERNAL_SERVER_ERROR",
-            "reason": "URI not found on target backed-end service, url: some url"
-          }]
-        }
-        """.stripMargin)
-
-    "verify read from json" in {
-      notFoundFailureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(notFoundFailureObject)
-    }
-  }
-
 }

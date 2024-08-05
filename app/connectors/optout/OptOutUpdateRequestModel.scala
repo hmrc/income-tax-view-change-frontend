@@ -35,11 +35,6 @@ object OptOutUpdateRequestModel {
       OptOutUpdateResponseFailure(
         List(ErrorItem("INTERNAL_SERVER_ERROR", s"Request failed due to $message"))
       )
-
-    def notFoundFailure(url: String): OptOutUpdateResponseFailure =
-      OptOutUpdateResponseFailure(
-        List(ErrorItem("INTERNAL_SERVER_ERROR", s"URI not found on target backed-end service, url: $url"))
-      )
   }
 
   implicit val formatSuccess: Format[OptOutUpdateResponseSuccess] = Json.format[OptOutUpdateResponseSuccess]
