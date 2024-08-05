@@ -154,19 +154,18 @@
             </label>
         </h2>
 
-        @if(sources.isHybridReporting) {
             <ul class="govuk-list govuk-list--bullet">
-                <li>
+                <li id="quarterly-list">
                 @getQuarterlyUpdateDate.map { quarterlyUpdate =>
-                    @getMessage("next-quarterly-obligation-text-1", quarterlyUpdate.inboundCorrespondenceFrom.getYear.toString, quarterlyUpdate.inboundCorrespondenceDue.getYear.toString)
-                    <span class="govuk-!-font-weight-bold">
-                    @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
-                    </span>
-                    @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
-                }
+                        @getMessage("next-quarterly-obligation-text-1", quarterlyUpdate.inboundCorrespondenceFrom.getYear.toString, quarterlyUpdate.inboundCorrespondenceTo.getYear.toString)
+                        <span class="govuk-!-font-weight-bold">
+                        @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
+                        </span>
+                        @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
+                    }
                 </li>
 
-                <li>
+                <li id="obligations-list">
                 @getFinalDecDate.map { finalDecDate =>
                     @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
                     <span class="govuk-!-font-weight-bold">
@@ -175,10 +174,8 @@
                 }
                 </li>
             </ul>
-        }
 
-        @if(!sources.isHybridReporting) {
-            <p class="govuk-body">
+            <p class="govuk-body" id="final-declaration">
                 @getFinalDecDate.map { finalDecDate =>
                     @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
                     <span class="govuk-!-font-weight-bold">
@@ -186,7 +183,6 @@
                 </span>
                 }
             </p>
-        }
 
 
         <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">

@@ -246,7 +246,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
 
     "Display the correct inset warning text" when {
-      "There is a single overdue quartlerly obligation in the current tax year" in new Setup(validCallWithSingleQuarterlyOverdue) {
+      "There is a single overdue quarterly obligation in the current tax year" in new Setup(validCallWithSingleQuarterlyOverdue) {
         Option(document.getElementById("warning-inset")) match {
           case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2022 to 2023 tax year. You must submit these updates with all required income and expenses through your compatible software."
           case None => fail("No inset text was found")
@@ -260,14 +260,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
       }
 
-//      "There are multiple overdue quarterly obligations across multiple tax years including the current tax year" in new Setup(validCallWithData2) {
-//        Option(document.getElementById("warning-inset")) match {
-//          case Some(insetText) => insetText.text() shouldBe "This test should fail."
-//          case None => fail("No inset text was found")
-//        }
-//      }
-
-      "There are multiple overdue quarterly obligations across multiple tax years not including the current tax year for a business with a historic start date" in new Setup(validCallWithData3) {
+      "There are multiple overdue quarterly obligations across multiple tax years including the current tax year" in new Setup(validCallWithData2) {
         Option(document.getElementById("warning-inset")) match {
           case Some(insetText) => insetText.text() shouldBe "You have 4 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
           case None => fail("No inset text was found")
