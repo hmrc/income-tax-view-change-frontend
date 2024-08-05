@@ -22,12 +22,10 @@ import mocks.{MockHttp, MockHttpV2}
 import models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponse
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Configuration
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.{chargeReference, testMtditid}
-import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testInvalidChargeHistoryDetailsModelJson, testValidChargeHistoryDetailsModelJson, testValidChargeHistoryModel}
+import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
@@ -38,6 +36,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockHttp
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
+
     def getAppConfig(): FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"

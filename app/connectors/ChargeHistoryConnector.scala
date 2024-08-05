@@ -22,13 +22,12 @@ import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorMode
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeHistoryConnector @Inject()(val http: HttpClient,
-                                       val httpV2: HttpClientV2,
+class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
                                        val appConfig: FrontendAppConfig
                                       )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
