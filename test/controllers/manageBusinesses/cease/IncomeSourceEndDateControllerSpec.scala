@@ -376,8 +376,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           enable(IncomeSources)
           mockBothPropertyBothBusiness()
           setupMockCreateSession(true)
-          setupMockSetSessionKeyMongo(Right(true))
-          if (incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
+          setupMockSetMultipleMongoData(Right(true))
+          if (incomeSourceType == SelfEmployment) setupMockSetMultipleMongoData(Right(true))
           if (isChange) {
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
           } else {
@@ -556,22 +556,32 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
           "called .submit" in {
             setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
+            val testMap: Map[String, String] = Map(
+              CeaseIncomeSourceData.dateCeasedField -> "2022-08-27"
+            )
+            setupMockSetMultipleMongoData(testMap)(Left(new Exception()))
             testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
           }
         }
         s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.incomeSourceIdField}" when {
           "called .submit" in {
             setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Right(true))
-            setupMockSetSessionKeyMongo(CeaseIncomeSourceData.incomeSourceIdField)(Left(new Exception()))
+            val testMap: Map[String, String] = Map(
+              CeaseIncomeSourceData.dateCeasedField -> "2022-08-27",
+              CeaseIncomeSourceData.incomeSourceIdField -> testSelfEmploymentId
+            )
+            setupMockSetMultipleMongoData(testMap)(Right(true))
+            setupMockSetMultipleMongoData(testMap)(Left(new Exception()))
             testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
           }
         }
         s"Property - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
           "called .submit" in {
             setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
+            val testMap: Map[String, String] = Map(
+              CeaseIncomeSourceData.dateCeasedField -> "2022-08-27"
+            )
+            setupMockSetMultipleMongoData(testMap)(Left(new Exception()))
             testInternalServerErrors(isAgent = false, isChange = false, id = None, incomeSourceType = ForeignProperty)
           }
         }
