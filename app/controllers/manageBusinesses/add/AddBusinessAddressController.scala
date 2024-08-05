@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -98,7 +99,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
           case Right(Some(sessionData)) =>
 
             sessionService.setMongoData(
-              businessAddressLens.replace { (Some(value.address), Some("GB")) } (sessionData)
+              businessAddressLens.replace { (value.address.some, "GB".some) } (sessionData)
             )
 
           case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))

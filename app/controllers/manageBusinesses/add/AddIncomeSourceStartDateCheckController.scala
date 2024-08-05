@@ -22,12 +22,12 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateLens, accountingPeriodLens, accountingPeriodStartDateLens, addIncomeSourceDataLens}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodLens, addIncomeSourceDataLens}
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
