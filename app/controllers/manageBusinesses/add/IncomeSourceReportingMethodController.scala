@@ -39,7 +39,7 @@ import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceReportingMethod
-
+import controllers.manageBusinesses.add.routes._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,21 +63,21 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
-      case (false, true) => routes.AddBusinessAddressController.show(false).url
-      case (true, true) => routes.AddBusinessAddressController.showAgent(false).url
-      case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType).url
+      case (false, true) => AddBusinessAddressController.show(false).url
+      case (true, true)  => AddBusinessAddressController.showAgent(false).url
+      case (_,       _)  => AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType).url
     }
 
   lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
+    if (isAgent) IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
+    else         IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
 
   lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceAddedController.show(incomeSourceType).url
+    if (isAgent) IncomeSourceAddedController.showAgent(incomeSourceType).url
+    else         IncomeSourceAddedController.show(incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
+    IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {

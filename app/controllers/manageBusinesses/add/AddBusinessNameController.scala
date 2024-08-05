@@ -34,6 +34,7 @@ import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessName
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,25 +51,22 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
+  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String =
     ((isAgent, isChange) match {
       case (_, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
-  }
 
-  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddBusinessNameController.submit(isAgent, isChange)
-  }
+  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call =
+    AddBusinessNameController.submit(isAgent, isChange)
 
-  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
+  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call =
     (isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, false) => AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+      case (false, _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }
-  }
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -127,8 +125,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     }
   }.recover {
     case ex =>
-      Logger("application")
-        .error(s"${ex.getMessage} - ${ex.getCause}")
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }

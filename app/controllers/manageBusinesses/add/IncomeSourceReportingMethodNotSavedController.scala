@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,10 +46,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val action: Call =
-      if (isAgent)
-        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
-      else
-        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
+      if (isAgent) IncomeSourceAddedController.showAgent(incomeSourceType)
+      else         IncomeSourceAddedController.show(incomeSourceType)
 
     Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
   }

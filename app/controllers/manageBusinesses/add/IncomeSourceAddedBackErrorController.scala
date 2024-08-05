@@ -27,6 +27,7 @@ import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedBackError
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,14 +45,18 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
-    val cannotGoBackRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
-    else controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+    val cannotGoBackRedirectUrl =
+      if (isAgent) ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
+      else         ReportingMethodSetBackErrorController.show(incomeSourceType)
+
     if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
       Future.successful(Redirect(cannotGoBackRedirectUrl))
     }
     else {
-      val postAction = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-      else controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+      val postAction =
+        if (isAgent) IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
+        else         IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+
       Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
     }
   }
@@ -88,7 +93,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {
-            Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
+            Redirect(IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
           }
         case None => Logger("application").error(
           "Error: Unable to find id in session")

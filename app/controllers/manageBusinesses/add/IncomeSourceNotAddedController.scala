@@ -25,6 +25,7 @@ import services.CreateBusinessDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.manageBusinesses.add.IncomeSourceNotAddedError
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,10 +45,8 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     val incomeSourceRedirect: Call =
-      if (isAgent)
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      else
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
+      if (isAgent) AddIncomeSourceController.showAgent()
+      else         AddIncomeSourceController.show()
 
     Future.successful(Ok(incomeSourceNotAddedError(
       isAgent,

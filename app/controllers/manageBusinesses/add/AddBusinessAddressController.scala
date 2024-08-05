@@ -98,9 +98,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
           case Right(Some(sessionData)) =>
 
             sessionService.setMongoData(
-              businessAddressLens.replace(
-                (Some(value.address), Some("GB"))
-              )(sessionData)
+              businessAddressLens.replace { (Some(value.address), Some("GB")) } (sessionData)
             )
 
           case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
