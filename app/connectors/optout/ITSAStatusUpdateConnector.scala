@@ -63,9 +63,9 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
             },
             valid => {
 
-              val message = if(valid.failures.nonEmpty) {
-                s"code: ${valid.failures.head.code}, reason: ${valid.failures.head.reason}"
-              } else "unknown reason"
+              val message = valid.failures.headOption
+                .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
+                .getOrElse("unknown reason")
 
               log.error(s"response status: ${response.status}, message: $message")
               valid
