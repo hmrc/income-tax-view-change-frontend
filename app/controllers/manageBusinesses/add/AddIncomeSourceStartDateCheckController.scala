@@ -26,7 +26,7 @@ import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeS
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateLens, accountingPeriodStartDateLens, addIncomeSourceDataLens}
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateLens, accountingPeriodLens, accountingPeriodStartDateLens, addIncomeSourceDataLens}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -193,8 +193,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
     sessionData.addIncomeSourceData match {
       case Some(data) =>
         sessionService.setMongoData(
-          addIncomeSourceDataLens
-            .replace(data.sanitiseDates.some)(sessionData)
+          addIncomeSourceDataLens.replace(data.sanitiseDates.some)(sessionData)
         ) flatMap(
           _ => Future.successful(Redirect(backUrl(incomeSourceType, isAgent, isChange)))
         )
@@ -219,10 +218,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case Some(_) =>
 
         val updatedAddIncomeSourceData =
-          addIncomeSourceDataLens.replace(
-            sessionData.addIncomeSourceData
-              .map(accountingPeriodStartDateLens.replace(incomeSourceStartDate.some))
-              .map(accountingPeriodEndDateLens.replace(accountingPeriodEndDate.some))
+          accountingPeriodLens.replace(
+            (incomeSourceStartDate.some, accountingPeriodEndDate.some)
           )(sessionData)
 
         sessionService.setMongoData(updatedAddIncomeSourceData)

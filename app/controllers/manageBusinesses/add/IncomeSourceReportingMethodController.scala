@@ -140,12 +140,8 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   }
 
   private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData)(implicit hc: HeaderCarrier): Future[Boolean] = {
-
-      sessionService.setMongoData(
-        sessionData.addIncomeSourceData match {
-          case Some(_) => incomeSourceAddedLens.replace(true.some)(sessionData)
-          case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData().some)
-        }
+    sessionService.setMongoData(
+      incomeSourceAddedLens.replace(true.some)(sessionData)
     )
   }
 

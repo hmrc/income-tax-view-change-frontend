@@ -116,8 +116,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
             },
           validForm =>
             sessionService.setMongoData(
-              businessTradeLens
-                .replace(validForm.trade.some)(sessionData)
+              businessTradeLens.replace(validForm.trade.some)(sessionData)
             ) flatMap {
               case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

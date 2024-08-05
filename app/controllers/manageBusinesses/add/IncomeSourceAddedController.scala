@@ -95,10 +95,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
       val uiJourneySessionData: UIJourneySessionData =
-        sessionData.addIncomeSourceData match {
-          case Some(_) => journeyIsCompleteLens.replace(true.some)(sessionData)
-          case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData().some)
-        }
+        journeyIsCompleteLens.replace(true.some)(sessionData)
 
       sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
         nextUpdatesService

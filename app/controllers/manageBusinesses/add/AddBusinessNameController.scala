@@ -106,7 +106,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     withSessionData(JourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
-      val addIncomeSourceData = sessionData.addIncomeSourceData
 
       BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
         formWithErrors =>
@@ -118,10 +117,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
           },
         formData => {
           sessionService.setMongoData(
-            addIncomeSourceData match {
-              case Some(_) => businessNameLens.replace(formData.name.some)(sessionData)
-              case None    => sessionData.copy(addIncomeSourceData = AddIncomeSourceData(businessName = formData.name.some).some)
-            }
+            businessNameLens.replace(formData.name.some)(sessionData)
           )
         } flatMap {
           case true => Future.successful(Redirect(getRedirect(isAgent, isChange)))
