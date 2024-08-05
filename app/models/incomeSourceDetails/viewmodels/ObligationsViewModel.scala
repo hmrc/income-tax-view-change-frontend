@@ -98,9 +98,14 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
   def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): Option[DatesModel] = {
     quarterlyObligationsDates.flatten
       .filter(_.inboundCorrespondenceFrom.isAfter(currentDate))
-      .sortBy(_.inboundCorrespondenceFrom)
+      //.sortBy(_.inboundCorrespondenceFrom)
       .headOption
   }
+
+  def getUpcomingQuarterlyTaxYear: String = {
+    quarterlyObligationsDates.last.last.inboundCorrespondenceTo.getYear.toString
+  }
+
 
   def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {
     finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))

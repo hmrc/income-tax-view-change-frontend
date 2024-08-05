@@ -125,6 +125,10 @@
     sources.getFinalDeclarationDate(currentDate)
 }
 
+@getTaxYear = @{
+    sources.currentTaxYear
+}
+
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
@@ -157,7 +161,7 @@
             <ul class="govuk-list govuk-list--bullet">
                 <li id="quarterly-list">
                 @getQuarterlyUpdateDate.map { quarterlyUpdate =>
-                        @getMessage("next-quarterly-obligation-text-1", quarterlyUpdate.inboundCorrespondenceFrom.getYear.toString, quarterlyUpdate.inboundCorrespondenceTo.getYear.toString)
+                        @getMessage("next-quarterly-obligation-text-1", (getTaxYear - 1).toString, getTaxYear.toString)
                         <span class="govuk-!-font-weight-bold">
                         @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
                         </span>
@@ -167,7 +171,7 @@
 
                 <li id="obligations-list">
                 @getFinalDecDate.map { finalDecDate =>
-                    @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
+                    @getMessage("final-dec-text", (getTaxYear - 1).toString, getTaxYear.toString)
                     <span class="govuk-!-font-weight-bold">
                     @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
                 </span>
