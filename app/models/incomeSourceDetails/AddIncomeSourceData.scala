@@ -133,7 +133,7 @@ object SensitiveAddIncomeSourceData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] = {
 
-       ((__ \ "businessName"                 ).formatNullable[SensitiveString]
+    ((__ \ "businessName"                 ).formatNullable[SensitiveString]
       ~ (__ \ "businessTrade"                ).formatNullable[SensitiveString]
       ~ (__ \ "dateStarted"                  ).formatNullable[SensitiveInstant]
       ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[SensitiveInstant]
@@ -150,3 +150,4 @@ object SensitiveAddIncomeSourceData {
     )
   }
 }
+

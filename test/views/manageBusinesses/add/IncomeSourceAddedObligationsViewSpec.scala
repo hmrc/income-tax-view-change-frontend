@@ -56,7 +56,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val day = LocalDate.of(2022, 1, 1)
   val dayForOverdueObligations = LocalDate.of(2022, 8, 6)
+  val dayCurrentTaxYear = LocalDate.of(2025, 1, 1)
 
+  val finalDecCurrent = DatesModel(dayCurrentTaxYear, dayCurrentTaxYear.plusDays(1), dayCurrentTaxYear.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
   val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
   val multipleFinalDeclarationDates = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised"),
     DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised"))
@@ -83,9 +85,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   )
 
   val viewModelWithHybridReporting: ObligationsViewModel = ObligationsViewModel(
-    Seq(quarterlyDatesYearFour),
-    Seq(finalDeclarationDates),
-    2023,
+    Seq(quarterlyDatesYearThree),
+    Seq(finalDecCurrent),
+    2025,
     showPrevTaxYears = true
   )
 
@@ -343,8 +345,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     "Display obligations with HYBRID reporting frequency" in new Setup(validHybridCallWithData){
       val quarterlyReporting: Element = document.getElementById("quarterly-list")
       val annualReporting: Element = document.getElementById("obligations-list")
-      quarterlyReporting.text() should include("Your next quarterly update for the 2023 to 2024 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
-      annualReporting.text() should include("Your tax return for the 2023 to 2024 tax year is due by 31 January 2025")
+      quarterlyReporting.text() should include("Your next quarterly update for the 2024 to 2025 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
+      annualReporting.text() should include("Your tax return for the 2024 to 2025 tax year is due by 31 January 2026")
     }
 
 
