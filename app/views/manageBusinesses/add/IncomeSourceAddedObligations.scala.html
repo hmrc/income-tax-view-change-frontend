@@ -35,7 +35,7 @@
         govukInsetText: GovukInsetText,
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -130,8 +130,8 @@
             </label>
         </h2>
 
-        @if(sources.getOverdueObligationsMessageComponents(currentDate).messageKey.nonEmpty) {
-            @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate)))))
+        @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
+            @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
 
             <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
                 <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>

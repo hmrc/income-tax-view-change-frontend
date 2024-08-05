@@ -21,13 +21,13 @@ import java.time.LocalDate
 final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
                                       finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean) {
 
-  def getOverdueObligationsMessageComponents(currentDate: LocalDate): OverdueObligationsMessageComponents = {
+  def getOverdueObligationsMessageComponents(currentDate: LocalDate, isBusinessHistoric: Boolean): OverdueObligationsMessageComponents = {
     val overdueAnnual = getNumberOfOverdueAnnualObligations(currentDate)
     val overdueQuarterly = getNumberOfOverdueQuarterlyObligations(currentDate)
-    if (overdueAnnual > 0 && overdueQuarterly > 0) {
-      // For hybrid reporting, or at least a year of overdue quarterly obligations that has final declarations
+
+    if (isBusinessHistoric) {
       OverdueObligationsMessageComponents("obligation.inset.multiple-hybrid-overdue.text",
-        Seq((overdueAnnual + overdueQuarterly).toString, (currentTaxYear - 1).toString, currentTaxYear.toString))
+        Seq((overdueAnnual + overdueQuarterly).toString, (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
     } else {
       (overdueAnnual, overdueQuarterly) match {
         case (1, 0) =>
