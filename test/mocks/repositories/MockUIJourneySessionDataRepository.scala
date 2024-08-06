@@ -79,7 +79,7 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
   }
 
   def mockRepositoryUpdateDataSuccessThenFailure(key1: String, value1: String , key2: String , value2: String): Unit = {
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key1), ArgumentMatchers.eq(value1)))
+    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
         override def wasAcknowledged(): Boolean = true
 
@@ -89,7 +89,7 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
         override def getUpsertedId: BsonValue = null
       }))
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key2), ArgumentMatchers.eq(value2)))
+    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
         override def wasAcknowledged(): Boolean = false
 
