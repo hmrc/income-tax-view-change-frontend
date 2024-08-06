@@ -150,7 +150,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        setupMockGetPaymentsOnAccount(None)
+        setupMockGetPaymentsOnAccount()
         setupMockTaxYearNotCrystallised()
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(emptySession))))
 

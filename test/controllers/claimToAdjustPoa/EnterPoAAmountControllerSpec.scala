@@ -207,6 +207,24 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
+      "Retrieving mongo session fails" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
+
+        setupMockGetPaymentOnAccountViewModel()
+        setupMockTaxYearNotCrystallised()
+
+        val result = TestEnterPoAAmountController.show(isAgent = false, NormalMode)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestEnterPoAAmountController.show(isAgent = true, NormalMode)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
       "User does not have an active mongo session" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -472,6 +490,66 @@ class EnterPoAAmountControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe BAD_REQUEST
         redirectLocation(result) shouldBe None
         status(resultAgent) shouldBe BAD_REQUEST
+        redirectLocation(resultAgent) shouldBe None
+      }
+      "Error setting new poa amount in mongo" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
+
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
+
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "1234.56"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "1234.56"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        redirectLocation(result) shouldBe None
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+        redirectLocation(resultAgent) shouldBe None
+      }
+      "Error setting adjustment reason in mongo" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
+
+        val result = TestEnterPoAAmountController.submit(isAgent = false, NormalMode)(getPostRequest(isAgent = false, NormalMode, "4500"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, NormalMode)(getPostRequest(isAgent = true, NormalMode, "4500"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        redirectLocation(result) shouldBe None
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+        redirectLocation(resultAgent) shouldBe None
+      }
+      "Error getting adjustment reason from mongo" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
+
+        when(mockPaymentOnAccountSessionService.getMongo(any(),any())).thenReturn(Future(Left(new Error("Error getting mongo data"))))
+        when(mockPaymentOnAccountSessionService.setNewPoAAmount(any())(any(),any())).thenReturn(Future(Right(())))
+        when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(),any())).thenReturn(Future(Right(())))
+
+        val result = TestEnterPoAAmountController.submit(isAgent = false, CheckMode)(getPostRequest(isAgent = false, CheckMode, "1000"))
+        val resultAgent = TestEnterPoAAmountController.submit(isAgent = true, CheckMode)(getPostRequest(isAgent = true, CheckMode, "1000"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        redirectLocation(result) shouldBe None
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
         redirectLocation(resultAgent) shouldBe None
       }
     }

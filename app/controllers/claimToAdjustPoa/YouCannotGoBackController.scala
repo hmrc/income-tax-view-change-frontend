@@ -53,6 +53,10 @@ class YouCannotGoBackController @Inject()(val authorisedFunctions: AuthorisedFun
           isAgent = isAgent,
           poaTaxYear = poa.taxYear
         )))
+      } recover {
+        case ex: Exception =>
+          Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
       }
   }
 }
