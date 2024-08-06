@@ -42,7 +42,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockHttp
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ChargeHistoryConnector(httpClientMock, mockHttpClientV2, getAppConfig())
+    val connector = new ChargeHistoryConnector(mockHttpClientV2, getAppConfig())
   }
 
 
