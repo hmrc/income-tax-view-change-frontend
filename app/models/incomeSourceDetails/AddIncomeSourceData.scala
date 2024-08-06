@@ -84,8 +84,7 @@ object AddIncomeSourceData {
 
   val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
 
-  //Below is a broken-down version of a Lens with an attempt to explain how it works
-
+  //Below is a broken-down version of a Lens as an attempt to explain how it works
   val businessNameLens: Lens[UIJourneySessionData, Option[String]] = { // Lens to access the 'businessName' within 'UIJourneySessionData'
 
     val businessNameFromDataLens = Lens[Option[AddIncomeSourceData], Option[String]]( // Lens to extract and modify 'businessName' from 'AddIncomeSourceData'
