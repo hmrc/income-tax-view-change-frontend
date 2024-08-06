@@ -49,10 +49,6 @@ class ApiFailureSubmittingPoaController @Inject()(val authorisedFunctions: Autho
       implicit user =>
         ifAdjustPoaIsEnabled(isAgent) {
           Future.successful(Ok(view(isAgent)))
-        } recover {
-          case ex: Throwable =>
-            Logger("application").error(s"Unexpected error: ${ex.getMessage} - ${ex.getCause}")
-            showInternalServerError(isAgent)
         }
     }
   }

@@ -56,7 +56,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
 
   "WhatYouNeedToKnowController.show" should {
     "return Ok" when {
-      "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount = totalAmount" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -64,6 +64,23 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthenticationPredicate
         mockSingleBISWithCurrentYearAsMigrationYear()
 
         setupMockGetPaymentsOnAccount()
+        setupMockTaxYearNotCrystallised()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
+
+        val result = TestWhatYouNeedToKnowController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestWhatYouNeedToKnowController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+        status(resultAgent) shouldBe OK
+      }
+      "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount > totalAmount" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount(Some(previouslyReducedPaymentOnAccountModel))
         setupMockTaxYearNotCrystallised()
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoAAmendmentData()))))
 

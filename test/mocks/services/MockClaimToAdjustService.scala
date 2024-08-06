@@ -49,6 +49,19 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
     previouslyAdjusted = Some(false)
   )
 
+  val previouslyReducedPaymentOnAccountModel: PaymentOnAccountViewModel = PaymentOnAccountViewModel(
+    poaOneTransactionId = "poaOne-Id",
+    poaTwoTransactionId = "poaTwo-Id",
+    taxYear = TaxYear.makeTaxYearWithEndYear(2024),
+    totalAmountOne = 3000.00,
+    totalAmountTwo = 3000.00,
+    relevantAmountOne = 5000.00,
+    relevantAmountTwo = 5000.00,
+    partiallyPaid = false,
+    fullyPaid = false,
+    previouslyAdjusted = Some(false)
+  )
+
   def setupMockGetPaymentOnAccountViewModel(data: PaymentOnAccountViewModel = defaultPaymentOnAccountModel): Unit =
     when(mockClaimToAdjustService.getAmendablePoaViewModel(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(Right(data)))
