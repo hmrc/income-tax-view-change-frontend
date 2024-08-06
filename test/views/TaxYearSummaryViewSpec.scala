@@ -24,7 +24,7 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{ObligationWithIncomeType, ObligationsModel}
+import models.obligations.{EopsObligation, FinalDeclarationObligation, ObligationType, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -349,11 +349,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
     }
 
-    def updateType(updateType: String): String = {
+    def updateType(updateType: ObligationType): String = {
       updateType match {
-        case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallised" => messages("updateTab.updateType.crystallised")
-        case _ => updateType
+        case QuarterlyObligation => messages("updateTab.updateType.quarterly")
+        case FinalDeclarationObligation => messages("updateTab.updateType.crystallised")
+        case EopsObligation => "nothing"
       }
     }
   }

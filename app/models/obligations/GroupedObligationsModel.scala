@@ -16,13 +16,13 @@
 
 package models.obligations
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, Reads}
 
 case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
-  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallised")
+  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == FinalDeclarationObligation)
     .sortBy(_.start.toEpochDay)
 }
 
 object GroupedObligationsModel {
-  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
+  implicit val format: Reads[GroupedObligationsModel] = Json.reads[GroupedObligationsModel]
 }

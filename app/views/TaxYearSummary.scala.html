@@ -24,6 +24,7 @@
 @import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
 @import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 @import java.time.LocalDate
+@import models.obligations._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -251,10 +252,10 @@
     }
 }
 
-@updateTypeHelper(updateType: String) = @{
+@updateTypeHelper(updateType: ObligationType) = @{
     updateType match {
-        case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallised" => messages("updateTab.updateType.crystallised")
+        case QuarterlyObligation => messages("updateTab.updateType.quarterly")
+        case FinalDeclarationObligation => messages("updateTab.updateType.crystallised")
         case _ => updateType
     }
 }

@@ -38,10 +38,11 @@
     )
 }
 
-@getObligationTypeText(obligation: String) = @{
+@getObligationTypeText(obligation: ObligationType) = @{
     obligation match {
-        case "Quarterly" => messages("nextUpdates.quarterly")
-        case _ => messages("nextUpdates.crystallised")
+        case QuarterlyObligation => messages("nextUpdates.quarterly")
+        case FinalDeclarationObligation => messages("nextUpdates.crystallised")
+        case EopsObligation => ""
     }
 }
 
@@ -52,7 +53,7 @@
 }
 
 @getTableHeadingMessage(obligation: SingleObligationModel) = @{
-    val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
+    val key = if(obligation.obligationType == QuarterlyObligation) "nextUpdates.section.heading.updates"
     else "nextUpdates.section.heading.taxYear"
     messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
 }
@@ -87,7 +88,7 @@
                 )),
                 caption = {
                     validObligations.headOption.map(x => x.obligation.obligationType) match {
-                        case Some("Quarterly") =>
+                        case Some(QuarterlyObligation) =>
                             validObligations.headOption.map(x => getTableHeadingMessage(x.obligation))
                         case _ => None
                     }

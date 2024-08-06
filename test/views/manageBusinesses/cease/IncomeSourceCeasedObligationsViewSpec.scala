@@ -18,6 +18,7 @@ package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
+import models.obligations._
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
@@ -56,8 +57,8 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val day: LocalDate = fixedDate
   val cessationDate: LocalDate = day.plusDays(1)
 
-  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
-  val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = FinalDeclarationObligation)
+  val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = FinalDeclarationObligation)
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,

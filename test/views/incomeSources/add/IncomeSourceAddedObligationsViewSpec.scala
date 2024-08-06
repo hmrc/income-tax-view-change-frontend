@@ -18,6 +18,7 @@ package views.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.obligations._
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.twirl.api.Html
@@ -53,7 +54,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val day = LocalDate.of(2022, 1, 1)
 
-  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = FinalDeclarationObligation)
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,

@@ -129,16 +129,8 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     }
   }
 
-  private def getUpdateType(updateType: String) = {
-    updateType match {
-      case "Quarterly" => "Quarterly Update"
-      case "Crystallised" => "Final Declaration"
-      case _ => updateType
-    }
-  }
-
   private def updatesJson(updates: ObligationWithIncomeType): JsObject = {
-    Json.obj("updateType" -> getUpdateType(updates.obligation.obligationType),
+    Json.obj("updateType" -> updates.obligation.obligationType.toString,
       "incomeSource" -> getObligationsType(updates.incomeType)) ++
       ("dateSubmitted", updates.obligation.dateReceived)
   }

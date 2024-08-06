@@ -142,7 +142,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
 
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = "Quarterly")
+      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = QuarterlyObligation)
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       quarterlyObligationDatesSimple,
@@ -169,7 +169,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = "Quarterly")
+      DatesModel(day, day, day, "Quarterly", isFinalDec = false, obligationType = QuarterlyObligation)
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       quarterlyObligationDatesSimple,

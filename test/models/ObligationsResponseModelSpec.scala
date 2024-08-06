@@ -22,7 +22,6 @@ import models.obligations._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
 import testConstants.NextUpdatesTestConstants._
 import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 import testUtils.TestSupport
@@ -155,14 +154,6 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
       }
     }
 
-    "return an empty list" when {
-
-      "calling .allDeadlinesWithSource" in {
-        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource()(
-          BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
-      }
-    }
-
     "return a list of only specific updates with source in date order" when {
 
       "calling .allQuarterly" in {
@@ -194,7 +185,7 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
           nextUpdateModelWithIncomeTypeList) shouldBe Map(
           None -> List(
-            ObligationWithIncomeType("nextUpdates.crystallisedAll", SingleObligationModel("2017-10-01", "2018-10-30", "2017-10-31", "Crystallised", None, "", StatusFulfilled))),
+            ObligationWithIncomeType("nextUpdates.crystallisedAll", SingleObligationModel("2017-10-01", "2018-10-30", "2017-10-31", FinalDeclarationObligation, None, "", StatusFulfilled))),
           Some(QuarterTypeCalendar) -> List(
             ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002", StatusFulfilled)),
             ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled))),

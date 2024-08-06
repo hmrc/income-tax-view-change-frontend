@@ -72,7 +72,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
     obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
+      if (obligations.headOption.map(_.obligation.obligationType).contains(QuarterlyObligation)) {
         val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
       }
@@ -119,7 +119,8 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
           model.obligations
             .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
             .flatMap(obligation => obligation.obligations.map(obligation =>
-              DatesModel(obligation.start, obligation.end, obligation.due, obligation.periodKey, isFinalDec = false, obligationType = obligation.obligationType)))
+              DatesModel(obligation.start, obligation.end, obligation.due, obligation.periodKey,
+                isFinalDec = false, obligationType = obligation.obligationType)))
         ).flatten
     }
   }
@@ -131,7 +132,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     } yield {
       val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly")
+      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == QuarterlyObligation)
         .sortBy(_.inboundCorrespondenceFrom)
 
       val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)

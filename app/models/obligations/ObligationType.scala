@@ -16,10 +16,23 @@
 
 package models.obligations
 
+import play.api.libs.json.{JsError, JsString, JsSuccess, Reads}
+
 sealed trait ObligationType
 
 case object EopsObligation extends ObligationType
 
 case object QuarterlyObligation extends ObligationType
+
+case object FinalDeclarationObligation extends ObligationType
+
+object ObligationType {
+  implicit val obligationStatusReads: Reads[ObligationType] = Reads[ObligationType] {
+    case JsString("FinalDeclaration") => JsSuccess(FinalDeclarationObligation)
+    case JsString("EOPS") => JsSuccess(EopsObligation)
+    case JsString("Quarterly") => JsSuccess(EopsObligation)
+    case _ => JsError("Unknown Obligation Type")
+  }
+}
 
 

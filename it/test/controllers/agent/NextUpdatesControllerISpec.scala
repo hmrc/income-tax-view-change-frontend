@@ -26,7 +26,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOut
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, QuarterlyObligation, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -105,7 +105,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -167,7 +167,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -212,7 +212,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         GroupedObligationsModel(
           identification = "testId",
           obligations = List(
-            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+            SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
           ))
       ))
 
@@ -254,7 +254,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -293,7 +293,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 
@@ -332,7 +332,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
             GroupedObligationsModel(
               identification = "testId",
               obligations = List(
-                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), QuarterlyObligation, None, "testPeriodKey", StatusFulfilled)
               ))
           ))
 

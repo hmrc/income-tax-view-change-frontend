@@ -92,7 +92,6 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
     }
 
     "return ErrorResponse model in case of failure" in new Setup {
@@ -141,7 +140,6 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
     }
 
     "return an error model in case of failure" in new Setup {

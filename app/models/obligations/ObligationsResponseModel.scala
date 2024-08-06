@@ -47,31 +47,31 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
             deadline =>
               Some(ObligationWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == groupedObligationsModel.identification)
                 .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-          } else if (groupedObligationsModel.obligations.forall(ob => ob.obligationType == "Crystallised"))
+          } else if (groupedObligationsModel.obligations.forall(ob => ob.obligationType == FinalDeclarationObligation))
             groupedObligationsModel.obligations.map {
               deadline => Some(ObligationWithIncomeType("nextUpdates.crystallisedAll", deadline))
             } else None
       }
     }.flatten
 
-    val nonEOPSDeadlines = deadlines.filter(_.obligation.obligationType != "EOPS")
+    val nonEOPSDeadlines = deadlines.filter(_.obligation.obligationType != EopsObligation)
 
 
     if (previous) nonEOPSDeadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == QuarterlyObligation)
 
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == FinalDeclarationObligation)
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
   def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
     allDeadlinesWithSource()(mtdItUser)
-      .filter(_.obligation.obligationType == "Quarterly")
+      .filter(_.obligation.obligationType == QuarterlyObligation)
       .count(_.obligation.status == StatusFulfilled)
 
   def getPeriodForQuarterly(obligation: ObligationWithIncomeType): QuarterReportingType = {
@@ -82,7 +82,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
   def groupByQuarterPeriod(obligations: Seq[ObligationWithIncomeType]): Map[Option[QuarterReportingType], Seq[ObligationWithIncomeType]] = {
     obligations.groupBy { obligation =>
         obligation.obligation.obligationType match {
-          case "Quarterly" => Some(getPeriodForQuarterly(obligation))
+          case QuarterlyObligation => Some(getPeriodForQuarterly(obligation))
           case _ => None //"Default"
         }
       }.view
@@ -100,7 +100,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
 }
 
 object ObligationsModel {
-  implicit val format: OFormat[ObligationsModel] = Json.format[ObligationsModel]
+  implicit val format: Reads[ObligationsModel] = Json.reads[ObligationsModel]
 }
 
 case class ObligationWithIncomeType(incomeType: String, obligation: SingleObligationModel)

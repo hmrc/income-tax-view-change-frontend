@@ -55,14 +55,14 @@ object NextUpdatesIntegrationTestConstants {
       start = deadlineStart1,
       end = deadlineEnd1,
       due = currentDate.minusDays(128),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     ), SingleObligationModel(
       start = deadlineStart2,
       end = deadlineEnd2,
       due = currentDate.minusDays(36),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     ), SingleObligationModel(
@@ -76,21 +76,21 @@ object NextUpdatesIntegrationTestConstants {
       start = deadlineStart4,
       end = deadlineEnd4,
       due = currentDate.plusDays(30),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     ), SingleObligationModel(
       start = deadlineStart5,
       end = deadlineEnd5,
       due = currentDate.plusDays(146),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     ), SingleObligationModel(
       start = deadlineStart6,
       end = deadlineEnd6,
       due = currentDate.plusDays(174),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     )
@@ -108,7 +108,7 @@ object NextUpdatesIntegrationTestConstants {
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       due = singleObligationDue,
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
     )
@@ -121,7 +121,7 @@ object NextUpdatesIntegrationTestConstants {
     SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
-      obligationType = "Crystallised",
+      obligationType = FinalDeclarationObligation,
       due = veryOverdueDate,
       dateReceived = None,
       periodKey = "periodKey", status = StatusFulfilled
@@ -132,7 +132,7 @@ object NextUpdatesIntegrationTestConstants {
     SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEnd,
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       due = overdueDate,
       dateReceived = None,
       periodKey = "periodKey", status = StatusFulfilled
@@ -185,7 +185,7 @@ object NextUpdatesIntegrationTestConstants {
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2017, 7, 5),
       due = currentDate.plusYears(1),
-      obligationType = "Quarterly",
+      obligationType = QuarterlyObligation,
       dateReceived = None,
       periodKey = "periodKey", status = StatusFulfilled
     )
@@ -208,7 +208,7 @@ object NextUpdatesIntegrationTestConstants {
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
-      "Crystallised",
+      FinalDeclarationObligation,
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     )
@@ -219,7 +219,7 @@ object NextUpdatesIntegrationTestConstants {
       start = LocalDate.of(2018, 4, 6),
       end = LocalDate.of(2019, 4, 5),
       due = LocalDate.of(2020, 1, 31),
-      "Crystallised",
+      FinalDeclarationObligation,
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     ),
@@ -227,7 +227,7 @@ object NextUpdatesIntegrationTestConstants {
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
-      "Crystallised",
+      FinalDeclarationObligation,
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     )

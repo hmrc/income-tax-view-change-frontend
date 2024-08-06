@@ -101,7 +101,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
+          obligationType = QuarterlyObligation,
           dateReceived = Some(fixedDate),
           periodKey = "Quarterly",
           StatusFulfilled

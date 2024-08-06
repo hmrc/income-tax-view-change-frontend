@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.obligations.{SingleObligationModel, ObligationsErrorModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{FinalDeclarationObligation, GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, QuarterlyObligation, SingleObligationModel, StatusFulfilled}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
 
@@ -34,7 +34,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2019, 10, 30),
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#002",
     StatusFulfilled
@@ -44,7 +44,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2017, 10, 30),
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#002",
     StatusFulfilled
@@ -54,7 +54,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = mockedCurrentTime20171031,
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#003",
     StatusFulfilled
@@ -65,7 +65,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 10, 1),
     end = mockedCurrentTime20171031,
     due = mockedCurrentTime20171031,
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#002",
     StatusFulfilled
@@ -75,7 +75,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2018, 10, 30),
     due = mockedCurrentTime20171031,
-    obligationType = "Crystallised",
+    obligationType = FinalDeclarationObligation,
     dateReceived = None,
     periodKey = "",
     StatusFulfilled
@@ -85,7 +85,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2018, 10, 1),
     end = LocalDate.of(2019, 10, 30),
     due = LocalDate.of(2020, 10, 31),
-    obligationType = "Crystallised",
+    obligationType = FinalDeclarationObligation,
     dateReceived = None,
     periodKey = "",
     StatusFulfilled
@@ -106,7 +106,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2017, 1, 1),
     LocalDate.of(2017, 4, 1),
     LocalDate.of(2017, 5, 1),
-    "Quarterly",
+    QuarterlyObligation,
     Some(LocalDate.of(2017, 4, 1)),
     "#001",
     StatusFulfilled
@@ -116,7 +116,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2017, 4, 1),
     LocalDate.of(2017, 7, 1),
     LocalDate.of(2017, 8, 1),
-    "Quarterly",
+    QuarterlyObligation,
     Some(LocalDate.of(2017, 7, 1)),
     "#002",
     StatusFulfilled
@@ -126,7 +126,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2017, 1, 1),
     LocalDate.of(2018, 1, 1),
     LocalDate.of(2018, 1, 1),
-    "Quarterly",
+    QuarterlyObligation,
     Some(LocalDate.of(2018, 1, 30)),
     "#003",
     StatusFulfilled
@@ -136,7 +136,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 30),
-    "Quarterly",
+    QuarterlyObligation,
     Some(LocalDate.of(2019, 1, 30)),
     "#004",
     status = StatusFulfilled
@@ -147,7 +147,7 @@ object NextUpdatesTestConstants {
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 31),
-    "Crystallised",
+    FinalDeclarationObligation,
     Some(LocalDate.of(2018, 1, 31)),
     "Crystallised",
     status = StatusFulfilled
@@ -200,7 +200,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 1),
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#002",
     status = StatusFulfilled
@@ -209,7 +209,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = mockedCurrentTime20171031,
-    obligationType = "Quarterly",
+    obligationType = QuarterlyObligation,
     dateReceived = None,
     periodKey = "#003",
     status = StatusFulfilled
@@ -219,7 +219,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2019, 10, 31),
-    obligationType = "Crystallised",
+    obligationType = FinalDeclarationObligation,
     dateReceived = None,
     periodKey = "",
     status = StatusFulfilled

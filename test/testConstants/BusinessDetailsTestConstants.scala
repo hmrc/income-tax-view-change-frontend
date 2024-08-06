@@ -419,16 +419,6 @@ object BusinessDetailsTestConstants {
     cashOrAccruals = true
   )
 
-  val businessNotValidObligationType = fakeNextUpdatesModel(SingleObligationModel(
-    start = LocalDate.of(2017, 7, 1),
-    end = LocalDate.of(2017, 9, 30),
-    due = LocalDate.of(2017, 10, 30),
-    obligationType = "notValidObligationType",
-    dateReceived = None,
-    periodKey = "#002",
-    StatusFulfilled
-  ))
-
   val alignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
@@ -480,7 +470,5 @@ object BusinessDetailsTestConstants {
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
   val obligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
-  val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
-    Seq(GroupedObligationsModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
 }

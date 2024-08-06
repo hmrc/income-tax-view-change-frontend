@@ -16,10 +16,12 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import models.obligations.ObligationType
+
 import java.time.LocalDate
 
 final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
                                       finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean)
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
-                            inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)
+                            inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: ObligationType)

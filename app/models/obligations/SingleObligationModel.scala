@@ -16,18 +16,18 @@
 
 package models.obligations
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, Reads}
 
 import java.time.LocalDate
 
 case class SingleObligationModel(start: LocalDate,
                                  end: LocalDate,
                                  due: LocalDate,
-                                 obligationType: String,
+                                 obligationType: ObligationType,
                                  dateReceived: Option[LocalDate],
                                  periodKey: String,
                                  status: ObligationStatus)
 
 object SingleObligationModel {
-  implicit val formatNextUpdateModel: Format[SingleObligationModel] = Json.format[SingleObligationModel]
+  implicit val readSingleObligationModel: Reads[SingleObligationModel] = Json.reads[SingleObligationModel]
 }
