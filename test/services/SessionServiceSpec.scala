@@ -121,7 +121,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
               .futureValue
 
           result.isLeft shouldBe true
-          result.swap.contains("Mongo Save data operation was not acknowledged")
+          result.left.toOption.map(_.getMessage) should contain("Mongo Save data operation was not acknowledged")
         }
       }
 
