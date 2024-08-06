@@ -100,6 +100,25 @@ class SessionService @Inject()(
       uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
+  def setMultipleMongoData(kv: Map[String, String], journeyType: JourneyType)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+    val keyValueToUpdate = kv.map { kv_ =>
+      journeyType.operation match {
+        case Add => (kv_._2, AddIncomeSourceData.getJSONKeyPath(kv_._1))
+        case Manage => (kv_._2, ManageIncomeSourceData.getJSONKeyPath(kv_._1))
+        case Cease => (kv_._2, CeaseIncomeSourceData.getJSONKeyPath(kv_._1))
+      }
+    }
+    uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
+      .map(
+        result => result.wasAcknowledged() match {
+          case true =>
+            Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        })
+  }
+
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
