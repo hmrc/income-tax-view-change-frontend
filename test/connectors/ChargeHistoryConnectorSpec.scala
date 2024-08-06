@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ChargeHistoryConnectorSpec extends TestSupport with MockHttp with MockHttpV2 with MockAuditingService {
+class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
 
   trait Setup {
