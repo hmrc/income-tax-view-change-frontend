@@ -23,7 +23,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import testUtils.TestSupport
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
@@ -32,6 +32,11 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
     mockSensitiveUIJourneySessionDataRepository,
     mockFrontendAppConfig
   )
+
+  private val testKeyOne = "businessName"
+  private val testValueOne = "Big Bid Niss"
+  private val testKeyTwo = "dateStarted"
+  private val testValueTwo = "2023-05-23"
 
   "sessionService " when {
     "mongo" when {
@@ -97,6 +102,26 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(testMap,
             JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result.toString shouldBe Left(new Exception("Mongo Save data operation was not acknowledged")).toString
+        }
+
+        "return a future left exception when the second key-value fails" in {
+
+          mockRepositoryUpdateDataFailure(s"addIncomeSourceData.$testKeyOne", testValueOne)
+          mockRepositoryUpdateDataSuccess(s"addIncomeSourceData.$testKeyTwo", testValueTwo)
+
+          val testMap: Map[String, String] =
+            Map(
+              testKeyOne -> testValueOne,
+              testKeyTwo -> testValueTwo
+            )
+
+          val result: Either[Throwable, Boolean] =
+            TestSessionService
+              .setMultipleMongoData(testMap, JourneyType(Add, SelfEmployment))
+              .futureValue
+
+          result.isLeft shouldBe true
+          result.swap.contains("Mongo Save data operation was not acknowledged")
         }
       }
 
