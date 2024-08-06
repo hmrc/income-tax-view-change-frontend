@@ -101,28 +101,22 @@ class SessionService @Inject()(
   }
 
   def setMultipleMongoData(kv: Map[String, String], journeyType: JourneyType)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
-    kv.map { kv_ =>
-        journeyType.operation match {
-          case Add => (kv_._2, AddIncomeSourceData.getJSONKeyPath(kv_._1))
-          case Manage => (kv_._2, ManageIncomeSourceData.getJSONKeyPath(kv_._1))
-          case Cease => (kv_._2, CeaseIncomeSourceData.getJSONKeyPath(kv_._1))
-        }
-      }.toList
-      .foldLeft(Future.successful[Either[Throwable, Boolean]](Right(false))) { (acc, kv) =>
-        acc.flatMap {
-          case Right(_) =>
-            uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(
-              result => result.wasAcknowledged() match {
-                case true => Right(true)
-                case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-              }
-            )
-          case Left(ex) =>
-            Future.successful(Left(ex))
-        }
+    val keyValueToUpdate = kv.map { kv_ =>
+      journeyType.operation match {
+        case Add => (kv_._2, AddIncomeSourceData.getJSONKeyPath(kv_._1))
+        case Manage => (kv_._2, ManageIncomeSourceData.getJSONKeyPath(kv_._1))
+        case Cease => (kv_._2, CeaseIncomeSourceData.getJSONKeyPath(kv_._1))
       }
+    }
+    uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
+      .map(
+        result => result.wasAcknowledged() match {
+          case true =>
+            Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        })
   }
 
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
