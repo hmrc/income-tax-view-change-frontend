@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnrolmentService @Inject()(http: HttpClient, appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def fetchEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[Either[String, EnrolmentsResponse]] = {
-    val url = s"${appConfig.enrolmentStoreProxyUrl}/enrolment-store-proxy/enrolment-store/groups/${groupId.replace("testGroupId-", "")}/enrolments?type=delegated"
+    val url = s"${appConfig.enrolmentStoreProxyUrl}/enrolment-store-proxy/enrolment-store/groups/${groupId}/enrolments?type=delegated"
     http.GET[HttpResponse](url).map { response =>
       response.json.validate[EnrolmentsResponse].asEither.left.map { errors =>
         logger.error("Failed to parse enrolments response: " + JsError.toJson(errors).toString)
