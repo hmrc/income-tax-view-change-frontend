@@ -135,37 +135,6 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
         isChange = isChange
       )
   }
-
-//  private def handleValidatedInput(validatedInput: DateFormElement,
-//                                   incomeSourceType: IncomeSourceType,
-//                                   incomeSourceIdMaybe: Option[IncomeSourceId],
-//                                   redirectAction: Call)(
-//                                    implicit headerCarrier: HeaderCarrier): Future[Result] = {
-//    (incomeSourceType, incomeSourceIdMaybe) match {
-//      case (SelfEmployment, Some(incomeSourceId)) =>
-//        val result = Redirect(redirectAction)
-//        val dataToSet = Map(
-//          CeaseIncomeSourceData.dateCeasedField -> validatedInput.date.toString,
-//          CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
-//        )
-//
-//        sessionService.setMultipleMongoData(dataToSet, JourneyType(Cease, incomeSourceType)).flatMap {
-//          case Right(_) => Future.successful(result)
-//          case Left(_) => Future.failed(new Error(
-//            s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
-//        }
-//
-//      case _ =>
-//        val propertyEndDate = validatedInput.date.toString
-//        val result = Redirect(redirectAction)
-//        sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
-//          journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-//          case Right(_) => Future.successful(result)
-//          case Left(exception) => Future.failed(exception)
-//        }
-//    }
-//  }
-
   private def handleMultipleValidatedInput(validatedInput: DateFormElement,
                                                         incomeSourceType: IncomeSourceType,
                                                         incomeSourceIdMaybe: Option[IncomeSourceId],
@@ -183,6 +152,11 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
             s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
+        } recoverWith {
+          case ex: Exception =>
+            val errorMessage = s"Error handling validated input. Date Ceased: ${validatedInput.date.toString}. Error: ${ex.getMessage} ${ex.getCause}"
+            Logger("application").error(errorMessage)
+            Future.successful(Results.InternalServerError("Internal Server Error"))
         }
 
       case _ =>

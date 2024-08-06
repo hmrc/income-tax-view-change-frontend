@@ -116,17 +116,6 @@ class UIJourneySessionDataRepository @Inject()(
       update = Document("$set" -> Document(key -> value))
     ).toFuture()
   }
-//  def updateMultipleData(data: UIJourneySessionData, fieldsToUpdate: Map[String, String])
-//                        (implicit ec: ExecutionContext): Future[UpdateResult] = {
-//    val updates = fieldsToUpdate.foldLeft(Seq[Updates]()) { case (acc, (key, value)) =>
-//      acc :+ set(key, value)
-//    }
-//    collection.updateOne(
-//      filter = dataFilter(data),
-//      update = combine(updates: _*)
-//    ).toFuture()
-//  }
-
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data))

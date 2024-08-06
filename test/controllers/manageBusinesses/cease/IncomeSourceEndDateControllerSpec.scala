@@ -570,7 +570,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
               CeaseIncomeSourceData.dateCeasedField -> "2022-08-27",
               CeaseIncomeSourceData.incomeSourceIdField -> testSelfEmploymentId
             )
-            setupMockSetMultipleMongoData(testMap)(Right(true))
             setupMockSetMultipleMongoData(testMap)(Left(new Exception()))
             testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
           }
