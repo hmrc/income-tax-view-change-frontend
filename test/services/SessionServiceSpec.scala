@@ -106,8 +106,8 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
 
         "return a future left exception when the second key-value fails" in {
 
-          mockRepositoryUpdateDataFailure(s"addIncomeSourceData.$testKeyOne", testValueOne)
-          mockRepositoryUpdateDataSuccess(s"addIncomeSourceData.$testKeyTwo", testValueTwo)
+          mockRepositoryUpdateDataSuccess(s"addIncomeSourceData.$testKeyOne", testValueOne)
+          mockRepositoryUpdateDataFailure(s"addIncomeSourceData.$testKeyTwo", testValueTwo)
 
           val testMap: Map[String, String] =
             Map(
