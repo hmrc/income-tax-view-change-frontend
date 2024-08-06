@@ -63,7 +63,6 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
     "one year available for opt-out; end-year 2023" should {
       "return successful response" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
@@ -89,7 +88,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(repository.set(any())).thenReturn(Future.successful(true))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()
@@ -101,7 +100,6 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
     "three years available for opt-out; end-year 2023, 2024, 2025" should {
       "return successful response" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYearNum = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYearNum)
@@ -127,7 +125,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(repository.set(any())).thenReturn(Future.successful(true))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()

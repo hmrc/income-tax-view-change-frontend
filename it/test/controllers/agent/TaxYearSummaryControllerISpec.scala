@@ -21,7 +21,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{AdjustPaymentsOnAccount, MFACreditsAndDebits}
@@ -567,7 +567,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError, isErrorPage = true)
+          pageTitleIndividual(titleProbWithService, isErrorPage = true)
         )
 
       }

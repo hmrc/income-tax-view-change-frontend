@@ -63,6 +63,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disableAllSwitches()
   }
 
   "showIncomeSummary" when {

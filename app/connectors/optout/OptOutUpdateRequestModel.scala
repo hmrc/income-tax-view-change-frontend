@@ -17,31 +17,23 @@
 package connectors.optout
 
 import play.api.libs.json.{Format, Json}
-import play.mvc.Http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT}
+import play.mvc.Http.Status.NO_CONTENT
 
 object OptOutUpdateRequestModel {
 
   val optOutUpdateReason: String = "10"
 
   case class OptOutUpdateRequest(taxYear: String, updateReason: String)
-  sealed trait OptOutUpdateResponse {
-    val statusCode: Int
-  }
-  case class OptOutUpdateResponseSuccess(correlationId: String, statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
+  sealed trait OptOutUpdateResponse
+
+  case class OptOutUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends OptOutUpdateResponse
   case class ErrorItem(code: String, reason: String)
-  case class OptOutUpdateResponseFailure(correlationId: String, statusCode: Int, failures: List[ErrorItem]) extends OptOutUpdateResponse
+  case class OptOutUpdateResponseFailure(failures: List[ErrorItem]) extends OptOutUpdateResponse
 
   object OptOutUpdateResponseFailure {
-    def defaultFailure(correlationId: String = "unknown"): OptOutUpdateResponseFailure =
-      OptOutUpdateResponseFailure(correlationId,
-        INTERNAL_SERVER_ERROR,
-        List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown error"))
-      )
-
-    def notFoundFailure(correlationId: String = "unknown", url: String): OptOutUpdateResponseFailure =
-      OptOutUpdateResponseFailure(correlationId,
-        INTERNAL_SERVER_ERROR,
-        List(ErrorItem("INTERNAL_SERVER_ERROR", s"URI not found on target backed-end service, url: $url"))
+    def defaultFailure(message: String = "unknown reason"): OptOutUpdateResponseFailure =
+      OptOutUpdateResponseFailure(
+        List(ErrorItem("INTERNAL_SERVER_ERROR", s"Request failed due to $message"))
       )
   }
 

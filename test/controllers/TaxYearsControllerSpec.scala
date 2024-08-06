@@ -16,9 +16,8 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
 import config.FrontendAppConfig
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -58,6 +57,11 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     ec,
     mockItvcErrorHandler,
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
 
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {

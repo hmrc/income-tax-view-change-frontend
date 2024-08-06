@@ -883,6 +883,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "User has no income source of the called type" in {
         mockAndBasicSetup(ERROR_TESTING)
         mockUKPropertyIncomeSource()
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         status(resultSE) shouldBe Status.INTERNAL_SERVER_ERROR
 
@@ -893,6 +894,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         mockAndBasicSetup(ERROR_TESTING)
         mockSingleBusinessIncomeSource()
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+
         val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         status(resultFP) shouldBe Status.INTERNAL_SERVER_ERROR
       }
