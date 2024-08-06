@@ -23,8 +23,7 @@ import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDa
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionService @Inject()(
@@ -114,11 +113,6 @@ class SessionService @Inject()(
       .foldLeft(Future.successful[Either[Throwable, Boolean]](Right(false))) { (acc, kv) =>
         acc.flatMap {
           case Right(_) =>
-            println(s"\ncalling: uiJourneySessionDataRepository.updateData($uiJourneySessionData, ${kv._2}, ${kv._1})")
-            println(s"\nwasAcknowledged: ${Await.result(uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(_.wasAcknowledged()),1000.milli)}")
-            println(s"\ngetMatchedCount: ${Await.result(uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(_.getMatchedCount),1000.milli)}")
-            println(s"\ngetModifiedCount: ${Await.result(uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(_.getModifiedCount),1000.milli)}")
-            println(s"\ngetUpsertedId: ${Await.result(uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(_.getUpsertedId),1000.milli)}")
             uiJourneySessionDataRepository.updateData(uiJourneySessionData, kv._2, kv._1).map(
               result => result.wasAcknowledged() match {
                 case true => Right(true)
