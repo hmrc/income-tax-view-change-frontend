@@ -82,15 +82,20 @@ object AddIncomeSourceData {
 
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 
-  val addIncomeSourceDataLens:       Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
-  val accountingPeriodStartDateLens: Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodStartDate)
-  val accountingPeriodEndDateLens:   Lens[AddIncomeSourceData, Option[LocalDate]]            = GenLens[AddIncomeSourceData](_.accountingPeriodEndDate)
+  val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
 
-  val businessNameLens: Lens[UIJourneySessionData, Option[String]] =
-    addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.businessName))(optStr => {
-      case Some(data) => Some(data.copy(businessName = optStr))
-      case None       => Some(AddIncomeSourceData(businessName = optStr))
-    }))
+  //Below is a broken-down version of a Lens with an attempt to explain how it works
+
+  val businessNameLens: Lens[UIJourneySessionData, Option[String]] = { // Lens to access the 'businessName' within 'UIJourneySessionData'
+
+    val businessNameFromDataLens = Lens[Option[AddIncomeSourceData], Option[String]]( // Lens to extract and modify 'businessName' from 'AddIncomeSourceData'
+      _.flatMap(_.businessName) // Getter: Extracts 'businessName' if present
+    )(optStr => {
+      case Some(data) => Some(data.copy(businessName = optStr))     // Setter: Updates 'businessName' in existing data
+      case None => Some(AddIncomeSourceData(businessName = optStr)) // Setter: Creates new data if none exists
+    })
+    addIncomeSourceDataLens.andThen(businessNameFromDataLens)
+  }
 
   val businessTradeLens: Lens[UIJourneySessionData, Option[String]] =
     addIncomeSourceDataLens.andThen(Lens[Option[AddIncomeSourceData], Option[String]](_.flatMap(_.businessTrade))(optStr => {
