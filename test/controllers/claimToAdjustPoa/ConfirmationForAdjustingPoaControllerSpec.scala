@@ -50,6 +50,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
   )
 
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val emptySession: PoAAmendmentData = PoAAmendmentData(None, None)
 
   object TestConfirmationForAdjustingPoaController extends ConfirmationForAdjustingPoaController(
     authorisedFunctions = mockAuthService,
@@ -125,7 +126,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
       }
     }
     "return an error 500" when {
-      "Payment On Account Session data is missing" in {
+      "Payment On Account Session is missing" in {
         enable(AdjustPaymentsOnAccount)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -134,7 +135,24 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthenticationPredic
 
         setupMockGetPaymentsOnAccount(None)
         setupMockTaxYearNotCrystallised()
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
+
+        val result = TestConfirmationForAdjustingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestConfirmationForAdjustingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "Payment On Account data is missing from session" in {
+        enable(AdjustPaymentsOnAccount)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockSingleBISWithCurrentYearAsMigrationYear()
+
+        setupMockGetPaymentsOnAccount(None)
+        setupMockTaxYearNotCrystallised()
+        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(emptySession))))
 
         val result = TestConfirmationForAdjustingPoaController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestConfirmationForAdjustingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())

@@ -48,9 +48,6 @@ trait ClaimToAdjustHelper {
   private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
     documentDetail.documentDescription.contains(POA2)
 
-  private val isPoA: DocumentDetail => Boolean = documentDetail =>
-    isPoAOne(documentDetail) || isPoATwo(documentDetail)
-
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
@@ -63,10 +60,6 @@ trait ClaimToAdjustHelper {
 
   protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
                                                         chargeReference: Option[String])
-
-  def hasPartiallyOrFullyPaidPoas(documentDetails: List[DocumentDetail]): Boolean =
-    documentDetails.exists(isPoA) &&
-      (documentDetails.exists(_.isPartPaid) || documentDetails.exists(_.isPaid))
 
   def getPaymentOnAccountModel(documentDetails: List[DocumentDetail],
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
