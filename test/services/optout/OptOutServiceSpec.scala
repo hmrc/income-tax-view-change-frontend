@@ -33,7 +33,7 @@ import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.optout.OptOutService.{OptOutInitialState, QuarterlyUpdatesCountForTaxYearModel}
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport._
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -140,6 +140,31 @@ class OptOutServiceSpec extends UnitSpec
       }
 
       f.futureValue shouldBe Succeeded
+    }
+  }
+
+  "OptOutService.recallOptOutInitialState" should {
+    "retrieve the intent year only" in {
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.Name,
+        optOutSessionData = Some(OptOutSessionData(Some(
+          OptOutContextData(
+            crystallisationStatus = true,
+            previousYearITSAStatus = "V",
+            currentYearITSAStatus = "V",
+            nextYearITSAStatus = "U")),
+          selectedOptOutYear = None))
+      )
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      val initialState = service.recallOptOutInitialState()
+
+      initialState.futureValue.isDefined shouldBe true
+      initialState.futureValue.get shouldBe OptOutInitialState(true, Voluntary, Voluntary, NoStatus)
     }
   }
 
