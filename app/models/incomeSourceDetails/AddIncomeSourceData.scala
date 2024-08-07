@@ -21,6 +21,8 @@ import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import monocle.Lens
+import monocle.macros.GenLens
 
 import java.time.{LocalDate, ZoneOffset}
 
@@ -78,6 +80,10 @@ object AddIncomeSourceData {
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
+
+  val addIncomeSourceDataLens: Lens[UIJourneySessionData, Option[AddIncomeSourceData]] = GenLens[UIJourneySessionData](_.addIncomeSourceData)
+  val businessNameLens: Lens[AddIncomeSourceData, Option[String]] = GenLens[AddIncomeSourceData](_.businessName)
+  val dateStartedLens: Lens[AddIncomeSourceData, Option[LocalDate]] = GenLens[AddIncomeSourceData](_.dateStarted)
 }
 
 case class SensitiveAddIncomeSourceData(
