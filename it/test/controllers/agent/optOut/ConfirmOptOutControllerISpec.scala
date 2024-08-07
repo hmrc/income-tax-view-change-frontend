@@ -100,7 +100,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
 
-          optOutService.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
+          optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
 
           val result = IncomeTaxViewChangeFrontend.getConfirmOptOut(clientDetailsWithConfirmation)
           verifyIncomeSourceDetailsCall(testMtditid)

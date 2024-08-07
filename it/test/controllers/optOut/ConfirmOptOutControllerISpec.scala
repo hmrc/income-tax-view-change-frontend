@@ -94,7 +94,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           currentYearStatus = Voluntary,
           nextYearStatus = Voluntary)
 
-        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+        assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmOptOut()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -199,7 +199,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
-        assert(optOutService.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+        assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
 
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
