@@ -85,9 +85,11 @@
 
     @h1(id = Some("heading"), msg = messages("optin.chooseOptInTaxYear.heading"), classes = "govuk-heading-l")
 
-    @p(id=Some("description1")) {
-        @messages("optin.chooseOptInTaxYear.desc1")
-    }
+    <div class="govuk-!-margin-bottom-7 ">
+        @p(id=Some("description1")) {
+            @messages("optin.chooseOptInTaxYear.desc1")
+        }
+    </div>
 
     @formBlock
 
