@@ -2071,3 +2071,11 @@ optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
 optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
+
+# opt in choose tax year
+optin.chooseOptInTaxYear.heading                     = TBD
+optin.chooseOptInTaxYear.desc1                       = TBD
+optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
+optin.chooseOptInTaxYear.continue                    = Yn eich blaen
+optin.confirmOptIn.cancel                            = Canslo

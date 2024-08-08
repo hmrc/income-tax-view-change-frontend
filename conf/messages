@@ -2114,5 +2114,9 @@ optout.optOutError.home-bullet-1                     = go back to the
 optout.optOutError.home-bullet-2                     = homepage
 
 # opt in choose tax year
-optin.chooseOptInTaxYear.heading                     = Opting in to reporting quarterly
+optin.chooseOptInTaxYear.heading                     = Voluntarily opting in to reporting quarterly
 optin.chooseOptInTaxYear.desc1                       = If you opt in to the next tax year, you will not have to submit a quarterly update until then.
+optin.chooseOptInTaxYear.whichTaxYear                = Which tax year do you want to opt in from?
+optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
+optin.chooseOptInTaxYear.continue                    = Continue
+optin.confirmOptIn.cancel                            = Cancel

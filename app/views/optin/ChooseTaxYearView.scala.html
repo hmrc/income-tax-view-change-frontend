@@ -42,11 +42,11 @@
 }
 
 @formBlock = {
-    @formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-multi-year-opt-out-form") {
+    @formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-multi-year-opt-in-form") {
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("optout.chooseOptOutTaxYear.whichTaxYear")),
+                    content = Text(messages("optin.chooseOptInTaxYear.whichTaxYear")),
                     classes = "govuk-fieldset__legend--m"
                 )),
                 attributes = Map("id" -> "whichTaxYear")
@@ -55,7 +55,7 @@
                 RadioItem(
                     id = Some(s"choice-year-$index"),
                     value = Some(optOutTaxYear.toString),
-                    content = Text(messages("optout.chooseOptOutTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}"))
+                    content = Text(messages("optin.chooseOptInTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}"))
                 )
             },
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
@@ -63,11 +63,11 @@
 
         <div class="govuk-button-group">
             @govukButton(Button(
-                content = Text(messages("base.continue")),
+                content = Text(messages("optin.chooseOptInTaxYear.continue")),
                 attributes = Map("id" -> "continue-button")
             ))
             <a class="govuk-link" id="cancel-button" href=@model.cancelURL>
-            @messages("optout.confirmOptOut.cancel")
+            @messages("optin.confirmOptIn.cancel")
             </a>
         </div>
     }
