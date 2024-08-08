@@ -27,7 +27,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
@@ -39,6 +39,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
+                                            val itsaStatusService: ITSAStatusService,
                                             nextUpdatesService: NextUpdatesService,
                                             auth: AuthenticatorPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
@@ -69,14 +70,22 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
             incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
             (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
           } yield {
-            handleSuccess(
-              isAgent = isAgent,
-              businessName = businessName,
-              incomeSourceType = incomeSourceType,
-              incomeSourceId = incomeSourceIdModel,
-              showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
-              sessionData = sessionData
-            )
+            itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap { _ =>
+              val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
+                sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(Some("A")),
+                sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(Some("A"))
+              )
+              val isHybridReporting = reportingMethodTaxYear1 != reportingMethodTaxYear2
+              handleSuccess(
+                isAgent = isAgent,
+                businessName = businessName,
+                incomeSourceType = incomeSourceType,
+                incomeSourceId = incomeSourceIdModel,
+                showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
+                sessionData = sessionData,
+                isHybridReporting = isHybridReporting
+              )
+            }
           }) getOrElse {
             Logger("application").error(
               s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
@@ -100,8 +109,8 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, isHybridReporting: Boolean
+  )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
@@ -117,7 +126,8 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
               isAgent = isAgent,
               incomeSourceType = incomeSourceType,
               currentDate = dateService.getCurrentDate,
-              isBusinessHistoric = isBusinessHistoric
+              isBusinessHistoric = isBusinessHistoric,
+              isHybridReporting = isHybridReporting
             ))
           }
         case None =>

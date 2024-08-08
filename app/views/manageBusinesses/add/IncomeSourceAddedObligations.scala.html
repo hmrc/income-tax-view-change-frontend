@@ -35,12 +35,13 @@
         govukInsetText: GovukInsetText,
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean, isHybridReporting: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
     messages(s"business-added.$key", args: _*)
 }
+    @import implicitDateFormatter.longDate
 
 @getPageTitle = @{
 
@@ -156,6 +157,10 @@
             @getMessage("deadlines")
             </label>
         </h2>
+
+
+        @isHybridReporting
+        <p></p>
 
             <ul class="govuk-list govuk-list--bullet">
                 <li id="quarterly-list">
