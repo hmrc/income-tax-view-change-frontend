@@ -101,30 +101,24 @@ class SessionService @Inject()(
   }
 
   def setMultipleMongoData(keyAndValue: Map[String, String], journeyType: JourneyType)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
-    keyAndValue.map { case (key, value) =>
-        journeyType.operation match {
-          case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
-          case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
-          case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
-        }
-      }.toList
-      .foldLeft(Future.successful[Either[Throwable, Boolean]](Right(false))) { (acc, keyAndValue) =>
-        acc.flatMap {
-          case Right(_) =>
-            uiJourneySessionDataRepository.updateData(uiJourneySessionData, keyAndValue._2, keyAndValue._1).map(
-              result => result.wasAcknowledged() match {
-                case true => Right(true)
-                case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-              }
-            )
-          case Left(ex) =>
-            Future.successful(Left(ex))
-        }
+    val keyValueToUpdate = keyAndValue.map { case (key, value) =>
+      journeyType.operation match {
+        case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
+        case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
+        case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
       }
+    }
+    uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
+      .map(
+        result => result.wasAcknowledged() match {
+          case true => Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        })
   }
 
+//  @deprecated("Use setMultipleMongoData()", since = "07/08/24")
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)

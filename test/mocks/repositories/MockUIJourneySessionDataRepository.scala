@@ -23,6 +23,7 @@ import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
+import org.mongodb.scala.result.UpdateResult
 import org.scalatest.BeforeAndAfterEach
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import testUtils.UnitSpec
@@ -65,6 +66,19 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       }))
   }
 
+  def mockRepositoryUpdateMultipleData(): Unit = {
+    when(mockUIJourneySessionDataRepository.updateMultipleData(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
+        override def wasAcknowledged(): Boolean = true
+
+        override def getMatchedCount: Long = 4
+
+        override def getModifiedCount: Long = 5
+
+        override def getUpsertedId: BsonValue = null
+      }))
+  }
+
   def mockRepositoryUpdateDataFailure(): Unit = {
     when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
@@ -78,18 +92,8 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       }))
   }
 
-  def mockRepositoryUpdateDataSuccessThenFailure(key1: String, value1: String , key2: String , value2: String): Unit = {
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
-        override def wasAcknowledged(): Boolean = true
-
-        override def getMatchedCount: Long = 4
-
-        override def getModifiedCount: Long = 5
-
-        override def getUpsertedId: BsonValue = null
-      }))
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+  def mockRepositoryUpdateMultipleDataFailure(): Unit = {
+    when(mockUIJourneySessionDataRepository.updateMultipleData(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
         override def wasAcknowledged(): Boolean = false
 
@@ -100,34 +104,29 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
         override def getUpsertedId: BsonValue = null
       }))
   }
+  def mockRepositoryUpdateDataSuccessThenFailure(key1: String, key2: String, value1: String, value2: String): Unit = {
+    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key1), ArgumentMatchers.eq(value1)))
+      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
+        override def wasAcknowledged(): Boolean = true
+        override def getMatchedCount: Long = 4
+        override def getModifiedCount: Long = 5
+        override def getUpsertedId: BsonValue = null
+      }))
 
-//  def mockRepositoryUpdateDataSuccessThenFailure(): Unit = {
-//    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-//      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
-//
-//        val callIndex = invocation.getInvocationCount
-//
-//        if (callIndex == 0) {
-//          // First call: Simulate a successful update
-//          Future.successful(new org.mongodb.scala.result.UpdateResult {
-//            override def wasAcknowledged(): Boolean = true
-//            override def getMatchedCount: Long = 1
-//            override def getModifiedCount: Long = 1
-//            override def getUpsertedId: BsonValue = null
-//          })
-//        } else {
-//          // Subsequent calls: Simulate a failed update
-//          Future.successful(new org.mongodb.scala.result.UpdateResult {
-//            override def wasAcknowledged(): Boolean = false
-//            override def getMatchedCount: Long = 4
-//            override def getModifiedCount: Long = 5
-//            override def getUpsertedId: BsonValue = null
-//          })
-//        }
-//      }
-//  }
+    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key2), ArgumentMatchers.eq(value2)))
+      .thenReturn(Future.successful(new org.mongodb.scala.result. UpdateResult {
+        override def wasAcknowledged(): Boolean = false
+        override def getMatchedCount: Long = 4
+        override def getModifiedCount: Long = 5
+        override def getUpsertedId: BsonValue = null
+      }))
 
+  }
 
+    def verifyMockUpdateData(noOfCalls: Int): Future[UpdateResult] = {
+      verify(mockUIJourneySessionDataRepository, times(noOfCalls)).updateData(ArgumentMatchers.any(), ArgumentMatchers.eq("addIncomeSourceData.key1"), ArgumentMatchers.eq("value1"))
+      verify(mockUIJourneySessionDataRepository, times(noOfCalls)).updateData(ArgumentMatchers.any(), ArgumentMatchers.eq("addIncomeSourceData.key2"), ArgumentMatchers.eq("value2"))
+    }
   def mockDeleteOne(): Unit = {
     when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
   }
