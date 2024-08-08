@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package models
+package models.chargeHistory
 
-import models.chargeHistory.ChargeHistoryModel
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 
