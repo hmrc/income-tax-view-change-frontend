@@ -23,7 +23,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import testUtils.TestSupport
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
@@ -32,6 +32,11 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
     mockSensitiveUIJourneySessionDataRepository,
     mockFrontendAppConfig
   )
+
+  private val testKeyOne = "businessName"
+  private val testValueOne = "Big Bid Niss"
+  private val testKeyTwo = "dateStarted"
+  private val testValueTwo = "2023-05-23"
 
   "sessionService " when {
     "mongo" when {
@@ -80,6 +85,43 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
             JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
+        }
+      }
+
+      "setMultipleMongoData method" should {
+        "return a future boolean value" in {
+          mockRepositoryUpdateData()
+          val testMap: Map[String, String] = Map("key1" -> "value1", "key2" -> "value2")
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(testMap,
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return a future left exception" in {
+          mockRepositoryUpdateDataFailure()
+          val testMap: Map[String, String] = Map("key1" -> "value1", "key2" -> "value2")
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(testMap,
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result.toString shouldBe Left(new Exception("Mongo Save data operation was not acknowledged")).toString
+        }
+
+        "return a future left exception when the second key-value fails" in {
+
+          mockRepositoryUpdateDataSuccess(s"addIncomeSourceData.$testKeyOne", testValueOne)
+          mockRepositoryUpdateDataFailure(s"addIncomeSourceData.$testKeyTwo", testValueTwo)
+
+          val testMap: Map[String, String] =
+            Map(
+              testKeyOne -> testValueOne,
+              testKeyTwo -> testValueTwo
+            )
+
+          val result: Either[Throwable, Boolean] =
+            TestSessionService
+              .setMultipleMongoData(testMap, JourneyType(Add, SelfEmployment))
+              .futureValue
+
+          result.isLeft shouldBe true
+          result.left.toOption.map(_.getMessage) should contain("Mongo Save data operation was not acknowledged")
         }
       }
 
