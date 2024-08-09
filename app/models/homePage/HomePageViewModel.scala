@@ -17,7 +17,7 @@
 package models.homePage
 
 import models.incomeSourceDetails.TaxYear
-import models.nextUpdates.NextUpdatesTileViewModel
+import models.obligations.NextUpdatesTileViewModel
 
 import java.time.LocalDate
 

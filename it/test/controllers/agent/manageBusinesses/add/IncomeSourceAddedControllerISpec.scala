@@ -22,7 +22,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSources
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -45,7 +45,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
 
   val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
 

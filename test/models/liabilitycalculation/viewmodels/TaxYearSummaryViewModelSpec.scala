@@ -19,7 +19,7 @@ package models.liabilitycalculation.viewmodels
 import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import testConstants.FinancialDetailsTestConstants.{dateService, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec

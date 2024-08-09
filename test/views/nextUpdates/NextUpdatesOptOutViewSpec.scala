@@ -18,7 +18,7 @@ package views.nextUpdates
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.nextUpdates._
+import models.obligations._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -72,10 +72,10 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val multiYearOptOutMessage: String = s"${messages("nextUpdates.optOutMultiYear-1")} ${messages("nextUpdates.optOutMultiYear-2")}"
   }
 
-  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
+  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   })
 

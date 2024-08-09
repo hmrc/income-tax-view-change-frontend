@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.admin.OptOut
-import models.nextUpdates._
+import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -65,7 +65,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                     (implicit user: MtdItUser[_]): Future[Result] =
     hasAnyIncomeSource {
       for {
-        nextUpdates <- nextUpdatesService.getNextUpdates().map {
+        nextUpdates <- nextUpdatesService.getOpenObligations().map {
           case obligations: ObligationsModel => obligations
           case _ => ObligationsModel(Nil)
         }

@@ -30,7 +30,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -204,10 +204,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -218,10 +218,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       )
     ),
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "testId2",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,

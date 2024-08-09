@@ -18,11 +18,11 @@ package testConstants
 
 import java.time.LocalDate
 import BaseIntegrationTestConstants._
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, StatusFulfilled}
 import play.api.libs.json.{JsValue, Json}
 
 object NextUpdatesIntegrationTestConstants {
-  def successResponse(obligationsModel: NextUpdatesModel): JsValue = {
+  def successResponse(obligationsModel: GroupedObligationsModel): JsValue = {
     Json.toJson(obligationsModel)
   }
 
@@ -50,43 +50,43 @@ object NextUpdatesIntegrationTestConstants {
 
   val testPropertyId = "1234"
 
-  def multipleNextUpdatesDataSuccessModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def multipleNextUpdatesDataSuccessModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       start = deadlineStart1,
       end = deadlineEnd1,
       due = currentDate.minusDays(128),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
-    ), NextUpdateModel(
+    ), SingleObligationModel(
       start = deadlineStart2,
       end = deadlineEnd2,
       due = currentDate.minusDays(36),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
-    ), NextUpdateModel(
+    ), SingleObligationModel(
       start = deadlineStart3,
       end = deadlineEnd3,
       due = currentDate.minusDays(36),
       obligationType = "EOPS",
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
-    ), NextUpdateModel(
+    ), SingleObligationModel(
       start = deadlineStart4,
       end = deadlineEnd4,
       due = currentDate.plusDays(30),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
-    ), NextUpdateModel(
+    ), SingleObligationModel(
       start = deadlineStart5,
       end = deadlineEnd5,
       due = currentDate.plusDays(146),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey", StatusFulfilled
-    ), NextUpdateModel(
+    ), SingleObligationModel(
       start = deadlineStart6,
       end = deadlineEnd6,
       due = currentDate.plusDays(174),
@@ -103,8 +103,8 @@ object NextUpdatesIntegrationTestConstants {
 
   val overdueDate: LocalDate = currentDate.minusDays(1)
 
-  def singleObligationQuarterlyReturnModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def singleObligationQuarterlyReturnModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       due = singleObligationDue,
@@ -117,8 +117,8 @@ object NextUpdatesIntegrationTestConstants {
   val veryOverdueDate: LocalDate = LocalDate.of(2017, 5, 5)
   val veryOverDueLongDate = "5 May 2017"
 
-  val singleObligationCrystallisationModel: NextUpdatesModel = NextUpdatesModel(testMtditid, List(
-    NextUpdateModel(
+  val singleObligationCrystallisationModel: GroupedObligationsModel = GroupedObligationsModel(testMtditid, List(
+    SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       obligationType = "Crystallised",
@@ -128,8 +128,8 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  def singleObligationOverdueModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def singleObligationOverdueModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEnd,
       obligationType = "Quarterly",
@@ -143,8 +143,8 @@ object NextUpdatesIntegrationTestConstants {
   val singleObligationEndEOPs = LocalDate.of(2018, 7, 5)
   val singleObligationDueEOPs = LocalDate.of(2018, 1, 1)
 
-  val singleObligationEOPSPropertyModel = NextUpdatesModel(testPropertyId, List(
-    NextUpdateModel(
+  val singleObligationEOPSPropertyModel = GroupedObligationsModel(testPropertyId, List(
+    SingleObligationModel(
       singleObligationStartEOPs,
       singleObligationEndEOPs,
       singleObligationDueEOPs,
@@ -154,8 +154,8 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val multipleObligationPropertyModel = NextUpdatesModel(testPropertyId, List(
-    NextUpdateModel(
+  val multipleObligationPropertyModel = GroupedObligationsModel(testPropertyId, List(
+    SingleObligationModel(
       singleObligationStartEOPs,
       singleObligationEndEOPs,
       singleObligationDueEOPs,
@@ -165,12 +165,12 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  def noObligationsModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+  def noObligationsModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
 
   ))
 
-  def singleObligationQuarterlyModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def singleObligationQuarterlyModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       singleObligationStart,
       singleObligationEnd,
       singleObligationDue,
@@ -180,8 +180,8 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  def singleObligationPlusYearOpenModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def singleObligationPlusYearOpenModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2017, 7, 5),
       due = currentDate.plusYears(1),
@@ -192,8 +192,8 @@ object NextUpdatesIntegrationTestConstants {
   ))
 
 
-  def SEIncomeSourceEOPSModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
-    NextUpdateModel(
+  def SEIncomeSourceEOPSModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2018, 1, 31),
@@ -203,8 +203,8 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModel = NextUpdatesModel(testMtditid, List(
-    NextUpdateModel(
+  val crystallisedEOPSModel = GroupedObligationsModel(testMtditid, List(
+    SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
@@ -214,8 +214,8 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModelMulti = NextUpdatesModel(testMtditid, List(
-    NextUpdateModel(
+  val crystallisedEOPSModelMulti = GroupedObligationsModel(testMtditid, List(
+    SingleObligationModel(
       start = LocalDate.of(2018, 4, 6),
       end = LocalDate.of(2019, 4, 5),
       due = LocalDate.of(2020, 1, 31),
@@ -223,7 +223,7 @@ object NextUpdatesIntegrationTestConstants {
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     ),
-    NextUpdateModel(
+    SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
@@ -233,5 +233,5 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  def emptyModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List())
+  def emptyModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List())
 }

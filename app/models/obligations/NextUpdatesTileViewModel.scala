@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.obligations
 
 import java.time.LocalDate
 

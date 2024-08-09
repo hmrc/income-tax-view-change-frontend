@@ -24,7 +24,7 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
+import models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -776,7 +776,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
         testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
           nextUpdateWithIncomeType.obligation.due
-        }.toList.sortBy(_._1)(localDateOrdering).reverse.foreach { case (due: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+        }.toList.sortBy(_._1)(localDateOrdering).reverse.foreach { case (due: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
           layoutContent.selectHead(s"#table-default-content-$due").text shouldBe messages("updateTab.due", due.toLongDate)
           val sectionContent = layoutContent.selectHead(s"#updates")
           obligations.zip(1 to obligations.length).foreach {

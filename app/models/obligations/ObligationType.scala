@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.nextUpdates
+package models.obligations
 
 sealed trait ObligationType
 

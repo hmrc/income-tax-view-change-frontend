@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.nextUpdates.NextUpdatesTileViewModel
+import models.obligations.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements

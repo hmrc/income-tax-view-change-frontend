@@ -23,7 +23,7 @@ import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -104,10 +104,10 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   }
 
   val updates: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,

@@ -24,7 +24,7 @@ import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsSt
 import models.admin.OptOut
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
