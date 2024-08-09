@@ -131,7 +131,12 @@
         </h2>
 
         @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
-            @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+            @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey != "hybrid") {
+                @govukInsetText(InsetText(id = Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+            } else {
+                @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(quarterlyObligationsDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+                @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(finalDeclarationDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+            }
 
             <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
                 <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
