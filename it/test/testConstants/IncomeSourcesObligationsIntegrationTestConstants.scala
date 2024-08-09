@@ -17,7 +17,7 @@
 package testConstants
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 
 import java.time.LocalDate
 
@@ -45,7 +45,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
   }
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel("123", List(NextUpdateModel(
+    GroupedObligationsModel("123", List(SingleObligationModel(
       LocalDate.of(taxYear, 1, 6),
       LocalDate.of(taxYear, 4, 5),
       LocalDate.of(taxYear, 5, 5),
@@ -53,7 +53,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       None,
       "#001",
       StatusFulfilled),
-      NextUpdateModel(
+      SingleObligationModel(
         LocalDate.of(taxYear, 1, 6),
         LocalDate.of(taxYear, 4, 5),
         LocalDate.of(taxYear, 5, 5),

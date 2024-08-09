@@ -18,7 +18,9 @@ package testOnly.controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import connectors.RawResponseReads
 import controllers.agent.predicates.ClientConfirmedController
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import testOnly.models.Identifier
@@ -44,29 +46,31 @@ class UTRListController @Inject()(
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
                                    val itvcErrorHandler: AgentItvcErrorHandler
-                                 ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                 ) extends ClientConfirmedController with I18nSupport with FeatureSwitching with RawResponseReads {
 
   def listUTRs(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {
-      case _ ~ _ ~ groupIdOpt =>
-        groupIdOpt.map { groupId =>
-          enrolmentService.fetchEnrolments(groupId).flatMap {
-            case Right(enrolmentsResponse) =>
-              val agentMTDITIDs = enrolmentsResponse.enrolments.flatMap(_.identifiers.collect {
-                case Identifier("MTDITID", value) => value
-              })
+      case _ ~ _ ~ Some(groupId) =>
+        Logger("application").info(s"${Console.YELLOW} agent groupid found: $groupId" + Console.WHITE)
+        enrolmentService.fetchEnrolments(groupId).flatMap {
+          case Right(enrolmentsResponse) =>
+            val agentMTDITIDs = enrolmentsResponse.enrolments.flatMap(_.identifiers.collect {
+              case Identifier("MTDITID", value) => value
+            })
 
-              userRepository.findAll().map { userRecords =>
-                val matchedRecords = enrolmentService.filterUserRecords(userRecords.toList, agentMTDITIDs)
-                Ok(listUTRsView(utrs = matchedRecords))
-              }
+            userRepository.findAll().map { userRecords =>
+              val matchedRecords = enrolmentService.filterUserRecords(userRecords.toList, agentMTDITIDs)
+              Ok(listUTRsView(utrs = matchedRecords))
+            }
 
-            case Left(errorMessage) =>
-              Future.successful(InternalServerError(errorMessage))
-          }
-        }.getOrElse {
-          Future.successful(InternalServerError("Group ID not found"))
+          case Left(errorMessage) =>
+            Logger("application").error(errorMessage)
+            Future.successful(InternalServerError(errorMessage))
         }
+
+      case _ =>
+        Logger("application").error("Group ID not found")
+        Future.successful(BadRequest("Group ID not found"))
     }
   }
 }

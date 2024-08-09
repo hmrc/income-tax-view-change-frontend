@@ -72,6 +72,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
       previouslyAdjusted = None
     ))
 
+  val emptySession: PoAAmendmentData = PoAAmendmentData(None, None)
   val validSession: PoAAmendmentData = PoAAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val validSessionIncrease: PoAAmendmentData = PoAAmendmentData(Some(Increase), Some(BigDecimal(1000.00)))
 
@@ -86,6 +87,16 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
     setupMockTaxYearCrystallised()
     setupMockPaymentOnAccountSessionService(Future.successful(sessionResponse))
+  }
+
+  def setUpFailedMongoTest(): Unit = {
+     enable(AdjustPaymentsOnAccount)
+    setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+    mockSingleBISWithCurrentYearAsMigrationYear()
+    setupMockGetPaymentsOnAccount(poa)
+    setupMockTaxYearCrystallised()
+    setupMockPaymentOnAccountSessionService(Future.failed(new Error("Error getting mongo session")))
   }
 
   "CheckYourAnswersController.show" should {
@@ -150,9 +161,19 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
     }
 
     s"return status: $INTERNAL_SERVER_ERROR" when {
-      "Payment On Account Session data is missing" in {
+      "Payment On Account Session is missing" in {
         setupTest(
           sessionResponse = Right(None),
+          claimToAdjustResponse = poa
+        )
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "Payment On Account data is missing from session" in {
+        setupTest(
+          sessionResponse = Right(Some(emptySession)),
           claimToAdjustResponse = poa
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
@@ -183,7 +204,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
       "the new POA amount is missing from the session" in {
         setupTest(
           sessionResponse = Right(Some(validSession.copy(newPoAAmount = None))),
-          claimToAdjustResponse = None
+          claimToAdjustResponse = poa
         )
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
@@ -195,6 +216,15 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
           sessionResponse = Left(new Exception("Something went wrong")),
           claimToAdjustResponse = poa
         )
+
+        val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "Failed future returned when retrieving mongo data" in {
+        setUpFailedMongoTest()
 
         val result = TestCheckYourAnswersController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent = TestCheckYourAnswersController.show(isAgent = true)(fakeRequestConfirmedClient())

@@ -22,7 +22,7 @@ import implicits.ImplicitDateParser
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-import models.nextUpdates.NextUpdateModelWithIncomeType
+import models.obligations.ObligationWithIncomeType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -137,7 +137,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     }
   }
 
-  private def updatesJson(updates: NextUpdateModelWithIncomeType): JsObject = {
+  private def updatesJson(updates: ObligationWithIncomeType): JsObject = {
     Json.obj("updateType" -> getUpdateType(updates.obligation.obligationType),
       "incomeSource" -> getObligationsType(updates.incomeType)) ++
       ("dateSubmitted", updates.obligation.dateReceived)

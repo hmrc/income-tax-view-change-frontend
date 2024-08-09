@@ -68,7 +68,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
       "successful update request was made" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
@@ -78,7 +77,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -92,7 +91,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -100,7 +99,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
       "successful update request was made" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
@@ -111,13 +109,13 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(user.nino).thenReturn(taxableEntityId)
         when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
         when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -131,7 +129,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(correlationId, NO_CONTENT)
+        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -139,7 +137,6 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
       "successful update request was made" in {
 
-        val correlationId = "123"
         val taxableEntityId = "456"
         val currentYear = 2024
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
@@ -153,10 +150,10 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
           OptOutUpdateResponseFailure.defaultFailure()
         ))
         when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
         when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess(correlationId)
+          OptOutUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))

@@ -15,9 +15,9 @@
  *@
 
 @import implicits.ImplicitDateFormatterImpl
-@import models.nextUpdates.NextUpdateModelWithIncomeType
+@import models.obligations.ObligationWithIncomeType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.nextUpdates._
+@import models.obligations._
 @import java.time.LocalDate
 @import play.twirl.api.HtmlFormat
 
@@ -25,7 +25,7 @@
 @(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
-@deadlineRow(deadline: NextUpdateModelWithIncomeType) = @{
+@deadlineRow(deadline: ObligationWithIncomeType) = @{
     Seq(
         TableRow(
             content = Text(getObligationTypeText(deadline.obligation.obligationType)),
@@ -51,7 +51,7 @@
     messages(key)
 }
 
-@getTableHeadingMessage(obligation: NextUpdateModel) = @{
+@getTableHeadingMessage(obligation: SingleObligationModel) = @{
     val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
     else "nextUpdates.section.heading.taxYear"
     messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
@@ -69,9 +69,9 @@
 @getSectionHeadingMessage(obligationType)
 }
 
-@makeTable(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
+@makeTable(collectedObligations: Seq[ObligationWithIncomeType]) = @{
     collectedObligations match {
-        case validObligations: Seq[NextUpdateModelWithIncomeType] if validObligations.nonEmpty =>
+        case validObligations: Seq[ObligationWithIncomeType] if validObligations.nonEmpty =>
             govukTable(Table(
                 classes = "govuk-body govuk-!-margin-bottom-8",
                 rows = {
@@ -99,7 +99,7 @@
     }
 }
 
-@bodyContent(bothQuarters: Boolean, standardObligations: Seq[NextUpdateModelWithIncomeType], calendarObligations: Seq[NextUpdateModelWithIncomeType]) = @{
+@bodyContent(bothQuarters: Boolean, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]) = @{
         if (bothQuarters) {
             Html(makeTable(calendarObligations).toString() + makeTable(standardObligations).toString())
         }
@@ -107,7 +107,7 @@
 }
 
 @getItems = @{
-    obligations.allDeadlines map { case DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, date: LocalDate, standardObligations: Seq[NextUpdateModelWithIncomeType], calendarObligations: Seq[NextUpdateModelWithIncomeType]) =>
+    obligations.allDeadlines map { case DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, date: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]) =>
         Section(
             headingContent = HtmlContent(headingContent(date)),
             summaryContent = HtmlContent(summaryContent(obligationType)),

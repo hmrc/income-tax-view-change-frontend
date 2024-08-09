@@ -130,6 +130,18 @@ class YouCannotGoBackControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
       }
+      "Call to mongo fails" in {
+        setupTest()
+
+        setupMockGetPaymentsOnAccount(testPoa1Maybe)
+        setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
+
+        val result = TestYouCannotGoBackController.show(isAgent = false)(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent = TestYouCannotGoBackController.show(isAgent = true)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 

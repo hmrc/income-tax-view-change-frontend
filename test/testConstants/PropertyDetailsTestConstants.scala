@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
-import models.nextUpdates.{NextUpdateModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, StatusFulfilled}
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, testStartDate3}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
@@ -191,7 +191,7 @@ object PropertyDetailsTestConstants {
     cashOrAccruals = true
   )
 
-  val openCrystallised: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
+  val openCrystallised: SingleObligationModel = fakeNextUpdatesModel(SingleObligationModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 31),

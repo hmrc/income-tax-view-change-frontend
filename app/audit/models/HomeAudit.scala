@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.nextUpdates.NextUpdatesTileViewModel
+import models.obligations.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 

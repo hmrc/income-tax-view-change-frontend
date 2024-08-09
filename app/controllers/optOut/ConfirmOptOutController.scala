@@ -70,7 +70,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_, _) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case OptOutUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
         case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }

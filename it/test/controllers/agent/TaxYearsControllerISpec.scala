@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleProbWithService}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ITSASubmissionIntegration
 import models.core.AccountingPeriodModel
@@ -187,7 +187,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError, isErrorPage = true)
+          pageTitleIndividual(titleProbWithService, isErrorPage = true)
         )
       }
 
