@@ -18,8 +18,11 @@ package repositories
 
 import cats.data.OptionT
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.optout.OptOutContextData.{statusToString, stringToStatus}
-import models.optout.{OptOutContextData, OptOutSessionData}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.optout.OptOutSessionData
+import play.api.libs.json.{Json, OFormat}
+import repositories.OptOutContextData.{statusToString, stringToStatus}
 import services.optout.OptOutProposition
 import services.optout.OptOutService.OptOutInitialState
 import uk.gov.hmrc.http.HeaderCarrier
@@ -79,4 +82,32 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       statusToString(oop.nextTaxYear.status))
   }
 
+}
+
+case class OptOutContextData(crystallisationStatus: Boolean,
+                             previousYearITSAStatus: String,
+                             currentYearITSAStatus: String,
+                             nextYearITSAStatus: String)
+
+object OptOutContextData {
+  implicit val format: OFormat[OptOutContextData] = Json.format[OptOutContextData]
+
+  def statusToString(status: ITSAStatus): String =
+    status match {
+      case ITSAStatus.NoStatus  => "U"
+      case ITSAStatus.Voluntary => "V"
+      case ITSAStatus.Annual    => "A"
+      case ITSAStatus.Mandated  => "M"
+      // This will be validated earlier on in a future ticket
+      case _ => throw new RuntimeException("Unexpected status")
+    }
+
+  def stringToStatus(status: String): ITSAStatus.Value =
+    status match {
+      case "U" => ITSAStatus.NoStatus
+      case "V" => ITSAStatus.Voluntary
+      case "A" => ITSAStatus.Annual
+      case "M" => ITSAStatus.Mandated
+      case _ => throw new RuntimeException("Unexpected status")
+    }
 }

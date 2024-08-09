@@ -18,8 +18,8 @@ package services.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import models.optout.OptOutContextData
-import models.optout.OptOutContextData.statusToString
+import repositories.OptOutContextData
+import repositories.OptOutContextData.statusToString
 
 object OptOutTestSupport {
 
