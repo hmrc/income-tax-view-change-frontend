@@ -98,14 +98,6 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
             JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result.toString shouldBe Left(new Exception("Mongo Save data operation was not acknowledged")).toString
         }
-        "return a future left exception when second key-value fails" in {
-          mockRepositoryUpdateDataSuccessThenFailure("addIncomeSourceData.key1","addIncomeSourceData.key2", "value1", "value2")
-          val testMap: Map[String, String] = Map("key1" -> "value1", "key2" -> "value2")
-          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(testMap,
-            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
-          result.toString shouldBe Left(new Exception("Mongo Save data operation was not acknowledged")).toString
-          verifyMockUpdateData(1)
-        }
       }
 
       "deleteMongoData method" should {

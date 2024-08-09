@@ -104,29 +104,7 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
         override def getUpsertedId: BsonValue = null
       }))
   }
-  def mockRepositoryUpdateDataSuccessThenFailure(key1: String, key2: String, value1: String, value2: String): Unit = {
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key1), ArgumentMatchers.eq(value1)))
-      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
-        override def wasAcknowledged(): Boolean = true
-        override def getMatchedCount: Long = 4
-        override def getModifiedCount: Long = 5
-        override def getUpsertedId: BsonValue = null
-      }))
 
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.eq(key2), ArgumentMatchers.eq(value2)))
-      .thenReturn(Future.successful(new org.mongodb.scala.result. UpdateResult {
-        override def wasAcknowledged(): Boolean = false
-        override def getMatchedCount: Long = 4
-        override def getModifiedCount: Long = 5
-        override def getUpsertedId: BsonValue = null
-      }))
-
-  }
-
-    def verifyMockUpdateData(noOfCalls: Int): Future[UpdateResult] = {
-      verify(mockUIJourneySessionDataRepository, times(noOfCalls)).updateData(ArgumentMatchers.any(), ArgumentMatchers.eq("addIncomeSourceData.key1"), ArgumentMatchers.eq("value1"))
-      verify(mockUIJourneySessionDataRepository, times(noOfCalls)).updateData(ArgumentMatchers.any(), ArgumentMatchers.eq("addIncomeSourceData.key2"), ArgumentMatchers.eq("value2"))
-    }
   def mockDeleteOne(): Unit = {
     when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
   }

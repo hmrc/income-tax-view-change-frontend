@@ -67,7 +67,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockSetMultipleMongoData(key: Map[String,String])(result: Either[Throwable, Boolean]): Unit = {
+  def setupMockSetMultipleMongoData(key: Map[String, String])(result: Either[Throwable, Boolean]): Unit = {
     when(
       mockSessionService.setMultipleMongoData(ArgumentMatchers.eq(key), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -133,4 +133,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
 
   def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
     verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockSetMultipleMongoDataResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).setMultipleMongoData(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 }

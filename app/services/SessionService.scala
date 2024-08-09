@@ -118,7 +118,6 @@ class SessionService @Inject()(
         })
   }
 
-//  @deprecated("Use setMultipleMongoData()", since = "07/08/24")
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
