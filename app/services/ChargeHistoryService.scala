@@ -47,7 +47,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         AdjustmentHistoryModel(creation, List.empty)
       case _ =>
         val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = "create")
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.filter(_.poaAdjustmentReason.isDefined), documentDetail.originalAmount)
+        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.filter(_.poaAdjustmentReason.isDefined).sortBy(_.reversalDate), documentDetail.originalAmount)
         val otherAdjustmentHistory: List[AdjustmentModel] = chargeHistory.filter(_.poaAdjustmentReason.isEmpty).map(
           event => AdjustmentModel(event.totalAmount, Some(event.reversalDate), event.reasonCode)
         )
