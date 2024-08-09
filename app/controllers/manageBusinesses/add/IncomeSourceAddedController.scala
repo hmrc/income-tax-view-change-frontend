@@ -76,7 +76,13 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(Some("A")),
                 sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(Some("A"))
               )
-              val isHybridReporting = reportingMethodTaxYear1 != reportingMethodTaxYear2
+              val reportingMethod = (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
+                case (Some("A"), Some("A")) => "Annual"
+                case (Some("Q"), Some("Q")) => "Quarterly"
+                case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => "Hybrid"
+                case _ => "Unknown"
+              }
+
               handleSuccess(
                 isAgent = isAgent,
                 businessName = businessName,
@@ -84,7 +90,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 incomeSourceId = incomeSourceIdModel,
                 showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
                 sessionData = sessionData,
-                isHybridReporting = isHybridReporting
+                reportingMethod = reportingMethod
               )
             }
           }) getOrElse {
@@ -110,7 +116,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, isHybridReporting: Boolean
+                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, reportingMethod: String
                            )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
@@ -129,7 +135,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 incomeSourceType = incomeSourceType,
                 currentDate = dateService.getCurrentDate,
                 isBusinessHistoric = isBusinessHistoric,
-                isHybridReporting = isHybridReporting
+                reportingMethod = reportingMethod
               ))
             } catch {
               case error: MissingFieldException =>
