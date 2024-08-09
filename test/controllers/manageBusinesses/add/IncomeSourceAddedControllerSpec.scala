@@ -164,12 +164,12 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               disableAllSwitches()
               enable(IncomeSources)
               setupMockAuthorisationSuccess(isAgent)
-              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockIncomeSource(incomeSourceType)
               mockISDS(incomeSourceType)
 
               when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
               when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
+              when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
 
               when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
                 Future(IncomeSourcesObligationsTestConstants.viewModel))
@@ -178,8 +178,6 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                 thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
               mockMongo(incomeSourceType)
-
-              setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
               val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
               else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
