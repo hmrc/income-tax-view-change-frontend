@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, JourneyType}
+import exceptions.MissingFieldException
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
@@ -108,9 +109,9 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-    showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, isHybridReporting: Boolean
-  )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
+                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, isHybridReporting: Boolean
+                           )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
@@ -120,15 +121,21 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
             val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
             val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
-            Ok(obligationsView(
-              businessName = businessName,
-              sources = viewModel,
-              isAgent = isAgent,
-              incomeSourceType = incomeSourceType,
-              currentDate = dateService.getCurrentDate,
-              isBusinessHistoric = isBusinessHistoric,
-              isHybridReporting = isHybridReporting
-            ))
+            try {
+              Ok(obligationsView(
+                businessName = businessName,
+                sources = viewModel,
+                isAgent = isAgent,
+                incomeSourceType = incomeSourceType,
+                currentDate = dateService.getCurrentDate,
+                isBusinessHistoric = isBusinessHistoric,
+                isHybridReporting = isHybridReporting
+              ))
+            } catch {
+              case error: MissingFieldException =>
+                Logger("application").error(s"Missing field: ${error.getMessage}")
+                errorHandler(isAgent).showInternalServerError()
+            }
           }
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -139,6 +146,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       }
     }
   }
+
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url

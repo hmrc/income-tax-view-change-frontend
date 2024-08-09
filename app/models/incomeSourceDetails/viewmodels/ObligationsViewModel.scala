@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import exceptions.MissingFieldException
+
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
@@ -93,11 +95,15 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
   }
 
-  def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): Option[DatesModel] = {
-    quarterlyObligationsDates.flatten
+  def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): DatesModel = {
+    val nextQuarterlyUpdate = quarterlyObligationsDates.flatten
       .filter(_.inboundCorrespondenceFrom.isAfter(currentDate))
       .sortBy(_.inboundCorrespondenceFrom)
       .headOption
+
+    nextQuarterlyUpdate.getOrElse(
+      throw MissingFieldException("Obligations : No upcoming quarterly update found")
+    )
   }
 
   def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {

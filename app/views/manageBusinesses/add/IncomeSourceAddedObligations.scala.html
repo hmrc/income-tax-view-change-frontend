@@ -23,6 +23,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import java.time.LocalDate
+@import exceptions.MissingFieldException
 
 @this(
         mainTemplate: unifiedLayout,
@@ -117,9 +118,13 @@
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
-@getQuarterlyUpdateDate = @{
- sources.getFirstUpcomingQuarterlyDate(currentDate)
-}
+    @getQuarterlyUpdateDate(sources: ObligationsViewModel, currentDate: LocalDate) = @{
+        try {
+            Some(sources.getFirstUpcomingQuarterlyDate(currentDate))
+        } catch {
+            case e: MissingFieldException => None
+        }
+    }
 
 @getFinalDecDate = @{
     sources.getFinalDeclarationDate(currentDate)
@@ -160,26 +165,32 @@
 
 
         @isHybridReporting
-        <p></p>
 
             <ul class="govuk-list govuk-list--bullet">
-                <li id="quarterly-list">
-                @getQuarterlyUpdateDate.map { quarterlyUpdate =>
+                @getQuarterlyUpdateDate(sources, currentDate).map { quarterlyUpdate =>
+                    <li id="quarterly-list">
                         @getMessage("next-quarterly-obligation-text-1", (getTaxYear - 1).toString, getTaxYear.toString)
-                        <span class="govuk-!-font-weight-bold">
-                        @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
-                        </span>
-                        @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
-                    }
-                </li>
-
-                <li id="obligations-list">
-                @getFinalDecDate.map { finalDecDate =>
-                    @getMessage("final-dec-text", (getTaxYear - 1).toString, getTaxYear.toString)
                     <span class="govuk-!-font-weight-bold">
-                    @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
-                </span>
+                    @getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)
+                    </span>
+                        @getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)
+                    </li>
+                }.getOrElse {
+                    <li id="quarterly-list">
+                    @getMessage("no-quarterly-obligation")
+                    </li>
                 }
+                <li id="obligations-list">
+                    @getFinalDecDate.map { finalDecDate =>
+                        @getMessage("final-dec-text", (getTaxYear - 1).toString, getTaxYear.toString)
+                        <span class="govuk-!-font-weight-bold">
+                        @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    </span>
+                    }.getOrElse {
+                        <li id="quarterly-list">
+                        @getMessage("no-quarterly-obligation")
+                        </li>
+                    }
                 </li>
             </ul>
 
