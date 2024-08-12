@@ -23,6 +23,7 @@ import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
+import org.mongodb.scala.result.UpdateResult
 import org.scalatest.BeforeAndAfterEach
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import testUtils.UnitSpec
@@ -47,9 +48,15 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       .thenReturn(Future.successful(response))
   }
 
-  def mockRepositorySet(response: Boolean): Unit = {
+  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false): Unit = {
     when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn({
+        if (withFailureResult){
+          Future.failed(new Exception("Error while set data"))
+        } else {
+          Future.successful(response)
+        }
+      })
   }
 
   def mockRepositoryUpdateData(): Unit = {
@@ -63,6 +70,28 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
         override def getUpsertedId: BsonValue = null
       }))
+  }
+
+  val mongoUpdateSuccess = new UpdateResult {
+    override def wasAcknowledged(): Boolean = true
+
+    override def getMatchedCount: Long = 4
+
+    override def getModifiedCount: Long = 5
+
+    override def getUpsertedId: BsonValue = null
+  }
+
+  def updateMultipleData(withSuccessResult: Boolean = true): Unit = {
+
+    when(mockUIJourneySessionDataRepository.updateMultipleData(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn({
+        if (withSuccessResult) {
+          Future.successful(mongoUpdateSuccess)
+        } else {
+          Future.failed(new Exception("Error returned from mongoDb"))
+        }
+      })
   }
 
   def mockDeleteOne(): Unit = {
