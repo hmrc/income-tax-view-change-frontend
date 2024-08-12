@@ -17,6 +17,7 @@
 package controllers.optin
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import forms.optin.ChooseTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
@@ -41,20 +42,70 @@ class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationP
     mcc = app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  def tests(isAgent: Boolean): Unit = {
+  val endTaxYear = 2023
+  val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
-    val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+  def tests(isAgent: Boolean): Unit = {
 
     "show page" should {
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockAvailableOptInTaxYear(List(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024)))
-        mockSaveIntent(TaxYear.forYearEnd(2023))
+        mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+        mockSaveIntent(taxYear2023)
 
+        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)
-
         status(result) shouldBe Status.OK
+      }
+    }
+
+    "submit page" when {
+
+      val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+      val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+        ChooseTaxYearForm.choiceField -> taxYear2023.toString
+      )
+
+      "with selection made" should {
+        s"return result with $SEE_OTHER status" in {
+
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+          mockSaveIntent(taxYear2023)
+
+          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
+          status(result) shouldBe Status.SEE_OTHER
+        }
+      }
+
+      "without selection made" should {
+        s"return result with $BAD_REQUEST status" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+          mockSaveIntent(taxYear2023)
+          val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
+          val requestPOSTWithChoice = requestPOST.withFormUrlEncodedBody(
+            ChooseTaxYearForm.choiceField -> ""
+          )
+
+          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "failed save intent" should {
+        s"return result with $INTERNAL_SERVER_ERROR status" in {
+          setupMockAuthorisationSuccess(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+          mockSaveIntent(taxYear2023, isSuccessful = false)
+
+          val result = controller.submit(isAgent).apply(requestPOSTWithChoice)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
     }
   }
