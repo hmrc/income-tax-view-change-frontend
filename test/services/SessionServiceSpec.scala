@@ -42,6 +42,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           TestSessionService.getMongo("ADD-SE")(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
       }
+
       "getMongoKey method " should {
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
@@ -74,6 +75,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           result shouldBe true
         }
       }
+
       "setMongoKey method" should {
         "return a future boolean value" in {
           mockRepositoryUpdateData()
