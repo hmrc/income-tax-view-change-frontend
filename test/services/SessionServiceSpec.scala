@@ -76,6 +76,15 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         }
       }
 
+      "setMultipleMongoData method" should {
+        "return a future boolean value" in {
+          updateMultipleData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+      }
+
       "setMongoKey method" should {
         "return a future boolean value" in {
           mockRepositoryUpdateData()

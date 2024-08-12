@@ -65,6 +65,19 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       }))
   }
 
+  def updateMultipleData(): Unit = {
+    when(mockUIJourneySessionDataRepository.updateMultipleData(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
+        override def wasAcknowledged(): Boolean = true
+
+        override def getMatchedCount: Long = 4
+
+        override def getModifiedCount: Long = 5
+
+        override def getUpsertedId: BsonValue = null
+      }))
+  }
+
   def mockDeleteOne(): Unit = {
     when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
   }
