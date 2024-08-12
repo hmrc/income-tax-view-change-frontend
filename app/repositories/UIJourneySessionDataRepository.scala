@@ -117,12 +117,14 @@ class UIJourneySessionDataRepository @Inject()(
       update = Document("$set" -> Document(key -> value))
     ).toFuture()
   }
+
   def updateMultipleData(data: UIJourneySessionData, keyAndValue: Map[String, String]): Future[UpdateResult] = {
     collection.updateOne(
       filter = dataFilter(data),
-      update = combine(keyAndValue.map(keyAndValueTuple => org.mongodb.scala.model.Updates.set(keyAndValueTuple._1, keyAndValueTuple._2) ).toList:_* )
+      update = combine(keyAndValue.map(keyAndValueTuple => org.mongodb.scala.model.Updates.set(keyAndValueTuple._1, keyAndValueTuple._2)).toList: _*)
     ).toFuture()
   }
+
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data))
