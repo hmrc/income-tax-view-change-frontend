@@ -48,9 +48,15 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       .thenReturn(Future.successful(response))
   }
 
-  def mockRepositorySet(response: Boolean): Unit = {
+  def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false): Unit = {
     when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn({
+        if (withFailureResult){
+          Future.failed(new Exception("Error while set data"))
+        } else {
+          Future.successful(response)
+        }
+      })
   }
 
   def mockRepositoryUpdateData(): Unit = {
