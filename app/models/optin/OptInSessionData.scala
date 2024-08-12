@@ -16,9 +16,16 @@
 
 package models.optin
 
-import models.incomeSourceDetails.TaxYear
+import play.api.libs.json.{Json, OFormat}
 
-case class ChooseTaxYearViewModel(
-                                   availableOptInTaxYear: List[TaxYear],
-                                   cancelURL: String, isAgent: Boolean
-                                 )
+case class OptInSessionData(optInContextData: Option[OptInContextData],
+                            selectedOptInYear: Option[String]) {
+
+  val selectedOptInYearField: String = "SelectedOptInYear"
+
+  def getJSONKeyPath(name: String): String = s"optInSessionData.$name"
+}
+
+object OptInSessionData {
+  implicit val format: OFormat[OptInSessionData] = Json.format[OptInSessionData]
+}

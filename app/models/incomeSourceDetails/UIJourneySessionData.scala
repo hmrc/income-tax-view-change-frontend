@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import models.optin.OptInSessionData
 import models.optout.OptOutSessionData
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
@@ -31,6 +32,7 @@ case class UIJourneySessionData(
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  optOutSessionData: Option[OptOutSessionData] = None,
+                                 optInSessionData: Option[OptInSessionData] = None,
                                  lastUpdated: Instant = Instant.now
                                ) {
 
@@ -42,6 +44,7 @@ case class UIJourneySessionData(
       manageIncomeSourceData,
       ceaseIncomeSourceData,
       optOutSessionData,
+      optInSessionData,
       lastUpdated
     )
 }
@@ -56,6 +59,7 @@ object UIJourneySessionData {
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
+      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
     )
@@ -69,6 +73,7 @@ case class SensitiveUIJourneySessionData(
                                           manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                           ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                           optOutSessionData: Option[OptOutSessionData] = None,
+                                          optInSessionData: Option[OptInSessionData] = None,
                                           lastUpdated: Instant = Instant.now
                                         ) {
 
@@ -80,6 +85,7 @@ case class SensitiveUIJourneySessionData(
       manageIncomeSourceData,
       ceaseIncomeSourceData,
       optOutSessionData,
+      optInSessionData,
       lastUpdated
     )
 }
@@ -94,6 +100,7 @@ object SensitiveUIJourneySessionData {
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
+      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )

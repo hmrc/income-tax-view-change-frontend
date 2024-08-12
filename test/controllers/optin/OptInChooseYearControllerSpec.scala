@@ -29,7 +29,7 @@ import views.html.optin.ChooseTaxYearView
 
 class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService {
 
-  val controller = new OptInChooseYearController(
+  val controller = new ChooseYearController(
     view = app.injector.instanceOf[ChooseTaxYearView], authorisedFunctions = mockAuthService, auth = testAuthenticator,
   )(
     appConfig = appConfig,

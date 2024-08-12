@@ -38,7 +38,7 @@
 @(form: Form[ChooseTaxYearForm], model: ChooseTaxYearViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptInPostUrl = @{
-    controllers.optin.routes.OptInChooseYearController.submit(model.isAgent)
+    controllers.optin.routes.ChooseYearController.submit(model.isAgent)
 }
 
 @formBlock = {

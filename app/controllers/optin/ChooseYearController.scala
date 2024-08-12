@@ -21,20 +21,23 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.optin.ChooseTaxYearForm
+import models.incomeSourceDetails.TaxYear
 import models.optin.ChooseTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
+import services.optin.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optin.ChooseTaxYearView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInChooseYearController @Inject()(val view: ChooseTaxYearView,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val auth: AuthenticatorPredicate)
-                                         (implicit val appConfig: FrontendAppConfig,
+class ChooseYearController @Inject()(val optInService: OptInService,
+                                     val view: ChooseTaxYearView,
+                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                     val auth: AuthenticatorPredicate)
+                                    (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -54,13 +57,39 @@ class OptInChooseYearController @Inject()(val view: ChooseTaxYearView,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok(view(ChooseTaxYearForm(List()), ChooseTaxYearViewModel(cancelURL = "cancelURL", isAgent = isAgent))))
+        Future.successful(Ok(view(ChooseTaxYearForm(optInService.availableOptInTaxYear().map(_.toString)), viewModel(isAgent))))
       }
-
   }
 
-
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok("submitted!!"))
+    implicit user =>
+      ChooseTaxYearForm(optInService.availableOptInTaxYear().map(_.toString)).bindFromRequest().fold(
+        formWithError => Future.successful(BadRequest(view(formWithError, viewModel(isAgent)))),
+        form => saveTaxYearChoice(form).map {
+          case true => redirectToCheckpointPage(isAgent)
+          case false => itvcErrorHandler.showInternalServerError()
+        }
+      )
+  }
+
+  private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit request: RequestHeader): Future[Boolean] = {
+    form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
+      optInService.saveIntent(intent)
+    } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))
+  }
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optin.routes.CheckYourAnswersController.show(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
+  }
+
+  private def cancelUrl(isAgent: Boolean): String = {
+    routes.ChooseYearController.show(isAgent).url //todo change this to the correct url
+  }
+
+  private def viewModel(isAgent: Boolean): ChooseTaxYearViewModel = {
+    ChooseTaxYearViewModel(availableOptInTaxYear = optInService.availableOptInTaxYear(),
+      cancelURL = cancelUrl(isAgent), isAgent = isAgent)
   }
 }

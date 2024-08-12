@@ -40,10 +40,13 @@ POST        /optout/choose-taxyear                                        contro
 POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
 # Opt In
-GET          /opt-in/multi-year-choice                                    controllers.optin.OptInChooseYearController.show(isAgent: Boolean = false)
-GET          /agents/opt-in/multi-year-choice                             controllers.optin.OptInChooseYearController.show(isAgent: Boolean = true)
-POST         /opt-in/multi-year-choice                                    controllers.optin.OptInChooseYearController.submit(isAgent: Boolean = false)
-POST         /agents/opt-in/multi-year-choice                             controllers.optin.OptInChooseYearController.submit(isAgent: Boolean = true)
+GET          /opt-in/multi-year-choice                                    controllers.optin.ChooseYearController.show(isAgent: Boolean = false)
+GET          /agents/opt-in/multi-year-choice                             controllers.optin.ChooseYearController.show(isAgent: Boolean = true)
+POST         /opt-in/multi-year-choice                                    controllers.optin.ChooseYearController.submit(isAgent: Boolean = false)
+POST         /agents/opt-in/multi-year-choice                             controllers.optin.ChooseYearController.submit(isAgent: Boolean = true)
+
+GET         /opt-in/check-answers                                         controllers.optin.CheckYourAnswersController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/check-answers                                  controllers.optin.CheckYourAnswersController.show(isAgent: Boolean = true)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)

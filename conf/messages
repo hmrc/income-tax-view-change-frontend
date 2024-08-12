@@ -2120,3 +2120,4 @@ optin.chooseOptInTaxYear.whichTaxYear                = Which tax year do you wan
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
 optin.chooseOptInTaxYear.continue                    = Continue
 optin.confirmOptIn.cancel                            = Cancel
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report quarterly from
