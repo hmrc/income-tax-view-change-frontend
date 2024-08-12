@@ -18,7 +18,8 @@ package controllers.optin
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockOptOutService
+import mocks.services.{MockOptInService, MockOptOutService}
+import models.incomeSourceDetails.TaxYear
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.MessagesControllerComponents
@@ -27,9 +28,10 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import testUtils.TestSupport
 import views.html.optin.ChooseTaxYearView
 
-class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService {
+class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
 
   val controller = new ChooseYearController(
+    mockOptInService,
     view = app.injector.instanceOf[ChooseTaxYearView], authorisedFunctions = mockAuthService, auth = testAuthenticator,
   )(
     appConfig = appConfig,
@@ -47,6 +49,8 @@ class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationP
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockAvailableOptInTaxYear(List(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024)))
+        mockSaveIntent(TaxYear.forYearEnd(2023))
 
         val result = controller.show(isAgent).apply(requestGET)
 
