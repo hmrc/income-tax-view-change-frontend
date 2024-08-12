@@ -927,10 +927,13 @@ chargeSummary.dunning.locks.banner.note							   = You still need to pay the tot
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-chargeSummary.paymentsOnAccount                                    = Payments on account are 2 advance payments made towards your next tax bill. They pay for:
-chargeSummary.paymentsOnAccount.bullet1                            = Income Tax
-chargeSummary.paymentsOnAccount.bullet2                            = Class 4 National Insurance contributions (opens in new tab)
-chargeSummary.paymentsOnAccount.p2                                 = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+chargeSummary.paymentsOnAccount                                    = You owe HMRC interest because you paid your first payment on account late
+chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
+chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
+chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
+chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
+
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -983,8 +986,8 @@ chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balanc
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
-chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on payment on account 1 of 2
-chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on payment on account 2 of 2
+chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
+chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
 chargeSummary.lpi.balancingCharge.text							   = Late payment interest on Balancing payment
 chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}

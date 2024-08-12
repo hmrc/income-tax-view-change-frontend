@@ -919,8 +919,8 @@ chargeSummary.payment-days-note-agent                              = O ran unrhy
 chargeSummary.payments-bullet1-2-agent                             = dull talu mae’n ei ddefnyddio
 chargeSummary.payments-bullet2-agent                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 
-chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
-chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
+chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 chargeSummary.lpi.interestPeriod								   = Cyfnod llog
 chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
