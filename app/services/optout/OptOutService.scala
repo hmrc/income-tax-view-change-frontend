@@ -204,13 +204,10 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def nextUpdatesPageOptOutViewModels()(implicit user: MtdItUser[_],
                                         hc: HeaderCarrier,
                                         ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])] = {
-    // Should we fetch the opt out initial state here? It would simplify initialising the journey.
-    fetchOptOutProposition().flatMap(oop => {
-      // Is there a better way to manage failure of initialiseOptOutJourney()...? handle the boolean?
-      initialiseOptOutJourney(oop).map(_ => oop)
-    }).map { proposition =>
-      (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
-    }
+    for {
+      proposition <- fetchOptOutProposition()
+      _ <- initialiseOptOutJourney(proposition)
+    } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
   }
 
   private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {
