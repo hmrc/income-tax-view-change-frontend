@@ -135,7 +135,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       getOrElse(false)
   }
 
-  private def recallOptOutInitialState()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutInitialState]] = {
+  def recallOptOutInitialState()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutInitialState]] = {
     repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
       for {
         data <- sessionData
@@ -315,7 +315,7 @@ object OptOutService {
     val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
 
-  private case class OptOutInitialState(finalisedStatus: Boolean,
+  case class OptOutInitialState(finalisedStatus: Boolean,
                                         previousYearItsaStatus: ITSAStatus,
                                         currentYearItsaStatus: ITSAStatus,
                                         nextYearItsaStatus: ITSAStatus)
