@@ -70,7 +70,14 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
 
     def onlyQuarterly(numberOfOverdueQuarterlyObligations: Int): OverdueObligationsMessageComponents = {
-      if (numberOfOverdueQuarterlyObligations > 1) {
+      if (quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(
+        TaxYear.makeTaxYearWithEndYear(currentTaxYear).toFinancialYearStart
+      ))).nonEmpty) {
+        OverdueObligationsMessageComponents(
+          "obligation.inset.multiple-tax-years-quarterly-overdue.text",
+          Seq(numberOfOverdueQuarterlyObligations.toString)
+        )
+      } else if (numberOfOverdueQuarterlyObligations > 1) {
         OverdueObligationsMessageComponents(
           "obligation.inset.multiple-quarterly-overdue.text",
           Seq(numberOfOverdueQuarterlyObligations.toString, (numberOfOverdueQuarterlyObligations * 3).toString, (currentTaxYear - 1).toString, currentTaxYear.toString)
@@ -105,11 +112,6 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
   def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {
     finalDeclarationDates.find(_.inboundCorrespondenceDue.isAfter(currentDate))
   }
-
-  def isHybridReporting: Boolean = {
-    quarterlyObligationsDates.flatten.nonEmpty
-  }
-
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,

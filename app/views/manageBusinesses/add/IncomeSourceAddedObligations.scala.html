@@ -135,9 +135,9 @@
 
     @formWithCSRF(action = getAddIncomeSourcesCall) {
 
-        <div class="govuk-panel govuk-panel--confirmation" id="banner">
+      <div class="govuk-panel govuk-panel--confirmation" id="banner">
         @getBannerContent()
-        </div>
+      </div>
 
       @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
         @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey != "hybrid") {
@@ -146,10 +146,6 @@
           @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(quarterlyObligationsDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
           @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(finalDeclarationDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
         }
-
-        <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
-          <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
-        </div>
       }
 
         <h2 class="govuk-label-wrapper">
