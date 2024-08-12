@@ -23,6 +23,7 @@ import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
+import org.mongodb.scala.result.UpdateResult
 import org.scalatest.BeforeAndAfterEach
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import testUtils.UnitSpec
@@ -65,17 +66,26 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
       }))
   }
 
-  def updateMultipleData(): Unit = {
+  val mongoUpdateSuccess = new UpdateResult {
+    override def wasAcknowledged(): Boolean = true
+
+    override def getMatchedCount: Long = 4
+
+    override def getModifiedCount: Long = 5
+
+    override def getUpsertedId: BsonValue = null
+  }
+
+  def updateMultipleData(withSuccessResult: Boolean = true): Unit = {
+
     when(mockUIJourneySessionDataRepository.updateMultipleData(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
-        override def wasAcknowledged(): Boolean = true
-
-        override def getMatchedCount: Long = 4
-
-        override def getModifiedCount: Long = 5
-
-        override def getUpsertedId: BsonValue = null
-      }))
+      .thenReturn({
+        if (withSuccessResult) {
+          Future.successful(mongoUpdateSuccess)
+        } else {
+          Future.failed(new Exception("Error returned from mongoDb"))
+        }
+      })
   }
 
   def mockDeleteOne(): Unit = {

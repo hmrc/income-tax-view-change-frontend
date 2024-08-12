@@ -83,6 +83,12 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
             JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
         }
+        "return a future error" in {
+          updateMultipleData(false)
+          val result = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          result.failed.futureValue.leftSideValue.getMessage shouldBe "Error returned from mongoDb"
+        }
       }
 
       "setMongoKey method" should {
