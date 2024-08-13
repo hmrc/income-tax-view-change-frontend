@@ -17,12 +17,14 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameLens
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -32,6 +34,7 @@ import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessName
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,25 +51,22 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
+  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String =
     ((isAgent, isChange) match {
       case (_, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
-  }
 
-  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddBusinessNameController.submit(isAgent, isChange)
-    }
+  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call =
+    AddBusinessNameController.submit(isAgent, isChange)
 
-  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
+  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call =
     (isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, false) => AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+      case (false, _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }
-  }
 
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
@@ -115,39 +115,19 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
           },
         formData => {
           sessionService.setMongoData(
-            sessionData.addIncomeSourceData match {
-              case Some(_) =>
-                sessionData.copy(
-                  addIncomeSourceData =
-                    sessionData.addIncomeSourceData.map(
-                      _.copy(
-                        businessName = Some(formData.name)
-                      )
-                    )
-                )
-              case None =>
-                sessionData.copy(
-                  addIncomeSourceData =
-                    Some(
-                      AddIncomeSourceData(
-                        businessName = Some(formData.name)
-                      )
-                    )
-                )
-            }
-          ) flatMap {
-            case true  => Future.successful(Redirect(getRedirect(isAgent, isChange)))
-            case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
-          }
+            businessNameLens.replace(formData.name.some)(sessionData)
+          )
+        } flatMap {
+          case true => Future.successful(Redirect(getRedirect(isAgent, isChange)))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
         }
       )
     }
   }.recover {
-  case ex =>
-    Logger("application")
-      .error(s"${ex.getMessage} - ${ex.getCause}")
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
-}
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
+  }
 
 }

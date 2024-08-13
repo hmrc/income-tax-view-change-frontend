@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -26,6 +27,7 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedLens
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,6 +36,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.AddIncomeSourceStartDate
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -164,26 +167,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       }
     }) { sessionData =>
       sessionService.setMongoData(
-        sessionData.addIncomeSourceData match {
-          case Some(_) =>
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    dateStarted = Some(formData.date)
-                  )
-                )
-            )
-          case None =>
-            sessionData.copy(
-              addIncomeSourceData =
-                Some(
-                  AddIncomeSourceData(
-                    dateStarted = Some(formData.date)
-                  )
-                )
-            )
-        }
+        dateStartedLens.replace(formData.date.some)(sessionData)
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
@@ -192,22 +176,21 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   }
 
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
+    AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
   }
 
   private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+    AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
   }
 
   private def getBackUrl(incomeSourceType: IncomeSourceType,
                          isAgent: Boolean,
-                         isChange: Boolean): String = {
+                         isChange: Boolean): String =
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (true, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-      case (false, true, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isAgent = isAgent, isChange = isChange)
-      case (_, _, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = isAgent)
-      }).url
-  }
+      case (true, true,        _) => IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (false, true,       _) => IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, SelfEmployment) => AddBusinessNameController.show(isAgent, isChange)
+      case (_, _,              _) => AddPropertyController.show(isAgent)
+    }).url
 }

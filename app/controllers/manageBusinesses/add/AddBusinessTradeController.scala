@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -24,6 +25,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeLens
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -31,6 +33,7 @@ import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.AddBusinessTrade
+import controllers.manageBusinesses.add.routes._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,18 +54,18 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, false) => AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
+      case (false, _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
   private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessAddressController.show(isChange)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, false) => AddBusinessAddressController.show(isChange)
+      case (false,     _) => IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     false) => AddBusinessAddressController.showAgent(isChange)
+      case (_,         _) => IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
@@ -77,7 +80,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
       val backURL = getBackURL(isAgent, isChange)
-      val postAction = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
+      val postAction = AddBusinessTradeController.submit(isAgent, isChange)
 
       Future.successful {
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
@@ -106,7 +109,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
               BadRequest(
                 addBusinessTradeView(
                   businessTradeForm = formWithErrors,
-                  postAction = routes.AddBusinessTradeController.submit(isAgent, isChange),
+                  postAction = AddBusinessTradeController.submit(isAgent, isChange),
                   isAgent = isAgent,
                   backURL = getBackURL(isAgent, isChange)
                 )
@@ -114,14 +117,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
             },
           validForm =>
             sessionService.setMongoData(
-              sessionData.copy(
-                addIncomeSourceData =
-                  sessionData.addIncomeSourceData.map(
-                    _.copy(
-                      businessTrade = Some(validForm.trade)
-                    )
-                  )
-              )
+              businessTradeLens.replace(validForm.trade.some)(sessionData)
             ) flatMap {
               case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
