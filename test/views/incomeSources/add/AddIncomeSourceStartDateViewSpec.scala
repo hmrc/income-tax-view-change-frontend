@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateForm
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError

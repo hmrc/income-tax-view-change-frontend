@@ -26,7 +26,7 @@ import testUtils.TestSupport
 import java.time.LocalDate
 
 
-class AddIncomeSourceStartDateFormSpec extends AnyWordSpec with Matchers with TestSupport {
+class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers with TestSupport {
 
   "AddIncomeSourceStartDate form" should {
     "bind with a valid date" in {
