@@ -23,7 +23,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Voluntary
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import models.optout.OptOutContextData.statusToString
 import models.optout.{OptOutContextData, OptOutSessionData}
 import play.api.http.Status
@@ -172,10 +172,10 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
   }
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -185,10 +185,10 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
           StatusFulfilled
         ))
     ),
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,

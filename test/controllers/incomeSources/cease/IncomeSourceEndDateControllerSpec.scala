@@ -412,7 +412,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
   }
+
   "IncomeSourceEndDateController submit/submitChange/submitAgent/submitChangeAgent" should {
+
     "return 303 SEE_OTHER" when {
       def testSubmitResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
@@ -426,8 +428,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(Right(true))
-        if (incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
+
+        if (incomeSourceType == SelfEmployment) {
+          setupMockSetMultipleMongoData(Right(true))
+        } else {
+          setupMockSetSessionKeyMongo(Right(true))
+        }
         if (isChange) {
           setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         } else {
@@ -451,8 +457,11 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectLocationResult)
 
-        if (incomeSourceType == SelfEmployment) verifyMockSetMongoKeyResponse(2)
-        else verifyMockSetMongoKeyResponse(1)
+        if (incomeSourceType == SelfEmployment) {
+          verifyMockSetMultipleMongoDataResponse(1)
+        } else {
+          verifyMockSetMongoKeyResponse(1)
+        }
       }
 
       "Self Employment - form is completed successfully" when {
@@ -466,6 +475,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
         }
+
         "called .submitChange" when {
           "user is an Individual" in {
             testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = true)
@@ -476,6 +486,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
       }
+
       "UK Property - form is completed successfully" when {
         val incomeSourceType = UkProperty
         val id = None
@@ -495,7 +506,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = true)
           }
         }
+
       }
+
       "Foreign Property - form is completed successfully" when {
         val incomeSourceType = ForeignProperty
         val id = None
@@ -517,6 +530,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
       }
     }
+
     "return 400 BAD_REQUEST" when {
       def testFormError(isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
@@ -568,6 +582,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
       }
     }
+
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
       def testInternalServerErrors(isAgent: Boolean, isChange: Boolean, id: Option[String] = None, incomeSourceType: IncomeSourceType = SelfEmployment): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {

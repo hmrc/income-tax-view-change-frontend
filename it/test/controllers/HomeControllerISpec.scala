@@ -22,7 +22,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
-import models.nextUpdates.ObligationsModel
+import models.obligations.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._

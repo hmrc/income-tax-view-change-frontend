@@ -23,7 +23,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
 import models.admin.OptOut
-import models.nextUpdates._
+import models.obligations._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
@@ -90,14 +90,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   )
 
   val obligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
+    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
   ))
 
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
-    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
+    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
@@ -105,13 +105,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     if (string == "Quarterly") QuarterlyObligation else EopsObligation
   }
 
-  def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+  def mockObligations: OngoingStubbing[Future[ObligationsResponseModel]] = {
+    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
-  def mockNoObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
-    when(mockNextUpdatesService.getNextUpdates(matches(true))(any(), any()))
+  def mockNoObligations: OngoingStubbing[Future[ObligationsResponseModel]] = {
+    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 
@@ -153,7 +153,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
         }
 
-        "successfully retrieves a set of Property NextUpdates and Previous from the NextUpdates service" should {
+        "successfully retrieves a set of Property obligations from the NextUpdates service" should {
 
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
@@ -204,7 +204,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -227,7 +226,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
@@ -251,7 +249,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           mockViewModel
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-          mockNoObligations
           val result = TestNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 

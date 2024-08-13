@@ -32,7 +32,7 @@ trait MockNextUpdates extends BeforeAndAfterEach {
     reset(nextUpdatesObj)
   }
 
-  def mockNextUpdates(currentObligations: models.nextUpdates.NextUpdatesViewModel, backUrl: String, isAgent: Boolean)
+  def mockNextUpdates(currentObligations: models.obligations.NextUpdatesViewModel, backUrl: String, isAgent: Boolean)
                      (response: Html): Unit = {
     when(nextUpdatesObj.apply(
       matches(currentObligations),

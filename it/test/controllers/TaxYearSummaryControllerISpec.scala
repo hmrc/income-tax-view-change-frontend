@@ -27,7 +27,7 @@ import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MF
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -324,10 +324,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   val emptyPaymentsList: List[DocumentDetailWithDueDate] = List.empty
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -337,10 +337,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           StatusFulfilled
         ))
     ),
-    NextUpdatesModel(
+    GroupedObligationsModel(
       identification = "ABC123456789",
       obligations = List(
-        NextUpdateModel(
+        SingleObligationModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -840,9 +840,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               "ABC123456789",
-              List(NextUpdateModel(
+              List(SingleObligationModel(
                 LocalDate.of(2017, 12, 28),
                 LocalDate.of(2018, 2, 3),
                 LocalDate.of(2018, 2, 4),
@@ -885,9 +885,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
-            NextUpdatesModel(
+            GroupedObligationsModel(
               "ABC123456789",
-              List(NextUpdateModel(
+              List(SingleObligationModel(
                 LocalDate.of(2017, 12, 28),
                 LocalDate.of(2018, 2, 3),
                 LocalDate.of(2018, 2, 4),
