@@ -49,7 +49,11 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     fetchOptOutInitialState(currentYear).
       map(initialState => {
-      createOptOutProposition(currentYear, initialState)
+      createOptOutProposition(currentYear,
+        initialState.finalisedStatus,
+        initialState.previousYearItsaStatus,
+        initialState.currentYearItsaStatus,
+        initialState.nextYearItsaStatus)
     })
   }
 
@@ -75,27 +79,33 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     OptionT(repository.recallOptOutInitialState()).
       map(initialState => {
-        createOptOutProposition(currentYear, initialState)
+        createOptOutProposition(currentYear,
+          initialState.finalisedStatus,
+          initialState.previousYearItsaStatus,
+          initialState.currentYearItsaStatus,
+          initialState.nextYearItsaStatus)
       }).getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
   private def createOptOutProposition(currentYear: TaxYear,
-                                      initialState: OptOutInitialState
-                                     ): OptOutProposition = {
+                                      previousYearCrystallised: Boolean,
+                                      previousYearItsaStatus: ITSAStatus,
+                                      currentYearItsaStatus: ITSAStatus,
+                                      nextYearItsaStatus: ITSAStatus): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
-      status = initialState.previousYearItsaStatus,
+      status = previousYearItsaStatus,
       taxYear = currentYear.previousYear,
-      crystallised = initialState.finalisedStatus
+      crystallised = previousYearCrystallised
     )
 
     val currentYearOptOut = CurrentOptOutTaxYear(
-      status = initialState.currentYearItsaStatus,
+      status = currentYearItsaStatus,
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptOutTaxYear(
-      status = initialState.nextYearItsaStatus,
+      status = nextYearItsaStatus,
       taxYear = currentYear.nextYear,
       currentTaxYear = currentYearOptOut
     )
