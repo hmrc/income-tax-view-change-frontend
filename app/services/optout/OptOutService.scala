@@ -26,6 +26,7 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutService._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -85,32 +86,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
           initialState.currentYearItsaStatus,
           initialState.nextYearItsaStatus)
       }).getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
-  }
-
-  private def createOptOutProposition(currentYear: TaxYear,
-                                      previousYearCrystallised: Boolean,
-                                      previousYearItsaStatus: ITSAStatus,
-                                      currentYearItsaStatus: ITSAStatus,
-                                      nextYearItsaStatus: ITSAStatus): OptOutProposition = {
-
-    val previousYearOptOut = PreviousOptOutTaxYear(
-      status = previousYearItsaStatus,
-      taxYear = currentYear.previousYear,
-      crystallised = previousYearCrystallised
-    )
-
-    val currentYearOptOut = CurrentOptOutTaxYear(
-      status = currentYearItsaStatus,
-      taxYear = currentYear
-    )
-
-    val nextYearOptOut = NextOptOutTaxYear(
-      status = nextYearItsaStatus,
-      taxYear = currentYear.nextYear,
-      currentTaxYear = currentYearOptOut
-    )
-
-    OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
   }
 
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
