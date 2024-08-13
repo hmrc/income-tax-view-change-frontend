@@ -51,7 +51,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     fetchOptOutInitialState(previousYear, currentYear, nextYear).
       map(initialState => {
-      createOptOutProposition(previousYear, currentYear, nextYear, initialState)
+      createOptOutProposition(currentYear, initialState)
     })
   }
 
@@ -76,24 +76,20 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                                 ec: ExecutionContext): Future[OptOutProposition] = {
 
     val currentYear = dateService.getCurrentTaxYear
-    val previousYear = currentYear.previousYear
-    val nextYear = currentYear.nextYear
 
     OptionT(repository.recallOptOutInitialState()).
       map(initialState => {
-        createOptOutProposition(previousYear, currentYear, nextYear, initialState)
+        createOptOutProposition(currentYear, initialState)
       }).getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
-  private def createOptOutProposition(previousYear: TaxYear,
-                                      currentYear: TaxYear,
-                                      nextYear: TaxYear,
+  private def createOptOutProposition(currentYear: TaxYear,
                                       initialState: OptOutInitialState
                                      ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
       status = initialState.previousYearItsaStatus,
-      taxYear = previousYear,
+      taxYear = currentYear.previousYear,
       crystallised = initialState.finalisedStatus
     )
 
@@ -104,7 +100,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
     val nextYearOptOut = NextOptOutTaxYear(
       status = initialState.nextYearItsaStatus,
-      taxYear = nextYear,
+      taxYear = currentYear.nextYear,
       currentTaxYear = currentYearOptOut
     )
 
