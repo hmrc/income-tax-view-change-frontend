@@ -31,10 +31,13 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
 
     if (isBusinessHistoric) {
       val nonHistoricOverdueObligations = getNumberOfNonHistoricOverdueObligations(currentDate)
-      if (nonHistoricOverdueObligations > 0) {
+      if (nonHistoricOverdueObligations > 1) {
         OverdueObligationsMessageComponents("obligation.inset.multiple-historic-overdue.text",
           Seq(getNumberOfNonHistoricOverdueObligations(currentDate).toString, (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
-      } else {
+      } else if (nonHistoricOverdueObligations == 1) {
+        OverdueObligationsMessageComponents("obligation.inset.single-historic-overdue.text",
+          Seq((currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
+      }else {
         OverdueObligationsMessageComponents("", Seq())
       }
     } else {
@@ -70,13 +73,20 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
 
     def onlyQuarterly(numberOfOverdueQuarterlyObligations: Int): OverdueObligationsMessageComponents = {
-      if (quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(
+      if (quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceTo.isBefore(
         TaxYear.makeTaxYearWithEndYear(currentTaxYear).toFinancialYearStart
       ))).nonEmpty) {
-        OverdueObligationsMessageComponents(
-          "obligation.inset.multiple-tax-years-quarterly-overdue.text",
-          Seq(numberOfOverdueQuarterlyObligations.toString)
-        )
+        if (numberOfOverdueQuarterlyObligations > 1) {
+          OverdueObligationsMessageComponents(
+            "obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text",
+            Seq(numberOfOverdueQuarterlyObligations.toString)
+          )
+        } else {
+          OverdueObligationsMessageComponents(
+            "obligation.inset.multiple-tax-years-single-quarterly-overdue.text",
+            Seq(numberOfOverdueQuarterlyObligations.toString)
+          )
+        }
       } else if (numberOfOverdueQuarterlyObligations > 1) {
         OverdueObligationsMessageComponents(
           "obligation.inset.multiple-quarterly-overdue.text",
