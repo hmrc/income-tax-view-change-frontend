@@ -46,30 +46,26 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                                ec: ExecutionContext): Future[OptOutProposition] = {
 
     val currentYear = dateService.getCurrentTaxYear
-    val previousYear = currentYear.previousYear
-    val nextYear = currentYear.nextYear
 
-    fetchOptOutInitialState(previousYear, currentYear, nextYear).
+    fetchOptOutInitialState(currentYear).
       map(initialState => {
       createOptOutProposition(currentYear, initialState)
     })
   }
 
-  private def fetchOptOutInitialState(previousYear: TaxYear,
-                                      currentYear: TaxYear,
-                                      nextYear: TaxYear)
+  private def fetchOptOutInitialState(currentYear: TaxYear)
                                      (implicit user: MtdItUser[_],
                                       hc: HeaderCarrier,
                                       ec: ExecutionContext): Future[OptOutInitialState] = {
 
-    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(previousYear)
-    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(previousYear)
+    val finalisedStatusFuture: Future[Boolean] = calculationListService.isTaxYearCrystallised(currentYear.previousYear)
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(currentYear.previousYear)
 
     for {
       finalisedStatus <- finalisedStatusFuture
       statusMap <- statusMapFuture
     }
-    yield OptOutInitialState(finalisedStatus, statusMap(previousYear), statusMap(currentYear), statusMap(nextYear))
+    yield OptOutInitialState(finalisedStatus, statusMap(currentYear.previousYear), statusMap(currentYear), statusMap(currentYear.nextYear))
   }
 
   def recallOptOutProposition()(implicit hc: HeaderCarrier,
