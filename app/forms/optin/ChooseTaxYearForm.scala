@@ -26,7 +26,6 @@ object ChooseTaxYearForm {
 
   val choiceField: String = "choice"
   val noResponseErrorMessageKey: String = "optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error"
-  val csrfToken: String = "csrfToken"
 
   def apply(optionValue: List[String])(implicit messages: Messages): Form[ChooseTaxYearForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)

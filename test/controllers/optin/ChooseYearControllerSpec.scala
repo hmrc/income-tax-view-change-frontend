@@ -29,7 +29,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import testUtils.TestSupport
 import views.html.optin.ChooseTaxYearView
 
-class OptInChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
+class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
 
   val controller = new ChooseYearController(
     mockOptInService,
