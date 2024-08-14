@@ -72,17 +72,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
             (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
           } yield {
             itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap { _ =>
-              val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
-                sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(Some("A")),
-                sessionData.addIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(Some("A"))
-              )
-              val reportingMethod = (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
-                case (Some("A"), Some("A")) => "Annual"
-                case (Some("Q"), Some("Q")) => "Quarterly"
-                case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => "Hybrid"
-                case _ => "Unknown"
-              }
-
+              val reportingMethod: String = getReportingMethod(sessionData.addIncomeSourceData)
               handleSuccess(
                 isAgent = isAgent,
                 businessName = businessName,
@@ -112,6 +102,19 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
           s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
         errorHandler(isAgent).showInternalServerError()
+    }
+  }
+
+  private def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): String = {
+    val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
+      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
+      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
+    )
+    (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
+      case (Some("A"), Some("A")) | (None, Some("A")) => "Annual"
+      case (Some("Q"), Some("Q")) | (None, Some("Q")) => "Quarterly"
+      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => "Hybrid"
+      case _ => "Unknown"
     }
   }
 
