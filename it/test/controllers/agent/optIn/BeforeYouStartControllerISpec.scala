@@ -19,7 +19,7 @@ package controllers.agent.optIn
 import controllers.optIn.BeforeYouStartControllerISpec._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
@@ -47,6 +47,19 @@ class BeforeYouStartControllerISpec extends ComponentSpecBase {
           elementTextByID("voluntaryStatus-text")(voluntaryStatusText)
         )
       }
+    }
+  }
+
+  s"calling GET $beforeYouStartControllerPageUrl" when {
+    "the user is unauthorised" in {
+      stubAuthorisedAgentUser(authorised = false)
+
+      val result = IncomeTaxViewChangeFrontend.getBeforeYouStart(clientDetailsWithConfirmation)
+
+      Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
+      result should have(
+        httpStatus(SEE_OTHER)
+      )
     }
   }
 
