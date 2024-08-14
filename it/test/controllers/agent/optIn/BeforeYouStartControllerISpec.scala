@@ -20,7 +20,7 @@ import controllers.optIn.BeforeYouStartControllerISpec._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithoutConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class BeforeYouStartControllerISpec extends ComponentSpecBase {
@@ -54,7 +54,7 @@ class BeforeYouStartControllerISpec extends ComponentSpecBase {
     "the user is unauthorised" in {
       stubAuthorisedAgentUser(authorised = false)
 
-      val result = IncomeTaxViewChangeFrontend.getBeforeYouStart(clientDetailsWithConfirmation)
+      val result = IncomeTaxViewChangeFrontend.getBeforeYouStart(clientDetailsWithoutConfirmation)
 
       Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
       result should have(
