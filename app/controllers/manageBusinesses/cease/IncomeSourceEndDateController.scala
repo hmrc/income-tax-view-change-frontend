@@ -144,20 +144,14 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
     (incomeSourceType, incomeSourceIdMaybe) match {
       case (SelfEmployment, Some(incomeSourceId)) =>
         val result = Redirect(redirectAction)
-        sessionService.setMongoKey(
-          CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
-        ).flatMap {
-          case Right(_) =>
-            sessionService.setMongoKey(
-              CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
-            ).flatMap {
-              case Right(_) => Future.successful(result)
-              case Left(_) => Future.failed(new Error(
-                s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
-            }
-
+        val mongoSetValues = Map(
+          CeaseIncomeSourceData.dateCeasedField -> validatedInput.date.toString,
+          CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
+        )
+        sessionService.setMultipleMongoData(mongoSetValues, JourneyType(Cease, incomeSourceType)).flatMap {
+          case Right(_) => Future.successful(result)
           case Left(_) => Future.failed(new Error(
-            s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+            s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
         }
 
       case _ =>

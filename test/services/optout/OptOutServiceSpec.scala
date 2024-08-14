@@ -33,7 +33,7 @@ import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.optout.OptOutService.{OptOutInitialState, QuarterlyUpdatesCountForTaxYearModel}
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport._
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -98,8 +98,27 @@ class OptOutServiceSpec extends UnitSpec
 
   val apiError: String = "some api error"
 
-  "OptOutService.resetSavedIntent" should {
-    "reset intent year" in {
+  "OptOutService.initialiseOptOutJourney" should {
+    "write the opt out data and no customer intent to the journey repository" in {
+
+      val forYearEnd = 2024
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+      when(repository.set(any())).thenReturn(Future.successful(true))
+
+      val f = for {
+        isReset <- service.initialiseOptOutJourney(buildOneYearOptOutPropositionForPreviousYear(forYearEnd))
+      } yield {
+        verify(repository).set(any())
+        isReset shouldBe true
+      }
+
+      f.futureValue shouldBe Succeeded
+    }
+  }
+
+  "OptOutService.saveIntent" should {
+    "overwrite the customer intent, but preserve the Opt Out Data" in {
 
       val forYearEnd = 2024
 
@@ -109,42 +128,65 @@ class OptOutServiceSpec extends UnitSpec
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
         journeyType = OptOutJourney.Name,
-        optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(forYearEnd).toString)))
+        optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = None))
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
 
-      def reconfigureMock(): Future[Unit] = {
-        Future {
-          // Hmm... should we be mocking the repository?
-          Mockito.reset(repository)
-
-          // Are we just testing that mockito works here?
-          when(repository.set(any())).thenReturn(Future.successful(true))
-
-          val data = UIJourneySessionData(
-            sessionId = hc.sessionId.get.value,
-            journeyType = OptOutJourney.Name,
-            optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = None))
-          )
-          when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
-        }
-      }
-
       val f = for {
         isSaved <- service.saveIntent(TaxYear.forYearEnd(forYearEnd))
-        savedIntent <- service.fetchSavedIntent()
-        _ <- reconfigureMock()
-        // Does this test need more consistent data now we initialise the data with the context statuses?
-        isReset <- service.initialiseOptOutJourney(buildOneYearOptOutPropositionForPreviousYear(forYearEnd))
-        noneIntent <- service.fetchSavedIntent()
       } yield {
+        verify(repository).set(any())
         isSaved shouldBe true
-        savedIntent.isDefined shouldBe true
-        isReset shouldBe true
-        noneIntent.isDefined shouldBe false
       }
 
       f.futureValue shouldBe Succeeded
+    }
+  }
+
+  "OptOutService.recallOptOutInitialState" should {
+    "retrieve the intent year only" in {
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.Name,
+        optOutSessionData = Some(OptOutSessionData(Some(
+          OptOutContextData(
+            crystallisationStatus = true,
+            previousYearITSAStatus = "V",
+            currentYearITSAStatus = "V",
+            nextYearITSAStatus = "U")),
+          selectedOptOutYear = None))
+      )
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      val initialState = service.recallOptOutInitialState()
+
+      initialState.futureValue.isDefined shouldBe true
+      initialState.futureValue.get shouldBe OptOutInitialState(true, Voluntary, Voluntary, NoStatus)
+    }
+  }
+
+  "OptOutService.fetchSavedIntent" should {
+    "retrieve the intent year only" in {
+
+      val forYearEnd = 2024
+      val customerIntent = TaxYear.forYearEnd(forYearEnd)
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.Name,
+        optOutSessionData = Some(OptOutSessionData(None, selectedOptOutYear = Some(customerIntent.toString)))
+      )
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      val savedIntent = service.fetchSavedIntent()
+
+      savedIntent.futureValue.isDefined shouldBe true
+      savedIntent.futureValue.get shouldBe customerIntent
     }
   }
 

@@ -42,6 +42,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           TestSessionService.getMongo("ADD-SE")(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
       }
+
       "getMongoKey method " should {
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
@@ -68,12 +69,33 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
 
       "setMongoData method" should {
         "return a future boolean value" in {
-          mockRepositorySet(true)
+          mockRepositorySet(response = true)
           val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
             .futureValue
           result shouldBe true
         }
+        "return a future error" in {
+          mockRepositorySet(response = true, withFailureResult = true)
+          val result= TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
+          result.failed.futureValue.leftSideValue.getMessage shouldBe "Error while set data"
+        }
       }
+
+      "setMultipleMongoData method" should {
+        "return a future boolean value" in {
+          updateMultipleData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
+        "return a future error" in {
+          updateMultipleData(false)
+          val result = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          result.failed.futureValue.leftSideValue.getMessage shouldBe "Error returned from mongoDb"
+        }
+      }
+
       "setMongoKey method" should {
         "return a future boolean value" in {
           mockRepositoryUpdateData()
