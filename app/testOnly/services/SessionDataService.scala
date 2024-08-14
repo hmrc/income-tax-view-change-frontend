@@ -27,8 +27,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData(sessionId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataModel]] =
-    sessionDataConnector.getSessionData(sessionId).map { response =>
+  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataModel]] =
+    sessionDataConnector.getSessionData(mtditid).map { response =>
       response.status match {
         case OK => response.json.validate[SessionDataModel].fold(
           invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
@@ -38,14 +38,14 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
       }
     }
 
-  def postSessionData(isAgent: Boolean, sessionId: SessionId)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
+  def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
   : Future[Either[Throwable, String]] = {
 
     user.saUtr match {
-      case Some(saUtr) =>
-        sessionDataConnector.postSessionData(postSessionDataModel(isAgent, user, sessionId, saUtr)).map { response =>
+      case Some(utr) =>
+        sessionDataConnector.postSessionData(postSessionDataModel(user, utr)).map { response =>
           response.status match {
-            case OK => Right(sessionId.value)
+            case OK => Right(user.mtditid)
             case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
           }
         }
@@ -53,18 +53,11 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
     }
   }
 
-  private def postSessionDataModel(isAgent: Boolean, user: MtdItUser[_], sessionId: SessionId, saUtr: String): SessionDataModel = {
-
-    val affinityGroup = if (isAgent) "Agent" else "Individual"
-
+  private def postSessionDataModel(user: MtdItUser[_], utr: String): SessionDataModel = {
     SessionDataModel(
-      sessionID = sessionId.value,
       mtditid = user.mtditid,
       nino = user.nino,
-      saUtr = saUtr,
-      clientFirstName = user.userName.flatMap(_.name),
-      clientLastName = user.userName.flatMap(_.lastName),
-      userType = affinityGroup
+      utr = utr
     )
   }
 

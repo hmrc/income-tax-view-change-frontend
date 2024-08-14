@@ -19,13 +19,9 @@ package testOnly.models
 import play.api.libs.json.{Json, OFormat}
 
 case class SessionDataModel(
-                             sessionID: String,
                              mtditid: String,
                              nino: String,
-                             saUtr: String,
-                             clientFirstName: Option[String],
-                             clientLastName: Option[String],
-                             userType: String
+                             utr: String
                            )
 
 object SessionDataModel {
