@@ -24,7 +24,7 @@
 @import enums.Poa2Charge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
-
+@import enums.TRMNewCharge
 
 
 
@@ -42,6 +42,8 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
+
+
 @(viewModel: ChargeSummaryViewModel)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -54,6 +56,12 @@
             <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
         </ul>
         @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+    </div>
+}
+
+@getBalancingCharge = {
+    <div>
+      TEST TEST
     </div>
 }
 
@@ -160,6 +168,7 @@
     @{
         viewModel.documentType match {
             case Poa1Charge | Poa2Charge => getPoaExplanationContent
+            case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingCharge
             case _ =>
         }
     }
