@@ -23,7 +23,7 @@ import enums.JourneyType.{Add, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
+import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSources
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
@@ -55,7 +55,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   with MockClientDetailsService
   with MockNextUpdatesService
   with MockSessionService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockITSAStatusService {
 
   val mockDateService: DateService = mock(classOf[DateService])
 
@@ -64,6 +65,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
+    mockITSAStatusService,
     mockNextUpdatesService,
     testAuthenticator
   )(
