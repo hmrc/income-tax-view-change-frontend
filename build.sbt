@@ -80,7 +80,23 @@ lazy val scoverageSettings = {
   )
 }
 
+lazy val core = project
+  .settings(scalaSettings: _*)
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(scoverageSettings: _*)
+  .settings(defaultSettings(): _*)
+  .settings(majorVersion := 1)
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(
+    libraryDependencies ++= appDependencies,
+    retrieveManaged := true
+  )
+
+
+
 lazy val microservice = Project(appName, file("."))
+  .aggregate(core)
+  .dependsOn(core)
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings: _*)
