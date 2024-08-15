@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.optin
+package services.optIn
 
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector

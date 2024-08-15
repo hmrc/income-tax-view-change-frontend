@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optin
+package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
@@ -23,9 +23,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.optin.OptInService
+import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optin.ChooseTaxYearView
+import views.html.optIn.ChooseTaxYearView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.optin
+package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import forms.optin.ChooseTaxYearForm
+import forms.optIn.ChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import models.optin.ChooseTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.optin.OptInService
+import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optin.ChooseTaxYearView
+import views.html.optIn.ChooseTaxYearView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,7 +79,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
-    val nextPage = controllers.optin.routes.CheckYourAnswersController.show(isAgent)
+    val nextPage = controllers.optIn.routes.CheckYourAnswersController.show(isAgent)
     Logger("application").info(s"redirecting to : $nextPage")
     Redirect(nextPage)
   }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.optin
+package controllers.optIn
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import forms.optin.ChooseTaxYearForm
+import forms.optIn.ChooseTaxYearForm
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
@@ -27,7 +27,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optin.ChooseTaxYearView
+import views.html.optIn.ChooseTaxYearView
 
 class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.optin.ChooseTaxYearForm
+@import forms.optIn.ChooseTaxYearForm
 @import models.optin.ChooseTaxYearViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
@@ -38,7 +38,7 @@
 @(form: Form[ChooseTaxYearForm], model: ChooseTaxYearViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptInPostUrl = @{
-    controllers.optin.routes.ChooseYearController.submit(model.isAgent)
+    controllers.optIn.routes.ChooseYearController.submit(model.isAgent)
 }
 
 @formBlock = {
