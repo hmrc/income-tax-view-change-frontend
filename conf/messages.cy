@@ -2072,6 +2072,23 @@ optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
 
+
+#######################################################################################################################
+## Opt In ##
+#######################################################################################################################
+
+# opt in before you start
+optIn.beforeYouStart.heading                   = Before you start
+optIn.beforeYouStart.desc1                     = Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately.
+optIn.beforeYouStart.desc2                     = To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from.
+optIn.beforeYouStart.reportQuarterly           = Reporting quarterly
+optIn.beforeYouStart.reportQuarterly.text      = If you choose to opt in:
+optIn.beforeYouStart.reportQuarterly.text.p1   = you will need to submit an update every 3 months in addition to your tax return.
+optIn.beforeYouStart.reportQuarterly.text.p2   = all your income sources will move to quarterly reporting.
+optIn.beforeYouStart.voluntaryStatus           = Your voluntary status
+optIn.beforeYouStart.voluntaryStatus.text      = As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time.
+optIn.beforeYouStart.button.start              = Start
+
 # opt in choose tax year
 optin.chooseOptInTaxYear.heading                     = TBD
 optin.chooseOptInTaxYear.desc1                       = TBD
