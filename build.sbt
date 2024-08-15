@@ -92,11 +92,23 @@ lazy val core = project
     retrieveManaged := true
   )
 
+lazy val connectors = project
+  .dependsOn(core)
+  .settings(scalaSettings: _*)
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(scoverageSettings: _*)
+  .settings(defaultSettings(): _*)
+  .settings(majorVersion := 1)
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(
+    libraryDependencies ++= appDependencies,
+    retrieveManaged := true
+  )
 
 
 lazy val microservice = Project(appName, file("."))
-  .aggregate(core)
   .dependsOn(core)
+  .dependsOn(connectors)
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings: _*)
