@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.optin.core
+package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}

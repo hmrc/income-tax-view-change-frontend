@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package services.optin
+package services.optIn
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
-import services.optin.OptInPropositionSpec.TestData
-import services.optin.core.{CurrentOptInTaxYear, NextOptInTaxYear, _}
+import services.optIn.OptInPropositionSpec.TestData
+import services.optIn.core._
 import testUtils.UnitSpec
 
 object OptInPropositionSpec {

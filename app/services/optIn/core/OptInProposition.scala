@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package services.optin.core
+package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
-import services.optin.core.OptInProposition.OneItem
+import services.optIn.core.OptInProposition.OneItem
 
 case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: NextOptInTaxYear) {
 
