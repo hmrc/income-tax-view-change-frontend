@@ -124,11 +124,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
-    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount")
-    val poaTextBullets = messages("chargeSummary.paymentsOnAccount.bullet1") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
+    val poa1TextSentence = messages("chargeSummary.paymentsOnAccount.poa1")
+    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount.textOne") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
     val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
 
-    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
+    def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
+
+    def poa2Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Second payment on account"
 
     def getFirstOrSecond(number: Int): String = {
       require(number > 0, "Number must be greater than zero")
@@ -138,7 +140,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         case _=> throw new Error(s"Number must be 1 or 2 but got: $number")
       }
     }
-    def poaInterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
+
+    def poa1InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on first payment on account"
+
+    def poa2InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on second payment on account"
 
     def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
 
@@ -312,11 +317,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have the correct heading for a POA 1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.select("h1").text() shouldBe poaHeading(2018, 1)
+        document.select("h1").text() shouldBe poa1Heading(2018, 1)
       }
 
       "have the correct heading for a POA 2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.select("h1").text() shouldBe poaHeading(2018, 2)
+        document.select("h1").text() shouldBe poa2Heading(2018, 2)
       }
 
       "have the correct heading for a new balancing charge" in new TestSetup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
@@ -328,11 +333,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have the correct heading for a POA 1 late interest charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe poaInterestHeading(2018, 1)
+        document.select("h1").text() shouldBe poa1InterestHeading(2018, 1)
       }
 
       "have the correct heading for a POA 2 late interest charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe poaInterestHeading(2018, 2)
+        document.select("h1").text() shouldBe poa2InterestHeading(2018, 2)
       }
 
       s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is enabled" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2)), codingOutEnabled = true) {
@@ -361,10 +366,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.selectById("p1").text() shouldBe poaTextParagraph
-        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p1").text() shouldBe poa1TextSentence
+        document.selectById("bullets").text() shouldBe poaTextParagraph
         document.selectById("p2").text() shouldBe poaTextP2
       }
+
+      chargeSummary.paymentsOnAccount.poa1                               = You owe HMRC interest because you paid your first payment on account late
+      chargeSummary.paymentsOnAccount.poa2                               = You owe HMRC interest because you paid your second payment on account late
+      chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+        chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
+      chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
+      chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
+        chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
 
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
         document.selectById("p1").text() shouldBe poaTextParagraph

@@ -22,6 +22,9 @@
 @import views.html.partials.chargeSummary._
 @import enums.Poa1Charge
 @import enums.Poa2Charge
+@import enums.BalancingCharge
+@import enums.TRMNewCharge
+@import enums.TRMAmmendCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
 
@@ -48,13 +51,34 @@
 
 @getPoaExplanationContent = {
     <div>
-        @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
-        @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.textOne")
+        @if(viewModel.documentType == Poa1Charge) {
+            @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount.poa1")}
+        } else {
+            @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.poa2")}
+        }
+            @p(id = Some("p3")) {
+                @messages("chargeSummary.paymentsOnAccount.textOne")
                 <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.paymentsOnAccount.linkText")</a>
-                @messages("chargeSummary.paymentsOnAccount.textTwo")}
-        @p(id = Some("p3")){@messages("chargeSummary.paymentsOnAccount.p3")
-        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.paymentsOnAccount.p3LinkText")}</a><br>
+                @messages("chargeSummary.paymentsOnAccount.textTwo")
+        }
+            @p(id = Some("p4")) {
+                @messages("chargeSummary.paymentsOnAccount.p3")
+                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.paymentsOnAccount.p3LinkText")</a><br><br>
+        }
     </div>
+}
+
+@getBalancingPaymentsExplanationContent = {
+    @p(id = Some("b1")){@messages("chargeSummary.lpi.balancingCharge.b1")}
+    @p(id = Some("b2")) {
+        @messages("chargeSummary.lpi.balancingCharge.textOne")
+        <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+        @messages("chargeSummary.lpi.balancingCharge.textTwo")
+    }
+    @p(id = Some("b3")) {
+        @messages("chargeSummary.lpi.balancingCharge.b3")
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p2LinkText")</a><br><br>
+    }
 }
 
 @checkPayeCodePara = {
@@ -74,6 +98,7 @@
             @messages("chargeSummary.payment-days-note")
         }
     }
+
     <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
         @if(viewModel.isAgent) {
             <li>@messages("chargeSummary.payments-bullet1-1")
@@ -160,6 +185,7 @@
     @{
         viewModel.documentType match {
             case Poa1Charge | Poa2Charge => getPoaExplanationContent
+            case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
             case _ =>
         }
     }
