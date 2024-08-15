@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.optin
+package controllers.optIn
 
 
-import controllers.optin.ChooseYearControllerISpec.{description1Text, headingText, taxYearChoiceOne, taxYearChoiceTwo}
-import forms.optin.ChooseTaxYearForm
+import controllers.optIn.ChooseYearControllerISpec.{description1Text, headingText, taxYearChoiceOne, taxYearChoiceTwo}
+import forms.optIn.ChooseTaxYearForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear

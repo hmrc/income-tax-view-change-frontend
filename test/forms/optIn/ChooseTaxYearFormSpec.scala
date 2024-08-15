@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.optin
+package forms.optIn
 
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, when}

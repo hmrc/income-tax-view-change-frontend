@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optin.OptInService
+import services.optIn.OptInService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

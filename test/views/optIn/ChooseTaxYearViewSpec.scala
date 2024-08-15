@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views.optin
+package views.optIn
 
 import config.FrontendAppConfig
-import forms.optin.ChooseTaxYearForm
+import forms.optIn.ChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import models.optin.ChooseTaxYearViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optin.ChooseTaxYearView
+import views.html.optIn.ChooseTaxYearView
 
 class ChooseTaxYearViewSpec extends TestSupport {
 

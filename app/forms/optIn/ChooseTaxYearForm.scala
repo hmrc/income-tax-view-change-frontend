@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.optin
+package forms.optIn
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
