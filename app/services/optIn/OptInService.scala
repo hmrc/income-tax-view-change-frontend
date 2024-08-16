@@ -16,10 +16,16 @@
 
 package services.optIn
 
+import auth.MtdItUser
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.optin.OptInContextData
+import models.optin.OptInContextData.stringToStatus
 import repositories.UIJourneySessionDataRepository
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInInitialState, OptInProposition}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -42,6 +48,84 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       getOrElse(true)//todo this should default to false, set to true until journey setup is done correctly
   }
 
-  def availableOptInTaxYear() = List(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024)) //todo TBD
+  def availableOptInTaxYear()(implicit user: MtdItUser[_],
+                              hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
+  def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
+                              hc: HeaderCarrier,
+                              ec: ExecutionContext): Future[Option[OptInProposition]] = {
+
+    val savedOptInProposition = for {
+
+      sessionData <- OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name))
+
+      optInSessionData <- OptionT(Future.successful(sessionData.optInSessionData))
+      contextData <- OptionT(Future.successful(optInSessionData.optInContextData))
+
+      currentYearAsTaxYear <- OptionT(Future.successful(contextData.currentYearAsTaxYear()))
+      nextTaxYearAsTaxYear <- OptionT(Future.successful(contextData.nextTaxYearAsTaxYear()))
+
+      currentYearITSAStatus = stringToStatus(contextData.currentYearITSAStatus)
+      nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
+
+      optInInitialState = OptInInitialState(currentYearITSAStatus, nextYearITSAStatus)
+      proposition = createOptInProposition(currentYearAsTaxYear, nextTaxYearAsTaxYear, optInInitialState)
+
+    } yield proposition
+
+    savedOptInProposition.value
+  }
+
+
+  def fetchOptInProposition()(implicit user: MtdItUser[_],
+                               hc: HeaderCarrier,
+                               ec: ExecutionContext): Future[OptInProposition] = {
+
+    fetchSavedOptInProposition().flatMap { savedProposition =>
+      savedProposition.map(Future.successful).getOrElse {
+        val currentYear = dateService.getCurrentTaxYear
+        val nextYear = currentYear.nextYear
+        fetchOptInInitialState(currentYear, nextYear)
+          .map(initialState => createOptInProposition(currentYear, nextYear, initialState))
+      }
+    }
+  }
+
+  private def fetchOptInInitialState( currentYear: TaxYear,
+                                      nextYear: TaxYear)
+                                     (implicit user: MtdItUser[_],
+                                      hc: HeaderCarrier,
+                                      ec: ExecutionContext): Future[OptInInitialState] = {
+
+    val statusMapFuture: Future[Map[TaxYear, ITSAStatus]] = getITSAStatusesFrom(currentYear)
+
+    for {
+      statusMap <- statusMapFuture
+    } yield OptInInitialState(statusMap(currentYear), statusMap(nextYear))
+  }
+
+  private def getITSAStatusesFrom(currentYear: TaxYear)(implicit user: MtdItUser[_],
+                                                         hc: HeaderCarrier,
+                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =
+    itsaStatusService.getStatusTillAvailableFutureYears(currentYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
+
+  private def createOptInProposition( currentYear: TaxYear,
+                                      nextYear: TaxYear,
+                                      initialState: OptInInitialState
+                                     ): OptInProposition = {
+
+    val currentOptInTaxYear = CurrentOptInTaxYear(
+      status = initialState.currentYearItsaStatus, //todo reinstate after ATs setup ITSAStatus.Annual, //
+      taxYear = currentYear
+    )
+
+    val nextYearOptOut = NextOptInTaxYear(
+      status = initialState.nextYearItsaStatus, //todo reinstate after ATs setup
+      taxYear = nextYear,
+      currentOptInTaxYear = currentOptInTaxYear
+    )
+
+    OptInProposition(currentOptInTaxYear, nextYearOptOut)
+  }
 }

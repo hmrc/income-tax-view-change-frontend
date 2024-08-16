@@ -21,12 +21,17 @@ import controllers.optIn.ChooseYearControllerISpec.{description1Text, headingTex
 import forms.optIn.ChooseTaxYearForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.optin.{OptInContextData, OptInSessionData}
+import models.optout.OptOutContextData.statusToString
 import play.api.http.Status.OK
 import play.mvc.Http.Status
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import utils.OptInJourney
 
 object ChooseYearControllerISpec {
   val headingText = "Voluntarily opting in to reporting quarterly"
@@ -45,7 +50,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   def testShowHappyCase(isAgent: Boolean): Unit = {
@@ -57,12 +62,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-//        todo mock optInService.availableOptInTaxYear when implementing MISUV-8006
-//                  stubOptOutInitialState(previousYearCrystallised = false,
-//                    previousYearStatus = Voluntary,
-//                    currentYearStatus = Voluntary,
-//                    nextYearStatus = Voluntary)
-//                  IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -88,12 +88,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        //todo mock optInService.availableOptInTaxYear when implementing MISUV-8006
-        //          stubOptOutInitialState(previousYearCrystallised = false,
-        //            previousYearStatus = Voluntary,
-        //            currentYearStatus = Voluntary,
-        //            nextYearStatus = Voluntary)
-        //          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
 
         val formData: Map[String, Seq[String]] = Map(
           ChooseTaxYearForm.choiceField -> Seq(currentTaxYear.toString)
@@ -120,11 +115,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          //          stubOptOutInitialState(previousYearCrystallised = false,
-          //            previousYearStatus = Voluntary,
-          //            currentYearStatus = Voluntary,
-          //            nextYearStatus = Voluntary)
-          //IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+          stubOptOutInitialState(currentTaxYear, currentYearStatus = Voluntary, currentTaxYear.nextYear, nextYearStatus = Voluntary)
 
           val formData: Map[String, Seq[String]] = Map(
             ChooseTaxYearForm.choiceField -> Seq()
@@ -145,35 +136,6 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
   }
 
-//  val allObligations: ObligationsModel = ObligationsModel(Seq(
-//    NextUpdatesModel(
-//      identification = "ABC123456789",
-//      obligations = List(
-//        NextUpdateModel(
-//          start = getCurrentTaxYearEnd.minusMonths(3),
-//          end = getCurrentTaxYearEnd,
-//          due = getCurrentTaxYearEnd,
-//          obligationType = "Quarterly",
-//          dateReceived = Some(getCurrentTaxYearEnd),
-//          periodKey = "#003",
-//          StatusFulfilled
-//        ))
-//    ),
-//    NextUpdatesModel(
-//      identification = "ABC123456789",
-//      obligations = List(
-//        NextUpdateModel(
-//          start = getCurrentTaxYearEnd.minusMonths(3),
-//          end = getCurrentTaxYearEnd,
-//          due = getCurrentTaxYearEnd,
-//          obligationType = "Quarterly",
-//          dateReceived = Some(getCurrentTaxYearEnd),
-//          periodKey = "#004",
-//          StatusFulfilled
-//        ))
-//    )
-//  ))
-
   "ChooseYearController - Individual" when {
     testShowHappyCase(isAgent = false)
     testSubmitHappyCase(isAgent = false)
@@ -186,20 +148,16 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
     testSubmitUnhappyCase(isAgent = true)
   }
 
-//  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
-//                                     previousYearStatus: ITSAStatus.Value,
-//                                     currentYearStatus: ITSAStatus.Value,
-//                                     nextYearStatus: ITSAStatus.Value): Unit = {
-//    repository.set(
-//      UIJourneySessionData(testSessionId,
-//        OptOutJourney.Name,
-//        optOutSessionData =
-//          Some(OptOutSessionData(
-//            Some(OptOutContextData(
-//              previousYearCrystallised,
-//              statusToString(previousYearStatus),
-//              statusToString(currentYearStatus),
-//              statusToString(nextYearStatus))), None))))
-//  }
+  private def stubOptOutInitialState(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
+                                     nextTaxYear: TaxYear, nextYearStatus: ITSAStatus.Value): Unit = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        OptInJourney.Name,
+        optInSessionData =
+          Some(OptInSessionData(
+            Some(OptInContextData(
+              currentTaxYear.toString, statusToString(currentYearStatus),
+              nextTaxYear.toString, statusToString(nextYearStatus))), None))))
+  }
 
 }

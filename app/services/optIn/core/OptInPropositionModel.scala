@@ -44,3 +44,8 @@ case class OneYearOptInProposition private(proposition: OptInProposition) extend
   val intent: OptInTaxYear = proposition.availableOptInYears.head
 }
 case class MultiYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes
+
+/* *******************************************************************************************************************
+  OptInInitialState
+ ******************************************************************************************************************* */
+case class OptInInitialState(currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus)

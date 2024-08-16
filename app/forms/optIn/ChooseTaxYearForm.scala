@@ -27,14 +27,14 @@ object ChooseTaxYearForm {
   val choiceField: String = "choice"
   val noResponseErrorMessageKey: String = "optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error"
 
-  def apply(optionValue: List[String])(implicit messages: Messages): Form[ChooseTaxYearForm] = {
+  def apply(optionValue: Seq[String])(implicit messages: Messages): Form[ChooseTaxYearForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     form(noSelectionErrorMessage, optionValue)
 
   }
 
-  def form(msg: String, optOutYears: List[String]): Form[ChooseTaxYearForm] = Form[ChooseTaxYearForm](
+  def form(msg: String, optOutYears: Seq[String]): Form[ChooseTaxYearForm] = Form[ChooseTaxYearForm](
     mapping(
       choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
     )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)

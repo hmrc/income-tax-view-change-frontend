@@ -16,16 +16,23 @@
 
 package models.optin
 
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInContextData(crystallisationStatus: Boolean,
-                             previousYearITSAStatus: String,
-                             currentYearITSAStatus: String,
-                             nextYearITSAStatus: String)
+case class OptInContextData(currentTaxYear: String, currentYearITSAStatus: String, nextTaxYear: String, nextYearITSAStatus: String) {
+
+  def currentYearAsTaxYear(): Option[TaxYear] = asTaxYear(currentTaxYear)
+  def nextTaxYearAsTaxYear(): Option[TaxYear] = asTaxYear(nextTaxYear)
+
+  private def asTaxYear(taxYearValue: String): Option[TaxYear] = {
+    TaxYear.getTaxYearModel(taxYearValue)
+  }
+}
 
 object OptInContextData {
+
   implicit val format: OFormat[OptInContextData] = Json.format[OptInContextData]
 
   def statusToString(status: ITSAStatus): String =
