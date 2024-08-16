@@ -16,8 +16,6 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import exceptions.MissingFieldException
-
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
@@ -114,9 +112,19 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
 
   def getFirstUpcomingQuarterlyDate(currentDate: LocalDate): Option[DatesModel] = {
     quarterlyObligationsDates.flatten
-      .filter(_.inboundCorrespondenceFrom.isAfter(currentDate))
-      .sortBy(_.inboundCorrespondenceFrom)
+      .filter(_.inboundCorrespondenceDue.isAfter(currentDate))
+      .sortBy(_.inboundCorrespondenceDue)
       .headOption
+  }
+
+  def getQuarterlyObligationTaxYear(quarterlyObligation: DatesModel): Int = {
+    if (quarterlyObligation.inboundCorrespondenceFrom.isBefore(TaxYear.makeTaxYearWithEndYear(currentTaxYear).toFinancialYearStart)) {
+      currentTaxYear - 1
+    } else if (quarterlyObligation.inboundCorrespondenceFrom.isAfter(TaxYear.makeTaxYearWithEndYear(currentTaxYear).toFinancialYearEnd)) {
+      currentTaxYear + 1
+    } else {
+      currentTaxYear
+    }
   }
 
   def getFinalDeclarationDate(currentDate: LocalDate): Option[DatesModel] = {

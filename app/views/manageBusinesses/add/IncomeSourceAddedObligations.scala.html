@@ -14,16 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import models.incomeSourceDetails.viewmodels._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
+
 @import java.time.LocalDate
-@import exceptions.MissingFieldException
 
 @this(
         mainTemplate: unifiedLayout,
@@ -117,28 +116,13 @@
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
-@getQuarterlyUpdateDate = @{
- sources.getFirstUpcomingQuarterlyDate(currentDate)
-}
-
-@getFinalDecDate = @{
-    sources.getFinalDeclarationDate(currentDate)
-}
-
-@getTaxYear = @{
-    sources.currentTaxYear
-}
-
   @getQuarterlyOrHybridList() = @{
     val quarterlyBullet: List[Html] = sources.getFirstUpcomingQuarterlyDate(currentDate) match {
       case Some(quarterlyUpdate) =>
+        val quarterlyUpdateTaxYear = sources.getQuarterlyObligationTaxYear(quarterlyUpdate)
         List(Html(
         s"""<li id="quarterly-list">
-          ${getMessage("next-quarterly-obligation-text-1", (getTaxYear - 1).toString, getTaxYear.toString)}
-          <span class="govuk-!-font-weight-bold">
-            ${getMessage("next-quarterly-obligation-date", quarterlyUpdate.inboundCorrespondenceDue.toLongDate)}
-          </span>
-          ${getMessage("next-quarterly-obligation-text-2", quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)}
+          ${getMessage("next-quarterly-obligation-text-1", (quarterlyUpdateTaxYear - 1).toString, quarterlyUpdateTaxYear.toString, quarterlyUpdate.inboundCorrespondenceDue.toLongDate, quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)}
         </li>"""
         ))
       case None => Nil
@@ -148,10 +132,7 @@
       case Some(finalDecDate) =>
         List(Html(
         s"""<li id="obligations-list">
-        ${getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)}
-        <span class="govuk-!-font-weight-bold">
-        ${getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)}
-        </span>
+        ${getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)}
         </li>"""
         ))
       case None => Nil
@@ -195,16 +176,13 @@
         }
       }
 
-        @if(reportingMethod == "Annual"){
-          @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
-            <p class="govuk-body" id="final-declaration">
-                @getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString)
-                <span class="govuk-!-font-weight-bold">
-                    @getMessage("final-dec-date", finalDecDate.inboundCorrespondenceDue.toLongDate)
-                </span>
-            </p>
-          }.getOrElse(Html(None))
-        }
+      @if(reportingMethod == "Annual"){
+        @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+          <p class="govuk-body" id="final-declaration">
+              @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
+          </p>
+        }.getOrElse(Html(None))
+      }
 
       <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
         <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>

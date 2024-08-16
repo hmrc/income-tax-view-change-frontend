@@ -28,7 +28,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
@@ -71,7 +71,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
             incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
             (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
           } yield {
-            itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap { _ =>
               val reportingMethod: String = getReportingMethod(sessionData.addIncomeSourceData)
               handleSuccess(
                 isAgent = isAgent,
@@ -82,7 +81,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 sessionData = sessionData,
                 reportingMethod = reportingMethod
               )
-            }
           }) getOrElse {
             Logger("application").error(
               s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")

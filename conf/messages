@@ -1685,13 +1685,9 @@ business-added.obligation.inset.single-historic-overdue.text                    
 business-added.obligation.inset.multiple-historic-overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
 business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
 
-business-added.next-quarterly-obligation-text-1 = Your next quarterly update for the {0} to {1} tax year is due by
-business-added.next-quarterly-obligation-date  = {0}
-business-added.next-quarterly-obligation-text-2  = for the quarterly period {0} to {1}
+business-added.next-quarterly-obligation-text-1 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 
-
-business-added.final-dec-text = Your tax return for the {0} to {1} tax year is due by
-business-added.final-dec-date = {0}
+business-added.final-dec-text = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
 business-added.quarterly-opt-out-text-1 = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
 business-added.quarterly-opt-out-link = your reporting frequency
