@@ -94,6 +94,14 @@ trait Constraints {
         Valid
     }
 
+  protected def fourDigitYear(errorKey: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if !(date.getYear.toString.forall(_.isDigit) && date.getYear.toString.length == 4) =>
+        Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
+
   protected def minDate(minimum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isBefore(minimum) =>

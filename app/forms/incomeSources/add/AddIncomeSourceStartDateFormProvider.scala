@@ -45,7 +45,8 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
         twoRequiredKey = s"$messagesPrefix.date.error.required.two",
         requiredKey    = s"$messagesPrefix.date.error.required"
       ).verifying(
-        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage, maximumAllowableDate.formatAsString)
+        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage, maximumAllowableDate.formatAsString),
+        fourDigitYear(messages(s"$messagesPrefix.error.invalid"))
       )
     )
   }
