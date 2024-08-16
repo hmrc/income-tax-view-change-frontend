@@ -77,9 +77,9 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     confidenceLevel = ConfidenceLevel.L250
   )
 
-  "invokeBlock" when {
+  "individualOrAgentWithClient" when {
 
-    "user is an individual" when {
+    "user is an individual" should {
 
       "execute block when timestamp and auth token, origin, HMRC-MTD-ID enrolment and successful income sources response" in new ResultFixture(
         retrievals = individualRetrievalData,
@@ -148,7 +148,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
         retrievals = individualRetrievalData,
         request = fakeRequestWithTimeoutSession.withSession(("origin", "PTA"))
       ) {
-        print(result)
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location).contains("/report-quarterly/income-and-expenses/view/session-timeout") shouldBe true
       }
@@ -162,7 +161,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       }
     }
 
-    "user is an agent" when {
+    "user is an agent" should {
 
       val sessionData = Map(
         (SessionKeys.confirmedClient, ""),
@@ -198,8 +197,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
         result.header.status shouldBe OK
       }
 
-
-
       s"throw exception when confidence level < ${appConfig.requiredConfidenceLevel}" in new ResultFixture(
         retrievals = agentRetrievalData.copy(confidenceLevel = ConfidenceLevel.L50 ),
         request = validAgentRequest) {
@@ -226,8 +223,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
       ) {
         result.header.status shouldBe INTERNAL_SERVER_ERROR
       }
-
-      // agent reference number is missing / present
 
       "throw exception when agent reference number is missing" in new ExceptionFixture(
         retrievals = agentRetrievalData.copy(enrolments = Enrolments(Set.empty)),
@@ -270,7 +265,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
         retrievals = agentRetrievalData,
         request = timeoutAgentRequest
       ) {
-        print(result)
         result.header.status shouldBe SEE_OTHER
         result.header.headers(Location).contains("/report-quarterly/income-and-expenses/view/session-timeout") shouldBe true
       }
@@ -367,7 +361,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
 
     when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(Future.failed( authorisationException ))
 
-    val result = authActions.authAction().async(block).apply(request).futureValue
+    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
   }
   class ResultFixture(retrievals: RetrievalData,
                       request: FakeRequest[AnyContent] = FakeRequest(),
@@ -375,7 +369,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
                       block: MtdItUser[_] => Future[Result] = (_) => Future.successful(Ok("OK!")))
     extends Fixture(retrievals, request, incomeSources, block) {
 
-    val result = authActions.authAction().async(block).apply(request).futureValue
+    val result = authActions.individualOrAgentWithClient.async(block)(request).futureValue
   }
 
   class ExceptionFixture(retrievals: RetrievalData,
@@ -386,7 +380,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     extends Fixture(retrievals, request, incomeSources, block) {
 
     val failedException: TestFailedException = intercept[TestFailedException] {
-      authActions.authAction().async(block).apply(request).futureValue
+      authActions.individualOrAgentWithClient.async(block)(request).futureValue
     }
 
     failedException.getCause.getClass shouldBe expectedError.getClass

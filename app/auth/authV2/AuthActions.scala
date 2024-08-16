@@ -37,7 +37,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                            (implicit val appConfig: FrontendAppConfig,
                                      val ec: ExecutionContext)  extends  FeatureSwitching {
 
-  def authAction[A](): ActionBuilder[MtdItUser, AnyContent] = {
+  def individualOrAgentWithClient[A]: ActionBuilder[MtdItUser, AnyContent] = {
 
       (   checkSessionTimeout andThen
 
