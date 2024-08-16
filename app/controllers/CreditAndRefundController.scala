@@ -19,50 +19,47 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
+import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditService, DateServiceInterface, IncomeSourceDetailsService, RepaymentService}
+import services.{CreditService, IncomeSourceDetailsService, RepaymentService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val creditService: CreditService,
                                           val retrieveBtaNavBar: NavBarPredicate,
-                                          val authenticate: AuthenticationPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
-                                          val auth: AuthenticatorPredicate)
+                                          val controllerComponents: MessagesControllerComponents)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          dateService: DateServiceInterface,
                                           val languageUtils: LanguageUtils,
-                                          mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends FrontendBaseController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.authAction().async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -91,7 +88,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def showAgent(): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) {
+    authActions.authAction().async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
@@ -102,7 +99,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def startRefund(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    authActions.authAction().async {
       implicit user =>
         user.userType match {
           case _ if !isEnabled(CreditsRefundsRepay) =>
