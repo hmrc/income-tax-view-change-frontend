@@ -371,13 +371,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.selectById("p2").text() shouldBe poaTextP2
       }
 
-      chargeSummary.paymentsOnAccount.poa1                               = You owe HMRC interest because you paid your first payment on account late
-      chargeSummary.paymentsOnAccount.poa2                               = You owe HMRC interest because you paid your second payment on account late
-      chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
-        chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
-      chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
-      chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
-        chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
+//      chargeSummary.paymentsOnAccount.poa1                               = You owe HMRC interest because you paid your first payment on account late
+//      chargeSummary.paymentsOnAccount.poa2                               = You owe HMRC interest because you paid your second payment on account late
+//      chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+//        chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
+//      chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
+//      chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
+//        chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
 
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
         document.selectById("p1").text() shouldBe poaTextParagraph
