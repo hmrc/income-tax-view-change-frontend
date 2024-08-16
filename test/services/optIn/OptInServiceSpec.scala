@@ -21,9 +21,8 @@ import connectors.optout.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.StatusDetail
 import models.optin.{OptInContextData, OptInSessionData}
-import models.optout.OptOutContextData.statusToString
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
@@ -142,7 +141,8 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        mockRepository(Annual, Annual)
+        //mockRepository(Annual, Annual)
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), nextTaxYear.toString, OptInContextData.statusToString(Annual))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -153,7 +153,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        mockRepository(Annual, Voluntary)
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), nextTaxYear.toString, OptInContextData.statusToString(Voluntary))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -161,22 +161,35 @@ class OptInServiceSpec extends UnitSpec
 
         verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
       }
+    }
+  }
 
-      def mockRepository(currentYearStatus: ITSAStatus, nextYearStatus: ITSAStatus): Unit = {
+  "OptInService.fetchSavedChosenTaxYear" should {
 
-        val sessionData = UIJourneySessionData(hc.sessionId.get.value,
-          OptInJourney.Name,
-          optInSessionData =
-            Some(OptInSessionData(
-              Some(OptInContextData(
-                currentTaxYear.toString, statusToString(currentYearStatus),
-                nextTaxYear.toString, statusToString(nextYearStatus))), None)))
+    "fetch saved choice when there is choice saved" in {
 
-        when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
-      }
+      mockRepository(selectedOptInYear = Some(TaxYear.forYearEnd(2023).toString))
+      val result = service.fetchSavedChosenTaxYear()
+      val choice = result.futureValue.get
 
+      choice shouldBe TaxYear.forYearEnd(2023)
     }
 
+    "fetch saved choice when there is no choice saved" in {
 
+      mockRepository()
+      val result = service.fetchSavedChosenTaxYear()
+      val choice = result.futureValue
+
+      choice shouldBe None
+    }
+  }
+
+  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
+
+    val sessionData = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name,
+      optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
+
+    when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(sessionData)))
   }
 }
