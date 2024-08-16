@@ -57,9 +57,17 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        optInService.availableOptInTaxYear().map { taxYears =>
-          Ok(view(ChooseTaxYearForm(taxYears.map(_.toString)), viewModel(taxYears, isAgent)))
-        }
+
+        /* todo to be removed, session data should be setup at start of journey */
+        for {
+          _ <- optInService.setupSessionData()
+          taxYears <- optInService.availableOptInTaxYear()
+        } yield Ok(view(ChooseTaxYearForm(taxYears.map(_.toString)), viewModel(taxYears, isAgent)))
+
+        /* todo to be reinstated, session data should be setup at start of journey */
+//        optInService.availableOptInTaxYear().map { taxYears =>
+//          Ok(view(ChooseTaxYearForm(taxYears.map(_.toString)), viewModel(taxYears, isAgent)))
+//        }
       }
   }
 

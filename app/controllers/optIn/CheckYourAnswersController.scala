@@ -55,7 +55,9 @@ class CheckYourAnswersController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok("Check your answers page! in MISUV-8006"))
+        optInService.fetchSavedChosenTaxYear().map { taxYear =>
+          Ok(s"Check your answers (${taxYear.get}) page! in MISUV-8006")
+        }
       }
   }
 }

@@ -19,11 +19,11 @@ package services.optIn
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.OptInContextData
 import models.optin.OptInContextData.stringToStatus
+import models.optin.OptInSessionData
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInInitialState, OptInProposition}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
@@ -52,15 +52,25 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
+  def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
+                                   hc: HeaderCarrier,
+                                   ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+
+    val savedOptInSessionData = for {
+      sessionData <- OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name))
+      optInSessionData <- OptionT(Future.successful(sessionData.optInSessionData))
+    } yield optInSessionData
+
+    savedOptInSessionData.value
+  }
+
   def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Option[OptInProposition]] = {
 
     val savedOptInProposition = for {
 
-      sessionData <- OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name))
-
-      optInSessionData <- OptionT(Future.successful(sessionData.optInSessionData))
+      optInSessionData <- OptionT(fetchSavedOptInSessionData())
       contextData <- OptionT(Future.successful(optInSessionData.optInContextData))
 
       currentYearAsTaxYear <- OptionT(Future.successful(contextData.currentYearAsTaxYear()))
@@ -127,5 +137,26 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     )
 
     OptInProposition(currentOptInTaxYear, nextYearOptOut)
+  }
+
+  def fetchSavedChosenTaxYear()(implicit user: MtdItUser[_],
+                                   hc: HeaderCarrier,
+                                   ec: ExecutionContext): Future[Option[TaxYear]] = {
+
+    fetchSavedOptInSessionData().map {
+      case None => None
+      case Some(s) => s.selectedOptInYear.flatMap(TaxYear.getTaxYearModel)
+    }
+  }
+
+  /* todo to be removed, session data should be setup at start of journey */
+  def setupSessionData()(implicit user: MtdItUser[_],
+                         hc: HeaderCarrier,
+                         ec: ExecutionContext): Future[Boolean] = {
+    repository.set(
+      UIJourneySessionData(hc.sessionId.get.value,
+        OptInJourney.Name,
+        optInSessionData =
+          Some(OptInSessionData(None, None))))
   }
 }
