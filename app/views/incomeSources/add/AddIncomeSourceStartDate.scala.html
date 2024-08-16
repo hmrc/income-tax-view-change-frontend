@@ -17,13 +17,15 @@
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
 @import java.time.LocalDate
+@import views.viewmodels.govuk.all.ErrorSummaryViewModel
+@import views.viewmodels.govuk.all.DateViewModel
+@import views.viewmodels.govuk.all.FluentDate
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
-        errorSummary: ErrorSummary,
+        govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
         govukButton: GovukButton
 )
@@ -52,27 +54,33 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 
-        @errorSummary(form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(
+                ErrorSummaryViewModel(
+                    form,
+                    errorLinkOverrides = Map("value" -> s"value.${form.errors.flatMap(_.args).headOption.getOrElse("day")}")
+                )
+            )
+        }
 
-        @govukDateInput(DateInput(
-            hint = Some(Hint(
-                id = Some(s"$messagesPrefix-hint"),
-                content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
-            )),
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(getMessage("heading")),
-                    classes = "govuk-label--l",
-                    isPageHeading = true
-                ))
-            )),
-            items = Seq(
-                InputItem(attributes = Map("maxLength" -> "2")),
-                InputItem(attributes = Map("maxLength" -> "2")),
-                InputItem(attributes = Map("maxLength" -> "4"))
-            ),
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-        ).withFormField(form("income-source-start-date")))
+        @govukDateInput(
+            DateViewModel(
+                field = form("value"),
+                fieldset = Fieldset(
+                    legend = Some(Legend(
+                        content = Text(getMessage("heading")),
+                        classes = "govuk-label--l",
+                        isPageHeading = true
+                    ))
+                )
+            )
+            .withHint(
+                Hint(
+                    id = Some(s"$messagesPrefix-hint"),
+                    content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
+                )
+            )
+        )
 
         @govukButton(Button(
             content = Text(messages("base.continue")),

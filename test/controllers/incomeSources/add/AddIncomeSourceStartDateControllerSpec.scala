@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -123,6 +124,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
     addIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate],
     customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
     sessionService = mockSessionService,
+    form = app.injector.instanceOf[AddIncomeSourceStartDateFormProvider],
     testAuthenticator
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],

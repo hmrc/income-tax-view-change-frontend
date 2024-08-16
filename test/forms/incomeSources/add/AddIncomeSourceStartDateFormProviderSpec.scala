@@ -30,8 +30,8 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
 
   "AddIncomeSourceStartDate form" should {
     "bind with a valid date" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
-      val formData = DateFormElement(LocalDate.of(2022, 12, 20))
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
+      val formData = LocalDate.of(2022, 12, 20)
       val completedForm = form.fill(formData)
 
       completedForm.data.get("income-source-start-date.day") shouldBe Some("20")
@@ -40,7 +40,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List.empty
     }
     "bind with an invalid date field - Self employment" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -50,7 +50,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${SelfEmployment.startDateMessagesPrefix}.error.invalid"), List()))
     }
     "bind with an invalid date field - Foreign property" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(ForeignProperty.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -60,7 +60,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${ForeignProperty.startDateMessagesPrefix}.error.invalid"), List()))
     }
     "bind with an invalid date field - UK Property" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(UkProperty.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -70,7 +70,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${UkProperty.startDateMessagesPrefix}.error.invalid"), List()))
     }
     "bind with a valid future date" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val futureDate = dateService.getCurrentDate.plusDays(6)
       val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
@@ -81,7 +81,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe Nil
     }
     "bind with a invalid future date, date greater then current date plus 6 days " in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val futureDate = dateService.getCurrentDate.plusDays(7)
       val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
@@ -92,7 +92,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
     }
 
     "bind with a date missing day field" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -102,7 +102,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.day.required"), List()))
     }
     "bind with a date missing month field" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -112,7 +112,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.month.required"), List()))
     }
     "bind with a date missing year field" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -122,7 +122,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.year.required"), List()))
     }
     "bind with a date missing day and month fields" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -132,7 +132,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.dayAndMonth.required"), List()))
     }
     "bind with a date missing day and year fields" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -142,7 +142,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.dayAndYear.required"), List()))
     }
     "bind with a date missing month and year fields" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -152,7 +152,7 @@ class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.monthAndYear.required"), List()))
     }
     "bind with a date missing day, month and year fields" in {
-      val form: Form[DateFormElement] = AddIncomeSourceStartDateForm(SelfEmployment.startDateMessagesPrefix)
+      val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "")
       val completedForm = form.bind(formData)
 
