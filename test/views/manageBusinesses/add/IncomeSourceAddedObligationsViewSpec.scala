@@ -34,6 +34,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val h1UKProperty: String = "UK property"
     val h1SelfEmployment: String = "Test Name"
     val headingBase: String = "has been added to your account"
+    val submitTaxReturn: String = "Submit your tax return"
     val submitSoftware: String = "Submit updates in software"
     val deadlinesHeading: String = "Your revised deadlines"
     val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
@@ -240,14 +241,21 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val validFutureTaxYearQuarterlyCall: Html = view(viewModelWithFutureBusinessStartReportingQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayJustBeforeTaxYearEnd2023_2024, isBusinessHistoric = false, reportingMethod = "Quarterly")
   // End of upcoming obligations data
 
+  val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "DefaultAnnual")
+
   val addIncomeSourceShowURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val nextUpdatesUrl = controllers.routes.NextUpdatesController.show().url
   val nextUpdatesAgentUrl = controllers.routes.NextUpdatesController.showAgent.url
 
+  val manageBusinessesUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
+  val manageBusinessesAgentUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url
+
+  val submitSoftwareUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+
   "Income Source Added Obligations - Individual" should {
-    "Display the correct banner message and heading" when {
+    "Display the correct banner message" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         banner.text() shouldBe IncomeSourceAddedMessages.h1UKProperty
@@ -259,9 +267,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1UKProperty + " " + IncomeSourceAddedMessages.headingBase
           case _ => fail("No 2nd h2 element found.")
         }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -274,9 +279,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1ForeignProperty + " " + IncomeSourceAddedMessages.headingBase
           case _ => fail("No 2nd h2 element found.")
         }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -289,11 +291,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SelfEmployment + " " + IncomeSourceAddedMessages.headingBase
           case _ => fail("No 2nd h2 element found.")
         }
-
-        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
       }
     }
+
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
     }
@@ -532,10 +532,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       }
     }
 
-    "Not display the view overdue and upcoming updates link when the user does not have them" in new Setup(validCallWithData) {
-      Option(document.getElementById("view-overdue-upcoming-updates")).isDefined shouldBe false
-    }
-
     "Display the correct revised deadlines text" when {
       "The business started in the current tax year" when {
         "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
@@ -770,46 +766,108 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       }
     }
 
-//    "Display obligations with quarterly reporting" in new Setup(validCallWithQuarterlyData) {
-//      val quarterlyReporting: Element = document.getElementById("obligations-list")
-//      quarterlyReporting.text() should include("Your next quarterly update for the 2023 to 2024 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
-//
-//    }
-
-//    "Display obligations with HYBRID reporting frequency" in new Setup(validHybridCallWithData){
-//      val quarterlyReporting: Element = document.getElementById("quarterly-list")
-//      val annualReporting: Element = document.getElementById("obligations-list")
-//      quarterlyReporting.text() should include("Your next quarterly update for the 2024 to 2025 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024")
-//      annualReporting.text() should include("Your tax return for the 2024 to 2025 tax year is due by 31 January 2026")
-//    }
-
-    "Display final declaration obligations if the user has them" in new Setup(validCallWithData) {
-      val finalDecSection: Element = layoutContent.getElementById("finalDeclaration")
-      finalDecSection.text() should include(IncomeSourceAddedMessages.finalDecHeading)
-      finalDecSection.text() should include(IncomeSourceAddedMessages.finalDecText)
-
-      val tableHeadings: Elements = finalDecSection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading1)
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading2)
-
-      val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("2022 to 2022")
-      tableContent.text() should include("3 January 2022")
+    "Display the view upcoming updates link when there are no overdue obligations" in new Setup(validCallWithData) {
+      Option(document.getElementById("view-upcoming-updates")) match {
+        case Some(upcomingUpdatesLink) => upcomingUpdatesLink.text() shouldBe "View your upcoming updates"
+        case None => fail("No upcoming updates link was found")
+      }
+    }
+    "Display the view overdue and upcoming updates link when there are no overdue obligations" in new Setup(validCurrentTaxYearQuarterlyCallOneOverdue) {
+      Option(document.getElementById("view-upcoming-updates")) match {
+        case Some(upcomingUpdatesLink) => upcomingUpdatesLink.text() shouldBe "View your overdue and upcoming updates"
+        case None => fail("No upcoming updates link was found")
+      }
     }
 
-    "Display previous tax year message" in new Setup(validCallWithData) {
-      val prevYearsSection: Element = layoutContent.getElementById("prevYears")
-      prevYearsSection.text() should include(IncomeSourceAddedMessages.prevYearsHeading)
-      prevYearsSection.text() should include(IncomeSourceAddedMessages.prevYearsText)
-    }
-
-    "Not display any obligation sections when user has no obligations" in new Setup(validUKPropertyBusinessCall) {
-      Option(layoutContent.getElementById("quarterly")) shouldBe None
-      Option(layoutContent.getElementById("prevyears")) shouldBe None
-    }
-
-    "render the view all your business link" in new Setup(validCallWithData) {
+    "Render the view all your business link" in new Setup(validCallWithData) {
       document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
+      document.getElementById("view-all-businesses-link").select("a").attr("href") shouldBe manageBusinessesUrl
+    }
+
+    "Display the correct change reporting frequency text" when {
+      // TODO the links of these tests will need to change to the new entry point for the opt in/out journeys once the page is made
+      "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
+        Option(document.getElementById("change-frequency")) match {
+          case Some(changeFrequency) =>
+            changeFrequency.text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
+            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+          case None => fail("No upcoming updates link was found")
+        }
+      }
+
+      "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
+        Option(document.getElementById("change-frequency")) match {
+          case Some(changeFrequency) =>
+            changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+          case None => fail("No upcoming updates link was found")
+        }
+      }
+
+      "It has hybrid reporting" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
+        Option(document.getElementById("change-frequency")) match {
+          case Some(changeFrequency) =>
+            changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+          case None => fail("No upcoming updates link was found")
+        }
+      }
+
+      "It defaults to annual reporting because the reporting methods page was skipped" in new Setup(validCurrentTaxYearDefaultAnnualCallNoOverdue) {
+        Option(document.getElementById("change-frequency")) match {
+          case Some(changeFrequency) =>
+            changeFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
+            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+          case None => fail("No upcoming updates link was found")
+        }
+      }
+    }
+
+    "Display the correct submit tax return / updates subheading and text" when {
+      "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
+        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
+
+        Option(document.getElementById("submit-text")) match {
+          case Some(upcomingDeadlineMessage) =>
+            upcomingDeadlineMessage.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").attr("href") shouldBe submitSoftwareUrl
+          case _ => fail("No submit text was found.")
+        }
+      }
+
+      "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
+        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+
+        Option(document.getElementById("submit-text")) match {
+          case Some(upcomingDeadlineMessage) =>
+            upcomingDeadlineMessage.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").attr("href") shouldBe submitSoftwareUrl
+          case _ => fail("No submit text was found.")
+        }
+      }
+
+      "It has hybrid reporting" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
+        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+
+        Option(document.getElementById("quarterly-submit-text")) match {
+          case Some(upcomingDeadlineMessage) =>
+            upcomingDeadlineMessage.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            upcomingDeadlineMessage.select("a").attr("href") shouldBe submitSoftwareUrl
+          case _ => fail("No submit text was found.")
+        }
+
+        Option(document.getElementById("annual-submit-text")) match {
+          case Some(upcomingDeadlineMessage) =>
+            upcomingDeadlineMessage.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
+          case _ => fail("No submit text was found.")
+        }
+      }
     }
 
     s"has GET form action to $addIncomeSourceShowURL" in new Setup(validCallWithData) {
