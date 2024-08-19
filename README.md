@@ -95,3 +95,16 @@ Staging:
 Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/session-storage
 Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
 
+--------------------------------------------------------
+
+Multi-project:
+Proposed dependency diagram (TBC):
+
+```mermaid
+graph TD;
+    core-->app;
+    repositories-->services;
+    connectors-->services;
+    core-->services;
+    services-->app;
+```
