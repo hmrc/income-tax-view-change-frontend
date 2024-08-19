@@ -24,7 +24,7 @@ import models.optout.OptOutSessionData
 import play.api.libs.json.{Json, OFormat}
 import repositories.OptOutContextData.{statusToString, stringToStatus}
 import services.optout.OptOutProposition
-import services.optout.OptOutService.OptOutInitialState
+import services.optout.OptOutProposition.createOptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptOutJourney
 
@@ -40,14 +40,16 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       getOrElse(false)
   }
 
-  def recallOptOutInitialState()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutInitialState]] = {
+  def recallOptOutInitialState()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutProposition]] = {
     repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
       for {
         data <- sessionData
         optOutData <- data.optOutSessionData
         contextData <- optOutData.optOutContextData
+        currentYear <- TaxYear.getTaxYearModel(contextData.currentYear)
       }
-      yield OptOutInitialState(
+      yield createOptOutProposition(
+        currentYear,
         contextData.crystallisationStatus,
         stringToStatus(contextData.previousYearITSAStatus),
         stringToStatus(contextData.currentYearITSAStatus),
@@ -76,7 +78,9 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
   }
 
   private def buildOptOutContextData(oop: OptOutProposition): OptOutContextData = {
-    OptOutContextData(oop.previousTaxYear.crystallised,
+    OptOutContextData(
+      oop.currentTaxYear.taxYear.toString,
+      oop.previousTaxYear.crystallised,
       statusToString(oop.previousTaxYear.status),
       statusToString(oop.currentTaxYear.status),
       statusToString(oop.nextTaxYear.status))
@@ -84,7 +88,8 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
 
 }
 
-case class OptOutContextData(crystallisationStatus: Boolean,
+case class OptOutContextData(currentYear: String,
+                             crystallisationStatus: Boolean,
                              previousYearITSAStatus: String,
                              currentYearITSAStatus: String,
                              nextYearITSAStatus: String)

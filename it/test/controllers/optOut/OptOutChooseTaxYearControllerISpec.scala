@@ -23,7 +23,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Voluntary
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.optout.OptOutSessionData
 import play.api.http.Status
 import play.api.http.Status.OK
@@ -56,7 +56,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -88,7 +89,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -121,7 +123,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(previousYearCrystallised = false,
+          stubOptOutInitialState(currentTaxYear,
+            previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Voluntary,
             nextYearStatus = Voluntary)
@@ -149,7 +152,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(previousYearCrystallised = false,
+        stubOptOutInitialState(currentTaxYear,
+          previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
           nextYearStatus = Voluntary)
@@ -212,7 +216,8 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
     testSubmitUnhappyCase(isAgent = true)
   }
 
-  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
+  private def stubOptOutInitialState(currentTaxYear: TaxYear,
+                                     previousYearCrystallised: Boolean,
                                      previousYearStatus: ITSAStatus.Value,
                                      currentYearStatus: ITSAStatus.Value,
                                      nextYearStatus: ITSAStatus.Value): Unit = {
@@ -222,6 +227,7 @@ class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
         optOutSessionData =
           Some(OptOutSessionData(
             Some(OptOutContextData(
+              currentYear = currentTaxYear.toString,
               previousYearCrystallised,
               statusToString(previousYearStatus),
               statusToString(currentYearStatus),

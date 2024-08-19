@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfter
 import play.api.http.Status.NO_CONTENT
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
-import services.optout.OptOutService.OptOutInitialState
+import services.optout.OptOutProposition.createOptOutProposition
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
@@ -68,9 +68,15 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutInitialState = OptOutInitialState(false, Voluntary, Mandated, Mandated)
 
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(optOutInitialState)))
+        when(repository.recallOptOutInitialState()).thenReturn(
+          Future.successful(Some(
+            createOptOutProposition(
+              currentYear = currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Voluntary,
+              currentYearItsaStatus = Mandated,
+              nextYearItsaStatus = Mandated))))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           OptOutUpdateResponseSuccess()
@@ -95,9 +101,16 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutInitialState = OptOutInitialState(false, Voluntary, Voluntary, Voluntary)
 
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(optOutInitialState)))
+        when(repository.recallOptOutInitialState()).thenReturn(
+          Future.successful(Some(
+            createOptOutProposition(
+              currentYear = currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Voluntary,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Voluntary))))
+
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
@@ -123,10 +136,16 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        val optOutInitialState = OptOutInitialState(false, Voluntary, Voluntary, Voluntary)
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(optOutInitialState)))
+        when(repository.recallOptOutInitialState()).thenReturn(
+          Future.successful(Some(
+            createOptOutProposition(
+              currentYear = currentTaxYear,
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Voluntary,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Voluntary))))
 
         when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           OptOutUpdateResponseFailure.defaultFailure()

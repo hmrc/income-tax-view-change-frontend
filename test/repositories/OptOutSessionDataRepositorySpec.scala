@@ -27,7 +27,7 @@ import org.mockito.Mockito._
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
 import services.NextUpdatesService
-import services.optout.OptOutService.OptOutInitialState
+import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutTestSupport._
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -127,6 +127,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
         journeyType = OptOutJourney.Name,
         optOutSessionData = Some(OptOutSessionData(Some(
           OptOutContextData(
+            currentYear = "2023-2024",
             crystallisationStatus = true,
             previousYearITSAStatus = "V",
             currentYearITSAStatus = "V",
@@ -138,7 +139,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val initialState = optOutRepository.recallOptOutInitialState()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe OptOutInitialState(true, Voluntary, Voluntary, NoStatus)
+      initialState.futureValue.get shouldBe createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus)
     }
   }
 

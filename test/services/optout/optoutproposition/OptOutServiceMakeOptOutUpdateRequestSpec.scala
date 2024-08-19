@@ -26,8 +26,8 @@ import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.OptOutSessionDataRepository
+import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutService
-import services.optout.OptOutService.OptOutInitialState
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -79,7 +79,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
-          OptOutInitialState(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
+          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
         val result = service.makeOptOutUpdateRequest()
 
@@ -112,7 +112,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
-          OptOutInitialState(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
+          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
 
         val result = service.makeOptOutUpdateRequest()
@@ -146,7 +146,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
-          OptOutInitialState(false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
+          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
         val result = service.makeOptOutUpdateRequest()
 

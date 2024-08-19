@@ -33,7 +33,8 @@ import play.mvc.Http.Status.NO_CONTENT
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutService.{OptOutInitialState, QuarterlyUpdatesCountForTaxYearModel}
+import services.optout.OptOutProposition.createOptOutProposition
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport._
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -504,7 +505,9 @@ class OptOutServiceSpec extends UnitSpec
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(OptOutInitialState(crystallisedPY, statusPY, statusCY, statusNY))))
+          when(repository.recallOptOutInitialState()).thenReturn(
+            Future.successful(Some(
+              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
           when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(optOutTaxYear.taxYear)))
 
           val response = service.optOutCheckPointPageViewModel()
@@ -547,7 +550,8 @@ class OptOutServiceSpec extends UnitSpec
           stubCurrentTaxYear(CY)
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(OptOutInitialState(crystallisedPY, statusPY, statusCY, statusNY))))
+          when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
+              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
           when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(intent)))
 
           val response = service.optOutCheckPointPageViewModel()
@@ -598,7 +602,8 @@ class OptOutServiceSpec extends UnitSpec
           stubCurrentTaxYear(CY)
 
           when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-          when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(OptOutInitialState(crystallisedPY, statusPY, statusCY, statusNY))))
+          when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
+            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
 
           val response = service.optOutConfirmedPageViewModel()
 
