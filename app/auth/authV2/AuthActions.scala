@@ -31,7 +31,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutPredicateV2,
                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
                             val agentHasClientDetails: AgentHasClientDetails,
                             val asMtdUser: AsMtdUser,
-                            val retrieveBtaNavBar: NavBarPredicate,
+                            val retrieveBtaNavBar: NavBarPredicateV2,
                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                             val featureSwitchPredicate: FeatureSwitchPredicateV2)
                            (implicit val appConfig: FrontendAppConfig,

@@ -51,6 +51,8 @@ class AgentHasClientDetails @Inject()(implicit val executionContext: ExecutionCo
       Future.successful(Right(request))
     } else if (!hasArn) {
         throw new MissingAgentReferenceNumber
-    } else Future.successful(Left(noClientDetailsRoute))
+    } else {
+      Future.successful(Left(noClientDetailsRoute))
+    }
   }
 }

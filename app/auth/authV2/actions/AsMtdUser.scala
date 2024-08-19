@@ -20,6 +20,7 @@ import auth.MtdItUserOptionNino
 import auth.authV2.AuthExceptions._
 import auth.authV2.EnroledUser
 import controllers.agent.routes
+import controllers.agent.sessionUtils.SessionKeys
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -36,9 +37,13 @@ class AsMtdUser @Inject()
 
     implicit val r = request
 
+    val optMtdId = request.affinityGroup match {
+      case Some(Agent) => request.session.get(SessionKeys.clientMTDID)
+      case _ => request.mtdId
+    }
+
     Future.successful(
-      request.mtdId
-        .map(id => MtdItUserOptionNino(
+      optMtdId.map(id => MtdItUserOptionNino(
           mtditid = id,
           nino = request.nino,
           userName = request.userName,
