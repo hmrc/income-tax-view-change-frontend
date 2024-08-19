@@ -21,7 +21,10 @@ import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInContextData(currentTaxYear: String, currentYearITSAStatus: String, nextTaxYear: String, nextYearITSAStatus: String) {
+case class OptInContextData(currentTaxYear: String,
+                            currentYearITSAStatus: String,
+                            nextTaxYear: String,
+                            nextYearITSAStatus: String) {
 
   def currentYearAsTaxYear(): Option[TaxYear] = asTaxYear(currentTaxYear)
   def nextTaxYearAsTaxYear(): Option[TaxYear] = asTaxYear(nextTaxYear)
