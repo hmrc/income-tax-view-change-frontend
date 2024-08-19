@@ -2082,13 +2082,13 @@ optout.optOutError.home-bullet-2                     = hafan
 ## Opt In ##
 #######################################################################################################################
 
-optIn.beforeYouStart.heading                   = Before you start
-optIn.beforeYouStart.desc1                     = Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately.
-optIn.beforeYouStart.desc2                     = To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from.
-optIn.beforeYouStart.reportQuarterly           = Reporting quarterly
-optIn.beforeYouStart.reportQuarterly.text      = If you choose to opt in:
-optIn.beforeYouStart.reportQuarterly.text.p1   = you will need to submit an update every 3 months in addition to your tax return.
-optIn.beforeYouStart.reportQuarterly.text.p2   = all your income sources will move to quarterly reporting.
-optIn.beforeYouStart.voluntaryStatus           = Your voluntary status
-optIn.beforeYouStart.voluntaryStatus.text      = As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time.
-optIn.beforeYouStart.button.start              = Start
+optIn.beforeYouStart.heading                   = Cyn i chi ddechrau
+optIn.beforeYouStart.desc1                     = Mae adrodd yn chwarterol yn galluogi CThEF i roi rhagolwg gwell o swm y dreth sydd arnoch, a hynny er mwyn eich helpu i gyllidebu’n well.
+optIn.beforeYouStart.desc2                     = Er mwyn adrodd yn chwarterol, bydd angen arnoch feddalwedd sy’n cydweddu. Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+optIn.beforeYouStart.reportQuarterly           = Adrodd yn chwarterol
+optIn.beforeYouStart.reportQuarterly.text      = Os byddwch yn dewis optio i mewn:
+optIn.beforeYouStart.reportQuarterly.text.p1   = bydd angen i chi gyflwyno diweddariad bob tri mis, yn ogystal â chyflwyno’ch Ffurflen Dreth.
+optIn.beforeYouStart.reportQuarterly.text.p2   = byddwch yn adrodd am bob un o’ch ffynonellau incwm yn chwarterol.
+optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
+optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
+optIn.beforeYouStart.button.start              = Dechrau
