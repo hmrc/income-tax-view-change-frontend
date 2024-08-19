@@ -38,6 +38,7 @@ object OptInContextData {
 
   implicit val format: OFormat[OptInContextData] = Json.format[OptInContextData]
 
+  /* todo: unify with optout code */
   def statusToString(status: ITSAStatus): String =
     status match {
       case ITSAStatus.NoStatus  => "U"
