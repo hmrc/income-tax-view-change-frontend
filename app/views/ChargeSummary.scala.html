@@ -22,7 +22,6 @@
 @import views.html.partials.chargeSummary._
 @import enums.Poa1Charge
 @import enums.Poa2Charge
-@import enums.BalancingCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
 
@@ -55,17 +54,6 @@
             <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
         </ul>
         @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
-    </div>
-}
-
-@getBalancingPaymentDefinitionContent = {
-    <div>
-        @p(id = Some("p1")){@messages("chargeSummary.definition.balancingcharge.p1")}
-        <ul id="bullets" class="govuk-list govuk-list--bullet">
-            <li>@messages("chargeSummary.definition.balancingcharge.bullet1")</li>
-            <li>@messages("chargeSummary.definition.balancingcharge.bullet2")</li>
-        </ul>
-        @p(id = Some("p2")){@messages("chargeSummary.definition.balancingcharge.p2")}
     </div>
 }
 
@@ -172,7 +160,6 @@
     @{
         viewModel.documentType match {
             case Poa1Charge | Poa2Charge => getPoaExplanationContent
-            case BalancingCharge => getBalancingPaymentDefinitionContent
             case _ =>
         }
     }
