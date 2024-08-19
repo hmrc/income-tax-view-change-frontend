@@ -72,8 +72,10 @@ GET         /report-quarterly/income-and-expenses/view/test-only/message-check-w
 GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show
 GET         /report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
 
-GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                     testOnly.controllers.SessionStorageServiceController.show
-GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage              testOnly.controllers.SessionStorageServiceController.showAgent
+GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                             testOnly.controllers.SessionStorageServiceController.show
+GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage                      testOnly.controllers.SessionStorageServiceController.showAgent
+GET         /report-quarterly/income-and-expenses/view/test-only/session-storage/get-by-mtditid              testOnly.controllers.SessionStorageServiceController.showByMtditid
+GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage/get-by-mtditid       testOnly.controllers.SessionStorageServiceController.showAgentByMtditid
 
 
 +nocsrf

@@ -43,9 +43,19 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleShow(isAgent = false)
   }
 
+  def showByMtditid(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleShow(isAgent = false)
+  }
+
   def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShow(isAgent = true)
+      handleShowByMtditid(isAgent = true)
+  }
+
+  def showAgentByMtditid: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleShowByMtditid(isAgent = true)
   }
 
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
@@ -89,6 +99,10 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
+  }
+
+  private def handleShowByMtditid(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
+
   }
 
 }
