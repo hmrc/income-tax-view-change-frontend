@@ -106,4 +106,17 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   }
 
+  def enableAll(): Action[AnyContent] = Action.async { implicit user =>
+    println("\nHIT PAGE\n")
+    for {
+      featureSwitches <- featureSwitchService.getAll
+      _ <- Future.sequence(
+        featureSwitches.map(featureSwitch =>
+          featureSwitchService.set(featureSwitch.name, enabled = true)
+        )
+      )
+    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+  }
+}
+
 }
