@@ -31,7 +31,7 @@ class ChooseTaxYearFormSpec extends UnitSpec {
   val errorMessage: String = s"Select the tax year you want to report quarterly from"
   implicit val mockMessages: Messages = mock(classOf[play.api.i18n.Messages])
 
-  val validFormData: Map[String, String] = Map(ChooseTaxYearForm.choiceField -> taxYear.toString)
+  def validFormData(taxYearToValidate: TaxYear): Map[String, String] = Map(ChooseTaxYearForm.choiceField -> taxYearToValidate.toString)
   val invalidFormData: Map[String, String] = Map(ChooseTaxYearForm.choiceField -> "")
 
   when(mockMessages.apply(ChooseTaxYearForm.noResponseErrorMessageKey)
@@ -41,7 +41,7 @@ class ChooseTaxYearFormSpec extends UnitSpec {
 
     "bind with a valid response" should {
       "contain the response - true" in {
-        val completedForm: Form[ChooseTaxYearForm] = ChooseTaxYearForm(choices).bind(validFormData)
+        val completedForm: Form[ChooseTaxYearForm] = ChooseTaxYearForm(choices).bind(validFormData(taxYear))
         completedForm.hasErrors shouldBe false
         completedForm.data.get(ChooseTaxYearForm.choiceField) shouldBe Some(taxYear.toString)
       }
