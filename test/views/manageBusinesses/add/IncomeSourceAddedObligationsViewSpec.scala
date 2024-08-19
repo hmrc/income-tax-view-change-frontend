@@ -348,14 +348,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       "The business started in the current tax year" when {
         "It is reporting quarterly and there is one overdue obligation" in new Setup(validCurrentTaxYearQuarterlyCallOneOverdue) {
           Option(document.getElementById("warning-inset")) match {
-            case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+            case Some(insetText) =>
+              insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "1 overdue update"
             case None => fail("No inset text was found")
           }
         }
 
         "It is reporting quarterly and there are multiple overdue obligations" in new Setup(validCurrentTaxYearQuarterlyCallMultipleOverdue) {
           Option(document.getElementById("warning-inset")) match {
-            case Some(insetText) => insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+            case Some(insetText) =>
+              insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "3 overdue updates"
             case None => fail("No inset text was found")
           }
         }
@@ -365,7 +369,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting annually for both CY-1 and CY" when {
           "There is one overdue obligation" in new Setup(validAnnualThenAnnualCallOneOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No inset text was found")
             }
           }
@@ -374,26 +380,34 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting annually for CY-1 and quarterly for CY" when {
           "There is one overdue quarterly obligation" in new Setup(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations" in new Setup(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates for the first 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 2 overdue updates for the first 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "2 overdue updates"
               case None => fail("No inset text was found")
             }
           }
 
           "There is one overdue annual obligation and multiple overdue quarterly obligations" in new Setup(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue) {
             Option(document.getElementById("annual-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No annual inset text was found")
             }
 
             Option(document.getElementById("quarterly-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "3 overdue updates"
               case None => fail("No quarterly inset text was found")
             }
           }
@@ -402,38 +416,50 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly for CY-1 and annually for CY" when {
           "There is one overdue quarterly obligation" in new Setup(validOneQuarterThenAnnualCallOneQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations" in new Setup(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "2 overdue updates"
               case None => fail("No inset text was found")
             }
           }
 
           "There is one overdue quarterly obligation and one overdue annual obligation" in new Setup(validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue) {
             Option(document.getElementById("annual-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No annual inset text was found")
             }
 
             Option(document.getElementById("quarterly-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No quarterly inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations and one overdue annual obligation" in new Setup(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue) {
             Option(document.getElementById("annual-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No annual inset text was found")
             }
 
             Option(document.getElementById("quarterly-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "2 overdue updates"
               case None => fail("No quarterly inset text was found")
             }
           }
@@ -442,33 +468,43 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly for both CY-1 and CY" when {
           "There is one overdue quarterly obligation from CY-1" in new Setup(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations from CY-1" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "2 overdue updates"
               case None => fail("No inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations from CY-1 and CY" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 3 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 3 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "3 overdue updates"
               case None => fail("No inset text was found")
             }
           }
 
           "There are multiple overdue quarterly obligations from CY-1 and CY, and one overdue annual obligation from CY-1" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue) {
             Option(document.getElementById("annual-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+                insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No annual inset text was found")
             }
 
             Option(document.getElementById("quarterly-warning-inset")) match {
-              case Some(insetText) => insetText.text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              case Some(insetText) =>
+                insetText.text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.select("b").text() shouldBe "4 overdue updates"
               case None => fail("No quarterly inset text was found")
             }
           }
@@ -478,14 +514,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       "The business started before CY-1 and has a historic start date" when {
         "There is one overdue obligation" in new Setup(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue) {
           Option(document.getElementById("warning-inset")) match {
-            case Some(insetText) => insetText.text() shouldBe "You have 1 overdue update. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+            case Some(insetText) =>
+              insetText.text() shouldBe "You have 1 overdue update. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+              insetText.select("b").text() shouldBe "1 overdue update"
             case None => fail("No inset text was found")
           }
         }
 
         "There are multiple overdue obligations" in new Setup(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue) {
           Option(document.getElementById("warning-inset")) match {
-            case Some(insetText) => insetText.text() shouldBe "You have 4 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+            case Some(insetText) =>
+              insetText.text() shouldBe "You have 4 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+              insetText.select("b").text() shouldBe "4 overdue updates"
             case None => fail("No inset text was found")
           }
         }
@@ -500,25 +540,25 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       "The business started in the current tax year" when {
         "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
           Option(document.getElementById("final-declaration")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
-              upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
+              upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
             case _ => fail("No upcoming annual obligation text was found.")
           }
         }
 
         "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
           Option(document.getElementById("quarterly-list")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
-              upcomingAnnualMessage.select("b").text() shouldBe "5 August 2024"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+              upcomingDeadlineMessage.select("b").text() shouldBe "5 August 2024"
             case _ => fail("No upcoming quarterly obligation text was found.")
           }
 
           Option(document.getElementById("obligations-list")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-              upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+              upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
             case _ => fail("No upcoming annual obligation text was found.")
           }
         }
@@ -528,18 +568,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting annually for both CY-1 and CY" when {
           "The current date is before the deadline for CY-1 final declaration" in new Setup(validAnnualThenAnnualCallNoOverdue) {
             Option(document.getElementById("final-declaration")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is after the deadline for CY-1 final declaration" in new Setup(validAnnualThenAnnualCallOneOverdue) {
             Option(document.getElementById("final-declaration")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -548,64 +588,64 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting annually for CY-1 and quarterly for CY" when {
           "The current date is before the CY-1 final declaration deadline and CY Q1 deadline" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 August 2024"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 August 2024"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is before the CY-1 final declaration deadline and between CY Q1 and Q2 deadlines" in new Setup(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 November 2024"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 November 2024 for the quarterly period 6 July 2024 to 5 October 2024"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 November 2024"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is after the CY-1 final declaration deadline and between CY Q2 and Q3 deadlines" in new Setup(validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 February 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 February 2025"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is after the CY-1 final declaration deadline and the CY Q3 deadline" in new Setup(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 May 2025 for the quarterly period 6 January 2025 to 5 April 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 May 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 May 2025 for the quarterly period 6 January 2025 to 5 April 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 May 2025"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -614,16 +654,16 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly for CY-1 and Annually for CY" when {
           "The current date is before the CY-1 Q4 deadline" in new Setup(validFullQuarterlyThenAnnualCallBeforeQ4Deadline) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 May 2024"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 May 2024"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -632,9 +672,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             withClue("Quarterly list id was present when it should not have been.")(Option(document.getElementById("quarterly-list")).isDefined shouldBe false)
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -643,9 +683,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             withClue("Quarterly list id was present when it should not have been.")(Option(document.getElementById("quarterly-list")).isDefined shouldBe false)
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -654,48 +694,48 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly for both CY-1 and CY" when {
           "The current date is before the CY-1 Q4 deadline" in new Setup(validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 May 2024"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 May 2024"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is between the CY-1 Q4 deadline and the CY Q1 deadline" in new Setup(validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 August 2024"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 August 2024"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2025"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
 
           "The current date is after the CY-1 final declaration deadline" in new Setup(validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline) {
             Option(document.getElementById("quarterly-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
-                upcomingAnnualMessage.select("b").text() shouldBe "5 February 2025"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
+                upcomingDeadlineMessage.select("b").text() shouldBe "5 February 2025"
               case _ => fail("No upcoming quarterly obligation text was found.")
             }
 
             Option(document.getElementById("obligations-list")) match {
-              case Some(upcomingAnnualMessage) =>
-                upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-                upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+              case Some(upcomingDeadlineMessage) =>
+                upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+                upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
               case _ => fail("No upcoming annual obligation text was found.")
             }
           }
@@ -705,25 +745,25 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       "The business will start in the next tax year" when {
         "It is reporting annually" in new Setup(validFutureTaxYearAnnualCall) {
           Option(document.getElementById("final-declaration")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
-              upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026."
+              upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
             case _ => fail("No upcoming annual obligation text was found.")
           }
         }
 
         "It is reporting quarterly" in new Setup(validFutureTaxYearQuarterlyCall) {
           Option(document.getElementById("quarterly-list")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
-              upcomingAnnualMessage.select("b").text() shouldBe "5 August 2024"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+              upcomingDeadlineMessage.select("b").text() shouldBe "5 August 2024"
             case _ => fail("No upcoming quarterly obligation text was found.")
           }
 
           Option(document.getElementById("obligations-list")) match {
-            case Some(upcomingAnnualMessage) =>
-              upcomingAnnualMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
-              upcomingAnnualMessage.select("b").text() shouldBe "31 January 2026"
+            case Some(upcomingDeadlineMessage) =>
+              upcomingDeadlineMessage.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+              upcomingDeadlineMessage.select("b").text() shouldBe "31 January 2026"
             case _ => fail("No upcoming annual obligation text was found.")
           }
         }
