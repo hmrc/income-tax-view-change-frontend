@@ -54,6 +54,8 @@ DELETE      /report-quarterly/income-and-expenses/view/test-only/delete-all-user
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show
 + nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
++ nocsrf
+POST        /report-quarterly/income-and-expenses/view/test-only/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll
 
 GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial
 
