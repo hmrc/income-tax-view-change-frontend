@@ -273,9 +273,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
 
       val mtdUser = if(isAgent) {
-        MtdItUser(testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          None, Some(Agent), Some("1"))(FakeRequest())
+        MtdItUser(testMtditid, testNino, userName = None,
+          incomeSources = multipleBusinessesAndPropertyResponse, btaNavPartial = None, saUtr = Some("1234567890"),
+          credId = None, userType = Some(Agent), arn = Some("1"))(FakeRequest())
       } else {
         MtdItUser(
           testMtditid, testNino, None,
