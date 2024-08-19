@@ -595,6 +595,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/manage/business-check-your-answers", clientDetailsWithConfirmation)(Map.empty)
     }
 
+    def getBeforeYouStart(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/start", additionalCookies)
+    }
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
