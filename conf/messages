@@ -1684,6 +1684,7 @@ business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.te
 business-added.obligation.inset.single-historic-overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
 business-added.obligation.inset.multiple-historic-overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
 business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
+business-added.obligation.view-upcoming-updates.text                                    = View your upcoming updates
 
 business-added.next-quarterly-obligation-text-1 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 
@@ -1697,14 +1698,18 @@ business-added.quarterly-opt-out-hybrid-text-1 = Depending on your circumstances
 business-added.quarterly-opt-out-hybrid-link = view and change your reporting frequency
 business-added.quarterly-opt-out-hybrid-text-2 = for all your businesses.
 
+business-added.default-annual-reporting-frequency-text = You are set to report annually for your new business. Find out more about
+business-added.default-annual-reporting-frequency-link = your reporting frequency.
+
 business-added.submit-software-text = Submit updates in software
 business-added.submit-software-quarterly-text = For any tax year you are reporting quarterly, you will need
 business-added.submit-software-quarterly-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-business-added.submit-software-annual-text = When reporting annually, you can file your yearly return as normal.
 
 business-added.submit-tax-return = Submit your tax return
 business-added.submit-tax-return-text = When reporting annually, you can submit your tax return directly through your HMRC online account or
 business-added.submit-tax-return-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-hybrid-annual-text = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 ## You cannot go back - Your business has been added page ##
 

@@ -103,10 +103,13 @@
     }
 }
 
-
-
 @getReportingFrequencyUrl = @{
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
+    if(isAgent) {
+      controllers.routes.NextUpdatesController.showAgent.url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
 }
 
 @getSoftwareUrl = @{
@@ -166,8 +169,6 @@
         </label>
       </h2>
 
-      @reportingMethod
-
       @if(reportingMethod == "Hybrid" | reportingMethod == "Quarterly") {
         @if(getQuarterlyOrHybridList().nonEmpty){
           <ul class="govuk-list govuk-list--bullet">
@@ -176,7 +177,7 @@
         }
       }
 
-      @if(reportingMethod == "Annual"){
+      @if(reportingMethod == "Annual" || reportingMethod == "DefaultAnnual"){
         @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
           <p class="govuk-body" id="final-declaration">
               @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
@@ -184,46 +185,73 @@
         }.getOrElse(Html(None))
       }
 
-      <div class="govuk-link govuk-body" id="view-overdue-upcoming-updates">
-        <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
-      </div>
+      @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
+        <div class="govuk-link govuk-body" id="view-upcoming-updates">
+          <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
+        </div>
+      } else {
+        <div class="govuk-link govuk-body" id="view-upcoming-updates">
+          <a href=@getNextUpdatesUrl>@getMessage("obligation.view-upcoming-updates.text")</a>
+        </div>
+      }
 
       <div class="govuk-link govuk-body" id="view-all-businesses-link">
         <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
       </div>
 
       @if(reportingMethod == "Hybrid" || reportingMethod == "Quarterly") {
-        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency-hybrid">
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("quarterly-opt-out-hybrid-text-1")
-          <a href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
           @getMessage("quarterly-opt-out-hybrid-text-2")
         </div>
       }
-
       @if(reportingMethod == "Annual") {
-        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency-hybrid">
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("quarterly-opt-out-text-1")
-          <a href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-link")</a>
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-link")</a>
           @getMessage("quarterly-opt-out-text-2")
         </div>
       }
-
-      @if(reportingMethod == "Hybrid" | reportingMethod == "Quarterly") {
-        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
-
-        <div class="govuk-body">
-          <p>@getMessage("submit-software-quarterly-text")
-            <a href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
-          </p>
+      @if(reportingMethod == "DefaultAnnual") {
+        <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
+          @getMessage("default-annual-reporting-frequency-text")
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("default-annual-reporting-frequency-link")</a>
         </div>
       }
 
-      @if(reportingMethod == "Annual") {
+
+
+      @if(reportingMethod == "Quarterly") {
+        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
+
+        <div class="govuk-body" id="submit-text">
+          <p>@getMessage("submit-software-quarterly-text")
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
+          </p>
+        </div>
+      }
+      @if(reportingMethod == "Annual" || reportingMethod == "DefaultAnnual") {
         <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-tax-return")</h2>
 
-        <div class="govuk-body">
+        <div class="govuk-body" id="submit-text">
           <p>@getMessage("submit-tax-return-text")
-            <a href=@getSoftwareUrl>@getMessage("submit-tax-return-link")</a>
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-tax-return-link")</a>
+          </p>
+        </div>
+      }
+      @if(reportingMethod == "Hybrid") {
+        <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
+
+        <div class="govuk-body" id="quarterly-submit-text">
+          <p>@getMessage("submit-software-quarterly-text")
+            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
+          </p>
+        </div>
+
+        <div class="govuk-body" id="annual-submit-text">
+          <p>
+            @getMessage("submit-hybrid-annual-text")
           </p>
         </div>
       }

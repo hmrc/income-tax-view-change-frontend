@@ -28,7 +28,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services._
+import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
@@ -112,6 +112,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
       case (Some("A"), Some("A")) | (None, Some("A")) => "Annual"
       case (Some("Q"), Some("Q")) | (None, Some("Q")) => "Quarterly"
       case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => "Hybrid"
+      case (None, None) => "DefaultAnnual"
       case _ => "Unknown"
     }
   }
