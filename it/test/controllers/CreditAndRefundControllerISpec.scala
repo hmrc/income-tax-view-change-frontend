@@ -270,6 +270,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
 
+
+
       val mtdUser = if(isAgent) {
         MtdItUser(testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),

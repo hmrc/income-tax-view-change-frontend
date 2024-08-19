@@ -16,12 +16,12 @@
 
 package auth.authV2
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import auth.authV2.AuthExceptions.{MissingAgentReferenceNumber, MissingMtdId}
 import auth.authV2.actions._
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.FrontendAuthConnector
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.predicates.{IncomeSourceDetailsPredicate, NavBarPredicate}
+import controllers.predicates.IncomeSourceDetailsPredicate
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
@@ -237,14 +237,6 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
         result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
       }
 
-      "redirect to /agents/client-utr to when client id is missing from enrolments (HMRC-MTD-ID)" in new ResultFixture(
-        retrievals = agentRetrievalData.copy(enrolments = Enrolments(Set(agentEnrolment, saEnrolment))),
-        request = validAgentRequest) {
-
-        result.header.status shouldBe SEE_OTHER
-        result.header.headers(Location) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
-      }
-
       "redirect to /agents/client-utr when client id is missing from session" in new ResultFixture(
         retrievals = agentRetrievalData,
         request = agentRequestMissingClientMtdId) {
@@ -330,7 +322,7 @@ class AuthActionsSpec extends TestSupport with ScalaFutures {
     app.injector.instanceOf[AuthoriseAndRetrieve],
     app.injector.instanceOf[AgentHasClientDetails],
     app.injector.instanceOf[AsMtdUser],
-    app.injector.instanceOf[NavBarPredicate],
+    app.injector.instanceOf[NavBarPredicateV2],
     app.injector.instanceOf[IncomeSourceDetailsPredicate],
     app.injector.instanceOf[FeatureSwitchPredicateV2]
   )(appConfig, ec)
