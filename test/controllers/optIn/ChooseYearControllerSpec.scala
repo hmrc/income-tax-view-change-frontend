@@ -45,20 +45,18 @@ class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredic
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   def tests(isAgent: Boolean): Unit = {
+    "show page" should {
+      s"return result with $OK status" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
+        mockSaveIntent(taxYear2023)
 
-    /* todo reinstate test after removal of session data setup code from choose-controller */
-//    "show page" should {
-//      s"return result with $OK status" in {
-//        setupMockAuthorisationSuccess(isAgent)
-//        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-//        mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-//        mockSaveIntent(taxYear2023)
-//
-//        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
-//        val result = controller.show(isAgent).apply(requestGET)
-//        status(result) shouldBe Status.OK
-//      }
-//    }
+        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+        val result = controller.show(isAgent).apply(requestGET)
+        status(result) shouldBe Status.OK
+      }
+    }
 
     "submit page" when {
 

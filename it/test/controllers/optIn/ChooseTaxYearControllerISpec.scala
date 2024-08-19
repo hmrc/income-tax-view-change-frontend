@@ -17,7 +17,7 @@
 package controllers.optIn
 
 
-//import controllers.optIn.ChooseYearControllerISpec.{description1Text, headingText, taxYearChoiceOne, taxYearChoiceTwo}
+import controllers.optIn.ChooseYearControllerISpec.{description1Text, headingText, taxYearChoiceOne, taxYearChoiceTwo}
 import forms.optIn.ChooseTaxYearForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -55,29 +55,28 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
   def testShowHappyCase(isAgent: Boolean): Unit = {
 
-    /* todo reinstate test after removal of session data setup code from choose-controller */
-//    val chooseOptInTaxYearPageUrl = routes.ChooseYearController.show(isAgent).url
+    val chooseOptInTaxYearPageUrl = routes.ChooseYearController.show(isAgent).url
 
-//    s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
-//      s"successfully render opt-in multi choice page" in {
-//
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-//
-//        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
-//
-//        val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
-//        verifyIncomeSourceDetailsCall(testMtditid)
-//
-//        result should have(
-//          httpStatus(OK),
-//          elementTextByID("heading")(headingText),
-//          elementTextByID("description1")(description1Text),
-//          elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
-//          elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
-//          elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),
-//        )
-//      }
-//    }
+    s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
+      s"successfully render opt-in multi choice page" in {
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("heading")(headingText),
+          elementTextByID("description1")(description1Text),
+          elementTextBySelector("#whichTaxYear.govuk-fieldset legend.govuk-fieldset__legend.govuk-fieldset__legend--m")("Which tax year do you want to opt in from?"),
+          elementTextBySelector("div.govuk-radios__item:nth-child(1) > label:nth-child(2)")(taxYearChoiceOne),
+          elementTextBySelector("div.govuk-radios__item:nth-child(2) > label:nth-child(2)")(taxYearChoiceTwo),
+        )
+      }
+    }
   }
 
   def testSubmitHappyCase(isAgent: Boolean): Unit = {

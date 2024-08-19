@@ -52,12 +52,34 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
+  /* todo to be removed, session data should be setup at start of journey */
+  def setupSessionData()(implicit user: MtdItUser[_],
+                         hc: HeaderCarrier,
+                         ec: ExecutionContext): Future[Boolean] = {
+    repository.set(
+      UIJourneySessionData(hc.sessionId.get.value,
+        OptInJourney.Name,
+        optInSessionData =
+          Some(OptInSessionData(None, None))))
+  }
+
+  def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
+                                   hc: HeaderCarrier,
+                                   ec: ExecutionContext): Future[Option[UIJourneySessionData]] = {
+
+    repository.get(hc.sessionId.get.value, OptInJourney.Name).flatMap {
+      case Some(jsd) => Future.successful(Some(jsd))
+      case None if attempt < 2 => setupSessionData().filter(b => b).flatMap(_ => fetchExistingUIJourneySessionDataOrInit(2))
+      case _ => Future.successful(None)
+    }
+  }
+
+  private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
                                    hc: HeaderCarrier,
                                    ec: ExecutionContext): Future[Option[OptInSessionData]] = {
 
     val savedOptInSessionData = for {
-      sessionData <- OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name))
+      sessionData <- OptionT(fetchExistingUIJourneySessionDataOrInit())
       optInSessionData <- OptionT(Future.successful(sessionData.optInSessionData))
     } yield optInSessionData
 
@@ -147,16 +169,5 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       case None => None
       case Some(s) => s.selectedOptInYear.flatMap(TaxYear.getTaxYearModel)
     }
-  }
-
-  /* todo to be removed, session data should be setup at start of journey */
-  def setupSessionData()(implicit user: MtdItUser[_],
-                         hc: HeaderCarrier,
-                         ec: ExecutionContext): Future[Boolean] = {
-    repository.set(
-      UIJourneySessionData(hc.sessionId.get.value,
-        OptInJourney.Name,
-        optInSessionData =
-          Some(OptInSessionData(None, None))))
   }
 }
