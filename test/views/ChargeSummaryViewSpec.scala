@@ -125,8 +125,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
     val poa1TextSentence = messages("chargeSummary.paymentsOnAccount.poa1")
-    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount.textOne") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
-    val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
+    val poa2TextSentence = messages("chargeSummary.paymentsOnAccount.poa2")
+    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount.textOne") + " " + messages("chargeSummary.paymentsOnAccount.linkText") + " " + messages("chargeSummary.paymentsOnAccount.textTwo")
+    val poaTextP4 = messages("chargeSummary.paymentsOnAccount.p4") + " " + messages("chargeSummary.paymentsOnAccount.p4LinkText")
 
     def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
 
@@ -367,22 +368,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
         document.selectById("p1").text() shouldBe poa1TextSentence
-        document.selectById("bullets").text() shouldBe poaTextParagraph
-        document.selectById("p2").text() shouldBe poaTextP2
+        document.selectById("p3").text() shouldBe poaTextParagraph
+        document.selectById("p4").text() shouldBe poaTextP4
       }
 
-//      chargeSummary.paymentsOnAccount.poa1                               = You owe HMRC interest because you paid your first payment on account late
-//      chargeSummary.paymentsOnAccount.poa2                               = You owe HMRC interest because you paid your second payment on account late
-//      chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
-//        chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
-//      chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
-//      chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
-//        chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
-
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.selectById("p1").text() shouldBe poaTextParagraph
-        document.selectById("bullets").text() shouldBe poaTextBullets
-        document.selectById("p2").text() shouldBe poaTextP2
+        document.selectById("p1").text() shouldBe poa1TextSentence
+        document.selectById("p3").text() shouldBe poaTextParagraph
+        document.selectById("p4").text() shouldBe poaTextP4
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {

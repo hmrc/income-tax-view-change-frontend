@@ -932,8 +932,8 @@ chargeSummary.paymentsOnAccount.poa2                               = You owe HMR
 chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
 chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
 chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
-chargeSummary.paymentsOnAccount.p3                                 = See guidance on the
-chargeSummary.paymentsOnAccount.p3LinkText                         = interest rates set by HMRC (opens in new tab).
+chargeSummary.paymentsOnAccount.p4                                 = See guidance on the
+chargeSummary.paymentsOnAccount.p4LinkText                         = interest rates set by HMRC (opens in new tab).
 
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
