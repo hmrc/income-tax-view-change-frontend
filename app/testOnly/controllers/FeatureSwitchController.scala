@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.admin.FeatureSwitchService
@@ -40,10 +41,14 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
 
-  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { request =>
+  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { _ =>
     featureSwitchService.set(featureFlagName, isEnabled).map {
-      case true => Ok(s"Flag $featureFlagName set to $isEnabled")
-      case false => InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
+      case true =>
+        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
+        Ok(s"Flag $featureFlagName set to $isEnabled")
+      case false =>
+        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
+        InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
     }
   }
 
@@ -114,6 +119,9 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
           featureSwitchService.set(featureSwitch.name, enabled = true)
         )
       )
-    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+    } yield {
+      Logger("application").info(s"Enabled all FSS")
+      Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+    }
   }
 }
