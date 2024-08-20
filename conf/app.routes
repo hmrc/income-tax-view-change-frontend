@@ -42,8 +42,6 @@ POST        /agents/optout/choose-taxyear                                 contro
 #OptIn
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
-GET         /opt-in/multi-year-choice                                     controllers.optIn.MultiYearChoiceController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/multi-year-choice                              controllers.optIn.MultiYearChoiceController.show(isAgent: Boolean = true)
 
 GET          /opt-in/multi-year-choice                                    controllers.optIn.ChooseYearController.show(isAgent: Boolean = false)
 GET          /agents/opt-in/multi-year-choice                             controllers.optIn.ChooseYearController.show(isAgent: Boolean = true)
