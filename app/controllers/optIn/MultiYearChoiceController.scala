@@ -23,25 +23,21 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import utils.AuthenticatorPredicate
-import views.html.optIn.BeforeYouStart
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         val ec: ExecutionContext,
-                                         val auth: AuthenticatorPredicate,
-                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                         override val mcc: MessagesControllerComponents
-                                        )
+class MultiYearChoiceController @Inject()(implicit val appConfig: FrontendAppConfig,
+                                          val ec: ExecutionContext,
+                                          val auth: AuthenticatorPredicate,
+                                          val authorisedFunctions: FrontendAuthorisedFunctions,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          override val mcc: MessagesControllerComponents
+                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val startButtonUrl = (isAgent: Boolean) => controllers.optIn.routes.MultiYearChoiceController.show(isAgent)
-
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent).url)))
+    implicit user => Future.successful(Ok(""))
   }
 }
