@@ -51,6 +51,11 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
     ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
     ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 10, 20), "Reversal", Some(MainIncomeLower.code)),
       ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 7, 15), "Reversal", Some(Increase.code)))
+  val chargeHistoryWithAmended: List[ChargeHistoryModel] = List(
+    ChargeHistoryModel("A", "77777", LocalDate.of(2021, 1, 1), "TRM Amend Charge", 2500, LocalDate.of(2024, 1, 15), "amended return", None),
+    ChargeHistoryModel("A", "12345", LocalDate.of(2021, 1, 1), "A", 2000, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2021, 1, 1), "A", 2300, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+  )
   val unchangedDocumentDetail: DocumentDetail = DocumentDetail(
     1, "A", Some("PoA1"), None, 2500, 2500, LocalDate.of(2024, 1, 10)
   )
@@ -227,6 +232,19 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
             res.adjustments(2).amount shouldBe 1300.0
           }
         }
+      }
+      "there is a charge history including adjustments for tax return amendments" in {
+        val desiredAdjustments = AdjustmentHistoryModel(
+          creationEvent = AdjustmentModel(2500, None, "create"),
+          adjustments = List(
+            AdjustmentModel(2000, Some(LocalDate.of(2024, 1, 15)), "amend"),
+            AdjustmentModel(2300, Some(LocalDate.of(2024, 2, 10)), "adjustment"),
+            AdjustmentModel(2200, Some(LocalDate.of(2024, 3, 15)), "adjustment"),
+          )
+        )
+
+        val res = TestChargeHistoryService.getAdjustmentHistory(chargeHistoryWithAmended, adjustedDocumentDetail)
+        res shouldBe desiredAdjustments
       }
     }
   }
