@@ -148,16 +148,14 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
     testSubmitUnhappyCase(isAgent = true)
   }
 
-  private def stubOptOutInitialState(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
-                                     nextTaxYear: TaxYear, nextYearStatus: ITSAStatus.Value): Unit = {
+  private def stubOptOutInitialState(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptInJourney.Name,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus),
-              nextTaxYear.toString, statusToString(nextYearStatus))), None))))
+              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
   }
 
 }

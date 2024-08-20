@@ -144,7 +144,7 @@ class OptInServiceSpec extends UnitSpec
       "return tax years ending 2023, 2024" in {
 
         //mockRepository(Annual, Annual)
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), nextTaxYear.toString, OptInContextData.statusToString(Annual))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), OptInContextData.statusToString(Annual))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -155,7 +155,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), nextTaxYear.toString, OptInContextData.statusToString(Voluntary))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), OptInContextData.statusToString(Voluntary))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
