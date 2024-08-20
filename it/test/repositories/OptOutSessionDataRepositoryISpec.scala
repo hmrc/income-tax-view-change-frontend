@@ -100,7 +100,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
         journeyType = OptOutJourney.Name,
         optOutSessionData = Some(expectedOptOutSessionData))
 
-      repository.set(expectedSessionData)
+      await(repository.set(expectedSessionData))
 
       val result = target.withSessionData(
         data => Future.successful(Results.Ok(s"Yes! I have data: ${data.sessionId}, ${data.optOutSessionData.get.selectedOptOutYear.get}")),
