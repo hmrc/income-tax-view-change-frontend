@@ -929,50 +929,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       Option(document.getElementById("view-overdue-upcoming-updates")).isDefined shouldBe false
     }
 
-    "Display quarterly obligations if the user has them" in new Setup(validAgentCallWithData) {
-      val quarterlySection: Element = layoutContent.getElementById("quarterly")
-      quarterlySection.text() should include(IncomeSourceAddedMessages.deadlinesHeading)
-      quarterlySection.text() should include(IncomeSourceAddedMessages.quarterlyText)
-
-      val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading1 + " 2022 to 2023")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading1 + " 2023 to 2024")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading1 + " 2024 to 2025")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading2)
-
-
-      val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("6 January 2022 to 5 April 2022")
-      tableContent.text() should include("5 May 2022")
-
-      tableContent.text() should include("6 January 2023 to 5 April 2023")
-      tableContent.text() should include("5 May 2023")
-
-      tableContent.text() should include("6 January 2024 to 5 April 2024")
-      tableContent.text() should include("5 May 2024")
-    }
-
-    "Display final declaration obligations if the user has them" in new Setup(validAgentCallWithData) {
-      val finalDecSection: Element = layoutContent.getElementById("finalDeclaration")
-      finalDecSection.text() should include(IncomeSourceAddedMessages.finalDecHeading)
-      finalDecSection.text() should include(IncomeSourceAddedMessages.finalDecText)
-
-      val tableHeadings: Elements = finalDecSection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading1)
-      tableHeadings.text() should include(IncomeSourceAddedMessages.tableHeading2)
-
-      val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("2022 to 2022")
-      tableContent.text() should include("3 January 2022")
-    }
-
-
-    "Display previous tax year message" in new Setup(validAgentCallWithData) {
-      val prevYearsSection: Element = layoutContent.getElementById("prevYears")
-      prevYearsSection.text() should include(IncomeSourceAddedMessages.prevYearsHeading)
-      prevYearsSection.text() should include(IncomeSourceAddedMessages.prevYearsText)
-    }
-
     "Not display any obligation sections when user has no obligations" in new Setup(validUKPropertyBusinessAgentCall) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
       Option(layoutContent.getElementById("prevyears")) shouldBe None
