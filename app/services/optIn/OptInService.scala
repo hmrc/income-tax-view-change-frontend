@@ -45,15 +45,14 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name)).
       map(journeySd => journeySd.copy(optInSessionData = journeySd.optInSessionData.map(_.copy(selectedOptInYear = Some(intent.toString))))).
       flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
-      getOrElse(true)//todo this should default to false, set to true until journey setup is done correctly
+      getOrElse(false)
   }
 
   def availableOptInTaxYear()(implicit user: MtdItUser[_],
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  /* todo to be removed, session data should be setup at start of journey */
-  def setupSessionData()(implicit user: MtdItUser[_],
+  private def setupSessionData()(implicit user: MtdItUser[_],
                          hc: HeaderCarrier,
                          ec: ExecutionContext): Future[Boolean] = {
     repository.set(
@@ -63,7 +62,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
           Some(OptInSessionData(None, None))))
   }
 
-  def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
+  private def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
                                    hc: HeaderCarrier,
                                    ec: ExecutionContext): Future[Option[UIJourneySessionData]] = {
 
@@ -86,7 +85,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     savedOptInSessionData.value
   }
 
-  def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
+  private def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Option[OptInProposition]] = {
 
@@ -110,7 +109,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
 
-  def fetchOptInProposition()(implicit user: MtdItUser[_],
+  private def fetchOptInProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
                                ec: ExecutionContext): Future[OptInProposition] = {
 
