@@ -16,54 +16,79 @@
 
 package repositories
 
-import cats.data.OptionT
 import helpers.ComponentSpecBase
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.optout.OptOutSessionData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus._
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.HttpEntity.Strict
-import play.api.mvc.Results
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.SessionService
-import utils.OptOutJourney
-
-import scala.concurrent.{ExecutionContext, Future}
+import services.optout.OptOutProposition.createOptOutProposition
 
 
 class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutures {
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val journeyRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val repository = app.injector.instanceOf[OptOutSessionDataRepository]
+
+  private val taxYearEnd = 2024
+  private val taxYear2023_2024 = TaxYear.forYearEnd(taxYearEnd)
+  private val taxYear2024_2025 = taxYear2023_2024.nextYear
 
   override def beforeEach(): Unit = {
-    await(repository.collection.deleteMany(BsonDocument()).toFuture())
+    await(journeyRepository.collection.deleteMany(BsonDocument()).toFuture())
   }
 
-  "UIJourneySessionDataRepository.set" should {
-    s"save opt-out session-data" should {
-      s"fetch saved opt-out session-data" in {
+  "OptOutSessionDataRepository" should {
+    s"save and recall the OptOutProposition" in {
 
-        val currentYear = 2024
-        val sessionId = "123"
-        val expectedOptOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some(TaxYear.forYearEnd(currentYear).toString))
-        val expectedSessionData = UIJourneySessionData(sessionId = sessionId,
-          journeyType = OptOutJourney.Name,
-          optOutSessionData = Some(expectedOptOutSessionData))
+      val optOutProposition =
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Mandated,
+          nextYearItsaStatus = NoStatus
+        )
 
-        await(repository.set(expectedSessionData))
+      await(repository.initialiseOptOutJourney(optOutProposition))
 
-        val savedData = repository.get(sessionId, OptOutJourney.Name)
+      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
+    }
 
-        val result = for {
-          fetchedOptOutSessionData <- OptionT(savedData)
-        } yield fetchedOptOutSessionData
+    s"save and recall the user choice" in {
 
-        result.value.futureValue.get.sessionId shouldBe expectedSessionData.sessionId
-        result.value.futureValue.get.journeyType shouldBe expectedSessionData.journeyType
-        result.value.futureValue.get.optOutSessionData shouldBe expectedSessionData.optOutSessionData
-      }
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+
+      await(repository.saveIntent(taxYear2024_2025))
+
+      repository.fetchSavedIntent().futureValue.get shouldBe taxYear2024_2025
+    }
+
+    s"not overwrite the OptOutProposition when saving the user choice" in {
+
+      val optOutProposition =
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Mandated,
+          nextYearItsaStatus = NoStatus
+        )
+
+      await(repository.initialiseOptOutJourney(optOutProposition))
+      await(repository.saveIntent(taxYear2024_2025))
+
+      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
     }
   }
 
+  private def someOptOutProposition = {
+    createOptOutProposition(
+      currentYear = taxYear2023_2024,
+      previousYearCrystallised = true,
+      previousYearItsaStatus = Voluntary,
+      currentYearItsaStatus = Voluntary,
+      nextYearItsaStatus = Voluntary
+    )
+  }
 }
