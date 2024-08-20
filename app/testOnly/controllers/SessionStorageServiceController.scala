@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.mvc._
-import testOnly.models.SessionDataModel
+import testOnly.models.SessionDataRetrieval
 import testOnly.services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -43,19 +43,19 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleShow(isAgent = false)
   }
 
-  def showByMtditid(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleShow(isAgent = false)
-  }
-
   def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowByMtditid(isAgent = true)
+      handleShow(isAgent = true)
   }
 
-  def showAgentByMtditid: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showByMtditid(mtditid: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleShowByMtditid(isAgent = false, mtditid)
+  }
+
+  def showAgentByMtditid(mtditid: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowByMtditid(isAgent = true)
+      handleShowByMtditid(isAgent = true, mtditid)
   }
 
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
@@ -80,10 +80,10 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
-      case Right(model: SessionDataModel) =>
+      case Right(model: SessionDataRetrieval) =>
         Ok(
           s"User model:          ${model.toString}\n" +
-            s"session id:        ${hc.sessionId.toString}\n" +
+            s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
             s"mtditid:           ${model.mtditid}\n" +
             s"nino:              ${model.nino}\n" +
@@ -101,8 +101,25 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
     errorHandler.showInternalServerError()
   }
 
-  private def handleShowByMtditid(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
-
+  private def handleShowByMtditid(isAgent: Boolean, mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    sessionDataService.getSessionDataByMtditid(mtditid) map {
+      case Left(ex) =>
+        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
+          s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
+        InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
+      case Right(model: List[SessionDataRetrieval]) =>
+        Ok(
+          model.zipWithIndex.map {
+            case (item, index) =>
+              s"List item:         ${index + 1}\n" +
+                s"User model:        ${item.toString}\n" +
+                s"session id:        ${item.sessionId}\n" +
+                s"internal id:       Not Implemented in FE Auth Predicate\n" +
+                s"mtditid:           ${item.mtditid}\n" +
+                s"nino:              ${item.nino}\n" +
+                s"utr:               ${item.utr}\n"
+          }.mkString("\n\n"))
+    }
   }
 
 }

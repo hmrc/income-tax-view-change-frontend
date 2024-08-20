@@ -19,24 +19,37 @@ package testOnly.services
 import auth.MtdItUser
 import play.api.http.Status.OK
 import testOnly.connectors.SessionDataConnector
-import testOnly.models.SessionDataModel
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import testOnly.models.{SessionDataModel, SessionDataRetrieval}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataModel]] =
+  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataRetrieval]] = {
     sessionDataConnector.getSessionData(mtditid).map { response =>
       response.status match {
-        case OK => response.json.validate[SessionDataModel].fold(
+        case OK => response.json.validate[SessionDataRetrieval].fold(
           invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
           valid => Right(valid)
         )
         case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
       }
     }
+  }
+
+  def getSessionDataByMtditid(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, List[SessionDataRetrieval]]] = {
+    sessionDataConnector.getSessionDataByMtdidit(mtditid).map { response =>
+      response.status match {
+        case OK => response.json.validate[List[SessionDataRetrieval]].fold(
+          invalid => Left(new Exception(s"Json validation error for List[SessionDataRetrieval]. Invalid: $invalid")),
+          valid => Right(valid)
+        )
+        case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
+      }
+    }
+  }
 
   def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
   : Future[Either[Throwable, String]] = {
