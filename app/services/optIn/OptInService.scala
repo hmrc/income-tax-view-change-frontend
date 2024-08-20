@@ -137,8 +137,10 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
   private def getITSAStatusesFrom(currentYear: TaxYear)(implicit user: MtdItUser[_],
                                                          hc: HeaderCarrier,
-                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =
-    itsaStatusService.getStatusTillAvailableFutureYears(currentYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
+                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
+    itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
+    //todo is passing currentYear.previousYear correct here?
+  }
 
   private def createOptInProposition( currentYear: TaxYear,
                                       nextYear: TaxYear,
@@ -146,12 +148,12 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                      ): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
-      status = initialState.currentYearItsaStatus, //todo on login selected ITSA status not taking affect needs to be investigated ITSAStatus.Annual, //
+      status = initialState.currentYearItsaStatus,
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptInTaxYear(
-      status = initialState.nextYearItsaStatus, //todo on login selected ITSA status not taking affect needs to be investigated
+      status = initialState.nextYearItsaStatus,
       taxYear = nextYear,
       currentOptInTaxYear = currentOptInTaxYear
     )
