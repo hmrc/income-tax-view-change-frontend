@@ -147,12 +147,12 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                      ): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
-      status = initialState.currentYearItsaStatus, //todo reinstate after ATs setup ITSAStatus.Annual, //
+      status = initialState.currentYearItsaStatus, //todo on login selected ITSA status not taking affect needs to be investigated ITSAStatus.Annual, //
       taxYear = currentYear
     )
 
     val nextYearOptOut = NextOptInTaxYear(
-      status = initialState.nextYearItsaStatus, //todo reinstate after ATs setup
+      status = initialState.nextYearItsaStatus, //todo on login selected ITSA status not taking affect needs to be investigated
       taxYear = nextYear,
       currentOptInTaxYear = currentOptInTaxYear
     )
