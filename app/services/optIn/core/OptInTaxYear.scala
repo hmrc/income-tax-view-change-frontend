@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package models.optin
+package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus}
 
-case class ChooseTaxYearViewModel( availableOptInTaxYear: Seq[TaxYear],
-                                   cancelURL: String,
-                                   isAgent: Boolean)
+trait OptInTaxYear {
+  val taxYear: TaxYear
+  def canOptIn: Boolean
+}
+case class CurrentOptInTaxYear(status: ITSAStatus, taxYear: TaxYear) extends OptInTaxYear {
+  def canOptIn: Boolean = status == Annual
+}
+case class NextOptInTaxYear(status: ITSAStatus, taxYear: TaxYear, currentOptInTaxYear: CurrentOptInTaxYear) extends OptInTaxYear {
+  def canOptIn: Boolean = (status == Annual) || (currentOptInTaxYear.status == Annual && status == NoStatus)
+  //todo check the no-status rule here?
+}

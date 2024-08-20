@@ -16,34 +16,21 @@
 
 package models.optin
 
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInContextData(crystallisationStatus: Boolean,
-                             previousYearITSAStatus: String,
-                             currentYearITSAStatus: String,
-                             nextYearITSAStatus: String)
+case class OptInContextData(currentTaxYear: String,
+                            currentYearITSAStatus: String,
+                            nextYearITSAStatus: String) {
+
+  def currentYearAsTaxYear(): Option[TaxYear] = asTaxYear(currentTaxYear)
+  def nextTaxYearAsTaxYear(): Option[TaxYear] = currentYearAsTaxYear().map(_.nextYear)
+
+  private def asTaxYear(taxYearValue: String): Option[TaxYear] = {
+    TaxYear.getTaxYearModel(taxYearValue)
+  }
+}
 
 object OptInContextData {
   implicit val format: OFormat[OptInContextData] = Json.format[OptInContextData]
-
-  def statusToString(status: ITSAStatus): String =
-    status match {
-      case ITSAStatus.NoStatus  => "U"
-      case ITSAStatus.Voluntary => "V"
-      case ITSAStatus.Annual    => "A"
-      case ITSAStatus.Mandated  => "M"
-      // This will be validated earlier on in a future ticket
-      case _ => throw new RuntimeException("Unexpected status")
-    }
-
-  def stringToStatus(status: String): ITSAStatus.Value =
-    status match {
-      case "U" => ITSAStatus.NoStatus
-      case "V" => ITSAStatus.Voluntary
-      case "A" => ITSAStatus.Annual
-      case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
-    }
 }

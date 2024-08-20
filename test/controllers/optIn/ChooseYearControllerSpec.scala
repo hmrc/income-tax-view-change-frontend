@@ -22,7 +22,6 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status
-import play.api.http.Status.OK
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -46,7 +45,6 @@ class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredic
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   def tests(isAgent: Boolean): Unit = {
-
     "show page" should {
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)

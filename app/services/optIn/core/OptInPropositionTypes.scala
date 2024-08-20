@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package models.optin
+package services.optIn.core
 
-import models.incomeSourceDetails.TaxYear
-
-case class ChooseTaxYearViewModel( availableOptInTaxYear: Seq[TaxYear],
-                                   cancelURL: String,
-                                   isAgent: Boolean)
+sealed trait OptInPropositionTypes {
+  val proposition: OptInProposition
+}
+case class OneYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes {
+  val intent: OptInTaxYear = proposition.availableOptInYears.head
+}
+case class MultiYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes

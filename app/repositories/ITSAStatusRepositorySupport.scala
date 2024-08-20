@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package models.optout
+package repositories
 
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.libs.json.{Json, OFormat}
 
-case class OptOutContextData(crystallisationStatus: Boolean,
-                             previousYearITSAStatus: String,
-                             currentYearITSAStatus: String,
-                             nextYearITSAStatus: String)
+object ITSAStatusRepositorySupport {
 
-object OptOutContextData {
-  implicit val format: OFormat[OptOutContextData] = Json.format[OptOutContextData]
-
-  //todo remove these converter functions and instead use ITSAStatus.statusToString, ITSAStatus.stringToStatus
   def statusToString(status: ITSAStatus): String =
     status match {
       case ITSAStatus.NoStatus  => "U"

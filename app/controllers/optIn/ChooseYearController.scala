@@ -57,22 +57,27 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok(view(ChooseTaxYearForm(optInService.availableOptInTaxYear().map(_.toString)), viewModel(isAgent))))
+
+        optInService.availableOptInTaxYear().map { taxYears =>
+          Ok(view(ChooseTaxYearForm(taxYears.map(_.toString)), viewModel(taxYears, isAgent)))
+        }
       }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
-      ChooseTaxYearForm(optInService.availableOptInTaxYear().map(_.toString)).bindFromRequest().fold(
-        formWithError => Future.successful(BadRequest(view(formWithError, viewModel(isAgent)))),
-        form => saveTaxYearChoice(form).map {
-          case true => redirectToCheckpointPage(isAgent)
-          case false => itvcErrorHandler.showInternalServerError()
-        }
-      )
+      optInService.availableOptInTaxYear().flatMap { taxYears =>
+        ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(
+          formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),
+          form => saveTaxYearChoice(form).map {
+            case true => redirectToCheckpointPage(isAgent)
+            case false => itvcErrorHandler.showInternalServerError()
+          }
+        )
+      }
   }
 
-  private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit request: RequestHeader): Future[Boolean] = {
+  private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit mtdItUser: MtdItUser[_]): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
       optInService.saveIntent(intent)
     } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))
@@ -88,8 +93,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
-  private def viewModel(isAgent: Boolean): ChooseTaxYearViewModel = {
-    ChooseTaxYearViewModel(availableOptInTaxYear = optInService.availableOptInTaxYear(),
-      cancelURL = cancelUrl(isAgent), isAgent = isAgent)
+  private def viewModel(availableOptInTaxYear: Seq[TaxYear], isAgent: Boolean): ChooseTaxYearViewModel = {
+    ChooseTaxYearViewModel(availableOptInTaxYear = availableOptInTaxYear, cancelURL = cancelUrl(isAgent), isAgent = isAgent)
   }
 }
