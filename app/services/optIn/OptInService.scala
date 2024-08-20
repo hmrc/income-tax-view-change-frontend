@@ -80,7 +80,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     val savedOptInSessionData = for {
       sessionData <- OptionT(fetchExistingUIJourneySessionDataOrInit())
-      optInSessionData <- OptionT(Future.successful(sessionData.optInSessionData))
+      optInSessionData <- OptionT.fromOption[Future](sessionData.optInSessionData)
     } yield optInSessionData
 
     savedOptInSessionData.value
@@ -93,10 +93,9 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     val savedOptInProposition = for {
 
       optInSessionData <- OptionT(fetchSavedOptInSessionData())
-      contextData <- OptionT(Future.successful(optInSessionData.optInContextData))
-
-      currentYearAsTaxYear <- OptionT(Future.successful(contextData.currentYearAsTaxYear()))
-      nextTaxYearAsTaxYear <- OptionT(Future.successful(contextData.nextTaxYearAsTaxYear()))
+      contextData <- OptionT.fromOption[Future](optInSessionData.optInContextData)
+      currentYearAsTaxYear <- OptionT.fromOption[Future](contextData.currentYearAsTaxYear())
+      nextTaxYearAsTaxYear <- OptionT.fromOption[Future](contextData.nextTaxYearAsTaxYear())
 
       currentYearITSAStatus = stringToStatus(contextData.currentYearITSAStatus)
       nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
