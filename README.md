@@ -95,3 +95,23 @@ Staging:
 Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/session-storage
 Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
 
+--------------------------------------------------------
+
+Multi-project:
+Proposed dependency diagram (TBC):
+
+
+core - response models (no view models) / forms ?;
+repositories - r/w - access to mongo: request response model out of core;
+services - wrappers around connector methods / place for view models(?)
+app - view models / views / controller ;
+
+```mermaid
+graph TD;
+    core-->repositories;
+    repositories-->services;
+    core-->connectors;
+    connectors-->services;
+    core-->services;
+    services-->app;
+```
