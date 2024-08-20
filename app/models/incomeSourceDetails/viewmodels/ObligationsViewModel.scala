@@ -28,12 +28,12 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
       val nonHistoricOverdueObligations = getNumberOfNonHistoricOverdueObligations(currentDate)
       if (nonHistoricOverdueObligations > 1) {
         OverdueObligationsMessageComponents("obligation.inset.multiple-historic-overdue.text",
-          Seq(getNumberOfNonHistoricOverdueObligations(currentDate).toString, (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
+          List(getNumberOfNonHistoricOverdueObligations(currentDate).toString, (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
       } else if (nonHistoricOverdueObligations == 1) {
         OverdueObligationsMessageComponents("obligation.inset.single-historic-overdue.text",
-          Seq((currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
+          List((currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
       }else {
-        OverdueObligationsMessageComponents("", Seq())
+        OverdueObligationsMessageComponents("", Nil)
       }
     } else {
       val overdueAnnual = getNumberOfOverdueAnnualObligations(currentDate).min(1) // Will only be a maximum of 1 overdue annual if non historic
@@ -42,11 +42,11 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
   }
 
-  def getNumberOfOverdueAnnualObligations(currentDate: LocalDate): Int = {
+  private def getNumberOfOverdueAnnualObligations(currentDate: LocalDate): Int = {
     finalDeclarationDates.count(_.inboundCorrespondenceDue.isBefore(currentDate))
   }
 
-  def getNumberOfOverdueQuarterlyObligations(currentDate: LocalDate): Int = {
+  private def getNumberOfOverdueQuarterlyObligations(currentDate: LocalDate): Int = {
     quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceDue.isBefore(currentDate))).size
   }
 
@@ -68,36 +68,36 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
         if (numberOfOverdueQuarterlyObligations > 1) {
           OverdueObligationsMessageComponents(
             "obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text",
-            Seq(numberOfOverdueQuarterlyObligations.toString)
+            List(numberOfOverdueQuarterlyObligations.toString)
           )
         } else {
           OverdueObligationsMessageComponents(
             "obligation.inset.multiple-tax-years-single-quarterly-overdue.text",
-            Seq(numberOfOverdueQuarterlyObligations.toString)
+            Nil
           )
         }
       } else if (numberOfOverdueQuarterlyObligations > 1) {
         OverdueObligationsMessageComponents(
           "obligation.inset.multiple-quarterly-overdue.text",
-          Seq(numberOfOverdueQuarterlyObligations.toString, (numberOfOverdueQuarterlyObligations * 3).toString, (currentTaxYear - 1).toString, currentTaxYear.toString)
+          List(numberOfOverdueQuarterlyObligations.toString, (numberOfOverdueQuarterlyObligations * 3).toString, (currentTaxYear - 1).toString, currentTaxYear.toString)
         )
       } else {
         OverdueObligationsMessageComponents(
           "obligation.inset.single-quarterly-overdue.text",
-          Seq((currentTaxYear - 1).toString, currentTaxYear.toString)
+          List((currentTaxYear - 1).toString, currentTaxYear.toString)
         )
       }
     }
 
     (overdueAnnual, overdueQuarterly) match {
       case (1, 0) =>
-        OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
+        OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Nil)
       case (0, q) if q > 0 =>
         onlyQuarterly(q)
       case (1, q) if q > 0 =>
-        OverdueObligationsMessageComponents("hybrid", Seq())
+        OverdueObligationsMessageComponents("hybrid", Nil)
       case _ =>
-        OverdueObligationsMessageComponents("", Seq())
+        OverdueObligationsMessageComponents("", Nil)
     }
   }
 
@@ -126,4 +126,4 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
                             inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)
 
-final case class OverdueObligationsMessageComponents(messageKey: String, args: Seq[String])
+final case class OverdueObligationsMessageComponents(messageKey: String, args: List[String])
