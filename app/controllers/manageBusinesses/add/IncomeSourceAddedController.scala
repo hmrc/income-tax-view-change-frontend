@@ -28,7 +28,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, U
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
@@ -40,7 +40,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
-                                            val itsaStatusService: ITSAStatusService,
                                             nextUpdatesService: NextUpdatesService,
                                             auth: AuthenticatorPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
