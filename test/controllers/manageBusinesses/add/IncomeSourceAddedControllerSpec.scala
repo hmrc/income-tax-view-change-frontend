@@ -65,7 +65,6 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockITSAStatusService,
     mockNextUpdatesService,
     testAuthenticator
   )(
