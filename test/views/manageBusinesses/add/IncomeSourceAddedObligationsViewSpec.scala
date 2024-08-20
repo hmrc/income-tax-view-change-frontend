@@ -17,9 +17,9 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.ChosenReportingMethod
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
 import testUtils.ViewSpec
@@ -182,66 +182,66 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None, day, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None, day, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None, day, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None, day, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
 
-  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"), day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
 
   // Overdue obligations test data
-  val validCurrentTaxYearAnnualCallNoOverdue: Html = view(viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validCurrentTaxYearQuarterlyCallNoOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validCurrentTaxYearQuarterlyCallOneOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
+  val validCurrentTaxYearAnnualCallNoOverdue: Html = view(viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validCurrentTaxYearQuarterlyCallNoOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validCurrentTaxYearQuarterlyCallOneOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html = view(viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
 
-  val validAnnualThenAnnualCallNoOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validAnnualThenAnnualCallOneOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validAnnualThenAnnualCallNoOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validAnnualThenAnnualCallOneOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
 
-  val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterSecondQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
+  val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterSecondQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
 
-  val validOneQuarterThenAnnualCallNoOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayBeforeLastQuarterlyDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validOneQuarterThenAnnualCallOneQuarterlyOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validTwoQuartersThenAnnualCallTwoQuarterlyOverdue: Html = view(viewModelTwoQuartersYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue: Html = view(viewModelTwoQuartersYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
+  val validOneQuarterThenAnnualCallNoOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayBeforeLastQuarterlyDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validOneQuarterThenAnnualCallOneQuarterlyOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validTwoQuartersThenAnnualCallTwoQuarterlyOverdue: Html = view(viewModelTwoQuartersYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue: Html = view(viewModelOneQuarterYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue: Html = view(viewModelTwoQuartersYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
 
-  val validOneQuarterThenQuarterlyCallNoOverdue: Html = view(viewModelOneQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayBeforeLastQuarterlyDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelOneQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Quarterly")
+  val validOneQuarterThenQuarterlyCallNoOverdue: Html = view(viewModelOneQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayBeforeLastQuarterlyDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelOneQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html = view(viewModelTwoQuarterYearThenQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
 
-  val validHistoricAnnualThenAnnualCallNoOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = true, reportingMethod = "Annual")
-  val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = true, reportingMethod = "Hybrid")
-  val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = true, reportingMethod = "Hybrid")
+  val validHistoricAnnualThenAnnualCallNoOverdue: Html = view(viewModelWithAnnualYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = true, reportingMethod = ChosenReportingMethod.Annual)
+  val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFirstQuarterDeadline2024_2025, isBusinessHistoric = true, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterThirdQuarterDeadline2024_2025, isBusinessHistoric = true, reportingMethod = ChosenReportingMethod.Hybrid)
 
-  val validFutureAnnualCallSameTaxYear: Html = view(viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Annual")
+  val validFutureAnnualCallSameTaxYear: Html = view(viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
   // End of overdue obligations test data
 
   // Upcoming obligations data
-  val validFullQuarterlyThenAnnualCallBeforeQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayJustAfterTaxYearStart2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validFullQuarterlyThenAnnualCallAfterQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Hybrid")
-  val validFullQuarterlyThenAnnualCallAfterFinalDecDeadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Hybrid")
+  val validFullQuarterlyThenAnnualCallBeforeQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayJustAfterTaxYearStart2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validFullQuarterlyThenAnnualCallAfterQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
+  val validFullQuarterlyThenAnnualCallAfterFinalDecDeadline: Html = view(viewModelWithFullQuarterlyYearThenAnnualYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Hybrid)
 
-  val validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayJustAfterTaxYearStart2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "Quarterly")
-  val validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = "Quarterly")
+  val validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayJustAfterTaxYearStart2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
+  val validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline: Html = view(viewModelWithFullQuarterlyYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, Some("Test Name"), dayAfterFinalDeclarationDeadline2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
 
-  val validFutureTaxYearAnnualCall: Html = view(viewModelWithFutureBusinessStartReportingAnnually, isAgent = false, SelfEmployment, Some("Test Name"), dayJustBeforeTaxYearEnd2023_2024, isBusinessHistoric = false, reportingMethod = "Annual")
-  val validFutureTaxYearQuarterlyCall: Html = view(viewModelWithFutureBusinessStartReportingQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayJustBeforeTaxYearEnd2023_2024, isBusinessHistoric = false, reportingMethod = "Quarterly")
+  val validFutureTaxYearAnnualCall: Html = view(viewModelWithFutureBusinessStartReportingAnnually, isAgent = false, SelfEmployment, Some("Test Name"), dayJustBeforeTaxYearEnd2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual)
+  val validFutureTaxYearQuarterlyCall: Html = view(viewModelWithFutureBusinessStartReportingQuarterly, isAgent = false, SelfEmployment, Some("Test Name"), dayJustBeforeTaxYearEnd2023_2024, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly)
   // End of upcoming obligations data
 
-  val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = "DefaultAnnual")
+  val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.DefaultAnnual)
 
   val addIncomeSourceShowURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url

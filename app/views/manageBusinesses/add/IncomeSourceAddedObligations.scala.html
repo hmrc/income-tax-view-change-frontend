@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import models.incomeSourceDetails.ChosenReportingMethod
 @import models.incomeSourceDetails.viewmodels._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
@@ -35,7 +36,7 @@
         govukInsetText: GovukInsetText,
 )
 
-@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean, reportingMethod: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None, currentDate: LocalDate, isBusinessHistoric: Boolean, reportingMethod: ChosenReportingMethod)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"business-added.$key", args: _*)
@@ -78,7 +79,7 @@
     </div>
 }
 
-@getBannerContent() = @{
+@getBannerContent = @{
     incomeSourceType match {
         case _: SelfEmployment.type =>
             bannerHtmlContent(getMessage("sole-trader.head"), businessName.get, getMessage("sole-trader.base"))
@@ -119,7 +120,7 @@
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
-  @getQuarterlyOrHybridList() = @{
+  @getQuarterlyOrHybridList = @{
     val quarterlyBullet: List[Html] = sources.getFirstUpcomingQuarterlyDate(currentDate) match {
       case Some(quarterlyUpdate) =>
         val quarterlyUpdateTaxYear = sources.getQuarterlyObligationTaxYear(quarterlyUpdate)
@@ -151,7 +152,7 @@
     @formWithCSRF(action = getAddIncomeSourcesCall) {
 
       <div class="govuk-panel govuk-panel--confirmation" id="banner">
-        @getBannerContent()
+        @getBannerContent
       </div>
 
       @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
@@ -169,15 +170,15 @@
         </label>
       </h2>
 
-      @if(reportingMethod == "Hybrid" | reportingMethod == "Quarterly") {
-        @if(getQuarterlyOrHybridList().nonEmpty){
+      @if(reportingMethod == ChosenReportingMethod.Hybrid | reportingMethod == ChosenReportingMethod.Quarterly) {
+        @if(getQuarterlyOrHybridList.nonEmpty){
           <ul class="govuk-list govuk-list--bullet">
-            @getQuarterlyOrHybridList()
+            @getQuarterlyOrHybridList
           </ul>
         }
       }
 
-      @if(reportingMethod == "Annual" || reportingMethod == "DefaultAnnual"){
+      @if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual){
         @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
           <p class="govuk-body" id="final-declaration">
               @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
@@ -199,21 +200,21 @@
         <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
       </div>
 
-      @if(reportingMethod == "Hybrid" || reportingMethod == "Quarterly") {
+      @if(reportingMethod == ChosenReportingMethod.Quarterly || reportingMethod == ChosenReportingMethod.Hybrid) {
         <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("quarterly-opt-out-hybrid-text-1")
           <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
           @getMessage("quarterly-opt-out-hybrid-text-2")
         </div>
       }
-      @if(reportingMethod == "Annual") {
+      @if(reportingMethod == ChosenReportingMethod.Annual) {
         <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("quarterly-opt-out-text-1")
           <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-link")</a>
           @getMessage("quarterly-opt-out-text-2")
         </div>
       }
-      @if(reportingMethod == "DefaultAnnual") {
+      @if(reportingMethod == ChosenReportingMethod.DefaultAnnual) {
         <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("default-annual-reporting-frequency-text")
           <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("default-annual-reporting-frequency-link")</a>
@@ -222,7 +223,7 @@
 
 
 
-      @if(reportingMethod == "Quarterly") {
+      @if(reportingMethod == ChosenReportingMethod.Quarterly) {
         <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
 
         <div class="govuk-body" id="submit-text">
@@ -231,7 +232,7 @@
           </p>
         </div>
       }
-      @if(reportingMethod == "Annual" || reportingMethod == "DefaultAnnual") {
+      @if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
         <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-tax-return")</h2>
 
         <div class="govuk-body" id="submit-text">
@@ -240,7 +241,7 @@
           </p>
         </div>
       }
-      @if(reportingMethod == "Hybrid") {
+      @if(reportingMethod == ChosenReportingMethod.Hybrid) {
         <h2 class="govuk-heading-m govuk-!-margin-top-8">@getMessage("submit-software-text")</h2>
 
         <div class="govuk-body" id="quarterly-submit-text">

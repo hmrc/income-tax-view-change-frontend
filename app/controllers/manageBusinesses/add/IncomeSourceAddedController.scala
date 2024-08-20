@@ -24,7 +24,7 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingFieldException
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -71,7 +71,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
             incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
             (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
           } yield {
-              val reportingMethod: String = getReportingMethod(sessionData.addIncomeSourceData)
+            val reportingMethod: ChosenReportingMethod = getReportingMethod(sessionData.addIncomeSourceData)
               handleSuccess(
                 isAgent = isAgent,
                 businessName = businessName,
@@ -103,22 +103,22 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
-  private def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): String = {
+  private def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): ChosenReportingMethod = {
     val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
       maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
       maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
     )
     (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
-      case (Some("A"), Some("A")) | (None, Some("A")) => "Annual"
-      case (Some("Q"), Some("Q")) | (None, Some("Q")) => "Quarterly"
-      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => "Hybrid"
-      case (None, None) => "DefaultAnnual"
-      case _ => "Unknown"
+      case (Some("A"), Some("A")) | (None, Some("A")) => ChosenReportingMethod.Annual
+      case (Some("Q"), Some("Q")) | (None, Some("Q")) => ChosenReportingMethod.Quarterly
+      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => ChosenReportingMethod.Hybrid
+      case (None, None) => ChosenReportingMethod.DefaultAnnual
+      case _ => ChosenReportingMethod.Unknown
     }
   }
 
   private def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, reportingMethod: String
+                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, reportingMethod: ChosenReportingMethod
                            )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
