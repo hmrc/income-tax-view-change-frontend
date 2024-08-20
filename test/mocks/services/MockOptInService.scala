@@ -36,7 +36,7 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockSaveIntent(intent: TaxYear, isSuccessful: Boolean = true): Unit = {
-    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any())).thenReturn(Future.successful(isSuccessful))
+    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any())).thenReturn(Future.successful(isSuccessful))
   }
 
   def mockAvailableOptInTaxYear(choices: List[TaxYear]): Unit = {

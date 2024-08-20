@@ -77,7 +77,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
       }
   }
 
-  private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit request: RequestHeader): Future[Boolean] = {
+  private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit mtdItUser: MtdItUser[_]): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
       optInService.saveIntent(intent)
     } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))

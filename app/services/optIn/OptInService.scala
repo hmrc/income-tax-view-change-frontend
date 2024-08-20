@@ -41,8 +41,10 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                              dateService: DateServiceInterface,
                              repository: UIJourneySessionDataRepository) {
 
-  def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    OptionT(repository.get(hc.sessionId.get.value, OptInJourney.Name)).
+  def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],
+                                  hc: HeaderCarrier,
+                                  ec: ExecutionContext): Future[Boolean] = {
+    OptionT(fetchExistingUIJourneySessionDataOrInit()).
       map(journeySd => journeySd.copy(optInSessionData = journeySd.optInSessionData.map(_.copy(selectedOptInYear = Some(intent.toString))))).
       flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
       getOrElse(false)
@@ -63,9 +65,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
   private def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
-                                   hc: HeaderCarrier,
-                                   ec: ExecutionContext): Future[Option[UIJourneySessionData]] = {
-
+                                                                        hc: HeaderCarrier,
+                                                                        ec: ExecutionContext): Future[Option[UIJourneySessionData]] = {
     repository.get(hc.sessionId.get.value, OptInJourney.Name).flatMap {
       case Some(jsd) => Future.successful(Some(jsd))
       case None if attempt < 2 => setupSessionData().filter(b => b).flatMap(_ => fetchExistingUIJourneySessionDataOrInit(2))

@@ -96,12 +96,14 @@ class OptInServiceSpec extends UnitSpec
   "OptInService.saveIntent and no session data" should {
     "save selectedOptInYear in session data" in {
 
-      when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(None))
+      val jsd = UIJourneySessionData(hc.sessionId.get.value, OptInJourney.Name)
+
+      when(repository.get(hc.sessionId.get.value, OptInJourney.Name)).thenReturn(Future.successful(Some(jsd)))
 
       val result = service.saveIntent(currentTaxYear)
       result.futureValue shouldBe true
 
-      verify(repository, times(0)).set(any())
+      verify(repository, times(1)).set(jsd)
     }
   }
 
