@@ -90,7 +90,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   }
 
   private def cancelUrl(isAgent: Boolean): String = {
-    routes.ChooseYearController.show(isAgent).url //todo change this to the correct url
+    routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
   private def viewModel(availableOptInTaxYear: Seq[TaxYear], isAgent: Boolean): ChooseTaxYearViewModel = {
