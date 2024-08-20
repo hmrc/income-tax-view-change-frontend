@@ -69,7 +69,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
 
-        when(repository.recallOptOutInitialState()).thenReturn(
+        when(repository.recallOptOutProposition()).thenReturn(
           Future.successful(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,
@@ -102,7 +102,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
 
-        when(repository.recallOptOutInitialState()).thenReturn(
+        when(repository.recallOptOutProposition()).thenReturn(
           Future.successful(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,
@@ -138,7 +138,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(repository.recallOptOutInitialState()).thenReturn(
+        when(repository.recallOptOutProposition()).thenReturn(
           Future.successful(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,

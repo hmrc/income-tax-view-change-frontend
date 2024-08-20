@@ -40,7 +40,7 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       getOrElse(false)
   }
 
-  def recallOptOutInitialState()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutProposition]] = {
+  def recallOptOutProposition()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutProposition]] = {
     repository.get(hc.sessionId.get.value, OptOutJourney.Name) map { sessionData =>
       for {
         data <- sessionData

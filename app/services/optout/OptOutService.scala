@@ -66,7 +66,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def recallOptOutProposition()(implicit hc: HeaderCarrier,
                                 ec: ExecutionContext): Future[OptOutProposition] = {
 
-    OptionT(repository.recallOptOutInitialState()).
+    OptionT(repository.recallOptOutProposition()).
       getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 

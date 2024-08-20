@@ -78,7 +78,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
+        when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
           createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
         val result = service.makeOptOutUpdateRequest()
@@ -111,7 +111,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
+        when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
           createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
 
@@ -145,7 +145,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.recallOptOutInitialState()).thenReturn(Future.successful(Some(
+        when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
           createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
 
         val result = service.makeOptOutUpdateRequest()

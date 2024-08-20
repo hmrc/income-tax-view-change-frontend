@@ -136,7 +136,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
 
-      val initialState = optOutRepository.recallOptOutInitialState()
+      val initialState = optOutRepository.recallOptOutProposition()
 
       initialState.futureValue.isDefined shouldBe true
       initialState.futureValue.get shouldBe createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus)
