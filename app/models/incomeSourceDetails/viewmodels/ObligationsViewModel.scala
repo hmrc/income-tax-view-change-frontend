@@ -24,9 +24,6 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
                                       finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean) {
 
   def getOverdueObligationsMessageComponents(currentDate: LocalDate, isBusinessHistoric: Boolean): OverdueObligationsMessageComponents = {
-    val overdueAnnual = getNumberOfOverdueAnnualObligations(currentDate)
-    val overdueQuarterly = getNumberOfOverdueQuarterlyObligations(currentDate)
-
     if (isBusinessHistoric) {
       val nonHistoricOverdueObligations = getNumberOfNonHistoricOverdueObligations(currentDate)
       if (nonHistoricOverdueObligations > 1) {
@@ -39,6 +36,8 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
         OverdueObligationsMessageComponents("", Seq())
       }
     } else {
+      val overdueAnnual = getNumberOfOverdueAnnualObligations(currentDate).min(1) // Will only be a maximum of 1 overdue annual if non historic
+      val overdueQuarterly = getNumberOfOverdueQuarterlyObligations(currentDate)
       handleNonHistoricCases(overdueAnnual, overdueQuarterly)
     }
   }
@@ -62,14 +61,6 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
   }
 
   private def handleNonHistoricCases(overdueAnnual: Int, overdueQuarterly: Int): OverdueObligationsMessageComponents = {
-    def onlyAnnual(numberOfOverdueAnnualObligations: Int): OverdueObligationsMessageComponents = {
-      if (numberOfOverdueAnnualObligations > 1) {
-        OverdueObligationsMessageComponents("obligation.inset.multiple-annual-overdue.text", Seq(numberOfOverdueAnnualObligations.toString))
-      } else {
-        OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
-      }
-    }
-
     def onlyQuarterly(numberOfOverdueQuarterlyObligations: Int): OverdueObligationsMessageComponents = {
       if (quarterlyObligationsDates.flatMap(_.filter(_.inboundCorrespondenceTo.isBefore(
         TaxYear.makeTaxYearWithEndYear(currentTaxYear).toFinancialYearStart
@@ -99,11 +90,11 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
     }
 
     (overdueAnnual, overdueQuarterly) match {
-      case (a, 0) if a > 0 =>
-        onlyAnnual(a)
+      case (1, 0) =>
+        OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Seq())
       case (0, q) if q > 0 =>
         onlyQuarterly(q)
-      case (a, q) if a > 0 && q > 0 =>
+      case (1, q) if q > 0 =>
         OverdueObligationsMessageComponents("hybrid", Seq())
       case _ =>
         OverdueObligationsMessageComponents("", Seq())
