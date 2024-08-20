@@ -20,7 +20,8 @@ import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary, statusToString}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import repositories.ITSAStatusRepositorySupport._
 import models.itsaStatus.StatusDetail
 import models.optin.{OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers.any

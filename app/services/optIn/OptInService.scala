@@ -21,7 +21,8 @@ import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, stringToStatus}
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import repositories.ITSAStatusRepositorySupport._
 import models.optin.OptInSessionData
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInInitialState, OptInProposition}

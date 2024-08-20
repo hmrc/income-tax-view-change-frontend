@@ -49,23 +49,4 @@ object ITSAStatus extends Enumeration {
 
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
   implicit val itsaStatusWrite: Writes[ITSAStatus] = Writes.enumNameWrites
-
-  def statusToString(status: ITSAStatus): String =
-    status match {
-      case ITSAStatus.NoStatus  => "U"
-      case ITSAStatus.Voluntary => "V"
-      case ITSAStatus.Annual    => "A"
-      case ITSAStatus.Mandated  => "M"
-      // This will be validated earlier on in a future ticket
-      case _ => throw new RuntimeException("Unexpected status")
-    }
-
-  def stringToStatus(status: String): ITSAStatus.Value =
-    status match {
-      case "U" => ITSAStatus.NoStatus
-      case "V" => ITSAStatus.Voluntary
-      case "A" => ITSAStatus.Annual
-      case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
-    }
 }
