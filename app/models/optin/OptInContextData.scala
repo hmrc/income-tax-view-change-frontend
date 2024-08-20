@@ -17,8 +17,6 @@
 package models.optin
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{Json, OFormat}
 
 case class OptInContextData(currentTaxYear: String,
@@ -34,26 +32,5 @@ case class OptInContextData(currentTaxYear: String,
 }
 
 object OptInContextData {
-
   implicit val format: OFormat[OptInContextData] = Json.format[OptInContextData]
-
-  /* todo: unify with optout code */
-  def statusToString(status: ITSAStatus): String =
-    status match {
-      case ITSAStatus.NoStatus  => "U"
-      case ITSAStatus.Voluntary => "V"
-      case ITSAStatus.Annual    => "A"
-      case ITSAStatus.Mandated  => "M"
-      // This will be validated earlier on in a future ticket
-      case _ => throw new RuntimeException("Unexpected status")
-    }
-
-  def stringToStatus(status: String): ITSAStatus.Value =
-    status match {
-      case "U" => ITSAStatus.NoStatus
-      case "V" => ITSAStatus.Voluntary
-      case "A" => ITSAStatus.Annual
-      case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
-    }
 }

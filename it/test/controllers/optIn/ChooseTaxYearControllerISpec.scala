@@ -23,9 +23,8 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, Voluntary, statusToString}
 import models.optin.{OptInContextData, OptInSessionData}
-import models.optout.OptOutContextData.statusToString
 import play.api.http.Status.OK
 import play.mvc.Http.Status
 import repositories.UIJourneySessionDataRepository
@@ -62,7 +61,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
+        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -88,7 +87,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextTaxYear, nextYearStatus = Annual)
+        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
         val formData: Map[String, Seq[String]] = Map(
           ChooseTaxYearForm.choiceField -> Seq(currentTaxYear.toString)
@@ -115,7 +114,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(currentTaxYear, currentYearStatus = Voluntary, currentTaxYear.nextYear, nextYearStatus = Voluntary)
+          stubOptOutInitialState(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
 
           val formData: Map[String, Seq[String]] = Map(
             ChooseTaxYearForm.choiceField -> Seq()

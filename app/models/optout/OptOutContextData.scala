@@ -28,6 +28,7 @@ case class OptOutContextData(crystallisationStatus: Boolean,
 object OptOutContextData {
   implicit val format: OFormat[OptOutContextData] = Json.format[OptOutContextData]
 
+  //todo remove these converter functions and instead use ITSAStatus.statusToString, ITSAStatus.stringToStatus
   def statusToString(status: ITSAStatus): String =
     status match {
       case ITSAStatus.NoStatus  => "U"

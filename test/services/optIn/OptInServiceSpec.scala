@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary, statusToString}
 import models.itsaStatus.StatusDetail
 import models.optin.{OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers.any
@@ -144,7 +144,7 @@ class OptInServiceSpec extends UnitSpec
       "return tax years ending 2023, 2024" in {
 
         //mockRepository(Annual, Annual)
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), OptInContextData.statusToString(Annual))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -155,7 +155,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, OptInContextData.statusToString(Annual), OptInContextData.statusToString(Voluntary))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
