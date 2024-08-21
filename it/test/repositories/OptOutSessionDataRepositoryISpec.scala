@@ -39,7 +39,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
   }
 
   "OptOutSessionDataRepository" should {
-    s"save and recall the OptOutProposition" in {
+    s"stores the OptOutProposition at initialisation for recall later in the journey" in {
 
       val optOutProposition =
         createOptOutProposition(
@@ -53,6 +53,16 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
       await(repository.initialiseOptOutJourney(optOutProposition))
 
       repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
+    }
+
+    s"Removes the customer intent at journey initialisation" in {
+
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+      await(repository.saveIntent(taxYear2024_2025))
+
+      await(repository.initialiseOptOutJourney(someOptOutProposition))
+
+      repository.fetchSavedIntent().futureValue shouldBe None
     }
 
     s"save and recall the user choice" in {
@@ -91,4 +101,5 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
       nextYearItsaStatus = Voluntary
     )
   }
+
 }
