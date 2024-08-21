@@ -147,11 +147,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private def updateReportingMethod(sessionData: UIJourneySessionData, reportingMethodTaxYear1: Option[String], reportingMethodTaxYear2: Option[String])
                                    (implicit hc: HeaderCarrier): Future[Boolean] = {
-    val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData =
-      oldAddIncomeSourceSessionData
-      .copy(reportingMethodTaxYear1 = reportingMethodTaxYear1)
-      .copy(reportingMethodTaxYear2 = reportingMethodTaxYear2)
+      sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+      .copy(reportingMethodTaxYear1 = reportingMethodTaxYear1, reportingMethodTaxYear2 = reportingMethodTaxYear2)
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
     sessionService.setMongoData(uiJourneySessionData)
