@@ -40,9 +40,14 @@
     controllers.optIn.routes.OptInCompletedController.show(model.isAgent)
 }
 
-
 @taxYears = @{
     messages("optin.checkAnswers.taxYears", model.startYear, model.endYear)
+}
+
+@getMessage = @{
+    if(model.intentIsNextYear) {
+        messages("optin.checkAnswers.ny", model.endYear)
+    } else messages("optin.checkAnswers.cy")
 }
 
 @mainTemplate(
@@ -73,12 +78,8 @@
                 )
             )))
 
-        @p(id=Some("optOut-summary")) {
-            @messages("optin.checkAnswers.p1")
-        }
-
-        @p(id=Some("optOut-warning")) {
-            @messages("optin.checkAnswers.p2")
+        @p(id=Some("optIn-summary")) {
+            @getMessage
         }
 
         <div class="govuk-button-group">

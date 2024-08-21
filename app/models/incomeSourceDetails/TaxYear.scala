@@ -48,6 +48,11 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def isBefore(taxYear: TaxYear): Boolean = this.startYear < taxYear.startYear
 
+  def isNextTaxYear(implicit dateService: DateServiceInterface): Boolean = {
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    endYear > currentTaxYearEnd
+  }
+
   private val April = 4
   private val Sixth = 6
   private val Fifth = 5

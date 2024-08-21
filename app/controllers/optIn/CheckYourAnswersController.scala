@@ -26,6 +26,7 @@ import models.optin.MultiYearOptOutCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.DateService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 import views.html.optIn.CheckYourAnswersView
@@ -38,11 +39,12 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
                                            val optInService: OptInService,
                                            val authorisedFunctions: FrontendAuthorisedFunctions,
                                            val auth: AuthenticatorPredicate)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          (implicit val dateService: DateService,
+                                           val appConfig: FrontendAppConfig,
+                                           mcc: MessagesControllerComponents,
+                                           val ec: ExecutionContext,
+                                           val itvcErrorHandler: ItvcErrorHandler,
+                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -61,7 +63,8 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
         val result = for {
           taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
-        } yield Ok(view(MultiYearOptOutCheckpointViewModel(taxYear, isAgent, cancelURL)))
+          intentIsNextYear = taxYear.isNextTaxYear(dateService)
+        } yield Ok(view(MultiYearOptOutCheckpointViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
 
         result.value.filter(_.isDefined).map(_.get)
       }
