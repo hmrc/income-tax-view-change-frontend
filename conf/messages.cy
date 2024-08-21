@@ -2101,3 +2101,13 @@ optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
+
+# opt in check your answers
+optin.checkAnswers.taxYears = TBD
+optin.checkAnswers.heading = Gwirio?ch atebion
+optin.checkAnswers.optin = Optio i mewn o
+optin.checkAnswers.change = TBD
+optin.checkAnswers.p1 = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno?ch diweddariad chwarterol drwy feddalwedd sy?n cydweddu.
+optin.checkAnswers.p2 = TBD
+optin.checkAnswers.confirm = TBD
+optin.checkAnswers.cancel = Canslo
