@@ -88,12 +88,9 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
 
     OptionT(intentFuture)
-      .map(intentTaxYear => {
-        makeOptOutUpdateRequest(optOutProposition, intentTaxYear)
-      })
-      .flatMap(responsesFuture => {
-        OptionT.liftF(responsesFuture)
-      }).getOrElse(OptOutUpdateResponseFailure.defaultFailure())
+      .map(intentTaxYear => makeOptOutUpdateRequest(optOutProposition, intentTaxYear))
+      .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
+      .getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
   private def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
