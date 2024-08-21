@@ -2092,3 +2092,12 @@ optIn.beforeYouStart.reportQuarterly.text.p2   = byddwch yn adrodd am bob un oâ€
 optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
 optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
 optIn.beforeYouStart.button.start              = Dechrau
+
+# opt in choose tax year
+optin.chooseOptInTaxYear.heading                     = TBD
+optin.chooseOptInTaxYear.desc1                       = TBD
+optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
+optin.chooseOptInTaxYear.continue                    = Yn eich blaen
+optin.confirmOptIn.cancel                            = Canslo
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
