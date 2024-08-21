@@ -99,16 +99,12 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     }
 
     val result = OptionT(intentFuture)
-      .map { intentTaxYear =>
-        optOutProposition.optOutYearsToUpdate(intentTaxYear)
-      }
-      .map { case yearsToUpdate =>
-        makeUpdateCalls(yearsToUpdate)
-      }
-      .flatMap { case (responsesSeqOfFutures) =>
+      .map(intentTaxYear => optOutProposition.optOutYearsToUpdate(intentTaxYear))
+      .map(yearsToUpdate => makeUpdateCalls(yearsToUpdate))
+      .flatMap(responsesSeqOfFutures => {
         OptionT(Future.sequence(responsesSeqOfFutures).map(v => Option(v)))
           .map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
-      }
+      })
 
     result.getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
