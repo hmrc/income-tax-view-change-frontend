@@ -27,9 +27,10 @@ class BeforeYouStartViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val beforeYouStartView: BeforeYouStart = app.injector.instanceOf[BeforeYouStart]
+  val startButtonUrl = "/some/optIn/url"
 
   class Setup(isAgent: Boolean = true) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(beforeYouStartView(isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(beforeYouStartView(isAgent, startButtonUrl)))
   }
 
   object beforeYouStart {
