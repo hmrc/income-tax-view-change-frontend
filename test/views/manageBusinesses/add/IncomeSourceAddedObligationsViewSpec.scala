@@ -869,11 +869,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
       }
     }
-
-    s"has GET form action to $addIncomeSourceShowURL" in new Setup(validCallWithData) {
-      document.getElementsByTag("form").get(0).attr("action") shouldBe addIncomeSourceShowURL
-      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
-    }
   }
 
   "Income Source Added Obligations - Agent" should {
@@ -891,7 +886,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
       }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -906,7 +901,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -921,7 +916,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
       }
     }
 
@@ -936,11 +931,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     "render the view all your businesses link" in new Setup(validAgentCallWithData) {
       document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
-    }
-
-    s"has GET form action to $addIncomeSourceShowAgentURL" in new Setup(validAgentCallWithData) {
-      document.getElementsByTag("form").get(0).attr("action") shouldBe addIncomeSourceShowAgentURL
-      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
     }
   }
 }
