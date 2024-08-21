@@ -2142,3 +2142,13 @@ optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
 optin.chooseOptInTaxYear.continue                    = Continue
 optin.confirmOptIn.cancel                            = Cancel
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report quarterly from
+
+# opt in check your answers
+optin.checkAnswers.taxYears = {0} to {1} tax year onwards
+optin.checkAnswers.heading = Check your answers
+optin.checkAnswers.optin = Opt in from
+optin.checkAnswers.change = Change
+optin.checkAnswers.p1 = If you opt out, you can submit your tax return through your HMRC online account or software.
+optin.checkAnswers.p2 = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
+optin.checkAnswers.confirm = Confirm
+optin.checkAnswers.cancel = Cancel

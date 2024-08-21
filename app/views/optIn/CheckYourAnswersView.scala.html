@@ -32,8 +32,8 @@
 )
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@getChangeOptOutHref = @{
-    controllers.optOut.routes.OptOutChooseTaxYearController.show(model.isAgent).url
+@getChangeOptInHref = @{
+    controllers.optIn.routes.CheckYourAnswersController.show(model.isAgent).url
 }
 
 @getPostAction = @{
@@ -42,33 +42,31 @@
 
 
 @taxYears = @{
-    messages("optout.checkAnswers.taxYears",
-        model.startYear,
-        model.endYear)
+    messages("optin.checkAnswers.taxYears", model.startYear, model.endYear)
 }
 
 @mainTemplate(
-    pageTitle = messages("optout.checkAnswers.heading"),
+    pageTitle = messages("optin.checkAnswers.heading"),
     backUrl = Some("#"),
     isAgent = model.isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @h1(id = Some("heading"), msg = messages("optout.checkAnswers.heading"), classes = "govuk-heading-l")
+    @h1(id = Some("heading"), msg = messages("optin.checkAnswers.heading"), classes = "govuk-heading-l")
 
     @formWithCSRF(action = getPostAction) {
         @govukSummaryList(SummaryList(
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(
                 SummaryListRow(
-                    key = Key(Text(messages("optout.checkAnswers.optOut"))),
+                    key = Key(Text(messages("optin.checkAnswers.optin"))),
                     value = Value(Text(taxYears)),
                     actions = Some(Actions(
                         items = Seq(ActionItem(
-                            href = getChangeOptOutHref,
+                            href = getChangeOptInHref,
                             classes = "govuk-link govuk-body",
-                            content = HtmlContent(messages("optout.checkAnswers.change")),
+                            content = HtmlContent(messages("optin.checkAnswers.change")),
                             attributes = Map("id" -> "change")
                         ))
                     ))
@@ -76,19 +74,19 @@
             )))
 
         @p(id=Some("optOut-summary")) {
-            @messages("optout.checkAnswers.p1")
+            @messages("optin.checkAnswers.p1")
         }
 
         @p(id=Some("optOut-warning")) {
-            @messages("optout.checkAnswers.p2")
+            @messages("optin.checkAnswers.p2")
         }
 
         <div class="govuk-button-group">
             @govukButton(Button(
-                content = Text(messages("optout.checkAnswers.confirm")),
+                content = Text(messages("optin.checkAnswers.confirm")),
                 attributes = Map("id" -> "confirm-button")
             ))
-            <a class="govuk-link" href=@model.cancelURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
+            <a class="govuk-link" href=@model.cancelURL id="cancel-button">@messages("optin.checkAnswers.cancel")</a>
         </div>
     }
 
