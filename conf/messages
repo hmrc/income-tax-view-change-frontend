@@ -153,12 +153,6 @@ home.overdue.message.dunningLock.false                          = You have overd
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
-
-## Recruitment Banner ##
-banner.recruitment.text                                         = Help improve this service
-banner.recruitment.link                                         = Join our research panel by answering a few questions.
-banner.recruitment.dismiss                                      = No, thankyou.
-
 ## List UTRs ##
 listUTRs.heading                                               = List UTRs
 
