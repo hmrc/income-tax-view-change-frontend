@@ -22,10 +22,11 @@ import connectors.optout.ITSAStatusUpdateConnector
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import repositories.ITSAStatusRepositorySupport._
 import models.optin.OptInSessionData
+import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInInitialState, OptInProposition}
+import services.optIn.core.OptInProposition._
+import services.optIn.core.{OptInInitialState, OptInProposition}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -141,25 +142,6 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                          ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
     itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
     //todo is passing currentYear.previousYear correct here?
-  }
-
-  private def createOptInProposition( currentYear: TaxYear,
-                                      nextYear: TaxYear,
-                                      initialState: OptInInitialState
-                                     ): OptInProposition = {
-
-    val currentOptInTaxYear = CurrentOptInTaxYear(
-      status = initialState.currentYearItsaStatus,
-      taxYear = currentYear
-    )
-
-    val nextYearOptOut = NextOptInTaxYear(
-      status = initialState.nextYearItsaStatus,
-      taxYear = nextYear,
-      currentOptInTaxYear = currentOptInTaxYear
-    )
-
-    OptInProposition(currentOptInTaxYear, nextYearOptOut)
   }
 
   def fetchSavedChosenTaxYear()(implicit user: MtdItUser[_],
