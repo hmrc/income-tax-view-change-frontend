@@ -2122,7 +2122,6 @@ optout.optOutError.home-bullet-2                     = homepage
 ## Opt In ##
 #######################################################################################################################
 
-# opt in before you start
 optIn.beforeYouStart.heading                   = Before you start
 optIn.beforeYouStart.desc1                     = Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately.
 optIn.beforeYouStart.desc2                     = To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from.
