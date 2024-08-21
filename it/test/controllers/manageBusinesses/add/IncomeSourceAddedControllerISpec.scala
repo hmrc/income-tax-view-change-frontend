@@ -33,7 +33,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
 
-class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
+class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
 
   val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
 
@@ -83,7 +83,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1))))) ))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -122,7 +122,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1))))) ))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -194,7 +194,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1))))) ))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
         When(s"I call GET $incomeSourceAddedForeignPropertyShowUrl")
 

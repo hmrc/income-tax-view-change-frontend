@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, JourneyType}
-import exceptions.MissingFieldException
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, UIJourneySessionData}
 import play.api.Logger

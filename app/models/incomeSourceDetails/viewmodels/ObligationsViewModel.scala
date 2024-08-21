@@ -21,7 +21,8 @@ import models.incomeSourceDetails.TaxYear
 import java.time.LocalDate
 
 final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
-                                      finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean) {
+  finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean
+) {
 
   def getOverdueObligationsMessageComponents(currentDate: LocalDate, isBusinessHistoric: Boolean): OverdueObligationsMessageComponents = {
     if (isBusinessHistoric) {
@@ -32,7 +33,7 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
       } else if (nonHistoricOverdueObligations == 1) {
         OverdueObligationsMessageComponents("obligation.inset.single-historic-overdue.text",
           List((currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
-      }else {
+      } else {
         OverdueObligationsMessageComponents("", Nil)
       }
     } else {
@@ -124,6 +125,7 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
 }
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
-                            inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)
+  inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String
+)
 
 final case class OverdueObligationsMessageComponents(messageKey: String, args: List[String])
