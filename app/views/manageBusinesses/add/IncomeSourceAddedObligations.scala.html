@@ -118,7 +118,7 @@
         val quarterlyUpdateTaxYear = sources.getQuarterlyObligationTaxYear(quarterlyUpdate)
         List(Html(
         s"""<li id="quarterly-list">
-          ${getMessage("next-quarterly-obligation-text-1", (quarterlyUpdateTaxYear - 1).toString, quarterlyUpdateTaxYear.toString, quarterlyUpdate.inboundCorrespondenceDue.toLongDate, quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)}
+          ${getMessage("next-quarterly-obligation-text", (quarterlyUpdateTaxYear - 1).toString, quarterlyUpdateTaxYear.toString, quarterlyUpdate.inboundCorrespondenceDue.toLongDate, quarterlyUpdate.inboundCorrespondenceFrom.toLongDate, quarterlyUpdate.inboundCorrespondenceTo.toLongDate)}
         </li>"""
         ))
       case None => Nil

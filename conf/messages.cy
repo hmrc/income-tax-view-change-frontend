@@ -1614,6 +1614,7 @@ incomeSources.add.foreign-property-check-details.change                     = Ne
 
 # business added page
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
+business-added.deadlines                                = Your revised deadlines
 business-added.to                                       = i
 
 business-added.foreign-property.head                    = Mae
@@ -1625,22 +1626,49 @@ business-added.uk-property.base                         = wedi cael ei ychwanegu
 business-added.sole-trader.head                        = Ychwanegwyd
 business-added.sole-trader.base                        = i’ch cyfrif
 
-business-added.quarterly-heading                                       = Anfon diweddariadau chwarterol
-business-added.quarterly-p1                                            = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business-added.final-declaration-heading                               = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-business-added.final-declaration-text                                  = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
-business-added.table.heading-1                                         = Blwyddyn dreth
-business-added.table.heading-2                                         = Dyddiad cau
-business-added.income-sources-button                                   = Eich ffynonellau incwm
-business-added.previous-tax-years-heading                              = Blynyddoedd treth blaenorol
-business-added.previous-tax-years-t1                                   = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-business-added.view-all-businesses                                     = Bwrw golwg dros eich busnesau
-business-added.obligation.inset.single-annual-overdue.text             =
-business-added.obligation.inset.multiple-annual-overdue.text           =
-business-added.obligation.inset.multiple-hybrid-overdue.text           =
-business-added.obligation.inset.single-quarterly-overdue.text          =
-business-added.obligation.inset.multiple-quarterly-overdue.text        =
-business-added.obligation.view-overdue-upcoming-updates.text           =
+business-added.quarterly-heading                                                        = Send quarterly updates
+business-added.quarterly-p1                                                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-added.final-declaration-heading                                                = Submit final declarations and pay your tax
+business-added.final-declaration-text                                                   = You must submit your final declarations and pay the tax you owe by the deadline.
+business-added.table.heading-1                                                          = Tax year
+business-added.table.heading-2                                                          = Deadline
+business-added.income-sources-button                                                    = Your income sources
+business-added.previous-tax-years-heading                                               = Previous tax years
+business-added.previous-tax-years-t1                                                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-added.view-all-businesses                                                      = View all your businesses
+business-added.obligation.inset.single-annual-overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
+business-added.obligation.inset.single-quarterly-overdue.text                           = You have <b>1 overdue update</b> for the first 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-quarterly-overdue.text                         = You have <b>{0} overdue updates</b> for the first {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-single-quarterly-overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.single-historic-overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
+business-added.obligation.inset.multiple-historic-overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
+business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
+business-added.obligation.view-upcoming-updates.text                                    = View your upcoming updates
+
+business-added.next-quarterly-obligation-text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business-added.final-dec-text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+
+business-added.quarterly-opt-out-text-1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business-added.quarterly-opt-out-link                       = your reporting frequency
+business-added.quarterly-opt-out-text-2                     = page.
+
+business-added.quarterly-opt-out-hybrid-text-1              = Depending on your circumstances, you may be able to
+business-added.quarterly-opt-out-hybrid-link                = view and change your reporting frequency
+business-added.quarterly-opt-out-hybrid-text-2              = for all your businesses.
+
+business-added.default-annual-reporting-frequency-text      = You are set to report annually for your new business. Find out more about
+business-added.default-annual-reporting-frequency-link      = your reporting frequency.
+
+business-added.submit-software-text                         = Submit updates in software
+business-added.submit-software-quarterly-text               = For any tax year you are reporting quarterly, you will need
+business-added.submit-software-quarterly-link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-tax-return                            = Submit your tax return
+business-added.submit-tax-return-text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business-added.submit-tax-return-link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-hybrid-annual-text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 
 ## You cannot go back - Your business has been added page ##

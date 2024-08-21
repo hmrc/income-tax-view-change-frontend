@@ -1679,30 +1679,29 @@ business-added.obligation.inset.multiple-historic-overdue.text                  
 business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
 business-added.obligation.view-upcoming-updates.text                                    = View your upcoming updates
 
-business-added.next-quarterly-obligation-text-1 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business-added.next-quarterly-obligation-text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business-added.final-dec-text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business-added.final-dec-text = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+business-added.quarterly-opt-out-text-1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business-added.quarterly-opt-out-link                       = your reporting frequency
+business-added.quarterly-opt-out-text-2                     = page.
 
-business-added.quarterly-opt-out-text-1 = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
-business-added.quarterly-opt-out-link = your reporting frequency
-business-added.quarterly-opt-out-text-2 = page.
+business-added.quarterly-opt-out-hybrid-text-1              = Depending on your circumstances, you may be able to
+business-added.quarterly-opt-out-hybrid-link                = view and change your reporting frequency
+business-added.quarterly-opt-out-hybrid-text-2              = for all your businesses.
 
-business-added.quarterly-opt-out-hybrid-text-1 = Depending on your circumstances, you may be able to
-business-added.quarterly-opt-out-hybrid-link = view and change your reporting frequency
-business-added.quarterly-opt-out-hybrid-text-2 = for all your businesses.
+business-added.default-annual-reporting-frequency-text      = You are set to report annually for your new business. Find out more about
+business-added.default-annual-reporting-frequency-link      = your reporting frequency.
 
-business-added.default-annual-reporting-frequency-text = You are set to report annually for your new business. Find out more about
-business-added.default-annual-reporting-frequency-link = your reporting frequency.
+business-added.submit-software-text                         = Submit updates in software
+business-added.submit-software-quarterly-text               = For any tax year you are reporting quarterly, you will need
+business-added.submit-software-quarterly-link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
-business-added.submit-software-text = Submit updates in software
-business-added.submit-software-quarterly-text = For any tax year you are reporting quarterly, you will need
-business-added.submit-software-quarterly-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+business-added.submit-tax-return                            = Submit your tax return
+business-added.submit-tax-return-text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business-added.submit-tax-return-link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
-business-added.submit-tax-return = Submit your tax return
-business-added.submit-tax-return-text = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business-added.submit-tax-return-link = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-
-business-added.submit-hybrid-annual-text = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+business-added.submit-hybrid-annual-text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 ## You cannot go back - Your business has been added page ##
 
