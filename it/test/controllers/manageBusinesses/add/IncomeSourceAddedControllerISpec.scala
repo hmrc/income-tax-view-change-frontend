@@ -37,7 +37,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
   val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
 
-  val IncomeSourceAddedSubmitUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.submit().url
   val addIncomeSourceUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
 
   val testDate: String = "2020-11-10"
@@ -109,23 +108,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           httpStatus(OK),
           pageTitleIndividual(expectedText),
           elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
-        )
-      }
-    }
-  }
-
-  s"calling POST $incomeSourceAddedSelfEmploymentShowUrl" should {
-    s"redirect to $addIncomeSourceUrl" when {
-      "called" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postAddedBusinessObligations()
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/manage-your-businesses/add/new-income-sources")
         )
       }
     }
@@ -214,8 +196,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), dateStarted = Some(LocalDate.of(2024, 1, 1))))) ))
 
-        await(sessionService.getMongo(JourneyType(Add, SelfEmployment).toString))
-
         When(s"I call GET $incomeSourceAddedForeignPropertyShowUrl")
 
         And("API 1771 returns a success response")
@@ -236,23 +216,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           httpStatus(OK),
           pageTitleIndividual(expectedText),
           elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
-        )
-      }
-    }
-  }
-
-  s"calling POST $incomeSourceAddedForeignPropertyShowUrl" should {
-    s"redirect to $addIncomeSourceShowUrl" when {
-      "called" in {
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.postForeignPropertyAddedObligations()
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/manage-your-businesses/add/new-income-sources")
         )
       }
     }
