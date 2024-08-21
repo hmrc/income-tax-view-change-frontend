@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 
 import java.time.LocalDateTime
@@ -30,7 +31,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 /* todo will be fully implemented in MISUV-TBD */
-class ReportingFrequencyPageController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class ReportingFrequencyPageController @Inject()(val optInService: OptInService,
+                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
                                                  val auth: AuthenticatorPredicate)
                                           (implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -52,7 +54,7 @@ class ReportingFrequencyPageController @Inject()(val authorisedFunctions: Fronte
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok(s"Reporting Frequency Page. Time:${LocalDateTime.now()}"))
+        optInService.setupSessionData().map(_ => Ok(s"Reporting Frequency Page. Time:${LocalDateTime.now()}"))
       }
   }
 }

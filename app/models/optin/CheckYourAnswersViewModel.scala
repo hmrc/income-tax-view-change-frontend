@@ -26,7 +26,7 @@ sealed trait CheckYourAnswersViewModel {
   val intentIsNextYear: Boolean
 }
 
-case class MultiYearOptOutCheckpointViewModel(intent: TaxYear,
+case class MultiYearCheckYourAnswersViewModel(intent: TaxYear,
                                               isAgent: Boolean,
                                               cancelURL: String, intentIsNextYear: Boolean = false)
   extends CheckYourAnswersViewModel {

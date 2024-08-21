@@ -55,7 +55,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  private def setupSessionData()(implicit user: MtdItUser[_],
+  def setupSessionData()(implicit user: MtdItUser[_],
                          hc: HeaderCarrier,
                          ec: ExecutionContext): Future[Boolean] = {
     repository.set(

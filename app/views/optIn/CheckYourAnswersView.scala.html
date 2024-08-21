@@ -33,7 +33,7 @@
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptInHref = @{
-    controllers.optIn.routes.CheckYourAnswersController.show(model.isAgent).url
+    controllers.optIn.routes.ChooseYearController.show(model.isAgent).url
 }
 
 @getPostAction = @{
@@ -46,7 +46,7 @@
 
 @getMessage = @{
     if(model.intentIsNextYear) {
-        messages("optin.checkAnswers.ny", model.endYear)
+        messages("optin.checkAnswers.ny", model.startYear)
     } else messages("optin.checkAnswers.cy")
 }
 

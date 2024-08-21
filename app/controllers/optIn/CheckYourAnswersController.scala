@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.ReportingFrequencyPageController
-import models.optin.MultiYearOptOutCheckpointViewModel
+import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -64,7 +64,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
           taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
           intentIsNextYear = taxYear.isNextTaxYear(dateService)
-        } yield Ok(view(MultiYearOptOutCheckpointViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
+        } yield Ok(view(MultiYearCheckYourAnswersViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
 
         result.value.filter(_.isDefined).map(_.get)
       }
