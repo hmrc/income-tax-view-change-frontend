@@ -71,6 +71,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
             (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
           } yield {
             val reportingMethod: ChosenReportingMethod = getReportingMethod(sessionData.addIncomeSourceData)
+            if (reportingMethod != ChosenReportingMethod.Unknown) {
               handleSuccess(
                 isAgent = isAgent,
                 businessName = businessName,
@@ -80,6 +81,13 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 sessionData = sessionData,
                 reportingMethod = reportingMethod
               )
+            } else {
+              Logger("application").error(
+                s"${if (isAgent) "[Agent]" else ""}" + s"retrieved an unknown case for chosen reporting method: $reportingMethod")
+              Future.successful {
+                errorHandler(isAgent).showInternalServerError()
+              }
+            }
           }) getOrElse {
             Logger("application").error(
               s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
@@ -128,21 +136,15 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
             val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
             val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
-            try {
-              Ok(obligationsView(
-                businessName = businessName,
-                sources = viewModel,
-                isAgent = isAgent,
-                incomeSourceType = incomeSourceType,
-                currentDate = dateService.getCurrentDate,
-                isBusinessHistoric = isBusinessHistoric,
-                reportingMethod = reportingMethod
-              ))
-            } catch {
-              case error: MissingFieldException =>
-                Logger("application").error(s"Missing field: ${error.getMessage}")
-                errorHandler(isAgent).showInternalServerError()
-            }
+            Ok(obligationsView(
+              businessName = businessName,
+              sources = viewModel,
+              isAgent = isAgent,
+              incomeSourceType = incomeSourceType,
+              currentDate = dateService.getCurrentDate,
+              isBusinessHistoric = isBusinessHistoric,
+              reportingMethod = reportingMethod
+            ))
           }
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""

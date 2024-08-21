@@ -126,8 +126,13 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     )
   }
 
-  def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+  def mockMongo(incomeSourceType: IncomeSourceType, reportingMethodTaxYear1: Option[String], reportingMethodTaxYear2: Option[String]): Unit = {
+    setupMockGetMongo(Right(Some(
+      notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType))
+        .copy(addIncomeSourceData = notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)).addIncomeSourceData.map(data =>
+          data.copy(reportingMethodTaxYear1 = reportingMethodTaxYear1, reportingMethodTaxYear2 = reportingMethodTaxYear2)
+        ))
+    )))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 
@@ -161,7 +166,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
       s"IncomeSourceAddedController.show (${incomeSourceType.key}, ${if (isAgent) "Agent" else "Individual"})" should {
         "return 200 OK" when {
-          "FS enabled with newly added income source and obligations view model" in {
+          "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
             disableAllSwitches()
             enable(IncomeSources)
             setupMockAuthorisationSuccess(isAgent)
@@ -178,7 +183,79 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             when(mockNextUpdatesService.getOpenObligations()(any(), any())).
               thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-            mockMongo(incomeSourceType)
+            mockMongo(incomeSourceType, None, None)
+
+            val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            setupMockAuthorisationSuccess(isAgent)
+            mockIncomeSource(incomeSourceType)
+            mockISDS(incomeSourceType)
+
+            when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
+            when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+              Future(IncomeSourcesObligationsTestConstants.viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+            mockMongo(incomeSourceType, Some("A"), Some("A"))
+
+            val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            setupMockAuthorisationSuccess(isAgent)
+            mockIncomeSource(incomeSourceType)
+            mockISDS(incomeSourceType)
+
+            when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
+            when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+              Future(IncomeSourcesObligationsTestConstants.viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+            mockMongo(incomeSourceType, Some("Q"), Some("Q"))
+
+            val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            setupMockAuthorisationSuccess(isAgent)
+            mockIncomeSource(incomeSourceType)
+            mockISDS(incomeSourceType)
+
+            when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
+            when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+              Future(IncomeSourcesObligationsTestConstants.viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+            mockMongo(incomeSourceType, Some("A"), Some("Q"))
 
             val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -225,7 +302,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             mockIncomeSource(incomeSourceType)
             setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
             mockFailure()
-            mockMongo(incomeSourceType)
+            mockMongo(incomeSourceType, None, None)
             val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -236,7 +313,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             mockIncomeSource(incomeSourceType)
             setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
             mockISDS(incomeSourceType)
-            mockMongo(incomeSourceType)
+            mockMongo(incomeSourceType, None, None)
             when(mockNextUpdatesService.getOpenObligations()(any(), any())).
               thenReturn(Future(testObligationsModel))
 
@@ -265,13 +342,37 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               when(mockNextUpdatesService.getOpenObligations()(any(), any())).
                 thenReturn(Future(testObligationsModel))
               mockProperty()
-              mockMongo(incomeSourceType)
+              mockMongo(incomeSourceType, None, None)
               setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
 
               val result: Future[Result] = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
               else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall unknown chosen reporting method" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            setupMockAuthorisationSuccess(isAgent)
+            mockIncomeSource(incomeSourceType)
+            mockISDS(incomeSourceType)
+
+            when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
+            when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+              Future(IncomeSourcesObligationsTestConstants.viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+            mockMongo(incomeSourceType, Some("A"), None)
+
+            val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe INTERNAL_SERVER_ERROR
           }
         }
       }
