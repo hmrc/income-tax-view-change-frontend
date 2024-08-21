@@ -30,8 +30,6 @@
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF
 )
-
-
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptOutHref = @{
@@ -39,7 +37,7 @@
 }
 
 @getPostAction = @{
-    controllers.optOut.routes.ConfirmOptOutController.submit(model.isAgent)
+    controllers.optIn.routes.OptInCompletedController.show(model.isAgent)
 }
 
 

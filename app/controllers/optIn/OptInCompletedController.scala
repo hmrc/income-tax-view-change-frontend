@@ -17,32 +17,27 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.routes.ReportingFrequencyPageController
-import models.optin.MultiYearOptOutCheckpointViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optIn.CheckYourAnswersView
 
+import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-/* todo will be fully implemented in MISUV-8006 */
-class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
-                                           val optInService: OptInService,
-                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                           val auth: AuthenticatorPredicate)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class OptInCompletedController @Inject()(val optInService: OptInService,
+                                         val authorisedFunctions: FrontendAuthorisedFunctions,
+                                         val auth: AuthenticatorPredicate)
+                                        (implicit val appConfig: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext,
+                                         val itvcErrorHandler: ItvcErrorHandler,
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -58,12 +53,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        val result = for {
-          taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
-          cancelURL = ReportingFrequencyPageController.show(isAgent).url
-        } yield Ok(view(MultiYearOptOutCheckpointViewModel(taxYear, isAgent, cancelURL)))
-
-        result.value.filter(_.isDefined).map(_.get)
+        Future.successful(Ok(s"OptIn Completed Page. Time:${LocalDateTime.now()}"))
       }
   }
 }
