@@ -176,7 +176,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
         result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
     }
@@ -198,7 +198,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
         result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
     }
@@ -220,7 +220,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        service.makeOptOutUpdateRequest(proposition, intent)
       }
     }
 
@@ -242,7 +242,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
       }
@@ -267,7 +267,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe OptOutUpdateResponseFailure(errorItems)
       }

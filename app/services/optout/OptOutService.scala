@@ -93,7 +93,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
       .getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
-  private def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
+  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
                                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
     val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
