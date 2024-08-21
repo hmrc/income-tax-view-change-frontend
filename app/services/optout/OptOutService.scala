@@ -78,19 +78,18 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def makeOptOutUpdateRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     recallOptOutProposition().flatMap { proposition =>
       proposition.optOutPropositionType.map {
-        case _: OneYearOptOutProposition   => makeOptOutUpdateRequest(proposition, Future.successful(proposition.availableTaxYearsForOptOut.headOption))
-        case _: MultiYearOptOutProposition => makeOptOutUpdateRequest(proposition, repository.fetchSavedIntent())
+        case _: OneYearOptOutProposition =>
+          OptionT(Future.successful(proposition.availableTaxYearsForOptOut.headOption))
+            .map(intentTaxYear => makeOptOutUpdateRequest(proposition, intentTaxYear))
+            .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
+            .getOrElse(OptOutUpdateResponseFailure.defaultFailure())
+        case _: MultiYearOptOutProposition =>
+          OptionT(repository.fetchSavedIntent())
+            .map(intentTaxYear => makeOptOutUpdateRequest(proposition, intentTaxYear))
+            .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
+            .getOrElse(OptOutUpdateResponseFailure.defaultFailure())
       } getOrElse Future.successful(OptOutUpdateResponseFailure.defaultFailure())
     }
-  }
-
-  def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentFuture: Future[Option[TaxYear]])
-                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
-
-    OptionT(intentFuture)
-      .map(intentTaxYear => makeOptOutUpdateRequest(optOutProposition, intentTaxYear))
-      .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
-      .getOrElse(OptOutUpdateResponseFailure.defaultFailure())
   }
 
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
