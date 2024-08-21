@@ -78,8 +78,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   def makeOptOutUpdateRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[OptOutUpdateResponse] = {
     recallOptOutProposition().flatMap { proposition =>
       proposition.optOutPropositionType.map {
-        case _: OneYearOptOutProposition =>
-          makeOptOutUpdateRequest(proposition, Future.successful(proposition.availableTaxYearsForOptOut.headOption))
+        case _: OneYearOptOutProposition   => makeOptOutUpdateRequest(proposition, Future.successful(proposition.availableTaxYearsForOptOut.headOption))
         case _: MultiYearOptOutProposition => makeOptOutUpdateRequest(proposition, repository.fetchSavedIntent())
       } getOrElse Future.successful(OptOutUpdateResponseFailure.defaultFailure())
     }
