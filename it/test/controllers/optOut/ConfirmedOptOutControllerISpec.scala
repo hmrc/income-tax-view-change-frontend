@@ -22,7 +22,7 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus._
 import models.optout.OptOutSessionData
 import play.api.http.Status.OK
-import repositories.OptOutContextData.statusToString
+import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse

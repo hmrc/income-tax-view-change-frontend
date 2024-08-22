@@ -27,7 +27,7 @@ import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObli
 import models.optout.OptOutSessionData
 import play.api.http.Status
 import play.api.http.Status.OK
-import repositories.OptOutContextData.statusToString
+import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse

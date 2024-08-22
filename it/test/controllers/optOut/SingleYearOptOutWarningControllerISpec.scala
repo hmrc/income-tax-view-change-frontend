@@ -24,7 +24,7 @@ import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{NoStatus, Voluntary}
 import models.optout.OptOutSessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import repositories.OptOutContextData.statusToString
+import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
