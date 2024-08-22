@@ -107,8 +107,9 @@ private class MonthFormatter(invalidKey: String, args: Seq[String] = Seq.empty) 
       .bind(key, data)
       .flatMap {
         str =>
+          val cleanedStr = str.stripPrefix("0")
           months
-            .find(m => m.getValue.toString == str || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
+            .find(m => m.getValue.toString == cleanedStr || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
             .map(x => Right(x.getValue))
             .getOrElse(Left(List(FormError(key, invalidKey, args))))
       }
