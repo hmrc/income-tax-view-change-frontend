@@ -55,7 +55,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     }
   }
 
-  def show(isAgent: Boolean = false, isChangeRequest: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
 
