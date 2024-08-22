@@ -22,8 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.incomeSources.cease.IncomeSourceEndDateForm
-import forms.models.DateFormElement
+import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
+import implicits.ImplicitDateFormatterImpl
 import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -31,23 +31,26 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
+import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              val incomeSourceEndDateForm: IncomeSourceEndDateForm,
+                                              val form: CeaseIncomeSourceEndDateFormProvider,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
                                               val sessionService: SessionService,
                                               val auth: AuthenticatorPredicate)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
+                                              implicit val dateFormatter: ImplicitDateFormatterImpl,
+                                              implicit val dateService: DateService,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
@@ -142,14 +145,14 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
 
             case _ =>
               val dateStartedOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-              val form = dateStartedOpt match {
+              val newForm = dateStartedOpt match {
                 case Some(date) =>
-                  incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(DateFormElement(date))
-                case None => incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
+                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(date)
+                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
               }
               Future.successful(Ok(
                 incomeSourceEndDate(
-                  incomeSourceEndDateForm = form,
+                  form = newForm,
                   postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
                   isAgent = isAgent,
                   backUrl = getBackCall(isAgent, incomeSourceType).url,
@@ -209,7 +212,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       )
   }
 
-  private def handleValidatedInput(validatedInput: DateFormElement,
+  private def handleValidatedInput(validatedInput: LocalDate,
                                    incomeSourceType: IncomeSourceType,
                                    incomeSourceIdMaybe: Option[IncomeSourceId],
                                    redirectAction: Call)(
@@ -218,7 +221,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       case (SelfEmployment, Some(incomeSourceId)) =>
         val result = Redirect(redirectAction)
         val mongoSetValues = Map(
-          CeaseIncomeSourceData.dateCeasedField -> validatedInput.date.toString,
+          CeaseIncomeSourceData.dateCeasedField -> validatedInput.toString,
           CeaseIncomeSourceData.incomeSourceIdField -> incomeSourceId.value
         )
         sessionService.setMultipleMongoData(mongoSetValues, JourneyType(Cease, incomeSourceType)).flatMap {
@@ -227,7 +230,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
             s"Failed to set data in session storage. incomeSourceType: $incomeSourceType."))
         }
       case _ =>
-        val propertyEndDate = validatedInput.date.toString
+        val propertyEndDate = validatedInput.toString
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
           journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
@@ -251,10 +254,10 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           case (SelfEmployment, None) =>
             Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
           case _ =>
-            incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
+            form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
               hasErrors => {
                 Future.successful(BadRequest(incomeSourceEndDate(
-                  incomeSourceEndDateForm = hasErrors,
+                  form = hasErrors,
                   postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
                   backUrl = getBackCall(isAgent, incomeSourceType).url,
                   isAgent = isAgent,
