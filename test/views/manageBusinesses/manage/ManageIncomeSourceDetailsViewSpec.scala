@@ -71,6 +71,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
   val opensInNewTabText = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
+
+  val insetReportingMessage = messages("incomeSources.manage.business-manage-details.inset")
+
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
@@ -160,6 +163,67 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = ForeignProperty,
     quarterReportingType = None
   )
+
+  val viewModelNoOtherBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    isTraditionalAccountingMethod = false,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = None,
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = None
+  )
+
+  val viewModelBusinessInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    isTraditionalAccountingMethod = false,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = None
+  )
+  val viewModelUkPropertyInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    isTraditionalAccountingMethod = false,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty,
+    quarterReportingType = None
+  )
+
+  val viewModelForeignPropertyInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    isTraditionalAccountingMethod = false,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = None
+  )
+
+
 
   def backUrl(isAgent: Boolean): String =
     controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
@@ -321,6 +385,19 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Cash basis accounting"
     }
+
+    "render the reporting inset text when the business is in latency" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only ONE active business" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the business is NOT in latency" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
   }
   "ManageSelfEmployment - Agent" should {
     "render the heading" in new Setup(true) {
@@ -362,6 +439,18 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoStandardContentP2
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
+    }
+
+    "render the reporting inset text when the business is in latency" in new Setup(true){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only ONE active business" in new Setup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the business is NOT in latency" in new Setup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
 
@@ -409,6 +498,18 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
+
+    "render the reporting inset text when the Uk Property is in latency" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only a Uk Property business" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new Setup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
   }
   "Manage Uk Property - Agent" should {
     "render the heading" in new ukSetup(true) {
@@ -453,6 +554,18 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
+    }
+
+    "render the reporting inset text when the Uk Property is in latency" in new ukSetup(true){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only a Uk Property business" in new ukSetup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new ukSetup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
 
@@ -500,6 +613,18 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
+
+    "render the reporting inset text when the Foreign Property is in latency" in new foreignSetup(false){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only a Foreign Property business" in new foreignSetup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetup(false){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
   }
   "Manage Foreign Property - Agent" should {
     "render the heading" in new foreignSetup(true) {
@@ -544,6 +669,17 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cashBasisAccounting
+    }
+    "render the reporting inset text when the Foreign Property is in latency" in new foreignSetup(true){
+      document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
+    }
+
+    "DO NOT render the reporting inset text when there is only a Foreign Property business" in new foreignSetup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
+    }
+
+    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetup(true){
+      document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
 }
