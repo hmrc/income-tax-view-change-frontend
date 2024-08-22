@@ -32,10 +32,11 @@ class CheckYourAnswersViewSpec extends TestSupport {
   val forYearEnd = 2023
   val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
 
-  class Setup(isAgent: Boolean = true) {
+  class Setup(isAgent: Boolean = true, intent: TaxYear, intentIsNextYear: Boolean) {
     private val cancelURL = if (isAgent) optIn.routes.ReportingFrequencyPageController.show(true).url else
       optIn.routes.ReportingFrequencyPageController.show(false).url
-    private val model = MultiYearCheckYourAnswersViewModel(intent = taxYear, isAgent = isAgent, cancelURL = cancelURL)
+    private val model = MultiYearCheckYourAnswersViewModel(intent = intent, isAgent = isAgent,
+      cancelURL = cancelURL, intentIsNextYear = intentIsNextYear)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model)))
   }
 
@@ -44,40 +45,58 @@ class CheckYourAnswersViewSpec extends TestSupport {
     val heading: String = messages("optin.checkAnswers.heading")
 
     val optin: String = messages("optin.checkAnswers.optin")
-    val taxYears: String = messages("optin.checkAnswers.taxYears", taxYear.startYear.toString, taxYear.endYear.toString)
+    def taxYears(intent: TaxYear): String = messages("optin.checkAnswers.taxYears", intent.startYear.toString, intent.endYear.toString)
     val change: String = messages("optin.checkAnswers.change")
-    val optInSummary: String = messages("optin.checkAnswers.cy")
+
+    val optInSummaryCy: String = messages("optin.checkAnswers.cy")
+    def optInSummaryNy(intent: TaxYear): String = messages("optin.checkAnswers.ny", intent.startYear.toString, intent.endYear.toString)
 
     val confirmButton: String = messages("optin.checkAnswers.confirm")
     val cancelButton: String = messages("optin.checkAnswers.cancel")
   }
 
-  "Opt-out confirm page" should {
+  def runTest(intent: TaxYear, intentIsNextYear: Boolean): Unit = {
 
-    "have the correct title" in new Setup(false) {
+    "have the correct title" in new Setup(false, intent, intentIsNextYear) {
       pageDocument.title() shouldBe optInChooseTaxYear.title
     }
 
-    "have the correct heading" in new Setup(false) {
+    "have the correct heading" in new Setup(false, intent, intentIsNextYear) {
       pageDocument.select("h1").text() shouldBe optInChooseTaxYear.heading
     }
 
-    "have the correct summary heading and page contents" in new Setup(false) {
+    "have the correct summary heading and page contents" in new Setup(false, intent, intentIsNextYear) {
       pageDocument.getElementsByClass("govuk-summary-list__key").text() shouldBe optInChooseTaxYear.optin
-      pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears
+      pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears(intent)
       pageDocument.getElementById("change").text() shouldBe optInChooseTaxYear.change
-      pageDocument.getElementById("optIn-summary").text() shouldBe optInChooseTaxYear.optInSummary
+
+      private val expectedSummary = if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
+      else optInChooseTaxYear.optInSummaryCy
+      pageDocument.getElementById("optIn-summary").text() shouldBe expectedSummary
       pageDocument.getElementById("confirm-button").text() shouldBe optInChooseTaxYear.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe optInChooseTaxYear.cancelButton
     }
 
-    "have the correct summary heading and page contents for Agents" in new Setup(true) {
+    "have the correct summary heading and page contents for Agents" in new Setup(true, intent, intentIsNextYear) {
       pageDocument.getElementsByClass("govuk-summary-list__key").text() shouldBe optInChooseTaxYear.optin
-      pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears
+      pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears(intent)
       pageDocument.getElementById("change").text() shouldBe optInChooseTaxYear.change
-      pageDocument.getElementById("optIn-summary").text() shouldBe optInChooseTaxYear.optInSummary
+
+      private val expectedSummary = if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
+      else optInChooseTaxYear.optInSummaryCy
+      pageDocument.getElementById("optIn-summary").text() shouldBe expectedSummary
       pageDocument.getElementById("confirm-button").text() shouldBe optInChooseTaxYear.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe optInChooseTaxYear.cancelButton
     }
+
   }
+
+  "run test when intent is current year" should {
+    runTest(taxYear, intentIsNextYear = false)
+  }
+
+  "run test when intent is next year" should {
+    runTest(taxYear.nextYear, intentIsNextYear =true)
+  }
+
 }
