@@ -1626,15 +1626,16 @@ business-added.uk-property.base                         = wedi cael ei ychwanegu
 business-added.sole-trader.head                        = Ychwanegwyd
 business-added.sole-trader.base                        = i’ch cyfrif
 
-business-added.quarterly-heading                                                        = Send quarterly updates
-business-added.quarterly-p1                                                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-business-added.final-declaration-heading                                                = Submit final declarations and pay your tax
-business-added.final-declaration-text                                                   = You must submit your final declarations and pay the tax you owe by the deadline.
-business-added.table.heading-1                                                          = Tax year
-business-added.table.heading-2                                                          = Deadline
-business-added.income-sources-button                                                    = Your income sources
-business-added.previous-tax-years-heading                                               = Previous tax years
-business-added.previous-tax-years-t1                                                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
+business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+business-added.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+business-added.table.heading-1                          = Blwyddyn dreth
+business-added.table.heading-2                          = Dyddiad cau
+business-added.income-sources-button                    = Eich ffynonellau incwm
+business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
+business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
 business-added.view-all-businesses                                                      = View all your businesses
 business-added.obligation.inset.single-annual-overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
 business-added.obligation.inset.single-quarterly-overdue.text                           = You have <b>1 overdue update</b> for the first 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
