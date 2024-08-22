@@ -675,6 +675,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/opt-in/multi-year-choice", additionalCookies)
     }
 
+    def renderCheckYourAnswersOptInJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/check-answers", additionalCookies)
+    }
+
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
       post("/optout/choose-taxyear")(body)
     }
