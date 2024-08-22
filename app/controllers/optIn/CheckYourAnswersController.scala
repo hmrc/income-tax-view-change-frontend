@@ -59,13 +59,14 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
+
         val result = for {
           taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
           intentIsNextYear = taxYear.isNextTaxYear(dateService)
         } yield Ok(view(MultiYearCheckYourAnswersViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
 
-        result.value.filter(_.isDefined).map(_.get)
+        result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }
   }
 }

@@ -42,4 +42,8 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
   def mockAvailableOptInTaxYear(choices: List[TaxYear]): Unit = {
     when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(Future.successful(choices))
   }
+
+  def mockFetchSavedChosenTaxYear(intent: TaxYear): Unit = {
+    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any())).thenReturn(Future.successful(Some(intent)))
+  }
 }
