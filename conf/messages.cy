@@ -2094,9 +2094,9 @@ optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn y
 optIn.beforeYouStart.button.start              = Dechrau
 
 # opt in choose tax year
-optin.chooseOptInTaxYear.heading                     = TBD
-optin.chooseOptInTaxYear.desc1                       = TBD
-optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.heading                     = Optio i mewn yn wirfoddol i adrodd yn chwarterol
+optin.chooseOptInTaxYear.desc1                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
+optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
