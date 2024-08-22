@@ -75,6 +75,10 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
+  def makeOptInCall(): Future[Boolean] = {
+    Future.successful(true)
+  }
+
   private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
                                    hc: HeaderCarrier,
                                    ec: ExecutionContext): Future[Option[OptInSessionData]] = {

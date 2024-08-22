@@ -69,4 +69,18 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
         result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }
   }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      optInService.makeOptInCall() map {
+        case true => redirectToCheckpointPage(isAgent)
+        case false => itvcErrorHandler.showInternalServerError()
+      }
+  }
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optIn.routes.OptInCompletedController.show(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
+  }
 }

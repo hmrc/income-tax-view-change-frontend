@@ -53,6 +53,8 @@ POST        /agents/opt-in/multi-year-choice                             control
 
 GET         /opt-in/check-answers                                         controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/check-answers                                  controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = true)
+POST        /opt-in/check-answers                                         controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/check-answers                                  controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = true)
 
 GET         /opt-in/completed                                             controllers.optIn.OptInCompletedController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/completed                                      controllers.optIn.OptInCompletedController.show(isAgent: Boolean = true)
