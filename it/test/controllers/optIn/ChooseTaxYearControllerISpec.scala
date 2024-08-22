@@ -126,8 +126,8 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
           result should have(
             httpStatus(Status.BAD_REQUEST),
-            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year you want to report quarterly from"),
-            elementTextBySelector("#choice-error")("Error: Select the tax year you want to report quarterly from")
+            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year that you want to report quarterly from"),
+            elementTextBySelector("#choice-error")("Error: Select the tax year that you want to report quarterly from")
           )
         }
       }
