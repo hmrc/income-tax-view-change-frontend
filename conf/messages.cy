@@ -2103,11 +2103,11 @@ optin.confirmOptIn.cancel                            = Canslo
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
 
 # opt in check your answers
-optin.checkAnswers.taxYears = TBD
+optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
 optin.checkAnswers.heading = Gwirio?ch atebion
 optin.checkAnswers.optin = Optio i mewn o
-optin.checkAnswers.change = TBD
+optin.checkAnswers.change = Newid
 optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno?ch diweddariad chwarterol drwy feddalwedd sy?n cydweddu.
 optin.checkAnswers.ny = TBD
-optin.checkAnswers.confirm = TBD
+optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
