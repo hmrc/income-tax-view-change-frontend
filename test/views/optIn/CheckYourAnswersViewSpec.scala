@@ -16,7 +16,7 @@
 
 package views.optIn
 
-import config.FrontendAppConfig
+import controllers.optIn
 import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import org.jsoup.Jsoup
@@ -27,17 +27,15 @@ import views.html.optIn.CheckYourAnswersView
 
 class CheckYourAnswersViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val view: CheckYourAnswersView = app.injector.instanceOf[CheckYourAnswersView]
 
   val forYearEnd = 2023
   val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
-  val availableOptOutTaxYear: List[TaxYear] = List(taxYear, taxYear.nextYear)
-  val availableOptOutTaxYearsList: List[String] = availableOptOutTaxYear.map(_.toString)
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
-    val model = MultiYearCheckYourAnswersViewModel(intent = taxYear, isAgent = isAgent, cancelURL = cancelURL)
+    private val cancelURL = if (isAgent) optIn.routes.ReportingFrequencyPageController.show(true).url else
+      optIn.routes.ReportingFrequencyPageController.show(false).url
+    private val model = MultiYearCheckYourAnswersViewModel(intent = taxYear, isAgent = isAgent, cancelURL = cancelURL)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model)))
   }
 
