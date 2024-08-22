@@ -1371,10 +1371,20 @@ dateForm.error.dayMonthAndYear.required                             = Mae’n rh
 dateForm.error.dayMonthAndYear.required.se                          = Nodwch y dyddiad y daeth eich busnes hunangyflogaeth i ben
 dateForm.error.dayMonthAndYear.required.uk                          = Nodwch y dyddiad y daeth eich busnes eiddo yn y DU i ben
 dateForm.error.dayMonthAndYear.required.fp                          = Nodwch y dyddiad y gwnaeth eich busnes eiddo tramor stopio
+dateForm.error.required.two                                         = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+dateForm.error.required                                             = Mae’n rhaid i’r dyddiad gynnwys {0}
 dateForm.error.future                                               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 dateForm.error.invalid                                              = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 dateFrom.error.beforeStartDate                                      = TNi all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+
+date.day                     = Diwrnod
+date.month                   = Mis
+date.year                    = Blwyddyn
+
+date.error.day               = diwrnod
+date.error.month             = mis
+date.error.year              = blwyddyn
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?

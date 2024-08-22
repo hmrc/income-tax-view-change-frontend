@@ -20,7 +20,8 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.manageBusinesses.cease.IncomeSourceEndDateForm
+import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
+import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSources
@@ -49,12 +50,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
   object TestIncomeSourceEndDateController extends IncomeSourceEndDateController(
     mockAuthService,
-    app.injector.instanceOf[IncomeSourceEndDateForm],
     app.injector.instanceOf[IncomeSourceEndDate],
     sessionService = mockSessionService,
+    app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider],
     testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec, app.injector.instanceOf[ItvcErrorHandler],
+    ec,
+    app.injector.instanceOf[ImplicitDateFormatterImpl],
+    dateService,
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
     def heading(incomeSourceType: IncomeSourceType): String = {
