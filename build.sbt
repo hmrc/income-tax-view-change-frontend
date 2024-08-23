@@ -3,9 +3,8 @@ import play.sbt.routes.RoutesKeys
 import sbt.*
 import sbt.Keys.libraryDependencySchemes
 import uk.gov.hmrc.DefaultBuildSettings.*
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.{DefaultBuildSettings, SbtAutoBuildPlugin}
+import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "income-tax-view-change-frontend"
 
@@ -81,7 +80,7 @@ lazy val scoverageSettings = {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
@@ -121,7 +120,7 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val it = project
   .dependsOn(microservice % "test->test")
-  .settings(DefaultBuildSettings.itSettings.head)
+  .settings(DefaultBuildSettings.itSettings().head)
   .enablePlugins(play.sbt.PlayScala)
   .settings(
     publish / skip := true
