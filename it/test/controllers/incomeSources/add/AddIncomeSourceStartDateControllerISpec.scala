@@ -129,9 +129,9 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
           Map(
-            "income-source-start-date.day" -> Seq("10"),
-            "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022")
+            "value.day" -> Seq("10"),
+            "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022")
           )
         }
         enable(IncomeSources)
@@ -152,9 +152,9 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
           Map(
-            "income-source-start-date.day" -> Seq("$"),
-            "income-source-start-date.month" -> Seq("%"),
-            "income-source-start-date.year" -> Seq("&")
+            "value.day" -> Seq("$"),
+            "value.month" -> Seq("%"),
+            "value.year" -> Seq("&")
           )
         }
         enable(IncomeSources)
@@ -166,7 +166,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-start-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI(s"$prefix.error.invalid"))
         )
       }
@@ -188,7 +188,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.UKPropertyStartDate.heading"),
-          elementTextByID("income-source-start-date-hint")(hintTextUkProperty),
+          elementTextByID("value-hint")(hintTextUkProperty),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -198,8 +198,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     s"redirect to $checkUKPropertyStartDateShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("10"), "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -216,8 +216,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("aa"), "income-source-start-date.month" -> Seq("02"),
-            "income-source-start-date.year" -> Seq("2023"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("02"),
+            "value.year" -> Seq("2023"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -228,7 +228,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-start-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.add.UKPropertyStartDate.error.invalid"))
         )
       }
@@ -251,7 +251,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.foreignProperty.startDate.heading"),
-          elementTextByID("income-source-start-date-hint")(hintTextForeignProperty),
+          elementTextByID("value-hint")(hintTextForeignProperty),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -261,8 +261,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     s"redirect to $foreignPropertyStartDateCheckUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("10"), "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -280,8 +280,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("aa"), "income-source-start-date.month" -> Seq("02"),
-            "income-source-start-date.year" -> Seq("2023"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("02"),
+            "value.year" -> Seq("2023"))
         }
 
         enable(IncomeSources)
@@ -292,7 +292,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-start-date")(formData)
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-start-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.add.foreignProperty.startDate.error.invalid"))
         )
       }
@@ -315,7 +315,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.UKPropertyStartDate.heading"),
-          elementTextByID("income-source-start-date-hint")(hintTextUkProperty),
+          elementTextByID("value-hint")(hintTextUkProperty),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -339,7 +339,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.foreignProperty.startDate.heading"),
-          elementTextByID("income-source-start-date-hint")(hintTextForeignProperty),
+          elementTextByID("value-hint")(hintTextForeignProperty),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -362,7 +362,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("add-business-start-date.heading"),
-          elementTextByID("income-source-start-date-hint")(hintTextBusiness),
+          elementTextByID("value-hint")(hintTextBusiness),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -372,8 +372,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     "render the Add Business Start Date" when {
       "User is authorised" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("10"), "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022"))
         }
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
@@ -398,8 +398,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     "render the Add Foreign Property Start Date" when {
       "User is authorised" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("10"), "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022"))
         }
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
@@ -424,8 +424,8 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     "render the Add UK Property Start Date" when {
       "User is authorised" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-start-date.day" -> Seq("10"), "income-source-start-date.month" -> Seq("10"),
-            "income-source-start-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"),
+            "value.year" -> Seq("2022"))
         }
 
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")

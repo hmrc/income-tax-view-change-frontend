@@ -71,7 +71,6 @@ private[mappings] class LocalDateFormatter(
       .withFilter(_._2.isEmpty)
       .map(_._1)
       .toList
-      //.map(field => messages(s"date.error.$field"))
 
     fields.count(_._2.isDefined) match {
       case 3 =>

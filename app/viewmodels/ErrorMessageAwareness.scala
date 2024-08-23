@@ -29,7 +29,7 @@ trait ErrorMessageAwareness {
         err =>
           ErrorMessage(
             content = Text(messages(err.message, err.args: _*)),
-            visuallyHiddenText = Some(messages("error.prefix"))
+            visuallyHiddenText = Some(messages("base.error-prefix"))
           )
       }
 }
