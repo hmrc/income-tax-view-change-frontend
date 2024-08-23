@@ -26,9 +26,8 @@ import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpoin
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
 import services.optout.OptOutService
-import utils.{AuthenticatorPredicate, OptOutJourney}
+import utils.AuthenticatorPredicate
 import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
@@ -37,15 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                         checkOptOutAnswers: CheckOptOutAnswers,
                                         optOutService: OptOutService,
-                                        auth: AuthenticatorPredicate,
-                                        override val sessionService: SessionService)
+                                        auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with OptOutJourney {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>

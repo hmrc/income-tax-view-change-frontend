@@ -41,8 +41,7 @@ class ConfirmOptOutControllerSpec extends TestSupport
     auth = testAuthenticator,
     view = app.injector.instanceOf[ConfirmOptOut],
     checkOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers],
-    optOutService = mockOptOutService,
-    sessionService = mockSessionService)(
+    optOutService = mockOptOutService)(
     appConfig = appConfig,
     ec = ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
