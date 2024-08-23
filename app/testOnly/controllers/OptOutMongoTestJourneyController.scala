@@ -60,7 +60,7 @@ class OptOutMongoTestJourneyController @Inject()(
             case Right(Some(sessionDataOption)) =>
                 val optOutUIJourneySessionData: UIJourneySessionData = sessionDataOption.copy(optOutSessionData = Some(OptOutSessionData(None, valueOpt)))
                 sessionService.setMongoData(optOutUIJourneySessionData).map { _ =>
-                  Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
+                  Redirect("/test-only/report-quarterly/income-and-expenses/view/showOptOutSession")
                 }
             case Right(None) =>
               val newSessionData = UIJourneySessionData(
@@ -70,7 +70,7 @@ class OptOutMongoTestJourneyController @Inject()(
               )
               sessionService.createSession("OPTOUT")
               sessionService.setMongoData(newSessionData).map { _ =>
-                Redirect("/report-quarterly/income-and-expenses/view/test-only/showOptOutSession")
+                Redirect("/test-only/report-quarterly/income-and-expenses/view/showOptOutSession")
               }
             case Left(ex) =>
               Future.successful(Ok(s"Unable to add data to session storage ex: ${ex.getMessage}"))
