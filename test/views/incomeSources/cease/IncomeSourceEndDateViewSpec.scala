@@ -18,8 +18,7 @@ package views.incomeSources.cease
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.{CeaseIncomeSourceEndDateFormProvider, IncomeSourceEndDateForm}
-import forms.models.DateFormElement
+import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}

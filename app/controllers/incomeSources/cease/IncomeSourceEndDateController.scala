@@ -49,7 +49,6 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
-                                              implicit val dateFormatter: ImplicitDateFormatterImpl,
                                               implicit val dateService: DateService,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)

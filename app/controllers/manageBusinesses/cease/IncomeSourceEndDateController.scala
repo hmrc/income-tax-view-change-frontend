@@ -23,7 +23,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import implicits.ImplicitDateFormatterImpl
 import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -49,7 +48,6 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
-                                              implicit val dateFormatter: ImplicitDateFormatterImpl,
                                               implicit val dateService: DateService,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)

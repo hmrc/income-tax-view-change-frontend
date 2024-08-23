@@ -18,7 +18,7 @@ package views.manageBusinesses.cease
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.{CeaseIncomeSourceEndDateFormProvider, IncomeSourceEndDateForm}
+import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -100,13 +100,15 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
     "render the hint - Self Employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the hint - Uk Property" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1") + " " + messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the hint - Foreign Property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1") + " " + messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -126,8 +128,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
         messages("dateForm.error.monthAndYear.required")
     }
     "render the error summary" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
+
     }
   }
 
@@ -145,13 +147,15 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
     }
     "render the hint - Self Employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the hint - Uk Property" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1") + " " + messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the hint - Foreign Property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1") + " " + messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -171,8 +175,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
         messages("dateForm.error.monthAndYear.required")
     }
     "render the error summary" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
     }
   }
 

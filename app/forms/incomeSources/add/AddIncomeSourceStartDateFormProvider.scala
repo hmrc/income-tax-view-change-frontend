@@ -38,14 +38,15 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
     val earliestLongInvalidDate: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
     val invalidFutureDateErrorMessage = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
 
-    val invalidMessage = s"$messagesPrefix.date.error.invalid"
+    val dateFormErrorPrefix = "dateForm.error"
+    val invalidMessage = s"$dateFormErrorPrefix.date.error.invalid"
 
     Form(
       "value" -> localDate(
-        invalidKey     = s"$messagesPrefix.date.error.invalid",
-        allRequiredKey = s"$messagesPrefix.date.error.required.all",
-        twoRequiredKey = s"$messagesPrefix.date.error.required.two",
-        requiredKey    = s"$messagesPrefix.date.error.required"
+        invalidKey     = s"$dateFormErrorPrefix.invalid",
+        allRequiredKey = s"$dateFormErrorPrefix.required.all",
+        twoRequiredKey = s"$dateFormErrorPrefix.required.two",
+        requiredKey    = s"$dateFormErrorPrefix.required"
       ).verifying(
         maxDate(maximumAllowableDate, invalidFutureDateErrorMessage, maximumAllowableDate.formatAsString),
         fourDigitValidYear(invalidMessage)

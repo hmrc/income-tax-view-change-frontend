@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.admin.IncomeSources
@@ -31,6 +30,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -56,10 +56,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
-    app.injector.instanceOf[ImplicitDateFormatterImpl],
     dateService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]) {
+    app.injector.instanceOf[AgentItvcErrorHandler])
 
     def heading(incomeSourceType: IncomeSourceType): String = {
       incomeSourceType match {
@@ -114,15 +113,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           }
 
           val document: Document = Jsoup.parse(contentAsString(result))
-          val (backAction, postAction, _) = TestIncomeSourceEndDateController.getActions(
+          val (backAction, postAction, _) = getActions(
             isAgent = isAgent,
             incomeSourceType = incomeSourceType,
             id = id,
             isChange = isChange)
 
           status(result) shouldBe OK
-          document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
-          document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
+          document.title shouldBe title(incomeSourceType, isAgent = isAgent)
+          document.select("h1").text shouldBe heading(incomeSourceType)
           document.getElementById("back-fallback").attr("href") shouldBe backAction.url
           document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
@@ -582,5 +581,4 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
   }
-}
 
