@@ -967,6 +967,11 @@ chargeSummary.paymentsOnAccount.p3                                 = Gweler yr a
 chargeSummary.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
 
+chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
+chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)
+chargeSummary.definition.balancingcharge.bullet2                   = mae’r dreth sydd arnoch yn fwy na’r hyn a dalwyd gennych yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
+chargeSummary.definition.balancingcharge.p2                        = Bydd angen hefyd i chi wneud taliad mantoli os oes arnoch unrhyw beth o ran Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
+
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
@@ -2083,3 +2088,28 @@ optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
 optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
+
+
+#######################################################################################################################
+## Opt In ##
+#######################################################################################################################
+
+optIn.beforeYouStart.heading                   = Cyn i chi ddechrau
+optIn.beforeYouStart.desc1                     = Mae adrodd yn chwarterol yn galluogi CThEF i roi rhagolwg gwell o swm y dreth sydd arnoch, a hynny er mwyn eich helpu i gyllidebu’n well.
+optIn.beforeYouStart.desc2                     = Er mwyn adrodd yn chwarterol, bydd angen arnoch feddalwedd sy’n cydweddu. Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+optIn.beforeYouStart.reportQuarterly           = Adrodd yn chwarterol
+optIn.beforeYouStart.reportQuarterly.text      = Os byddwch yn dewis optio i mewn:
+optIn.beforeYouStart.reportQuarterly.text.p1   = bydd angen i chi gyflwyno diweddariad bob tri mis, yn ogystal â chyflwyno’ch Ffurflen Dreth.
+optIn.beforeYouStart.reportQuarterly.text.p2   = byddwch yn adrodd am bob un o’ch ffynonellau incwm yn chwarterol.
+optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
+optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
+optIn.beforeYouStart.button.start              = Dechrau
+
+# opt in choose tax year
+optin.chooseOptInTaxYear.heading                     = TBD
+optin.chooseOptInTaxYear.desc1                       = TBD
+optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
+optin.chooseOptInTaxYear.continue                    = Yn eich blaen
+optin.confirmOptIn.cancel                            = Canslo
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD

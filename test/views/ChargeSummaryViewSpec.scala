@@ -19,10 +19,8 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
-import enums.GatewayPage.GatewayPage
 import enums.OtherCharge
 import exceptions.MissingFieldException
-import junit.extensions.TestSetup
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -129,6 +127,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val poaTextParagraph = messages("chargeSummary.paymentsOnAccount.textOne") + " " + messages("chargeSummary.paymentsOnAccount.linkText") + " " + messages("chargeSummary.paymentsOnAccount.textTwo")
     val poaTextP4 = messages("chargeSummary.paymentsOnAccount.p4") + " " + messages("chargeSummary.paymentsOnAccount.p4LinkText")
 
+    val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
+    val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
+    val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
+
+    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
     def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
 
     def poa2Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Second payment on account"
@@ -365,6 +368,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
 
       }
+
+      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
+        document.selectById("p1").text() shouldBe bcdTextParagraph
+        document.selectById("bullets").text() shouldBe bcdTextBullets
+        document.selectById("p2").text() shouldBe bcdTextP2
+      }
+
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
         document.selectById("p1").text() shouldBe poa1TextSentence

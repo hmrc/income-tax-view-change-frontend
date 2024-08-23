@@ -135,6 +135,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     testMtditid, testNino, None, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty), None,
     Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
+
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -670,8 +671,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/optout/choose-taxyear", additionalCookies)
     }
 
+    def renderChooseOptInTaxYearPageInMultiYearJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/multi-year-choice", additionalCookies)
+    }
+
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
       post("/optout/choose-taxyear")(body)
+    }
+
+    def submitChoiceOnOptInChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/multi-year-choice")(body)
     }
 
     def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -1015,6 +1024,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckYourAnswersSoleTrader(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/manage-your-businesses/manage/business-check-your-answers", additionalCookies)(Map.empty)
+    }
+
+    def getBeforeYouStart(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/start", additionalCookies)
     }
   }
 
