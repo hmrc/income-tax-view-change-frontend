@@ -50,7 +50,7 @@ case class TaxYear(startYear: Int, endYear: Int) {
 
   def isNextTaxYear(implicit dateService: DateServiceInterface): Boolean = {
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
-    endYear > currentTaxYearEnd
+    endYear > currentTaxYearEnd && (endYear - currentTaxYearEnd == 1)
   }
 
   private val April = 4

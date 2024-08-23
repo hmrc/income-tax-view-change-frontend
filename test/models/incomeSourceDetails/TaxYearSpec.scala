@@ -17,7 +17,9 @@
 package models.incomeSourceDetails
 
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
+import org.mockito.Mockito._
 import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, Json}
+import services.DateService
 import testUtils.{TestSupport, UnitSpec}
 
 import java.time.LocalDate
@@ -255,6 +257,35 @@ class TaxYearSpec extends UnitSpec with TestSupport {
     "return end of financial year" in {
       val taxYear = TaxYear.forYearEnd(2024)
       taxYear.toFinancialYearEnd shouldBe LocalDate.of(taxYear.endYear, 4, 5)
+    }
+  }
+
+  "isNextTaxYear method and current year is 2023-2024" should {
+
+    val forYearEnd = 2024
+    val dateServiceMock = mock[DateService]()
+    when(dateServiceMock.getCurrentTaxYearEnd).thenReturn(forYearEnd)
+
+    "return true for next-year 2024-2025" in {
+      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
+        .nextYear
+        .isNextTaxYear(dateServiceMock)
+      isNextTaxYear shouldBe true
+    }
+
+    "return false for year after next-year 2025-2026" in {
+      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
+        .nextYear
+        .nextYear
+        .isNextTaxYear(dateServiceMock)
+      isNextTaxYear shouldBe false
+    }
+
+    "return false for previous-year 2022-2023" in {
+      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
+        .previousYear
+        .isNextTaxYear(dateServiceMock)
+      isNextTaxYear shouldBe false
     }
   }
 
