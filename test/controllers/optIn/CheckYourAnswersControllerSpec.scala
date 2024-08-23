@@ -17,16 +17,22 @@
 package controllers.optIn
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{OK, status}
+import play.api.http.Status.OK
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.status
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.CheckYourAnswersView
 import play.api.test.Helpers._
+
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService with MockOptInService with MockDateService {
@@ -48,7 +54,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
   val endTaxYear = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
-  def tests(isAgent: Boolean): Unit = {
+  def showTests(isAgent: Boolean): Unit = {
     "show page" should {
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
@@ -62,11 +68,43 @@ class CheckYourAnswersControllerSpec extends TestSupport
     }
   }
 
+  def submitTest(isAgent: Boolean): Unit = {
+    val testName = "MultiYear Opt-In"
+    val requestPOST = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+
+    s"submit method is invoked $testName" should {
+
+      s"return result with $OK status for $testName" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        when(mockOptInService.makeOptInCall()(any(), any(), any())).thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+
+        val result: Future[Result] = controller.submit(isAgent)(requestPOST)
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    s"return result with $SEE_OTHER status for $testName and update fails" in {
+      setupMockAuthorisationSuccess(isAgent)
+      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+      when(mockOptInService.makeOptInCall()(any(), any(), any())).thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+      val result: Future[Result] = controller.submit(isAgent)(requestPOST)
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+  }
+
   "CheckYourAnswersController - Individual" when {
-    tests(isAgent = false)
+    showTests(isAgent = false)
+    submitTest(isAgent = false)
   }
 
   "CheckYourAnswersController - Agent" when {
-    tests(isAgent = true)
+    showTests(isAgent = true)
+    submitTest(isAgent = true)
   }
 }
