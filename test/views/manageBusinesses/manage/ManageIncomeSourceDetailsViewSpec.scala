@@ -74,7 +74,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   val insetReportingMessage = messages("incomeSources.manage.business-manage-details.inset")
 
-  val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+
+
+  val businessViewModelInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
@@ -86,10 +88,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(QuarterTypeStandard)
+    quarterReportingType = Some(QuarterTypeStandard),
+    isOnlyActiveBusiness = false
   )
 
-  val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val businessViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = None,
     tradingName = None,
@@ -101,10 +104,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = None,
     latencyDetails = None,
     incomeSourceType = SelfEmployment,
-    quarterReportingType = None
+    quarterReportingType = None,
+    isOnlyActiveBusiness = false
   )
 
-  val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val ukViewModelInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = None,
     tradingName = None,
@@ -116,7 +120,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(QuarterTypeCalendar)
+    quarterReportingType = Some(QuarterTypeCalendar),
+    isOnlyActiveBusiness = false
   )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -131,10 +136,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = None,
     latencyDetails = None,
     incomeSourceType = UkProperty,
-    quarterReportingType = None
+    quarterReportingType = None,
+    isOnlyActiveBusiness = false
   )
 
-  val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val foreignViewModelInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = None,
     tradingName = None,
@@ -146,7 +152,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    quarterReportingType = Some(QuarterTypeCalendar)
+    quarterReportingType = Some(QuarterTypeCalendar),
+    isOnlyActiveBusiness = false
   )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -161,7 +168,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = None,
     latencyDetails = None,
     incomeSourceType = ForeignProperty,
-    quarterReportingType = None
+    quarterReportingType = None,
+    isOnlyActiveBusiness = false
   )
 
   val viewModelNoOtherBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -176,59 +184,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = None,
     latencyDetails = None,
     incomeSourceType = SelfEmployment,
-    quarterReportingType = None
+    quarterReportingType = None,
+    isOnlyActiveBusiness = true
   )
-
-  val viewModelBusinessInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = None,
-    address = None,
-    isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = SelfEmployment,
-    quarterReportingType = None
-  )
-  val viewModelUkPropertyInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = None,
-    address = None,
-    isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty,
-    quarterReportingType = None
-  )
-
-  val viewModelForeignPropertyInLatency: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = None,
-    address = None,
-    isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = ForeignProperty,
-    quarterReportingType = None
-  )
-
-
 
   def backUrl(isAgent: Boolean): String =
     controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
 
-  class Setup(isAgent: Boolean, error: Boolean = false) {
+  class businessSetUp(isAgent: Boolean, error: Boolean = false) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
@@ -237,7 +200,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        viewModel,
+        businessViewModelInLatency,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -247,11 +210,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   }
 
-  class Setup2(isAgent: Boolean, error: Boolean = false) {
+  class businessSetUpUnknowns(isAgent: Boolean, error: Boolean = false) {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        viewModel2,
+        businessViewModelUnknowns,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -269,7 +232,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        ukViewModel,
+        ukViewModelInLatency,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -303,7 +266,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        foreignViewModel,
+        foreignViewModelInLatency,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -330,14 +293,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   "ManageSelfEmployment - Individual" should {
-    "render the heading" in new Setup(false) {
+    "render the heading" in new businessSetUp(false) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
-    "render the back correct back Url" in new Setup(false) {
+    "render the back correct back Url" in new businessSetUp(false) {
       document.getElementById("back-fallback").text() shouldBe messages("base.back")
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
-    "render the whole page" in new Setup(false) {
+    "render the whole page" in new businessSetUp(false) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -371,7 +334,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
-    "render the whole page with unknowns and no change links" in new Setup2(false) {
+    "render the whole page with unknowns and no change links" in new businessSetUpUnknowns(false) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -386,28 +349,28 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Cash basis accounting"
     }
 
-    "render the reporting inset text when the business is in latency" in new Setup(false){
+    "render the reporting inset text when the business is in latency" in new businessSetUp(false){
       document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
     }
 
-    "DO NOT render the reporting inset text when there is only ONE active business" in new Setup(false){
+    "DO NOT render the reporting inset text when there is only ONE active business" in new businessSetUp(false){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the business is NOT in latency" in new Setup(false){
+    "DO NOT render the reporting inset text when the business is NOT in latency" in new businessSetUpUnknowns(false){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
   }
   "ManageSelfEmployment - Agent" should {
-    "render the heading" in new Setup(true) {
+    "render the heading" in new businessSetUp(true) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
-    "render the back correct back Url" in new Setup(true) {
+    "render the back correct back Url" in new businessSetUp(true) {
       document.getElementById("back-fallback").text() shouldBe messages("base.back")
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
-    "render the whole page" in new Setup(true) {
+    "render the whole page" in new businessSetUp(true) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -441,15 +404,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
-    "render the reporting inset text when the business is in latency" in new Setup(true){
+    "render the reporting inset text when the business is in latency" in new businessSetUp(true){
       document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
     }
 
-    "DO NOT render the reporting inset text when there is only ONE active business" in new Setup(true){
+    "DO NOT render the reporting inset text when there is only ONE active business" in new businessSetUp(true){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the business is NOT in latency" in new Setup(true){
+    "DO NOT render the reporting inset text when the business is NOT in latency" in new businessSetUpUnknowns(true){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
@@ -499,15 +462,15 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
 
-    "render the reporting inset text when the Uk Property is in latency" in new Setup(false){
+    "render the reporting inset text when the Uk Property is in latency" in new ukSetup(false){
       document.getElementsByClass("govuk-inset-text").text() shouldBe insetReportingMessage
     }
 
-    "DO NOT render the reporting inset text when there is only a Uk Property business" in new Setup(false){
+    "DO NOT render the reporting inset text when there is only a Uk Property business" in new ukSetup(false){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new Setup(false){
+    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new ukSetupUnknowns(false){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
@@ -564,7 +527,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new ukSetup(true){
+    "DO NOT render the reporting inset text when the Uk Property business is NOT in latency" in new ukSetupUnknowns(true){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
@@ -622,7 +585,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetup(false){
+    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetupUnknowns(false){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }
@@ -678,7 +641,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
 
-    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetup(true){
+    "DO NOT render the reporting inset text when the Foreign Property business is NOT in latency" in new foreignSetupUnknowns(true){
       document.getElementsByClass("govuk-inset-text") shouldBe empty
     }
   }

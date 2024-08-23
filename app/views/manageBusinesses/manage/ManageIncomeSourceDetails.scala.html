@@ -235,6 +235,8 @@
         </div>
     }
 
+    <p>@viewModel.isOnlyActiveBusiness<p>
+
     @govukSummaryList(SummaryList(
         rows = {
             if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty

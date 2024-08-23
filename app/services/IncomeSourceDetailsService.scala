@@ -70,15 +70,6 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     )
   }
 
-  def isOnlyActiveIncomeSource(sources: IncomeSourceDetailsModel): Boolean = {
-    val activeBusinesses = sources.businesses.filterNot(_.isCeased).size
-    val activeUkProperties = sources.properties.filterNot(_.isCeased).count(_.isUkProperty)
-    val activeForeignProperties = sources.properties.filterNot(_.isCeased).count(_.isForeignProperty)
-
-    val totalActiveIncomeSources = activeBusinesses + activeUkProperties + activeForeignProperties
-    totalActiveIncomeSources == 1
-  }
-
   def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)

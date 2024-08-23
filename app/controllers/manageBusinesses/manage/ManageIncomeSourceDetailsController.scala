@@ -80,6 +80,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       }
   }
 
+  def moreThanOneActiveBusiness()(implicit user: MtdItUser[_]): Boolean = {
+    val activeBusinesses = user.incomeSources.businesses.size
+    val activePropertyBusinesses = user.incomeSources.properties.size
+
+    if (activeBusinesses + activePropertyBusinesses > 1) true else false
+  }
+
   def handleSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
     incomeSourceIdHash match {
@@ -150,7 +157,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                          crystallisationTaxYear2: Option[Boolean], isOnlyActiveBusiness: Boolean)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -163,12 +170,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      isOnlyActiveBusiness = isOnlyActiveBusiness
     )
   }
 
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType, isOnlyActiveBusiness: Boolean)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -181,13 +189,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      isOnlyActiveBusiness = isOnlyActiveBusiness
     )
   }
 
 
   private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId, isAgent: Boolean)
                                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+
+    val isOnlyActiveBusiness = moreThanOneActiveBusiness()
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -201,14 +212,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = true,
               crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)))
+              crystallisationTaxYear2 = None,
+              isOnlyActiveBusiness = isOnlyActiveBusiness)))
             case Some(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelSEBusiness(
                   incomeSource = desiredIncomeSourceMaybe.get,
                   itsaStatus = true,
                   crystallisationTaxYear1 = crystallisationData.headOption,
-                  crystallisationTaxYear2 = crystallisationData.lastOption
+                  crystallisationTaxYear2 = crystallisationData.lastOption,
+                  isOnlyActiveBusiness = isOnlyActiveBusiness
                 )))
           }
         case false =>
@@ -217,7 +230,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = false,
               crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)
+              crystallisationTaxYear2 = None,
+              isOnlyActiveBusiness = isOnlyActiveBusiness
+            )
           ))
       }
     } else {
@@ -229,6 +244,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
   private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceType, isAgent: Boolean)
                                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+
+    val isOnlyActiveBusiness = moreThanOneActiveBusiness()
+
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties
@@ -250,7 +268,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               itsaStatus = true,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType)))
+              incomeSourceType = incomeSourceType,
+              isOnlyActiveBusiness = isOnlyActiveBusiness)))
             case Some(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelPropertyBusiness(
@@ -258,7 +277,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                   itsaStatus = true,
                   crystallisationTaxYear1 = crystallisationData.headOption,
                   crystallisationTaxYear2 = crystallisationData.lastOption,
-                  incomeSourceType = incomeSourceType
+                  incomeSourceType = incomeSourceType,
+                  isOnlyActiveBusiness = isOnlyActiveBusiness
                 )))
           }
         case false =>
@@ -268,7 +288,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               itsaStatus = false,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType)
+              incomeSourceType = incomeSourceType,
+              isOnlyActiveBusiness = isOnlyActiveBusiness)
           ))
       }
     } else {
