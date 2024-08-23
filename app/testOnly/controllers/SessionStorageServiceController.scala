@@ -22,6 +22,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.mvc._
 import testOnly.models.SessionDataRetrieval
+import testOnly.models.sessionData.SessionDataPostSuccess
 import testOnly.services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -63,9 +64,9 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       case Left(ex) =>
         Logger("application")
           .error(s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-        Future.successful(handleError(isAgent))
-      case Right(mtditid: String) =>
-        handlePostSuccess(mtditid, isAgent)
+        Future.successful(InternalServerError(s"There was an error. message: ${ex.getMessage}, cause: ${ex.getCause}"))
+      case Right(res: SessionDataPostSuccess) =>
+        handlePostSuccess(res, isAgent)
     }
   }.recover {
     case ex: Throwable =>
@@ -74,15 +75,16 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleError(isAgent)
   }
 
-  private def handlePostSuccess(mtditid: String, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
-    sessionDataService.getSessionData(mtditid) map {
+  private def handlePostSuccess(res: SessionDataPostSuccess, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
+    sessionDataService.getSessionData(res.mtditid) map {
       case Left(ex) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataRetrieval) =>
         Ok(
-          s"User model:          ${model.toString}\n" +
+          s"Status:              ${res.status}\n" +
+            s"User model:          ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
             s"mtditid:           ${model.mtditid}\n" +
@@ -93,7 +95,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   }
 
   def post()(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_])
-  : Future[Either[Throwable, String]] =
+  : Future[Either[Throwable, SessionDataPostSuccess]] =
     sessionDataService.postSessionData()
 
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {

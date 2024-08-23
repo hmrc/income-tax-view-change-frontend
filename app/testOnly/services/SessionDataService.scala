@@ -17,8 +17,9 @@
 package testOnly.services
 
 import auth.MtdItUser
-import play.api.http.Status.OK
+import play.api.http.Status.{CONFLICT, OK}
 import testOnly.connectors.SessionDataConnector
+import testOnly.models.sessionData.SessionDataPostSuccess
 import testOnly.models.{SessionDataModel, SessionDataRetrieval}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -52,14 +53,14 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
   }
 
   def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[Either[Throwable, String]] = {
+  : Future[Either[Throwable, SessionDataPostSuccess]] = {
 
     user.saUtr match {
       case Some(utr) =>
         sessionDataConnector.postSessionData(postSessionDataModel(user, utr)).map { response =>
           response.status match {
-            case OK => Right(user.mtditid)
-            case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
+            case status if status == OK || status == CONFLICT => Right(SessionDataPostSuccess(status, user.mtditid))
+            case status => Left(new Exception(s"User session could not be saved. status: $status"))
           }
         }
       case None => Future.successful(Left(new Exception(s"User had no saUtr!")))
