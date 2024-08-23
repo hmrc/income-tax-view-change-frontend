@@ -30,7 +30,6 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object ITSAStatusUpdateConnector {
-  val CorrelationIdHeader = "CorrelationId"
   def toApiFormat(taxYear: TaxYear): String = {
     s"${taxYear.startYear}-${taxYear.endYear.toString.toSeq.drop(2)}"
   }
