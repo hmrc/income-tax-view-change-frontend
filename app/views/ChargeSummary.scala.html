@@ -53,14 +53,14 @@
     <div>
         @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
             @p(id = Some("p1")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if(viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
+        } else if (viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
             @p(id = Some("p2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
         } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
             @p(id = Some("p3")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
         } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
             @p(id = Some("p4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
         }
-        @if(viewModel.documentType == Poa1Charge | Poa2Charge && viewModel.latePaymentInterestCharge) {
+        @if((viewModel.documentType == Poa1Charge | viewModel.documentType == Poa2Charge) && viewModel.latePaymentInterestCharge) {
             @p(id = Some("p3")) {
                 @messages("chargeSummary.paymentsOnAccount.textOne")
                 <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.paymentsOnAccount.linkText")</a>
