@@ -90,7 +90,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
     }
     "render the hint" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -105,13 +105,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
-    "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages("dateForm.error.monthAndYear.required")
-    }
     "render the error summary" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
     }
   }
 
@@ -126,7 +121,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
     }
     "render the hint" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -141,13 +136,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
-    "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages("dateForm.error.monthAndYear.required")
-    }
     "render the error summary" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
     }
   }
 

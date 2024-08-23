@@ -45,7 +45,7 @@
 }
 
 @getHintContent = {
-@p(classes = "govuk-hint") {
+@p(classes = "govuk-hint", id = Some("income-source-end-date-hint-example")) {
     @messages("dateForm.hint")
 }
 }
@@ -81,7 +81,6 @@
             )
             .withHint(
                 Hint(
-                    //id = Some(s"$messagesPrefix-hint"),
                     content = HtmlContent(getHintContent)
                 )
             )

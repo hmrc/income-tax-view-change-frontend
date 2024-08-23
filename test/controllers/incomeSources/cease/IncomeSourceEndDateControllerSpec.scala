@@ -176,9 +176,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {
-          document.getElementById("income-source-end-date.day").`val`() shouldBe "10"
-          document.getElementById("income-source-end-date.month").`val`() shouldBe "10"
-          document.getElementById("income-source-end-date.year").`val`() shouldBe "2022"
+          document.getElementById("value.day").`val`() shouldBe "10"
+          document.getElementById("value.month").`val`() shouldBe "10"
+          document.getElementById("value.year").`val`() shouldBe "2022"
 
         }
       }
@@ -422,8 +422,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       def testSubmitResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+              "value.year" -> "2022")
         }
 
         setupMockAuthorisationSuccess(isAgent)
@@ -538,8 +538,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       def testFormError(isAgent: Boolean, isChange: Boolean): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withIncorrectDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "", "value.month" -> "8",
+              "value.year" -> "2022")
         }
         val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         val incomeSourceType = SelfEmployment
@@ -563,7 +563,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe TestIncomeSourceEndDateController.getValidationErrorTabTitle(incomeSourceType)
-
+        document.getElementsByClass("govuk-error-message").text() shouldBe "error.prefix: The date must include a day"
       }
 
       "the form is not completed successfully" when {
@@ -590,8 +590,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       def testInternalServerErrors(isAgent: Boolean, isChange: Boolean, id: Option[String] = None, incomeSourceType: IncomeSourceType = SelfEmployment): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
-            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
-              "income-source-end-date.year" -> "2022")
+            .withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+              "value.year" -> "2022")
         }
 
         setupMockAuthorisationSuccess(isAgent)
