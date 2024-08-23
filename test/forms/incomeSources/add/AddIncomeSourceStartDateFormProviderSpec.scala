@@ -28,138 +28,140 @@ import java.time.LocalDate
 
 class AddIncomeSourceStartDateFormProviderSpec extends AnyWordSpec with Matchers with TestSupport {
 
+  val dateFormErrorPrefix = "dateForm.error"
+
   "AddIncomeSourceStartDate form" should {
     "bind with a valid date" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val formData = LocalDate.of(2022, 12, 20)
       val completedForm = form.fill(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("20")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("12")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("2022")
+      completedForm.data.get("value.day") shouldBe Some("20")
+      completedForm.data.get("value.month") shouldBe Some("12")
+      completedForm.data.get("value.year") shouldBe Some("2022")
       completedForm.errors shouldBe List.empty
     }
     "bind with an invalid date field - Self employment" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
+      val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("supp")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${SelfEmployment.startDateMessagesPrefix}.error.invalid"), List()))
+      completedForm.data.get("value.day") shouldBe Some("yo")
+      completedForm.data.get("value.month") shouldBe Some("yo")
+      completedForm.data.get("value.year") shouldBe Some("supp")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.invalid"), List()))
     }
     "bind with an invalid date field - Foreign property" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
+      val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("supp")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${ForeignProperty.startDateMessagesPrefix}.error.invalid"), List()))
+      completedForm.data.get("value.day") shouldBe Some("yo")
+      completedForm.data.get("value.month") shouldBe Some("yo")
+      completedForm.data.get("value.year") shouldBe Some("supp")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.invalid"), List()))
     }
     "bind with an invalid date field - UK Property" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "yo", "income-source-start-date.month" -> "yo", "income-source-start-date.year" -> "supp")
+      val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("yo")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("supp")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${UkProperty.startDateMessagesPrefix}.error.invalid"), List()))
+      completedForm.data.get("value.day") shouldBe Some("yo")
+      completedForm.data.get("value.month") shouldBe Some("yo")
+      completedForm.data.get("value.year") shouldBe Some("supp")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.invalid"), List()))
     }
     "bind with a valid future date" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val futureDate = dateService.getCurrentDate.plusDays(6)
-      val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
+      val formData = Map("value.day" -> s"${futureDate.getDayOfMonth}", "value.month" -> s"${futureDate.getMonthValue}", "value.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some(s"${futureDate.getDayOfMonth}")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some(s"${futureDate.getMonthValue}")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some(s"${futureDate.getYear}")
+      completedForm.data.get("value.day") shouldBe Some(s"${futureDate.getDayOfMonth}")
+      completedForm.data.get("value.month") shouldBe Some(s"${futureDate.getMonthValue}")
+      completedForm.data.get("value.year") shouldBe Some(s"${futureDate.getYear}")
       completedForm.errors shouldBe Nil
     }
     "bind with a invalid future date, date greater then current date plus 6 days " in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
       val futureDate = dateService.getCurrentDate.plusDays(7)
-      val formData = Map("income-source-start-date.day" -> s"${futureDate.getDayOfMonth}", "income-source-start-date.month" -> s"${futureDate.getMonthValue}", "income-source-start-date.year" -> s"${futureDate.getYear}")
+      val formData = Map("value.day" -> s"${futureDate.getDayOfMonth}", "value.month" -> s"${futureDate.getMonthValue}", "value.year" -> s"${futureDate.getYear}")
       val completedForm = form.bind(formData)
-      completedForm.data.get("income-source-start-date.day") shouldBe Some(s"${futureDate.getDayOfMonth}")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some(s"${futureDate.getMonthValue}")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some(s"${futureDate.getYear}")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"The date your business started trading must be before ${mockImplicitDateFormatter.longDate(futureDate).toLongDate}"), List()))
+      completedForm.data.get("value.day") shouldBe Some(s"${futureDate.getDayOfMonth}")
+      completedForm.data.get("value.month") shouldBe Some(s"${futureDate.getMonthValue}")
+      completedForm.data.get("value.year") shouldBe Some(s"${futureDate.getYear}")
+      completedForm.errors shouldBe List(FormError("value", List(s"The date your business started trading must be before ${mockImplicitDateFormatter.longDate(futureDate).toLongDate}"), List()))
     }
 
     "bind with a date missing day field" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "2016")
+      val formData = Map("value.day" -> "", "value.month" -> "12", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("12")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("2016")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.day.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("")
+      completedForm.data.get("value.month") shouldBe Some("12")
+      completedForm.data.get("value.year") shouldBe Some("2016")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.required"), List("day")))
     }
     "bind with a date missing month field" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "2016")
+      val formData = Map("value.day" -> "20", "value.month" -> "", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("20")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("2016")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.month.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("20")
+      completedForm.data.get("value.month") shouldBe Some("")
+      completedForm.data.get("value.year") shouldBe Some("2016")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.required"), List("month")))
     }
     "bind with a date missing year field" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "")
+      val formData = Map("value.day" -> "20", "value.month" -> "12", "value.year" -> "")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("20")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("12")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.year.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("20")
+      completedForm.data.get("value.month") shouldBe Some("12")
+      completedForm.data.get("value.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("value", List(s"$dateFormErrorPrefix.required"), List("year")))
     }
     "bind with a date missing day and month fields" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "2016")
+      val formData = Map("value.day" -> "", "value.month" -> "", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("2016")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.dayAndMonth.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("")
+      completedForm.data.get("value.month") shouldBe Some("")
+      completedForm.data.get("value.year") shouldBe Some("2016")
+      completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("day", "month")))
     }
     "bind with a date missing day and year fields" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "12", "income-source-start-date.year" -> "")
+      val formData = Map("value.day" -> "", "value.month" -> "12", "value.year" -> "")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("12")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.dayAndYear.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("")
+      completedForm.data.get("value.month") shouldBe Some("12")
+      completedForm.data.get("value.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("day", "year")))
     }
     "bind with a date missing month and year fields" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "20", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "")
+      val formData = Map("value.day" -> "20", "value.month" -> "", "value.year" -> "")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("20")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List("dateForm.error.monthAndYear.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("20")
+      completedForm.data.get("value.month") shouldBe Some("")
+      completedForm.data.get("value.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("month", "year")))
     }
     "bind with a date missing day, month and year fields" in {
       val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(SelfEmployment.startDateMessagesPrefix)
-      val formData = Map("income-source-start-date.day" -> "", "income-source-start-date.month" -> "", "income-source-start-date.year" -> "")
+      val formData = Map("value.day" -> "", "value.month" -> "", "value.year" -> "")
       val completedForm = form.bind(formData)
 
-      completedForm.data.get("income-source-start-date.day") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.month") shouldBe Some("")
-      completedForm.data.get("income-source-start-date.year") shouldBe Some("")
-      completedForm.errors shouldBe List(FormError("income-source-start-date", List(s"${SelfEmployment.startDateMessagesPrefix}.error.required"), List()))
+      completedForm.data.get("value.day") shouldBe Some("")
+      completedForm.data.get("value.month") shouldBe Some("")
+      completedForm.data.get("value.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("value", List(s"${SelfEmployment.startDateMessagesPrefix}.required.all"), List()))
     }
   }
 }

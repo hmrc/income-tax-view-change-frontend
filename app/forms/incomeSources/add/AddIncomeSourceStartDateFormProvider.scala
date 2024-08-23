@@ -44,11 +44,11 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
     Form(
       "value" -> localDate(
         invalidKey     = s"$dateFormErrorPrefix.invalid",
-        allRequiredKey = s"$dateFormErrorPrefix.required.all",
+        allRequiredKey = s"$messagesPrefix.required.all",
         twoRequiredKey = s"$dateFormErrorPrefix.required.two",
         requiredKey    = s"$dateFormErrorPrefix.required"
       ).verifying(
-        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage, maximumAllowableDate.formatAsString),
+        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage),
         fourDigitValidYear(invalidMessage)
       )
     )
