@@ -307,7 +307,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
-            document.getElementsByClass("govuk-error-message").text() shouldBe s"error.prefix: Enter the date your ${getHintText(incomeSourceType)}"
+            document.getElementsByClass("govuk-error-message").text() shouldBe s"Error:: Enter the date your ${getHintText(incomeSourceType)}"
           }
           "no form is submitted" in {
             disableAllSwitches()

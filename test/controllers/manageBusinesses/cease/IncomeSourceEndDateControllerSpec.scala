@@ -494,7 +494,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
-          document.getElementsByClass("govuk-error-message").text() shouldBe "error.prefix: The date must include a day"
+          document.getElementsByClass("govuk-error-message").text() shouldBe "Error:: The date must include a day"
         }
 
         "the form is not completed successfully" when {
