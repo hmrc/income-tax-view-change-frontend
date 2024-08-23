@@ -50,31 +50,6 @@
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
 @getPoaExplanationContent = {
-    <div>
-        @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
-            @p(id = Some("p1")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if (viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("p2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("p3")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
-            @p(id = Some("p4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        }
-        @if((viewModel.documentType == Poa1Charge | viewModel.documentType == Poa2Charge) && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("p3")) {
-                @messages("chargeSummary.paymentsOnAccount.textOne")
-                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.paymentsOnAccount.linkText")</a>
-                @messages("chargeSummary.paymentsOnAccount.textTwo")
-            }
-            @p(id = Some("p4")) {
-                @messages("chargeSummary.paymentsOnAccount.p4")
-                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.paymentsOnAccount.p4LinkText")</a><br><br>
-            }
-        }
-    </div>
-}
-
-@OLDgetPoaExplanationContent = {
 
 <div>
     @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
@@ -84,6 +59,32 @@
     </ul>
     @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
 </div>
+}
+
+
+@getLpiPoaExplanationContent = {
+    <div>
+        @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa1")){@messages("chargeSummary.paymentsOnAccount")}
+        } else if (viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+        } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa3")){@messages("chargeSummary.paymentsOnAccount")}
+        } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa2")}
+        }
+        @if((viewModel.documentType == Poa1Charge | viewModel.documentType == Poa2Charge) && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa5")) {
+                @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
+                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+                @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
+            }
+            @p(id = Some("lpi-poa6")) {
+                @messages("chargeSummary.lpi.paymentsOnAccount.p3")
+                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a><br><br>
+            }
+        }
+    </div>
 }
 
 @getBalancingPaymentDefinitionContent = {
@@ -99,15 +100,15 @@
 
 @getBalancingPaymentsExplanationContent = {
     <div>
-        @p(id = Some("b1")){@messages("chargeSummary.lpi.balancingCharge.b1")}
-        @p(id = Some("b2")) {
+        @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
+        @p(id = Some("lpi-bcd2")) {
             @messages("chargeSummary.lpi.balancingCharge.textOne")
             <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
             @messages("chargeSummary.lpi.balancingCharge.textTwo")
         }
-        @p(id = Some("b3")) {
-            @messages("chargeSummary.lpi.balancingCharge.b3")
-            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p2LinkText")</a><br><br>
+        @p(id = Some("lpi-bcd3")) {
+            @messages("chargeSummary.lpi.balancingCharge.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a><br><br>
         }
     </div>
 }
@@ -215,8 +216,9 @@
 
     @{
         viewModel.documentType match {
-            case Poa1Charge | Poa2Charge => OLDgetPoaExplanationContent
-            case BalancingCharge => getBalancingPaymentDefinitionContent
+            case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => getPoaExplanationContent
+            case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
+            case TRMNewCharge if !viewModel.latePaymentInterestCharge => getBalancingPaymentDefinitionContent //TRMNewCharge used to decide whether it's Balancing Charge but this might need to be checked if it's correct
             case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
             case _ =>
         }

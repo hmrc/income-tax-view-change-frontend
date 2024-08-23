@@ -122,14 +122,23 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
-    val poa1TextSentence = messages("chargeSummary.paymentsOnAccount.poa1")
-    val poa2TextSentence = messages("chargeSummary.paymentsOnAccount.poa2")
-    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount.textOne") + " " + messages("chargeSummary.paymentsOnAccount.linkText") + " " + messages("chargeSummary.paymentsOnAccount.textTwo")
-    val poaTextP4 = messages("chargeSummary.paymentsOnAccount.p4") + " " + messages("chargeSummary.paymentsOnAccount.p4LinkText")
+    val poaTextParagraph = messages("chargeSummary.paymentsOnAccount")
+    val poaTextBullets = messages("chargeSummary.paymentsOnAccount.bullet1") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
+    val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
+
+    val lpiPoa1TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa1")
+    val lpiPoa2TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa2")
+    val lpiPoaTextParagraph = messages("chargeSummary.lpi.paymentsOnAccount.textOne") + " " + messages("chargeSummary.lpi.paymentsOnAccount.linkText") + " " + messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
+    val lpiPoaTextP3 = messages("chargeSummary.lpi.paymentsOnAccount.p3") + " " + messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")
 
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
+
+    val lpiBcdTextSentence = messages("chargeSummary.lpi.balancingCharge.p1")
+    val lpiBcdTextParagraph = messages("chargeSummary.lpi.balancingCharge.textOne") + " " + messages("chargeSummary.lpi.balancingCharge.linkTex") + " " + messages("chargeSummary.lpi.balancingCharge.textTwo")
+    val lpiBcdTextP3 = messages("chargeSummary.lpi.balancingCharge.p3") + " " + messages("chargeSummary.lpi.balancingCharge.p3LinkText")
+
 
     def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
     def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
@@ -369,23 +378,40 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       }
 
-      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
+      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"))) {
         document.selectById("p1").text() shouldBe bcdTextParagraph
         document.selectById("bullets").text() shouldBe bcdTextBullets
         document.selectById("p2").text() shouldBe bcdTextP2
       }
 
+      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"))) {
+        document.selectById("lpi-bcd1").text() shouldBe lpiBcdTextSentence
+//        document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
+//        document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
+      }
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.selectById("p1").text() shouldBe poa1TextSentence
-        document.selectById("p3").text() shouldBe poaTextParagraph
-        document.selectById("p4").text() shouldBe poaTextP4
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
       }
 
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.selectById("p2").text() shouldBe poa2TextSentence
-        document.selectById("p3").text() shouldBe poaTextParagraph
-        document.selectById("p4").text() shouldBe poaTextP4
+        document.selectById("p1").text() shouldBe poaTextParagraph
+        document.selectById("bullets").text() shouldBe poaTextBullets
+        document.selectById("p2").text() shouldBe poaTextP2
+      }
+
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 1"))) {
+        document.selectById("lpi-poa2").text() shouldBe lpiPoa1TextSentence
+        document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
+        document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
+      }
+
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
+        document.selectById("p4").text() shouldBe lpiPoa2TextSentence
+        document.selectById("p5").text() shouldBe lpiPoaTextParagraph
+        document.selectById("p6").text() shouldBe lpiPoaTextP3
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {

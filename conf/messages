@@ -927,21 +927,19 @@ chargeSummary.dunning.locks.banner.note							   = You still need to pay the tot
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-chargeSummary.lpi.paymentsOnAccount.poa1                           = You owe HMRC interest because you paid your first payment on account late
-chargeSummary.lpi.paymentsOnAccount.poa2                           = You owe HMRC interest because you paid your second payment on account late
-chargeSummary.lpi.paymentsOnAccount.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
-chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
-chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
-chargeSummary.lpi.paymentsOnAccount.p4                             = See guidance on the
-chargeSummary.lpi.paymentsOnAccount.p4LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.paymentsOnAccount                                    = Payments on account are 2 advance payments made towards your next tax bill. They pay for:
+chargeSummary.paymentsOnAccount.bullet1                            = Income Tax
+chargeSummary.paymentsOnAccount.bullet2                            = Class 4 National Insurance contributions (opens in new tab)
+chargeSummary.paymentsOnAccount.p2                                 = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+
 
 chargeSummary.lpi.paymentsOnAccount.poa1                           = You owe HMRC interest because you paid your first payment on account late
 chargeSummary.lpi.paymentsOnAccount.poa2                           = You owe HMRC interest because you paid your second payment on account late
 chargeSummary.lpi.paymentsOnAccount.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
 chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
-chargeSummary.lpi.paymentsOnAccount.p4                             = See guidance on the
-chargeSummary.lpi.paymentsOnAccount.p4LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
@@ -1010,12 +1008,12 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for Balancing payment created
 
-chargeSummary.lpi.balancingCharge.b1                               = You owe HMRC interest because you paid your balancing payment late.
+chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
 chargeSummary.lpi.balancingCharge.linkText                         = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
-chargeSummary.lpi.balancingCharge.b3                               = See guidance on the
-chargeSummary.lpi.balancingCharge.b3LinkText                       = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
+chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
 
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
