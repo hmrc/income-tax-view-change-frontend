@@ -67,7 +67,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
           messages(s"${incomeSourceType.startDateMessagesPrefix}.heading")
       }
       "render the hint" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("income-source-start-date-hint").text() shouldBe
+        document.getElementById("value-hint").text() shouldBe
           s"${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint")} ${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint2")} ${messages("dateForm.hint")}"
       }
       "render the date form" in new Setup(isAgent, hasError = false, incomeSourceType) {
@@ -88,13 +88,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
       }
-      "render the error message" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("income-source-start-date-error").text() shouldBe messages("base.error-prefix") + " " +
-          messages(s"${incomeSourceType.startDateMessagesPrefix}.error.required")
-      }
       "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe
+        document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " +
           messages(s"${incomeSourceType.startDateMessagesPrefix}.error.required")
       }
     }
