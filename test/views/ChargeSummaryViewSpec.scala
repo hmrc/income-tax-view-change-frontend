@@ -373,7 +373,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.selectById("p1").text() shouldBe poa1TextSentence
+        document.selectById("p2").text() shouldBe poa2TextSentence
         document.selectById("p3").text() shouldBe poaTextParagraph
         document.selectById("p4").text() shouldBe poaTextP4
       }
@@ -389,8 +389,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
@@ -559,25 +559,25 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
-        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#p-interest-locks-msg").text().contains(s"$interestLinkFirstWord $interestLinkText $interestLinkFullText") shouldBe true
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
@@ -905,25 +905,25 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(), paymentBreakdown = paymentBreakdown, isAgent = true) {

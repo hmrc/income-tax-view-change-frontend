@@ -51,34 +51,54 @@
 
 @getPoaExplanationContent = {
     <div>
-        @if(viewModel.documentType == Poa1Charge) {
-            @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount.poa1")}
-        } else {
-            @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.poa2")}
+        @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("p1")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+        } else if(viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("p2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+        } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("p3")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+        } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("p4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
         }
+        @if(viewModel.documentType == Poa1Charge | Poa2Charge && viewModel.latePaymentInterestCharge) {
             @p(id = Some("p3")) {
                 @messages("chargeSummary.paymentsOnAccount.textOne")
                 <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.paymentsOnAccount.linkText")</a>
                 @messages("chargeSummary.paymentsOnAccount.textTwo")
-        }
+            }
             @p(id = Some("p4")) {
                 @messages("chargeSummary.paymentsOnAccount.p4")
                 <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.paymentsOnAccount.p4LinkText")</a><br><br>
+            }
         }
     </div>
 }
 
+@OLDgetPoaExplanationContent = {
+
+<div>
+    @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
+    <ul id="bullets" class="govuk-list govuk-list--bullet">
+        <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
+        <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+    </ul>
+    @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+</div>
+}
+
 @getBalancingPaymentsExplanationContent = {
-    @p(id = Some("b1")){@messages("chargeSummary.lpi.balancingCharge.b1")}
-    @p(id = Some("b2")) {
-        @messages("chargeSummary.lpi.balancingCharge.textOne")
-        <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
-        @messages("chargeSummary.lpi.balancingCharge.textTwo")
-    }
-    @p(id = Some("b3")) {
-        @messages("chargeSummary.lpi.balancingCharge.b3")
-        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p2LinkText")</a><br><br>
-    }
+    <div>
+        @p(id = Some("b1")){@messages("chargeSummary.lpi.balancingCharge.b1")}
+        @p(id = Some("b2")) {
+            @messages("chargeSummary.lpi.balancingCharge.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+            @messages("chargeSummary.lpi.balancingCharge.textTwo")
+        }
+        @p(id = Some("b3")) {
+            @messages("chargeSummary.lpi.balancingCharge.b3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p2LinkText")</a><br><br>
+        }
+    </div>
 }
 
 @checkPayeCodePara = {
@@ -184,7 +204,7 @@
 
     @{
         viewModel.documentType match {
-            case Poa1Charge | Poa2Charge => getPoaExplanationContent
+            case Poa1Charge | Poa2Charge => OLDgetPoaExplanationContent
             case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
             case _ =>
         }
@@ -250,11 +270,11 @@
         @p(id=Some("p-interest-locks-msg")){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @link(id = Some("what-you-owe-interest-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.interestLocks.text-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @link(id = Some("what-you-owe-interest-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.interestLocks.text")
             }
 
@@ -262,12 +282,12 @@
     } else {
         @p(){
             @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent")
-                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText-agent")</a>
+                @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                @link(id = Some("what-you-owe-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.whatYouOwe.textTwo-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
+                @link(id = Some("what-you-owe-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.whatYouOwe.textTwo")
             }
         }

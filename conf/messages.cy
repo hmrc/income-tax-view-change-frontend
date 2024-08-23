@@ -962,7 +962,7 @@ chargeSummary.paymentsOnAccount.poa1                               = Mae arnoch 
 chargeSummary.paymentsOnAccount.poa2                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch ail daliad ar gyfrif yn hwyr.
 chargeSummary.paymentsOnAccount.textOne                            = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
 chargeSummary.paymentsOnAccount.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
-chargeSummary.paymentsOnAccount.textTwo                            = plŵs â 2.5%.
+chargeSummary.paymentsOnAccount.textTwo                            = plws 2.5%.
 chargeSummary.paymentsOnAccount.p3                                 = Gweler yr arweiniad ynghylch y
 chargeSummary.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 

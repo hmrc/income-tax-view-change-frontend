@@ -927,13 +927,21 @@ chargeSummary.dunning.locks.banner.note							   = You still need to pay the tot
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-chargeSummary.paymentsOnAccount.poa1                               = You owe HMRC interest because you paid your first payment on account late
-chargeSummary.paymentsOnAccount.poa2                               = You owe HMRC interest because you paid your second payment on account late
-chargeSummary.paymentsOnAccount.textOne                            = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
-chargeSummary.paymentsOnAccount.linkText                           = Bank of England base rate (opens in new tab)
-chargeSummary.paymentsOnAccount.textTwo                            = plus 2.5%.
-chargeSummary.paymentsOnAccount.p4                                 = See guidance on the
-chargeSummary.paymentsOnAccount.p4LinkText                         = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.paymentsOnAccount.poa1                           = You owe HMRC interest because you paid your first payment on account late
+chargeSummary.lpi.paymentsOnAccount.poa2                           = You owe HMRC interest because you paid your second payment on account late
+chargeSummary.lpi.paymentsOnAccount.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
+chargeSummary.lpi.paymentsOnAccount.p4                             = See guidance on the
+chargeSummary.lpi.paymentsOnAccount.p4LinkText                     = interest rates set by HMRC (opens in new tab).
+
+chargeSummary.lpi.paymentsOnAccount.poa1                           = You owe HMRC interest because you paid your first payment on account late
+chargeSummary.lpi.paymentsOnAccount.poa2                           = You owe HMRC interest because you paid your second payment on account late
+chargeSummary.lpi.paymentsOnAccount.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
+chargeSummary.lpi.paymentsOnAccount.p4                             = See guidance on the
+chargeSummary.lpi.paymentsOnAccount.p4LinkText                     = interest rates set by HMRC (opens in new tab).
 
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
