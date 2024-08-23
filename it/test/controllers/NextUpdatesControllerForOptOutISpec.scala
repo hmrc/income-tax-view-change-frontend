@@ -59,14 +59,14 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        optOutService.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
-        val savedTaxYearOpn: Option[TaxYear] = optOutService.fetchSavedIntent().futureValue
+        optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
+        val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         savedTaxYearOpn.isDefined shouldBe true
         savedTaxYearOpn.get shouldBe TaxYear.forYearEnd(2024)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
-        val afterResetOpn: Option[TaxYear] = optOutService.fetchSavedIntent().futureValue
+        val afterResetOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         //assert intent tax-year is reset to none
         afterResetOpn.isDefined shouldBe false
 
@@ -101,14 +101,14 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino,
           previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-        optOutService.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
-        val savedTaxYearOpn: Option[TaxYear] = optOutService.fetchSavedIntent().futureValue
+        optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue shouldBe true
+        val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         savedTaxYearOpn.isDefined shouldBe true
         savedTaxYearOpn.get shouldBe TaxYear.forYearEnd(2024)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
-        val afterResetOpn: Option[TaxYear] = optOutService.fetchSavedIntent().futureValue
+        val afterResetOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         //assert intent tax-year is reset to none
         afterResetOpn.isDefined shouldBe false
 

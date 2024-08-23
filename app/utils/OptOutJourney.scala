@@ -16,36 +16,6 @@
 
 package utils
 
-import auth.MtdItUser
-import models.incomeSourceDetails.UIJourneySessionData
-import play.api.mvc.Result
-import services.SessionService
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.{ExecutionContext, Future}
-
 object OptOutJourney {
   val Name = "OPTOUT"
-}
-
-trait OptOutJourney {
-  self =>
-  val sessionService: SessionService
-
-  implicit val ec: ExecutionContext
-
-  def withSessionData(handleSessionData: UIJourneySessionData => Future[Result],
-                      handleErrorCase: Throwable => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    sessionService.getMongo(OptOutJourney.Name).flatMap {
-      case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)
-      case Right(None) =>
-        sessionService.createSession(OptOutJourney.Name).flatMap { _ =>
-          val data = UIJourneySessionData(hc.sessionId.get.value, OptOutJourney.Name)
-          handleSessionData(data)
-        }
-      case Left(ex) => handleErrorCase(ex)
-    }
-  }
 }

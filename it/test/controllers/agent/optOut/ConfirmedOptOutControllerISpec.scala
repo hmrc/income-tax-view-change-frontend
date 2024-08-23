@@ -19,12 +19,11 @@ package controllers.agent.optOut
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
-import models.optout.OptOutContextData.statusToString
-import models.optout.{OptOutContextData, OptOutSessionData}
+import models.optout.OptOutSessionData
 import play.api.http.Status.OK
-import repositories.UIJourneySessionDataRepository
+import repositories.ITSAStatusRepositorySupport.statusToString
+import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 import utils.OptOutJourney
@@ -53,7 +52,7 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
           stubAuthorisedAgentUser(authorised = true)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(
+          stubOptOutInitialState(currentTaxYear,
             previousYearCrystallised = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Mandated,
@@ -71,16 +70,18 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
     }
   }
 
-  private def stubOptOutInitialState(previousYearCrystallised: Boolean,
-                                     previousYearStatus: ITSAStatus.Value,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value): Unit = {
+  private def stubOptOutInitialState(currentTaxYear: TaxYear,
+                                     previousYearCrystallised: Boolean,
+                                     previousYearStatus: Value,
+                                     currentYearStatus: Value,
+                                     nextYearStatus: Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptOutJourney.Name,
         optOutSessionData =
           Some(OptOutSessionData(
             Some(OptOutContextData(
+              currentYear = currentTaxYear.toString,
               previousYearCrystallised,
               statusToString(previousYearStatus),
               statusToString(currentYearStatus),
