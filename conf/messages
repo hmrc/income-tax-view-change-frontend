@@ -2152,8 +2152,9 @@ optin.checkAnswers.cy = If you opt in, you will need to submit your quarterly up
 optin.checkAnswers.ny = If you opt in from the next tax year onwards, from 6 April {0} you will need to submit your quarterly updates through compatible software.
 optin.checkAnswers.confirm = Confirm and save
 optin.checkAnswers.cancel = Cancel
+optin.checkAnswers.submissionsMade = Any income and expenses already submitted for this tax year will be deleted. You will need to include this information in your quarterly updates.
 
-# opt out error page
+# opt in error page
 optin.optInError.heading                           = Sorry, there is a problem with the service
 optin.optInError.options                           = You can:
 optin.optInError.nextUpdates-bullet-1              = go back to your

@@ -28,8 +28,10 @@
         hr: hr,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        govukInsetText: GovukInsetText,
 )
+
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptInHref = @{
@@ -48,6 +50,10 @@
     if(model.intentIsNextYear) {
         messages("optin.checkAnswers.ny", model.startYear)
     } else messages("optin.checkAnswers.cy")
+}
+
+@previouslySubmittedUpdatesWarningBlock = @{
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
 }
 
 @mainTemplate(
@@ -81,6 +87,10 @@
         @p(id=Some("optIn-summary")) {
             @getMessage
         }
+
+       @if(model.showPreviouslySubmittedUpdatesWarning) {
+           @previouslySubmittedUpdatesWarningBlock
+       }
 
         <div class="govuk-button-group">
             @govukButton(Button(
