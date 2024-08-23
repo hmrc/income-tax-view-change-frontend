@@ -16,16 +16,19 @@
 
 package controllers.optIn
 
+import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.CheckYourAnswersControllerISpec._
-import forms.optIn.ChooseTaxYearForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import play.mvc.Http.Status
+import play.mvc.Http.Status.BAD_REQUEST
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
@@ -52,6 +55,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
   val nextTaxYear = currentTaxYear.nextYear
 
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val itsaStatusUpdateConnector: ITSAStatusUpdateConnector = app.injector.instanceOf[ITSAStatusUpdateConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,7 +64,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   def testShowHappyCase(isAgent: Boolean): Unit = {
 
-    val chooseOptInTaxYearPageUrl = routes.ChooseYearController.show(isAgent).url
+    val chooseOptInTaxYearPageUrl = routes.CheckYourAnswersController.show(isAgent).url
 
     s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
 
@@ -113,7 +117,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       }
     }
   }
-
+  val emptyBodyString = ""
   def testSubmitHappyCase(isAgent: Boolean): Unit = {
 
     val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
@@ -125,16 +129,16 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
 
-        val formData: Map[String, Seq[String]] = Map(
-          ChooseTaxYearForm.choiceField -> Seq(currentTaxYear.toString)
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+          Status.NO_CONTENT, emptyBodyString
         )
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptInChooseTaxYear(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(Status.SEE_OTHER),
-          //todo add more asserts in MISUV-8006
+          //todo add more asserts in MISUV-8007
         )
       }
     }
@@ -142,7 +146,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   def testSubmitUnhappyCase(isAgent: Boolean): Unit = {
 
-    val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+    val chooseOptOutTaxYearPageUrl = routes.CheckYourAnswersController.show(isAgent).url
 
     s"no tax-year choice is made and" when {
       s"submit page form, calling POST $chooseOptOutTaxYearPageUrl" should {
@@ -152,17 +156,15 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
           setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
 
-          val formData: Map[String, Seq[String]] = Map(
-            ChooseTaxYearForm.choiceField -> Seq()
+          ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
+            BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
           )
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitChoiceOnOptInChooseTaxYear(formData)
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.submitCheckYourAnswersOptInJourney()
           verifyIncomeSourceDetailsCall(testMtditid)
 
           result should have(
-            httpStatus(Status.BAD_REQUEST),
-            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year that you want to report quarterly from"),
-            elementTextBySelector("#choice-error")("Error: Select the tax year that you want to report quarterly from")
+            httpStatus(Status.SEE_OTHER),
           )
         }
       }
@@ -173,24 +175,26 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
   "ChooseYearController - Individual" when {
     testShowHappyCase(isAgent = false)
-//    testSubmitHappyCase(isAgent = false)
-//    testSubmitUnhappyCase(isAgent = false)
+    testSubmitHappyCase(isAgent = false)
+    testSubmitUnhappyCase(isAgent = false)
   }
 
   "ChooseYearController - Agent" when {
-//    testShowHappyCase(isAgent = true)
-//    testSubmitHappyCase(isAgent = true)
-//    testSubmitUnhappyCase(isAgent = true)
+    testShowHappyCase(isAgent = true)
+    testSubmitHappyCase(isAgent = true)
+    testSubmitUnhappyCase(isAgent = true)
   }
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
+  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
+                                    nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptInJourney.Name,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), Some(intent.toString)))))
+              currentTaxYear.toString, statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), Some(intent.toString)))))
   }
 
 }

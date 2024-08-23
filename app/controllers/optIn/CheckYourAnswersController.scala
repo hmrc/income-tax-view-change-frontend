@@ -20,9 +20,9 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.routes.ReportingFrequencyPageController
+import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
     implicit user =>
       optInService.makeOptInCall() map {
         case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => itvcErrorHandler.showInternalServerError()
+        case _ => Redirect(OptInErrorController.show(isAgent))
       }
   }
 
