@@ -20,6 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.ReportingFrequencyPageController
 import models.optin.MultiYearCheckYourAnswersViewModel
@@ -73,8 +74,8 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       optInService.makeOptInCall() map {
-        case true => redirectToCheckpointPage(isAgent)
-        case false => itvcErrorHandler.showInternalServerError()
+        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
+        case _ => itvcErrorHandler.showInternalServerError()
       }
   }
 

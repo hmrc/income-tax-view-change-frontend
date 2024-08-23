@@ -19,6 +19,7 @@ package services.optIn
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -75,8 +76,15 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
-  def makeOptInCall(): Future[Boolean] = {
-    Future.successful(true)
+  def makeOptInCall()(implicit user: MtdItUser[_],
+                      hc: HeaderCarrier,
+                      ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+
+    fetchSavedChosenTaxYear() flatMap {
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+    }
+
   }
 
   private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
