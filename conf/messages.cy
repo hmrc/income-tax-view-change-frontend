@@ -2111,3 +2111,13 @@ optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno?ch
 optin.checkAnswers.ny = TBD
 optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
+optin.checkAnswers.submissionsMade = TBD
+
+# opt in error page
+optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
+optin.optInError.options                           = Gallwch wneud y canlynol:
+optin.optInError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
+optin.optInError.nextUpdates-link                  = diweddariadau nesaf
+optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
+optin.optInError.home-bullet-1                     = mynd yn ôl i’r
+optin.optInError.home-bullet-2                     = hafan
