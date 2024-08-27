@@ -26,8 +26,11 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.OptInSessionData
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{OptInInitialState, OptInProposition}
+import services.optout.NextOptOutTaxYear
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -122,7 +125,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
 
-  private def fetchOptInProposition()(implicit user: MtdItUser[_],
+  def fetchOptInProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
                                ec: ExecutionContext): Future[OptInProposition] = {
 
@@ -165,4 +168,30 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       case Some(s) => s.selectedOptInYear.flatMap(TaxYear.getTaxYearModel)
     }
   }
+
+  def getQuarterlyUpdatesCountForOfferedYears(proposition: OptInProposition)
+                                             (implicit user: MtdItUser[_],
+                                              hc: HeaderCarrier,
+                                              ec: ExecutionContext): Future[QuarterlyUpdatesCountForTaxYearModel] = {
+
+    def cumulativeQuarterlyUpdateCounts(taxYearToCount: Seq[QuarterlyUpdatesCountForTaxYear]): Seq[QuarterlyUpdatesCountForTaxYear] =
+      if (taxYearToCount.isEmpty)
+        Seq()
+      else
+        Seq(cumulativeCount(taxYearToCount)) ++ cumulativeQuarterlyUpdateCounts(taxYearToCount.tail)
+
+    def cumulativeCount(taxYearToCount: Seq[QuarterlyUpdatesCountForTaxYear]): QuarterlyUpdatesCountForTaxYear =
+      QuarterlyUpdatesCountForTaxYear(taxYearToCount.head.taxYear, taxYearToCount.map(_.count).sum)
+
+    val annualQuarterlyUpdateCounts = Future.sequence(
+      proposition.availableOptInYears.map {
+        case next: NextOptOutTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, 0))
+        case previousOrCurrent => nextUpdatesService.getQuarterlyUpdatesCounts(previousOrCurrent.taxYear)
+      })
+
+    annualQuarterlyUpdateCounts.
+      map(cumulativeQuarterlyUpdateCounts).
+      map(QuarterlyUpdatesCountForTaxYearModel)
+  }
+  
 }

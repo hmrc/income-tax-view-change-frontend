@@ -21,16 +21,19 @@ import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRespons
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.Annual
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.status
+import play.api.test.Helpers._
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.CheckYourAnswersView
-import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
@@ -60,6 +63,13 @@ class CheckYourAnswersControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockFetchSavedChosenTaxYear(taxYear2023)
+
+        val currentOptInTaxYear = CurrentOptInTaxYear(Annual, taxYear2023)
+        val nextOptInTaxYear = NextOptInTaxYear(Annual, taxYear2023.nextYear, currentOptInTaxYear)
+        when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+          .thenReturn(Future.successful(OptInProposition(currentOptInTaxYear, nextOptInTaxYear)))
+        when(mockOptInService.getQuarterlyUpdatesCountForOfferedYears(any())(any(), any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(taxYear2023, 3)))))
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)

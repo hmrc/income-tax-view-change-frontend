@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.optIn.CheckYourAnswersController.ZeroCount
 import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
@@ -34,6 +35,10 @@ import views.html.optIn.CheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
+object CheckYourAnswersController {
+  val ZeroCount = 0
+}
 
 class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
                                            val optInService: OptInService,
@@ -62,10 +67,15 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
       withRecover(isAgent) {
 
         val result = for {
-          taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
+          intentTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
-          intentIsNextYear = taxYear.isNextTaxYear(dateService)
-        } yield Ok(view(MultiYearCheckYourAnswersViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
+          intentIsNextYear = intentTaxYear.isNextTaxYear(dateService)
+          proposition <- OptionT.liftF(optInService.fetchOptInProposition())
+          quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(optInService.getQuarterlyUpdatesCountForOfferedYears(proposition))
+          showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
+            .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(ZeroCount) > ZeroCount
+        } yield Ok(view(MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear,
+          showPreviouslySubmittedUpdatesWarning = showPreviouslySubmittedUpdatesWarning)))
 
         result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }

@@ -72,7 +72,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear).futureValue shouldBe true
+        val intent = currentTaxYear
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.renderCheckYourAnswersOptInJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -96,7 +97,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear.nextYear).futureValue shouldBe true
+        val intent = currentTaxYear.nextYear
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.renderCheckYourAnswersOptInJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
