@@ -22,7 +22,6 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.CheckYourAnswersController.ZeroCount
 import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
@@ -30,15 +29,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
+import services.optIn.OptInService._
 import utils.AuthenticatorPredicate
 import views.html.optIn.CheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
-object CheckYourAnswersController {
-  val ZeroCount = 0
-}
 
 class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
                                            val optInService: OptInService,

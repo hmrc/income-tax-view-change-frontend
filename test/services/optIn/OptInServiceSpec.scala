@@ -24,13 +24,17 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
 import models.itsaStatus.StatusDetail
 import models.optin.{OptInContextData, OptInSessionData}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney
@@ -227,6 +231,34 @@ class OptInServiceSpec extends UnitSpec
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
     }
 
+  }
+
+  "OptInService.cumulativeQuarterlyUpdateCounts" should {
+
+    "for proposition with opt-in for only next-tax-year" in {
+
+      val currentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+      val nextOptInTaxYear = NextOptInTaxYear(Annual, nextTaxYear, currentOptInTaxYear)
+      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
+
+      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(nextTaxYear, 0)))
+    }
+
+    "for proposition with opt-in for current-tax-year" in {
+
+      val currentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+      val nextOptInTaxYear = NextOptInTaxYear(Voluntary, nextTaxYear, currentOptInTaxYear)
+      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentOptInTaxYear.taxYear))(any(), any()))
+        .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
+
+      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
+
+      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
+    }
   }
 
   def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext

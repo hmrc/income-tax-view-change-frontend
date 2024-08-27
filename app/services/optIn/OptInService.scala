@@ -27,9 +27,9 @@ import models.optin.OptInSessionData
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optIn.OptInService.ZeroCount
 import services.optIn.core.OptInProposition._
-import services.optIn.core.{OptInInitialState, OptInProposition}
-import services.optout.NextOptOutTaxYear
+import services.optIn.core.{NextOptInTaxYear, OptInInitialState, OptInProposition}
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -185,13 +185,18 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     val annualQuarterlyUpdateCounts = Future.sequence(
       proposition.availableOptInYears.map {
-        case next: NextOptOutTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, 0))
-        case previousOrCurrent => nextUpdatesService.getQuarterlyUpdatesCounts(previousOrCurrent.taxYear)
+        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, ZeroCount))
+        case anyOtherOptInTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptInTaxYear.taxYear)
       })
 
     annualQuarterlyUpdateCounts.
       map(cumulativeQuarterlyUpdateCounts).
       map(QuarterlyUpdatesCountForTaxYearModel)
   }
-  
+
+}
+
+object OptInService {
+  /* todo remove this and reuse variable from opt-out after refactor */
+  val ZeroCount = 0
 }
