@@ -47,7 +47,7 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)
 
