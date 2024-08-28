@@ -52,7 +52,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   s"calling GET $singleYearOptOutWarningPageGETUrl" should {

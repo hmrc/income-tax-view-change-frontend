@@ -2169,4 +2169,23 @@ optin.chooseOptInTaxYear.whichTaxYear                = Which tax year do you wan
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} to {1} onwards
 optin.chooseOptInTaxYear.continue                    = Continue
 optin.confirmOptIn.cancel                            = Cancel
-optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report quarterly from
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Select the tax year that you want to report quarterly from
+
+# opt in check your answers
+optin.checkAnswers.taxYears = {0} to {1} tax year onwards
+optin.checkAnswers.heading = Check your answers
+optin.checkAnswers.optin = Opt in from
+optin.checkAnswers.change = Change
+optin.checkAnswers.cy = If you opt in, you will need to submit your quarterly update through compatible software.
+optin.checkAnswers.ny = If you opt in from the next tax year onwards, from 6 April {0} you will need to submit your quarterly updates through compatible software.
+optin.checkAnswers.confirm = Confirm and save
+optin.checkAnswers.cancel = Cancel
+
+# opt out error page
+optin.optInError.heading                           = Sorry, there is a problem with the service
+optin.optInError.options                           = You can:
+optin.optInError.nextUpdates-bullet-1              = go back to your
+optin.optInError.nextUpdates-link                  = next updates
+optin.optInError.nextUpdates-bullet-2              = and try again
+optin.optInError.home-bullet-1                     = go back to the
+optin.optInError.home-bullet-2                     = homepage

@@ -17,12 +17,12 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
 
@@ -30,15 +30,14 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-/* todo will be fully implemented in MISUV-TBD */
-class ReportingFrequencyPageController @Inject()(val optInService: OptInService,
-                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                 val auth: AuthenticatorPredicate)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class OptInCompletedController @Inject()(val optInService: OptInService,
+                                         val authorisedFunctions: FrontendAuthorisedFunctions,
+                                         val auth: AuthenticatorPredicate)
+                                        (implicit val appConfig: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext,
+                                         val itvcErrorHandler: ItvcErrorHandler,
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -54,7 +53,7 @@ class ReportingFrequencyPageController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        optInService.setupSessionData().map(_ => Ok(s"Reporting Frequency Page. Time:${LocalDateTime.now()}"))
+        Future.successful(Ok(s"OptIn Completed Page. Time:${LocalDateTime.now()}"))
       }
   }
 }

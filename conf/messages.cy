@@ -2104,10 +2104,20 @@ optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn y
 optIn.beforeYouStart.button.start              = Dechrau
 
 # opt in choose tax year
-optin.chooseOptInTaxYear.heading                     = TBD
-optin.chooseOptInTaxYear.desc1                       = TBD
-optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.heading                     = Optio i mewn yn wirfoddol i adrodd yn chwarterol
+optin.chooseOptInTaxYear.desc1                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
+optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
+
+# opt in check your answers
+optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
+optin.checkAnswers.heading = Gwirio?ch atebion
+optin.checkAnswers.optin = Optio i mewn o
+optin.checkAnswers.change = Newid
+optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno?ch diweddariad chwarterol drwy feddalwedd sy?n cydweddu.
+optin.checkAnswers.ny = TBD
+optin.checkAnswers.confirm = Cadarnhau a chadw
+optin.checkAnswers.cancel = Canslo
