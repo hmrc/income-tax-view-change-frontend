@@ -20,10 +20,11 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
+import controllers.optIn.routes.ReportingFrequencyPageController
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.OptInSessionData
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -193,6 +194,25 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       map(cumulativeQuarterlyUpdateCounts).
       map(QuarterlyUpdatesCountForTaxYearModel)
   }
+
+  def getMultiYearCheckYourAnswersViewModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+                                                              hc: HeaderCarrier,
+                                                              ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
+    val result = for {
+      intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
+      cancelURL = ReportingFrequencyPageController.show(isAgent).url
+      intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
+      proposition <- OptionT.liftF(fetchOptInProposition())
+      quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(getQuarterlyUpdatesCountForOfferedYears(proposition))
+      showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
+        .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(ZeroCount) > ZeroCount
+    } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear,
+      showPreviouslySubmittedUpdatesWarning = showPreviouslySubmittedUpdatesWarning)
+
+    result.value
+  }
+
+  private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
 }
 

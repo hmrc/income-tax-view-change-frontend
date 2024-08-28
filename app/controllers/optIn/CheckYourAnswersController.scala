@@ -17,20 +17,17 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
-import models.incomeSourceDetails.TaxYear
+import controllers.optIn.routes.OptInErrorController
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
-import services.optIn.OptInService.ZeroCount
 import utils.AuthenticatorPredicate
 import views.html.optIn.CheckYourAnswersView
 
@@ -63,22 +60,18 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
     implicit user =>
       withRecover(isAgent) {
 
-        val result = for {
-          intentTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
-          cancelURL = ReportingFrequencyPageController.show(isAgent).url
-          intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
-          proposition <- OptionT.liftF(optInService.fetchOptInProposition())
-          quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(optInService.getQuarterlyUpdatesCountForOfferedYears(proposition))
-          showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
-            .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(ZeroCount) > ZeroCount
-        } yield Ok(view(MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear,
-          showPreviouslySubmittedUpdatesWarning = showPreviouslySubmittedUpdatesWarning)))
+        optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
+          case Some(model) => Ok(view(MultiYearCheckYourAnswersViewModel(
+            model.intentTaxYear,
+            model.isAgent,
+            model.cancelURL,
+            model.intentIsNextYear,
+            model.showPreviouslySubmittedUpdatesWarning)))
+          case None => errorHandler(isAgent).showInternalServerError()
+        }
 
-        result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }
   }
-
-  private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
