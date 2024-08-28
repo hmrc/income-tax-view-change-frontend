@@ -29,14 +29,8 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                      val http: HttpClient
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
-  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/$mtditid"
-
-    http.GET[HttpResponse](url)(httpReads, hc, ec)
-  }
-
-  def getSessionDataByMtdidit(mtditid: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/get-by-mtditid/$mtditid"
+  def getSessionData()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
 
     http.GET[HttpResponse](url)(httpReads, hc, ec)
   }

@@ -49,24 +49,16 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleShow(isAgent = true)
   }
 
-  def showByMtditid(mtditid: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleShowByMtditid(isAgent = false, mtditid)
-  }
-
-  def showAgentByMtditid(mtditid: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleShowByMtditid(isAgent = true, mtditid)
-  }
-
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
     post() flatMap {
       case Left(ex) =>
-        Logger("application")
-          .error(s"${if (isAgent) "Agent" else "Individual"} - POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
+        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} " +
+          s"- POST user data to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
         Future.successful(InternalServerError(s"There was an error. message: ${ex.getMessage}, cause: ${ex.getCause}"))
       case Right(res: SessionDataPostSuccess) =>
-        handlePostSuccess(res, isAgent)
+        Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
+          s"- POST user data to income-tax-session-data successful! Status: ${res.status}, mtditid: ${res.mtditid}")
+        handlePostSuccess(isAgent)
     }
   }.recover {
     case ex: Throwable =>
@@ -75,15 +67,15 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleError(isAgent)
   }
 
-  private def handlePostSuccess(res: SessionDataPostSuccess, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
-    sessionDataService.getSessionData(res.mtditid) map {
+  private def handlePostSuccess(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
+    sessionDataService.getSessionData() map {
       case Left(ex) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataRetrieval) =>
         Ok(
-          s"Status:              ${res.status}\n" +
+          s"Session Data Service POST and GET requests were successful!\n" +
             s"User model:          ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
@@ -101,27 +93,6 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
-  }
-
-  private def handleShowByMtditid(isAgent: Boolean, mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    sessionDataService.getSessionDataByMtditid(mtditid) map {
-      case Left(ex) =>
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-          s" - GET user data request to income-tax-session-data unsuccessful: - ${ex.getMessage} - ${ex.getCause} - ")
-        InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
-      case Right(model: List[SessionDataRetrieval]) =>
-        Ok(
-          model.zipWithIndex.map {
-            case (item, index) =>
-              s"List item:         ${index + 1}\n" +
-                s"User model:        ${item.toString}\n" +
-                s"session id:        ${item.sessionId}\n" +
-                s"internal id:       Not Implemented in FE Auth Predicate\n" +
-                s"mtditid:           ${item.mtditid}\n" +
-                s"nino:              ${item.nino}\n" +
-                s"utr:               ${item.utr}\n"
-          }.mkString("\n\n"))
-    }
   }
 
 }

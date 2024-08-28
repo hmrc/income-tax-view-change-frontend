@@ -28,23 +28,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataRetrieval]] = {
-    sessionDataConnector.getSessionData(mtditid).map { response =>
+  def getSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataRetrieval]] = {
+    sessionDataConnector.getSessionData().map { response =>
       response.status match {
         case OK => response.json.validate[SessionDataRetrieval].fold(
           invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
-          valid => Right(valid)
-        )
-        case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
-      }
-    }
-  }
-
-  def getSessionDataByMtditid(mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, List[SessionDataRetrieval]]] = {
-    sessionDataConnector.getSessionDataByMtdidit(mtditid).map { response =>
-      response.status match {
-        case OK => response.json.validate[List[SessionDataRetrieval]].fold(
-          invalid => Left(new Exception(s"Json validation error for List[SessionDataRetrieval]. Invalid: $invalid")),
           valid => Right(valid)
         )
         case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
