@@ -94,7 +94,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
+          elementTextByID("value-hint")(hintText(SelfEmployment)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -121,7 +121,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -142,7 +142,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -151,7 +151,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
         )
 
@@ -179,10 +179,10 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(SelfEmployment)),
-          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
+          elementTextByID("value-hint")(hintText(SelfEmployment)),
+          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -193,7 +193,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -214,7 +214,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -223,7 +223,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
         )
 
@@ -251,7 +251,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(UkProperty)),
+          elementTextByID("value-hint")(hintText(UkProperty)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -278,7 +278,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -297,7 +297,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -306,7 +306,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
         )
 
@@ -332,10 +332,10 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(UkProperty)),
-          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
+          elementTextByID("value-hint")(hintText(UkProperty)),
+          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -345,7 +345,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -365,7 +365,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -374,7 +374,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
         )
 
@@ -400,7 +400,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
+          elementTextByID("value-hint")(hintText(ForeignProperty)),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -427,7 +427,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -447,7 +447,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -456,7 +456,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
         )
 
@@ -482,10 +482,10 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("income-source-end-date-hint")(hintText(ForeignProperty)),
-          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
-          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
-          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
+          elementTextByID("value-hint")(hintText(ForeignProperty)),
+          elementAttributeBySelector("input[id=value.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=value.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=value.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -495,7 +495,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -516,7 +516,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("value.day" -> Seq("aa"), "value.month" -> Seq("12"), "value.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -525,7 +525,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
             messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
         )
 

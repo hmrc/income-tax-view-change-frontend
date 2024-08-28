@@ -23,13 +23,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
+import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
-import services.optIn.OptInService._
+import services.optIn.OptInService.ZeroCount
 import utils.AuthenticatorPredicate
 import views.html.optIn.CheckYourAnswersView
 
@@ -65,7 +66,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
         val result = for {
           intentTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
-          intentIsNextYear = intentTaxYear.isNextTaxYear(dateService)
+          intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
           proposition <- OptionT.liftF(optInService.fetchOptInProposition())
           quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(optInService.getQuarterlyUpdatesCountForOfferedYears(proposition))
           showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
@@ -76,6 +77,8 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
         result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }
   }
+
+  private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>

@@ -64,6 +64,9 @@ class CheckYourAnswersControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockFetchSavedChosenTaxYear(taxYear2023)
 
+        val currentTaxYear = taxYear2023.previousYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
         val currentOptInTaxYear = CurrentOptInTaxYear(Annual, taxYear2023)
         val nextOptInTaxYear = NextOptInTaxYear(Annual, taxYear2023.nextYear, currentOptInTaxYear)
         when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
