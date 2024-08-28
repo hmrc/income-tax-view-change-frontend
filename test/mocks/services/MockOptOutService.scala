@@ -21,7 +21,7 @@ import models.optout._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutProposition, OptOutService}
 import testUtils.UnitSpec
 

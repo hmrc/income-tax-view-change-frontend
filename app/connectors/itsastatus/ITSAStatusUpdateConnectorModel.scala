@@ -19,7 +19,6 @@ package connectors.itsastatus
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status.NO_CONTENT
 
-/* todo this model to replace OptOutUpdateRequestModel */
 object ITSAStatusUpdateConnectorModel {
 
   val optOutUpdateReason: String = "10"

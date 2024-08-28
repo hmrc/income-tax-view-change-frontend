@@ -28,7 +28,7 @@ import play.api.Configuration
 import play.mvc.Http.Status
 import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutService, OptOutTestSupport}
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino

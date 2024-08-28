@@ -27,7 +27,7 @@ import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.optout.OptOutService._
+import services.reportingfreq.ReportingFrequency._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -202,24 +202,6 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     annualQuarterlyUpdateCounts.
       map(cumulativeQuarterlyUpdateCounts).
       map(QuarterlyUpdatesCountForTaxYearModel)
-  }
-
-}
-
-
-object OptOutService {
-
-  /* todo should be moved to a common location and reused by opt-in */
-  private val noQuarterlyUpdates = 0
-
-  /* todo should be moved to a common location and reused by opt-in */
-  case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
-
-    def getCountFor(offeredTaxYear: TaxYear): Int = counts
-      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
-      .map(_.count).sum
-
-    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
 
 }

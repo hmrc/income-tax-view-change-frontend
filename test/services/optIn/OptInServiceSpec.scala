@@ -35,7 +35,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney

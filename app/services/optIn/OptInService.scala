@@ -28,10 +28,9 @@ import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optIn.OptInService.ZeroCount
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{NextOptInTaxYear, OptInInitialState, OptInProposition}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -186,7 +185,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     val annualQuarterlyUpdateCounts = Future.sequence(
       proposition.availableOptInYears.map {
-        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, ZeroCount))
+        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, noQuarterlyUpdates))
         case anyOtherOptInTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptInTaxYear.taxYear)
       })
 
@@ -205,7 +204,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       proposition <- OptionT.liftF(fetchOptInProposition())
       quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(getQuarterlyUpdatesCountForOfferedYears(proposition))
       showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
-        .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(ZeroCount) > ZeroCount
+        .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(noQuarterlyUpdates) > noQuarterlyUpdates
     } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear,
       showPreviouslySubmittedUpdatesWarning = showPreviouslySubmittedUpdatesWarning)
 
@@ -214,9 +213,4 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
   private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
-}
-
-object OptInService {
-  /* todo remove this and reuse variable from opt-out after refactor */
-  val ZeroCount = 0
 }
