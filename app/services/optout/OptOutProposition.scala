@@ -17,6 +17,7 @@
 package services.optout
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
                              currentTaxYear: CurrentOptOutTaxYear,
@@ -46,4 +47,34 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
       case _ => None
     }
   }
+}
+
+object OptOutProposition {
+
+  def createOptOutProposition(currentYear: TaxYear,
+                                      previousYearCrystallised: Boolean,
+                                      previousYearItsaStatus: ITSAStatus,
+                                      currentYearItsaStatus: ITSAStatus,
+                                      nextYearItsaStatus: ITSAStatus): OptOutProposition = {
+
+    val previousYearOptOut = PreviousOptOutTaxYear(
+      status = previousYearItsaStatus,
+      taxYear = currentYear.previousYear,
+      crystallised = previousYearCrystallised
+    )
+
+    val currentYearOptOut = CurrentOptOutTaxYear(
+      status = currentYearItsaStatus,
+      taxYear = currentYear
+    )
+
+    val nextYearOptOut = NextOptOutTaxYear(
+      status = nextYearItsaStatus,
+      taxYear = currentYear.nextYear,
+      currentTaxYear = currentYearOptOut
+    )
+
+    OptOutProposition(previousYearOptOut, currentYearOptOut, nextYearOptOut)
+  }
+
 }

@@ -25,6 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
 import utils.AuthenticatorPredicate
 import views.html.optOut.OptOutChooseTaxYear
@@ -33,7 +34,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
-                                              val optOutService: OptOutService)
+                                              val optOutService: OptOutService,
+                                              val repository: OptOutSessionDataRepository)
                                              (implicit val appConfig: FrontendAppConfig,
                                               val ec: ExecutionContext,
                                               val auth: AuthenticatorPredicate,
@@ -49,7 +51,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       for {
         optOutProposition <- optOutService.recallOptOutProposition()
         submissionCountForTaxYear <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
-        intent <- optOutService.fetchSavedIntent()
+        intent <- repository.fetchSavedIntent()
       } yield {
         val taxYearsList = optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList
         val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
@@ -81,7 +83,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
 
   private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
-      optOutService.saveIntent(intent)
+      repository.saveIntent(intent)
     } getOrElse Future.failed(new RuntimeException("no tax-year choice available"))
   }
 

@@ -36,7 +36,7 @@
 )
 
 
-@(isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean = false, startButtonUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("optIn.beforeYouStart.heading"),
@@ -70,7 +70,8 @@
     <div class="govuk-button-group">
         @govukButton(Button(
         content = Text(messages("optIn.beforeYouStart.button.start")),
-        attributes = Map("id" -> "start-button")
+        attributes = Map("id" -> "start-button"),
+        href = Some(startButtonUrl)
         ))
     </div>
 }

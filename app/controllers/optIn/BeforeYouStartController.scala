@@ -39,7 +39,9 @@ class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart)
                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  private val startButtonUrl = (isAgent: Boolean) => controllers.optIn.routes.ChooseYearController.show(isAgent)
+
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user => Future.successful(Ok(beforeYouStart(isAgent)))
+    implicit user => Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent).url)))
   }
 }

@@ -19,9 +19,17 @@ package forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
+
+  implicit class RichLocalDate(localDate: LocalDate) {
+    def formatAsString: String = localDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+
+    def formatForText: String = localDate.format(DateTimeFormatter.ofPattern("dd MM yyyy"))
+  }
 
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
