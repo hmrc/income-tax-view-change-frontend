@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.optout
+package connectors.itsastatus
 
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status.NO_CONTENT

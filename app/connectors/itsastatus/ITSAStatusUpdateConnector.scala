@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package connectors.optout
+package connectors.itsastatus
 
 import config.FrontendAppConfig
 import connectors.RawResponseReads
-import connectors.optout.ITSAStatusUpdateConnector._
-import connectors.optout.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnector._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.mvc.Http.Status
@@ -72,5 +72,15 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
           )
       }
     }
+  }
+
+  def optOut(taxYear: TaxYear, taxableEntityId: String)
+                          (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+    makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
+  }
+
+  def optIn(taxYear: TaxYear, taxableEntityId: String)
+            (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+    makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
   }
 }

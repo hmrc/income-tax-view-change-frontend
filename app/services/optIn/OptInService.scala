@@ -18,8 +18,8 @@ package services.optIn
 
 import auth.MtdItUser
 import cats.data.OptionT
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import controllers.optIn.routes.ReportingFrequencyPageController
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -85,7 +85,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
 

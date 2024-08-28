@@ -17,8 +17,8 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -78,7 +78,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
               currentYearItsaStatus = Mandated,
               nextYearItsaStatus = Mandated))))
 
-        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+        when(optOutConnector.optOut(any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           ITSAStatusUpdateResponseSuccess()
         ))
 
@@ -113,7 +113,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+        when(optOutConnector.optOut(any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           ITSAStatusUpdateResponseSuccess()
         ))
 
@@ -147,7 +147,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
               currentYearItsaStatus = Voluntary,
               nextYearItsaStatus = Voluntary))))
 
-        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+        when(optOutConnector.optOut(any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
           ITSAStatusUpdateResponseFailure.defaultFailure()
         ))
 

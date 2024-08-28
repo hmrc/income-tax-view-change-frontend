@@ -16,7 +16,7 @@
 
 package controllers.optOut
 
-import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}

@@ -16,7 +16,7 @@
 
 package controllers.agent.optOut
 
-import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub

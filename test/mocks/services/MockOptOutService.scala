@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.optout._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

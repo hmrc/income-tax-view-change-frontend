@@ -17,8 +17,8 @@
 package services.optIn
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import controllers.optIn.routes.ReportingFrequencyPageController
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
@@ -200,7 +200,7 @@ class OptInServiceSpec extends UnitSpec
 
       mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
 
-      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+      when(optOutConnector.optIn(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
 
       val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
@@ -212,7 +212,7 @@ class OptInServiceSpec extends UnitSpec
 
       mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
 
-      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+      when(optOutConnector.optIn(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
       val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
