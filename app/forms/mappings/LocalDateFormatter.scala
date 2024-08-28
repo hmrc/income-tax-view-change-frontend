@@ -71,7 +71,6 @@ private[mappings] class LocalDateFormatter(
       .withFilter(_._2.isEmpty)
       .map(_._1)
       .toList
-      .map(field => messages(s"date.error.$field"))
 
     fields.count(_._2.isDefined) match {
       case 3 =>
@@ -107,8 +106,9 @@ private class MonthFormatter(invalidKey: String, args: Seq[String] = Seq.empty) 
       .bind(key, data)
       .flatMap {
         str =>
+          val cleanedStr = str.stripPrefix("0")
           months
-            .find(m => m.getValue.toString == str || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
+            .find(m => m.getValue.toString == cleanedStr || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
             .map(x => Right(x.getValue))
             .getOrElse(Left(List(FormError(key, invalidKey, args))))
       }

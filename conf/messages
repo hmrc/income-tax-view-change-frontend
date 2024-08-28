@@ -1365,6 +1365,8 @@ dateForm.error.dayMonthAndYear.required                             = The date m
 dateForm.error.dayMonthAndYear.required.se                          = Enter the date your self-employed business stopped
 dateForm.error.dayMonthAndYear.required.uk                          = Enter the date your UK property business stopped
 dateForm.error.dayMonthAndYear.required.fp                          = Enter the date your foreign property business stopped
+dateForm.error.required.two                                         = The date must include a {0} and a {1}
+dateForm.error.required                                             = The date must include a {0}
 dateForm.error.future                                               = You cannot provide a cessation date that is beyond the current day or a date in the future
 dateForm.error.invalid                                              = The date must be a real date
 dateFrom.error.beforeStartDate                                      = The cessation date cannot be earlier than the start date for the business
@@ -1440,6 +1442,33 @@ add-foreign-property-start-date-check.error                          = Select ye
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
+date.day                     = Day
+date.month                   = Month
+date.year                    = Year
+
+date.error.day               = day
+date.error.month             = month
+date.error.year              = year
+
+add-business-start-date.invalid        = The date must be a real date
+add-business-start-date.required.all   = Enter the date your business started trading
+add-business-start-date.required.two   = The date must include a {0} and a {1}
+add-business-start-date.required       = The date must include a {0}
+add-business-start-date.future         = The date your business started trading must be before {0}
+
+incomeSources.add.UKPropertyStartDate.invalid        = The date must be a real date
+incomeSources.add.UKPropertyStartDate.required.all   = Enter the date your UK property business started
+incomeSources.add.UKPropertyStartDate.required.two   = The date must include a {0} and a {1}
+incomeSources.add.UKPropertyStartDate.required       = The date must include a {0}
+incomeSources.add.UKPropertyStartDate.future         = The date your UK property business started must be before {0}
+
+incomeSources.add.foreignProperty.startDate.invalid        = The date must be a real date
+incomeSources.add.foreignProperty.startDate.required.all   = Enter the date your foreign property business started
+incomeSources.add.foreignProperty.startDate.required.two   = The date must include a {0} and a {1}
+incomeSources.add.foreignProperty.startDate.required       = The date must include a {0}
+incomeSources.add.foreignProperty.startDate.future         = The date your foreign property business started must be before {0}
+
+
 # add foreign property accounting method
 incomeSources.add.FP.AccountingMethod.heading                 = What accounting method do you use for your foreign property business?
 incomeSources.add.FP.AccountingMethod.example                 = Show me an example
@@ -1489,7 +1518,6 @@ add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
-add-business-start-date.error.required               = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
