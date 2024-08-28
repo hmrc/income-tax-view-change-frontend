@@ -22,8 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
-import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
-import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -34,7 +32,9 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
 import views.html.manageBusinesses.add.AddIncomeSourceStartDate
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +43,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    val sessionService: SessionService,
+                                                   form: AddIncomeSourceStartDateFormProvider,
                                                    auth: AuthenticatorPredicate)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -99,7 +100,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       val filledForm = dateStartedOpt match {
         case Some(date) =>
-          form(messagesPrefix).fill(DateFormElement(date))
+          form(messagesPrefix).fill(date)
         case None => form(messagesPrefix)
       }
 
@@ -155,7 +156,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       errorHandler.showInternalServerError()
   }
 
-  def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
+  def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
@@ -170,7 +171,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
               addIncomeSourceData =
                 sessionData.addIncomeSourceData.map(
                   _.copy(
-                    dateStarted = Some(formData.date)
+                    dateStarted = Some(formData)
                   )
                 )
             )
@@ -179,7 +180,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
               addIncomeSourceData =
                 Some(
                   AddIncomeSourceData(
-                    dateStarted = Some(formData.date)
+                    dateStarted = Some(formData)
                   )
                 )
             )

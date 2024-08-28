@@ -102,6 +102,13 @@ trait Constraints {
         Valid
     }
 
+  //Just checks if the date is 4 digits, we don't have an earliest possible date
+  protected def fourDigitValidYear(errorKey: String): Constraint[LocalDate] =
+    Constraint {
+      case date if date.getYear > 999 => Valid
+      case _ => Invalid(errorKey)
+    }
+
   protected def nonEmptySet(errorKey: String): Constraint[Set[_]] =
     Constraint {
       case set if set.nonEmpty =>
