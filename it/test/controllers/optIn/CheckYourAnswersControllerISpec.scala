@@ -40,17 +40,19 @@ import scala.concurrent.Future
 object CheckYourAnswersControllerISpec {
   val headingText = "Check your answers"
   val optInSummary = "If you opt in, you will need to submit your quarterly update through compatible software."
-  val optInSummaryNextYear = "If you opt in from the next tax year onwards, from 6 April 2025 you will need to submit " +
+  val optInSummaryNextYear = "If you opt in from the next tax year onwards, from 6 April 2023 you will need to submit " +
     "your quarterly updates through compatible software."
   val optin = "Opt in from"
-  val selectTaxYear = "2024 to 2025 tax year onwards"
-  val selectTaxYearNextYear = "2025 to 2026 tax year onwards"
+  val selectTaxYear = "2022 to 2023 tax year onwards"
+  val selectTaxYearNextYear = "2023 to 2024 tax year onwards"
   val change = "Change"
+
+  val emptyBodyString = ""
 }
 
 class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
-  val forYearEnd = 2025
+  val forYearEnd = dateService.getCurrentTaxYear.endYear
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
   val nextTaxYear = currentTaxYear.nextYear
 
@@ -68,7 +70,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
 
     s"show page, calling GET $chooseOptInTaxYearPageUrl" should {
 
-      s"successfully render opt-in multi choice page" in {
+      s"successfully render opt-in check-your-answers page" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -93,7 +95,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
         )
       }
 
-      s"successfully render opt-in multi choice page 2" in {
+      s"successfully render opt-in check-your-answers page 2" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -119,7 +121,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecBase {
       }
     }
   }
-  val emptyBodyString = ""
+
   def testSubmitHappyCase(isAgent: Boolean): Unit = {
 
     val chooseOptOutTaxYearPageUrl = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
