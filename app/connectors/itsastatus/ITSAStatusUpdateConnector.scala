@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.RawResponseReads
 import connectors.optout.ITSAStatusUpdateConnector._
 import connectors.optout.ITSAStatusUpdateConnectorModel._
-import connectors.optout.OptOutUpdateRequestModel._
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.mvc.Http.Status
@@ -44,38 +43,6 @@ class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: F
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
 
-  def requestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
-                             (implicit headerCarrier: HeaderCarrier): Future[OptOutUpdateResponse] = {
-
-    val body = OptOutUpdateRequest(taxYear = toApiFormat(taxYear), updateReason = updateReason)
-
-    http.PUT[OptOutUpdateRequest, HttpResponse](
-      buildRequestUrlWith(taxableEntityId), body, Seq[(String, String)]()
-    ).map { response =>
-      response.status match {
-        case Status.NO_CONTENT => OptOutUpdateResponseSuccess()
-
-        case _ =>
-          response.json.validate[OptOutUpdateResponseFailure].fold(
-            invalid => {
-              log.error(s"Json validation error parsing itsa-status update response, error $invalid")
-              OptOutUpdateResponseFailure.defaultFailure(s"json response: $invalid")
-            },
-            valid => {
-
-              val message = valid.failures.headOption
-                .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
-                .getOrElse("unknown reason")
-
-              log.error(s"response status: ${response.status}, message: $message")
-              valid
-            }
-          )
-      }
-    }
-  }
-
-  /* todo this call to replace requestOptOutForTaxYear */
   def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
                           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
 

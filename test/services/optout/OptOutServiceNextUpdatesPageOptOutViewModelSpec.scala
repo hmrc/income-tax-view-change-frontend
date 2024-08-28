@@ -18,7 +18,7 @@ package services.optout
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
+import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
@@ -84,8 +84,8 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()
@@ -119,8 +119,8 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
-        when(optOutConnector.requestOptOutForTaxYear(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         val result = service.nextUpdatesPageOptOutViewModels()

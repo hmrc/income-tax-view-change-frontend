@@ -20,7 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseSuccess
+import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
@@ -68,7 +68,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = isAgent) {
     implicit user =>
       optOutService.makeOptOutUpdateRequest().map {
-        case OptOutUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
         case _ => Redirect(routes.OptOutErrorController.show(isAgent))
       }
   }
