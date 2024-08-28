@@ -16,15 +16,22 @@
 
 package testOnly.models
 
-import play.api.libs.json.{Json, OFormat}
+import models.core.ResponseModel.{AResponseReads, SuccessModel}
+import play.api.libs.json.{Format, Json, OFormat}
 
 case class SessionDataRetrieval(
                              mtditid: String,
                              nino: String,
                              utr: String,
                              sessionId: String
-                           )
+                           ) extends SuccessModel
 
 object SessionDataRetrieval {
-  implicit val formats: OFormat[SessionDataRetrieval] = Json.format[SessionDataRetrieval]
+  implicit val format: OFormat[SessionDataRetrieval] = Json.format[SessionDataRetrieval]
+
+  implicit val reads: SessionDataRetrievalReads = new SessionDataRetrievalReads
+
+  class SessionDataRetrievalReads extends AResponseReads[SessionDataRetrieval] {
+    implicit val format: Format[SessionDataRetrieval] = SessionDataRetrieval.format
+  }
 }

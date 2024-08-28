@@ -17,9 +17,10 @@
 package testOnly.services
 
 import auth.MtdItUser
-import play.api.http.Status.{CONFLICT, OK}
+import models.core.ErrorModel
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testOnly.connectors.SessionDataConnector
-import testOnly.models.sessionData.SessionDataPostSuccess
+import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse}
 import testOnly.models.{SessionDataModel, SessionDataRetrieval}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,30 +29,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataRetrieval]] = {
-    sessionDataConnector.getSessionData().map { response =>
-      response.status match {
-        case OK => response.json.validate[SessionDataRetrieval].fold(
-          invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
-          valid => Right(valid)
-        )
-        case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
-      }
-    }
+  def getSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, SessionDataRetrieval]] = {
+    sessionDataConnector.getSessionData()
   }
 
   def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[Either[Throwable, SessionDataPostSuccess]] = {
+  : Future[SessionDataPostResponse] = {
 
     user.saUtr match {
-      case Some(utr) =>
-        sessionDataConnector.postSessionData(postSessionDataModel(user, utr)).map { response =>
-          response.status match {
-            case status if status == OK || status == CONFLICT => Right(SessionDataPostSuccess(status, user.mtditid))
-            case status => Left(new Exception(s"User session could not be saved. status: $status"))
-          }
-        }
-      case None => Future.successful(Left(new Exception(s"User had no saUtr!")))
+      case Some(utr) => sessionDataConnector.postSessionData(postSessionDataModel(user, utr))
+      case None => Future.successful(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "User had no saUtr!")))
     }
   }
 
