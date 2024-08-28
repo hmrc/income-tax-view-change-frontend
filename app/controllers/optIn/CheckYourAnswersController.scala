@@ -23,6 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
+import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -64,12 +65,14 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
         val result = for {
           taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
           cancelURL = ReportingFrequencyPageController.show(isAgent).url
-          intentIsNextYear = taxYear.isNextTaxYear(dateService)
+          intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, taxYear)
         } yield Ok(view(MultiYearCheckYourAnswersViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
 
         result.getOrElse(errorHandler(isAgent).showInternalServerError())
       }
   }
+
+  private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>

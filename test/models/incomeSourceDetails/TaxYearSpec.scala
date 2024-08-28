@@ -260,34 +260,4 @@ class TaxYearSpec extends UnitSpec with TestSupport {
     }
   }
 
-  "isNextTaxYear method and current year is 2023-2024" should {
-
-    val forYearEnd = 2024
-    val dateServiceMock = mock[DateService]()
-    when(dateServiceMock.getCurrentTaxYearEnd).thenReturn(forYearEnd)
-
-    "return true for next-year 2024-2025" in {
-      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
-        .nextYear
-        .isNextTaxYear(dateServiceMock)
-      isNextTaxYear shouldBe true
-    }
-
-    "return false for year after next-year 2025-2026" in {
-      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
-        .nextYear
-        .nextYear
-        .isNextTaxYear(dateServiceMock)
-      isNextTaxYear shouldBe false
-    }
-
-    "return false for previous-year 2022-2023" in {
-      val isNextTaxYear = TaxYear.forYearEnd(forYearEnd)
-        .previousYear
-        .isNextTaxYear(dateServiceMock)
-      isNextTaxYear shouldBe false
-    }
-  }
-
-
 }

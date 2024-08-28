@@ -61,6 +61,9 @@ class CheckYourAnswersControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockFetchSavedChosenTaxYear(taxYear2023)
 
+        val currentTaxYear = taxYear2023.previousYear
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)
         status(result) shouldBe Status.OK
