@@ -126,6 +126,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val poaTextBullets = messages("chargeSummary.paymentsOnAccount.bullet1") + " " + messages("chargeSummary.paymentsOnAccount.bullet2")
     val poaTextP2 = messages("chargeSummary.paymentsOnAccount.p2")
 
+    val adjustmentText = messages("chargeSummary.definition.hmrcadjustment")
+
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
@@ -359,26 +361,30 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
         document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
+      }
 
+      "have content explaining the definition of a HMRC adjustment when charge is a MFA Debit" in new TestSetup(
+        documentDetail = financialDetailsModelWithMFADebit().documentDetails.head,
+        isMFADebit = true) {
+        document.select("#charge-explanation>:nth-child(1)").text() shouldBe adjustmentText
       }
 
       "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
-        document.selectById("p1").text() shouldBe bcdTextParagraph
-        document.selectById("bullets").text() shouldBe bcdTextBullets
-        document.selectById("p2").text() shouldBe bcdTextP2
+        document.select("#charge-explanation>:nth-child(1)").text() shouldBe bcdTextParagraph
+        document.select("#charge-explanation>:nth-child(2)").text() shouldBe bcdTextBullets
+        document.select("#charge-explanation>:nth-child(3)").text() shouldBe bcdTextP2
       }
 
-
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.selectById("p1").text() shouldBe poaTextParagraph
-        document.selectById("bullets").text() shouldBe poaTextBullets
-        document.selectById("p2").text() shouldBe poaTextP2
+        document.select("#charge-explanation>:nth-child(1)").text() shouldBe poaTextParagraph
+        document.select("#charge-explanation>:nth-child(2)").text() shouldBe poaTextBullets
+        document.select("#charge-explanation>:nth-child(3)").text() shouldBe poaTextP2
       }
 
       "have content explaining the definition of a payment on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.selectById("p1").text() shouldBe poaTextParagraph
-        document.selectById("bullets").text() shouldBe poaTextBullets
-        document.selectById("p2").text() shouldBe poaTextP2
+        document.select("#charge-explanation>:nth-child(1)").text() shouldBe poaTextParagraph
+        document.select("#charge-explanation>:nth-child(2)").text() shouldBe poaTextBullets
+        document.select("#charge-explanation>:nth-child(3)").text() shouldBe poaTextP2
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {

@@ -960,6 +960,8 @@ chargeSummary.definition.balancingcharge.bullet1                   = nid oedd ge
 chargeSummary.definition.balancingcharge.bullet2                   = mae’r dreth sydd arnoch yn fwy na’r hyn a dalwyd gennych yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
 chargeSummary.definition.balancingcharge.p2                        = Bydd angen hefyd i chi wneud taliad mantoli os oes arnoch unrhyw beth o ran Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
+chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
+
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif

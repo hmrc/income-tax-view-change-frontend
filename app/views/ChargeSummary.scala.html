@@ -47,26 +47,45 @@
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
-@getPoaExplanationContent = {
-    <div>
-        @p(id = Some("p1")){@messages("chargeSummary.paymentsOnAccount")}
-        <ul id="bullets" class="govuk-list govuk-list--bullet">
+
+@paymentOnAccountExplanation = {
+    <div id="charge-explanation">
+        @p(){
+            @messages("chargeSummary.paymentsOnAccount")
+        }
+        <ul class="govuk-list govuk-list--bullet">
             <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
             <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
         </ul>
-        @p(id = Some("p2")){@messages("chargeSummary.paymentsOnAccount.p2")}
+        @p(){
+            @messages("chargeSummary.paymentsOnAccount.p2")
+        }
     </div>
 }
 
-@getBalancingPaymentDefinitionContent = {
-    <div>
-        @p(id = Some("p1")){@messages("chargeSummary.definition.balancingcharge.p1")}
-        <ul id="bullets" class="govuk-list govuk-list--bullet">
+@balancingChargeExplanation = {
+    <div id="charge-explanation">
+        @p(){@messages("chargeSummary.definition.balancingcharge.p1")}
+        <ul class="govuk-list govuk-list--bullet">
             <li>@messages("chargeSummary.definition.balancingcharge.bullet1")</li>
             <li>@messages("chargeSummary.definition.balancingcharge.bullet2")</li>
         </ul>
-        @p(id = Some("p2")){@messages("chargeSummary.definition.balancingcharge.p2")}
+        @p(){@messages("chargeSummary.definition.balancingcharge.p2")}
     </div>
+}
+
+@hmrcAdjustmentExplanation = {
+    <div id="charge-explanation">
+        @p(){@messages("chargeSummary.definition.hmrcadjustment")}
+    </div>
+}
+
+@getExplanationContent = @{viewModel.documentType match {
+        case Poa1Charge | Poa2Charge    => paymentOnAccountExplanation
+        case BalancingCharge            => balancingChargeExplanation
+        case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
+        case _                          =>
+    }
 }
 
 @checkPayeCodePara = {
@@ -169,13 +188,7 @@
         }
     </h1>
 
-    @{
-        viewModel.documentType match {
-            case Poa1Charge | Poa2Charge => getPoaExplanationContent
-            case BalancingCharge => getBalancingPaymentDefinitionContent
-            case _ =>
-        }
-    }
+    @getExplanationContent
 
     @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
