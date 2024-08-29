@@ -16,7 +16,6 @@
 
 package controllers.optOut
 
-import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.OptOutUpdateRequestModel.OptOutUpdateResponseFailure
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
@@ -125,8 +124,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           nextYearStatus = NoStatus)
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          Status.NO_CONTENT, emptyBodyString,
-          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+          Status.NO_CONTENT, emptyBodyString
         )
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
@@ -177,8 +175,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
           nextYearStatus = NoStatus)
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
-          BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
-          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
+          BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString()
         )
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.postConfirmOptOut()
@@ -202,7 +199,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           BAD_REQUEST, Json.toJson(OptOutUpdateResponseFailure.defaultFailure()).toString(),
-          Map(ITSAStatusUpdateConnector.CorrelationIdHeader -> "123")
         )
 
         assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)

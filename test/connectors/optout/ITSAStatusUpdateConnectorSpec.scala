@@ -33,7 +33,7 @@
 package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.optout.ITSAStatusUpdateConnector.CorrelationIdHeader
+import connectors.optout.ITSAStatusUpdateConnector._
 import connectors.optout.OptOutUpdateRequestModel._
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
@@ -45,7 +45,6 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import ITSAStatusUpdateConnector._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -74,7 +73,7 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
 
         val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
         val apiResponse = OptOutUpdateResponseSuccess()
-        val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map())
 
         setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
@@ -95,7 +94,7 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
         val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
         val apiFailResponse = OptOutUpdateResponseFailure(errorItems)
-        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map(CorrelationIdHeader -> Seq("123")))
+        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map())
 
         setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 

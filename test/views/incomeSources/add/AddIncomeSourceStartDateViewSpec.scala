@@ -17,29 +17,33 @@
 package views.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateForm
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.FormError
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddIncomeSourceStartDate
+
+import java.time.LocalDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
 
     val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
+    lazy val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider().apply(incomeSourceType.startDateMessagesPrefix)
+    lazy val errorForm: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(incomeSourceType.startDateMessagesPrefix)
+      .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
 
     val document: Document = {
       Jsoup.parse(
         contentAsString(
           addIncomeSourceStartDate(
             form = {
-              if(hasError) AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
-                .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
-              else AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
+              if(hasError) errorForm
+              else form
             },
             postAction = Call("", ""),
             isAgent = isAgent,
@@ -61,7 +65,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
           messages(s"${incomeSourceType.startDateMessagesPrefix}.heading")
       }
       "render the hint" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("income-source-start-date-hint").text() shouldBe
+        document.getElementById("value-hint").text() shouldBe
           s"${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint")} ${messages("dateForm.hint")}"
       }
       "render the date form" in new Setup(isAgent, hasError = false, incomeSourceType) {
@@ -82,13 +86,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
       }
-      "render the error message" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("income-source-start-date-error").text() shouldBe messages("base.error-prefix") + " " +
-          messages(s"${incomeSourceType.startDateMessagesPrefix}.error.required")
-      }
       "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe
+        document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " +
           messages(s"${incomeSourceType.startDateMessagesPrefix}.error.required")
       }
     }

@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
+import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -54,9 +55,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   with ImplicitDateFormatter
   with FeatureSwitching {
 
-  val dayField = "income-source-start-date.day"
-  val monthField = "income-source-start-date.month"
-  val yearField = "income-source-start-date.year"
+  val dayField = "value.day"
+  val monthField = "value.month"
+  val yearField = "value.year"
 
   val testDay = "01"
   val testMonth = "01"
@@ -118,11 +119,20 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
     s"${messages("htmlTitle.invalidInput", messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))}"
   }
 
+  def getHintText(incomeSourceType: IncomeSourceType) = {
+    incomeSourceType match {
+      case SelfEmployment => "business started trading"
+      case UkProperty => "UK property business started"
+      case ForeignProperty => "foreign property business started"
+    }
+  }
+
   object TestAddIncomeSourceStartDateController extends AddIncomeSourceStartDateController(
     authorisedFunctions = mockAuthService,
     addIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate],
     customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
     sessionService = mockSessionService,
+    form = app.injector.instanceOf[AddIncomeSourceStartDateFormProvider],
     testAuthenticator
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -188,9 +198,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             val backUrl = getBackUrl(isAgent, true, incomeSourceType)
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
-            document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
-            document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
-            document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
+            document.getElementById("value.day").attr("value") shouldBe "1"
+            document.getElementById("value.month").attr("value") shouldBe "1"
+            document.getElementById("value.year").attr("value") shouldBe "2022"
             status(result) shouldBe OK
           }
         }
@@ -215,9 +225,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
               if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
               else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
             }
-            document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
-            document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
-            document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
+            document.getElementById("value.day").attr("value") shouldBe "1"
+            document.getElementById("value.month").attr("value") shouldBe "1"
+            document.getElementById("value.year").attr("value") shouldBe "2022"
             status(result) shouldBe OK
           }
         }
@@ -297,6 +307,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
+            document.getElementsByClass("govuk-error-message").text() shouldBe s"Error:: Enter the date your ${getHintText(incomeSourceType)}"
           }
           "no form is submitted" in {
             disableAllSwitches()

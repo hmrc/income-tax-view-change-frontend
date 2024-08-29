@@ -19,10 +19,25 @@
 @import views.html.components.{dateInput, p}
 @import views.html.helpers.injected.{ContinueButton, ErrorSummary}
 @import views.html.layouts.unifiedLayout
+@import java.time.LocalDate
+@import views.viewmodels.govuk.all.ErrorSummaryViewModel
+@import views.viewmodels.govuk.all.DateViewModel
+@import views.viewmodels.govuk.all.FluentDate
 
-@this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
+@this(mainTemplate: unifiedLayout,
+        dateInput: dateInput,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukDateInput: GovukDateInput,
+        errorSummary: ErrorSummary,
+        p: p)
 
-@(incomeSourceType: IncomeSourceType, incomeSourceEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType,
+        form: Form[LocalDate],
+        postAction: Call,
+        isAgent: Boolean = false,
+        backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)
@@ -30,11 +45,11 @@
 
 @getHintContent = {
 @if(!(incomeSourceType == SelfEmployment)) {
-    @p(classes = "govuk-hint") {
+    @p(classes = "govuk-hint", id = Some("income-source-end-date-hint")) {
         @getMessage("hint-1")
     }
 }
-@p(classes = "govuk-hint") {
+@p(classes = "govuk-hint", id = Some("income-source-end-date-hint-example")) {
     @messages("dateForm.hint")
 }
 }
@@ -47,24 +62,45 @@
     s"${incomeSourceType.endDateMessagePrefix}-caption"
 }
 
-@mainTemplate(pageTitle = getMessage("heading"), form = Some(incomeSourceEndDateForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    form = Some(form),
+    isAgent = isAgent,
+    backUrl = Some(backUrl),
+    btaNavPartial = user.btaNavPartial) {
 
-    @errorSummary(
-        form = incomeSourceEndDateForm
-    )
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(
+            ErrorSummaryViewModel(
+                form,
+                errorLinkOverrides = Map("value" -> s"value.${form.errors.flatMap(_.args).headOption.getOrElse("day")}")
+            )
+        )
+    }
 
     <h2 class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</h2>
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
+        @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
-        @dateInput(
-            content = getMessage("heading"),
-            field = incomeSourceEndDateForm("income-source-end-date"),
-            hintContent = Some(HtmlContent(getHintContent)),
-            pageHeading = true
-        )
+            @govukDateInput(
+                DateViewModel(
+                    field = form("value"),
+                    fieldset = Fieldset(
+                        legend = Some(Legend(
+                            content = Text(getMessage("heading")),
+                            classes = "govuk-label--l",
+                            isPageHeading = true
+                        ))
+                    )
+                )
+                .withHint(
+                    Hint(
+                        content = HtmlContent(getHintContent)
+                    )
+                )
+            )
 
-        @continueButton()
+    @continueButton()
 
-    }
+}
 }
