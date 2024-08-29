@@ -108,6 +108,19 @@
 @getSoftwareUrl = @{
     "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 }
+
+@getOverdueObligationsComponents = @{
+  sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)
+}
+
+@getSpecifiedObligationsComponents(isAnnual: Boolean) = @{
+  val modifiedSources: ObligationsViewModel =
+    if (isAnnual) sources.copy(quarterlyObligationsDates = Nil)
+    else sources.copy(finalDeclarationDates = Nil)
+
+  getOverdueObligationsMessage(modifiedSources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric))
+}
+
 @getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
     messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
@@ -145,12 +158,12 @@
         @getBannerContent
       </div>
 
-      @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
-        @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey != "hybrid") {
-          @govukInsetText(InsetText(id = Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+      @if(getOverdueObligationsComponents.messageKey.nonEmpty) {
+        @if(getOverdueObligationsComponents.messageKey != "hybrid") {
+          @govukInsetText(InsetText(id = Some("warning-inset"), content = HtmlContent(getOverdueObligationsMessage(getOverdueObligationsComponents))))
         } else {
-          @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(quarterlyObligationsDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
-          @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getOverdueObligationsMessage(sources.copy(finalDeclarationDates = Nil).getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)))))
+          @govukInsetText(InsetText(id = Some("annual-warning-inset"), content = HtmlContent(getSpecifiedObligationsComponents(isAnnual = true))))
+          @govukInsetText(InsetText(id = Some("quarterly-warning-inset"), content = HtmlContent(getSpecifiedObligationsComponents(isAnnual = false))))
         }
       }
 
@@ -160,7 +173,7 @@
         </label>
       </h2>
 
-      @if(reportingMethod == ChosenReportingMethod.Hybrid | reportingMethod == ChosenReportingMethod.Quarterly) {
+      @if(reportingMethod == ChosenReportingMethod.Hybrid || reportingMethod == ChosenReportingMethod.Quarterly) {
         @if(getQuarterlyOrHybridList.nonEmpty){
           <ul class="govuk-list govuk-list--bullet">
             @getQuarterlyOrHybridList
