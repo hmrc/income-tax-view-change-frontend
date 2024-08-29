@@ -364,7 +364,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have content explaining the definition of a HMRC adjustment when charge is a MFA Debit" in new TestSetup(
-        documentDetail = financialDetailsModelWithMFADebit().documentDetails.head,
+        documentDetail = financialDetailsModelWithMFADebit()
+          .documentDetails.head
+          .copy(documentDescription = Some("TRM New Charge")),
         isMFADebit = true) {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe adjustmentText
       }
