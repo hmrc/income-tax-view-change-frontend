@@ -136,7 +136,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
 
     val lpiBcdTextSentence = messages("chargeSummary.lpi.balancingCharge.p1")
-    val lpiBcdTextParagraph = messages("chargeSummary.lpi.balancingCharge.textOne") + " " + messages("chargeSummary.lpi.balancingCharge.linkTex") + " " + messages("chargeSummary.lpi.balancingCharge.textTwo")
+    val lpiBcdTextParagraph = messages("chargeSummary.lpi.balancingCharge.textOne") + " " + messages("chargeSummary.lpi.balancingCharge.linkText") + " " + messages("chargeSummary.lpi.balancingCharge.textTwo")
     val lpiBcdTextP3 = messages("chargeSummary.lpi.balancingCharge.p3") + " " + messages("chargeSummary.lpi.balancingCharge.p3LinkText")
 
 
@@ -362,7 +362,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningLock = None), codingOutEnabled = true) {
-        document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
+        document.select("#nic2TaxYear").text() shouldBe class2NicTaxYear(2018)
       }
 
       s"have the correct heading for a Cancelled PAYE Self Assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -384,10 +384,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.selectById("p2").text() shouldBe bcdTextP2
       }
 
-      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"))) {
+      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
         document.selectById("lpi-bcd1").text() shouldBe lpiBcdTextSentence
-//        document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
-//        document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
+        document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
+        document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
       }
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
@@ -402,16 +402,16 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.selectById("p2").text() shouldBe poaTextP2
       }
 
-      "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 1"))) {
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
         document.selectById("lpi-poa2").text() shouldBe lpiPoa1TextSentence
         document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
         document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
       }
 
-      "have content explaining the definition of a late payment interest charge on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.selectById("p4").text() shouldBe lpiPoa2TextSentence
-        document.selectById("p5").text() shouldBe lpiPoaTextParagraph
-        document.selectById("p6").text() shouldBe lpiPoaTextP3
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
+        document.selectById("lpi-poa4").text() shouldBe lpiPoa2TextSentence
+        document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
+        document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
