@@ -60,6 +60,29 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
   }
 
+  def hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear
+  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
+
+    val currentYearEnd = dateService.getCurrentTaxYearEnd //23-24
+    val previousYearEnd = currentYearEnd - 1
+
+    val currentTaxYear = TaxYear.forYearEnd(currentYearEnd)
+    val previousTaxYear = TaxYear.forYearEnd(previousYearEnd)
+
+    val currentYearStatusFuture = getITSAStatusDetail(currentTaxYear, futureYears = false, history = false)
+    val previousYearStatusFuture = getITSAStatusDetail(previousTaxYear, futureYears = false, history = false)
+
+    for {
+      currentYearStatus <- currentYearStatusFuture.map(statusDetail =>
+        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+      previousYearStatus <- previousYearStatusFuture.map(statusDetail =>
+        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+    } yield {
+      (currentYearStatus, previousYearStatus)
+    }
+  }
+
+
 
   def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_],
                                                           hc: HeaderCarrier,

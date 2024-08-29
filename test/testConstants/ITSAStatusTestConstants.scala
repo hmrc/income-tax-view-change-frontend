@@ -43,6 +43,35 @@ object ITSAStatusTestConstants {
       ITSAStatusResponseModel("2021-22", Some(List(statusDetail)))
     )
   }
+
+  val successMultipleYearMandatedITSAStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+    )
+  }
+
+  val currentYearMandatedPreviousYearNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+    )
+  }
+
+  val previousYearMandatedCurrentYearNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetail)))
+    )
+  }
+
+  val bothYearsNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetail)))
+    )
+  }
+
   val successITSAStatusResponseModelMinimal = ITSAStatusResponseModel("2019-20", None)
   val errorITSAStatusError = ITSAStatusResponseError(BAD_REQUEST, "Dummy message")
   val badJsonErrorITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response")

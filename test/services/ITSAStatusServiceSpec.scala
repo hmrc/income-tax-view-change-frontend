@@ -28,7 +28,7 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
 
   object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
-  val taxYear = TaxYear.forYearEnd(2020)
+  val taxYear = TaxYear.forYearEnd(2023)
   val taxYearEnd = taxYear.endYear
   val yearRange = taxYear.formatTaxYearRange
   "hasMandatedOrVoluntaryStatusCurrentYear " when {
@@ -72,4 +72,39 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
       }
     }
   }
+
+  "hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear" when {
+
+    "ITSAStatus is returned" should {
+
+      "return (true, true) if both current and previous years have MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearMandatedITSAStatusResponse))
+
+        TestITSAStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToUnknownStatus
+      }
+
+      "return (true, false) if only current year has MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(currentYearMandatedPreviousYearNoStatusResponse))
+
+        TestITSAStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe (true, false)
+      }
+
+      "return (false, true) if only previous year has MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(previousYearMandatedCurrentYearNoStatusResponse))
+
+        TestITSAStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe (false, true)
+      }
+
+      "return (false, false) if neither current nor previous years have MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(bothYearsNoStatusResponse))
+
+        TestITSAStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe (false, false)
+      }
+    }
+  }
+
 }
