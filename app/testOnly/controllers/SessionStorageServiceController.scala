@@ -22,7 +22,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.mvc._
 import testOnly.models.SessionGetResponse.SessionDataGetSuccess
-import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
 import testOnly.services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -84,6 +84,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
             s"User model:        ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
+            s"mtditid:           ${model.mtditid}\n" +
             s"nino:              ${model.nino}\n" +
             s"utr:               ${model.utr}\n"
         )
