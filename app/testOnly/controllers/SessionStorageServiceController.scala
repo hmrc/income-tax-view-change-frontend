@@ -41,16 +41,16 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShow(isAgent = false, user.mtditid)
+      handleShow(isAgent = false)
   }
 
   def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShow(isAgent = true, mtdItUser.mtditid)
+      handleShow(isAgent = true)
   }
 
-  private def handleShow(isAgent: Boolean, mtditid: String)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
-    sessionDataService.postSessionData() flatMap {
+  private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
+    post() flatMap {
       case Left(errorModel: SessionDataPostFailure) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} " +
           s"- POST user data to income-tax-session-data unsuccessful: - status: ${errorModel.status} - message: ${errorModel.errorMessage} - ")
@@ -58,12 +58,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       case Right(successModel: SessionDataPostSuccess) =>
         Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
           s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
-        successModel.status match {
-          case CONFLICT =>
-            Future.successful(Conflict("Status - 409. A complete duplicate of this record was found in the database. We have updated the lastUpdated field."))
-          case _ =>
-            handlePostSuccess(isAgent, mtditid)
-        }
+        handlePostSuccess(isAgent)
     }
   }.recover {
     case ex: Throwable =>
@@ -72,8 +67,8 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleError(isAgent)
   }
 
-  private def handlePostSuccess(isAgent: Boolean, mtditid: String)(implicit hc: HeaderCarrier): Future[Result] = {
-    sessionDataService.getSessionData(mtditid) map {
+  private def handlePostSuccess(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
+    sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
           s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - ")
@@ -90,6 +85,9 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
         )
     }
   }
+
+  def post()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SessionDataPostResponse] =
+    sessionDataService.postSessionData()
 
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

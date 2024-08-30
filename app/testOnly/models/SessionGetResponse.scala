@@ -39,18 +39,13 @@ object SessionGetResponse {
   implicit object SessionGetResponseReads extends HttpReads[SessionGetResponse] {
     override def read(method: String, url: String, response: HttpResponse): SessionGetResponse = {
       response.status match {
-        case OK =>
-          Logger("application").info("Get session call successful. OK response was returned from the API")
+        case OK | NOT_FOUND =>
+          Logger("application").info("Get session call successful. OK or NOT_FOUND response was returned from the API")
           response.json.validate[SessionDataGetSuccess].fold(
             invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
             valid => Right(valid)
           )
-        case NOT_FOUND =>
-          Logger("application").error(s"No user session was found. status: $NOT_FOUND")
-          Left(new Exception(s"No user session was found. status: $NOT_FOUND"))
-        case status =>
-          Logger("application").error(s"User session could not be saved. status: $status")
-          Left(new Exception(s"User session could not be saved. status: $status"))
+        case status => Left(new Exception(s"User session could not be saved. status: $status"))
       }
     }
   }
