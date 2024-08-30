@@ -24,7 +24,6 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 object SessionGetResponse {
 
   case class SessionDataGetSuccess(
-                                    mtditid: String,
                                     nino: String,
                                     utr: String,
                                     sessionId: String
