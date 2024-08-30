@@ -109,6 +109,7 @@
 }
 
 @getBalancingPaymentsExplanationContent = {
+"AAAAAAAAAAAAAAAAA"
     <div>
         @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
         @p(id = Some("lpi-bcd2")) {
@@ -126,7 +127,7 @@
 @getExplanationContent = @{viewModel.documentType match {
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
-        case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of BalancingCharge
+        case BalancingCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of BalancingCharge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case _                          =>

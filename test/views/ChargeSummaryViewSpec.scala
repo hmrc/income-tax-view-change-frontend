@@ -382,7 +382,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "have content explaining the definition of a HMRC adjustment when charge is a MFA Debit" in new TestSetup(
         documentDetail = financialDetailsModelWithMFADebit()
           .documentDetails.head
-          .copy(documentDescription = Some("TRM New Charge")),
+          .copy(documentDescription = Some("TEST")),
         isMFADebit = true) {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe adjustmentText
       }
@@ -393,7 +393,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#charge-explanation>:nth-child(3)").text() shouldBe bcdTextP2
       }
 
-      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
+      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD")), latePaymentInterestCharge = true) {
         document.selectById("lpi-bcd1").text() shouldBe lpiBcdTextSentence
         document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
         document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
