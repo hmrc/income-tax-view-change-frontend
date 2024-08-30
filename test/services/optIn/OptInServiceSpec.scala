@@ -279,8 +279,7 @@ class OptInServiceSpec extends UnitSpec
         intentTaxYear = currentTaxYear,
         isAgent = isAgent,
         cancelURL = ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = false,
-        showPreviouslySubmittedUpdatesWarning = true
+        intentIsNextYear = false
       )
     }
 
@@ -299,8 +298,7 @@ class OptInServiceSpec extends UnitSpec
         intentTaxYear = currentTaxYear.nextYear,
         isAgent = isAgent,
         cancelURL = ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = true,
-        showPreviouslySubmittedUpdatesWarning = false
+        intentIsNextYear = true
       )
     }
 
