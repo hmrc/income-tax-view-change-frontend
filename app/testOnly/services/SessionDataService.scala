@@ -17,23 +17,23 @@
 package testOnly.services
 
 import auth.MtdItUser
-import models.core.ErrorModel
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testOnly.connectors.SessionDataConnector
+import testOnly.models.SessionDataModel
+import testOnly.models.SessionGetResponse.SessionGetResponse
 import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse}
-import testOnly.models.{SessionDataModel, SessionDataRetrieval}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorModel, SessionDataRetrieval]] = {
+  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
     sessionDataConnector.getSessionData()
   }
 
-  def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
+  def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier)
   : Future[SessionDataPostResponse] = {
 
     user.saUtr match {

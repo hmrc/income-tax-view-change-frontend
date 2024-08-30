@@ -18,11 +18,10 @@ package testOnly.connectors
 
 import config.FrontendAppConfig
 import connectors.RawResponseReads
-import models.core.ResponseModel.{ResponseModel, UnexpectedError}
-import play.api.Logger
 import play.api.libs.json.Json
+import testOnly.models.SessionDataModel
+import testOnly.models.SessionGetResponse.SessionGetResponse
 import testOnly.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
-import testOnly.models.{SessionDataModel, SessionDataRetrieval}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -33,17 +32,13 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                      val http: HttpClientV2
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
-  def getSessionData()(implicit hc: HeaderCarrier): Future[ResponseModel[SessionDataRetrieval]] = {
+  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
     lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
 
     http
       .get(url"$url")
-      .execute[ResponseModel[SessionDataRetrieval]]
-      .recover {
-        case e =>
-          Logger("application").error(e.getMessage)
-          Left(UnexpectedError)
-      }
+      .execute[SessionGetResponse]
+
   }
 
   def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {

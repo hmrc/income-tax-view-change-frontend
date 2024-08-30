@@ -19,10 +19,9 @@ package testOnly.controllers
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.core.ErrorModel
 import play.api.Logger
 import play.api.mvc._
-import testOnly.models.SessionDataRetrieval
+import testOnly.models.SessionGetResponse.SessionDataGetSuccess
 import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
 import testOnly.services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -70,11 +69,11 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
 
   private def handlePostSuccess(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
-      case Left(errorModel: ErrorModel) =>
+      case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-          s" - GET user data request to income-tax-session-data unsuccessful: - status: ${errorModel.code} - message: ${errorModel.message} - ")
+          s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - ")
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
-      case Right(model: SessionDataRetrieval) =>
+      case Right(model: SessionDataGetSuccess) =>
         Ok(
           s"Session Data Service POST and GET requests were successful!\n" +
             s"User model:          ${model.toString}\n" +
@@ -87,8 +86,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
     }
   }
 
-  def post()(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_])
-  : Future[SessionDataPostResponse] =
+  def post()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[SessionDataPostResponse] =
     sessionDataService.postSessionData()
 
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
