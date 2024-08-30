@@ -29,8 +29,8 @@ import scala.concurrent.Future
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
-    sessionDataConnector.getSessionData()
+  def getSessionData(mtditid: String)(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
+    sessionDataConnector.getSessionData(mtditid)
   }
 
   def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier)
