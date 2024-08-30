@@ -22,7 +22,8 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
+import controllers.optIn.routes.OptInErrorController
+import controllers.routes.ReportingFrequencyPageController
 import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger

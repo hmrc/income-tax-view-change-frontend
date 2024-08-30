@@ -1757,6 +1757,7 @@ incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob bl
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
+incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
