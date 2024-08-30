@@ -52,6 +52,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
@@ -218,7 +219,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("main h2")(lpiHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
       )
     }
@@ -241,7 +242,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("main h2")(lpiHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
       )
