@@ -18,8 +18,8 @@ package services.optIn
 
 import auth.MtdItUser
 import cats.data.OptionT
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import controllers.optIn.routes.ReportingFrequencyPageController
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -28,10 +28,9 @@ import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optIn.OptInService.ZeroCount
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{NextOptInTaxYear, OptInInitialState, OptInProposition}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency._
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -85,7 +84,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
 
@@ -187,7 +186,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     val annualQuarterlyUpdateCounts = Future.sequence(
       proposition.availableOptInYears.map {
-        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, ZeroCount))
+        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, noQuarterlyUpdates))
         case anyOtherOptInTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptInTaxYear.taxYear)
       })
 
@@ -210,9 +209,4 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
   private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
 
-}
-
-object OptInService {
-  /* todo remove this and reuse variable from opt-out after refactor */
-  val ZeroCount = 0
 }
