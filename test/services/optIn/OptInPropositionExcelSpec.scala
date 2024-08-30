@@ -93,7 +93,7 @@ class OptInPropositionExcelSpec extends UnitSpec {
     val tab = "  "
 
     rowsWithoutHeaders.foreach(line => {
-      val cells = line.split(tab).take(9)
+      val cells = line.split(tab).take(8)
 
       val lineString = Seq(
         quote(parseItsaStatus(cells(0))),
