@@ -277,6 +277,13 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "claimToAdjustService.getPoaTaxYearForEntryPoint returns a Left containing an exception" should {
       "hit the recover block and redirect to the internal server error page" in {
         enable(AdjustPaymentsOnAccount)
+
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess()
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
         mockSingleBusinessIncomeSource()
         setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
 
