@@ -24,14 +24,12 @@ sealed trait CheckYourAnswersViewModel {
   val isAgent: Boolean
   val cancelURL: String
   val intentIsNextYear: Boolean
-  val showPreviouslySubmittedUpdatesWarning: Boolean
 }
 
 case class MultiYearCheckYourAnswersViewModel(intentTaxYear: TaxYear,
                                               isAgent: Boolean,
                                               cancelURL: String,
-                                              intentIsNextYear: Boolean = false,
-                                              showPreviouslySubmittedUpdatesWarning: Boolean = false)
+                                              intentIsNextYear: Boolean = false)
   extends CheckYourAnswersViewModel {
   val startYear: String = intentTaxYear.startYear.toString
   val endYear: String = intentTaxYear.endYear.toString

@@ -66,8 +66,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
           .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
             taxYear2023,
             isAgent, ReportingFrequencyPageController.show(isAgent).url,
-            intentIsNextYear = true,
-            showPreviouslySubmittedUpdatesWarning = true)
+            intentIsNextYear = true)
           )))
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")

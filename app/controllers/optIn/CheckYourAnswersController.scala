@@ -66,8 +66,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
             model.intentTaxYear,
             model.isAgent,
             model.cancelURL,
-            model.intentIsNextYear,
-            model.showPreviouslySubmittedUpdatesWarning)))
+            model.intentIsNextYear)))
           case None => errorHandler(isAgent).showInternalServerError()
         }
 

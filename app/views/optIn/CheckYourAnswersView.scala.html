@@ -52,10 +52,6 @@
     } else messages("optin.checkAnswers.cy")
 }
 
-@previouslySubmittedUpdatesWarningBlock = @{
-    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
-}
-
 @mainTemplate(
     pageTitle = messages("optin.checkAnswers.heading"),
     backUrl = Some("#"),
@@ -87,10 +83,6 @@
         @p(id=Some("optIn-summary")) {
             @getMessage
         }
-
-       @if(model.showPreviouslySubmittedUpdatesWarning) {
-           @previouslySubmittedUpdatesWarningBlock
-       }
 
         <div class="govuk-button-group">
             @govukButton(Button(

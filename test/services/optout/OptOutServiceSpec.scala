@@ -176,7 +176,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
         result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
@@ -198,7 +198,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
         result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
@@ -212,7 +212,7 @@ class OptOutServiceSpec extends UnitSpec
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear).nextYear
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.makeITSAStatusUpdate(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
+        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
           ITSAStatusUpdateResponseSuccess()
         ))
         val proposition = buildOneYearOptOutPropositionForNextYear(currentYear)
@@ -220,7 +220,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = optOutTaxYear
 
-        service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        service.makeOptOutUpdateRequest(proposition, intent)
       }
     }
 
@@ -242,7 +242,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
@@ -267,7 +267,7 @@ class OptOutServiceSpec extends UnitSpec
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
         val intent = currentTaxYear
 
-        val result = service.makeOptOutUpdateRequest(proposition, Future.successful(Some(intent)))
+        val result = service.makeOptOutUpdateRequest(proposition, intent)
 
         result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
       }

@@ -169,6 +169,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
+  /* todo may need to be removed or changed, awaiting ongoing investigation and decisions by team */
   def getQuarterlyUpdatesCountForOfferedYears(proposition: OptInProposition)
                                              (implicit user: MtdItUser[_],
                                               hc: HeaderCarrier,
@@ -201,12 +202,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
       cancelURL = ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
-      proposition <- OptionT.liftF(fetchOptInProposition())
-      quarterlyUpdatesCountForOfferedYears <- OptionT.liftF(getQuarterlyUpdatesCountForOfferedYears(proposition))
-      showPreviouslySubmittedUpdatesWarning = quarterlyUpdatesCountForOfferedYears.counts
-        .filter(v => v.taxYear == intentTaxYear).map(_.count).headOption.getOrElse(noQuarterlyUpdates) > noQuarterlyUpdates
-    } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear,
-      showPreviouslySubmittedUpdatesWarning = showPreviouslySubmittedUpdatesWarning)
+    } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear)
 
     result.value
   }
