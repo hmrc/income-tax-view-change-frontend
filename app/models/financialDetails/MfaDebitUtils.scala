@@ -16,15 +16,23 @@
 
 package models.financialDetails
 
+import scala.util.Try
+
 object MfaDebitUtils {
-  private val MFADebitType: List[String] = List(
-    "ITSA PAYE Charge",
-    "ITSA Calc Error Correction",
-    "ITSA Manual Penalty Pre CY-4",
-    "ITSA Misc Charge")
+  private val MFADebitType: Map[Int, String] = Map(
+    (4000 -> "ITSA PAYE Charge"),
+    (4001 -> "ITSA Calc Error Correction"),
+    (4002 -> "ITSA Manual Penalty Pre CY-4"),
+    (4003 -> "ITSA Misc Charge"))
+
+  def isMFADebitMainTransaction(mainType: Option[String]): Boolean = {
+    mainType
+      .flatMap(t => Try(t.toInt).toOption)
+      .exists(i => MFADebitType.contains(i))
+  }
 
   def isMFADebitMainType(mainType: Option[String]): Boolean = {
-    mainType.exists(MFADebitType.contains(_))
+    mainType.exists(MFADebitType.values.toList.contains(_))
   }
 
   def filterMFADebits(MFADebitsEnabled: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {

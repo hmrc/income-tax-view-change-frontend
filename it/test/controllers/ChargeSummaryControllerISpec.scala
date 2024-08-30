@@ -475,6 +475,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1040000123",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -523,6 +524,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
