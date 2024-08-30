@@ -977,6 +977,8 @@ chargeSummary.definition.balancingcharge.bullet1                   = nid oedd ge
 chargeSummary.definition.balancingcharge.bullet2                   = mae’r dreth sydd arnoch yn fwy na’r hyn a dalwyd gennych yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
 chargeSummary.definition.balancingcharge.p2                        = Bydd angen hefyd i chi wneud taliad mantoli os oes arnoch unrhyw beth o ran Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
+chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
+
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
@@ -1371,7 +1373,7 @@ notmigrated.agent.link_title                                    = cyfrif Hunanas
 incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
 incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
-incomeSources.add.UKPropertyStartDate.error.required            = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
+incomeSources.add.UKPropertyStartDate.required.all              = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 add-uk-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
@@ -1388,10 +1390,20 @@ dateForm.error.dayMonthAndYear.required                             = Mae’n rh
 dateForm.error.dayMonthAndYear.required.se                          = Nodwch y dyddiad y daeth eich busnes hunangyflogaeth i ben
 dateForm.error.dayMonthAndYear.required.uk                          = Nodwch y dyddiad y daeth eich busnes eiddo yn y DU i ben
 dateForm.error.dayMonthAndYear.required.fp                          = Nodwch y dyddiad y gwnaeth eich busnes eiddo tramor stopio
+dateForm.error.required.two                                         = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+dateForm.error.required                                             = Mae’n rhaid i’r dyddiad gynnwys {0}
 dateForm.error.future                                               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 dateForm.error.invalid                                              = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 dateFrom.error.beforeStartDate                                      = TNi all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+
+date.day                     = Diwrnod
+date.month                   = Mis
+date.year                    = Blwyddyn
+
+date.error.day               = diwrnod
+date.error.month             = mis
+date.error.year              = blwyddyn
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
@@ -1457,7 +1469,7 @@ incomeSources.add.foreignProperty.startDate.error.missingYear        = Mae’n r
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = Mae’n rhaid i’r dyddiad gynnwys mis
 incomeSources.add.foreignProperty.startDate.error.missingDay         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
 incomeSources.add.foreignProperty.startDate.error.invalid            = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
-incomeSources.add.foreignProperty.startDate.error.required           = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
+incomeSources.add.foreignProperty.startDate.required.all             = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
 incomeSources.add.foreignProperty.startDate.error.future             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r dyddiad hwn yn gywir?
 add-foreign-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
@@ -1490,7 +1502,7 @@ add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
-add-business-start-date.error.required               = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.required.all           = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 
 # add business accounting method
@@ -2111,10 +2123,20 @@ optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn y
 optIn.beforeYouStart.button.start              = Dechrau
 
 # opt in choose tax year
-optin.chooseOptInTaxYear.heading                     = TBD
-optin.chooseOptInTaxYear.desc1                       = TBD
-optin.chooseOptInTaxYear.whichTaxYear                = TBD
+optin.chooseOptInTaxYear.heading                     = Optio i mewn yn wirfoddol i adrodd yn chwarterol
+optin.chooseOptInTaxYear.desc1                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, ni fydd yn rhaid i chi gyflwyno diweddariad chwarterol tan hynny.
+optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlaen rydych eisiau optio i mewn?
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
 optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
+
+# opt in check your answers
+optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
+optin.checkAnswers.heading = Gwirio’ch atebion
+optin.checkAnswers.optin = Optio i mewn o
+optin.checkAnswers.change = Newid
+optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariad chwarterol drwy feddalwedd sy’n cydweddu.
+optin.checkAnswers.ny = TBD
+optin.checkAnswers.confirm = Cadarnhau a chadw
+optin.checkAnswers.cancel = Canslo

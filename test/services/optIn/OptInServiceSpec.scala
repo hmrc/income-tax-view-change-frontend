@@ -18,15 +18,16 @@ package services.optIn
 
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
-import repositories.ITSAStatusRepositorySupport._
 import models.itsaStatus.StatusDetail
 import models.optin.{OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
+import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.optIn.OptInServiceSpec.statusDetailWith
@@ -35,7 +36,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object OptInServiceSpec {
   def statusDetailWith(status: ITSAStatus): StatusDetail = {
@@ -187,6 +188,48 @@ class OptInServiceSpec extends UnitSpec
       choice shouldBe None
     }
   }
+
+  "OptInService.makeOptInCall" should {
+
+    "success response case" in {
+
+      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+
+      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+        .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+
+      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+
+      result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
+    }
+
+    "fail response case" in {
+
+      mockRepository(selectedOptInYear = Some(currentTaxYear.toString))
+
+      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+
+      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+    }
+
+    "fail where missing intent tax-year case" in {
+
+      mockRepository(selectedOptInYear = None)
+
+      when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+      val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
+
+      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+    }
+
+  }
+
+  def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
 
   def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
 

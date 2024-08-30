@@ -21,6 +21,7 @@ import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockOptOutService
+import mocks.repositories.MockOptOutSessionDataRepository
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutMultiYearViewModel
@@ -38,7 +39,7 @@ import views.html.optOut.OptOutChooseTaxYear
 import scala.concurrent.Future
 
 class OptOutChooseTaxYearControllerSpec extends TestSupport
-  with MockAuthenticationPredicate with MockFrontendAuthorisedFunctions with MockOptOutService {
+  with MockAuthenticationPredicate with MockFrontendAuthorisedFunctions with MockOptOutService with MockOptOutSessionDataRepository {
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
@@ -48,7 +49,7 @@ class OptOutChooseTaxYearControllerSpec extends TestSupport
   val itvcErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
   val itvcErrorHandlerAgent: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
 
-  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService)(appConfig,
+  val controller = new OptOutChooseTaxYearController(optOutChooseTaxYear, mockOptOutService, mockOptOutSessionDataRepository)(appConfig,
     ec, testAuthenticator, mockAuthService, itvcErrorHandler, itvcErrorHandlerAgent, mcc)
 
   val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear

@@ -26,7 +26,7 @@ import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import repositories.UIJourneySessionDataRepository
+import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutService, OptOutTestSupport}
@@ -56,7 +56,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(httpClientMock, mockAuditingService, appConfig)
   val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)
-  val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+  val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
   val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
     nextUpdatesService, mockDateService, repository)
