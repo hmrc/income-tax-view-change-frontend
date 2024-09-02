@@ -124,12 +124,12 @@
 }
 
 @getExplanationContent = @{viewModel.documentType match {
+        case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
         case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
-        case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case _                          =>
     }
 }
