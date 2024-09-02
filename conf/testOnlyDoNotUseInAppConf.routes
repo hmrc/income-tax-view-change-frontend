@@ -13,87 +13,87 @@
 # Add all the application routes to the prod.routes file
 
 ## Test only assets using this route
-GET         /report-quarterly/income-and-expenses/view/test-only/assets/*filePath                     testOnly.controllers.TestOnlyAssetsController.at(filePath: String)
+GET         /test-only/report-quarterly/income-and-expenses/view/assets/*filePath                     testOnly.controllers.TestOnlyAssetsController.at(filePath: String)
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.submit
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-client/nino/:nino/utr/:utr      testOnly.controllers.StubClientDetailsController.submitWithParams(nino: String, utr: String)
+GET         /test-only/report-quarterly/income-and-expenses/view/stub-client                          testOnly.controllers.StubClientDetailsController.show
+POST        /test-only/report-quarterly/income-and-expenses/view/stub-client                          testOnly.controllers.StubClientDetailsController.submit
+GET         /test-only/report-quarterly/income-and-expenses/view/stub-client/nino/:nino/utr/:utr      testOnly.controllers.StubClientDetailsController.submitWithParams(nino: String, utr: String)
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit
-
-+ nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy
+GET         /test-only/report-quarterly/income-and-expenses/view/stub-schema                          testOnly.controllers.StubSchemaController.show
+POST        /test-only/report-quarterly/income-and-expenses/view/stub-schema                          testOnly.controllers.StubSchemaController.submit
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy
+POST        /test-only/report-quarterly/income-and-expenses/view/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy
 
 + nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin
+DELETE      /test-only/report-quarterly/income-and-expenses/view/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy
+
++ nocsrf
+GET         /test-only/report-quarterly/income-and-expenses/view/custom-login                         testOnly.controllers.CustomLoginController.showLogin
 GET         /hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css                                        testOnly.controllers.CustomLoginController.showCss
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin
+POST        /test-only/report-quarterly/income-and-expenses/view/submitLogin                          testOnly.controllers.CustomLoginController.postLogin
 
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.submit
-
-+ nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy
+GET         /test-only/report-quarterly/income-and-expenses/view/stub-data                            testOnly.controllers.StubDataController.show
+POST        /test-only/report-quarterly/income-and-expenses/view/stub-data                            testOnly.controllers.StubDataController.submit
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy
+POST        /test-only/report-quarterly/income-and-expenses/view/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers
+DELETE      /test-only/report-quarterly/income-and-expenses/view/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy
 
 + nocsrf
-DELETE      /report-quarterly/income-and-expenses/view/test-only/delete-all-users/proxy               testOnly.controllers.StubUsersController.deleteUsers
+POST        /test-only/report-quarterly/income-and-expenses/view/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers
 
-GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
+DELETE      /test-only/report-quarterly/income-and-expenses/view/delete-all-users/proxy               testOnly.controllers.StubUsersController.deleteUsers
 
-GET        /report-quarterly/income-and-expenses/view/test-only/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll
+GET         /test-only/report-quarterly/income-and-expenses/view/feature-switch                       testOnly.controllers.FeatureSwitchController.show
++ nocsrf
+POST        /test-only/report-quarterly/income-and-expenses/view/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
 
-GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial
+GET        /test-only/report-quarterly/income-and-expenses/view/enable-all-feature-switches          testOnly.controllers.FeatureSwitchController.enableAll
+
+GET         /test-only/report-quarterly/income-and-expenses/view/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial
 
 ->          /                                                                                          prod.Routes
 
-GET        /report-quarterly/income-and-expenses/view/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
+GET        /test-only/report-quarterly/income-and-expenses/view/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
 
-GET        /report-quarterly/income-and-expenses/view/test-only/showSession                          testOnly.controllers.SessionStorageController.show
+GET        /test-only/report-quarterly/income-and-expenses/view/showSession                          testOnly.controllers.SessionStorageController.show
 
-GET       /report-quarterly/income-and-expenses/view/test-only/upsertSession                         testOnly.controllers.SessionStorageController.upsert(key: Option[String], value: Option[String])
+GET       /test-only/report-quarterly/income-and-expenses/view/upsertSession                         testOnly.controllers.SessionStorageController.upsert(key: Option[String], value: Option[String])
 
-GET         /report-quarterly/income-and-expenses/view/test-only/message-check                       testOnly.controllers.MessageCheckController.show
+GET         /test-only/report-quarterly/income-and-expenses/view/message-check                       testOnly.controllers.MessageCheckController.show
 
-GET         /report-quarterly/income-and-expenses/view/test-only/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh
+GET         /test-only/report-quarterly/income-and-expenses/view/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh
 
-GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show
-GET         /report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
+GET         /test-only/report-quarterly/income-and-expenses/view/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show
+GET         /test-only/report-quarterly/income-and-expenses/view/agents/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
 
-GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                     testOnly.controllers.SessionStorageServiceController.show
-GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage              testOnly.controllers.SessionStorageServiceController.showAgent
+GET         /test-only/report-quarterly/income-and-expenses/view/session-storage                     testOnly.controllers.SessionStorageServiceController.show
+GET         /test-only/report-quarterly/income-and-expenses/view/agents/session-storage              testOnly.controllers.SessionStorageServiceController.showAgent
 
-
-+nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
-GET        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.get
 
 +nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.putAll
+PUT        /test-only/report-quarterly/income-and-expenses/view/featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
+GET        /test-only/report-quarterly/income-and-expenses/view/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.get
 
 +nocsrf
-PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
+PUT        /test-only/report-quarterly/income-and-expenses/view/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.putAll
+
++nocsrf
+PUT        /test-only/report-quarterly/income-and-expenses/view/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
 
 #GET        /report-quarterly/income-and-expenses/view/test-only/allfeatureSwitches                                                testOnly.controllers.FeatureSwitchController.show
 #POST       /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                testOnly.controllers.FeatureSwitchController.submit
 
-GET        /report-quarterly/income-and-expenses/view/test-only/showOptOutSession                          testOnly.controllers.OptOutMongoTestJourneyController.show
+GET        /test-only/report-quarterly/income-and-expenses/view/showOptOutSession                          testOnly.controllers.OptOutMongoTestJourneyController.show
 
-GET       /report-quarterly/income-and-expenses/view/test-only/upsertOptOutSession                         testOnly.controllers.OptOutMongoTestJourneyController.upsert(key: Option[String], value: Option[String])
+GET       /test-only/report-quarterly/income-and-expenses/view/upsertOptOutSession                         testOnly.controllers.OptOutMongoTestJourneyController.upsert(key: Option[String], value: Option[String])
 
 
-GET       /report-quarterly/income-and-expenses/view/test-only/list-agent-utrs                             testOnly.controllers.UTRListController.listUTRs
+GET       /test-only/report-quarterly/income-and-expenses/view/list-agent-utrs                             testOnly.controllers.UTRListController.listUTRs

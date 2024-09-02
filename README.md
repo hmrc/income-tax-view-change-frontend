@@ -78,20 +78,20 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 ### To access Opt Out Custom Data testOnly page to see current data, first log in as a whitelisted opt out user (e.g: OP000001A) and then go to:
 
 Local:
-Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
-Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+Individual: http://localhost:9081/test-only/report-quarterly/income-and-expenses/view/showOptOutCurrentData
+Agent: http://localhost:9081/test-only/report-quarterly/income-and-expenses/view/agents/showOptOutCurrentData
 
 Staging:
-Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
-Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+Individual: https://www.staging.tax.service.gov.uk/test-only/report-quarterly/income-and-expenses/view/showOptOutCurrentData
+Agent: https://www.staging.tax.service.gov.uk/test-only/report-quarterly/income-and-expenses/view/agents/showOptOutCurrentData
 
 ### To access income-tax-session-data testOnly page to test the income-tax-session-data service, first log in as a user and then go to:
 
 Local:
-Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/session-storage
-Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
+Individual: http://localhost:9081/test-only/report-quarterly/income-and-expenses/view/session-storage
+Agent: http://localhost:9081/test-only/report-quarterly/income-and-expenses/view/agents/session-storage
 
 Staging:
-Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/session-storage
-Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
+Individual: https://www.staging.tax.service.gov.uk/test-only/report-quarterly/income-and-expenses/view/session-storage
+Agent: https://www.staging.tax.service.gov.uk/test-only/report-quarterly/income-and-expenses/view/agents/session-storage
 
