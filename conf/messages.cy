@@ -897,11 +897,11 @@ chargeSummary.class2Nic.text                                    = Class 2 Nation
 chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                  = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.hmrcAdjustment.text                               = Addasiad CThEF
-chargeSummary.paymentAmount                                     = Swm llawn y taliad
+chargeSummary.paymentAmount                                     = Swm
 chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
-chargeSummary.remainingDue                                      = Yn weddill i dalu
+chargeSummary.remainingDue                                      = I’w dalu o hyd
 chargeSummary.whatYouOwe.textOne                                = Bwrw golwg dros
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw beth arall i’w dalu.
 chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros

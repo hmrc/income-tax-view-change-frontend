@@ -859,7 +859,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
         "Display an unpaid MFA Credit" in new TestSetup(
           documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), isMFADebit = true) {
-          val summaryListText = "Due date OVERDUE 15 May 2019 Full payment amount £1,400.00 Remaining to pay £1,400.00 "
+          val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
           val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
           val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
           // heading should be hmrc adjustment
@@ -879,7 +879,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
             outstandingAmount = 0.00), isMFADebit = true,
           paymentAllocationEnabled = true,
           paymentAllocations = paymentAllocations) {
-          val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
+          val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
           val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
           val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
           val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
@@ -905,7 +905,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display balancing charge due date as N/A and hide sections - Payment Breakdown ,Make a payment button ,Any payments you make, Payment History" when {
         val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = 0, originalAmount = BigDecimal(0), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
-          document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
+          document.select(".govuk-summary-list").text() shouldBe "Due date N/A Amount £0.00 Still to pay £0.00"
           document.select("p").get(1).text shouldBe "View what you owe to check if you have any other charges to pay."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
@@ -1002,7 +1002,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "Display an unpaid MFA Credit" in new TestSetup(
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), isMFADebit = true,
         isAgent = true) {
-        val summaryListText = "Due date OVERDUE 15 May 2019 Full payment amount £1,400.00 Remaining to pay £1,400.00 "
+        val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
@@ -1021,7 +1021,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
           outstandingAmount = 0.00), isMFADebit = true, isAgent = true,
         paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
-        val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
+        val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
