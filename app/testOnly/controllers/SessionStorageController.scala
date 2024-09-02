@@ -50,7 +50,7 @@ class SessionStorageController @Inject()
       res match {
         case Some((k, v)) =>
           Future.successful(
-            Redirect("/test-only/report-quarterly/income-and-expenses/view/showSession")
+            Redirect("/report-quarterly/income-and-expenses/view/test-only/showSession")
               .withSession(request.session + (k -> v))
           )
         case None =>
