@@ -132,7 +132,7 @@ object BusinessDetailsTestConstants {
     taxYear1 = year2023.toString,
     latencyIndicator1 = "Q",
     taxYear2 = year2024.toString,
-    latencyIndicator2 = "")
+    latencyIndicator2 = "A")
 
   val quarterTypeElectionStandard = QuarterTypeElection("STANDARD", "2021")
   val quarterTypeElectionCalendar = QuarterTypeElection("CALENDAR", "2021")

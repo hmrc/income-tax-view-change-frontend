@@ -26,7 +26,7 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetailsCYUnknown, testStartDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetailsCYUnknown, testStartDate, testTradeName}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
@@ -80,8 +80,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
-    taxYearOneCrystallised = Some(true),
+    latencyYearOneIsQuarterly = Some(true),
+    taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -111,11 +111,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
-    taxYearOneCrystallised = Some(true),
+    latencyYearTwoIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
+    taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
-    latencyDetails = Some(testLatencyDetailsCYUnknown),
+    latencyDetails = Some(testLatencyDetails4),
     incomeSourceType = SelfEmployment,
     quarterReportingType = Some(QuarterTypeStandard)
   )
@@ -160,7 +160,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -543,32 +543,19 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
     }
 
-    "render the change links where status is Quarterly" in {
-
-      val isAgent = false
-
-       val view: HtmlFormat.Appendable = {
-        manageIncomeSourceDetailsView(
-          selfEmploymentViewModelOneYearCrystallised,
-          isAgent,
-          backUrl(isAgent)
-        )(messages, implicitly)
-      }
-
-       val document: Document = Jsoup.parse(contentAsString(view))
-
-      document.getElementById("change-link-1").text().isEmpty
+    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false){
+      document.getElementById("change-link-1") shouldBe null
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "use CY-1 ITSA status to render change link when CY is unknown" in new SelfEmploymentCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
+      document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
     }
 
-    "dont display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
-      document.getElementById("change-link-2").text().isEmpty
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
     }
   }
   "ManageSelfEmployment - Agent" should {
