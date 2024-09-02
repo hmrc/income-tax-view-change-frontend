@@ -128,6 +128,7 @@
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
         case BalancingCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of BalancingCharge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
+        case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case _                          =>
     }
