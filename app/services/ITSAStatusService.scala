@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
@@ -60,25 +60,28 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
   }
 
-  def hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear
+  def hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails: Option[LatencyDetails])
   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
 
-    val currentYearEnd = dateService.getCurrentTaxYearEnd //23-24
-    val previousYearEnd = currentYearEnd - 1
+    latencyDetails match {
+      case Some(details) =>
+        val taxYear1 = TaxYear.forYearEnd(details.taxYear1.toInt)
+        val taxYear2 = TaxYear.forYearEnd(details.taxYear2.toInt)
 
-    val currentTaxYear = TaxYear.forYearEnd(currentYearEnd)
-    val previousTaxYear = TaxYear.forYearEnd(previousYearEnd)
+        val taxYear1StatusFuture = getITSAStatusDetail(taxYear1, futureYears = false, history = false)
+        val taxYear2StatusFuture = getITSAStatusDetail(taxYear2, futureYears = false, history = false)
 
-    val currentYearStatusFuture = getITSAStatusDetail(currentTaxYear, futureYears = false, history = false)
-    val previousYearStatusFuture = getITSAStatusDetail(previousTaxYear, futureYears = false, history = false)
+        for {
+          taxYear1Status <- taxYear1StatusFuture.map(statusDetail =>
+            statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+          taxYear2Status <- taxYear2StatusFuture.map(statusDetail =>
+            statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+        } yield {
+          (taxYear1Status, taxYear2Status)
+        }
 
-    for {
-      currentYearStatus <- currentYearStatusFuture.map(statusDetail =>
-        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
-      previousYearStatus <- previousYearStatusFuture.map(statusDetail =>
-        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
-    } yield {
-      (currentYearStatus, previousYearStatus)
+      case None =>
+        Future.successful((false, false))
     }
   }
 

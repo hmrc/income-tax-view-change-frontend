@@ -196,7 +196,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       .find(businessDetailsModel => businessDetailsModel.incomeSourceId == incomeSourceId.value)
 
     if (desiredIncomeSourceMaybe.isDefined) {
-      itsaStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear.flatMap {
+      val latencyDetails = desiredIncomeSourceMaybe.get.latencyDetails
+
+      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails).flatMap {
         case (currentYearStatus, previousYearStatus) =>
           getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
             case None => Future(Right(variableViewModelSEBusiness(
@@ -238,7 +240,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
 
     if (desiredIncomeSourceMaybe.isDefined) {
-      itsaStatusService.hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear.flatMap {
+      val latencyDetails = desiredIncomeSourceMaybe.get.latencyDetails
+      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails).flatMap {
         case (currentYearStatus, previousYearStatus) =>
           getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
             case None => Future(Right(variableViewModelPropertyBusiness(
