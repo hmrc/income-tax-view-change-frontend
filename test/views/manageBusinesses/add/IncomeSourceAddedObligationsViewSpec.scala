@@ -438,7 +438,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly and there is one overdue obligation" in new Setup(validCurrentTaxYearQuarterlyCallOneOverdue) {
           Option(document.getElementById("warning-inset")) match {
             case Some(insetText) =>
-              insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.text() shouldBe "You have 1 overdue update for 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
               insetText.select("b").text() shouldBe "1 overdue update"
             case None => fail("No inset text was found")
           }
@@ -447,7 +447,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         "It is reporting quarterly and there are multiple overdue obligations" in new Setup(validCurrentTaxYearQuarterlyCallMultipleOverdue) {
           Option(document.getElementById("warning-inset")) match {
             case Some(insetText) =>
-              insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
               insetText.select("b").text() shouldBe "3 overdue updates"
             case None => fail("No inset text was found")
           }
@@ -470,7 +470,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "There is one overdue quarterly obligation" in new Setup(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
               case Some(insetText) =>
-                insetText.text() shouldBe "You have 1 overdue update for the first 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.text() shouldBe "You have 1 overdue update for 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
                 insetText.select("b").text() shouldBe "1 overdue update"
               case None => fail("No inset text was found")
             }
@@ -479,7 +479,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "There are multiple overdue quarterly obligations" in new Setup(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue) {
             Option(document.getElementById("warning-inset")) match {
               case Some(insetText) =>
-                insetText.text() shouldBe "You have 2 overdue updates for the first 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.text() shouldBe "You have 2 overdue updates for 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
                 insetText.select("b").text() shouldBe "2 overdue updates"
               case None => fail("No inset text was found")
             }
@@ -495,7 +495,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById("quarterly-warning-inset")) match {
               case Some(insetText) =>
-                insetText.text() shouldBe "You have 3 overdue updates for the first 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+                insetText.text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
                 insetText.select("b").text() shouldBe "3 overdue updates"
               case None => fail("No quarterly inset text was found")
             }
