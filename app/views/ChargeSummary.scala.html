@@ -23,6 +23,8 @@
 @import enums.Poa1Charge
 @import enums.Poa2Charge
 @import enums.BalancingCharge
+@import enums.TRMNewCharge
+@import enums.TRMAmmendCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
 
@@ -63,6 +65,32 @@
     </div>
 }
 
+
+@getLpiPoaExplanationContent = {
+    <div>
+        @if(viewModel.documentType == Poa1Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa1")){@messages("chargeSummary.paymentsOnAccount")}
+        } else if (viewModel.documentType == Poa1Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+        } else if(viewModel.documentType == Poa2Charge && !viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa3")){@messages("chargeSummary.paymentsOnAccount")}
+        } else if(viewModel.documentType == Poa2Charge && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa2")}
+        }
+        @if((viewModel.documentType == Poa1Charge | viewModel.documentType == Poa2Charge) && viewModel.latePaymentInterestCharge) {
+            @p(id = Some("lpi-poa5")) {
+                @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
+                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+                @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
+            }
+            @p(id = Some("lpi-poa6")) {
+                @messages("chargeSummary.lpi.paymentsOnAccount.p3")
+                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a><br><br>
+            }
+        }
+    </div>
+}
+
 @balancingChargeExplanation = {
     <div id="charge-explanation">
         @p(){@messages("chargeSummary.definition.balancingcharge.p1")}
@@ -80,13 +108,33 @@
     </div>
 }
 
+@getBalancingPaymentsExplanationContent = {
+    <div>
+        @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
+        @p(id = Some("lpi-bcd2")) {
+            @messages("chargeSummary.lpi.balancingCharge.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+            @messages("chargeSummary.lpi.balancingCharge.textTwo")
+        }
+        @p(id = Some("lpi-bcd3")) {
+            @messages("chargeSummary.lpi.balancingCharge.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a><br><br>
+        }
+    </div>
+}
+
 @getExplanationContent = @{viewModel.documentType match {
-        case Poa1Charge | Poa2Charge    => paymentOnAccountExplanation
-        case BalancingCharge            => balancingChargeExplanation
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
+        case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
+        case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
+        case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
+        case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
+        case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
         case _                          =>
     }
 }
+
+
 
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
@@ -97,6 +145,7 @@
     }
 }
 
+
 @paymentProcessingInfo = {
     @p(id = Some("payment-days-note")){
         @if(viewModel.isAgent) {
@@ -105,6 +154,7 @@
             @messages("chargeSummary.payment-days-note")
         }
     }
+
     <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
         @if(viewModel.isAgent) {
             <li>@messages("chargeSummary.payments-bullet1-1")
@@ -189,7 +239,7 @@
         }
     </h1>
 
-    @getExplanationContent
+@getExplanationContent
 
     @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
@@ -208,7 +258,7 @@
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
-        @p(){
+        @p(id = Some("nic2TaxYear")){
             @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
         }
     }
@@ -251,11 +301,11 @@
         @p(id=Some("p-interest-locks-msg")){
             @if(viewModel.isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @link(id = Some("what-you-owe-interest-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.interestLocks.text-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                @link(link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @link(id = Some("what-you-owe-interest-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.interestLocks.text")
             }
 
@@ -263,12 +313,12 @@
     } else {
         @p(){
             @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent")
-                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText-agent")</a>
+                @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                @link(id = Some("what-you-owe-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                 @messages("chargeSummary.whatYouOwe.textTwo-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
-                <a class="govuk-link" href="@viewModel.whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
+                @link(id = Some("what-you-owe-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                 @messages("chargeSummary.whatYouOwe.textTwo")
             }
         }

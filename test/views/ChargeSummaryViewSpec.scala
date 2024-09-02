@@ -128,11 +128,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
     val adjustmentText = messages("chargeSummary.definition.hmrcadjustment")
 
+    val lpiPoa1TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa1")
+    val lpiPoa2TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa2")
+    val lpiPoaTextParagraph = messages("chargeSummary.lpi.paymentsOnAccount.textOne") + " " + messages("chargeSummary.lpi.paymentsOnAccount.linkText") + " " + messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
+    val lpiPoaTextP3 = messages("chargeSummary.lpi.paymentsOnAccount.p3") + " " + messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")
+
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
 
+    val lpiBcdTextSentence = messages("chargeSummary.lpi.balancingCharge.p1")
+    val lpiBcdTextParagraph = messages("chargeSummary.lpi.balancingCharge.textOne") + " " + messages("chargeSummary.lpi.balancingCharge.linkText") + " " + messages("chargeSummary.lpi.balancingCharge.textTwo")
+    val lpiBcdTextP3 = messages("chargeSummary.lpi.balancingCharge.p3") + " " + messages("chargeSummary.lpi.balancingCharge.p3LinkText")
+
+
     def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
+    def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
+
+    def poa2Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Second payment on account"
 
     def getFirstOrSecond(number: Int): String = {
       require(number > 0, "Number must be greater than zero")
@@ -142,7 +155,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         case _=> throw new Error(s"Number must be 1 or 2 but got: $number")
       }
     }
-    def poaInterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
+
+    def poa1InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on first payment on account"
+
+    def poa2InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on second payment on account"
 
     def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
 
@@ -316,11 +332,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have the correct heading for a POA 1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.select("h1").text() shouldBe poaHeading(2018, 1)
+        document.select("h1").text() shouldBe poa1Heading(2018, 1)
       }
 
       "have the correct heading for a POA 2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.select("h1").text() shouldBe poaHeading(2018, 2)
+        document.select("h1").text() shouldBe poa2Heading(2018, 2)
       }
 
       "have the correct heading for a new balancing charge" in new TestSetup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
@@ -332,11 +348,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have the correct heading for a POA 1 late interest charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe poaInterestHeading(2018, 1)
+        document.select("h1").text() shouldBe poa1InterestHeading(2018, 1)
       }
 
       "have the correct heading for a POA 2 late interest charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe poaInterestHeading(2018, 2)
+        document.select("h1").text() shouldBe poa2InterestHeading(2018, 2)
       }
 
       s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is enabled" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2)), codingOutEnabled = true) {
@@ -348,7 +364,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraph explaining which tax year the Class 2 NIC is for" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningLock = None), codingOutEnabled = true) {
-        document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
+        document.select("#nic2TaxYear").text() shouldBe class2NicTaxYear(2018)
       }
 
       s"have the correct heading for a Cancelled PAYE Self Assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -366,15 +382,21 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "have content explaining the definition of a HMRC adjustment when charge is a MFA Debit" in new TestSetup(
         documentDetail = financialDetailsModelWithMFADebit()
           .documentDetails.head
-          .copy(documentDescription = Some("TRM New Charge")),
+          .copy(documentDescription = Some("")),
         isMFADebit = true) {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe adjustmentText
       }
 
-      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
+      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"))) {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe bcdTextParagraph
         document.select("#charge-explanation>:nth-child(2)").text() shouldBe bcdTextBullets
         document.select("#charge-explanation>:nth-child(3)").text() shouldBe bcdTextP2
+      }
+
+      "have content explaining the definition of a late balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD")), latePaymentInterestCharge = true) {
+        document.selectById("lpi-bcd1").text() shouldBe lpiBcdTextSentence
+        document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
+        document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
       }
 
       "have content explaining the definition of a payment on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
@@ -389,6 +411,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#charge-explanation>:nth-child(3)").text() shouldBe poaTextP2
       }
 
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA1" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
+        document.selectById("lpi-poa2").text() shouldBe lpiPoa1TextSentence
+        document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
+        document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
+      }
+
+      "have content explaining the definition of a late payment interest charge on account when charge is a POA2" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
+        document.selectById("lpi-poa4").text() shouldBe lpiPoa2TextSentence
+        document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
+        document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
+      }
+
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
         verifySummaryListRowNumeric(2, paymentAmount, "£1,400.00")
@@ -400,8 +434,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
@@ -570,25 +604,25 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
-        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#p-interest-locks-msg").text().contains(s"$interestLinkFirstWord $interestLinkText $interestLinkFullText") shouldBe true
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#what-you-owe-link").text() shouldBe interestLinkText
+        document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
@@ -921,25 +955,25 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
-        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
+        document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
+        document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(), paymentBreakdown = paymentBreakdown, isAgent = true) {

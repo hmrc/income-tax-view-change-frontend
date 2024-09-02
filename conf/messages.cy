@@ -851,8 +851,8 @@ whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cy
 whatYouOwe.totalBalance                                         = Cyfanswm y taliadau
 whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
 whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
-whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
-whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 whatYouOwe.balancingCharge.interest.line1.text                  = Llog ar y balans sy’n weddill
 whatYouOwe.over-due.interest-rate                               = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
@@ -919,11 +919,24 @@ chargeSummary.payment-days-note-agent                              = O ran unrhy
 chargeSummary.payments-bullet1-2-agent                             = dull talu mae’n ei ddefnyddio
 chargeSummary.payments-bullet2-agent                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 
-chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
-chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
+chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
+chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
+chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+
+chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 chargeSummary.lpi.interestPeriod								   = Cyfnod llog
 chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
+
+chargeSummary.lpi.balancingCharge.p1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
+chargeSummary.lpi.balancingCharge.textOne                          = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+chargeSummary.lpi.balancingCharge.linkText                         = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+chargeSummary.lpi.balancingCharge.textTwo                          = plws 2.5%.
+chargeSummary.lpi.balancingCharge.p3                               = Gweler yr arweiniad ynghylch y
+chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
 chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
@@ -950,10 +963,14 @@ chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog a
 
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-chargeSummary.paymentsOnAccount                                    = Mae taliadau ar gyfrif yn 2 daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am:
-chargeSummary.paymentsOnAccount.bullet1                            = Treth Incwm
-chargeSummary.paymentsOnAccount.bullet2                            = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-chargeSummary.paymentsOnAccount.p2                                 = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+chargeSummary.lpi.paymentsOnAccount.poa1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad ar gyfrif cyntaf yn hwyr.
+chargeSummary.lpi.paymentsOnAccount.poa2                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch ail daliad ar gyfrif yn hwyr.
+chargeSummary.lpi.paymentsOnAccount.textOne                            = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+chargeSummary.lpi.paymentsOnAccount.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+chargeSummary.lpi.paymentsOnAccount.textTwo                            = plws 2.5%.
+chargeSummary.lpi.paymentsOnAccount.p3                                 = Gweler yr arweiniad ynghylch y
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)
