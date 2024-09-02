@@ -57,6 +57,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val testArn: String = "1"
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.Poa1heading")
+  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
@@ -223,7 +224,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("chargeSummary.lpi.paymentOnAccount1.text"),
-        elementTextBySelector("main h2")(paymentHistory)
+        elementTextBySelector("main h2")(lpiHistory)
       )
     }
 

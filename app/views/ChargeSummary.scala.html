@@ -206,6 +206,7 @@
 
 @chargeHistoryHeading = @{
     viewModel.documentType match {
+        case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
         case Poa2Charge => messages("chargeSummary.chargeHistory.Poa2heading")
         case _ => messages("chargeSummary.chargeHistory.heading")

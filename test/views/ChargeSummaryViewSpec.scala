@@ -655,6 +655,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         documentDetailModel(documentDescription = Some("Other")), paymentBreakdown = paymentBreakdown){
         document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
+      "display charge history heading as late payment interest history when charge is a late payment interest" in new TestSetup(
+        documentDetailModel(documentDescription = Some("ITSA - POA 2")), paymentBreakdown = paymentBreakdown,
+        latePaymentInterestCharge = true){
+        document.select("main h3").text shouldBe "Late payment interest history"
+      }
 
 
       "display only the charge creation item when no history found for a payment on account 1 of 2" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
