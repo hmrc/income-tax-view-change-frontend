@@ -81,7 +81,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
     latencyYearOneIsQuarterly = None,
-    taxYearOneCrystallised = Some(false),
+    taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
