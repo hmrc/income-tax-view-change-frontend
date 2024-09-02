@@ -970,6 +970,7 @@ chargeSummary.payments-bullet1-2-agent                             = payment met
 chargeSummary.payments-bullet2-agent                               = must reach us by the due date - they’ll be charged interest and may have to pay a penalty if the payment is late
 
 chargeSummary.chargeHistory.heading								        = Payment history
+chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history
 chargeSummary.chargeHistory.date								        = Date
