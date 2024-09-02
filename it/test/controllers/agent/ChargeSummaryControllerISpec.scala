@@ -519,6 +519,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1040000123",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -552,22 +553,22 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 0,
+          "originalAmount" -> 1200.00,
           "documentText" -> "documentText",
           "documentDueDate" -> "2021-04-15",
           "formBundleNumber" -> "88888888",
-          "originalAmount" -> 1200,
-          "outstandingAmount" -> 1200,
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
           "paymentLotItem" -> "5",
-          "effectiveDateOfPayment" -> "2018-03-30",
-          "documentDueDate" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,

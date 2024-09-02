@@ -937,6 +937,8 @@ chargeSummary.definition.balancingcharge.bullet1                   = did not hav
 chargeSummary.definition.balancingcharge.bullet2                   = owe more than what you paid during the year (for example, through payments on account or PAYE)
 chargeSummary.definition.balancingcharge.p2                        = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
+chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
+
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
 chargeSummary.paymentBreakdown.nic2   							   = Class 2 National Insurance
