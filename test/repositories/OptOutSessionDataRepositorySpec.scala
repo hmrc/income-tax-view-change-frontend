@@ -17,7 +17,7 @@
 package repositories
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnector
 import mocks.services._
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus._

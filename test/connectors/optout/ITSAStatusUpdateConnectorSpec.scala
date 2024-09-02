@@ -33,8 +33,9 @@
 package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.optout.ITSAStatusUpdateConnector._
-import connectors.optout.OptOutUpdateRequestModel._
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnector._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
@@ -71,15 +72,15 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
 
         when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
 
-        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
-        val apiResponse = OptOutUpdateResponseSuccess()
+        val apiRequest = ITSAStatusUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
+        val apiResponse = ITSAStatusUpdateResponseSuccess()
         val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map())
 
-        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[ITSAStatusUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, optOutUpdateReason)
+        val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess()
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess()
 
       }
     }
@@ -92,15 +93,15 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
 
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
-        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
-        val apiFailResponse = OptOutUpdateResponseFailure(errorItems)
+        val apiRequest = ITSAStatusUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
+        val apiFailResponse = ITSAStatusUpdateResponseFailure(errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map())
 
-        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[ITSAStatusUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, optOutUpdateReason)
+        val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(errorItems)
+        result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
 
       }
     }
@@ -113,15 +114,15 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
 
         val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
-        val apiRequest = OptOutUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
-        val apiFailResponse = OptOutUpdateResponseFailure(errorItems)
+        val apiRequest = ITSAStatusUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
+        val apiFailResponse = ITSAStatusUpdateResponseFailure(errorItems)
         val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
 
-        setupHttpClientMock[OptOutUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
+        setupHttpClientMock[ITSAStatusUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
 
-        val result: Future[OptOutUpdateResponse] = connector.requestOptOutForTaxYear(taxYear, taxableEntityId, optOutUpdateReason)
+        val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(errorItems)
+        result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
 
       }
     }

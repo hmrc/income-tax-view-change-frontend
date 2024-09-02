@@ -16,7 +16,7 @@
 
 package connectors.optout
 
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateRequest, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -28,7 +28,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
   "The request model" should {
 
-    val requestObject = OptOutUpdateRequest(TaxYear.forYearEnd(endYear).toString, optOutUpdateReason)
+    val requestObject = ITSAStatusUpdateRequest(TaxYear.forYearEnd(endYear).toString, optOutUpdateReason)
     val requestJson = Json.parse(
       """
         {
@@ -38,12 +38,12 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         """.stripMargin)
 
     "verify write to json" in {
-      Json.toJson[OptOutUpdateRequest](requestObject) shouldBe requestJson
+      Json.toJson[ITSAStatusUpdateRequest](requestObject) shouldBe requestJson
     }
   }
 
   "The success model" should {
-    val successObject = OptOutUpdateResponseSuccess()
+    val successObject = ITSAStatusUpdateResponseSuccess()
     val successJson = Json.parse(
       """
         {
@@ -53,13 +53,13 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         """.stripMargin)
 
     "verify read from json" in {
-      successJson.validate[OptOutUpdateResponseSuccess] shouldBe JsSuccess(successObject)
+      successJson.validate[ITSAStatusUpdateResponseSuccess] shouldBe JsSuccess(successObject)
     }
   }
 
   "The failure model" should {
 
-    val failureObject = OptOutUpdateResponseFailure.defaultFailure()
+    val failureObject = ITSAStatusUpdateResponseFailure.defaultFailure()
     val failureJson = Json.parse(
       """
         {
@@ -73,7 +73,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
         """.stripMargin)
 
     "verify read from json" in {
-      failureJson.validate[OptOutUpdateResponseFailure] shouldBe JsSuccess(failureObject)
+      failureJson.validate[ITSAStatusUpdateResponseFailure] shouldBe JsSuccess(failureObject)
     }
   }
 
