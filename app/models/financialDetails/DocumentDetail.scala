@@ -80,7 +80,6 @@ case class DocumentDetail(taxYear: Int,
 
   def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
     case Some(amount) if amount <= 0 => false
-    case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
   }
