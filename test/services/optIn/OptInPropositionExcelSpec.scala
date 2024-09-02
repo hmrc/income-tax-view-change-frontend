@@ -32,12 +32,13 @@ class OptInPropositionExcelSpec extends UnitSpec {
         This generator is currently ignored but can be reactivated to regenerate the test data if needed.
           - To reactivate generator, replace "ignore" with "in"
 
-      Select first 9 columns of Opt Out Scenarios Spreadsheet (currently v15).
+      Select first 8 columns of Opt-In Scenarios Spreadsheet (currently v5).
         - to avoid cells that contain carriage returns as to make parsing easier.
-      Paste into a fresh spreadsheet and save as OptInScenarios.tsv in project root directory.
+      Paste into a fresh spreadsheet and save as test/resources/OptInScenarios.tsv in project root directory.
         - csv has issues with commas within cells, therefore use tsv to allow simple parsing.
       Run the test to generate the formatted test data in the console, based on the required scenarios.
-        - Copy the scenarios output from the console and paste them into the data table "scenarios" to update the following test in this file.
+        - Copy the scenarios output from the console and paste them into the data table "scenarios" to update the
+        following test in this file.
    */
 
     def parseItsaStatus(input: String): String =
