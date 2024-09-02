@@ -980,7 +980,7 @@ chargeSummary.definition.balancingcharge.p2                        = Bydd angen 
 chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
 
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
-chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
+chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.date								        = Dyddiad
