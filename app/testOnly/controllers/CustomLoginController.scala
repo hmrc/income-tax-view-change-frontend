@@ -76,7 +76,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
-                  s"test-only/report-quarterly/income-and-expenses/view/stub-client/nino/${user.nino}/utr/" + user.utr
+                  s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
                 else
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
