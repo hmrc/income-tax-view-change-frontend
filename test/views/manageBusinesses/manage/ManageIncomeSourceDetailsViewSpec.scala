@@ -144,10 +144,26 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(QuarterTypeCalendar)
+  )
+
+  val ukViewModelOneYearQuarterly: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = Some(testStartDate),
+    address = None,
+    isTraditionalAccountingMethod = false,
+    latencyYearTwoIsQuarterly = Some(true),
+    latencyYearOneIsQuarterly = Some(true),
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails4),
     incomeSourceType = UkProperty,
     quarterReportingType = Some(QuarterTypeCalendar)
   )
@@ -175,9 +191,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
-    taxYearOneCrystallised = Some(true),
+    latencyYearTwoIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
+    taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetailsCYUnknown),
     incomeSourceType = UkProperty,
@@ -208,7 +224,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -224,27 +240,27 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
     latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty,
+    incomeSourceType = ForeignProperty,
     quarterReportingType = Some(QuarterTypeStandard)
   )
 
-  val foreignPropertyViewModelCYUnknown: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val foreignPropertyLatencyYearTwoUnknown: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = None,
-    taxYearOneCrystallised = Some(true),
+    latencyYearTwoIsQuarterly = None,
+    latencyYearOneIsQuarterly = Some(true),
+    taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetailsCYUnknown),
-    incomeSourceType = UkProperty,
+    incomeSourceType = ForeignProperty,
     quarterReportingType = Some(QuarterTypeStandard)
   )
 
@@ -459,7 +475,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        foreignPropertyViewModelCYUnknown,
+        foreignPropertyLatencyYearTwoUnknown,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -647,46 +663,34 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "Do not render the reporting frequency rows when NO latency details" in new ukSetupUnknowns(false) {
-      document.getElementsByClass("govuk-summary-list__key").eq(6).isDefined shouldBe false
-      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(3).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
     "render the reporting frequency rows IF there are latency details" in new ukSetup(false) {
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
     "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false){
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
-      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
-    "render the change links where status is Quarterly" in {
+    "render the change links where status is Quarterly" in new ukCrystallisedSetup(false) {
 
-      val isAgent = false
-
-      val view: HtmlFormat.Appendable = {
-        manageIncomeSourceDetailsView(
-          selfEmploymentViewModelOneYearCrystallised,
-          isAgent,
-          backUrl(isAgent)
-        )(messages, implicitly)
-      }
-
-      val document: Document = Jsoup.parse(contentAsString(view))
-
-      document.getElementById("change-link-1").text().isEmpty
+      document.getElementById("change-link-1") shouldBe null
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "use CY-1 ITSA status to render change link when CY is unknown" in new ukCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
+      document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
     }
 
-    "dont display change link when CY & CY-1 ITSA Status are unknown" in new ukCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
-      document.getElementById("change-link-2").text().isEmpty
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new ukSetupUnknowns(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
     }
 
   }
@@ -781,46 +785,33 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
     "Do not render the reporting frequency rows when NO latency details" in new foreignSetupUnknowns(false) {
-      document.getElementsByClass("govuk-summary-list__key").eq(6).isDefined shouldBe false
-      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(3).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
     "render the reporting frequency rows IF there are latency details" in new foreignSetup(false) {
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
     "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false){
-      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
-      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
-    "render the change links where status is Quarterly" in {
-
-      val isAgent = false
-
-      val view: HtmlFormat.Appendable = {
-        manageIncomeSourceDetailsView(
-          selfEmploymentViewModelOneYearCrystallised,
-          isAgent,
-          backUrl(isAgent)
-        )(messages, implicitly)
-      }
-
-      val document: Document = Jsoup.parse(contentAsString(view))
-
-      document.getElementById("change-link-1").text().isEmpty
+    "render the change links where status is Quarterly" in new foreignCrystallisedSetup(false) {
+      document.getElementById("change-link-1") shouldBe null
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "use CY-1 ITSA status to render change link when CY is unknown" in new foreignCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
+      document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
     }
 
-    "dont display change link when CY & CY-1 ITSA Status are unknown" in new foreignCYLatencyUnknownSetup(false) {
-      document.getElementById("change-link-1").text().isEmpty
-      document.getElementById("change-link-2").text().isEmpty
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new foreignSetupUnknowns(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
     }
   }
   "Manage Foreign Property - Agent" should {
