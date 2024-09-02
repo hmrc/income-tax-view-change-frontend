@@ -45,10 +45,13 @@ class CheckYourAnswersViewSpec extends TestSupport {
     val heading: String = messages("optin.checkAnswers.heading")
 
     val optin: String = messages("optin.checkAnswers.optin")
+
     def taxYears(intent: TaxYear): String = messages("optin.checkAnswers.taxYears", intent.startYear.toString, intent.endYear.toString)
+
     val change: String = messages("optin.checkAnswers.change")
 
     val optInSummaryCy: String = messages("optin.checkAnswers.cy")
+
     def optInSummaryNy(intent: TaxYear): String = messages("optin.checkAnswers.ny", intent.startYear.toString, intent.endYear.toString)
 
     val confirmButton: String = messages("optin.checkAnswers.confirm")
@@ -96,7 +99,7 @@ class CheckYourAnswersViewSpec extends TestSupport {
   }
 
   "run test when intent is next year" should {
-    runTest(taxYear.nextYear, intentIsNextYear =true)
+    runTest(taxYear.nextYear, intentIsNextYear = true)
   }
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optIn
+package controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
@@ -34,11 +34,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReportingFrequencyPageController @Inject()(val optInService: OptInService,
                                                  val authorisedFunctions: FrontendAuthorisedFunctions,
                                                  val auth: AuthenticatorPredicate)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                (implicit val appConfig: FrontendAppConfig,
+                                                 mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
