@@ -1754,11 +1754,12 @@ incomeSources.manage.business-manage-details.reporting-method         =   Amlder
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
 incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
-incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter (cyfnod gras)
-incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob blwyddyn (cyfnod gras)
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob blwyddyn
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
+incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu

@@ -1804,12 +1804,13 @@ incomeSources.manage.business-manage-details.accounting-method        =   Accoun
 incomeSources.manage.business-manage-details.reporting-method         =   Reporting frequency {0} to {1}
 incomeSources.manage.business-manage-details.change                   =   Change
 incomeSources.manage.business-manage-details.quarterly                =   Quarterly
-incomeSources.manage.business-manage-details.annually                 =   Annually
-incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly (grace period)
-incomeSources.manage.business-manage-details.annually.graceperiod     =   Annually (grace period)
+incomeSources.manage.business-manage-details.annually                 =   Annual
+incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Annual
 incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
+incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
