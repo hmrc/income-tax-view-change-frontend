@@ -914,10 +914,10 @@ chargeSummary.codingOut.text                                       = Balancing p
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
-chargeSummary.paymentAmount   									   = Full payment amount
+chargeSummary.paymentAmount   									   = Amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
-chargeSummary.remainingDue   									   = Remaining to pay
+chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = OVERDUE
 chargeSummary.na                                                   = N/A
 
