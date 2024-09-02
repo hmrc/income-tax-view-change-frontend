@@ -149,7 +149,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatusCY: Boolean, itsaStatusCYM1: Boolean, crystallisationTaxYear1: Option[Boolean],
+  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, latencyYearOneStatus: Boolean, latencyYearTwoStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
                                           crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -158,8 +158,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearTwoIsQuarterly = Some(itsaStatusCY),
-      latencyYearOneIsQuarterly = Some(itsaStatusCYM1),
+      latencyYearTwoIsQuarterly = Some(latencyYearOneStatus),
+      latencyYearOneIsQuarterly = Some(latencyYearTwoStatus),
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
@@ -199,20 +199,20 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       val latencyDetails = desiredIncomeSourceMaybe.get.latencyDetails
 
       itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails).flatMap {
-        case (currentYearStatus, previousYearStatus) =>
+        case (latencyYearOneStatus, latencyYearTwoStatus) =>
           getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
             case None => Future(Right(variableViewModelSEBusiness(
               incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatusCY = currentYearStatus,
-              itsaStatusCYM1 = previousYearStatus,
+              latencyYearOneStatus = latencyYearOneStatus,
+              latencyYearTwoStatus = latencyYearTwoStatus,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None)))
             case Some(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelSEBusiness(
                   incomeSource = desiredIncomeSourceMaybe.get,
-                  itsaStatusCY = currentYearStatus,
-                  itsaStatusCYM1 = previousYearStatus,
+                  latencyYearOneStatus = latencyYearOneStatus,
+                  latencyYearTwoStatus = latencyYearTwoStatus,
                   crystallisationTaxYear1 = crystallisationData.headOption,
                   crystallisationTaxYear2 = crystallisationData.lastOption
                 )))
