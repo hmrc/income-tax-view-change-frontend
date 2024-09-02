@@ -387,7 +387,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe adjustmentText
       }
 
-      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
+      "have content explaining the definition of a balancing charge when charge is a balancing charge" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"))) {
         document.select("#charge-explanation>:nth-child(1)").text() shouldBe bcdTextParagraph
         document.select("#charge-explanation>:nth-child(2)").text() shouldBe bcdTextBullets
         document.select("#charge-explanation>:nth-child(3)").text() shouldBe bcdTextP2
