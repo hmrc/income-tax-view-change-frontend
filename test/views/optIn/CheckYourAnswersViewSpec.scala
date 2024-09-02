@@ -33,8 +33,8 @@ class CheckYourAnswersViewSpec extends TestSupport {
   val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
 
   class Setup(isAgent: Boolean = true, intent: TaxYear, intentIsNextYear: Boolean) {
-    private val cancelURL = if (isAgent) optIn.routes.ReportingFrequencyPageController.show(true).url else
-      optIn.routes.ReportingFrequencyPageController.show(false).url
+    private val cancelURL = if (isAgent) controllers.routes.ReportingFrequencyPageController.show(true).url else
+      controllers.routes.ReportingFrequencyPageController.show(false).url
     private val model = MultiYearCheckYourAnswersViewModel(intentTaxYear = intent, isAgent = isAgent,
       cancelURL = cancelURL, intentIsNextYear = intentIsNextYear)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model)))
