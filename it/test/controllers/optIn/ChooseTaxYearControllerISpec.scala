@@ -24,10 +24,10 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
-import repositories.ITSAStatusRepositorySupport._
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.mvc.Http.Status
+import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -62,7 +62,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.renderChooseOptInTaxYearPageInMultiYearJourney()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -88,7 +88,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual)
 
         val formData: Map[String, Seq[String]] = Map(
           ChooseTaxYearForm.choiceField -> Seq(currentTaxYear.toString)
@@ -115,7 +115,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          stubOptOutInitialState(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
+          setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary)
 
           val formData: Map[String, Seq[String]] = Map(
             ChooseTaxYearForm.choiceField -> Seq()
@@ -126,8 +126,8 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
 
           result should have(
             httpStatus(Status.BAD_REQUEST),
-            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year you want to report quarterly from"),
-            elementTextBySelector("#choice-error")("Error: Select the tax year you want to report quarterly from")
+            elementTextBySelector(".bold > a:nth-child(1)")("Select the tax year that you want to report quarterly from"),
+            elementTextBySelector("#choice-error")("Error: Select the tax year that you want to report quarterly from")
           )
         }
       }
@@ -148,7 +148,7 @@ class ChooseYearControllerISpec extends ComponentSpecBase {
     testSubmitUnhappyCase(isAgent = true)
   }
 
-  private def stubOptOutInitialState(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
+  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptInJourney.Name,

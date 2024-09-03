@@ -17,6 +17,10 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
+#Reporting Frequency
+GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show(isAgent: Boolean = false)
+GET         /agents/reporting-frequency                                   controllers.ReportingFrequencyPageController.show(isAgent: Boolean = true)
+
 #OptOut
 GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = false)
 GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = true)
@@ -39,20 +43,24 @@ GET         /agents/optout/choose-taxyear                                 contro
 POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
 POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
-#OptIn
-GET         /opt-in/reporting-freq                                        controllers.optIn.ReportingFrequencyPageController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/reporting-freq                                 controllers.optIn.ReportingFrequencyPageController.show(isAgent: Boolean = true)
-
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
 
-GET          /opt-in/multi-year-choice                                    controllers.optIn.ChooseYearController.show(isAgent: Boolean = false)
-GET          /agents/opt-in/multi-year-choice                             controllers.optIn.ChooseYearController.show(isAgent: Boolean = true)
-POST         /opt-in/multi-year-choice                                    controllers.optIn.ChooseYearController.submit(isAgent: Boolean = false)
-POST         /agents/opt-in/multi-year-choice                             controllers.optIn.ChooseYearController.submit(isAgent: Boolean = true)
+GET         /opt-in/multi-year-choice                                    controllers.optIn.ChooseYearController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/multi-year-choice                             controllers.optIn.ChooseYearController.show(isAgent: Boolean = true)
+POST        /opt-in/multi-year-choice                                    controllers.optIn.ChooseYearController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/multi-year-choice                             controllers.optIn.ChooseYearController.submit(isAgent: Boolean = true)
 
 GET         /opt-in/check-answers                                         controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/check-answers                                  controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = true)
+POST        /opt-in/check-answers                                         controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/check-answers                                  controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = true)
+
+GET         /opt-in/completed                                             controllers.optIn.OptInCompletedController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/completed                                      controllers.optIn.OptInCompletedController.show(isAgent: Boolean = true)
+
+GET         /opt-in/error                                                 controllers.optIn.OptInErrorController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/error                                          controllers.optIn.OptInErrorController.show(isAgent: Boolean = true)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)

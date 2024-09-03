@@ -19,6 +19,7 @@ package services.optIn
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.optout.ITSAStatusUpdateConnector
+import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -55,7 +56,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  private def setupSessionData()(implicit user: MtdItUser[_],
+  def setupSessionData()(implicit user: MtdItUser[_],
                          hc: HeaderCarrier,
                          ec: ExecutionContext): Future[Boolean] = {
     repository.set(
@@ -73,6 +74,17 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       case None if attempt < 2 => setupSessionData().filter(b => b).flatMap(_ => fetchExistingUIJourneySessionDataOrInit(2))
       case _ => Future.successful(None)
     }
+  }
+
+  def makeOptInCall()(implicit user: MtdItUser[_],
+                      hc: HeaderCarrier,
+                      ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+
+    fetchSavedChosenTaxYear() flatMap {
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+    }
+
   }
 
   private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],

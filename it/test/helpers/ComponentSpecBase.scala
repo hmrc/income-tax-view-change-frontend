@@ -674,6 +674,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/opt-in/multi-year-choice", additionalCookies)
     }
 
+    def renderCheckYourAnswersOptInJourney(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/check-answers", additionalCookies)
+    }
+
     def submitChoiceOnOptOutChooseTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
       post("/optout/choose-taxyear")(body)
     }
@@ -682,8 +686,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post("/opt-in/multi-year-choice")(body)
     }
 
+    def submitCheckYourAnswersOptInJourney(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/check-answers")(body)
+    }
+
     def renderOptOutErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/optout/error", additionalCookies)
+    }
+
+    def renderOptInErrorPage(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/error", additionalCookies)
     }
 
     def postConfirmOptOut(): WSResponse = post(s"/optout/review-confirm-taxyear")(Map.empty)

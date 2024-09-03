@@ -28,7 +28,8 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import testUtils.TestSupport
 import views.html.optIn.ChooseTaxYearView
 
-class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
+class ChooseYearControllerSpec extends TestSupport
+  with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
 
   val controller = new ChooseYearController(
     mockOptInService,
@@ -50,7 +51,7 @@ class ChooseYearControllerSpec extends TestSupport with MockAuthenticationPredic
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
-        mockSaveIntent(taxYear2023)
+        mockFetchSavedChosenTaxYear(taxYear2023)
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)

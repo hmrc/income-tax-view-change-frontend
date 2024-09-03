@@ -17,6 +17,7 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -24,7 +25,7 @@ import forms.optIn.ChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import models.optin.ChooseTaxYearViewModel
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
@@ -38,10 +39,10 @@ class ChooseYearController @Inject()(val optInService: OptInService,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auth: AuthenticatorPredicate)
                                     (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                     mcc: MessagesControllerComponents,
+                                     val ec: ExecutionContext,
+                                     val itvcErrorHandler: ItvcErrorHandler,
+                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -58,10 +59,21 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     implicit user =>
       withRecover(isAgent) {
 
-        optInService.availableOptInTaxYear().map { taxYears =>
-          Ok(view(ChooseTaxYearForm(taxYears.map(_.toString)), viewModel(taxYears, isAgent)))
+        optInService.availableOptInTaxYear().flatMap { taxYears =>
+          (for {
+            savedTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
+          } yield {
+            createResult(Some(savedTaxYear), taxYears, isAgent)
+          }).getOrElse(createResult(None, taxYears, isAgent))
         }
       }
+  }
+
+  private def createResult(savedTaxYear: Option[TaxYear], taxYears: Seq[TaxYear], isAgent: Boolean)
+                          (implicit messages: Messages, user: MtdItUser[_]): Result = {
+    val form = ChooseTaxYearForm(taxYears.map(_.toString))(messages)
+    val filledForm = savedTaxYear.map(ty => form.fill(ChooseTaxYearForm(Some(ty.toString)))).getOrElse(form)
+    Ok(view(filledForm, viewModel(taxYears, isAgent))(messages, user))
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -90,7 +102,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   }
 
   private def cancelUrl(isAgent: Boolean): String = {
-    routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
   private def viewModel(availableOptInTaxYear: Seq[TaxYear], isAgent: Boolean): ChooseTaxYearViewModel = {

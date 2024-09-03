@@ -76,7 +76,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def isMFADebit(fdm: FinancialDetailsModel, id: String): Boolean = {
-    fdm.financialDetails.exists(fd => fd.transactionId.contains(id) && MfaDebitUtils.isMFADebitMainType(fd.mainType))
+    fdm.financialDetails.exists(fd => fd.transactionId.contains(id) && MfaDebitUtils.isMFADebitMainTransaction(fd.mainTransaction))
   }
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
