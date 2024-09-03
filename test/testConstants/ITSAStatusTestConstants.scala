@@ -57,7 +57,7 @@ object ITSAStatusTestConstants {
 
   val currentYearMandatedPreviousYearNoStatusResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMinimal))),
       ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
     )
   }
@@ -65,7 +65,7 @@ object ITSAStatusTestConstants {
   val previousYearMandatedCurrentYearNoStatusResponse = {
     List(
       ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetail)))
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMinimal)))
     )
   }
 
