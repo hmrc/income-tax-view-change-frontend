@@ -142,8 +142,7 @@ class OptInPropositionExcelSpec extends UnitSpec {
     ("A", " ", "CY+1", true, List("CY", "CY+1"), "CY+1", "A", "V"),
     ("A", "V", "CY", true, List("CY"), "CY", "V", "V"),
     ("A", "V", "CY+1", false, List("CY"), " ", "A", "V"),
-    /* todo: check this line */
-    //("A", "A", "CY", true, List("CY", "CY+1"), "CY", "V", "V"),
+    ("A", "A", "CY", true, List("CY", "CY+1"), "CY", "V", "A"),
     ("A", "A", "CY+1", true, List("CY", "CY+1"), "CY+1", "A", "V"),
     (" ", "A", "CY+1", false, List("CY+1"), "CY+1", " ", "V"),
     (" ", "M", "CY+1", false, List(), " ", " ", "M"),
