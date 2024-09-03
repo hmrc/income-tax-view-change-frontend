@@ -196,7 +196,7 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     val annualQuarterlyUpdateCounts = Future.sequence(
       proposition.availableOptOutYears.map {
         case next: NextOptOutTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, 0))
-        case previousOrCurrent => nextUpdatesService.getQuarterlyUpdatesCounts(previousOrCurrent.taxYear)
+        case anyOtherOptOutTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptOutTaxYear.taxYear)
       })
 
     annualQuarterlyUpdateCounts.
@@ -209,12 +209,14 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
 
 object OptOutService {
 
+  /* todo should be moved to a common location and reused by opt-in */
   private val noQuarterlyUpdates = 0
 
+  /* todo should be moved to a common location and reused by opt-in */
   case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
 
-    def getCountFor(offeredOptOutYear: TaxYear): Int = counts
-      .filter(taxYearCounts => taxYearCounts.taxYear == offeredOptOutYear)
+    def getCountFor(offeredTaxYear: TaxYear): Int = counts
+      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
       .map(_.count).sum
 
     val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates

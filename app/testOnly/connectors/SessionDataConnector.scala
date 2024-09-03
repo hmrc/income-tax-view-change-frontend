@@ -18,29 +18,38 @@ package testOnly.connectors
 
 import config.FrontendAppConfig
 import connectors.RawResponseReads
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import testOnly.models.SessionDataModel
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import testOnly.models.SessionGetResponse.SessionGetResponse
+import testOnly.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
-                                     val http: HttpClient
+                                     val http: HttpClientV2
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
-  def getSessionData(sessionId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/$sessionId"
+  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
 
-    http.GET[HttpResponse](url)(httpReads, hc, ec)
+    http
+      .get(url"$url")
+      .execute[SessionGetResponse]
+
   }
 
-  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
+  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)
 
-    http.POST[JsValue, HttpResponse](url, body)
-  }
+    http
+      .post(url"$url")
+      .withBody(body)
+      .execute[SessionDataPostResponse]
 
+  }
 }

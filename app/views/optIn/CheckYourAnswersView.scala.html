@@ -28,8 +28,10 @@
         hr: hr,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        govukInsetText: GovukInsetText,
 )
+
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptInHref = @{
