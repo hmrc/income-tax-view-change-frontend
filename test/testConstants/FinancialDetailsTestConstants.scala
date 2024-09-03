@@ -584,7 +584,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
         paymentLotItem = None, latePaymentInterestAmount = None)),
-      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction", mainTransaction = "4022")
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction", mainTransaction = "4001")
       )
     )
 

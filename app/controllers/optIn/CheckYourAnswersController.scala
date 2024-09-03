@@ -29,12 +29,11 @@ import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optIn.{CheckYourAnswersView, ChooseTaxYearView}
+import views.html.optIn.CheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-/* todo will be fully implemented in MISUV-8006 */
 class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
                                            val optInService: OptInService,
                                            val authorisedFunctions: FrontendAuthorisedFunctions,

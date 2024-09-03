@@ -216,6 +216,10 @@
     }
 }
 
+@reportingFrequencyURL = @{
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -233,6 +237,12 @@
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>
+    }
+
+    @p(id = Some("reportingFrequency")){
+        @link(link = reportingFrequencyURL,
+            messageKey = getMessage("reportingFrequency"),
+            id = Some("reportingFrequency-link"))
     }
 
     @govukSummaryList(SummaryList(

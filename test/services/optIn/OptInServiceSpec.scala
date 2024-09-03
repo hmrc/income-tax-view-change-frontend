@@ -19,7 +19,7 @@ package services.optIn
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import controllers.optIn.routes.ReportingFrequencyPageController
+import controllers.routes
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
@@ -278,7 +278,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear,
         isAgent = isAgent,
-        cancelURL = ReportingFrequencyPageController.show(isAgent).url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = false
       )
     }
@@ -297,7 +297,7 @@ class OptInServiceSpec extends UnitSpec
       result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
         intentTaxYear = currentTaxYear.nextYear,
         isAgent = isAgent,
-        cancelURL = ReportingFrequencyPageController.show(isAgent).url,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
         intentIsNextYear = true
       )
     }

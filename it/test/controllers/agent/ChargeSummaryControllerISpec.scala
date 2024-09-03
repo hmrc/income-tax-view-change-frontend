@@ -57,6 +57,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val testArn: String = "1"
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.Poa1heading")
+  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
   val taxYear: Int = getCurrentTaxYearEnd.getYear
 
 
@@ -223,7 +224,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("chargeSummary.lpi.paymentOnAccount1.text"),
-        elementTextBySelector("main h2")(paymentHistory)
+        elementTextBySelector("main h2")(lpiHistory)
       )
     }
 
@@ -519,6 +520,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1040000123",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -552,22 +554,22 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 0,
+          "originalAmount" -> 1200.00,
           "documentText" -> "documentText",
           "documentDueDate" -> "2021-04-15",
           "formBundleNumber" -> "88888888",
-          "originalAmount" -> 1200,
-          "outstandingAmount" -> 1200,
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
           "paymentLotItem" -> "5",
-          "effectiveDateOfPayment" -> "2018-03-30",
-          "documentDueDate" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
         Json.obj(
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "mainTransaction" -> "4002",
           "transactionId" -> "1",
           "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
@@ -634,7 +636,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date OVERDUE 30 March 2018 Full payment amount £1,200.00 Remaining to pay £1,200.00"
+      val summaryListText = "Due date OVERDUE 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
@@ -671,7 +673,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      val summaryListText = "Due date 30 March 2018 Full payment amount £1,200.00 Remaining to pay £0.00"
+      val summaryListText = "Due date 30 March 2018 Amount £1,200.00 Still to pay £0.00"
       val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
       val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
       val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2018 £1,200.00"

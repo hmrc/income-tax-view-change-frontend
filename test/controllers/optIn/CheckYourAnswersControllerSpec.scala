@@ -18,7 +18,7 @@ package controllers.optIn
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import controllers.optIn.routes.ReportingFrequencyPageController
+import controllers.routes
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
@@ -65,7 +65,7 @@ class CheckYourAnswersControllerSpec extends TestSupport
         when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
           .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
             taxYear2023,
-            isAgent, ReportingFrequencyPageController.show(isAgent).url,
+            isAgent, routes.ReportingFrequencyPageController.show(isAgent).url,
             intentIsNextYear = true)
           )))
 
