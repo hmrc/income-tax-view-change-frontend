@@ -250,7 +250,7 @@
             ))
                 ++ getQuarterlyType
                 ++ {
-            if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
+            if(viewModel.latencyYearTwoIsQuarterly
                     && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
         },
         attributes = Map("id" -> "manage-details-table")),
