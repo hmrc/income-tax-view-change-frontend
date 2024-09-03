@@ -40,6 +40,9 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+
+
+
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
                                val authorisedFunctions: AuthorisedFunctions,
