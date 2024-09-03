@@ -26,6 +26,7 @@ import mocks.services.MockSessionService
 import models.admin.{CalendarQuarterTypes, IncomeSources}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.LatencyDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -126,6 +127,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2025)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(false))
@@ -136,6 +139,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderNoLatency()
         when(mockSessionService.createSession(any())(any(), any())).thenReturn(Future.successful(true))
         when(mockSessionService.setMongoKey(any(), any(), any())(any(), any())).thenReturn(Future(Right(true)))
@@ -144,6 +149,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(false))
@@ -154,6 +161,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(true))
@@ -164,6 +173,12 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((false, false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
+          .thenReturn(Future.successful(true))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
+          .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
 
 
@@ -171,6 +186,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((false, false)))
     }
   }
 
