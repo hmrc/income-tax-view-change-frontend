@@ -71,7 +71,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
   val opensInNewTabText = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
-  
+  val reportingFrequencyText = messages("incomeSources.manage.business-manage-details.reportingFrequency")
+
+  def reportingFrequencyLink(isAgent: Boolean): String = {
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+  }
+
   val selfEmploymentViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
@@ -304,6 +309,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   class SelfEmploymentUnknownsSetup(isAgent: Boolean, error: Boolean = false) {
 
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+        .show(taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+    }
+
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         selfEmploymentViewModelWithUnknowns,
@@ -315,6 +325,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
   }
+
 
   class SelfEmploymentCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
 
@@ -520,6 +531,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
       document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
       document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
@@ -530,7 +543,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     }
     "render the whole page with unknowns and no change links" in new SelfEmploymentUnknownsSetup(false) {
-
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
@@ -607,6 +619,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
       document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
       document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(true)
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary

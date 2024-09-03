@@ -48,8 +48,8 @@ object Utilities {
     (docDetail.getDocType, docDetail.documentText) match {
     case (_, Some(documentText)) if (documentText.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
     case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-    case (Poa1Charge, _) => if (latePaymentCharge) Some("Late payment interest for payment on account 1 of 2") else Some("First payment on account")
-    case (Poa2Charge,_) => if (latePaymentCharge) Some("Late payment interest for payment on account 2 of 2") else Some("Second payment on account")
+    case (Poa1Charge, _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
+    case (Poa2Charge,_) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
     case (TRMNewCharge | TRMAmmendCharge,_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
     case (_, _) => docDetail.documentDescription
   }
