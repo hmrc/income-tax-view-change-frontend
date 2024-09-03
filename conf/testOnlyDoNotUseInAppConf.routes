@@ -30,7 +30,7 @@ DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/pro
 
 + nocsrf
 GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin
-GET         /test-only/hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css                              testOnly.controllers.CustomLoginController.showCss
+GET         /hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css                                        testOnly.controllers.CustomLoginController.showCss
 
 + nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin
