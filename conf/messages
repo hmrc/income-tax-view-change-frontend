@@ -203,7 +203,7 @@ tax-year-summary.payments.paymentOnAccount2.text                   = Second paym
 tax-year-summary.payments.balancingCharge.text                     = Balancing payment
 tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest on first payment on account
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest on second payment on account
-tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for balancing payment
+tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest on balancing payment
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled PAYE Self Assessment (through your PAYE tax code)
 tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
@@ -842,7 +842,7 @@ whatYouOwe.paymentOnAccount2.text							       = Second payment on account
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
-whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for balancing payment
+whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
@@ -1009,7 +1009,7 @@ chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
-chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for balancing payment created
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest on balancing payment created
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
@@ -1129,7 +1129,7 @@ paymentAllocation.paymentAllocations.bcd.sl                     = Student Loans 
 paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains Tax for Balancing payment
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
-paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for balancing payment
+paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest on balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 ##Tax Years Overview Update Tab##
