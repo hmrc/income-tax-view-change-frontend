@@ -74,9 +74,8 @@ GET         /report-quarterly/income-and-expenses/view/test-only/message-check-w
 GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show
 GET         /report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
 
-GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                     testOnly.controllers.SessionStorageServiceController.show
-GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage              testOnly.controllers.SessionStorageServiceController.showAgent
-
+GET         /report-quarterly/income-and-expenses/view/test-only/session-storage                                      testOnly.controllers.SessionStorageServiceController.show
+GET         /report-quarterly/income-and-expenses/view/agents/test-only/session-storage                               testOnly.controllers.SessionStorageServiceController.showAgent
 
 +nocsrf
 PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
