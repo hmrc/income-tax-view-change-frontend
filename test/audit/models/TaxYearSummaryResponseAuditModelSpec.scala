@@ -192,7 +192,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
-      "paymentType" -> paymentsLpiPaymentOnAccount1,
+      "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> false,
       "status" -> "part-paid"
     )),
@@ -237,7 +237,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
-      "paymentType" -> paymentsLpiPaymentOnAccount1,
+      "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> true,
       "status" -> "part-paid"
     )),

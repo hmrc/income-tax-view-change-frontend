@@ -16,7 +16,6 @@
 
 package views.optIn
 
-import controllers.optIn
 import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import org.jsoup.Jsoup
@@ -33,8 +32,8 @@ class CheckYourAnswersViewSpec extends TestSupport {
   val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
 
   class Setup(isAgent: Boolean = true, intent: TaxYear, intentIsNextYear: Boolean) {
-    private val cancelURL = if (isAgent) optIn.routes.ReportingFrequencyPageController.show(true).url else
-      optIn.routes.ReportingFrequencyPageController.show(false).url
+    private val cancelURL = if (isAgent) controllers.routes.ReportingFrequencyPageController.show(true).url else
+      controllers.routes.ReportingFrequencyPageController.show(false).url
     private val model = MultiYearCheckYourAnswersViewModel(intent = intent, isAgent = isAgent,
       cancelURL = cancelURL, intentIsNextYear = intentIsNextYear)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model)))
@@ -45,10 +44,13 @@ class CheckYourAnswersViewSpec extends TestSupport {
     val heading: String = messages("optin.checkAnswers.heading")
 
     val optin: String = messages("optin.checkAnswers.optin")
+
     def taxYears(intent: TaxYear): String = messages("optin.checkAnswers.taxYears", intent.startYear.toString, intent.endYear.toString)
+
     val change: String = messages("optin.checkAnswers.change")
 
     val optInSummaryCy: String = messages("optin.checkAnswers.cy")
+
     def optInSummaryNy(intent: TaxYear): String = messages("optin.checkAnswers.ny", intent.startYear.toString, intent.endYear.toString)
 
     val confirmButton: String = messages("optin.checkAnswers.confirm")
@@ -96,7 +98,7 @@ class CheckYourAnswersViewSpec extends TestSupport {
   }
 
   "run test when intent is next year" should {
-    runTest(taxYear.nextYear, intentIsNextYear =true)
+    runTest(taxYear.nextYear, intentIsNextYear = true)
   }
 
 }

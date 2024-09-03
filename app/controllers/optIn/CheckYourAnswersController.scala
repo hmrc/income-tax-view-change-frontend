@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.optIn.routes.{OptInErrorController, ReportingFrequencyPageController}
+import controllers.optIn.routes.OptInErrorController
 import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
@@ -64,7 +64,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
 
         val result = for {
           taxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
-          cancelURL = ReportingFrequencyPageController.show(isAgent).url
+          cancelURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
           intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, taxYear)
         } yield Ok(view(MultiYearCheckYourAnswersViewModel(taxYear, isAgent, cancelURL, intentIsNextYear)))
 

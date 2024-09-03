@@ -17,6 +17,10 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
 
+#Reporting Frequency
+GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show(isAgent: Boolean = false)
+GET         /agents/reporting-frequency                                   controllers.ReportingFrequencyPageController.show(isAgent: Boolean = true)
+
 #OptOut
 GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = false)
 GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = true)
@@ -38,10 +42,6 @@ GET         /optout/choose-taxyear                                        contro
 GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = true)
 POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
 POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
-
-#OptIn
-GET         /opt-in/reporting-freq                                        controllers.optIn.ReportingFrequencyPageController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/reporting-freq                                 controllers.optIn.ReportingFrequencyPageController.show(isAgent: Boolean = true)
 
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
