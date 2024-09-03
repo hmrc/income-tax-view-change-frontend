@@ -19,7 +19,7 @@ package services.optout
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
@@ -27,7 +27,7 @@ import models.optout._
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.reportingfreq.ReportingFrequency._
+import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -202,6 +202,23 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
     annualQuarterlyUpdateCounts.
       map(cumulativeQuarterlyUpdateCounts).
       map(QuarterlyUpdatesCountForTaxYearModel)
+  }
+
+}
+
+object OptOutService {
+
+  /* todo should be moved to a common location and reused by opt-in */
+  private val noQuarterlyUpdates = 0
+
+  /* todo should be moved to a common location and reused by opt-in */
+  case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
+
+    def getCountFor(offeredTaxYear: TaxYear): Int = counts
+      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
+      .map(_.count).sum
+
+    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
 
 }

@@ -19,15 +19,13 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
-import controllers.predicates.{FeatureSwitchPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsResponseModel}
+import models.chargeHistory._
+import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -37,9 +35,7 @@ import services.{ChargeHistoryService, DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
-import utils.AuthenticatorPredicate
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 
@@ -107,6 +103,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeading: String = messages("chargeSummary.chargeHistory.Poa1heading")
+  val lpiHistoryHeading: String = messages("chargeSummary.chargeHistory.lateInterestPayment")
   val lateInterestSuccessHeading = s"Tax year 6 April 2017 to 5 April 2018 ${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
   val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2")}"
   val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2-agent")}"
@@ -185,7 +182,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe lpiHistoryHeading
       }
 
       "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
@@ -369,7 +366,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe lpiHistoryHeading
       }
 
 

@@ -19,8 +19,8 @@ package services.optIn
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
-import controllers.optIn.routes.ReportingFrequencyPageController
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import controllers.routes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -28,9 +28,10 @@ import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.optIn.OptInService.ZeroCount
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{NextOptInTaxYear, OptInInitialState, OptInProposition}
-import services.reportingfreq.ReportingFrequency._
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
@@ -186,7 +187,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
     val annualQuarterlyUpdateCounts = Future.sequence(
       proposition.availableOptInYears.map {
-        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, noQuarterlyUpdates))
+        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, ZeroCount))
         case anyOtherOptInTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptInTaxYear.taxYear)
       })
 
@@ -200,13 +201,18 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                                                               ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
-      cancelURL = ReportingFrequencyPageController.show(isAgent).url
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
       intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
     } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear)
 
     result.value
   }
 
-  private def isNextTaxYear(currentTaxYear: TaxYear, nextTaxYear: TaxYear): Boolean = currentTaxYear.nextYear == nextTaxYear
+  private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
 
+}
+
+object OptInService {
+  /* todo remove this and reuse variable from opt-out after refactor */
+  val ZeroCount = 0
 }

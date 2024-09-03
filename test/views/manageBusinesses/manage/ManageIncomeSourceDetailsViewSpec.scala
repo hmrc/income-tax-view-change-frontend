@@ -71,6 +71,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
   val opensInNewTabText = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
+  val reportingFrequencyText = messages("incomeSources.manage.business-manage-details.reportingFrequency")
+
+  def reportingFrequencyLink(isAgent: Boolean): String = {
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+  }
+
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
@@ -298,6 +304,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
       document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
       document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
@@ -355,6 +363,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe standard
       document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe annuallyGracePeriod
       document.getElementsByClass("govuk-summary-list__value").eq(7).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(true)
 
       val expandableInfo = document.getElementById("expandable-info")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary

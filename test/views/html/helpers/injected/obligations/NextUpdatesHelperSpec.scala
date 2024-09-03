@@ -103,3 +103,4 @@ class  NextUpdatesHelperSpec extends TestSupport {
     }
   }
 }
+
