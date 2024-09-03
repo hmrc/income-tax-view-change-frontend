@@ -19,18 +19,23 @@ package services.optIn
 import auth.MtdItUser
 import connectors.optout.ITSAStatusUpdateConnector
 import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import controllers.routes
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
 import models.itsaStatus.StatusDetail
-import models.optin.{OptInContextData, OptInSessionData}
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney
@@ -225,6 +230,76 @@ class OptInServiceSpec extends UnitSpec
       val result = service.makeOptInCall()(user, hc, executionContext()).futureValue
 
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+    }
+
+  }
+
+  "OptInService.cumulativeQuarterlyUpdateCounts" should {
+
+    "for proposition with opt-in for only next-tax-year" in {
+
+      val currentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
+      val nextOptInTaxYear = NextOptInTaxYear(Annual, nextTaxYear, currentOptInTaxYear)
+      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
+
+      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(nextTaxYear, 0)))
+    }
+
+    "for proposition with opt-in for current-tax-year" in {
+
+      val currentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+      val nextOptInTaxYear = NextOptInTaxYear(Voluntary, nextTaxYear, currentOptInTaxYear)
+      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+
+      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentOptInTaxYear.taxYear))(any(), any()))
+        .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
+
+      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
+
+      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
+    }
+  }
+
+  "OptInService.getMultiYearCheckYourAnswersViewModel" should {
+
+    "return model when intent is current tax-year" in {
+
+      val isAgent = false
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual)))
+      mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.toString))
+      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+
+      val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
+
+      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
+        intentTaxYear = currentTaxYear,
+        isAgent = isAgent,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
+        intentIsNextYear = false
+      )
+    }
+
+    "return model when intent is next tax-year" in {
+
+      val isAgent = false
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual)))
+      mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.nextYear.toString))
+      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+
+      val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
+
+      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
+        intentTaxYear = currentTaxYear.nextYear,
+        isAgent = isAgent,
+        cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url,
+        intentIsNextYear = true
+      )
     }
 
   }
