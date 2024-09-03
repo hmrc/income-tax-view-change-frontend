@@ -2131,7 +2131,7 @@ optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlae
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
-optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol.
 
 # opt in check your answers
 optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
