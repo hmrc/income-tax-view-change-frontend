@@ -42,7 +42,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = currentTaxYear
-  val taxYear2: Int = (currentTaxYear + 1)
+  val taxYear2: Int = currentTaxYear + 1
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
   val latencyDetails: LatencyDetails = LatencyDetails(
