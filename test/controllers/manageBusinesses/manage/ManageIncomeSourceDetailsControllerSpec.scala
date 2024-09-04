@@ -93,7 +93,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
     val standard: String = messages("incomeSources.manage.quarterly-period.standard")
     val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
-    val reportingMethod = messages("incomeSources.manage.business-manage-details.reporting-method")
+    val reportingMethod: String = messages("incomeSources.manage.business-manage-details.reporting-method")
   }
 
   sealed trait Scenario
