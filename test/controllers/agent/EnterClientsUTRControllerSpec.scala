@@ -23,7 +23,7 @@ import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockClientDetailsService
+import mocks.services.{MockClientDetailsService, MockSessionDataService}
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
@@ -41,13 +41,15 @@ class EnterClientsUTRControllerSpec extends TestSupport
   with MockEnterClientsUTR
   with MockFrontendAuthorisedFunctions
   with MockClientDetailsService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionDataService {
 
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientDetailsService,
     mockAuthService,
-    mockAuditingService
+    mockAuditingService,
+    mockSessionDataService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
