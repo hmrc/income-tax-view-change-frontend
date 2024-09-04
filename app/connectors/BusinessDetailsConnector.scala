@@ -18,7 +18,7 @@ package connectors
 
 import audit.AuditingService
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.{MtdItUserOptionNino, MtdItUserWithNino}
+import auth.MtdItUserOptionNino
 import config.FrontendAppConfig
 import models.core.{NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessDetailsConnector @Inject()(val http: HttpClient,
                                          val auditingService: AuditingService,
                                          val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                        )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
@@ -48,7 +48,6 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
   def getNinoLookupUrl(mtdRef: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
-
 
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -88,14 +87,14 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
 
     //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios for Income Source Journey
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
+    val incomeSourcesPattern = """.*/income-sources/.*""".r
 
     val hc = mtdItUser.path match {
-      case manageBusinessesPattern(_*) =>
+      case manageBusinessesPattern(_*) | incomeSourcesPattern(_*) =>
         checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.incomeSourceOverrides(), "afterIncomeSourceCreated")
       case _ =>
         headerCarrier
     }
-
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"GET $url")
