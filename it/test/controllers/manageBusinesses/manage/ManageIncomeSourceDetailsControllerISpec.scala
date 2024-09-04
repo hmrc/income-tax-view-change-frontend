@@ -59,6 +59,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
+
   val addressAsString: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
   val businessTradingName: String = "business"
   val businessStartDate: String = "1 January 2017"
@@ -90,6 +91,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -118,11 +120,12 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         //enable(TimeMachineAddYear)
 
         And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
         // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -147,10 +150,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Type of trade"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Accounting method"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(businessAccountingMethod),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2022 to 2023"),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesQuarterly),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(7)", "dt")("Reporting frequency 2023 to 2024"),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(7)", "dd")(messagesAnnually),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
         )
@@ -163,7 +162,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
@@ -204,7 +204,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -265,7 +266,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -294,7 +296,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
@@ -323,7 +326,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -351,7 +355,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
@@ -376,7 +381,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -405,7 +411,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
@@ -434,7 +441,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
 
