@@ -19,12 +19,12 @@ package testOnly.controllers
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import models.sessionData.SessionGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._
-import testOnly.models.SessionGetResponse.SessionDataGetSuccess
-import testOnly.models.sessionData.SessionDataModel
-import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
-import testOnly.services.SessionDataService
+import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 

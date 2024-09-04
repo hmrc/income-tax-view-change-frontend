@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package testOnly.services
+package services
 
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testOnly.connectors.SessionDataConnector
-import testOnly.models.SessionGetResponse.SessionGetResponse
-import testOnly.models.sessionData.SessionDataModel
-import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse}
+import connectors.SessionDataConnector
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import models.sessionData.SessionGetResponse.SessionGetResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

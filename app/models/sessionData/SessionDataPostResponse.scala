@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testOnly.models.sessionData
+package models.sessionData
 
 import play.api.http.Status.{CONFLICT, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}

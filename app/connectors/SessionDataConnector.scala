@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package testOnly.connectors
+package connectors
 
 import config.FrontendAppConfig
-import connectors.RawResponseReads
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import models.sessionData.SessionGetResponse.SessionGetResponse
 import play.api.libs.json.Json
-import testOnly.models.SessionGetResponse.SessionGetResponse
-import testOnly.models.sessionData.SessionDataModel
-import testOnly.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 

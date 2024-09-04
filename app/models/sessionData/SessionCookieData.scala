@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testOnly.models.sessionData
+package models.sessionData
 
 import controllers.agent.sessionUtils.SessionKeys
 
