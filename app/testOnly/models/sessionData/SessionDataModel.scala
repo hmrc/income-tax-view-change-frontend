@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package testOnly.models.sessionData
 
 import play.api.libs.json.{Json, OFormat}
 

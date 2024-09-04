@@ -22,6 +22,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import play.api.Logger
 import play.api.mvc._
 import testOnly.models.SessionGetResponse.SessionDataGetSuccess
+import testOnly.models.sessionData.SessionDataModel
 import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
 import testOnly.services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,25 +51,32 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   }
 
   private def handleShow(isAgent: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Result] = {
-    sessionDataService.postSessionData() flatMap {
-      case Left(errorModel: SessionDataPostFailure) =>
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} " +
-          s"- POST user data to income-tax-session-data unsuccessful: - status: ${errorModel.status} - message: ${errorModel.errorMessage} - ")
-        Future.successful(InternalServerError(s"There was an error. status: ${errorModel.status} - message: ${errorModel.errorMessage}"))
-      case Right(successModel: SessionDataPostSuccess) =>
-        Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
-          s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
-        successModel.status match {
-          case CONFLICT =>
-            Future.successful(Conflict("Status - 409. A complete duplicate of this record was found in the database. We have updated the lastUpdated field."))
-          case _ =>
-            handlePostSuccess(isAgent)
+    user.saUtr match {
+      case Some(value) =>
+        val sessionDataModel: SessionDataModel = SessionDataModel(mtditid = user.mtditid, nino = user.nino, utr = value)
+        sessionDataService.postSessionData(sessionDataModel) flatMap {
+          case Left(errorModel: SessionDataPostFailure) =>
+            logErrorWithMessage(isAgent, s"POST user data to income-tax-session-data unsuccessful:" +
+              s" - status: ${errorModel.status} - message: ${errorModel.errorMessage} - ")
+            Future.successful(handleError(isAgent))
+          case Right(successModel: SessionDataPostSuccess) =>
+            Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
+              s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
+            successModel.status match {
+              case CONFLICT =>
+                Future.successful(Conflict("Status - 409." +
+                  " A complete duplicate of this record was found in the database. We have updated the lastUpdated field."))
+              case _ =>
+                handlePostSuccess(isAgent)
+            }
         }
+      case None =>
+        logErrorWithMessage(isAgent, "saUtr was None in the request")
+        Future.successful(handleError(isAgent))
     }
   }.recover {
     case ex: Throwable =>
-      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-        s" - Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      logErrorWithMessage(isAgent, s"Error on income-tax-session-data service test only page, status: - ${ex.getMessage} - ${ex.getCause} - ")
       handleError(isAgent)
   }
 
@@ -94,6 +102,10 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
   private def handleError(isAgent: Boolean)(implicit request: Request[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
+  }
+
+  private def logErrorWithMessage(isAgent: Boolean, message: String): Unit = {
+    Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} $message")
   }
 
 }
