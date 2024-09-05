@@ -34,8 +34,6 @@ import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optIn.OptInServiceSpec.statusDetailWith
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.OptInJourney
@@ -64,8 +62,7 @@ class OptInServiceSpec extends UnitSpec
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService,
-    mockCalculationListService, nextUpdatesService, mockDateService, repository)
+  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository)
 
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -232,34 +229,6 @@ class OptInServiceSpec extends UnitSpec
       result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
     }
 
-  }
-
-  "OptInService.cumulativeQuarterlyUpdateCounts" should {
-
-//    "for proposition with opt-in for only next-tax-year" in {
-//
-//      val currentOptInTaxYear = CurrentOptInTaxYear(Voluntary, currentTaxYear)
-//      val nextOptInTaxYear = NextOptInTaxYear(Annual, nextTaxYear, currentOptInTaxYear)
-//      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
-//
-//      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
-//
-//      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(nextTaxYear, 0)))
-//    }
-//
-//    "for proposition with opt-in for current-tax-year" in {
-//
-//      val currentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
-//      val nextOptInTaxYear = NextOptInTaxYear(Voluntary, nextTaxYear, currentOptInTaxYear)
-//      val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
-//
-//      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentOptInTaxYear.taxYear))(any(), any()))
-//        .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
-//
-//      val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
-//
-//      result.futureValue shouldBe QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(currentOptInTaxYear.taxYear, 1)))
-//    }
   }
 
   "OptInService.getMultiYearCheckYourAnswersViewModel" should {

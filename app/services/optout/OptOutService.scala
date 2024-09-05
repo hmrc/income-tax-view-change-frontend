@@ -205,20 +205,3 @@ class OptOutService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnect
   }
 
 }
-
-object OptOutService {
-
-  /* todo should be moved to a common location and reused by opt-in */
-  private val noQuarterlyUpdates = 0
-
-  /* todo should be moved to a common location and reused by opt-in */
-  case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
-
-    def getCountFor(offeredTaxYear: TaxYear): Int = counts
-      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
-      .map(_.count).sum
-
-    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
-  }
-
-}
