@@ -23,6 +23,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.mvc.Http.Status
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -35,13 +36,21 @@ object ITSAStatusUpdateConnector {
 }
 
 @Singleton
-class ITSAStatusUpdateConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
+class ITSAStatusUpdateConnector @Inject()(val httpV2: HttpClientV2,
+                                          val http: HttpClient,
+                                          val appConfig: FrontendAppConfig)
                                          (implicit val ec: ExecutionContext) extends RawResponseReads {
 
   private val log = Logger("application")
 
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
+
+  def makeITSAStatusUpdateV2(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
+                          (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+
+    ???
+  }
 
   def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
                           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
