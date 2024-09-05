@@ -38,6 +38,8 @@ import config.FrontendAppConfig
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import org.scalatest.prop.TableDrivenPropertyChecks.forAll
+import org.scalatest.prop.Tables.Table
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -211,53 +213,43 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
   "modifyHeaderCarrier" should {
 
-    "add test header when path matches manage-businesses pattern for Manage Business Journey" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/manage-your-businesses/reporting-frequency", hc)
+    "add test header when path matches certain patterns" should {
 
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterIncomeSourceCreated")
+      val scenarios = Table(
+        ("scenarioName", "path", "expectedHeader"),
+        ("Manage Business Journey", "/manage-your-businesses/reporting-frequency", Some("afterIncomeSourceCreated")),
+        ("UK Property", "/income-sources/uk-property-reporting-method", Some("afterIncomeSourceCreated")),
+        ("Foreign Property", "/income-sources/foreign-property-reporting-method", Some("afterIncomeSourceCreated")),
+        ("Sole Trader", "/income-sources/business-reporting-method", Some("afterIncomeSourceCreated"))
+      )
+
+      forAll(scenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
+        s"add test header for $scenarioName with path: $path" in new Setup {
+          implicit val appConfig: FrontendAppConfig = getAppConfig()
+          val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
+        }
+      }
     }
 
-    "add test header when path matches income-sources pattern for UK Property" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-sources/uk-property-reporting-method", hc)
+    "not add test header when path does not match patterns" should {
 
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterIncomeSourceCreated")
-    }
+      val noHeaderScenarios = Table(
+        ("scenarioName", "path", "expectedHeader"),
+        ("Other Path", "/some/other-path", None),
+        ("Manage Business Other Path", "/manage-your-businesses/other-path", Some("")),
+        ("Income Sources Other Path", "/income-sources/other-path", Some(""))
+      )
 
-    "add test header when path matches income-sources pattern for Foreign Property" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-sources/foreign-property-reporting-method", hc)
+      forAll(noHeaderScenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
+        s"not add test header for $scenarioName with path: $path" in new Setup {
+          implicit val appConfig: FrontendAppConfig = getAppConfig()
+          val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
 
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterIncomeSourceCreated")
-    }
-
-    "add test header when path matches income-sources pattern for Sole Trader" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-sources/business-reporting-method", hc)
-
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterIncomeSourceCreated")
-    }
-
-    "not add test header when path does not match any pattern" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/some/other-path", headerCarrier)
-
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe None
-    }
-
-    "not add test header when path does not match any pattern for manage business path" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/manage-your-businesses/other-path", headerCarrier)
-
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("")
-    }
-
-    "not add test header when path does not match any pattern for income sources path" in new Setup {
-      implicit val appConfig: FrontendAppConfig = getAppConfig()
-      val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-sources/other-path", headerCarrier)
-
-      modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("")
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
+        }
+      }
     }
   }
 }
