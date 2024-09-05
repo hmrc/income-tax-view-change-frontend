@@ -16,8 +16,8 @@
 
 package controllers.optIn
 
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.CheckYourAnswersControllerISpec._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}

@@ -17,8 +17,8 @@
 package services.optout
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{ErrorItem, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
@@ -34,7 +34,7 @@ import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.OptOutServiceSpec.TaxYearAndCountOfSubmissionsForIt
 import services.optout.OptOutTestSupport._
 import testConstants.ITSAStatusTestConstants.yearToStatus
@@ -168,8 +168,8 @@ class OptOutServiceSpec extends UnitSpec
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear).previousYear
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         val proposition = buildOneYearOptOutPropositionForPreviousYear(currentYear)
@@ -177,7 +177,7 @@ class OptOutServiceSpec extends UnitSpec
         val intent = optOutTaxYear
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -190,8 +190,8 @@ class OptOutServiceSpec extends UnitSpec
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
         val proposition = buildOneYearOptOutPropositionForCurrentYear(currentYear)
 
@@ -199,7 +199,7 @@ class OptOutServiceSpec extends UnitSpec
         val intent = optOutTaxYear
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -212,8 +212,8 @@ class OptOutServiceSpec extends UnitSpec
         val optOutTaxYear: TaxYear = TaxYear.forYearEnd(currentYear).nextYear
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(optOutTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(optOutTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
         val proposition = buildOneYearOptOutPropositionForNextYear(currentYear)
 
@@ -233,8 +233,8 @@ class OptOutServiceSpec extends UnitSpec
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
@@ -244,7 +244,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -259,8 +259,8 @@ class OptOutServiceSpec extends UnitSpec
           "Submission has not passed validation. Invalid parameter taxableEntityId."))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseFailure(errorItems)
+        when(optOutConnector.optOut(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseFailure(errorItems)
         ))
         val proposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
@@ -269,7 +269,7 @@ class OptOutServiceSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest(proposition, intent)
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure(errorItems)
+        result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
       }
     }
 
