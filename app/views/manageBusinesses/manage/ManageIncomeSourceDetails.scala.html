@@ -148,7 +148,7 @@
                     else
                         Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
                 ),
-                actions = if(viewModel.latencyYearOneIsQuarterly) Some(Actions(
+                actions = if(viewModel.latencyYearOneIsQuarterly.get) Some(Actions(
                     items = Seq(
                         ActionItem(
                             href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
@@ -171,7 +171,7 @@
                     else
                         HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
                 ),
-                actions = if(viewModel.latencyYearTwoIsQuarterly || viewModel.latencyYearOneIsQuarterly) Some(Actions(
+                actions = if(viewModel.latencyYearTwoIsQuarterly.get) Some(Actions(
                     items = Seq(
                         ActionItem(
                             href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),

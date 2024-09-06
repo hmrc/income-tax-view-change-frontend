@@ -95,21 +95,23 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         result shouldBe (true, true)
       }
 
-      "return (true, false) if only current year has MTD Mandated or MTD Voluntary" in {
+      "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status (fall back to first year status)" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
 
 
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails4))(testMtdItUser, headerCarrier, ec).futureValue shouldBe (true, false)
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails4))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe (true, true)
       }
 
-      "return (false, true) if only previous year has MTD Mandated or MTD Voluntary" in {
+      "return (false, true) if only second year has MTD Mandated or MTD Voluntary" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
 
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue shouldBe (false, true)
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe (false, true)
       }
 
       "return (false, false) if neither current nor previous years have MTD Mandated or MTD Voluntary" in {
@@ -117,8 +119,10 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
 
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails5))(testMtdItUser, headerCarrier, ec).futureValue shouldBe (false, false)
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails5))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe (false, false)
       }
+
     }
   }
 

@@ -22,7 +22,6 @@ import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -74,8 +73,14 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         for {
           taxYear1Status <- taxYear1StatusFuture.map(statusDetail =>
             statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
-          taxYear2Status <- taxYear2StatusFuture.map(statusDetail =>
-            statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+
+          taxYear2Status <- taxYear2StatusFuture.map { statusDetail =>
+            if (statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isUnknown)))) {
+              taxYear1Status
+            } else {
+              statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+            }
+          }
         } yield {
           (taxYear1Status, taxYear2Status)
         }
