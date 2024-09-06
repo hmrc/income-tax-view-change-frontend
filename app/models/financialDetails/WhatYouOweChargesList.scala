@@ -22,12 +22,15 @@ import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
+                                 codedOutDocumentDetail: Option[DocumentDetail] = None,
+                                 reconciliationDebitCharges: Option[List[DocumentDetailWithDueDate]] = None) {
 
   lazy val overdueChargeList: List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
 
-  def sortedChargesList: List[DocumentDetailWithDueDate] = chargesList.sortWith((charge1, charge2) =>
-    charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
+  def sortedChargesList: List[DocumentDetailWithDueDate] = {
+    val combinedCharges = chargesList ++ reconciliationDebitCharges.getOrElse(Nil)
+      combinedCharges.sortWith((charge1, charge2) =>
+      charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))}
 
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
@@ -38,6 +41,10 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def hasUnpaidPOAs: Boolean = chargesList.exists(docDetail =>
     docDetail.documentDetail.isPOA && docDetail.documentDetail.outstandingAmount > 0.0)
+
+  def hasReconciliationCharges: Boolean = reconciliationDebitCharges.exists { charges =>
+      charges.exists(charge => mainTransactionCodesToCheck.contains(charge.documentDetail.mainTransaction))
+    }
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
