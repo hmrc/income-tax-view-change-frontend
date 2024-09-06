@@ -14,25 +14,35 @@
  * limitations under the License.
  */
 
-package services
+package mocks.connectors
 
 import connectors.SessionDataConnector
-import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, reset, when}
+import org.scalatest.BeforeAndAfterEach
 import testOnly.models.SessionDataGetResponse.SessionGetResponse
-import uk.gov.hmrc.http.HeaderCarrier
+import testUtils.UnitSpec
 
-import javax.inject.Inject
 import scala.concurrent.Future
 
-class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
+trait MockSessionDataConnector extends UnitSpec with BeforeAndAfterEach {
 
-  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
-    sessionDataConnector.getSessionData()
+  val mockSessionDataConnector: SessionDataConnector = mock(classOf[SessionDataConnector])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionDataConnector)
   }
 
-  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
-    sessionDataConnector.postSessionData(sessionDataModel)
+  def setupMockPostSessionData(response: SessionDataPostResponse): Unit = {
+    when(mockSessionDataConnector.postSessionData(any())(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetSessionData(response: SessionGetResponse): Unit = {
+    when(mockSessionDataConnector.getSessionData()(any()))
+      .thenReturn(Future.successful(response))
   }
 
 }

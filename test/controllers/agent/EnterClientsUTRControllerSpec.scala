@@ -25,6 +25,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockClientDetailsService, MockSessionDataService}
 import mocks.views.agent.MockEnterClientsUTR
+import models.sessionData.SessionDataPostResponse.{SessionDataPostSuccess, SessionDataPostFailure}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents
@@ -135,9 +136,11 @@ class EnterClientsUTRControllerSpec extends TestSupport
         }
       }
       "redirect to the confirm client details page" when {
-        "the utr entered is valid and there is a client/agent relationship" in {
+        "the utr entered is valid, there is a client/agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+
+          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
@@ -158,11 +161,12 @@ class EnterClientsUTRControllerSpec extends TestSupport
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
           verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
-        "the utr entered contains spaces and is valid" in {
+        "the utr entered contains spaces and is valid and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
@@ -267,6 +271,22 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "the utr entered is valid, there is a client/agent relationship but the POST request to session data service is unsuccessful" in {
+          val validUTR: String = "1234567890"
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+
+          setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
+
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
+
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }

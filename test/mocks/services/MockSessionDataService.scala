@@ -16,13 +16,11 @@
 
 package mocks.services
 
-import enums.JourneyType.JourneyType
-import models.incomeSourceDetails.UIJourneySessionData
-import org.mockito.ArgumentMatchers
+import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.{SessionDataService, SessionService}
+import services.SessionDataService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -34,6 +32,10 @@ trait MockSessionDataService extends UnitSpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionDataService)
+  }
+
+  def setupMockPostSessionData(response: SessionDataPostResponse): Unit = {
+    when(mockSessionDataService.postSessionData(any())(any())).thenReturn(Future.successful(response))
   }
 
 }

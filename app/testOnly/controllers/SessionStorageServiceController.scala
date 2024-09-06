@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
-import models.sessionData.SessionGetResponse.SessionDataGetSuccess
+import testOnly.models.SessionDataGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._
 import services.SessionDataService

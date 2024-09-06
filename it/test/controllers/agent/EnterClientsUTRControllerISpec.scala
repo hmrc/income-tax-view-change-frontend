@@ -19,10 +19,7 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub, SessionDataStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -159,6 +156,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
     s"redirect ($SEE_OTHER) to the next page" when {
       "the utr submitted is valid" in {
         val validUTR: String = "1234567890"
+        SessionDataStub.stubPostSessionDataResponse()
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
@@ -188,6 +186,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         "the utr submitted contains spaces and is valid" in {
           val validUTR: String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+          SessionDataStub.stubPostSessionDataResponse()
           stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
           CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
             status = OK,
