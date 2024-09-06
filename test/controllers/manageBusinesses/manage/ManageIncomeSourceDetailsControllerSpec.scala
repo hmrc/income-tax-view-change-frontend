@@ -126,7 +126,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       case EXPIRED_LATENCY =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2025)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
-          .thenReturn(Future.successful((false, false)))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(false))
@@ -518,7 +518,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
-
       }
     }
   }

@@ -162,7 +162,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
         And("API 1404 getCalculationList returns a success response")
@@ -196,6 +196,50 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
       }
+
+      "URL has valid income source ID and authorised user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1171 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Type of trade"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Accounting method"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(businessAccountingMethod),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2022 to 2023"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesAnnuallyGracePeriod),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(7)", "dt")("Reporting frequency 2023 to 2024"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(7)", "dd")(messagesQuarterlyGracePeriod),
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
@@ -318,6 +362,38 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
       }
+
+      "URL has valid income source ID and authorised user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1171 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-uk-property")
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
@@ -433,6 +509,38 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
       }
+
+      "URL has valid income source ID and authorised user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1171 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+
       "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)

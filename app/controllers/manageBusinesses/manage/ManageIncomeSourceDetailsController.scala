@@ -158,8 +158,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearOneIsQuarterly = Some(latencyYearTwoStatus),
-      latencyYearTwoIsQuarterly = Some(latencyYearOneStatus),
+      latencyYearOneIsQuarterly = Some(latencyYearOneStatus),
+      latencyYearTwoIsQuarterly = Some(latencyYearTwoStatus),
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
@@ -168,7 +168,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     )
   }
 
-  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatusCY: Boolean, itsaStatusCYM1: Boolean, crystallisationTaxYear1: Option[Boolean],
+  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, latencyYearOneStatus: Boolean, latencyYearTwoStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
                                                 crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -177,8 +177,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearOneIsQuarterly = Some(itsaStatusCYM1),
-      latencyYearTwoIsQuarterly = Some(itsaStatusCY),
+      latencyYearOneIsQuarterly = Some(latencyYearOneStatus),
+      latencyYearTwoIsQuarterly = Some(latencyYearTwoStatus),
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
@@ -264,13 +264,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
             itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails)).flatMap {
-              case (currentYearStatus, previousYearStatus) =>
+              case (latencyYearOneStatus, latencyYearTwoStatus) =>
                 getCrystallisationInformation(Some(latencyDetails)).flatMap {
                   case None =>
                     Future.successful(Right(variableViewModelPropertyBusiness(
                       incomeSource = desiredIncomeSource,
-                      itsaStatusCY = currentYearStatus,
-                      itsaStatusCYM1 = previousYearStatus,
+                      latencyYearOneStatus = latencyYearOneStatus,
+                      latencyYearTwoStatus = latencyYearTwoStatus,
                       crystallisationTaxYear1 = None,
                       crystallisationTaxYear2 = None,
                       incomeSourceType = incomeSourceType)))
@@ -278,8 +278,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                     Future.successful(Right(
                       variableViewModelPropertyBusiness(
                         incomeSource = desiredIncomeSource,
-                        itsaStatusCY = currentYearStatus,
-                        itsaStatusCYM1 = previousYearStatus,
+                        latencyYearOneStatus = latencyYearOneStatus,
+                        latencyYearTwoStatus = latencyYearTwoStatus,
                         crystallisationTaxYear1 = crystallisationData.headOption,
                         crystallisationTaxYear2 = crystallisationData.lastOption,
                         incomeSourceType = incomeSourceType
@@ -290,8 +290,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             Future.successful(Right(
               variableViewModelPropertyBusiness(
                 incomeSource = desiredIncomeSource,
-                itsaStatusCY = false,
-                itsaStatusCYM1 = false,
+                latencyYearOneStatus = false,
+                latencyYearTwoStatus = false,
                 crystallisationTaxYear1 = None,
                 crystallisationTaxYear2 = None,
                 incomeSourceType = incomeSourceType
