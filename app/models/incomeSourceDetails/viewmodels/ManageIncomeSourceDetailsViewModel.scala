@@ -50,6 +50,11 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
       case false => "incomeSources.manage.business-manage-details.cash-accounting"
     }
   }
+
+  def shouldShowTaxYears: Boolean = {
+    if(latencyYearTwoIsQuarterly.get && latencyDetails.isDefined) true else false
+  }
+
 }
 
 
