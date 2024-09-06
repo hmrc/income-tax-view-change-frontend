@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package models.optin
+package services.optIn.core
 
-import models.incomeSourceDetails.TaxYear
-import services.optIn.core.OptInState
+sealed trait OptInState
 
-case class OptInCompletedViewModel(isAgent: Boolean, optInTaxYear: TaxYear, state: Option[OptInState]) {
-  val startYear: String = optInTaxYear.startYear.toString
-  val endYear: String = optInTaxYear.endYear.toString
-}
+object OneYearOptInState extends OptInState
+
+object TwoYearOptInState extends OptInState
