@@ -62,13 +62,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
           case Right(successModel: SessionDataPostSuccess) =>
             Logger("application").debug(s"${if (isAgent) "Agent" else "Individual"} " +
               s"- POST user data to income-tax-session-data successful! status: ${successModel.status}")
-            successModel.status match {
-              case CONFLICT =>
-                Future.successful(Conflict("Status - 409." +
-                  " A complete duplicate of this record was found in the database. We have updated the lastUpdated field."))
-              case _ =>
-                handlePostSuccess(isAgent)
-            }
+            handlePostSuccess(isAgent, successModel.status)
         }
       case None =>
         logErrorWithMessage(isAgent, "saUtr was None in the request")
@@ -80,7 +74,7 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
       handleError(isAgent)
   }
 
-  private def handlePostSuccess(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def handlePostSuccess(isAgent: Boolean, status: Int)(implicit hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
         Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
@@ -88,7 +82,12 @@ class SessionStorageServiceController @Inject()(implicit val ec: ExecutionContex
         InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
       case Right(model: SessionDataGetSuccess) =>
         Ok(
-          s"Session Data Service POST and GET requests were successful!\n" +
+          {
+            if (status.equals(CONFLICT))
+              "A complete duplicate of this record was found in the database. We have replaced the old record with the new one."
+            else ""
+          } +
+            s"Session Data Service POST and GET requests were successful with status: $status !\n" +
             s"User model:        ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +
