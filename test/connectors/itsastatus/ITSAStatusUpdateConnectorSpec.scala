@@ -30,21 +30,25 @@
  * limitations under the License.
  */
 
-package connectors.optout
+package connectors.itsastatus
 
 import config.FrontendAppConfig
-import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnector._
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModelHttpV2.{ITSAStatusBody, ITSAStatusResponse, ITSAStatusResponseFailure, ITSAStatusResponseSuccess}
+import models.core.ErrorModel
+import models.core.ResponseModel.ResponseModel
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
-import play.mvc.Http.Status.{BAD_REQUEST, NO_CONTENT}
+import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -52,10 +56,11 @@ import scala.concurrent.Future
 
 class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with BeforeAndAfter with ScalaFutures {
 
+  val httpClientV2: HttpClientV2 = mock(classOf[HttpClientV2])
   val httpClient: HttpClient = mock(classOf[HttpClient])
   val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   implicit val headerCarrier: HeaderCarrier = mock(classOf[HeaderCarrier])
-  val connector = new ITSAStatusUpdateConnector(httpClient, appConfig)
+  val connector = new ITSAStatusUpdateConnector(httpClientV2, httpClient, appConfig)
 
   val taxYear = TaxYear.forYearEnd(2024)
   val taxableEntityId: String = "AB123456A"
@@ -125,6 +130,24 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
         result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
 
       }
+
+      "return failure response xx" in {
+
+        when(appConfig.itvcProtectedService).thenReturn(s"http://localhost:9082")
+
+        val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
+          "Submission has not passed validation. Invalid parameter taxableEntityId."))
+        val apiRequest = ITSAStatusUpdateRequest(toApiFormat(taxYear), optOutUpdateReason)
+        val apiFailResponse = ITSAStatusUpdateResponseFailure(errorItems)
+        val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
+
+        setupHttpVTwoClientMockForFail[ITSAStatusUpdateRequest](connector.buildRequestUrlWith(taxableEntityId))(apiRequest, httpResponse)
+
+        val result: Future[ITSAStatusResponse] = connector.optInn(taxYear, taxableEntityId)
+
+        result.futureValue shouldBe ITSAStatusResponseFailure(statusCode = INTERNAL_SERVER_ERROR,
+          errorItems = List(ITSAStatusUpdateConnectorModelHttpV2.ErrorItem(INTERNAL_SERVER_ERROR, "Some bad request")))
+      }
     }
 
   }
@@ -147,5 +170,18 @@ class ITSAStatusUpdateConnectorSpec extends AnyWordSpecLike with Matchers with B
   def setupHttpClientMock[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit = {
     when(httpClient.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+  }
+
+  val requestBuilder: RequestBuilder = mock(classOf[RequestBuilder])
+
+  def setupHttpVTwoClientMockForFail[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit = {
+
+    when(httpClientV2.put(any())(ArgumentMatchers.eq(headerCarrier))).thenReturn(requestBuilder)
+
+    val body = ITSAStatusBody(taxYear = toApiFormat(taxYear), updateReason = "11")
+    when(requestBuilder.withBody(Json.toJson(body))).thenReturn(requestBuilder)
+
+    when(requestBuilder.execute[ResponseModel[ITSAStatusResponseSuccess]]).thenReturn(Future.successful(Left(ErrorModel(INTERNAL_SERVER_ERROR, "Some bad request"))))
+
   }
 }

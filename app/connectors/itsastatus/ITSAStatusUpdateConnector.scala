@@ -20,11 +20,14 @@ import config.FrontendAppConfig
 import connectors.RawResponseReads
 import connectors.itsastatus.ITSAStatusUpdateConnector._
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModelHttpV2.{ITSAStatusBody, ITSAStatusResponse, ITSAStatusResponseSuccess}
+import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
+import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +39,7 @@ object ITSAStatusUpdateConnector {
 }
 
 @Singleton
-class ITSAStatusUpdateConnector @Inject()(val httpV2: HttpClientV2,
+class ITSAStatusUpdateConnector @Inject()(val httpv2: HttpClientV2,
                                           val http: HttpClient,
                                           val appConfig: FrontendAppConfig)
                                          (implicit val ec: ExecutionContext) extends RawResponseReads {
@@ -46,10 +49,22 @@ class ITSAStatusUpdateConnector @Inject()(val httpV2: HttpClientV2,
   def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
 
-  def makeITSAStatusUpdateV2(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
-                          (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def makeITSAStatusUpdateVII(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
+                          (implicit headerCarrier: HeaderCarrier): Future[ResponseModel[ITSAStatusResponseSuccess]] = {
 
-    ???
+    val body = ITSAStatusBody(taxYear = toApiFormat(taxYear), updateReason = updateReason)
+    val url = buildRequestUrlWith(taxableEntityId)
+
+    httpv2
+      .put(url"$url")
+      .withBody(Json.toJson(body))
+      //.setHeader(correlationId.asHeader())
+      .execute[ResponseModel[ITSAStatusResponseSuccess]]
+      .recover {
+        case e =>
+          Logger("application").error(e.getMessage)
+          Left(UnexpectedError)
+      }
   }
 
   def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
@@ -91,5 +106,13 @@ class ITSAStatusUpdateConnector @Inject()(val httpV2: HttpClientV2,
   def optIn(taxYear: TaxYear, taxableEntityId: String)
             (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
+  }
+
+  def optInn(taxYear: TaxYear, taxableEntityId: String)
+           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusResponse] = {
+    makeITSAStatusUpdateVII(taxYear, taxableEntityId, optInUpdateReason) map {
+      case Right(_) => ITSAStatusResponseSuccess()
+      case Left(e) => ITSAStatusResponse.withError(e.code, e.message)
+    }
   }
 }
