@@ -55,6 +55,10 @@ class ITSAStatusUpdateConnector @Inject()(val httpv2: HttpClientV2,
     val body = ITSAStatusBody(taxYear = toApiFormat(taxYear), updateReason = updateReason)
     val url = buildRequestUrlWith(taxableEntityId)
 
+//    val jsValue = Json.toJson(body)
+//    val json = jsValue.toString()
+//    print(json)
+
     httpv2
       .put(url"$url")
       .withBody(Json.toJson(body))

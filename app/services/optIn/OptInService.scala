@@ -19,7 +19,8 @@ package services.optIn
 import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModelHttpV2.{ITSAStatusResponse, ITSAStatusResponseSuccess}
 import controllers.routes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -80,8 +81,21 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.optInn(taxYear = intentTaxYear, user.nino)
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+    }
+
+    val result = for {
+      intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
+      response <- OptionT.liftF(itsaStatusUpdateConnector.optInn(taxYear = intentTaxYear, user.nino))
+    } yield response match {
+      case _:ITSAStatusResponseSuccess => ITSAStatusUpdateResponseSuccess()
+      case _ => ITSAStatusUpdateResponseFailure.defaultFailure()
+    }
+
+    result.value map {
+        case Some(r) => r
+      case None => ITSAStatusUpdateResponseFailure.defaultFailure()
     }
 
   }
