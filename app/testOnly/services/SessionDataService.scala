@@ -17,54 +17,36 @@
 package testOnly.services
 
 import auth.MtdItUser
-import play.api.http.Status.OK
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testOnly.connectors.SessionDataConnector
 import testOnly.models.SessionDataModel
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import testOnly.models.SessionGetResponse.SessionGetResponse
+import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
 
-  def getSessionData(sessionId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, SessionDataModel]] =
-    sessionDataConnector.getSessionData(sessionId).map { response =>
-      response.status match {
-        case OK => response.json.validate[SessionDataModel].fold(
-          invalid => Left(new Exception(s"Json validation error for SessionDataModel. Invalid: $invalid")),
-          valid => Right(valid)
-        )
-        case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
-      }
-    }
+  def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
+    sessionDataConnector.getSessionData()
+  }
 
-  def postSessionData(isAgent: Boolean, sessionId: SessionId)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[Either[Throwable, String]] = {
+  def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier)
+  : Future[SessionDataPostResponse] = {
 
     user.saUtr match {
-      case Some(saUtr) =>
-        sessionDataConnector.postSessionData(postSessionDataModel(isAgent, user, sessionId, saUtr)).map { response =>
-          response.status match {
-            case OK => Right(sessionId.value)
-            case _ => Left(new Exception(s"Unknown exception. Status: ${response.status}, Json: ${response.json}"))
-          }
-        }
-      case None => Future.successful(Left(new Exception(s"User had no saUtr!")))
+      case Some(utr) => sessionDataConnector.postSessionData(postSessionDataModel(user, utr))
+      case None => Future.successful(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "User had no saUtr!")))
     }
   }
 
-  private def postSessionDataModel(isAgent: Boolean, user: MtdItUser[_], sessionId: SessionId, saUtr: String): SessionDataModel = {
-
-    val affinityGroup = if (isAgent) "Agent" else "Individual"
-
+  private def postSessionDataModel(user: MtdItUser[_], utr: String): SessionDataModel = {
     SessionDataModel(
-      sessionID = sessionId.value,
       mtditid = user.mtditid,
       nino = user.nino,
-      saUtr = saUtr,
-      clientFirstName = user.userName.flatMap(_.name),
-      clientLastName = user.userName.flatMap(_.lastName),
-      userType = affinityGroup
+      utr = utr
     )
   }
 

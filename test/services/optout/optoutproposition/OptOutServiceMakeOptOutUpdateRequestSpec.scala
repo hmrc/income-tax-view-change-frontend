@@ -17,8 +17,8 @@
 package services.optout.optoutproposition
 
 import auth.MtdItUser
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess, optOutUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -73,8 +73,8 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -83,7 +83,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -100,14 +100,14 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
-        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.makeITSAStatusUpdate(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -117,7 +117,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseSuccess(NO_CONTENT)
+        result.futureValue shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
       }
     }
 
@@ -134,14 +134,14 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
         when(dateService.getCurrentTaxYear).thenReturn(TaxYear.forYearEnd(currentYear))
 
         when(user.nino).thenReturn(taxableEntityId)
-        when(optOutConnector.requestOptOutForTaxYear(previousTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseFailure.defaultFailure()
+        when(optOutConnector.optOut(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseFailure.defaultFailure()
         ))
-        when(optOutConnector.requestOptOutForTaxYear(currentTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(currentTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
-        when(optOutConnector.requestOptOutForTaxYear(nextTaxYear, taxableEntityId, optOutUpdateReason)).thenReturn(Future.successful(
-          OptOutUpdateResponseSuccess()
+        when(optOutConnector.optOut(nextTaxYear, taxableEntityId)).thenReturn(Future.successful(
+          ITSAStatusUpdateResponseSuccess()
         ))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -150,7 +150,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec extends UnitSpec
 
         val result = service.makeOptOutUpdateRequest()
 
-        result.futureValue shouldBe OptOutUpdateResponseFailure.defaultFailure()
+        result.futureValue shouldBe ITSAStatusUpdateResponseFailure.defaultFailure()
       }
     }
 

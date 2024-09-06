@@ -28,12 +28,18 @@
         hr: hr,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        govukInsetText: GovukInsetText,
 )
+
 @(model: CheckYourAnswersViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getChangeOptInHref = @{
     controllers.optIn.routes.ChooseYearController.show(model.isAgent).url
+}
+
+@previouslySubmittedUpdatesWarningBlock = @{
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
 }
 
 @getPostAction = @{
@@ -81,6 +87,8 @@
         @p(id=Some("optIn-summary")) {
             @getMessage
         }
+
+        @previouslySubmittedUpdatesWarningBlock
 
         <div class="govuk-button-group">
             @govukButton(Button(

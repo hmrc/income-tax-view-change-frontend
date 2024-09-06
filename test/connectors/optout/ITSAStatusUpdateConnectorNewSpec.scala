@@ -33,8 +33,9 @@
 package connectors.optout
 
 import config.FrontendAppConfig
-import connectors.optout.ITSAStatusUpdateConnector._
-import connectors.optout.ITSAStatusUpdateConnectorModel._
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnector._
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}

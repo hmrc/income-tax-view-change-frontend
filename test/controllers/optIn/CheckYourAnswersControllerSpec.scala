@@ -17,20 +17,21 @@
 package controllers.optIn
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import controllers.routes
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.incomeSourceDetails.TaxYear
+import models.optin.MultiYearCheckYourAnswersViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.status
+import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.optIn.CheckYourAnswersView
-import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
@@ -56,17 +57,33 @@ class CheckYourAnswersControllerSpec extends TestSupport
 
   def showTests(isAgent: Boolean): Unit = {
     "show page" should {
+
       s"return result with $OK status" in {
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockFetchSavedChosenTaxYear(taxYear2023)
 
-        val currentTaxYear = taxYear2023.previousYear
-        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+        when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
+          .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
+            taxYear2023,
+            isAgent, routes.ReportingFrequencyPageController.show(isAgent).url,
+            intentIsNextYear = true)
+          )))
 
         val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
         val result = controller.show(isAgent).apply(requestGET)
         status(result) shouldBe Status.OK
+      }
+
+      s"return result with $INTERNAL_SERVER_ERROR status" in {
+        setupMockAuthorisationSuccess(isAgent)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
+          .thenReturn(Future.successful(None))
+
+        val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
+        val result = controller.show(isAgent).apply(requestGET)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
@@ -81,7 +98,8 @@ class CheckYourAnswersControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(isAgent)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        when(mockOptInService.makeOptInCall()(any(), any(), any())).thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+        when(mockOptInService.makeOptInCall()(any(), any(), any()))
+          .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
 
         val result: Future[Result] = controller.submit(isAgent)(requestPOST)
 
@@ -93,7 +111,8 @@ class CheckYourAnswersControllerSpec extends TestSupport
       setupMockAuthorisationSuccess(isAgent)
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      when(mockOptInService.makeOptInCall()(any(), any(), any())).thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+      when(mockOptInService.makeOptInCall()(any(), any(), any()))
+        .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
       val result: Future[Result] = controller.submit(isAgent)(requestPOST)
 

@@ -18,17 +18,18 @@ package services.optIn
 
 import auth.MtdItUser
 import cats.data.OptionT
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import controllers.routes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.OptInSessionData
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{OptInInitialState, OptInProposition}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
+import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
 
@@ -38,8 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                              itsaStatusService: ITSAStatusService,
-                             calculationListService: CalculationListService,
-                             nextUpdatesService: NextUpdatesService,
                              dateService: DateServiceInterface,
                              repository: UIJourneySessionDataRepository) {
 
@@ -81,7 +80,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
 
@@ -122,7 +121,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   }
 
 
-  private def fetchOptInProposition()(implicit user: MtdItUser[_],
+  def fetchOptInProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
                                ec: ExecutionContext): Future[OptInProposition] = {
 
@@ -165,4 +164,19 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       case Some(s) => s.selectedOptInYear.flatMap(TaxYear.getTaxYearModel)
     }
   }
+
+  def getMultiYearCheckYourAnswersViewModel(isAgent: Boolean)(implicit user: MtdItUser[_],
+                                                              hc: HeaderCarrier,
+                                                              ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
+    val result = for {
+      intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
+      cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
+      intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
+    } yield MultiYearCheckYourAnswersViewModel(intentTaxYear, isAgent, cancelURL, intentIsNextYear)
+
+    result.value
+  }
+
+  private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
+
 }

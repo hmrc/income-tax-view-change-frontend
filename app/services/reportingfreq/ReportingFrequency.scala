@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package models.optin
+package services.reportingfreq
 
 import models.incomeSourceDetails.TaxYear
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 
-sealed trait CheckYourAnswersViewModel {
-  val startYear: String
-  val endYear: String
-  val isAgent: Boolean
-  val cancelURL: String
-  val intentIsNextYear: Boolean
-}
+object ReportingFrequency {
 
-case class MultiYearCheckYourAnswersViewModel(intentTaxYear: TaxYear,
-                                              isAgent: Boolean,
-                                              cancelURL: String,
-                                              intentIsNextYear: Boolean = false)
-  extends CheckYourAnswersViewModel {
-  val startYear: String = intentTaxYear.startYear.toString
-  val endYear: String = intentTaxYear.endYear.toString
+  val noQuarterlyUpdates = 0
+
+  case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
+
+    def getCountFor(offeredTaxYear: TaxYear): Int = counts
+      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
+      .map(_.count).sum
+
+    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
+  }
+
 }
