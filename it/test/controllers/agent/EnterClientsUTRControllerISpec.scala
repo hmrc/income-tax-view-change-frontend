@@ -19,7 +19,10 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub, SessionDataStub}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
