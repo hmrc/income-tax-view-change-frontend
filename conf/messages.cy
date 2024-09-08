@@ -150,6 +150,7 @@ taxYears.table.taxYear.heading                                 = Blwyddyn dreth
 taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
+taxYears.accruesInterest                                       = LLOG YN CAEL EI GRONNI
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
@@ -275,6 +276,8 @@ tax-year-summary.message.C559104                               = rydych wedi haw
 tax-year-summary.message.C559105                               = rydych wedi hawlio Lwfans Incwm o Eiddo ar gyfer eich eiddo tramor. Mae hyn yn golygu na allwch hawlio am addasiad ar gyfer defnydd preifat.
 tax-year-summary.message.C559113                               = ar gyfer eich eiddo tramor, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau.
 tax-year-summary.message.C559114                               = ar gyfer eich llety gwyliau wedi’i ddodrefnu yn yr AEE, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau ohonynt.
+tax-year-summary.first-poa-extra-amount                        = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.second-poa-extra-amount                       = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 
 tax-year-summary.agent.message.header                          = Ni allwn ddangos y cyfrifiad hwn:
 tax-year-summary.agent.message.action                          = Mae angen i chi ddiwygio ac ailgyflwyno Ffurflen Dreth eich cleient

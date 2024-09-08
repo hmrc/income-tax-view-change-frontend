@@ -164,6 +164,7 @@ taxYears.taxYears                                              = 6 April {0} to 
 taxYears.ongoing                                               = ONGOING
 taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
+taxYears.accruesInterest                                       = ACCRUES INTEREST
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
@@ -294,6 +295,8 @@ tax-year-summary.message.C559104                                   = you’ve cl
 tax-year-summary.message.C559105                                   = the amount you’ve claimed for private use adjustment for your foreign property is more than the total allowable expenses.
 tax-year-summary.message.C559113                                   = for your foreign property, you need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.message.C559114                                   = for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both.
+tax-year-summary.first-poa-extra-amount                            = First payment on account: extra amount from your tax return
+tax-year-summary.second-poa-extra-amount                           = Second payment on account: extra amount from your tax return
 
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
 tax-year-summary.agent.message.action                              = You need to amend and resubmit your client’s return
