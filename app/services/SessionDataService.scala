@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package testOnly.services
+package services
 
-import auth.MtdItUser
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testOnly.connectors.SessionDataConnector
-import testOnly.models.SessionDataModel
-import testOnly.models.SessionGetResponse.SessionGetResponse
-import testOnly.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse}
+import connectors.SessionDataConnector
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import testOnly.models.SessionDataGetResponse.SessionGetResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -33,21 +31,8 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector) {
     sessionDataConnector.getSessionData()
   }
 
-  def postSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier)
-  : Future[SessionDataPostResponse] = {
-
-    user.saUtr match {
-      case Some(utr) => sessionDataConnector.postSessionData(postSessionDataModel(user, utr))
-      case None => Future.successful(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "User had no saUtr!")))
-    }
-  }
-
-  private def postSessionDataModel(user: MtdItUser[_], utr: String): SessionDataModel = {
-    SessionDataModel(
-      mtditid = user.mtditid,
-      nino = user.nino,
-      utr = utr
-    )
+  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
+    sessionDataConnector.postSessionData(sessionDataModel)
   }
 
 }
