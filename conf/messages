@@ -2215,28 +2215,23 @@ optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
-optin.completedOptIn.heading                                   = Opt In completed
-optin.completedOptIn.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
-optin.completedOptIn.one-year                                  = You are reporting annually for the {0} to {1} tax year
-optin.completedOptIn.submitTax                                 = Submit your tax return
-optin.completedOptIn.submitTax.desc1                           = For any tax years where you chose to opt out and report annually, you can submit your tax return directly through your HMRC online account or software.
-optin.completedOptIn.submitTax.desc2                           = If you are still reporting quarterly for certain tax years, you are required to send those quarterly updates through compatible software.
-optin.completedOptIn.updatesDue                                = Your next updates due
-optin.completedOptIn.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
-optin.completedOptIn.next-updates                              = next updates
-optin.completedOptIn.reportQuarterly                           = Reporting quarterly again in the future
-optin.completedOptIn.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
-optin.completedOptIn.reportQuarterly.p1                        = HMRC lowers the income threshold for Making Tax Digital
-optin.completedOptIn.reportQuarterly.p2                        = you report an increase in your qualifying income in a tax return
-optin.completedOptIn.reportQuarterly.example                   = For example, if your qualifying income exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
-optin.completedOptIn.reportQuarterly.desc2                     = If this happens, we will write to you to let you know.
-optin.completedOptIn.reportQuarterly.desc3                     = You can check the threshold for qualifying income in the {0} .
-optin.completedOptIn.reportQuarterly.desc3.anchor-text         = criteria for people who will need to sign up for Making Tax Digital
-optin.completedOptIn.reportQuarterly.desc3.anchor-link         = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
-optin.completedOptIn.report-quarterly-next-year-onwards        = Reporting quarterly from next tax year onwards
-optin.completedOptIn.warning-quarterly-update.text             = From 6 April {0}, you’ll be required to send quarterly updates through
-optin.completedOptIn.software-compatible                       = software compatible with Making Tax Digital for Income Tax
-optin.completedOptIn.software-compatible.link                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
-optin.completedOptIn.reportQuarterly.reason-list               = This could be because:
-optin.completedOptIn.reportQuarterly.reason1                   = HMRC lowered the income threshold for Making Tax Digital
-optin.completedOptIn.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
+optin.completedOptIn.heading                       = Opt In completed
+optin.completedOptIn.heading.line1                 = You are now reporting quarterly from {0} to {1} tax year onwards
+optin.completedOptIn.nextUpdates                   = Your next updates due
+optin.completedOptIn.nextUpdate.desc1              = Check the updates and deadlines page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
+optin.completedOptIn.nextUpdate.desc2              = You can decide at any time to opt out of reporting quarterly for all your businesses on your reporting frequency page.
+
+optin.completedOptIn.submitUpdates                 = Submit updates in software
+optin.completedOptIn.submitUpdates.desc1           = For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab).
+optin.completedOptIn.submitUpdates.desc2           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+
+optin.completedOptIn.futureReporting               = Reporting in the future
+optin.completedOptIn.futureReporting.desc1         = You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:
+optin.completedOptIn.futureReporting.p1            = HMRC lowers the income threshold for Making Tax Digital for Income Tax
+optin.completedOptIn.futureReporting.p2            = you report an increase in your qualifying income in a tax return
+
+optin.completedOptIn.futureReporting.scenario      = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
+optin.completedOptIn.futureReporting.desc2         = If this happens, we will write to you to let you know.
+
+optin.completedOptIn.incomeThreshold.desc           = You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
+

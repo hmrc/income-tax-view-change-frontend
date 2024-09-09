@@ -17,9 +17,9 @@
 package models.optin
 
 import models.incomeSourceDetails.TaxYear
-import services.optIn.core.OptInState
 
-case class OptInCompletedViewModel(isAgent: Boolean, optInTaxYear: TaxYear, state: Option[OptInState]) {
+case class OptInCompletedViewModel(isAgent: Boolean, optInTaxYear: TaxYear) {
   val startYear: String = optInTaxYear.startYear.toString
   val endYear: String = optInTaxYear.endYear.toString
+  val nextYear: String = optInTaxYear.nextYear.endYear.toString
 }

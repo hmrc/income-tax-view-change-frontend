@@ -20,20 +20,19 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.incomeSourceDetails.TaxYear
 import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
-import services.optIn.core.OneYearOptInState
 import utils.AuthenticatorPredicate
-import views.html.optIn.OptInCompletedView
+import views.html.optIn.{OptInCompletedCurrentYearView, OptInCompletedNextYearView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInCompletedController @Inject()(val view: OptInCompletedView,
+class OptInCompletedController @Inject()(val currentYearView: OptInCompletedCurrentYearView,
+                                         val nextYearView: OptInCompletedNextYearView,
                                          val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
                                          val auth: AuthenticatorPredicate)
@@ -57,9 +56,21 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok(view(OptInCompletedViewModel(isAgent = isAgent,
-          optInTaxYear = TaxYear.forYearEnd(2024),
-          state = Some(OneYearOptInState)))))
+
+        for {
+          proposition <- optInService.fetchOptInProposition()
+          intent <- optInService.fetchSavedChosenTaxYear()
+        } yield {
+          intent.map { optInTaxYear =>
+
+            val model = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = optInTaxYear)
+            if (proposition.isCurrentTaxYear(optInTaxYear)) {
+              Ok(currentYearView(model))
+            } else Ok(nextYearView(model))
+
+          }.getOrElse(errorHandler(isAgent).showInternalServerError())
+        }
+
       }
   }
 }

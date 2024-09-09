@@ -62,7 +62,7 @@ class OptInPropositionSpec extends UnitSpec {
           val proposition = OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
 
           proposition.isOneYearOptIn shouldBe offered.size == 1
-          proposition.isMultiYearOptIn shouldBe offered.size > 1
+          proposition.isTwoYearOptIn shouldBe offered.size > 1
           proposition.isNoOptInAvailable shouldBe offered.isEmpty
 
           proposition.availableOptInYears.isEmpty shouldBe false
