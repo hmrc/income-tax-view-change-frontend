@@ -26,14 +26,17 @@ import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.agent.ClientsUTRForm
+import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import services.SessionDataService
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment}
+import utils.SessionCookieUtil
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -43,12 +46,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: AuthorisedFunctions,
-                                          val auditingService: AuditingService)
+                                          val auditingService: AuditingService,
+                                          val sessionDataService: SessionDataService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
-  extends BaseAgentController with I18nSupport with FeatureSwitching {
+  extends BaseAgentController with I18nSupport with FeatureSwitching with SessionCookieUtil {
 
   lazy val notAnAgentPredicate: AuthPredicate[IncomeTaxAgentUser] = {
     val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
@@ -87,13 +91,11 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
               authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
                 case _ ~ _ ~ _ ~ _ =>
-                  val sessionValues: Seq[(String, String)] = Seq(
-                    SessionKeys.clientMTDID -> mtdItId,
-                    SessionKeys.clientNino -> nino,
-                    SessionKeys.clientUTR -> validUTR
-                  ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
-                  sendAudit(true, user, validUTR, nino, mtdItId)
-                  Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
+                  val sessionCookieData: SessionCookieData = SessionCookieData(mtdItId, nino, validUTR, firstName, lastName)
+                  handleSessionCookies(sessionCookieData) { sessionCookies =>
+                    sendAudit(true, user, sessionCookieData.utr, sessionCookieData.nino, sessionCookieData.mtditid)
+                    Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
+                  }
               }.recover {
                 case ex =>
                   Logger("application")
