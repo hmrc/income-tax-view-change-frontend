@@ -38,6 +38,10 @@
     controllers.optIn.routes.ChooseYearController.show(model.isAgent).url
 }
 
+@previouslySubmittedUpdatesWarningBlock = @{
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
+}
+
 @getPostAction = @{
     controllers.optIn.routes.CheckYourAnswersController.submit(model.isAgent)
 }
@@ -83,6 +87,8 @@
         @p(id=Some("optIn-summary")) {
             @getMessage
         }
+
+        @previouslySubmittedUpdatesWarningBlock
 
         <div class="govuk-button-group">
             @govukButton(Button(

@@ -17,7 +17,7 @@
 package controllers.optIn
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
