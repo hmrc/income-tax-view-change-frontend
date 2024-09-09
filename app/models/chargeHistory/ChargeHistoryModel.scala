@@ -20,7 +20,6 @@ import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
-
 case class ChargeHistoryModel(taxYear: String,
                               documentId: String,
                               documentDate: LocalDate,
@@ -31,14 +30,12 @@ case class ChargeHistoryModel(taxYear: String,
                               poaAdjustmentReason: Option[String]) {
 
   val reasonCode: String = {
-    if (poaAdjustmentReason.isDefined) "adjustment"
+    if (poaAdjustmentReason.isDefined) Adjustment.asString
     else
       reversalReason match {
-        case "amended return" => "amend"
-        case "Customer Request" => "request"
-        case error =>
-          Logger("application").error(s"Missing or non-matching history reason: $error found")
-          "unrecognisedReason"
+        case "amended return" => Amend.asString
+        case "Customer Request" => Request.asString
+        case _ => "unrecognisedReason"
       }
   }
 
@@ -50,4 +47,17 @@ case class ChargeHistoryModel(taxYear: String,
 
 object ChargeHistoryModel {
   implicit val format: Format[ChargeHistoryModel] = Json.format[ChargeHistoryModel]
+}
+
+sealed trait Reason {
+  val asString: String
+}
+case object Amend extends Reason {
+  override val asString: String = "amend"
+}
+case object Adjustment extends Reason {
+  override val asString: String = "adjustment"
+}
+case object Request extends Reason {
+  override val asString: String = "request"
 }

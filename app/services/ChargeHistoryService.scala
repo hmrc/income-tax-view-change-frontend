@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import models.chargeHistory._
 import models.financialDetails.DocumentDetail
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
