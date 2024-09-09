@@ -20,7 +20,8 @@ import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub, SessionDataStub}
+import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseConflictResponse, stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
+import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
@@ -86,6 +87,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
+
     s"return $OK with technical difficulties" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
@@ -99,6 +101,23 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
+
+    s"return $OK with empty black banner on the enter client utr page" in {
+      stubAuthorisedAgentUser(authorised = true)
+
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
+
+      val document: Document = Jsoup.parse(result.toString)
+      document.select(".govuk-header__content")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+        .text() shouldBe ""
+
+      result should have(
+        httpStatus(OK),
+        pageTitleAgentLogin("agent.confirmClient.heading")
+      )
+    }
+
     s"return $BAD_REQUEST" when {
       "no utr is submitted" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -156,10 +175,10 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
+
     s"redirect ($SEE_OTHER) to the next page" when {
-      "the utr submitted is valid" in {
+      "the utr submitted is valid and session data service post returns an OK response" in {
         val validUTR: String = "1234567890"
-        SessionDataStub.stubPostSessionDataResponse()
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
@@ -173,6 +192,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
@@ -185,35 +206,70 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
 
-      s"redirect ($SEE_OTHER) to the next page" when {
-        "the utr submitted contains spaces and is valid" in {
-          val validUTR: String = "1234567890"
-          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
-          SessionDataStub.stubPostSessionDataResponse()
-          stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
-          CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
-            status = OK,
-            response = CitizenDetailsStub.validCitizenDetailsResponse(
-              firstName = "testFirstName",
-              lastName = "testLastName",
-              nino = testNino
-            )
-          )
-          IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-            status = OK,
-            response = Json.toJson(singleBusinessResponse)
-          )
+      "the utr submitted contains spaces and is valid and session data service post returns an OK response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-          val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
 
-          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+        Then(s"I stub the session-data service call to return status $OK")
+        stubPostSessionDataResponseOkResponse()
 
-          Then("The enter clients utr page is returned with an error")
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
           )
-        }
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
+      }
+
+      "the utr submitted contains spaces and is valid and session data service post returns a CONFLICT response" in {
+        val validUTR: String = "1234567890"
+        val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+
+        Then(s"I stub the session-data service call to return status $CONFLICT")
+        stubPostSessionDataResponseConflictResponse()
+
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
+        Then("The enter clients utr page is returned with an error")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+        )
       }
     }
 
@@ -306,23 +362,57 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleIndividual(titleInternalServer, isErrorPage = true)
         )
       }
+      "the income tax session data post call returned an error" in {
+        val validUTR: String = "1234567890"
+        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
 
-      s"return $OK with empty black banner on the enter client utr page" in {
-        stubAuthorisedAgentUser(authorised = true)
+        Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
+        stubPostSessionDataResponseFailure()
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
-        val document: Document = Jsoup.parse(result.toString)
-        document.select(".govuk-header__content")
-          .select(".hmrc-header__service-name hmrc-header__service-name--linked")
-          .text() shouldBe ""
-
+        Then(s"ISE is shown with status $INTERNAL_SERVER_ERROR")
         result should have(
-          httpStatus(OK),
-          pageTitleAgentLogin("agent.confirmClient.heading")
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitleIndividual(titleInternalServer, isErrorPage = true)
+        )
+      }
+      "there was a failed future when posting data to the income tax session data service" in {
+        val validUTR: String = "1234567890"
+        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"ISE is shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitleIndividual(titleInternalServer, isErrorPage = true)
         )
       }
     }
   }
-
 }

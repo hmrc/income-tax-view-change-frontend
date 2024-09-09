@@ -21,10 +21,13 @@ import play.api.http.Status
 
 object SessionDataStub {
 
-  val sessionDataPostUrl: String = "http://localhost:30027/income-tax-session-data"
+  def stubPostSessionDataResponseOkResponse(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.OK, "")
 
-  def stubPostSessionDataResponse(): Unit =
-    WiremockHelper.stubPost(sessionDataPostUrl, Status.OK, "")
+  def stubPostSessionDataResponseConflictResponse(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.CONFLICT, "")
 
+  def stubPostSessionDataResponseFailure(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.INTERNAL_SERVER_ERROR, "")
 
 }

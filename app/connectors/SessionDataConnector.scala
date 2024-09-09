@@ -32,7 +32,7 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     http
       .get(url"$url")
@@ -41,7 +41,7 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)
 
