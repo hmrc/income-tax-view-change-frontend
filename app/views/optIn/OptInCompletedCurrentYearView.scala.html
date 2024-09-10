@@ -39,7 +39,7 @@
 @panel = {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
-        @messages("optin.completedOptIn.heading")
+            @messages("optin.completedOptIn.heading")
         </h1>
         <div class="govuk-panel__body">
         @messages(panelBody, model.startYear, model.endYear)
@@ -52,13 +52,13 @@
         <h3 class="govuk-heading-m" >@messages("optin.completedOptIn.cy.revisedDeadlines.title")</h3>
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.a")
-                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p1.b")</span>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.c")
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.a", model.startYear, model.endYear)
+                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p1.b", model.endYear)</span>
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.c", model.startYear, model.endYear)
             </li>
             <li>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p2.a")
-                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b")</span>
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p2.a", model.startYear, model.endYear)
+                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b", model.nextYear)</span>
             </li>
         </ul>
     </div>

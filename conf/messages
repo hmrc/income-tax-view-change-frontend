@@ -2219,11 +2219,11 @@ optin.completedOptIn.heading                        = Opt In completed
 
 optin.completedOptIn.cy.heading.desc                = You are now reporting quarterly from {0} to {1} tax year onwards
 optin.completedOptIn.cy.revisedDeadlines.title      = Your revised deadlines
-optin.completedOptIn.cy.revisedDeadlines.p1.a       = Your next quarterly update for the 2024 to 2025 tax year is due by
-optin.completedOptIn.cy.revisedDeadlines.p1.b       = 5 February 2025
-optin.completedOptIn.cy.revisedDeadlines.p1.c       = for the quarterly period 6 October 2024 to 5 January 2025
-optin.completedOptIn.cy.revisedDeadlines.p2.a       = Your tax return for the 2024 to 2025 tax year is due by
-optin.completedOptIn.cy.revisedDeadlines.p2.b       = 31 January 2026
+optin.completedOptIn.cy.revisedDeadlines.p1.a       = Your next quarterly update for the {0} to {1} tax year is due by
+optin.completedOptIn.cy.revisedDeadlines.p1.b       = 5 February {0}
+optin.completedOptIn.cy.revisedDeadlines.p1.c       = for the quarterly period 6 October {0} to 5 January {1}
+optin.completedOptIn.cy.revisedDeadlines.p2.a       = Your tax return for the {0} to {1} tax year is due by
+optin.completedOptIn.cy.revisedDeadlines.p2.b       = 31 January {0}
 optin.completedOptIn.cy.upcomingUpdates             = View your upcoming updates
 optin.completedOptIn.cy.reportingFrequency.a        = You can decide at any time to opt out of reporting quarterly for all your businesses on
 optin.completedOptIn.cy.reportingFrequency.b        = your reporting frequency
