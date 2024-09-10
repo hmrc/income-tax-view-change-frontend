@@ -29,16 +29,6 @@ case class ChargeHistoryModel(taxYear: String,
                               reversalReason: String,
                               poaAdjustmentReason: Option[String]) {
 
-  val reasonCode: String = {
-    if (poaAdjustmentReason.isDefined) Adjustment.asString
-    else
-      reversalReason match {
-        case "amended return" => Amend.asString
-        case "Customer Request" => Request.asString
-        case _ => "unrecognisedReason"
-      }
-  }
-
   private val POA1: String = "ITSA- POA 1"
   private val POA2: String = "ITSA - POA 2"
 
@@ -60,4 +50,7 @@ case object Adjustment extends Reason {
 }
 case object Request extends Reason {
   override val asString: String = "request"
+}
+case object Create extends Reason {
+  override val asString: String = "create"
 }

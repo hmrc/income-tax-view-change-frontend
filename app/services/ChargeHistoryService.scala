@@ -41,28 +41,45 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
-  def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): AdjustmentHistoryModel = {
+  def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): Either[Throwable, AdjustmentHistoryModel] = {
     chargeHistory match {
       case Nil =>
-        val creation = AdjustmentModel(amount = documentDetail.originalAmount, adjustmentDate = Some(documentDetail.documentDate), reasonCode = "create")
-        AdjustmentHistoryModel(creation, List.empty)
+        val creation = AdjustmentModel(amount = documentDetail.originalAmount, adjustmentDate = Some(documentDetail.documentDate), reasonCode = Create)
+        Right(AdjustmentHistoryModel(creation, List.empty))
       case _ =>
-        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = "create")
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.reversalDate), documentDetail.originalAmount)
-        AdjustmentHistoryModel(creation, poaAdjustmentHistory.sortBy(_.adjustmentDate))
+        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = None, reasonCode = Create)
+        adjustments(chargeHistory.sortBy(_.reversalDate), documentDetail.originalAmount) match {
+          case Right(value) => Right(AdjustmentHistoryModel(creation, value.sortBy(_.adjustmentDate)))
+          case Left(error) => Left(error)
+        }
     }
   }
+  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): Either[Throwable, List[AdjustmentModel]] = {
+    chargeHistory.foldLeft[Either[Throwable, (BigDecimal, List[AdjustmentModel])]](Right((finalAmount, List.empty[AdjustmentModel]))) {
+      case (Left(err), _) => Left(err) // If there's already an error, propagate it
+      case (Right((nextAmount, adjList)), current) =>
+        getReasonCode(current) match {
+          case Left(error) => Left(error) // If getReasonCode returns an error, propagate it
+          case Right(reasonCode) =>
+            val newAdjustment = AdjustmentModel(
+              adjustmentDate = Some(current.reversalDate),
+              reasonCode = reasonCode, // Use the successful reasonCode
+              amount = nextAmount
+            )
+            Right((current.totalAmount, newAdjustment :: adjList))
+        }
+    }.map(_._2)
+  }
 
-  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
-    chargeHistory.foldRight((finalAmount, List.empty[AdjustmentModel])) { (current, acc) =>
-      val (nextAmount, adjList) = acc
-      val newAdjustment = AdjustmentModel(
-        adjustmentDate = Some(current.reversalDate),
-        reasonCode = current.reasonCode,
-        amount = nextAmount
-      )
-      (current.totalAmount, newAdjustment :: adjList)
-    }._2
+  def getReasonCode(chargeHistoryModel: ChargeHistoryModel): Either[Throwable, Reason] = {
+    chargeHistoryModel.poaAdjustmentReason match {
+      case Some(_) => Right(Adjustment)
+      case None => chargeHistoryModel.reversalReason match {
+        case "amended return" => Right(Amend)
+        case "Customer Request" => Right(Request)
+        case _ => Left( new Exception("Invalid value in reversalReason field"))
+      }
+    }
   }
 
 }

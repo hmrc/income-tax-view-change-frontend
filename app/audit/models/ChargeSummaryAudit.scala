@@ -24,6 +24,7 @@ import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
+import services.ChargeHistoryService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities._
 
@@ -31,7 +32,7 @@ import utils.Utilities._
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                               paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                              isMFADebit: Boolean = false, taxYear: Int) extends ExtendedAuditModel {
+                              isMFADebit: Boolean = false, taxYear: Int, chargeHistoryService: ChargeHistoryService) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")
@@ -110,7 +111,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
 
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
-    "description" -> getChargeTypeFromKey(Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode}.${docDateDetail.documentDetail.getChargeTypeKey()}")),
+    "description" -> getChargeTypeFromKey(
+      Some(s"chargeSummary.chargeHistory.${chargeHistoryService.getReasonCode(chargeHistory)}.${docDateDetail.documentDetail.getChargeTypeKey()}")),
     "amount" -> chargeHistory.totalAmount
   )
 

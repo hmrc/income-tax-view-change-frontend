@@ -23,5 +23,5 @@ case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
 
 case class AdjustmentModel(amount: BigDecimal,
                       adjustmentDate: Option[LocalDate],
-                           reasonCode: String)
+                           reasonCode: Reason)
 

@@ -153,30 +153,35 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
+          chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail) match {
+            case Right(value) =>
+              val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+                currentDate = dateService.getCurrentDate,
+                documentDetailWithDueDate = documentDetailWithDueDate,
+                backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+                gatewayPage = sessionGatewayPage,
+                paymentBreakdown = paymentBreakdown,
+                paymentAllocations = paymentAllocations,
+                payments = paymentsForAllYears,
+                chargeHistoryEnabled = isEnabled(ChargeHistory),
+                paymentAllocationEnabled = paymentAllocationEnabled,
+                latePaymentInterestCharge = isLatePaymentCharge,
+                codingOutEnabled = isEnabled(CodingOut),
+                btaNavPartial = user.btaNavPartial,
+                isAgent = isAgent,
+                isMFADebit = isMFADebit,
+                documentType = documentDetailWithDueDate.documentDetail.getDocType,
+                adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
+              )
+              mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
+                case Right(_) =>
+                  Ok(chargeSummaryView(viewModel))
+                case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+              }
+            case Left(value) => onError(value.getMessage, isAgent, showInternalServerError = true)
 
-          val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
-            currentDate = dateService.getCurrentDate,
-            documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-            gatewayPage = sessionGatewayPage,
-            paymentBreakdown = paymentBreakdown,
-            paymentAllocations = paymentAllocations,
-            payments = paymentsForAllYears,
-            chargeHistoryEnabled = isEnabled(ChargeHistory),
-            paymentAllocationEnabled = paymentAllocationEnabled,
-            latePaymentInterestCharge = isLatePaymentCharge,
-            codingOutEnabled = isEnabled(CodingOut),
-            btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent,
-            isMFADebit = isMFADebit,
-            documentType = documentDetailWithDueDate.documentDetail.getDocType,
-            adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
-          )
-          mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
-            case Right(_) =>
-              Ok(chargeSummaryView(viewModel))
-            case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
           }
+
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
@@ -225,7 +230,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
-      taxYear = taxYear
+      taxYear = taxYear,
+      chargeHistoryService = chargeHistoryService
     ))
   }
 }
