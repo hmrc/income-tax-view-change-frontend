@@ -17,6 +17,7 @@
 package utils
 
 import config.AgentItvcErrorHandler
+import config.featureswitch.UserSessionApiFS
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
@@ -26,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait SessionCookieUtil {
+trait SessionCookieUtil extends UserSessionApiFS {
   self =>
 
   val sessionDataService: SessionDataService
@@ -34,14 +35,18 @@ trait SessionCookieUtil {
 
   def handleSessionCookies(sessionCookieData: SessionCookieData)(codeBlock: Seq[(String, String)] => Future[Result])
                           (implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Future[Result] = {
-    sessionDataService.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
-      case Left(value: SessionDataPostFailure) =>
-        Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
-        Future.successful(itvcErrorHandler.showInternalServerError())
-      case Right(value: SessionDataPostSuccess) =>
-        Logger("application").info(s"[Agent] Posting user session data was successful. Status: ${value.status}")
-        codeBlock(sessionCookieData.toSessionCookieSeq)
+    if (getUserSessionApiFS) {
+      sessionDataService.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
+        case Left(value: SessionDataPostFailure) =>
+          Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+        case Right(value: SessionDataPostSuccess) =>
+          Logger("application").info(s"[Agent] Posting user session data was successful. Status: ${value.status}")
+          codeBlock(sessionCookieData.toSessionCookieSeq)
+      }
+    } else {
+      Logger("application").info(s"[Agent] GetUserSessionApi feature switch was off so session data has not been posted to the session-data service")
+      codeBlock(sessionCookieData.toSessionCookieSeq)
     }
   }
-
 }
