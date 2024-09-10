@@ -149,7 +149,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, latencyYearOneStatus: Boolean, latencyYearTwoStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
+  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel,
+                                          latencyYearOneStatus: Boolean,
+                                          latencyYearTwoStatus: Boolean,
+                                          crystallisationTaxYear1: Option[Boolean],
                                           crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -168,8 +171,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     )
   }
 
-  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, latencyYearOneStatus: Boolean, latencyYearTwoStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
+                                                latencyYearOneStatus: Boolean,
+                                                latencyYearTwoStatus: Boolean,
+                                                crystallisationTaxYear1: Option[Boolean],
+                                                crystallisationTaxYear2: Option[Boolean],
+                                                incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
