@@ -33,7 +33,7 @@
 @(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @panelBody = @{
-    "optin.completedOptIn.heading.line1"
+    "optin.completedOptIn.cy.heading.desc"
 }
 
 @panel = {
@@ -47,34 +47,49 @@
     </div>
 }
 
-@yourNextUpdatesDue = {
+@revisedDeadlines = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.nextUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.nextUpdate.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.nextUpdate.desc2")</p>
+        <h3 class="govuk-heading-m" >@messages("optin.completedOptIn.cy.revisedDeadlines.title")</h3>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.a")
+                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p1.b")</span>
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.c")
+            </li>
+            <li>
+                @messages("optin.completedOptIn.cy.revisedDeadlines.p2.a")
+                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b")</span>
+            </li>
+        </ul>
+    </div>
+}
+
+@upcomingUpdates = {
+    <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.upcomingUpdates")</p>
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.reportingFrequency")</p>
     </div>
 }
 
 @submitUpdatesInSoftware = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.submitUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.submitUpdates.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.submitUpdates.desc2")</p>
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.submitUpdates.desc1")</p>
     </div>
 }
 
 @futureReporitng = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
-        <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc1")</p>
+        <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.cy.futureReporting")</h2>
+        <p class="govuk-body">@messages("optin.completedOptIn.cy.futureReporting.desc1")</p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
-            <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
+            <li>@messages("optin.completedOptIn.cy.futureReporting.p1")</li>
+            <li>@messages("optin.completedOptIn.cy.futureReporting.p2")</li>
         </ul>
         @exampleScenarioInset
-        <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
+        <p class="govuk-body">@messages("optin.completedOptIn.cy.futureReporting.desc2")</p>
 
-        <p class="govuk-body">@messages("optin.completedOptIn.incomeThreshold.desc")</p>
+        <p class="govuk-body">@messages("optin.completedOptIn.cy.incomeThreshold.desc")</p>
     </div>
 }
 
@@ -88,7 +103,8 @@
     btaNavPartial = user.btaNavPartial,
 ) {
     @panel
-    @yourNextUpdatesDue
+    @revisedDeadlines
+    @upcomingUpdates
     @submitUpdatesInSoftware
     @futureReporitng
 }

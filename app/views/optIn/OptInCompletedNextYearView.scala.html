@@ -33,7 +33,7 @@
 @(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @panelBody = @{
-    "optin.completedOptIn.heading.line1"
+    "optin.completedOptIn.ny.heading.desc"
 }
 
 @panel = {
@@ -49,37 +49,37 @@
 
 @yourNextUpdatesDue = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.nextUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.nextUpdate.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.nextUpdate.desc2")</p>
+        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.nextUpdates")</h2>
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.ny.nextUpdate.desc1")</p>
+        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.ny.nextUpdate.desc2")</p>
     </div>
 }
 
 @submitUpdatesInSoftware = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.submitUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.submitUpdates.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.submitUpdates.desc2")</p>
+        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.submitUpdates")</h2>
+        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.ny.submitUpdates.desc1")</p>
+        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.ny.submitUpdates.desc2")</p>
     </div>
 }
 
 @futureReporitng = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
-        <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc1")</p>
+        <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.ny.futureReporting")</h2>
+        <p class="govuk-body">@messages("optin.completedOptIn.ny.futureReporting.desc1")</p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
-            <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
+            <li>@messages("optin.completedOptIn.ny.futureReporting.p1")</li>
+            <li>@messages("optin.completedOptIn.ny.futureReporting.p2")</li>
         </ul>
         @exampleScenarioInset
-        <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
+        <p class="govuk-body">@messages("optin.completedOptIn.ny.futureReporting.desc2")</p>
 
-        <p class="govuk-body">@messages("optin.completedOptIn.incomeThreshold.desc")</p>
+        <p class="govuk-body">@messages("optin.completedOptIn.ny.incomeThreshold.desc")</p>
     </div>
 }
 
 @exampleScenarioInset = @{
-    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.futureReporting.scenario", model.startYear, model.endYear, model.nextYear))))
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.ny.futureReporting.scenario", model.startYear, model.endYear, model.nextYear))))
 }
 
 @mainTemplate(
