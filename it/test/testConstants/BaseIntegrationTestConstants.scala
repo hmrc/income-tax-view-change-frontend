@@ -22,7 +22,7 @@ import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyDetails, QuarterTypeElection, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsDetail, QuarterTypeElection, QuarterTypeStandard}
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -145,8 +145,10 @@ object BaseIntegrationTestConstants {
     tradingStartDate = Some(testDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -161,8 +163,10 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -177,8 +181,10 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearTwoIsQuarterly = Some(true),
-    latencyYearOneIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),

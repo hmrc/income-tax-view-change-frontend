@@ -161,8 +161,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearOneIsQuarterly = Some(latencyYearOneStatus),
-      latencyYearTwoIsQuarterly = Some(latencyYearTwoStatus),
+      latencyYears = LatencyYearsDetail(
+        firstYear = Some(latencyYearOneStatus),
+        secondYear = Some(latencyYearTwoStatus)
+      ),
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
@@ -184,8 +186,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearOneIsQuarterly = Some(latencyYearOneStatus),
-      latencyYearTwoIsQuarterly = Some(latencyYearTwoStatus),
+      latencyYears = LatencyYearsDetail(
+        firstYear = Some(latencyYearOneStatus),
+        secondYear = Some(latencyYearTwoStatus)
+      ),
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
@@ -225,9 +229,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def handleLatencyAndCrystallisationDetails(
-                                    desiredIncomeSource: BusinessDetailsModel,
-                                    latencyDetails: LatencyDetails
-                                  )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                                      desiredIncomeSource: BusinessDetailsModel,
+                                                      latencyDetails: LatencyDetails
+                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     for {
       (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
@@ -252,6 +256,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         ))
     }
   }
+
 
   private def getManageIncomeSourceViewModelProperty(
                                                       sources: IncomeSourceDetailsModel,

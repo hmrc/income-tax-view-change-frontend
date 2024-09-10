@@ -18,7 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails.{LatencyDetails, QuarterReportingType}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsDetail, QuarterReportingType}
 
 import java.time.LocalDate
 
@@ -28,8 +28,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
                                               isTraditionalAccountingMethod: Boolean,
-                                              latencyYearOneIsQuarterly: Option[Boolean],
-                                              latencyYearTwoIsQuarterly: Option[Boolean],
+                                              latencyYears: LatencyYearsDetail,
                                               taxYearOneCrystallised: Option[Boolean],
                                               taxYearTwoCrystallised: Option[Boolean],
                                               latencyDetails: Option[LatencyDetails],
@@ -52,7 +51,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def shouldShowTaxYears: Boolean = {
-    if(latencyYearTwoIsQuarterly.get && latencyDetails.isDefined) true else false
+    latencyYears.secondYear.getOrElse(false) && latencyDetails.isDefined
   }
 
 }

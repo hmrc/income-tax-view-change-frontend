@@ -135,57 +135,58 @@
     }
 }
 
-@getTaxYears = @{
-    val taxYearRows = Seq(
-        if(!viewModel.taxYearOneCrystallised.get) {
-            Some(SummaryListRow(
-                key = Key(
-                    content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
-                ),
-                value = Value(
-                    content = if(!viewModel.taxYearOneCrystallised.get)
-                        Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)+".graceperiod"))
-                    else
-                        Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
-                ),
-                actions = if(viewModel.latencyYearOneIsQuarterly.get) Some(Actions(
-                    items = Seq(
-                        ActionItem(
-                            href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
-                            content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-link-1")
+    @getTaxYears = @{
+        val taxYearRows = Seq(
+            if (!viewModel.taxYearOneCrystallised.get) {
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
+                    ),
+                    value = Value(
+                        content = if (!viewModel.taxYearOneCrystallised.get)
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1) + ".graceperiod"))
+                        else
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
+                    ),
+                    actions = if (viewModel.latencyYears.firstYear.get) Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "change-link-1")
+                            )
                         )
-                    )
-                )) else None
-            ))
-        } else None,
+                    )) else None
+                ))
+            } else None,
 
-        if(!viewModel.taxYearTwoCrystallised.get) {
-            Some(SummaryListRow(
-                key = Key(
-                    content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
-                ),
-                value = Value(
-                    content = if(!viewModel.taxYearTwoCrystallised.get)
-                        HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)+".graceperiod"))
-                    else
-                        HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
-                ),
-                actions = if(viewModel.latencyYearTwoIsQuarterly.get) Some(Actions(
-                    items = Seq(
-                        ActionItem(
-                            href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
-                            content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-link-2")
+            if (!viewModel.taxYearTwoCrystallised.get) {
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
+                    ),
+                    value = Value(
+                        content = if (!viewModel.taxYearTwoCrystallised.get)
+                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2) + ".graceperiod"))
+                        else
+                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
+                    ),
+                    actions = if (viewModel.latencyYears.secondYear.get) Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "change-link-2")
+                            )
                         )
-                    )
-                )) else None
-            ))
-        } else None
-    )
+                    )) else None
+                ))
+            } else None
+        )
 
-    taxYearRows.flatten
-}
+        taxYearRows.flatten
+    }
+
 
 
 @getQuarterlyType = @{
@@ -240,7 +241,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.latencyYearTwoIsQuarterly && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
+    @if(viewModel.latencyYears.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>

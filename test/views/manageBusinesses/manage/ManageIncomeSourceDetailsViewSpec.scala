@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyYear, LatencyYearsDetail, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -84,8 +84,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -100,8 +102,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -116,8 +120,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = None,
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = None
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails4),
@@ -133,8 +139,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = None,
-    latencyYearTwoIsQuarterly = Some(false),
+    latencyYears = LatencyYearsDetail(
+      firstYear = None,
+      secondYear = Some(false)
+    ),
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
@@ -149,8 +157,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -165,8 +175,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails4),
@@ -181,8 +193,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -197,8 +211,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = None,
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = None
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetailsCYUnknown),
@@ -213,8 +229,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = None,
-    latencyYearTwoIsQuarterly = Some(false),
+    latencyYears = LatencyYearsDetail(
+      firstYear = None,
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
@@ -229,8 +247,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -245,8 +265,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = Some(true),
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = Some(true),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
@@ -261,8 +283,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = Some(true),
-    latencyYearTwoIsQuarterly = None,
+    latencyYears = LatencyYearsDetail(
+      firstYear = Some(true),
+      secondYear = None
+    ),
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetailsCYUnknown),
@@ -277,8 +301,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYearOneIsQuarterly = None,
-    latencyYearTwoIsQuarterly = Some(false),
+    latencyYears = LatencyYearsDetail(
+      firstYear = None,
+      secondYear = Some(true)
+    ),
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
