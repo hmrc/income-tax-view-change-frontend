@@ -57,6 +57,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  def isReviewAndReconcileDebitCharge(documentId: String): Boolean = {
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && ReviewAndReconcileDebitUtils.isReviewAndReconcileMainTransaction()
+    }
+  }
+
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
 
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {

@@ -25,10 +25,10 @@ import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, ReviewAndReconcilePoa}
 import models.core.Nino
 import models.financialDetails.MfaDebitUtils.filterMFADebits
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
@@ -161,7 +161,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
-                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId)))
+                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId))
+            )
         }.filter(documentDetailWithDueDate => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
@@ -178,8 +179,14 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
+        val reconciliationDebitsWithDueDates: List[DocumentDetailWithDueDate] =
+          financialDetails.getPairedDocumentDetails() flatMap {
+            case (_, fd) if fd.isReconciliationDebitCharge(isEnabled(ReviewAndReconcilePoa)) =>
+              documentDetailsWithDueDates.filter(fd.transactionId.contains)
+            case _ => Nil
+          }
 
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut ++ reconciliationDebitsWithDueDates)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")

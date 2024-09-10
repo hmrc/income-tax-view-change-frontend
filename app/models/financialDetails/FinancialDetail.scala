@@ -48,6 +48,10 @@ case class FinancialDetail(taxYear: String,
 
   lazy val hasAccruedInterest: Boolean = accruedInterest.isDefined
 
+  lazy val isReconciliationDebitCharge: Boolean => Boolean = reviewAndReconcilePoaEnabled =>
+    if (reviewAndReconcilePoaEnabled) mainTransaction.exists(validMainTransactionTypes)
+    else false
+
   lazy val dunningLocks: Seq[SubItem] = {
     items.fold(Seq.empty[SubItem]) { subItems =>
       subItems.filter(_.dunningLock.contains("Stand over order"))
