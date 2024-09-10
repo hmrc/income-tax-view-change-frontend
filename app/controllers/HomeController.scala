@@ -57,6 +57,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+
+    val date = dateService.getCurrentDate
+    Logger("application").error(s"TimeMachine::CurrentDate => $date")
     implicit user =>
       handleShowRequest(isAgent = false, origin)
   }

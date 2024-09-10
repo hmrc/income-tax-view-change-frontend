@@ -17,8 +17,10 @@
 package services
 
 import com.google.inject.ImplementedBy
+import com.typesafe.config.ConfigFactory
 import config.{FrontendAppConfig, TimeMachine}
 import models.incomeSourceDetails.TaxYear
+import play.api.Logger
 
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
@@ -31,7 +33,17 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   override protected def now(): LocalDate = LocalDate.now()
 
   override def getCurrentDate: LocalDate = {
-    if (getTimeMachineConfig.isTimeMachineEnabled) {
+    // Attempt to reload Config everytime
+    // Q1: Is that thread safe?
+    // Q2: Performance ???
+
+    val cfg = ConfigFactory.load(frontendAppConfig.config.underlying)
+    val newConfig = cfg.getConfig("feature-switch")
+    val fsTimeMachine = newConfig.getString("enable-time-machine")
+    Logger("application").info(s"TimeMachine::Config -> ${fsTimeMachine}")
+
+    if ( fsTimeMachine.toBoolean){
+    //if (getTimeMachineConfig.isTimeMachineEnabled) {
       now()
         .plusYears(getTimeMachineConfig.addYears)
         .plusDays(getTimeMachineConfig.addDays)
