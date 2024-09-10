@@ -66,15 +66,30 @@
 
 @upcomingUpdates = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.upcomingUpdates")</p>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.reportingFrequency")</p>
+        <p id="submit-tax-p1" class="govuk-body" >
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.cy.upcomingUpdates")
+            </a>
+        </p>
+        <p id="submit-tax-p1" class="govuk-body" >
+            @messages("optin.completedOptIn.cy.reportingFrequency.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.cy.reportingFrequency.b")
+            </a>
+            @messages("optin.completedOptIn.cy.reportingFrequency.c")
+        </p>
     </div>
 }
 
 @submitUpdatesInSoftware = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.submitUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.cy.submitUpdates.desc1")</p>
+        <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.cy.submitUpdates")</h2>
+        <p id="submit-tax-p1" class="govuk-body" >
+            @messages("optin.completedOptIn.cy.submitUpdates.desc1.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.cy.submitUpdates.desc1.b")
+            </a>
+        </p>
     </div>
 }
 
@@ -89,12 +104,17 @@
         @exampleScenarioInset
         <p class="govuk-body">@messages("optin.completedOptIn.cy.futureReporting.desc2")</p>
 
-        <p class="govuk-body">@messages("optin.completedOptIn.cy.incomeThreshold.desc")</p>
+        <p class="govuk-body">
+            @messages("optin.completedOptIn.cy.incomeThreshold.desc.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.cy.incomeThreshold.desc.b")
+            </a>
+        </p>
     </div>
 }
 
 @exampleScenarioInset = @{
-    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.futureReporting.scenario", model.startYear, model.endYear, model.nextYear))))
+    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.completedOptIn.cy.futureReporting.scenario", model.startYear, model.endYear, model.nextYear))))
 }
 
 @mainTemplate(
