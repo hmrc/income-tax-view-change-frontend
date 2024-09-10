@@ -139,7 +139,7 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
     isEnabled(CodingOut),
     isEnabled(MFACreditsAndDebits)
   ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _, _) =>
+    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)
         .filter(_.relevantDueDate.isDefined)
     case _ => Nil

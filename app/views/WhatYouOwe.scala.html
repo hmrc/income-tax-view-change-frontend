@@ -375,6 +375,7 @@
         <div>
 
             @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+            "AAAAAAAAAAAAAA"
                 <div id="payments-due-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
@@ -451,40 +452,6 @@
                         </tbody>
                     </table>
                 </div>
-            }
-            @if(whatYouOweChargesList.hasReconciliationChargesWithMainTransactionCodes) {
-            <div id="reconciliation-debit-charges">
-                <h2>@getMessage("reconciliation-debit-charges.heading")</h2>
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("reconciliation-debit-charges.caption")</caption>
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
-                        <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>
-                        <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-                        <th scope="col" class="govuk-table__header govuk-!-text-align-right">@getMessage("tableHead.amount-due")</th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    @for((charge, index) <- whatYouOweChargesList.reconciliationDebitCharges.getOrElse(Nil).zipWithIndex) {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">
-                            @charge.dueDate.map(_.toLongDateShort).getOrElse("N/A")
-                        </td>
-                        <td class="govuk-table__cell govuk-!-width-one-half">
-                            @getMessage(charge.documentDetail.getChargeTypeKey(codedOutEnabled = codingOutEnabled))
-                        </td>
-                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                            @charge.documentDetail.taxYear
-                        </td>
-                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">
-                            @charge.documentDetail.remainingToPayByChargeOrLpi.toCurrency
-                        </td>
-                    </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
             }
             @if(!whatYouOweChargesList.isChargesListEmpty) {
                 @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
