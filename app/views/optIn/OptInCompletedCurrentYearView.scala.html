@@ -96,7 +96,7 @@
 @futureReporitng = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.cy.futureReporting")</h2>
-        <p class="govuk-body">@messages("optin.completedOptIn.cy.futureReporting.desc1")</p>
+        <p class="govuk-body">@messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("optin.completedOptIn.cy.futureReporting.p1")</li>
             <li>@messages("optin.completedOptIn.cy.futureReporting.p2")</li>
