@@ -50,15 +50,33 @@
 @yourNextUpdatesDue = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.nextUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.ny.nextUpdate.desc1")</p>
-        <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.ny.nextUpdate.desc2")</p>
+        <p id="submit-tax-p1" class="govuk-body" >
+            @messages("optin.completedOptIn.ny.nextUpdate.desc1.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.ny.nextUpdate.desc1.b")
+            </a>
+            @messages("optin.completedOptIn.ny.nextUpdate.desc1.c")
+        </p>
+        <p id="submit-tax-p2" class="govuk-body" >
+            @messages("optin.completedOptIn.ny.nextUpdate.desc2.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.ny.nextUpdate.desc2.b")
+            </a>
+            @messages("optin.completedOptIn.ny.nextUpdate.desc2.c")
+        </p>
     </div>
 }
 
 @submitUpdatesInSoftware = {
     <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.submitUpdates")</h2>
-        <p id="submit-tax-p1" class="govuk-body" >@messages("optin.completedOptIn.ny.submitUpdates.desc1")</p>
+        <p id="submit-tax-p1" class="govuk-body">
+            @messages("optin.completedOptIn.ny.submitUpdates.desc1.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.ny.submitUpdates.desc1.b")
+            </a>
+
+        </p>
         <p id="submit-tax-p2" class="govuk-body" >@messages("optin.completedOptIn.ny.submitUpdates.desc2")</p>
     </div>
 }
@@ -74,7 +92,12 @@
         @exampleScenarioInset
         <p class="govuk-body">@messages("optin.completedOptIn.ny.futureReporting.desc2")</p>
 
-        <p class="govuk-body">@messages("optin.completedOptIn.ny.incomeThreshold.desc")</p>
+        <p class="govuk-body">
+            @messages("optin.completedOptIn.ny.incomeThreshold.desc.a")
+            <a href="#" class="govuk-link govuk-body">
+                @messages("optin.completedOptIn.ny.incomeThreshold.desc.b")
+            </a>
+        </p>
     </div>
 }
 
