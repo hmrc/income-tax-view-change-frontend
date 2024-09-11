@@ -150,10 +150,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel,
-                                          latencyYearOneStatus: Boolean,
-                                          latencyYearTwoStatus: Boolean,
-                                          crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                          latencyYearsQuarterly: LatencyYearsQuarterly,
+                                          latencyYearsCrystallised: LatencyYearsCrystallised)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -162,12 +160,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       latencyYearsQuarterly = LatencyYearsQuarterly(
-        firstYear = Some(latencyYearOneStatus),
-        secondYear = Some(latencyYearTwoStatus)
+        firstYear = latencyYearsQuarterly.firstYear,
+        secondYear = latencyYearsQuarterly.secondYear
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
-        firstYear = crystallisationTaxYear1,
-        secondYear = crystallisationTaxYear2
+        firstYear = latencyYearsCrystallised.firstYear,
+        secondYear = latencyYearsCrystallised.secondYear
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
@@ -176,10 +174,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
-                                                latencyYearOneStatus: Boolean,
-                                                latencyYearTwoStatus: Boolean,
-                                                crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean],
+                                                latencyYearsQuarterly: LatencyYearsQuarterly,
+                                                latencyYearsCrystallised: LatencyYearsCrystallised,
                                                 incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -189,12 +185,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       latencyYearsQuarterly = LatencyYearsQuarterly(
-        firstYear = Some(latencyYearOneStatus),
-        secondYear = Some(latencyYearTwoStatus)
+        firstYear = latencyYearsQuarterly.firstYear,
+        secondYear = latencyYearsQuarterly.secondYear
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
-        firstYear = crystallisationTaxYear1,
-        secondYear = crystallisationTaxYear2
+        firstYear = latencyYearsCrystallised.firstYear,
+        secondYear = latencyYearsCrystallised.secondYear
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
@@ -221,10 +217,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case None =>
             Future.successful(Right(variableViewModelSEBusiness(
               incomeSource = desiredIncomeSource,
-              latencyYearOneStatus = false,
-              latencyYearTwoStatus = false,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None
+              latencyYearsQuarterly = LatencyYearsQuarterly(
+                firstYear = Some(false),
+                secondYear = Some(false)
+              ),
+              latencyYearsCrystallised = LatencyYearsCrystallised(
+                firstYear = None,
+                secondYear = None,
+              )
             )))
         }
       case None =>
@@ -244,19 +244,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       case None =>
         Right(variableViewModelSEBusiness(
           incomeSource = desiredIncomeSource,
-          latencyYearOneStatus = latencyYearOneStatus,
-          latencyYearTwoStatus = latencyYearTwoStatus,
-          crystallisationTaxYear1 = None,
-          crystallisationTaxYear2 = None
+          latencyYearsQuarterly = LatencyYearsQuarterly(
+            firstYear = Some(latencyYearOneStatus),
+            secondYear = Some(latencyYearTwoStatus)
+          ),
+          latencyYearsCrystallised = LatencyYearsCrystallised(
+            firstYear = None,
+            secondYear = None
+          )
         ))
 
       case Some(crystallisationList: List[Boolean]) =>
         Right(variableViewModelSEBusiness(
           incomeSource = desiredIncomeSource,
-          latencyYearOneStatus = latencyYearOneStatus,
-          latencyYearTwoStatus = latencyYearTwoStatus,
-          crystallisationTaxYear1 = crystallisationList.headOption,
-          crystallisationTaxYear2 = crystallisationList.lastOption
+          latencyYearsQuarterly = LatencyYearsQuarterly(
+            firstYear = Some(latencyYearOneStatus),
+            secondYear = Some(latencyYearTwoStatus)
+          ),
+          latencyYearsCrystallised = LatencyYearsCrystallised(
+            firstYear = crystallisationList.headOption,
+            secondYear = crystallisationList.lastOption
+          )
         ))
     }
   }
@@ -288,10 +296,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           case None =>
             Future.successful(Right(variableViewModelPropertyBusiness(
               incomeSource = desiredIncomeSource,
-              latencyYearOneStatus = false,
-              latencyYearTwoStatus = false,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None,
+              latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+              latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
               incomeSourceType = incomeSourceType
             )))
 
@@ -314,19 +320,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       case None =>
         Right(variableViewModelPropertyBusiness(
           incomeSource = desiredIncomeSource,
-          latencyYearOneStatus = latencyYearOneStatus,
-          latencyYearTwoStatus = latencyYearTwoStatus,
-          crystallisationTaxYear1 = None,
-          crystallisationTaxYear2 = None,
+          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+          latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
           incomeSourceType = incomeSourceType
         ))
       case Some(crystallisationList: List[Boolean]) =>
         Right(variableViewModelPropertyBusiness(
           incomeSource = desiredIncomeSource,
-          latencyYearOneStatus = latencyYearOneStatus,
-          latencyYearTwoStatus = latencyYearTwoStatus,
-          crystallisationTaxYear1 = crystallisationList.headOption,
-          crystallisationTaxYear2 = crystallisationList.lastOption,
+          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+          latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
           incomeSourceType = incomeSourceType
         ))
     }
