@@ -1831,6 +1831,7 @@ incomeSources.manage.business-manage-details.cash-accounting          =   Cash b
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
+incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2026, you could be required to report quarterly.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method

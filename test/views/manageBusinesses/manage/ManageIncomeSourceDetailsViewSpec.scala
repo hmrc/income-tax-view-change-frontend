@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val opensInNewTabText = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
   val reportingFrequencyText = messages("incomeSources.manage.business-manage-details.reportingFrequency")
-
+  val newBusinessInsetText = messages("incomeSources.manage.business-manage-details.insetText")
   def reportingFrequencyLink(isAgent: Boolean): String = {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
@@ -281,6 +281,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the whole page" in new Setup(false) {
 
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
@@ -317,6 +319,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the whole page with unknowns and no change links" in new Setup2(false) {
 
+      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
@@ -339,6 +343,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new Setup(true) {
+
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -385,6 +391,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the whole page" in new ukSetup(false) {
 
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
@@ -412,6 +420,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
+      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -429,6 +438,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new ukSetup(true) {
+
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -457,6 +468,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
+      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -475,6 +487,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new foreignSetup(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -503,6 +516,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
+      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -520,6 +534,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new foreignSetup(true) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -548,6 +563,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
+      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
