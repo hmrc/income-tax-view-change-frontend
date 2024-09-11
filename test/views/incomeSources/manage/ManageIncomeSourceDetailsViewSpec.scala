@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsDetail, QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -74,7 +74,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
     ),
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(false)
     ),
@@ -114,7 +114,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
     ),
@@ -134,7 +134,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(false)
     ),
@@ -154,7 +154,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(true)
     ),
@@ -174,7 +174,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(false)
     ),

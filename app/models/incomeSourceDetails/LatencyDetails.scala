@@ -25,7 +25,7 @@ case class LatencyDetails(latencyEndDate: LocalDate,
                           taxYear2: String, latencyIndicator2: String)
 
 
-case class LatencyYearsDetail(firstYear: Option[Boolean], secondYear:Option[Boolean])
+case class LatencyYearsQuarterly(firstYear: Option[Boolean], secondYear:Option[Boolean])
 
 case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear:Option[Boolean])
 

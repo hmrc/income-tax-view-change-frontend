@@ -22,7 +22,7 @@ import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsDetail, QuarterTypeElection, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeElection, QuarterTypeStandard}
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -145,7 +145,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = Some(testDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -165,7 +165,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -185,7 +185,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsDetail(
+    latencyYears = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
