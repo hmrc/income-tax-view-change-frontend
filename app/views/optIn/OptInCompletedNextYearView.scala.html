@@ -32,6 +32,22 @@
 
 @(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@upcomingUpdatesUrl = {
+    @controllers.routes.NextUpdatesController.show(Some(model.isAgent.toString))
+}
+
+@reportingFrequencyUrl = {
+    @controllers.routes.ReportingFrequencyPageController.show(model.isAgent)
+}
+
+@makingTaxDigitalUrl = {
+    https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+}
+
+@incomeThresholdUrl = {
+    https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+}
+
 @panelBody = @{
     "optin.completedOptIn.ny.heading.desc"
 }
@@ -39,10 +55,10 @@
 @panel = {
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
-        @messages("optin.completedOptIn.heading")
+            @messages("optin.completedOptIn.heading")
         </h1>
         <div class="govuk-panel__body">
-        @messages(panelBody, model.startYear, model.endYear)
+            @messages(panelBody, model.startYear, model.endYear)
         </div>
     </div>
 }
@@ -52,14 +68,14 @@
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.nextUpdates")</h2>
         <p id="submit-tax-p1" class="govuk-body" >
             @messages("optin.completedOptIn.ny.nextUpdate.desc1.a")
-            <a href="#" class="govuk-link govuk-body">
+            <a href="@upcomingUpdatesUrl" class="govuk-link govuk-body">
                 @messages("optin.completedOptIn.ny.nextUpdate.desc1.b")
             </a>
             @messages("optin.completedOptIn.ny.nextUpdate.desc1.c")
         </p>
         <p id="submit-tax-p2" class="govuk-body" >
             @messages("optin.completedOptIn.ny.nextUpdate.desc2.a")
-            <a href="#" class="govuk-link govuk-body">
+            <a href="@reportingFrequencyUrl" class="govuk-link govuk-body">
                 @messages("optin.completedOptIn.ny.nextUpdate.desc2.b")
             </a>
             @messages("optin.completedOptIn.ny.nextUpdate.desc2.c")
@@ -72,7 +88,7 @@
         <h2 id="submit-tax-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.submitUpdates")</h2>
         <p id="submit-tax-p1" class="govuk-body">
             @messages("optin.completedOptIn.ny.submitUpdates.desc1.a")
-            <a href="#" class="govuk-link govuk-body">
+            <a href="@makingTaxDigitalUrl" class="govuk-link govuk-body">
                 @messages("optin.completedOptIn.ny.submitUpdates.desc1.b")
             </a>
 
@@ -94,7 +110,7 @@
 
         <p class="govuk-body">
             @messages("optin.completedOptIn.ny.incomeThreshold.desc.a")
-            <a href="#" class="govuk-link govuk-body">
+            <a href="@incomeThresholdUrl" class="govuk-link govuk-body">
                 @messages("optin.completedOptIn.ny.incomeThreshold.desc.b")
             </a>
         </p>
