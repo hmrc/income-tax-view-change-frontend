@@ -308,10 +308,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def handleLatencyAndCrystallisationDetailsForProperty(
-                                               desiredIncomeSource: PropertyDetailsModel,
-                                               latencyDetails: LatencyDetails,
-                                               incomeSourceType: IncomeSourceType
-                                             )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                                                 desiredIncomeSource: PropertyDetailsModel,
+                                                                 latencyDetails: LatencyDetails,
+                                                                 incomeSourceType: IncomeSourceType
+                                                               )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     for {
       (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
