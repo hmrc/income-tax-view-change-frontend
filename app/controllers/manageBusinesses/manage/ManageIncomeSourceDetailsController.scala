@@ -159,14 +159,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearsQuarterly = LatencyYearsQuarterly(
-        firstYear = latencyYearsQuarterly.firstYear,
-        secondYear = latencyYearsQuarterly.secondYear
-      ),
-      latencyYearsCrystallised = LatencyYearsCrystallised(
-        firstYear = latencyYearsCrystallised.firstYear,
-        secondYear = latencyYearsCrystallised.secondYear
-      ),
+      latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
@@ -184,14 +178,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYearsQuarterly = LatencyYearsQuarterly(
-        firstYear = latencyYearsQuarterly.firstYear,
-        secondYear = latencyYearsQuarterly.secondYear
-      ),
-      latencyYearsCrystallised = LatencyYearsCrystallised(
-        firstYear = latencyYearsCrystallised.firstYear,
-        secondYear = latencyYearsCrystallised.secondYear
-      ),
+      latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
