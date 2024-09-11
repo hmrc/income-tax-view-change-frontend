@@ -43,9 +43,10 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def businessAccountingMethodAsKey(isTraditionalAccountingMethod: Boolean): String = {
-    isTraditionalAccountingMethod match {
-      case true => "incomeSources.manage.business-manage-details.traditional-accounting"
-      case false => "incomeSources.manage.business-manage-details.cash-accounting"
+    if (isTraditionalAccountingMethod) {
+      "incomeSources.manage.business-manage-details.traditional-accounting"
+    } else {
+      "incomeSources.manage.business-manage-details.cash-accounting"
     }
   }
 
