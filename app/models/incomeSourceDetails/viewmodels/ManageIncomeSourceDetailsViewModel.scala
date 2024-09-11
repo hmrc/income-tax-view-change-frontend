@@ -18,7 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsDetail, QuarterReportingType}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsDetail, QuarterReportingType}
 
 import java.time.LocalDate
 
@@ -29,8 +29,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               address: Option[AddressModel],
                                               isTraditionalAccountingMethod: Boolean,
                                               latencyYears: LatencyYearsDetail,
-                                              taxYearOneCrystallised: Option[Boolean],
-                                              taxYearTwoCrystallised: Option[Boolean],
+                                              latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               quarterReportingType: Option[QuarterReportingType]

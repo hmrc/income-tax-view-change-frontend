@@ -22,7 +22,7 @@ import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsDetail, QuarterTypeElection, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsDetail, QuarterTypeElection, QuarterTypeStandard}
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -149,8 +149,10 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
     quarterReportingType = Some(QuarterTypeStandard)
@@ -167,8 +169,10 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
     quarterReportingType = Some(QuarterTypeStandard)
@@ -185,8 +189,10 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
     quarterReportingType = None

@@ -137,13 +137,13 @@
 
     @getTaxYears = @{
         val taxYearRows = Seq(
-            if (!viewModel.taxYearOneCrystallised.get) {
+            if (!viewModel.latencyYearsCrystallised.firstYear.get) {
                 Some(SummaryListRow(
                     key = Key(
                         content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
                     ),
                     value = Value(
-                        content = if (!viewModel.taxYearOneCrystallised.get)
+                        content = if (!viewModel.latencyYearsCrystallised.firstYear.get)
                             Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1) + ".graceperiod"))
                         else
                             Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
@@ -160,13 +160,13 @@
                 ))
             } else None,
 
-            if (!viewModel.taxYearTwoCrystallised.get) {
+            if (!viewModel.latencyYearsCrystallised.secondYear.get) {
                 Some(SummaryListRow(
                     key = Key(
                         content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
                     ),
                     value = Value(
-                        content = if (!viewModel.taxYearTwoCrystallised.get)
+                        content = if (!viewModel.latencyYearsCrystallised.secondYear.get)
                             HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2) + ".graceperiod"))
                         else
                             HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
@@ -241,7 +241,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.latencyYears.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
+    @if(viewModel.latencyYears.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.latencyYearsCrystallised.secondYear.get || !viewModel.latencyYearsCrystallised.firstYear.get)) {
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>

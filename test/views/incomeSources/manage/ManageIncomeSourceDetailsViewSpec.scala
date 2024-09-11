@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyYearsDetail, QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsDetail, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -78,8 +78,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear = Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
     quarterReportingType = Some(QuarterTypeStandard)
@@ -96,8 +98,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear = Some(false)
     ),
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = SelfEmployment,
     quarterReportingType = None
@@ -114,8 +118,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear = Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
     quarterReportingType = Some(QuarterTypeCalendar)
@@ -132,8 +138,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear =  Some(false)
     ),
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = UkProperty,
     quarterReportingType = None
@@ -150,8 +158,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear =  Some(true)
     ),
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
     quarterReportingType = Some(QuarterTypeCalendar)
@@ -168,8 +178,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       firstYear = None,
       secondYear =  Some(false)
     ),
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = ForeignProperty,
     quarterReportingType = None

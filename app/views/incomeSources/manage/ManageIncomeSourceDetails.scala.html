@@ -144,7 +144,7 @@
             value = Value(
                 content = Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
             ),
-            actions = if(!viewModel.taxYearOneCrystallised.get) Some(Actions(
+            actions = if(!viewModel.latencyYearsCrystallised.firstYear.get) Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
@@ -162,7 +162,7 @@
             value = Value(
                 content = HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
             ),
-            actions = if(!viewModel.taxYearTwoCrystallised.get) Some(Actions(
+            actions = if(!viewModel.latencyYearsCrystallised.secondYear.get) Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),

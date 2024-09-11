@@ -161,8 +161,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
-      taxYearOneCrystallised = crystallisationTaxYear1,
-      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = crystallisationTaxYear1,
+        secondYear = crystallisationTaxYear2
+      ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
@@ -182,8 +184,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
-      taxYearOneCrystallised = crystallisationTaxYear1,
-      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = crystallisationTaxYear1,
+        secondYear = crystallisationTaxYear2
+      ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)

@@ -27,6 +27,8 @@ case class LatencyDetails(latencyEndDate: LocalDate,
 
 case class LatencyYearsDetail(firstYear: Option[Boolean], secondYear:Option[Boolean])
 
+case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear:Option[Boolean])
+
 object LatencyDetails {
   implicit val format: Format[LatencyDetails] = Json.format[LatencyDetails]
 }
