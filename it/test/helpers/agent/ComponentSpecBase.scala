@@ -93,6 +93,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.contact-frontend.port" -> mockPort,
     "feature-switches.read-from-mongo" -> "false",
     "feature-switch.enable-time-machine" -> "false",
+    "feature-switch.enable-session-data-storage" -> "true",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )
