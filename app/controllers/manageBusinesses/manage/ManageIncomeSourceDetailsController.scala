@@ -223,7 +223,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               ),
               latencyYearsCrystallised = LatencyYearsCrystallised(
                 firstYear = None,
-                secondYear = None,
+                secondYear = None
               )
             )))
         }
