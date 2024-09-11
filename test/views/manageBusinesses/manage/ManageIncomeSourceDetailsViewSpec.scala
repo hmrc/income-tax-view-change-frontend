@@ -20,13 +20,13 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyYear, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetailsCYUnknown, testStartDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
@@ -35,43 +35,43 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
 
   val unknown: String = messages("incomeSources.generic.unknown")
-  val heading = messages("incomeSources.manage.business-manage-details.heading")
-  val soleTrader = messages("incomeSources.manage.business-manage-details.sole-trader-section")
-  val businessName = messages("incomeSources.manage.business-manage-details.business-name")
-  val businessAddress = messages("incomeSources.manage.business-manage-details.business-address")
-  val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
-  val typeOfTrade = messages("incomeSources.manage.business-manage-details.tradetype")
-  val isTraditionalAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
-  val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
-  val quarterlyPeriodType = messages("incomeSources.manage.quarterly-period")
-  val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
-  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
-  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
-  val change = messages("incomeSources.manage.business-manage-details.change")
-  val graceperiodinfo = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
-  val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
-  val annually = messages("incomeSources.manage.business-manage-details.annually")
-  val quarterlyGracePeriod = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
-  val annuallyGracePeriod = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
-  val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
-  val standard = messages("incomeSources.manage.quarterly-period.standard")
-  val calendar = messages("incomeSources.manage.quarterly-period.calendar")
-  val traditional = messages("incomeSources.manage.business-manage-details.traditional-accounting")
+  val heading: String = messages("incomeSources.manage.business-manage-details.heading")
+  val soleTrader: String = messages("incomeSources.manage.business-manage-details.sole-trader-section")
+  val businessName: String = messages("incomeSources.manage.business-manage-details.business-name")
+  val businessAddress: String = messages("incomeSources.manage.business-manage-details.business-address")
+  val dateStarted: String = messages("incomeSources.manage.business-manage-details.date-started")
+  val typeOfTrade: String = messages("incomeSources.manage.business-manage-details.tradetype")
+  val isTraditionalAccountingMethod: String = messages("incomeSources.manage.business-manage-details.accounting-method")
+  val ukAccountingMethod: String = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
+  val quarterlyPeriodType: String = messages("incomeSources.manage.quarterly-period")
+  val foreignAccountingMethod: String = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
+  val reportingMethod1: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
+  val reportingMethod2: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
+  val change: String = messages("incomeSources.manage.business-manage-details.change")
+  val graceperiodinfo: String = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
+  val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
+  val annually: String = messages("incomeSources.manage.business-manage-details.annually")
+  val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
+  val annuallyGracePeriod: String = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
+  val cash: String = messages("incomeSources.manage.business-manage-details.cash-accounting")
+  val standard: String = messages("incomeSources.manage.quarterly-period.standard")
+  val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
+  val traditional: String = messages("incomeSources.manage.business-manage-details.traditional-accounting")
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
   val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL United Kingdom"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
-  val expandableInfoStandardSummary = messages("incomeSources.manage.quarterly-period.standard.summary")
-  val expandableInfoCalendarSummary = messages("incomeSources.manage.quarterly-period.calendar.summary")
-  val expandableInfoStandardContentP1 = messages("incomeSources.manage.quarterly-period.standard.content.p1")
-  val expandableInfoStandardContentP2 = messages("incomeSources.manage.quarterly-period.standard.content.p2")
-  val expandableInfoCalendarContentP1 = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
-  val expandableInfoCalendarContentP2 = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
-  val expandableInfoContentP3 = messages("incomeSources.manage.quarterly-period.content.p3")
+  val expandableInfoStandardSummary: String = messages("incomeSources.manage.quarterly-period.standard.summary")
+  val expandableInfoCalendarSummary: String = messages("incomeSources.manage.quarterly-period.calendar.summary")
+  val expandableInfoStandardContentP1: String = messages("incomeSources.manage.quarterly-period.standard.content.p1")
+  val expandableInfoStandardContentP2: String = messages("incomeSources.manage.quarterly-period.standard.content.p2")
+  val expandableInfoCalendarContentP1: String = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
+  val expandableInfoCalendarContentP2: String = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
+  val expandableInfoContentP3: String = messages("incomeSources.manage.quarterly-period.content.p3")
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
-  val opensInNewTabText = messages("pagehelp.opensInNewTabText")
+  val opensInNewTabText: String = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
-  val reportingFrequencyText = messages("incomeSources.manage.business-manage-details.reportingFrequency")
+  val reportingFrequencyText: String = messages("incomeSources.manage.business-manage-details.reportingFrequency")
 
   def reportingFrequencyLink(isAgent: Boolean): String = {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url

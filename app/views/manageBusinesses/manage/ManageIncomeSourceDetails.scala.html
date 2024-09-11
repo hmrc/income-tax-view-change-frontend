@@ -111,7 +111,7 @@
             ),
             value = Value(
                 content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                    case Some(x) => Text(s"""$x""")
+                    case Some(x) => HtmlContent(s"""$x""")
                     case None => Text(messages("incomeSources.generic.unknown"))
                 }
             )
