@@ -71,6 +71,9 @@ class OptInPropositionSpec extends UnitSpec {
           proposition.availableTaxYearsForOptIn.isEmpty shouldBe false
           proposition.availableTaxYearsForOptIn.size == expectedAvailableOptInYearsSize shouldBe true
 
+          proposition.isCurrentTaxYear(currentTaxYear) shouldBe true
+          proposition.isCurrentTaxYear(currentTaxYear.nextYear) shouldBe false
+
           val assertOptInPropositionType: Seq[() => Boolean] = Seq(
             () => proposition.optInPropositionType.get.isInstanceOf[OneYearOptInProposition],
             () => proposition.optInPropositionType.get.isInstanceOf[MultiYearOptInProposition]
