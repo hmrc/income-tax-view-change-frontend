@@ -157,7 +157,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYears = LatencyYearsQuarterly(
+      latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
@@ -180,7 +180,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      latencyYears = LatencyYearsQuarterly(
+      latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),

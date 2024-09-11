@@ -111,7 +111,7 @@
             ),
             value = Value(
                 content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                    case Some(x) => HtmlContent(s"""$x""")
+                    case Some(x) => Text(s"""$x""")
                     case None => Text(messages("incomeSources.generic.unknown"))
                 }
             )
@@ -148,7 +148,7 @@
                         else
                             Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
                     ),
-                    actions = if (viewModel.latencyYears.firstYear.get) Some(Actions(
+                    actions = if (viewModel.latencyYearsQuarterly.firstYear.get) Some(Actions(
                         items = Seq(
                             ActionItem(
                                 href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
@@ -167,11 +167,11 @@
                     ),
                     value = Value(
                         content = if (!viewModel.latencyYearsCrystallised.secondYear.get)
-                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2) + ".graceperiod"))
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2) + ".graceperiod"))
                         else
-                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
                     ),
-                    actions = if (viewModel.latencyYears.secondYear.get) Some(Actions(
+                    actions = if (viewModel.latencyYearsQuarterly.secondYear.get) Some(Actions(
                         items = Seq(
                             ActionItem(
                                 href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
@@ -241,7 +241,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.latencyYears.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.latencyYearsCrystallised.secondYear.get || !viewModel.latencyYearsCrystallised.firstYear.get)) {
+    @if(viewModel.latencyYearsQuarterly.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.latencyYearsCrystallised.secondYear.get || !viewModel.latencyYearsCrystallised.firstYear.get)) {
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>

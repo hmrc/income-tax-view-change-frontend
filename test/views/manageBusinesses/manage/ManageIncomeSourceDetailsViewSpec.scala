@@ -34,7 +34,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
 
-  val unknown = messages("incomeSources.generic.unknown")
+  val unknown: String = messages("incomeSources.generic.unknown")
   val heading = messages("incomeSources.manage.business-manage-details.heading")
   val soleTrader = messages("incomeSources.manage.business-manage-details.sole-trader-section")
   val businessName = messages("incomeSources.manage.business-manage-details.business-name")
@@ -84,7 +84,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -104,7 +104,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -124,7 +124,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = None
     ),
@@ -145,7 +145,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(false)
     ),
@@ -165,7 +165,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -185,7 +185,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -205,7 +205,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -225,7 +225,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = None
     ),
@@ -245,7 +245,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
     ),
@@ -265,7 +265,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -285,7 +285,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -305,7 +305,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = None
     ),
@@ -325,7 +325,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
     ),

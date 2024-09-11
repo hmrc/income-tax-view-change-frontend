@@ -28,7 +28,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
                                               isTraditionalAccountingMethod: Boolean,
-                                              latencyYears: LatencyYearsQuarterly,
+                                              latencyYearsQuarterly: LatencyYearsQuarterly,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
@@ -51,7 +51,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def shouldShowTaxYears: Boolean = {
-    latencyYears.secondYear.getOrElse(false) && latencyDetails.isDefined
+    latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
   }
 
 }

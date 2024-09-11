@@ -145,7 +145,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = Some(testDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -165,7 +165,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
@@ -185,7 +185,7 @@ object BaseIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     address = None,
     isTraditionalAccountingMethod = false,
-    latencyYears = LatencyYearsQuarterly(
+    latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = Some(true),
       secondYear = Some(true)
     ),
