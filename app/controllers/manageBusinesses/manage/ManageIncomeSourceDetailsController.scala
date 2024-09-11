@@ -149,8 +149,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel,
+                                          latencyYearsQuarterly: LatencyYearsQuarterly,
+                                          latencyYearsCrystallised: LatencyYearsCrystallised)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -158,17 +159,18 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
-      taxYearOneCrystallised = crystallisationTaxYear1,
-      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
     )
   }
 
-  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
+                                                latencyYearsQuarterly: LatencyYearsQuarterly,
+                                                latencyYearsCrystallised: LatencyYearsCrystallised,
+                                                incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -176,9 +178,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
-      itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
-      taxYearOneCrystallised = crystallisationTaxYear1,
-      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
       quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
@@ -186,49 +187,83 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
 
-  private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId, isAgent: Boolean)
-                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+  private def getManageIncomeSourceViewModel(
+                                              sources: IncomeSourceDetailsModel,
+                                              incomeSourceId: IncomeSourceId,
+                                              isAgent: Boolean
+                                            )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(businessDetailsModel => businessDetailsModel.incomeSourceId == incomeSourceId.value)
+      .find(_.incomeSourceId == incomeSourceId.value)
 
-    if (desiredIncomeSourceMaybe.isDefined) {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
-            case None => Future(Right(variableViewModelSEBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)))
-            case Some(crystallisationData: List[Boolean]) =>
-              Future(Right(
-                variableViewModelSEBusiness(
-                  incomeSource = desiredIncomeSourceMaybe.get,
-                  itsaStatus = true,
-                  crystallisationTaxYear1 = crystallisationData.headOption,
-                  crystallisationTaxYear2 = crystallisationData.lastOption
-                )))
-          }
-        case false =>
-          Future(Right(
-            variableViewModelSEBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = false,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)
-          ))
-      }
-    } else {
-      Future(Left(
-        new Error("Unable to find income source")
-      ))
+    desiredIncomeSourceMaybe match {
+      case Some(desiredIncomeSource) =>
+        desiredIncomeSource.latencyDetails match {
+          case Some(latencyDetails) =>
+            handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+          case None =>
+            Future.successful(Right(variableViewModelSEBusiness(
+              incomeSource = desiredIncomeSource,
+              latencyYearsQuarterly = LatencyYearsQuarterly(
+                firstYear = Some(false),
+                secondYear = Some(false)
+              ),
+              latencyYearsCrystallised = LatencyYearsCrystallised(
+                firstYear = None,
+                secondYear = None
+              )
+            )))
+        }
+      case None =>
+        Future.successful(Left(new Error("Unable to find income source")))
     }
   }
 
-  private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceType, isAgent: Boolean)
-                                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+  private def handleLatencyAndCrystallisationDetails(
+                                                      desiredIncomeSource: BusinessDetailsModel,
+                                                      latencyDetails: LatencyDetails
+                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+
+    for {
+      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
+    } yield crystallisationData match {
+      case None =>
+        Right(variableViewModelSEBusiness(
+          incomeSource = desiredIncomeSource,
+          latencyYearsQuarterly = LatencyYearsQuarterly(
+            firstYear = Some(latencyYearOneStatus),
+            secondYear = Some(latencyYearTwoStatus)
+          ),
+          latencyYearsCrystallised = LatencyYearsCrystallised(
+            firstYear = None,
+            secondYear = None
+          )
+        ))
+
+      case Some(crystallisationList: List[Boolean]) =>
+        Right(variableViewModelSEBusiness(
+          incomeSource = desiredIncomeSource,
+          latencyYearsQuarterly = LatencyYearsQuarterly(
+            firstYear = Some(latencyYearOneStatus),
+            secondYear = Some(latencyYearTwoStatus)
+          ),
+          latencyYearsCrystallised = LatencyYearsCrystallised(
+            firstYear = crystallisationList.headOption,
+            secondYear = crystallisationList.lastOption
+          )
+        ))
+    }
+  }
+
+
+  private def getManageIncomeSourceViewModelProperty(
+                                                      sources: IncomeSourceDetailsModel,
+                                                      incomeSourceType: IncomeSourceType,
+                                                      isAgent: Boolean
+                                                    )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties
@@ -241,42 +276,52 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       }
     }
 
-    if (desiredIncomeSourceMaybe.isDefined) {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
-            case None => Future(Right(variableViewModelPropertyBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType)))
-            case Some(crystallisationData: List[Boolean]) =>
-              Future(Right(
-                variableViewModelPropertyBusiness(
-                  incomeSource = desiredIncomeSourceMaybe.get,
-                  itsaStatus = true,
-                  crystallisationTaxYear1 = crystallisationData.headOption,
-                  crystallisationTaxYear2 = crystallisationData.lastOption,
-                  incomeSourceType = incomeSourceType
-                )))
-          }
-        case false =>
-          Future(Right(
-            variableViewModelPropertyBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = false,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType)
-          ))
-      }
-    } else {
-      Future(Left(
-        new Error("Unable to find income source")
-      ))
+    desiredIncomeSourceMaybe match {
+      case Some(desiredIncomeSource) =>
+        desiredIncomeSource.latencyDetails match {
+          case Some(latencyDetails) =>
+            handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+          case None =>
+            Future.successful(Right(variableViewModelPropertyBusiness(
+              incomeSource = desiredIncomeSource,
+              latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+              latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+              incomeSourceType = incomeSourceType
+            )))
+
+        }
+      case None =>
+        Future.successful(Left(new Error("Unable to find income source")))
     }
   }
+
+  private def handleLatencyAndCrystallisationDetailsForProperty(
+                                                                 desiredIncomeSource: PropertyDetailsModel,
+                                                                 latencyDetails: LatencyDetails,
+                                                                 incomeSourceType: IncomeSourceType
+                                                               )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+
+    for {
+      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
+    } yield crystallisationData match {
+      case None =>
+        Right(variableViewModelPropertyBusiness(
+          incomeSource = desiredIncomeSource,
+          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+          latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
+          incomeSourceType = incomeSourceType
+        ))
+      case Some(crystallisationList: List[Boolean]) =>
+        Right(variableViewModelPropertyBusiness(
+          incomeSource = desiredIncomeSource,
+          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+          latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
+          incomeSourceType = incomeSourceType
+        ))
+    }
+  }
+
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, incomeSourceIdHashMaybe: Option[IncomeSourceIdHash],
                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {

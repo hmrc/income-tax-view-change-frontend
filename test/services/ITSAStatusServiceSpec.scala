@@ -18,19 +18,26 @@ package services
 
 import mocks.connectors.MockITSAStatusConnector
 import models.incomeSourceDetails.TaxYear
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import testConstants.BaseTestConstants.{testMtdItUser, testNino}
+import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
 import testConstants.ITSAStatusTestConstants._
 import testUtils.TestSupport
+
+import scala.concurrent.Future
 
 class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
-  val taxYear = TaxYear.forYearEnd(2020)
+  val taxYear = TaxYear.forYearEnd(2023)
   val taxYearEnd = taxYear.endYear
   val yearRange = taxYear.formatTaxYearRange
+
+  val taxYear2 = TaxYear.forYearEnd(2024)
+  val secondYearRange = taxYear2.formatTaxYearRange
   "hasMandatedOrVoluntaryStatusCurrentYear " when {
 
     "ITSAStatus is returned " should {
@@ -72,4 +79,51 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
       }
     }
   }
+
+
+  "hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear" when {
+
+    "ITSAStatus is returned" should {
+
+      "return (true, true) if both years have MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue
+
+        result shouldBe(true, true)
+      }
+
+      "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status (fall back to first year status)" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
+
+
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails4))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe(true, true)
+      }
+
+      "return (false, true) if only second year has MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe(false, true)
+      }
+
+      "return (false, false) if neither current nor previous years have MTD Mandated or MTD Voluntary" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
+
+        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails5))(testMtdItUser, headerCarrier, ec).futureValue
+        result shouldBe(false, false)
+      }
+
+    }
+  }
+
 }
