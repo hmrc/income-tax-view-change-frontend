@@ -128,7 +128,6 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
-  .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
     testForkedParallel := true
   )
