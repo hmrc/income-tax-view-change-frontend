@@ -16,8 +16,7 @@
 
 package utils
 
-import config.AgentItvcErrorHandler
-import config.featureswitch.UserSessionApiFS
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
@@ -27,15 +26,18 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait SessionCookieUtil extends UserSessionApiFS {
+trait SessionCookieUtil {
   self =>
 
   val sessionDataService: SessionDataService
   val itvcErrorHandler: AgentItvcErrorHandler
+  val appConfig: FrontendAppConfig
+
+  def getSessionDataStorageFS: Boolean = appConfig.isSessionDataStorageEnabled
 
   def handleSessionCookies(sessionCookieData: SessionCookieData)(codeBlock: Seq[(String, String)] => Future[Result])
                           (implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Future[Result] = {
-    if (getUserSessionApiFS) {
+    if (getSessionDataStorageFS) {
       sessionDataService.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
         case Left(value: SessionDataPostFailure) =>
           Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")

@@ -31,9 +31,9 @@ trait MockAppConfig extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockIsUserSessionApiEnabled(): Unit =
-    when(mockAppConfig.isUserSessionApiEnabled).thenReturn(true)
+    when(mockAppConfig.isSessionDataStorageEnabled).thenReturn(true)
 
   def setupMockIsUserSessionApiDisabled(): Unit =
-    when(mockAppConfig.isUserSessionApiEnabled).thenReturn(false)
+    when(mockAppConfig.isSessionDataStorageEnabled).thenReturn(false)
 
 }
