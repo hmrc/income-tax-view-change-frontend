@@ -21,8 +21,6 @@ object ReviewAndReconcileDebitUtils {
   lazy val poaOneMainTransaction = "4911"
   lazy val poaTwoMainTransaction = "4913"
 
-  lazy val validMainTransactionTypes: Set[String] = Set(poaOneMainTransaction, poaTwoMainTransaction)
-
   def isReviewAndReconcilePoaOneMainTransaction(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaOneMainTransaction)
 
