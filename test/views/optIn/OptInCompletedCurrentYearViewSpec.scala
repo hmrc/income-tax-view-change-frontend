@@ -44,6 +44,13 @@ class OptInCompletedCurrentYearViewSpec extends TestSupport {
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
+    pageDocument.getElementById("quarterly-update-due").text() shouldBe "5 February 2023"
+    pageDocument.getElementById("current-year-due").text() shouldBe "31 January 2024"
+    pageDocument.getElementById("upcoming-updates-link").text() shouldBe "View your upcoming updates"
+    val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
+      "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
+    pageDocument.getElementById("warning-inset").text() shouldBe expectedText
+
   }
 
 }

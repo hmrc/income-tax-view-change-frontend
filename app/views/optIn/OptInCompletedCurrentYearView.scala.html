@@ -53,12 +53,12 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 @messages("optin.completedOptIn.cy.revisedDeadlines.p1.a", model.startYear, model.endYear)
-                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p1.b", model.endYear)</span>
+                <span id="quarterly-update-due" class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p1.b", model.endYear)</span>
                 @messages("optin.completedOptIn.cy.revisedDeadlines.p1.c", model.startYear, model.endYear)
             </li>
             <li>
                 @messages("optin.completedOptIn.cy.revisedDeadlines.p2.a", model.startYear, model.endYear)
-                <span class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b", model.nextYear)</span>
+                <span id="current-year-due" class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b", model.nextYear)</span>
             </li>
         </ul>
     </div>
@@ -83,7 +83,7 @@
 @upcomingUpdates = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <p id="optin-completed-view-p1" class="govuk-body" >
-            <a href="@upcomingUpdatesUrl" class="govuk-link govuk-body">
+            <a id="upcoming-updates-link" href="@upcomingUpdatesUrl" class="govuk-link govuk-body">
                 @messages("optin.completedOptIn.cy.upcomingUpdates")
             </a>
         </p>
