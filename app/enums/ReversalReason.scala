@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package enums
 
-import enums.ReversalReason
+sealed trait ReversalReason {
+  val value: String
+}
 
-import java.time.LocalDate
+case object  CreateReversalReason extends ReversalReason {
+  override val value: String = "create"
+}
 
-case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
-                                  adjustments: List[AdjustmentModel])
+case object  AmendedReturnReversalReason extends ReversalReason {
+  override val value: String = "amend"
+}
 
-case class AdjustmentModel(amount: BigDecimal,
-                      adjustmentDate: Option[LocalDate],
-                           reasonCode: ReversalReason)
+case object  AdjustmentReversalReason extends ReversalReason {
+  override val value: String = "adjustment"
+}
+
+case object  CustomerRequestReason extends ReversalReason {
+  override val value: String = "request"
+}
+
+case object  UnknownReversalReason extends ReversalReason {
+  override val value: String = "unrecognisedReason"
+}

@@ -19,7 +19,7 @@ package views
 import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.CodingOutType._
-import enums.OtherCharge
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason, OtherCharge}
 import exceptions.MissingFieldException
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -44,7 +44,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   import Messages._
 
-  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), "adjustment"), List())
+  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List())
 
   class TestSetup(documentDetail: DocumentDetail,
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -228,19 +228,19 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
-  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
+  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), AmendedReturnReversalReason, Some("001"))
   val amendedAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "adjustment"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AdjustmentReversalReason))
   )
   val adjustmentHistoryWithBalancingCharge: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "amend"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AmendedReturnReversalReason))
   )
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
   val customerRequestAdjustmentHistory : AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "request"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), CustomerRequestReason))
   )
 
   val paymentBreakdown: List[FinancialDetail] = List(
