@@ -31,14 +31,16 @@ object OptInCompletedCurrentYearViewSpec {
 class OptInCompletedCurrentYearViewSpec extends TestSupport {
 
   val optInCompletedCurrentYearView: OptInCompletedCurrentYearView = app.injector.instanceOf[OptInCompletedCurrentYearView]
-  val forYearEnd = 2023
+
 
   class Setup(isAgent: Boolean = true, taxYear: TaxYear) {
     val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear)
     val pageDocument: Document = Jsoup.parse(contentAsString(optInCompletedCurrentYearView(model = model)))
   }
 
-  s"have the correct content for year ${TaxYear.forYearEnd(forYearEnd)}" in new Setup(false, TaxYear.forYearEnd(forYearEnd)) {
+  val forYearEnd = 2023
+  val year22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  s"have the correct content for year $year22_23" in new Setup(false, year22_23) {
     pageDocument.title() shouldBe OptInCompletedCurrentYearViewSpec.title
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
@@ -52,16 +54,18 @@ class OptInCompletedCurrentYearViewSpec extends TestSupport {
 
   }
 
-  s"have the correct content for year ${TaxYear.forYearEnd(forYearEnd).nextYear}" in new Setup(false, TaxYear.forYearEnd(forYearEnd).nextYear) {
+  val anotherForYearEnd = 2022
+  val year21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
+  s"have the correct content for year $year21_22" in new Setup(false, year21_22) {
     pageDocument.title() shouldBe OptInCompletedCurrentYearViewSpec.title
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
-    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2023 to 2024 tax year onwards"
-    pageDocument.getElementById("quarterly-update-due").text() shouldBe "5 February 2024"
-    pageDocument.getElementById("current-year-due").text() shouldBe "31 January 2025"
+    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
+    pageDocument.getElementById("quarterly-update-due").text() shouldBe "5 February 2022"
+    pageDocument.getElementById("current-year-due").text() shouldBe "31 January 2023"
     pageDocument.getElementById("upcoming-updates-link").text() shouldBe "View your upcoming updates"
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
-      "in the 2023 to 2024 tax year, you would have to report quarterly from 6 April 2025."
+      "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
     pageDocument.getElementById("warning-inset").text() shouldBe expectedText
 
   }
