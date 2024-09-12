@@ -16,6 +16,7 @@
 
 package models.chargeHistory
 
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, UnknownReversalReason}
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 
@@ -24,10 +25,12 @@ import java.time.LocalDate
 class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
   def testChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
-    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0, LocalDate.of(2021, 9, 9), reversalReason, None)
+    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
+      LocalDate.of(2021, 9, 9), reversalReason, None)
   }
   def testPoaChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
-    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0, LocalDate.of(2021, 9, 9), reversalReason, Some("001"))
+    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
+      LocalDate.of(2021, 9, 9), reversalReason, Some("001"))
   }
 
   "chargeHistoryModel" when {
@@ -35,19 +38,19 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
     "calling .reasonCode" should {
 
       "return a valid message key for a poa adjustment" in {
-        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe "adjustment"
+        testPoaChargeHistoryModel("Reversal").reasonCode shouldBe AdjustmentReversalReason
       }
 
       "return a valid message key for an amended reversal" in {
-        testChargeHistoryModel("amended return").reasonCode shouldBe "amend"
+        testChargeHistoryModel("amended return").reasonCode shouldBe AmendedReturnReversalReason
       }
 
       "return a valid message key for a customer requested reversal" in {
-        testChargeHistoryModel("Customer Request").reasonCode shouldBe "request"
+        testChargeHistoryModel("Customer Request").reasonCode shouldBe CustomerRequestReason
       }
 
       "return an unknown message key for a non matching reversal reason" in {
-        testChargeHistoryModel("Unknown").reasonCode shouldBe "unrecognisedReason"
+        testChargeHistoryModel("Unknown").reasonCode shouldBe UnknownReversalReason
       }
     }
   }
