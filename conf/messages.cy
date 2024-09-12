@@ -195,6 +195,8 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TW
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
+tax-year-summary.payments.first-poa-extra-amount               = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.second-poa-extra-amount              = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -276,8 +278,6 @@ tax-year-summary.message.C559104                               = rydych wedi haw
 tax-year-summary.message.C559105                               = rydych wedi hawlio Lwfans Incwm o Eiddo ar gyfer eich eiddo tramor. Mae hyn yn golygu na allwch hawlio am addasiad ar gyfer defnydd preifat.
 tax-year-summary.message.C559113                               = ar gyfer eich eiddo tramor, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau.
 tax-year-summary.message.C559114                               = ar gyfer eich llety gwyliau wedi’i ddodrefnu yn yr AEE, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau ohonynt.
-tax-year-summary.first-poa-extra-amount                        = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-tax-year-summary.second-poa-extra-amount                       = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 
 tax-year-summary.agent.message.header                          = Ni allwn ddangos y cyfrifiad hwn:
 tax-year-summary.agent.message.action                          = Mae angen i chi ddiwygio ac ailgyflwyno Ffurflen Dreth eich cleient

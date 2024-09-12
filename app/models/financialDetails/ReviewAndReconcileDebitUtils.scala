@@ -16,32 +16,16 @@
 
 package models.financialDetails
 
-import scala.util.Try
-
 object ReviewAndReconcileDebitUtils {
 
-  lazy val validMainTransactionTypes: Set[String] = Set("4911", "4913")
+  lazy val poaOneMainTransaction = "4911"
+  lazy val poaTwoMainTransaction = "4913"
 
-  def isReviewAndReconcileMainTransaction(mainTransaction: Option[String]): Boolean =
-    validMainTransactionTypes.forall(mainTransaction.contains)
+  lazy val validMainTransactionTypes: Set[String] = Set(poaOneMainTransaction, poaTwoMainTransaction)
 
-  private val mfaMainTransactionToMainType: Map[Int, String] = Map(
-    (4000 -> "ITSA PAYE Charge"),
-    (4001 -> "ITSA Calc Error Correction"),
-    (4002 -> "ITSA Manual Penalty Pre CY-4"),
-    (4003 -> "ITSA Misc Charge"))
+  def isReviewAndReconcilePoaOneMainTransaction(mainTransaction: Option[String]): Boolean =
+    mainTransaction.contains(poaOneMainTransaction)
 
-  def isMFADebitMainTransaction(mainTransaction: Option[String]): Boolean = {
-    mainTransaction
-      .flatMap(t => Try(t.toInt).toOption)
-      .exists(mfaMainTransactionToMainType.contains)
-  }
-
-  def isMFADebitMainType(mainType: Option[String]): Boolean = {
-    mainType.exists(mfaMainTransactionToMainType.values.toList.contains(_))
-  }
-
-  def filterMFADebits(MFADebitsEnabled: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
-    if (!MFADebitsEnabled && documentDetailWithDueDate.isMFADebit) false else true
-  }
+  def isReviewAndReconcilePoaTwoMainTransaction(mainTransaction: Option[String]): Boolean =
+    mainTransaction.contains(poaTwoMainTransaction)
 }

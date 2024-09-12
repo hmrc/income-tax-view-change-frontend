@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
+import models.financialDetails.ReviewAndReconcileDebitUtils.validMainTransactionTypes
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 

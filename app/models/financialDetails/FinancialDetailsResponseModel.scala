@@ -19,6 +19,7 @@ package models.financialDetails
 import auth.MtdItUser
 import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.financialDetails.ReviewAndReconcileDebitUtils.{isReviewAndReconcilePoaOneMainTransaction, isReviewAndReconcilePoaTwoMainTransaction}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -57,10 +58,18 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def isReviewAndReconcileDebitCharge(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && ReviewAndReconcileDebitUtils.isReviewAndReconcileMainTransaction()
-    }
+  def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOneMainTransaction(fd.mainTransaction)
+      }
+  }
+
+  def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwoMainTransaction(fd.mainTransaction)
+      }
   }
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)

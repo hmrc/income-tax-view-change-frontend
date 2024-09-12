@@ -169,8 +169,14 @@
 }
 
 @getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    val chargeTypeKey = if (documentDetailWithDueDate.isMFADebit) "hmrcAdjustment.text" else s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val chargeTypeKey = {
+        if (documentDetailWithDueDate.isMFADebit) { "hmrcAdjustment.text" }
+        else if (documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit) { "first-poa-extra-amount" }
+        else if (documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit) { "second-poa-extra-amount" }
+        else s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    }
     val lpi = if (documentDetailWithDueDate.isLatePaymentInterest) "lpi." else ""
+
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
 
@@ -231,10 +237,8 @@
                             @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
                          </td>
                          <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
-                    } else if(documentDetailWithDueDate.documentDetail.isBalancingCharge(codingOutEnabled)) {
-                         <td class="govuk-table__cell">
-                           @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
-                         </td>
+                    } else if(documentDetailWithDueDate.isReviewAndReconcileDebit) {
+                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
                          <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.toCurrencyString</td>
                     } else {
                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>

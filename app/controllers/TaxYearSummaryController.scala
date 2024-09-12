@@ -161,7 +161,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
-                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId))
+                isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId),
+                isReviewAndReconcilePoaOneDebit = financialDetails.isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, isEnabled(ReviewAndReconcilePoa)),
+                isReviewAndReconcilePoaTwoDebit = financialDetails.isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, isEnabled(ReviewAndReconcilePoa))
+              )
             )
         }.filter(documentDetailWithDueDate => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
@@ -179,14 +182,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        val reconciliationDebitsWithDueDates: List[DocumentDetailWithDueDate] =
-          financialDetails.getPairedDocumentDetails() flatMap {
-            case (_, fd) if fd.isReconciliationDebitCharge(isEnabled(ReviewAndReconcilePoa)) =>
-              documentDetailsWithDueDates.filter(fd.transactionId.contains)
-            case _ => Nil
-          }
 
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut ++ reconciliationDebitsWithDueDates)
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
