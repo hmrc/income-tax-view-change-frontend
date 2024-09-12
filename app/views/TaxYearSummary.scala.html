@@ -170,10 +170,12 @@
 
 @getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
     val chargeTypeKey = {
-        if (documentDetailWithDueDate.isMFADebit) { "hmrcAdjustment.text" }
-        else if (documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit) { "first-poa-extra-amount" }
-        else if (documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit) { "second-poa-extra-amount" }
-        else s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+        documentDetailWithDueDate match {
+            case _ if documentDetailWithDueDate.isMFADebit => "hmrcAdjustment.text"
+            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit => "first-poa-extra-amount"
+            case _ if documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit => "second-poa-extra-amount"
+            case _ => s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+        }
     }
     val lpi = if (documentDetailWithDueDate.isLatePaymentInterest) "lpi." else ""
 
