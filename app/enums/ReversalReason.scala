@@ -20,6 +20,7 @@ sealed trait ReversalReason {
   val value: String
 }
 
+// Not part of String -> ReversalReason conversion:: do we need this item?
 case object  CreateReversalReason extends ReversalReason {
   override val value: String = "create"
 }

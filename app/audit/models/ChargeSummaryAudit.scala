@@ -110,7 +110,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
 
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
-    "description" -> getChargeTypeFromKey(Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode}.${docDateDetail.documentDetail.getChargeTypeKey()}")),
+    "description" -> getChargeTypeFromKey(
+      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.value}.${docDateDetail.documentDetail.getChargeTypeKey()}")),
     "amount" -> chargeHistory.totalAmount
   )
 
@@ -120,13 +121,13 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentHistoryAllocations): Seq[JsObject] = {
-    val description = if(docDateDetail.documentDetail.isPayeSelfAssessment){
-     Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
-   } else if (docDateDetail.documentDetail.isCancelledPayeSelfAssessment) {
-     Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
-   } else {
-     Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
-   }
+    val description = if (docDateDetail.documentDetail.isPayeSelfAssessment) {
+      Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
+    } else if (docDateDetail.documentDetail.isCancelledPayeSelfAssessment) {
+      Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
+    } else {
+      Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
+    }
 
     paymentAllocation.allocations.map(payment => Json.obj() ++
       ("date", payment.dueDate) ++
@@ -156,8 +157,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++
-    Json.obj( "endTaxYear" -> taxYear) ++
-    Json.obj("overdue"-> docDateDetail.isOverdue) ++
+    Json.obj("endTaxYear" -> taxYear) ++
+    Json.obj("overdue" -> docDateDetail.isOverdue) ++
     Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {
