@@ -213,6 +213,8 @@
                             ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) ||
                             (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
+                        } else if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid) {
+                            <div class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">
                             @if(documentDetailWithDueDate.documentDetail.originalAmount == 0) {
