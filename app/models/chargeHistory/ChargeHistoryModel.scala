@@ -16,7 +16,6 @@
 
 package models.chargeHistory
 
-import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
