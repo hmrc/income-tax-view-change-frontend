@@ -43,10 +43,6 @@
     dueDate: Option[LocalDate], outstandingAmount: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
-@paymentAllocationInset = {
-    @p(){@messages("paymentAllocation.info")}
-}
-
 @pageTitle = @{
     messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
         "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
@@ -87,8 +83,6 @@
             <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString}</dd>
         </div>
     </dl>
-
-@govukInsetText(InsetText(content = HtmlContent(paymentAllocationInset)))
 
     @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
 

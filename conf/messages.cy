@@ -1128,7 +1128,6 @@ paymentAllocation.heading                                       = Taliad roeddec
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
-paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
 paymentAllocation.tableSection.heading                          = Dyraniadau
 paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
