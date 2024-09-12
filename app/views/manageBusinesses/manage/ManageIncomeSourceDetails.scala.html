@@ -69,7 +69,7 @@
 }
 
 @taxYearValue(taxYear: String) = @{
-    s"${taxYear.toInt - 1}-${taxYear}"
+    s"${taxYear.toInt - 1}-$taxYear"
 }
 
 @extractOption(content: Option[String]) = @{
@@ -135,51 +135,59 @@
     }
 }
 
-@getTaxYears = @{
-    Seq(
-        SummaryListRow(
-            key = Key(
-                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
-            ),
-            value = Value(
-                content = if(!viewModel.taxYearOneCrystallised.get)
-                                Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)+".graceperiod"))
-                         else
-                                Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
-            ),
-            actions = if(!viewModel.taxYearOneCrystallised.get) Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
-                        content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-link-1")
-                    )
-                )
-            ))
-            else None
-        ),
-        SummaryListRow(
-            key = Key(
-                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
-            ),
-            value = Value(
-                content = if(!viewModel.taxYearTwoCrystallised.get)
-                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)+".graceperiod"))
-                          else
-                            HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
-            ),
-            actions = if(!viewModel.taxYearTwoCrystallised.get) Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
-                        content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-link-2")
-                    )
-                )
-            )) else None
+    @getTaxYears = @{
+        val taxYearRows = Seq(
+            if (!viewModel.latencyYearsCrystallised.firstYear.get) {
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
+                    ),
+                    value = Value(
+                        content = if (!viewModel.latencyYearsCrystallised.firstYear.get)
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1) + ".graceperiod"))
+                        else
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
+                    ),
+                    actions = if (viewModel.latencyYearsQuarterly.firstYear.get) Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "change-link-1")
+                            )
+                        )
+                    )) else None
+                ))
+            } else None,
+
+            if (!viewModel.latencyYearsCrystallised.secondYear.get) {
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
+                    ),
+                    value = Value(
+                        content = if (!viewModel.latencyYearsCrystallised.secondYear.get)
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2) + ".graceperiod"))
+                        else
+                            Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
+                    ),
+                    actions = if (viewModel.latencyYearsQuarterly.secondYear.get) Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "change-link-2")
+                            )
+                        )
+                    )) else None
+                ))
+            } else None
         )
-    )
-}
+
+        taxYearRows.flatten
+    }
+
+
 
 @getQuarterlyType = @{
     viewModel.quarterReportingType match {
@@ -210,8 +218,8 @@
         val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
 
         govukDetails(Details(id = Some("expandable-info"),
-                            summary = Text(messages(s"incomeSources.manage.quarterly-period.$quarterTypeMessageKey.summary")),
-                            content = content))
+            summary = Text(messages(s"incomeSources.manage.quarterly-period.$quarterTypeMessageKey.summary")),
+            content = content))
 
     }
 }
@@ -233,7 +241,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear && viewModel.latencyDetails.isDefined && (!viewModel.taxYearTwoCrystallised.get || !viewModel.taxYearOneCrystallised.get)) {
+    @if(viewModel.latencyYearsQuarterly.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.latencyYearsCrystallised.secondYear.get || !viewModel.latencyYearsCrystallised.firstYear.get)) {
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
         </div>
@@ -263,33 +271,32 @@
                 )
             )
         ) ++
-    {
-        if (viewModel.incomeSourceType == SelfEmployment) {
-            Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(getMessage("tradetype"))
-                    ),
-                    value = Value(
-                        content = Text(extractOption(viewModel.incomeSource))
-                    )
-                )
-            )
-        } else Seq.empty
-    } ++
-    Seq(
-            SummaryListRow(
-                key = Key(
-                    content = Text(getAccountingMethodMessage)
-                ),
-                value = Value(
-                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
-                )
-            ))
+                {
+                    if (viewModel.incomeSourceType == SelfEmployment) {
+                        Seq(
+                            SummaryListRow(
+                                key = Key(
+                                    content = Text(getMessage("tradetype"))
+                                ),
+                                value = Value(
+                                    content = Text(extractOption(viewModel.incomeSource))
+                                )
+                            )
+                        )
+                    } else Seq.empty
+                } ++
+                Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(getAccountingMethodMessage)
+                        ),
+                        value = Value(
+                            content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
+                        )
+                    ))
                 ++ getQuarterlyType
                 ++ {
-            if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
-                    && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
+            if(viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
         },
         attributes = Map("id" -> "manage-details-table")),
     )
@@ -299,4 +306,3 @@
     <br>
 
 }
-

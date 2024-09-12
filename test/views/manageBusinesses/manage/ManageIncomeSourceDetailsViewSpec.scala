@@ -20,88 +20,139 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testStartDate, testTradeName}
-import testUtils.TestSupport
+import testConstants.BusinessDetailsTestConstants._
+import testUtils.{TestSupport, ViewSpec}
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
-class ManageIncomeSourceDetailsViewSpec extends TestSupport {
+class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
 
-  val unknown = messages("incomeSources.generic.unknown")
-  val heading = messages("incomeSources.manage.business-manage-details.heading")
-  val soleTrader = messages("incomeSources.manage.business-manage-details.sole-trader-section")
-  val businessName = messages("incomeSources.manage.business-manage-details.business-name")
-  val businessAddress = messages("incomeSources.manage.business-manage-details.business-address")
-  val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
-  val typeOfTrade = messages("incomeSources.manage.business-manage-details.tradetype")
-  val isTraditionalAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
-  val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
-  val quarterlyPeriodType = messages("incomeSources.manage.quarterly-period")
-  val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
-  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
-  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
-  val change = messages("incomeSources.manage.business-manage-details.change")
-  val graceperiodinfo = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
-  val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
-  val annually = messages("incomeSources.manage.business-manage-details.annually")
-  val quarterlyGracePeriod = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
-  val annuallyGracePeriod = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
-  val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
-  val standard = messages("incomeSources.manage.quarterly-period.standard")
-  val calendar = messages("incomeSources.manage.quarterly-period.calendar")
-  val traditional = messages("incomeSources.manage.business-manage-details.traditional-accounting")
+  val unknown: String = messages("incomeSources.generic.unknown")
+  val heading: String = messages("incomeSources.manage.business-manage-details.heading")
+  val soleTrader: String = messages("incomeSources.manage.business-manage-details.sole-trader-section")
+  val businessName: String = messages("incomeSources.manage.business-manage-details.business-name")
+  val businessAddress: String = messages("incomeSources.manage.business-manage-details.business-address")
+  val dateStarted: String = messages("incomeSources.manage.business-manage-details.date-started")
+  val typeOfTrade: String = messages("incomeSources.manage.business-manage-details.tradetype")
+  val isTraditionalAccountingMethod: String = messages("incomeSources.manage.business-manage-details.accounting-method")
+  val ukAccountingMethod: String = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
+  val quarterlyPeriodType: String = messages("incomeSources.manage.quarterly-period")
+  val foreignAccountingMethod: String = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
+  val reportingMethod1: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
+  val reportingMethod2: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
+  val change: String = messages("incomeSources.manage.business-manage-details.change")
+  val graceperiodinfo: String = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
+  val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
+  val annually: String = messages("incomeSources.manage.business-manage-details.annually")
+  val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
+  val annuallyGracePeriod: String = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
+  val cash: String = messages("incomeSources.manage.business-manage-details.cash-accounting")
+  val standard: String = messages("incomeSources.manage.quarterly-period.standard")
+  val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
+  val traditional: String = messages("incomeSources.manage.business-manage-details.traditional-accounting")
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
   val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL United Kingdom"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
-  val expandableInfoStandardSummary = messages("incomeSources.manage.quarterly-period.standard.summary")
-  val expandableInfoCalendarSummary = messages("incomeSources.manage.quarterly-period.calendar.summary")
-  val expandableInfoStandardContentP1 = messages("incomeSources.manage.quarterly-period.standard.content.p1")
-  val expandableInfoStandardContentP2 = messages("incomeSources.manage.quarterly-period.standard.content.p2")
-  val expandableInfoCalendarContentP1 = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
-  val expandableInfoCalendarContentP2 = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
-  val expandableInfoContentP3 = messages("incomeSources.manage.quarterly-period.content.p3")
+  val expandableInfoStandardSummary: String = messages("incomeSources.manage.quarterly-period.standard.summary")
+  val expandableInfoCalendarSummary: String = messages("incomeSources.manage.quarterly-period.calendar.summary")
+  val expandableInfoStandardContentP1: String = messages("incomeSources.manage.quarterly-period.standard.content.p1")
+  val expandableInfoStandardContentP2: String = messages("incomeSources.manage.quarterly-period.standard.content.p2")
+  val expandableInfoCalendarContentP1: String = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
+  val expandableInfoCalendarContentP2: String = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
+  val expandableInfoContentP3: String = messages("incomeSources.manage.quarterly-period.content.p3")
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
-  val opensInNewTabText = messages("pagehelp.opensInNewTabText")
+  val opensInNewTabText: String = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
-  val reportingFrequencyText = messages("incomeSources.manage.business-manage-details.reportingFrequency")
+  val reportingFrequencyText: String = messages("incomeSources.manage.business-manage-details.reportingFrequency")
   val newBusinessInsetText = messages("incomeSources.manage.business-manage-details.insetText")
   def reportingFrequencyLink(isAgent: Boolean): String = {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
-  val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val selfEmploymentViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = Some(testTradeName),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
     quarterReportingType = Some(QuarterTypeStandard)
   )
 
-  val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val selfEmploymentViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(true),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = Some(QuarterTypeStandard)
+  )
+
+  val selfEmploymentViewModelCYUnknown: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = None
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetails4),
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = Some(QuarterTypeStandard)
+  )
+
+
+  val selfEmploymentViewModelWithUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     incomeSource = None,
     tradingName = None,
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = None,
+      secondYear = Some(false)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = SelfEmployment,
     quarterReportingType = None
@@ -114,12 +165,77 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
     quarterReportingType = Some(QuarterTypeCalendar)
+  )
+
+  val ukViewModelOneYearQuarterly: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = None,
+    tradingName = None,
+    tradingStartDate = Some(testStartDate),
+    address = None,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetails4),
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(QuarterTypeCalendar)
+  )
+
+  val ukPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(true),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(QuarterTypeStandard)
+  )
+
+  val ukPropertyViewModelCYUnknown: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = None
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetailsCYUnknown),
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -129,9 +245,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = None,
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = UkProperty,
     quarterReportingType = None
@@ -144,12 +265,57 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = Some(testStartDate),
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-    taxYearOneCrystallised = Some(false),
-    taxYearTwoCrystallised = Some(false),
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
     quarterReportingType = Some(QuarterTypeCalendar)
+  )
+
+  val foreignPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(true),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = Some(QuarterTypeStandard)
+  )
+
+  val foreignPropertyLatencyYearTwoUnknown: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSource = Some(testTradeName),
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
+    address = expectedAddress,
+    isTraditionalAccountingMethod = false,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = Some(true),
+      secondYear = None
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = Some(false),
+      secondYear = Some(false)
+    ),
+    latencyDetails = Some(testLatencyDetailsCYUnknown),
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -159,9 +325,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingStartDate = None,
     address = None,
     isTraditionalAccountingMethod = false,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
+    latencyYearsQuarterly = LatencyYearsQuarterly(
+      firstYear = None,
+      secondYear = Some(true)
+    ),
+    latencyYearsCrystallised = LatencyYearsCrystallised(
+      firstYear = None,
+      secondYear = None
+    ),
     latencyDetails = None,
     incomeSourceType = ForeignProperty,
     quarterReportingType = None
@@ -170,7 +341,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   def backUrl(isAgent: Boolean): String =
     controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
 
-  class Setup(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentSetup(isAgent: Boolean, error: Boolean = false) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
@@ -179,7 +350,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        viewModel,
+        selfEmploymentViewModel,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -189,11 +360,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   }
 
-  class Setup2(isAgent: Boolean, error: Boolean = false) {
+  class SelfEmploymentUnknownsSetup(isAgent: Boolean, error: Boolean = false) {
+
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+        .show(taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+    }
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
-        viewModel2,
+        selfEmploymentViewModelWithUnknowns,
         isAgent,
         backUrl(isAgent)
       )(messages, implicitly)
@@ -202,6 +378,41 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
   }
+
+
+  class SelfEmploymentCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+        .show(taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModelOneYearCrystallised,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class SelfEmploymentCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModelCYUnknown,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
 
   class ukSetup(isAgent: Boolean, error: Boolean = false) {
 
@@ -237,6 +448,40 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
+  class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+        .show(taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukPropertyViewModelOneYearCrystallised,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class ukCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukPropertyViewModelCYUnknown,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+
   class foreignSetup(isAgent: Boolean, error: Boolean = false) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
@@ -271,15 +516,50 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
+  class foreignCrystallisedSetup(isAgent: Boolean, error: Boolean = false) {
+
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+        .show(taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignPropertyViewModelOneYearCrystallised,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class foreignCYLatencyUnknownSetup(isAgent: Boolean, error: Boolean = false) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignPropertyLatencyYearTwoUnknown,
+        isAgent,
+        backUrl(isAgent)
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+
+
   "ManageSelfEmployment - Individual" should {
-    "render the heading" in new Setup(false) {
+    "render the heading" in new SelfEmploymentSetup(false) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
-    "render the back correct back Url" in new Setup(false) {
+    "render the back correct back Url" in new SelfEmploymentSetup(false) {
       document.getElementById("back-fallback").text() shouldBe messages("base.back")
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
-    "render the whole page" in new Setup(false) {
+    "render the whole page" in new SelfEmploymentSetup(false) {
 
       document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
@@ -317,8 +597,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
-    "render the whole page with unknowns and no change links" in new Setup2(false) {
-
+    "render the whole page with unknowns and no change links" in new SelfEmploymentUnknownsSetup(false) {
       Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
@@ -333,16 +612,41 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Cash basis accounting"
     }
+
+    "Do not render the reporting frequency rows when NO latency details" in new SelfEmploymentUnknownsSetup(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(6).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+    }
+
+    "render the reporting frequency rows IF there are latency details" in new SelfEmploymentSetup(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false){
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
+    }
+
+    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false){
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2").text() shouldBe change
+    }
+
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
+    }
   }
   "ManageSelfEmployment - Agent" should {
-    "render the heading" in new Setup(true) {
+    "render the heading" in new SelfEmploymentSetup(true) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
-    "render the back correct back Url" in new Setup(true) {
+    "render the back correct back Url" in new SelfEmploymentSetup(true) {
       document.getElementById("back-fallback").text() shouldBe messages("base.back")
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
-    "render the whole page" in new Setup(true) {
+    "render the whole page" in new SelfEmploymentSetup(true) {
 
       document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
@@ -428,6 +732,33 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
+
+    "Do not render the reporting frequency rows when NO latency details" in new ukSetupUnknowns(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(3).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
+    }
+
+    "render the reporting frequency rows IF there are latency details" in new ukSetup(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false){
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
+    }
+
+    "render the change links where status is Quarterly" in new ukCrystallisedSetup(false) {
+
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2").text() shouldBe change
+    }
+
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new ukSetupUnknowns(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
+    }
+
   }
   "Manage Uk Property - Agent" should {
     "render the heading" in new ukSetup(true) {
@@ -523,6 +854,30 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
+    }
+    "Do not render the reporting frequency rows when NO latency details" in new foreignSetupUnknowns(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(3).isDefined shouldBe false
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
+    }
+
+    "render the reporting frequency rows IF there are latency details" in new foreignSetup(false) {
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false){
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
+    }
+
+    "render the change links where status is Quarterly" in new foreignCrystallisedSetup(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2").text() shouldBe change
+    }
+
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new foreignSetupUnknowns(false) {
+      document.getElementById("change-link-1") shouldBe null
+      document.getElementById("change-link-2") shouldBe null
     }
   }
   "Manage Foreign Property - Agent" should {
