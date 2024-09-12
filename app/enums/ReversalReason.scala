@@ -18,6 +18,7 @@ package enums
 
 sealed trait ReversalReason {
   val value: String
+  override def toString: String = value
 }
 
 // Not part of String -> ReversalReason conversion:: do we need this item?
