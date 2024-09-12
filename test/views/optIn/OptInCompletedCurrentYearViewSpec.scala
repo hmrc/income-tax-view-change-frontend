@@ -24,24 +24,20 @@ import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedCurrentYearView
 
-object OptInCompletedCurrentYearViewSpec {
-  val title = "Opt In completed - Manage your Income Tax updates - GOV.UK"
-}
 
 class OptInCompletedCurrentYearViewSpec extends TestSupport {
 
-  val optInCompletedCurrentYearView: OptInCompletedCurrentYearView = app.injector.instanceOf[OptInCompletedCurrentYearView]
-
+  val view: OptInCompletedCurrentYearView = app.injector.instanceOf[OptInCompletedCurrentYearView]
 
   class Setup(isAgent: Boolean = true, taxYear: TaxYear) {
     val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear)
-    val pageDocument: Document = Jsoup.parse(contentAsString(optInCompletedCurrentYearView(model = model)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
   val forYearEnd = 2023
-  val year22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
-  s"have the correct content for year $year22_23" in new Setup(false, year22_23) {
-    pageDocument.title() shouldBe OptInCompletedCurrentYearViewSpec.title
+  val taxYear22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  s"have the correct content for year $taxYear22_23" in new Setup(false, taxYear22_23) {
+    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
@@ -55,9 +51,9 @@ class OptInCompletedCurrentYearViewSpec extends TestSupport {
   }
 
   val anotherForYearEnd = 2022
-  val year21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
-  s"have the correct content for year $year21_22" in new Setup(false, year21_22) {
-    pageDocument.title() shouldBe OptInCompletedCurrentYearViewSpec.title
+  val taxYear21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
+  s"have the correct content for year $taxYear21_22" in new Setup(false, taxYear21_22) {
+    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
 
     pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"

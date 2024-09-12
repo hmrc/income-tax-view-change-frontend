@@ -24,23 +24,40 @@ import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.optIn.OptInCompletedNextYearView
 
-object OptInCompletedNextYearViewSpec {
-  val title = "Opt In completed - Manage your Income Tax updates - GOV.UK"
-}
-
 class OptInCompletedNextYearViewSpec extends TestSupport {
 
-  val optInCompletedNextYearView: OptInCompletedNextYearView = app.injector.instanceOf[OptInCompletedNextYearView]
-  val forYearEnd = 2023
-  val currentTaxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  val view: OptInCompletedNextYearView = app.injector.instanceOf[OptInCompletedNextYearView]
 
-  class Setup(isAgent: Boolean = true) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = currentTaxYear)
-    val pageDocument: Document = Jsoup.parse(contentAsString(optInCompletedNextYearView(model = model)))
+  class Setup(isAgent: Boolean = true, taxYear: TaxYear) {
+    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear)
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
-  "have the correct title" in new Setup(false) {
-    pageDocument.title() shouldBe OptInCompletedNextYearViewSpec.title
+  val forYearEnd = 2023
+  val taxYear22_23: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  s"have the correct content for year $taxYear22_23" in new Setup(false, taxYear22_23) {
+    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
+
+    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
+    pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
+
+    pageDocument.getElementById("optin-completed-view-p1").text() shouldBe "Check the updates and deadlines page for " +
+      "the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current " +
+      "year."
+    pageDocument.getElementById("optin-completed-view-p2").text() shouldBe "You can decide at any time to opt out of " +
+      "reporting quarterly for all your businesses on your reporting frequency page."
+
+    pageDocument.getElementById("optin-completed-view-p3").text() shouldBe "For any tax year you are reporting " +
+      "quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+    pageDocument.getElementById("optin-completed-view-p4").text() shouldBe "When reporting annually, you can submit " +
+      "your tax return directly through your HMRC online account or compatible software."
+
+    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You are voluntarily opted in to reporting " +
+      "quarterly from the next tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
+      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
+      "(opens in new tab)."
+
   }
 
 }
