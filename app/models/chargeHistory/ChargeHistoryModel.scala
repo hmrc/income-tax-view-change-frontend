@@ -36,9 +36,7 @@ case class ChargeHistoryModel(taxYear: String,
       reversalReason match {
         case "amended return" => "amend"
         case "Customer Request" => "request"
-        case error =>
-          Logger("application").error(s"Missing or non-matching history reason: $error found")
-          "unrecognisedReason"
+        case error => "unrecognisedReason"
       }
   }
 
