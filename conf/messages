@@ -1119,6 +1119,7 @@ paymentAllocation.intro                                         = When you make 
 paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
 paymentAllocation.condition-2                                   = Charges that become due.
 paymentAllocation.condition-3                                   = Charges due within 30 days.
+paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
 
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2

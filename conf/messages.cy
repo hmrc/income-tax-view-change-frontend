@@ -1156,6 +1156,7 @@ paymentAllocation.intro                                         = Pan fyddwch yn
 paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy'n cronni llog.
 paymentAllocation.condition-2                                   = Taliadau sy'n dod yn ddyledus.
 paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
+paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
 
 
 ## Final Tax Overview (Individual/Common Content)
