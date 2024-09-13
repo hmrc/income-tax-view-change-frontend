@@ -39,7 +39,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
   def getReconciliationChargesList(financialDetailsModel: FinancialDetailsModel): List[(FinancialDetail, Option[(Option[LocalDate], Int, BigDecimal)])] = {
     val reconciliationChargesMainTransactions = financialDetails.filter(financialDetailsModel =>
-      financialDetailsModel.mainTransaction.contains("4911") || financialDetailsModel.mainTransaction.contains(MainTransaction.first))
+      financialDetailsModel.mainTransaction.contains("4911") || financialDetailsModel.mainTransaction.contains("4913"))
 
     val result = reconciliationChargesMainTransactions.map { financialDetails =>
       val documentData = financialDetails.transactionId.flatMap { id =>

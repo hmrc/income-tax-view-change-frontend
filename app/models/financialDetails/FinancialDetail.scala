@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
-                           mainTransaction: Option[MainTransaction] = None,
+                           mainTransaction: Option[String] = None,
                            transactionId: Option[String] = None,
                            transactionDate: Option[LocalDate] = None,
                            chargeReference: Option[String] = None,
@@ -141,12 +141,4 @@ object FinancialDetail {
       MTypeBCD -> supportedBCDCTypeParts
     )
   }
-}
-
-case class MainTransaction(value: String)
-
-object MainTransaction{
-  val first = MainTransaction("4913")
-
-  val knownValues = Set(first)
 }
