@@ -16,9 +16,9 @@
 
 package mocks.services
 
-import connectors.optout.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
-import connectors.optout.OptOutUpdateRequestModel.{optOutUpdateReason, OptOutUpdateResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -36,8 +36,8 @@ trait MockITSAStatusUpdateConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockOptOutConnector)
   }
 
-  def setupMockRequestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)(out: OptOutUpdateResponse): Unit = {
-    when(mockOptOutConnector.requestOptOutForTaxYear(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(taxableEntityId), optOutUpdateReason)
+  def setupMockRequestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)(out: ITSAStatusUpdateResponse): Unit = {
+    when(mockOptOutConnector.makeITSAStatusUpdate(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(taxableEntityId), optOutUpdateReason)
       (any())).thenReturn(Future.successful(out))
   }
 

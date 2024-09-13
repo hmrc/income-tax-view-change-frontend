@@ -17,7 +17,7 @@
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.optout.OptOutUpdateRequestModel.{OptOutUpdateResponse, OptOutUpdateResponseFailure, OptOutUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptOutService, MockSessionService}
 import models.incomeSourceDetails.TaxYear
@@ -76,8 +76,8 @@ class ConfirmOptOutControllerSpec extends TestSupport
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 
-  val optOutUpdateResponseSuccess: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseSuccess())
-  val optOutUpdateResponseFailure: Future[OptOutUpdateResponse] = Future.successful(OptOutUpdateResponseFailure.defaultFailure())
+  val optOutUpdateResponseSuccess: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseSuccess())
+  val optOutUpdateResponseFailure: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
 
 
   def oneYearShowTest(isAgent: Boolean): Unit = {

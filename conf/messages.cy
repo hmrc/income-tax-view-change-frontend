@@ -1771,13 +1771,13 @@ incomeSources.manage.business-manage-details.accounting-method        =   Dull c
 incomeSources.manage.business-manage-details.reporting-method         =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
-incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
+incomeSources.manage.business-manage-details.annually                 =   Blynyddol
 incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter
-incomeSources.manage.business-manage-details.annually.graceperiod     =   Bob blwyddyn
+incomeSources.manage.business-manage-details.annually.graceperiod     =   Blynyddol
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
-incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
+incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
@@ -2131,7 +2131,7 @@ optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlae
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
-optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = TBD
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol.
 
 # opt in check your answers
 optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
@@ -2139,7 +2139,7 @@ optin.checkAnswers.heading = Gwirio’ch atebion
 optin.checkAnswers.optin = Optio i mewn o
 optin.checkAnswers.change = Newid
 optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariad chwarterol drwy feddalwedd sy’n cydweddu.
-optin.checkAnswers.ny = TBD
+optin.checkAnswers.ny = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
 optin.checkAnswers.submissionsMade = TBD

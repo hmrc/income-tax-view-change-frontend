@@ -18,7 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails.{LatencyDetails, QuarterReportingType}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
 
 import java.time.LocalDate
 
@@ -28,9 +28,8 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
                                               isTraditionalAccountingMethod: Boolean,
-                                              itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
-                                              taxYearOneCrystallised: Option[Boolean],
-                                              taxYearTwoCrystallised: Option[Boolean],
+                                              latencyYearsQuarterly: LatencyYearsQuarterly,
+                                              latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               quarterReportingType: Option[QuarterReportingType]
@@ -44,11 +43,17 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def businessAccountingMethodAsKey(isTraditionalAccountingMethod: Boolean): String = {
-    isTraditionalAccountingMethod match {
-      case true => "incomeSources.manage.business-manage-details.traditional-accounting"
-      case false => "incomeSources.manage.business-manage-details.cash-accounting"
+    if (isTraditionalAccountingMethod) {
+      "incomeSources.manage.business-manage-details.traditional-accounting"
+    } else {
+      "incomeSources.manage.business-manage-details.cash-accounting"
     }
   }
+
+  def shouldShowTaxYears: Boolean = {
+    latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
+  }
+
 }
 
 

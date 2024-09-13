@@ -21,7 +21,7 @@ import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object SessionGetResponse {
+object SessionDataGetResponse {
 
   case class SessionDataGetSuccess(
                                     mtditid: String,
