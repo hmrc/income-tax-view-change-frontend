@@ -64,9 +64,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
-//      if (whatYouOweChargesList.chargesList.exists(c => c.isReviewAndReconcilePoaOneDebit)) println("BABABABABA")
-//      if (whatYouOweChargesList.chargesList.exists(c => c.documentDetail.transactionId == "PA000007202403")) println("SCREEE")
-      if (whatYouOweChargesList.chargesList.exists(c => c.documentDetail.documentDescription.contains("documentDescriptionTest"))) println("CDCDCD")
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
       Ok(whatYouOwe(

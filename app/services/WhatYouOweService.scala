@@ -21,8 +21,6 @@ import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,11 +36,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  val validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.getDocType) match {
-      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge) => true
-      case (_, _) => false
+  val validChargeTypeCondition: DocumentDetailWithDueDate => Boolean = documentDetailWDD => {
+    (documentDetailWDD.documentDetail.documentText, documentDetailWDD.documentDetail.getDocType, documentDetailWDD.isReviewAndReconcileDebit) match {
+      case (Some(documentText), _, _) if documentText.contains("Class 2 National Insurance") => true
+      case (_, Poa1Charge | Poa2Charge | TRMNewCharge | TRMAmmendCharge, _) => true
+      case (_, _, true) => true
+      case (_, _, _) => false
     }
   }
 
@@ -61,8 +60,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
-        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled, reviewAndReconcileEnabled)
+        unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
+      } yield getWhatYouOweChargesList(unpaidCharges, isCodingOutEnabled, isMFACreditsEnabled, reviewAndReconcileEnabled)
     }.flatten
   }
 
@@ -115,7 +114,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isCodingOutEnabled, reviewAndReconcileEnabled))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
-        && validChargeTypeCondition(documentDetailWithDueDate.documentDetail)
+        && validChargeTypeCondition(documentDetailWithDueDate)
         && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
         && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
       .sortBy(_.dueDate.get)
