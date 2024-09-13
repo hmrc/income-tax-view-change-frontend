@@ -1152,6 +1152,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
+paymentAllocation.intro                                        = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol

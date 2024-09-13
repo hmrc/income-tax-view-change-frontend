@@ -34,7 +34,8 @@
       p:p,
       govukInsetText: GovukInsetText,
       link: link,
-      appConfig: config.FrontendAppConfig
+      appConfig: config.FrontendAppConfig,
+      list: bulletPointList
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
@@ -84,8 +85,10 @@
         </div>
     </dl>
 
-    @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+@p() {@messages("paymentAllocation.intro")}
+@list("hello", "hello2")
 
+@if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
     } else {
         <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
