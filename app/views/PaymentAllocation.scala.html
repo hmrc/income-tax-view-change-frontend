@@ -87,6 +87,10 @@
 
 @p() {@messages("paymentAllocation.intro")}
 
+@numberList("paymentAllocation.condition-1", "paymentAllocation.condition-2", "paymentAllocation.condition-3")
+
+@p() {@messages("paymentAllocation.outro")}
+
 @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
     } else {
         <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
