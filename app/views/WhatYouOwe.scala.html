@@ -262,6 +262,12 @@
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
+@getInterestMessage(documentDetailWithDueDate: DocumentDetailWithDueDate): String = @{
+    if(documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit) getMessage("over-due.reviewAndReconcileOne.line1")
+    else  if(documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit) getMessage("over-due.reviewAndReconcileTwo.line1")
+    else getMessage("over-due.interest.line1")
+    }
+
 @getReturnHref(year: Int) = @{
    if (isAgent) {
        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
@@ -284,10 +290,14 @@
             @documentDetailWithDueDate.documentDetail.documentDueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
-            @if(isOverduePayment){
-                <div>
-                    <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
-                </div>
+            @if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid) {
+                <div class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest")</div>
+            }else {
+                @if(isOverduePayment){
+                    <div>
+                        <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
+                    </div>
+                }
             }
             @getPaymentTypeEntry(documentDetailWithDate = documentDetailWithDueDate, isOverduePayment = isOverduePayment,
                 rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit, index = index)
@@ -434,7 +444,7 @@
                                         <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
                                             <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                             <td class="govuk-table__cell govuk-!-width-one-half">
-                                                @getMessage("over-due.interest.line1")
+                                                @getInterestMessage(charge)
                                                 <div>
                                                 @getMessage("over-due.interest.line2",
                                                     charge.documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
