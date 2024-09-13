@@ -67,6 +67,8 @@ object FeatureSwitchName {
       JsSuccess(OptOut)
     case name if name == JsString(AdjustPaymentsOnAccount.name) =>
       JsSuccess(AdjustPaymentsOnAccount)
+    case name if name == JsString(ReviewAndReconcilePoa.name) =>
+      JsSuccess(ReviewAndReconcilePoa)
     case _ => JsError("Invalid feature switch name")
   }
 
@@ -91,7 +93,7 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(ITSASubmissionIntegration, ChargeHistory, PaymentAllocation, CodingOut, NavBarFs,
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
-      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount)
+      PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
 
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -175,6 +177,11 @@ case object OptOut extends FeatureSwitchName {
 case object AdjustPaymentsOnAccount extends FeatureSwitchName {
   override val name: String = s"adjust-payments-on-account"
   override val toString: String = "Adjust Payments On Account"
+}
+
+case object ReviewAndReconcilePoa extends FeatureSwitchName {
+  override val name: String = s"review-and-reconcile-poa"
+  override val toString: String = "Review And Reconcile POA"
 }
 
 object FeatureSwitchMongoFormats {

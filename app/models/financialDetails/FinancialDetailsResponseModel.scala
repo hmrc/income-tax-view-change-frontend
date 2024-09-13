@@ -19,6 +19,7 @@ package models.financialDetails
 import auth.MtdItUser
 import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.financialDetails.ReviewAndReconcileDebitUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -78,6 +79,20 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
+      }
+  }
+
+  def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
+      }
+  }
+
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
 
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
@@ -98,11 +113,13 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
-        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
+        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId),
+        isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
+        isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
   def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {

@@ -214,19 +214,24 @@
     </thead>
 }
 
-@paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
+@reviewAndReconcileKey(documentDetailWithDate: DocumentDetailWithDueDate): String = @{
+    if (documentDetailWithDate.isReviewAndReconcilePoaOneDebit) "reviewAndReconcileOne.text"
+    else "reviewAndReconcileTwo.text"
+}
+
+@paymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else if (documentDetailWithDate.isReviewAndReconcileDebit) reviewAndReconcileKey(documentDetailWithDate) else documentDetailWithDate.documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
-    val taxYear = documentDetail.taxYear
+    val taxYear = documentDetailWithDate.documentDetail.taxYear
     val linkHref = if(isAgent) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear.toInt,
-            documentDetail.transactionId, isLatePaymentInterest)
+            documentDetailWithDate.documentDetail.transactionId, isLatePaymentInterest)
     } else {
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
-            documentDetail.transactionId, isLatePaymentInterest, origin)
+            documentDetailWithDate.documentDetail.transactionId, isLatePaymentInterest, origin)
     }
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
         linkSuffix: String, index+1)
@@ -240,20 +245,20 @@
     </a>
 }
 
-@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
-    val isLatePaymentInterest = isOverduePayment && documentDetail.isLatePaymentInterest
+@getPaymentTypeEntry(documentDetailWithDate: DocumentDetailWithDueDate, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
+    val isLatePaymentInterest = isOverduePayment && documentDetailWithDate.documentDetail.isLatePaymentInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
         } else {
-            if(documentDetail.isClass2Nic || documentDetail.isLatePaymentInterest) {
+            if(documentDetailWithDate.documentDetail.isClass2Nic || documentDetailWithDate.documentDetail.isLatePaymentInterest) {
                 "late-link"
             } else {
                 "late-link2"
             }
         }
     }
-    paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
+    paymentTypeEntry(documentDetailWithDate, rowId, isLatePaymentInterest = isLatePaymentInterest,
     linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
@@ -284,7 +289,7 @@
                     <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
                 </div>
             }
-            @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
+            @getPaymentTypeEntry(documentDetailWithDate = documentDetailWithDueDate, isOverduePayment = isOverduePayment,
                 rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit, index = index)
 
             @if(documentDetailWithDueDate.dunningLock){
