@@ -35,7 +35,7 @@
       govukInsetText: GovukInsetText,
       link: link,
       appConfig: config.FrontendAppConfig,
-      list: bulletPointList
+      numberList: numberList
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
@@ -86,7 +86,6 @@
     </dl>
 
 @p() {@messages("paymentAllocation.intro")}
-@list("hello", "hello2")
 
 @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
     } else {
