@@ -1155,6 +1155,8 @@ paymentAllocation.sa.info                                       = Dyma arian a d
 paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
 paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy'n cronni llog.
 paymentAllocation.condition-2                                   = Taliadau sy'n dod yn ddyledus.
+paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
+
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
