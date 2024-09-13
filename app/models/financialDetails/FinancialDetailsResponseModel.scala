@@ -38,27 +38,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getAllDueDates: List[LocalDate] = {
     documentDetails.flatMap(_.getDueDate())
   }
-  def getReconciliationChargesList(financialDetailsModel: FinancialDetailsModel): List[(FinancialDetail, Option[(Option[LocalDate], Int, BigDecimal)])] = {
-    val reconciliationChargesMainTransactions = financialDetails.filter(financialDetailsModel =>
-      financialDetailsModel.mainTransaction.contains("4911") || financialDetailsModel.mainTransaction.contains("4913"))
-
-    val result = reconciliationChargesMainTransactions.map { financialDetails =>
-      val documentData = financialDetails.transactionId.flatMap { id =>
-        documentDetails.find(_.transactionId == id).map { doc =>
-          (doc.documentDueDate, doc.taxYear, doc.outstandingAmount)
-        }
-      }
-      (financialDetails, documentData)
-    }
-    result
-  }
-
-  def getReconciliationCharges(financialDetailsModel: FinancialDetailsModel): List[FinancialDetail] = {
-    val reconciliationCharges = financialDetails.filter (financialDetailsModel =>
-      financialDetailsModel.mainTransaction.contains("4911") || financialDetailsModel.mainTransaction.contains("4913"))
-    reconciliationCharges
-  }
-
 
   def dunningLockExists(documentId: String): Boolean = {
     documentDetails.filter(_.transactionId == documentId)
