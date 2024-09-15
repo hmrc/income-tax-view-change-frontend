@@ -958,20 +958,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
       }
-      "display Review And Reconcile Debits - Individual" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = false)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe hmrcAdjustment
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
-      }
-
-      "display Review And Reconcile Debits - Agent" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe hmrcAdjustment
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
-          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
-      }
-
     }
   }
 }
