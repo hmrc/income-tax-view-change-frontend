@@ -289,7 +289,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
     "user has Review and Reconcile debit charges" should {
-      "render the Review and Reconcile debit charge in the table" in {
+      "render the Review and Reconcile debit charges in the table" in {
         enable(ReviewAndReconcilePoa)
 
         mockSingleBusinessIncomeSource()
@@ -309,14 +309,15 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
       }
-      "render the Review and Reconcile debit charge in the table with no ACCRUES INTEREST tag if the charge is paid" in {
+      "render the Review and Reconcile debit charges in the table with no ACCRUES INTEREST tag if the charge is paid" in {
         enable(ReviewAndReconcilePoa)
 
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModelResponse =
           financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
-            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0)
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
           )))
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -326,9 +327,11 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe OK
-        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag") shouldBe null
+        Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
       }
     }
 
