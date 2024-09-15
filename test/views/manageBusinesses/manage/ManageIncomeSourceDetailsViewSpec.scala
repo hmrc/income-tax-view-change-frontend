@@ -72,7 +72,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val opensInNewTabText: String = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
   val reportingFrequencyText: String = messages("incomeSources.manage.business-manage-details.reportingFrequency")
-  val newBusinessInsetText = messages("incomeSources.manage.business-manage-details.insetText")
+  val newBusinessInsetText: String = messages("incomeSources.manage.business-manage-details.insetText")
+
   def reportingFrequencyLink(isAgent: Boolean): String = {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
@@ -550,7 +551,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   }
 
 
-
   "ManageSelfEmployment - Individual" should {
     "render the heading" in new SelfEmploymentSetup(false) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
@@ -623,12 +623,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
     }
 
-    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false){
+    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false) {
       Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
@@ -743,7 +743,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
@@ -864,7 +864,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
