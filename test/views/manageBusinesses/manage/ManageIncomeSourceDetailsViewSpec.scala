@@ -146,7 +146,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
+      firstYear = Some(false),
       secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
@@ -246,8 +246,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
-      secondYear = Some(true)
+      firstYear = Some(false),
+      secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = None,
@@ -326,8 +326,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
-      secondYear = Some(true)
+      firstYear = Some(false),
+      secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = None,
@@ -597,8 +597,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
-    "render the whole page with unknowns and no change links" in new SelfEmploymentUnknownsSetup(false) {
-      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+    "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -629,13 +629,13 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false){
-      document.getElementById("change-link-1") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
   }
   "ManageSelfEmployment - Agent" should {
@@ -723,8 +723,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
-      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+    "render the whole page with unknowns and no change links or inset text" in new ukSetupUnknowns(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -749,14 +749,13 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the change links where status is Quarterly" in new ukCrystallisedSetup(false) {
-
-      document.getElementById("change-link-1") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new ukSetupUnknowns(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
 
   }
@@ -799,7 +798,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
-      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -846,8 +845,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
-      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+    "render the whole page with unknowns and no change links or inset text" in new foreignSetupUnknowns(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -871,13 +870,13 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the change links where status is Quarterly" in new foreignCrystallisedSetup(false) {
-      document.getElementById("change-link-1") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new foreignSetupUnknowns(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
   }
   "Manage Foreign Property - Agent" should {
@@ -917,8 +916,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
-      Option(document.getElementsByClass("govuk-inset-text")) shouldBe None
+    "render the whole page with unknowns and no change links or inset text" in new foreignSetupUnknowns(true) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
