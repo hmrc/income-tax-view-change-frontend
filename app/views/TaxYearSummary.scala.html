@@ -161,10 +161,14 @@
 
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
+    if(documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit || documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit) {
+        "/"
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
+        if(isAgent){
+            controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
+        } else {
+            controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
+        }
     }
 }
 
