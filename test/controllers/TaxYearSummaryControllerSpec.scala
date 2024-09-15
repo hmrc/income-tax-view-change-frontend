@@ -25,12 +25,12 @@ import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs, ReviewAndReconcilePoa}
 import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{SingleObligationModel, ObligationsErrorModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -285,6 +285,29 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+    "user has Review and Reconcile debit charges" should {
+      "render the Review and Reconcile debit charge in the table" in {
+        enable(ReviewAndReconcilePoa)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        contentAsString(result)
+        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").attr("href") shouldBe ""
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").attr("href") shouldBe ""
       }
     }
 

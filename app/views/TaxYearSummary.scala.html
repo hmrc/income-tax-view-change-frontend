@@ -221,7 +221,7 @@
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
                         @if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid) {
-                            <div class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest")</div>
+                            <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">
                             @if(documentDetailWithDueDate.documentDetail.originalAmount == 0) {
