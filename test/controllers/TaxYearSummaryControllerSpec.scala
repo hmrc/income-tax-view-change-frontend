@@ -305,9 +305,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result)
         Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").attr("href") shouldBe ""
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").attr("href") shouldBe ""
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
       }
     }
 
