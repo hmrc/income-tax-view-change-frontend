@@ -302,7 +302,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe OK
-        contentAsString(result)
         Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
