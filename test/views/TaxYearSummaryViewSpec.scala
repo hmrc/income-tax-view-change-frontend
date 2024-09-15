@@ -219,8 +219,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023,2024)))
 
-
-
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
@@ -958,6 +956,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
       }
+
     }
   }
 }
