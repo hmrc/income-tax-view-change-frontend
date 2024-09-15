@@ -50,6 +50,7 @@ import views.html.TaxYearSummary
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import scala.util.Try
 
 class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
@@ -307,6 +308,33 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
+      }
+      "render the Review and Reconcile debit charge in the table with no ACCRUES INTEREST tag if the charge is paid" in {
+        enable(ReviewAndReconcilePoa)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse =
+          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0)
+          )))
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+
+        println(s"\n${
+          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0)
+          ))}\n")
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag") shouldBe null
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
       }
     }
 
