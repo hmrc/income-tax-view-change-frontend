@@ -305,9 +305,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe OK
         Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
       }
       "render the Review and Reconcile debit charges in the table with no ACCRUES INTEREST tag if the charge is paid" in {
         enable(ReviewAndReconcilePoa)
@@ -329,9 +329,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe OK
         Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").firstElementChild().attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
-        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").firstElementChild().attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
       }
     }
 
@@ -941,6 +941,54 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         status(result) shouldBe OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+      }
+    }
+    "user has Review and Reconcile debit charges" should {
+      "render the Review and Reconcile debit charges in the table" in {
+        enable(ReviewAndReconcilePoa)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear)(fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+      }
+      "render the Review and Reconcile debit charges in the table with no ACCRUES INTEREST tag if the charge is paid" in {
+        enable(ReviewAndReconcilePoa)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse =
+          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
+          )))
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear)(fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
       }
     }
   }
