@@ -241,6 +241,14 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
+    @if(viewModel.shouldShowInsetText) {
+        <div class="govuk-inset-text">
+            @messages("incomeSources.manage.business-manage-details.insetText")
+        </div>
+    }
+    <p>
+        @(viewModel.shouldShowInsetText)
+    </p>
     @if(viewModel.latencyYearsQuarterly.secondYear.get && viewModel.latencyDetails.isDefined && (!viewModel.latencyYearsCrystallised.secondYear.get || !viewModel.latencyYearsCrystallised.firstYear.get)) {
         <div id="graceperiodinfo" class="govuk-details govuk-details__text govuk-!-margin-bottom-6">
             <p>@messages(s"incomeSources.manage.quarterly-period.content.graceperiod.info", viewModel.latencyDetails.get.taxYear2)</p>
