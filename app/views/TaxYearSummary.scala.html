@@ -161,7 +161,7 @@
 
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    if(documentDetailWithDueDate.isReviewAndReconcilePoaOneDebit || documentDetailWithDueDate.isReviewAndReconcilePoaTwoDebit) {
+    if(documentDetailWithDueDate.isReviewAndReconcileDebit) {
         "/"
     } else {
         if(isAgent){
