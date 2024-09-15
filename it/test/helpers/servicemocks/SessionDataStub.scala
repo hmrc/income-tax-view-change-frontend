@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package helpers.servicemocks
 
-import enums.ReversalReason
+import helpers.WiremockHelper
+import play.api.http.Status
 
-import java.time.LocalDate
+object SessionDataStub {
 
-case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
-                                  adjustments: List[AdjustmentModel])
+  def stubPostSessionDataResponseOkResponse(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.OK, "")
 
-case class AdjustmentModel(amount: BigDecimal,
-                      adjustmentDate: Option[LocalDate],
-                           reasonCode: ReversalReason)
+  def stubPostSessionDataResponseConflictResponse(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.CONFLICT, "")
+
+  def stubPostSessionDataResponseFailure(): Unit =
+    WiremockHelper.stubPost("/income-tax-session-data/", Status.INTERNAL_SERVER_ERROR, "")
+
+}

@@ -48,6 +48,33 @@ object ITSAStatusTestConstants {
   val badJsonErrorITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response")
   val failedFutureITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, s"Unexpected failed future, error")
 
+  val successMultipleYearMandatedITSAStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+    )
+  }
+
+  val currentYearMandatedPreviousYearNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMinimal))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+    )
+  }
+
+  val previousYearMandatedCurrentYearNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMinimal)))
+    )
+  }
+
+  val bothYearsNoStatusResponse = {
+    List(
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetail)))
+    )
+  }
 
   val statusDetailMinimalJson = Json.parse(
     """

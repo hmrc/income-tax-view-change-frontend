@@ -26,6 +26,7 @@ import mocks.services.MockSessionService
 import models.admin.{CalendarQuarterTypes, IncomeSources}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.LatencyDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -92,7 +93,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
     val standard: String = messages("incomeSources.manage.quarterly-period.standard")
     val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
-
+    val reportingMethod: String = messages("incomeSources.manage.business-manage-details.reporting-method")
   }
 
   sealed trait Scenario
@@ -124,8 +125,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     scenario match {
       case EXPIRED_LATENCY =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2025)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(false))
@@ -134,16 +135,16 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
       case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2024)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderNoLatency()
         when(mockSessionService.createSession(any())(any(), any())).thenReturn(Future.successful(true))
         when(mockSessionService.setMongoKey(any(), any(), any())(any(), any())).thenReturn(Future(Right(true)))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(false))
@@ -152,8 +153,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(true))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((true, true)))
         mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
           .thenReturn(Future.successful(true))
@@ -162,15 +163,19 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
       case NON_ELIGIBLE_ITSA_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(false))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((false, false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any))
+          .thenReturn(Future.successful(true))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any))
+          .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
 
 
       case ERROR_TESTING =>
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(2023)
-        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(false))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+          .thenReturn(Future.successful((false, false)))
     }
   }
 
@@ -265,12 +270,17 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dd").text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.calendar
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").eq(6).isEmpty
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").eq(7).isEmpty
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -295,6 +305,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
 
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__key").eq(6).text().contains(TestManageIncomeSourceDetailsController.reportingMethod)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__key").eq(7).text().contains(TestManageIncomeSourceDetailsController.reportingMethod)
+
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
@@ -311,13 +326,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").eq(5).isEmpty
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").eq(6).isEmpty
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, but non eligable itsa status" in {
@@ -441,14 +456,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(5).text() shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(6).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
-
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").eq(5).isEmpty
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").eq(6).isEmpty
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
@@ -504,7 +518,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
-
       }
     }
   }
@@ -564,9 +577,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").eq(3).isEmpty
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").eq(4).isEmpty
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -666,9 +679,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").eq(3).isEmpty
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").eq(4).isEmpty
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
@@ -765,9 +778,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").eq(2).isEmpty
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").eq(3).isEmpty
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -865,10 +878,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("graceperiodinfo")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").eq(2).isEmpty
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
-
+          .getElementsByClass("govuk-summary-list__value").eq(3).isEmpty
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
