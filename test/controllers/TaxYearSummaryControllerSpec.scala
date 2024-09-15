@@ -323,12 +323,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-
-        println(s"\n${
-          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
-            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0)
-          ))}\n")
-
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe OK
