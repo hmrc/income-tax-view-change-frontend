@@ -948,15 +948,15 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(ReviewAndReconcilePoa)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        mockCalculationSuccessfulNew(testMtditid)
-        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
-        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-          toDate = LocalDate.of(testTaxYear, 4, 5))(
-          response = testObligtionsModel
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
         )
 
-        val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear)(fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
 
         status(result) shouldBe OK
         Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
@@ -969,19 +969,19 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(ReviewAndReconcilePoa)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        mockCalculationSuccessfulNew(testMtditid)
-        mockFinancialDetailsSuccess(financialDetailsModelResponse =
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(response =
           financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
             financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
             financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
           )))
-        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-          toDate = LocalDate.of(testTaxYear, 4, 5))(
-          response = testObligtionsModel
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
         )
 
-        val result = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear)(fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
 
         status(result) shouldBe OK
         Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
