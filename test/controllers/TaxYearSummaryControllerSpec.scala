@@ -1009,6 +1009,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
         Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
       }
+
       "display no Review and Reconcile debit charges in the charges table when ReviewAndReconcilePoa FS is disabled" in {
         disable(ReviewAndReconcilePoa)
 
