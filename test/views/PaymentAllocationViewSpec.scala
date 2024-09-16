@@ -127,6 +127,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .getElementsByTag("dd").last.text shouldBe amount
       }
 
+      "have payment allocation introduction" in new PaymentAllocationSetup() {
+        document.getElementById("paymentAllocation.intro").text shouldBe messages("paymentAllocation.intro")
+      }
+
     }
 
     "check that the second section information is present" when {
@@ -225,6 +229,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       s"have the correct Amount of $amount" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.selectById("payment-allocation-charge-table")
           .getElementsByTag("dd").last.text shouldBe amount
+      }
+
+      "have payment allocation introduction" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("paymentAllocation.intro").text shouldBe messages("paymentAllocation.intro")
       }
 
     }
