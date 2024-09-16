@@ -1617,6 +1617,7 @@ incomeSources.add.foreign-property-check-details.change                     = Ne
 
 # business added page
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
+business-added.deadlines                                = Eich dyddiadau cau sydd wedi’u haddasu
 business-added.to                                       = i
 
 business-added.foreign-property.head                    = Mae
@@ -1637,6 +1638,42 @@ business-added.table.heading-2                          = Dyddiad cau
 business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
+business-added.view-all-businesses                                                      = Bwrw golwg dros eich holl fusnesau
+business-added.obligation.inset.single-annual-overdue.text                              = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.single-quarterly-overdue.text                           = Mae gennych <b>1 diweddariad sy’n hwyr</b> ar gyfer 3 mis ym mlwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+business-added.obligation.inset.multiple-quarterly-overdue.text                         = Mae gennych <b>{0} ddiweddariad sy’n hwyr</b> ar gyfer {1} mis ym mlwyddyn dreth {2} i {3}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+business-added.obligation.inset.multiple-tax-years-single-quarterly-overdue.text        = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text      = Mae gennych <b>{0} o ddiweddariadau sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.single-historic-overdue.text                            = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {0} i {1}.
+business-added.obligation.inset.multiple-historic-overdue.text                          = Mae gennych <b>{0} ddiweddariad sy’n hwyr</b>. Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {1} i {2}.
+business-added.obligation.view-overdue-upcoming-updates.text                            = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
+business-added.obligation.view-upcoming-updates.text                                    = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+
+business-added.next-quarterly-obligation-text               = Mae’n rhaid i chi gyflwyno’ch diweddariad chwarterol nesaf, ar gyfer blwyddyn dreth {0} i {1}, erbyn <b>{2}</b> ar gyfer cyfnod chwarterol {3} i {4}
+business-added.final-dec-text                               = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
+
+business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol a phenderfynu adrodd yn flynyddol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’ch tudalen ynghylch
+business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
+business-added.quarterly-opt-out-text-2                     =
+
+business-added.quarterly-opt-out-hybrid-text-1              =
+business-added.quarterly-opt-out-hybrid-link                =
+business-added.quarterly-opt-out-hybrid-text-2              =
+
+business-added.default-annual-reporting-frequency-text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
+business-added.default-annual-reporting-frequency-link      = amlder eich adroddiadau.
+
+business-added.submit-software-text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+business-added.submit-software-quarterly-text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+business-added.submit-software-quarterly-link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+
+business-added.submit-tax-return                            = Cyflwyno’ch Ffurflen Dreth
+business-added.submit-tax-return-text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio
+business-added.submit-tax-return-link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+
+business-added.submit-hybrid-annual-text                    = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+
 
 ## You cannot go back - Your business has been added page ##
 
