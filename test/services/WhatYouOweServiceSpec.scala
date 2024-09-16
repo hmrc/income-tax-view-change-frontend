@@ -337,8 +337,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe expectedResult
       }
       "return list including POA extra charges" in { //Currently one of these has a reverse order to the other???
-       // testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweWithReviewReconcileData)
-        // testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Unfiltered)
+//        testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweWithReviewReconcileData)
+//         testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Unfiltered)
       }
       "return list excluding POA extra charges" in {
         testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweEmptyRandR)

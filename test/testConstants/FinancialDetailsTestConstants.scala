@@ -1131,7 +1131,7 @@ object FinancialDetailsTestConstants {
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
     mainTransaction = List(Some("4911"), Some("4913")),
-    dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
+    dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     latePaymentInterestAmount = List(None, None)
