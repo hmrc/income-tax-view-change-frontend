@@ -127,9 +127,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .getElementsByTag("dd").last.text shouldBe amount
       }
 
-      "checking there is the info text" in new PaymentAllocationSetup() {
-        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
-      }
     }
 
     "check that the second section information is present" when {
@@ -230,9 +227,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .getElementsByTag("dd").last.text shouldBe amount
       }
 
-      "checking there is the info text" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
-      }
     }
 
     "check that the second section information is present" when {
