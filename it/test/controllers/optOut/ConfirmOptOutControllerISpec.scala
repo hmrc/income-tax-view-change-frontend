@@ -229,6 +229,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
               statusToString(previousYearStatus),
               statusToString(currentYearStatus),
               statusToString(nextYearStatus))), None))))
+      .futureValue shouldBe true
   }
 
 }
