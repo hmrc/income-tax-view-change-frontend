@@ -1650,24 +1650,24 @@ business-added.obligation.view-upcoming-updates.text                            
 business-added.next-quarterly-obligation-text               = Mae’n rhaid i chi gyflwyno’ch diweddariad chwarterol nesaf, ar gyfer blwyddyn dreth {0} i {1}, erbyn <b>{2}</b> ar gyfer cyfnod chwarterol {3} i {4}
 business-added.final-dec-text                               = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
 
-business-added.quarterly-opt-out-text-1                     =
-business-added.quarterly-opt-out-link                       =
+business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol a phenderfynu adrodd yn flynyddol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’ch tudalen ynghylch
+business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
 business-added.quarterly-opt-out-text-2                     =
 
-business-added.quarterly-opt-out-hybrid-text-1              =
+business-added.quarterly-opt-out-hybrid-text-1              = //todo 8287 confirm 'your reporting frequency'
 business-added.quarterly-opt-out-hybrid-link                =
 business-added.quarterly-opt-out-hybrid-text-2              =
 
-business-added.default-annual-reporting-frequency-text      =
-business-added.default-annual-reporting-frequency-link      =
+business-added.default-annual-reporting-frequency-text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
+business-added.default-annual-reporting-frequency-link      = amlder eich adroddiadau.
 
 business-added.submit-software-text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 business-added.submit-software-quarterly-text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
 business-added.submit-software-quarterly-link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
 
 business-added.submit-tax-return                            = Cyflwyno’ch Ffurflen Dreth
-business-added.submit-tax-return-text                       =
-business-added.submit-tax-return-link                       =
+business-added.submit-tax-return-text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio
+business-added.submit-tax-return-link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
 business-added.submit-hybrid-annual-text                    = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
