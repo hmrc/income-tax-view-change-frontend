@@ -291,7 +291,7 @@
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid && !documentDetailWithDueDate.isOverdue) {
-                <div class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest")</div>
+                <div> <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span></div>
             }
             @if(isOverduePayment){
                 <div>
@@ -440,7 +440,7 @@
                             @if(whatYouOweChargesList.chargesList.nonEmpty) {
                                 @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
                                     @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
-                                    @if(charge.isOverdue && charge.documentDetail.hasAccruingInterest) {
+                                    @if(charge.documentDetail.hasAccruingInterest) {
                                         <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
                                             <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                             <td class="govuk-table__cell govuk-!-width-one-half">
