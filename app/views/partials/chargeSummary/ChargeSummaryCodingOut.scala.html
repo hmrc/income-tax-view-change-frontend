@@ -20,7 +20,7 @@
 @this()
 
 @(
-    documentDetail: models.financialDetails.DocumentDetail,
+    chargeItem: models.financialDetails.ChargeItem,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
@@ -32,15 +32,15 @@
         @messages("chargeSummary.paymentAmountCodingOut")
     </strong>
     @{
-        documentDetail.originalAmount.toCurrency
+        chargeItem.originalAmount.toCurrency
     }
 </p>
 
 <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
     @{
-        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+        if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
-        else documentDetail.remainingToPay.toCurrency
+        } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
+        else chargeItem.remainingToPay.toCurrency
     }
 </p>

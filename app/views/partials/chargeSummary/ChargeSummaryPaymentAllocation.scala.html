@@ -19,7 +19,7 @@
 @import models.chargeSummary.PaymentHistoryAllocations
 @import models.financialDetails.PaymentsWithChargeType
 @import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails.MfaDebitCharge
 @import exceptions.MissingFieldException
 @import java.time.LocalDate
 
@@ -28,16 +28,15 @@
 
 @(  paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel,
-    documentDetailWithDueDate: DocumentDetailWithDueDate,
+    chargeItem: models.financialDetails.ChargeItem,
     isAgent: Boolean = false,
-    isMFADebit: Boolean,
     origin: Option[String] = None,
     codingOutFrom: String,
     codingOutTo: String)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
-@taxYearTo = @{documentDetailWithDueDate.documentDetail.taxYear}
+@taxYearTo = @{chargeItem.taxYear}
 
 
 @allocationLinkHTML(link: String, linkText: String) = {
@@ -61,7 +60,7 @@
                     } else {
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
                     }
-                    val linkText = if (isMFADebit) messages("chargeSummary.paymentAllocations.mfaDebit") else
+                    val linkText = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
                         allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
                                 messages(msg, codingOutFrom, codingOutTo)
                             }).getOrElse(

@@ -18,7 +18,7 @@ package models.financialDetails
 
 import play.api.libs.json._
 
-sealed trait CreditType {
+sealed trait CreditType extends TransactionType {
   val key: String
 }
 

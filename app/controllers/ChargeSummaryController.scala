@@ -124,9 +124,16 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                   isAgent: Boolean, origin: Option[String],
                                   isMFADebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
+
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
+
+    val chargeItem = ChargeItem.fromDocumentPair(
+      documentDetailWithDueDate.documentDetail,
+      financialDetailsForCharge.headOption,
+      isEnabledFromConfig(CodingOut))
+
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
       case Some(value) => value.chargeReference
       case None => None
@@ -146,17 +153,17 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
       case Right(chargeHistory) =>
-        if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
+        if (!isEnabled(CodingOut) && (
+          documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
-
           val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
             currentDate = dateService.getCurrentDate,
-            documentDetailWithDueDate = documentDetailWithDueDate,
+            chargeItem = chargeItem,
             backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
             gatewayPage = sessionGatewayPage,
             paymentBreakdown = paymentBreakdown,
@@ -168,11 +175,10 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             codingOutEnabled = isEnabled(CodingOut),
             btaNavPartial = user.btaNavPartial,
             isAgent = isAgent,
-            isMFADebit = isMFADebit,
             documentType = documentDetailWithDueDate.documentDetail.getDocType,
             adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
           )
-          mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
+          mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {
             case Right(_) =>
               Ok(chargeSummaryView(viewModel))
             case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)

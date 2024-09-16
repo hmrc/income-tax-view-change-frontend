@@ -399,6 +399,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            mainTransaction = Some("4920"),
             chargeReference = Some("ABCD1234"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
@@ -413,6 +414,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CHARGEID01"),
             mainType = Some("SA Payment on Account 1"),
+            mainTransaction = Some("4920"),
             chargeReference = Some("ABCD1234"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
@@ -428,6 +430,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             transactionId = Some("PAYID01"),
             chargeReference = Some("ABCD1234"),
             mainType = Some("Payment"),
+            mainTransaction = Some("0060"),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(
               Some(currentDate),
@@ -468,7 +471,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CODINGOUT01"),
-            mainType = Some("SA Payment on Account 1"),
+            mainType = Some("SA Balancing Charge"),
+            mainTransaction = Some("4910"),
             chargeType = Some(ITSA_NI),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(currentDate),

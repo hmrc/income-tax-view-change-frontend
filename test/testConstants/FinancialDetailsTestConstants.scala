@@ -444,6 +444,36 @@ object FinancialDetailsTestConstants {
   )
 
 
+  def chargeItemModel(taxYear: Int = 2018,
+                      transactionId: String = id1040000123,
+                      transactionType: ChargeType = PaymentOnAccountOne,
+                      subTransactionType: Option[SubTransactionType] = None,
+                      documentDate: LocalDate = LocalDate.of(2018, 3, 29),
+                      dueDate: Option[LocalDate] =  Some(LocalDate.of(2019, 5, 15)),
+                      originalAmount : BigDecimal = 1400.00,
+                      outstandingAmount: BigDecimal = 1400.00,
+                      interestOutstandingAmount: Option[BigDecimal] = Some(80.0),
+                      latePaymentInterestAmount: Option[BigDecimal] = Some(100.0),
+                      interestFromDate:  Option[LocalDate] = Some(LocalDate.of(2018, 3, 29)),
+                      interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
+                      lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
+                      isOverdue:Boolean = true): ChargeItem = ChargeItem(
+    transactionId = "id",
+    taxYear = taxYear,
+    transactionType = transactionType,
+    subTransactionType = subTransactionType,
+    documentDate = documentDate,
+    dueDate = dueDate,
+    originalAmount = originalAmount,
+    outstandingAmount = outstandingAmount,
+    interestOutstandingAmount = interestOutstandingAmount,
+    latePaymentInterestAmount = latePaymentInterestAmount,
+    interestFromDate = interestFromDate,
+    interestEndDate = interestEndDate,
+    lpiWithDunningLock = lpiWithDunningLock,
+    isOverdue = isOverdue
+  )
+
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
                           documentText: Option[String] = Some("documentText"),

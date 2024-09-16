@@ -25,8 +25,7 @@
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(
-    documentDetailWithDueDate: DocumentDetailWithDueDate,
-    documentDetail: DocumentDetail,
+    chargeItem: models.financialDetails.ChargeItem,
     latePaymentInterestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
@@ -36,58 +35,60 @@
 
 @import implicitDateFormatter.longDate
 
-<div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
-    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-        @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
-            <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
-        }
-        @{
-            if(latePaymentInterestCharge) {
-                documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-            } else if(documentDetail.isBalancingCharge(codingOutEnabled)) {
-                documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
-            } else {
-                documentDetail.documentDueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
-            }
-        }
-    </dd>
-</div>
-
-@if(latePaymentInterestCharge) {
+<dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+        <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-        @messages("chargeSummary.lpi.interestPeriod.dates",
-            documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
-            documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+            @if(chargeItem.isOverdue && !chargeItem.checkIsPaid(latePaymentInterestCharge)) {
+                <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+            }
+            @{
+                if(latePaymentInterestCharge) {
+                    chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
+                } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
+                    chargeItem.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
+                } else {
+                    chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
+                }
+            }
+        </dd>
     </div>
-}
-<div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-    @{
-        if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
-            messages("chargeSummary.paymentAmountCodingOut")
-        } else messages("chargeSummary.paymentAmount")
+
+    @if(latePaymentInterestCharge) {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            @messages("chargeSummary.lpi.interestPeriod.dates",
+                chargeItem.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
+                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+        </div>
     }
-    </dt>
-    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-        <span>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
         @{
-            if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-            else documentDetail.originalAmount.toCurrency
+            if (chargeItem.subTransactionType != None) {
+                messages("chargeSummary.paymentAmountCodingOut")
+            } else messages("chargeSummary.paymentAmount")
         }
-        </span>
-    </dd>
-</div>
-<div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-    @{
-        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-            messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
-        else documentDetail.remainingToPay.toCurrency
-    }
-    </dd>
-</div>
+        </dt>
+        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            <span>
+            @{
+                if (latePaymentInterestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                else chargeItem.originalAmount.toCurrency
+            }
+            </span>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+        @{
+            if (codingOutEnabled && chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
+                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+            } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
+            else chargeItem.remainingToPay.toCurrency
+        }
+        </dd>
+    </div>
+</dl>
