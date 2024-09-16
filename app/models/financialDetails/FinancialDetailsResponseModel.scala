@@ -70,6 +70,20 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
+      }
+  }
+
+  def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
+    reviewAndReconcileIsEnabled &&
+      financialDetails.exists { fd =>
+        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
+      }
+  }
+
   def isReviewAndReconcileDebit(documentId: String): Boolean = {
     isReviewAndReconcilePoaOneDebit(documentId) ||
       isReviewAndReconcilePoaTwoDebit(documentId)
@@ -95,11 +109,13 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
-        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
+        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId),
+        isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
+        isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
   def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
@@ -115,7 +131,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
       (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-          .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+        .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
     )
   }
 
@@ -157,11 +173,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getAllocationsToCharge(charge: FinancialDetail): Option[PaymentHistoryAllocations] = {
 
     def hasDocumentDetailForPayment(transactionId: String): Boolean = {
-        documentDetails
-          .find(_.transactionId == transactionId)
-          .exists(documentDetail => {
-            documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
-          })
+      documentDetails
+        .find(_.transactionId == transactionId)
+        .exists(documentDetail => {
+          documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
+        })
     }
 
     def findIdOfClearingPayment(clearingSAPDocument: Option[String]): Option[String] = {
@@ -177,15 +193,15 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     charge.items
       .map { subItems =>
         subItems.collect {
-          case subItem if subItem.clearingSAPDocument.isDefined =>
-            PaymentHistoryAllocation(
-              dueDate = subItem.dueDate,
-              amount = subItem.amount,
-              clearingSAPDocument = subItem.clearingSAPDocument,
-              clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
-        }
-        // only return payments for now
-        .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))
+            case subItem if subItem.clearingSAPDocument.isDefined =>
+              PaymentHistoryAllocation(
+                dueDate = subItem.dueDate,
+                amount = subItem.amount,
+                clearingSAPDocument = subItem.clearingSAPDocument,
+                clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+          }
+          // only return payments for now
+          .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))
       }
       .collect {
         case payments if payments.nonEmpty => PaymentHistoryAllocations(payments, charge.mainType, charge.chargeType)

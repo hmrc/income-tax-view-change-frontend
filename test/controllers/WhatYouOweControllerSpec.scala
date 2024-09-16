@@ -22,7 +22,7 @@ import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, ReviewAndReconcilePoa}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -85,6 +85,14 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
+  def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    ReviewAndReconcileDocumentDetailsWithDueDate,
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
+    ))
+  )
+
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
@@ -98,7 +106,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -119,7 +127,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -140,7 +148,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
         val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
@@ -168,7 +176,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -198,7 +206,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -226,7 +234,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -249,7 +257,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -270,7 +278,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -291,7 +299,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -302,6 +310,29 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+    "ReviewAndReconcilePoa FS is enabled" should {
+      "render poa extra charges in charges table" in new Setup{
+        enable(ReviewAndReconcilePoa)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
+        status(resultAgent) shouldBe Status.OK
+        contentAsString(resultAgent).contains("First payment on account: extra amount from your tax return") shouldBe true
       }
     }
   }
