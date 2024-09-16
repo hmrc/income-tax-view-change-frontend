@@ -92,7 +92,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
