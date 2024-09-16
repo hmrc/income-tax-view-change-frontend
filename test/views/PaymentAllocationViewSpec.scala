@@ -135,6 +135,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         document.getElementById("numbered-element-0").text shouldBe messages("paymentAllocation.condition-1")
       }
 
+      "have payment allocation condition 2" in new PaymentAllocationSetup() {
+        document.getElementById("numbered-element-1").text shouldBe messages("paymentAllocation.condition-2")
+      }
+
     }
 
     "check that the second section information is present" when {
@@ -242,6 +246,11 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "have payment allocation condition 1" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.getElementById("numbered-element-0").text shouldBe messages("paymentAllocation.condition-1")
       }
+
+      "have payment allocation condition 2" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("numbered-element-1").text shouldBe messages("paymentAllocation.condition-2")
+      }
+
 
     }
 
