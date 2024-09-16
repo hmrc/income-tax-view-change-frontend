@@ -168,7 +168,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             )
         }
           .filter(documentDetailWithDueDate     => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
-          .filterNot(documentDetailWithDueDate  => filterReviewAndReconcileDebits(documentDetailWithDueDate, financialDetails))
+          .filterNot(documentDetailWithDueDate  => filterReviewAndReconcileDebits(isEnabled(ReviewAndReconcilePoa), documentDetailWithDueDate, financialDetails))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
@@ -196,10 +196,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
-  private def filterReviewAndReconcileDebits(documentDetailsWithDueDate: DocumentDetailWithDueDate,
-                                             financialDetails: FinancialDetailsModel)
-                                             (implicit user: MtdItUser[_]) = {
-    !isEnabled(ReviewAndReconcilePoa) &&
+  private def filterReviewAndReconcileDebits(reviewAndReconcileDebitsIsEnabled: Boolean,
+                                             documentDetailsWithDueDate: DocumentDetailWithDueDate,
+                                             financialDetails: FinancialDetailsModel) = {
+    !reviewAndReconcileDebitsIsEnabled &&
       financialDetails.isReviewAndReconcileDebit(documentDetailsWithDueDate.documentDetail.transactionId)
   }
 
