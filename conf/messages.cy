@@ -1760,7 +1760,6 @@ incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
 incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
-incomeSources.manage.quarterly-period.content.graceperiod.info        =   Mae’r busnes o fewn cyfnod gras ar hyn o bryd. O Ebrill {0} ymlaen, pan mae’r cyfnod, bydd angen i chi cyflwyno adroddiadau’n chwarterol.
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
@@ -1778,7 +1777,7 @@ incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrif
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
-incomeSources.manage.business-manage-details.insetText                             =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill 2026 ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
+incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
