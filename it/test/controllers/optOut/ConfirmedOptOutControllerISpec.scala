@@ -19,6 +19,7 @@ package controllers.optOut
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
 import models.optout.OptOutSessionData
 import play.api.http.Status.OK
@@ -71,9 +72,9 @@ class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
 
   private def stubOptOutInitialState(currentTaxYear: TaxYear,
                                      previousYearCrystallised: Boolean,
-                                     previousYearStatus: Value,
-                                     currentYearStatus: Value,
-                                     nextYearStatus: Value): Unit = {
+                                     previousYearStatus: ITSAStatus.Value,
+                                     currentYearStatus: ITSAStatus.Value,
+                                     nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptOutJourney.Name,

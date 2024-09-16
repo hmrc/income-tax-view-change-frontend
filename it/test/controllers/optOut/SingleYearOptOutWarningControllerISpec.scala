@@ -21,7 +21,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus._
 import models.optout.OptOutSessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.ITSAStatusRepositorySupport.statusToString

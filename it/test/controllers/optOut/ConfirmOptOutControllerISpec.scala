@@ -20,6 +20,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResp
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
 import models.optout.OptOutSessionData
 import play.api.http.Status.OK
@@ -215,9 +216,9 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
   private def stubOptOutInitialState(currentTaxYear: TaxYear,
                                      previousYearCrystallised: Boolean,
-                                     previousYearStatus: Value,
-                                     currentYearStatus: Value,
-                                     nextYearStatus: Value): Unit = {
+                                     previousYearStatus: ITSAStatus.Value,
+                                     currentYearStatus: ITSAStatus.Value,
+                                     nextYearStatus: ITSAStatus.Value): Unit = {
     repository.set(
       UIJourneySessionData(testSessionId,
         OptOutJourney.Name,

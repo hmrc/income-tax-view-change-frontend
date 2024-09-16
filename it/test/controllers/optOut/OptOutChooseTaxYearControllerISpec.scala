@@ -22,7 +22,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Voluntary
+import models.itsaStatus.ITSAStatus._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.optout.OptOutSessionData
 import play.api.http.Status
