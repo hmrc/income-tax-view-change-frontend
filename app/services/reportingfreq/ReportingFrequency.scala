@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package services.reportingfreq
 
-import play.api.libs.json.{Json, OFormat}
+import models.incomeSourceDetails.TaxYear
+import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 
-case class SessionDataModel(
-                             mtditid: String,
-                             nino: String,
-                             utr: String
-                           )
+object ReportingFrequency {
 
-object SessionDataModel {
-  implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
+  val noQuarterlyUpdates = 0
+
+  case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
+
+    def getCountFor(offeredTaxYear: TaxYear): Int = counts
+      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
+      .map(_.count).sum
+
+    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
+  }
+
 }
-

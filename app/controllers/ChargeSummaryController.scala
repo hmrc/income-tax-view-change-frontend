@@ -175,7 +175,6 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             codingOutEnabled = isEnabled(CodingOut),
             btaNavPartial = user.btaNavPartial,
             isAgent = isAgent,
-            documentType = documentDetailWithDueDate.documentDetail.getDocType,
             adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
           )
           mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate) match {

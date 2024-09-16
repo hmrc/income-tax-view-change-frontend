@@ -16,7 +16,6 @@
 
 package models.chargeSummary
 
-import enums.DocumentType
 import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails._
@@ -39,7 +38,6 @@ case class ChargeSummaryViewModel(
                                    btaNavPartial: Option[Html] = None,
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
-                                   documentType: DocumentType,
                                    adjustmentHistory: AdjustmentHistoryModel
                                  ) {
 

@@ -18,8 +18,8 @@ package services.optIn
 
 import auth.MtdItUser
 import cats.data.OptionT
-import connectors.optout.ITSAStatusUpdateConnector
-import connectors.optout.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optInUpdateReason}
+import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import controllers.routes
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
@@ -27,12 +27,9 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optIn.OptInService.ZeroCount
 import services.optIn.core.OptInProposition._
-import services.optIn.core.{NextOptInTaxYear, OptInInitialState, OptInProposition}
-import services.optout.OptOutService.QuarterlyUpdatesCountForTaxYearModel
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
+import services.optIn.core.{OptInInitialState, OptInProposition}
+import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptInJourney
 
@@ -42,8 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                              itsaStatusService: ITSAStatusService,
-                             calculationListService: CalculationListService,
-                             nextUpdatesService: NextUpdatesService,
                              dateService: DateServiceInterface,
                              repository: UIJourneySessionDataRepository) {
 
@@ -85,7 +80,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear = intentTaxYear, user.nino, optInUpdateReason)
+      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
       case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
 
@@ -170,32 +165,6 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
-  /* todo may need to be removed or changed, awaiting ongoing investigation and decisions by team */
-  def getQuarterlyUpdatesCountForOfferedYears(proposition: OptInProposition)
-                                             (implicit user: MtdItUser[_],
-                                              hc: HeaderCarrier,
-                                              ec: ExecutionContext): Future[QuarterlyUpdatesCountForTaxYearModel] = {
-
-    def cumulativeQuarterlyUpdateCounts(taxYearToCount: Seq[QuarterlyUpdatesCountForTaxYear]): Seq[QuarterlyUpdatesCountForTaxYear] =
-      if (taxYearToCount.isEmpty)
-        Seq()
-      else
-        Seq(cumulativeCount(taxYearToCount)) ++ cumulativeQuarterlyUpdateCounts(taxYearToCount.tail)
-
-    def cumulativeCount(taxYearToCount: Seq[QuarterlyUpdatesCountForTaxYear]): QuarterlyUpdatesCountForTaxYear =
-      QuarterlyUpdatesCountForTaxYear(taxYearToCount.head.taxYear, taxYearToCount.map(_.count).sum)
-
-    val annualQuarterlyUpdateCounts = Future.sequence(
-      proposition.availableOptInYears.map {
-        case next: NextOptInTaxYear => Future.successful(QuarterlyUpdatesCountForTaxYear(next.taxYear, ZeroCount))
-        case anyOtherOptInTaxYear => nextUpdatesService.getQuarterlyUpdatesCounts(anyOtherOptInTaxYear.taxYear)
-      })
-
-    annualQuarterlyUpdateCounts.
-      map(cumulativeQuarterlyUpdateCounts).
-      map(QuarterlyUpdatesCountForTaxYearModel)
-  }
-
   def getMultiYearCheckYourAnswersViewModel(isAgent: Boolean)(implicit user: MtdItUser[_],
                                                               hc: HeaderCarrier,
                                                               ec: ExecutionContext): Future[Option[MultiYearCheckYourAnswersViewModel]] = {
@@ -210,9 +179,4 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
   private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
 
-}
-
-object OptInService {
-  /* todo remove this and reuse variable from opt-out after refactor */
-  val ZeroCount = 0
 }

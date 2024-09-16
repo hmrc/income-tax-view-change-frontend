@@ -458,7 +458,7 @@ object FinancialDetailsTestConstants {
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
                       isOverdue:Boolean = true): ChargeItem = ChargeItem(
-    transactionId = "id",
+    transactionId = transactionId,
     taxYear = taxYear,
     transactionType = transactionType,
     subTransactionType = subTransactionType,
@@ -1550,6 +1550,19 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
 
+  val ReviewAndReconcileDocumentDetails: List[DocumentDetail] = List(
+    documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2019, 5, 15))),
+    documentDetailModel(documentDescription = Some("SA POA 2 Reconciliation Debit"), transactionId = "RARDEBIT02",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2019, 5, 15)))
+  )
+
   val MFADebitsFinancialDetails: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = MFADebitsDocumentDetails,
@@ -1559,6 +1572,17 @@ object FinancialDetailsTestConstants {
       FinancialDetail(taxYear = "2018", mainType = Some("ITSA Calc Error Correction"), mainTransaction = Some("4022"), transactionId = Some("MFADEBIT02"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail(taxYear = "2018", mainType = Some("ITSA Manual Penalty Pre CY-4"), mainTransaction = Some("4002"), transactionId = Some("MFADEBIT03"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+    )
+  )
+
+  val financialDetailsWithReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
+    documentDetails = ReviewAndReconcileDocumentDetails,
+    financialDetails = List(
+      FinancialDetail(taxYear = "2018", mainType = Some("SA POA 1 Reconciliation Debit"), mainTransaction = Some("4911"), transactionId = Some("RARDEBIT01"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainType = Some("SA POA 2 Reconciliation Debit"), mainTransaction = Some("4913"), transactionId = Some("RARDEBIT02"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )

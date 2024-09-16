@@ -17,11 +17,14 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.optout.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
+import controllers.routes.ReportingFrequencyPageController
+import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -29,7 +32,7 @@ import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optIn.CheckYourAnswersView
+import views.html.optIn.{CheckYourAnswersView, ChooseTaxYearView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

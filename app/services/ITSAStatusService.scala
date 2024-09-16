@@ -20,9 +20,8 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -58,6 +57,37 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     getITSAStatusDetail(taxYear, futureYears = false, history = false)
       .map(statusDetail =>
         statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+  }
+
+  def hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails: Option[LatencyDetails])
+                                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
+
+    latencyDetails match {
+      case Some(details) =>
+        val taxYear1 = TaxYear.forYearEnd(details.taxYear1.toInt)
+        val taxYear2 = TaxYear.forYearEnd(details.taxYear2.toInt)
+
+        val taxYear1StatusFuture = getITSAStatusDetail(taxYear1, futureYears = false, history = false)
+        val taxYear2StatusFuture = getITSAStatusDetail(taxYear2, futureYears = false, history = false)
+
+        for {
+          taxYear1Status <- taxYear1StatusFuture.map(statusDetail =>
+            statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+
+          taxYear2Status <- taxYear2StatusFuture.map { statusDetail =>
+            if (statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isUnknown)))) {
+              taxYear1Status
+            } else {
+              statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+            }
+          }
+        } yield {
+          (taxYear1Status, taxYear2Status)
+        }
+
+      case None =>
+        Future.successful((false, false))
+    }
   }
 
 

@@ -38,6 +38,8 @@ import config.FrontendAppConfig
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import org.scalatest.prop.TableDrivenPropertyChecks.forAll
+import org.scalatest.prop.Tables.Table
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -45,7 +47,7 @@ import testConstants.BaseTestConstants._
 import testConstants.NinoLookupTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.Future
@@ -58,11 +60,12 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
     def getAppConfig(): FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
+
         override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
       }
 
     val connector = new BusinessDetailsConnector(httpClientMock, mockAuditingService, getAppConfig())
-
+    val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   }
 
   "getBusinessDetailsUrl" should {
@@ -123,7 +126,9 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
   val incomeSourceOverride = Seq(
     "uk-property-reporting-method", // UK Property Select reporting method
-    "foreign-property-reporting-method" // Foreign Property Select reporting method
+    "foreign-property-reporting-method", // Foreign Property Select reporting method
+    "business-reporting-method", // Sole Trader Select reporting method
+    "reporting-frequency" // Manage business reporting frequency
   )
 
   "getIncomeSources" should {
@@ -203,6 +208,48 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
       val result: Future[NinoResponse] = connector.getNino(testMtditid)
       result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
+    }
+  }
+
+  "modifyHeaderCarrier" should {
+
+    "add test header when path matches certain patterns" should {
+
+      val scenarios = Table(
+        ("scenarioName", "path", "expectedHeader"),
+        ("Manage Business Journey", "/manage-your-businesses/reporting-frequency", Some("afterIncomeSourceCreated")),
+        ("UK Property", "/income-sources/uk-property-reporting-method", Some("afterIncomeSourceCreated")),
+        ("Foreign Property", "/income-sources/foreign-property-reporting-method", Some("afterIncomeSourceCreated")),
+        ("Sole Trader", "/income-sources/business-reporting-method", Some("afterIncomeSourceCreated"))
+      )
+
+      forAll(scenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
+        s"add test header for $scenarioName with path: $path" in new Setup {
+          implicit val appConfig: FrontendAppConfig = getAppConfig()
+          val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
+        }
+      }
+    }
+
+    "not add test header when path does not match patterns" should {
+
+      val noHeaderScenarios = Table(
+        ("scenarioName", "path", "expectedHeader"),
+        ("Other Path", "/some/other-path", None),
+        ("Manage Business Other Path", "/manage-your-businesses/other-path", Some("")),
+        ("Income Sources Other Path", "/income-sources/other-path", Some(""))
+      )
+
+      forAll(noHeaderScenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
+        s"not add test header for $scenarioName with path: $path" in new Setup {
+          implicit val appConfig: FrontendAppConfig = getAppConfig()
+          val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
+        }
+      }
     }
   }
 }

@@ -1598,6 +1598,73 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 
+  def testValidFinancialDetailsModelReviewAndReconcileDebitsJson(
+                                                  originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
+                                                  dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                                  interestLocks: List[String] = noInterestLock,
+                                                  latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                                 ): JsValue = Json.obj(
+    "balanceDetails" -> Json.obj(
+      "balanceDueWithin30Days" -> 1.00,
+      "overDueAmount" -> 2.00,
+      "totalBalance" -> 3.00
+    ),
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear.toInt,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "TRM New Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29",
+        "effectiveDateOfPayment" -> dueDate,
+        "documentDueDate" -> dueDate
+      ),
+      Json.obj(
+        "taxYear" -> taxYear.toInt,
+        "transactionId" -> "1040000124",
+        "documentDescription" -> "TRM New Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29",
+        "effectiveDateOfPayment" -> dueDate,
+        "documentDueDate" -> dueDate
+      )
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA POA 1 Reconciliation Debit",
+        "mainTransaction" -> "4911",
+        "transactionId" -> "1040000123",
+        "chargeType" -> ITSA_NI,
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 10000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA POA 2 Reconciliation Debit",
+        "mainTransaction" -> "4913",
+        "transactionId" -> "1040000124",
+        "chargeType" -> ITSA_NI,
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 9000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001")
+        )
+      )
+    )
+  )
+
+
   val businessOnlyResponseWithUnknownAddressName: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,

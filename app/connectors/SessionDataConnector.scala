@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package testOnly.connectors
+package connectors
 
 import config.FrontendAppConfig
-import connectors.RawResponseReads
+import models.sessionData.SessionDataModel
+import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import testOnly.models.SessionDataGetResponse.SessionGetResponse
 import play.api.libs.json.Json
-import testOnly.models.SessionDataModel
-import testOnly.models.SessionGetResponse.SessionGetResponse
-import testOnly.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -33,7 +32,7 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     http
       .get(url"$url")
@@ -42,7 +41,7 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
-    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data"
+    lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)
 

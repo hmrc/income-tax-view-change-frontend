@@ -25,9 +25,9 @@ object Headers {
                             headerCarrier: HeaderCarrier,
                             configPages: Option[Seq[String]],
                             suffix: String): HeaderCarrier = {
-    val page : Map[String, String] = configPages.map(kv =>
+    val page: Map[String, String] = configPages.map(kv =>
       kv.map(k => (k, suffix)).toMap
-    ).getOrElse( Map[String, String]())
+    ).getOrElse(Map[String, String]())
     val urlPathArray = requestPath.split('/')
     val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
     val updatedHeader = page.get(actionPath) match {

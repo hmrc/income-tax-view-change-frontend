@@ -17,9 +17,8 @@
 package views
 
 import config.featureswitch.FeatureSwitching
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import enums.ChargeType._
-import enums.CodingOutType._
-import enums.Poa1Charge
 import exceptions.MissingFieldException
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -44,7 +43,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   import Messages._
 
-  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), "adjustment"), List())
+  val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List())
 
   class TestSetup(chargeItem: ChargeItem = chargeItemModel(),
                   dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -71,8 +70,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       latePaymentInterestCharge = latePaymentInterestCharge,
       codingOutEnabled = codingOutEnabled,
       isAgent = isAgent,
-      adjustmentHistory = adjustmentHistory,
-      documentType =  Poa1Charge)
+      adjustmentHistory = adjustmentHistory)
     val view: Html = chargeSummary(viewModel)
     val document: Document = Jsoup.parse(view.toString())
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -228,17 +226,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "amended return", Some("001"))
   val amendedAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "adjustment"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AdjustmentReversalReason))
   )
   val adjustmentHistoryWithBalancingCharge: AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "amend"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), AmendedReturnReversalReason))
   )
   val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", fixedDate, "", 1500, LocalDate.of(2018, 7, 6), "Customer Request", Some("002"))
   val customerRequestAdjustmentHistory : AdjustmentHistoryModel = AdjustmentHistoryModel(
-    creationEvent = AdjustmentModel(1400, None, "create"),
-    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), "request"))
+    creationEvent = AdjustmentModel(1400, None, CreateReversalReason),
+    adjustments = List(AdjustmentModel(1500, Some(LocalDate.of(2018, 7, 6)), CustomerRequestReason))
   )
 
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -1162,8 +1160,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         latePaymentInterestCharge = false,
         codingOutEnabled = false,
         isAgent = false,
-        adjustmentHistory = defaultAdjustmentHistory,
-        documentType = Poa1Charge)
+        adjustmentHistory = defaultAdjustmentHistory)
       val thrownException = intercept[MissingFieldException] {
 
         chargeSummary(exceptionViewModel)
@@ -1222,57 +1219,59 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
     }
-//
-//    "MFA Credits" when {
-//
-//      val paymentAllocations = List(
-//        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
-//        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"), Some("PAYID01"))
-//      )
-//
-//      "Display an unpaid MFA Credit" in new TestSetup(
-//        m, isMFADebit = true,
-//        isAgent = true) {
-//        val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
-//        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-//        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
-//        // heading should be hmrc adjustment
-//        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
-//          messages("chargeSummary.hmrcAdjustment.text")
-//        // remaining to pay should be the same as payment amount
-//        document.select(".govuk-summary-list").text() shouldBe summaryListText
-//        // there should be a "make a payment" button
-//        document.select("#payment-link-2019").size() shouldBe 0
-//        // payment history should show only "HMRC adjustment created"
-//        document.select("#payment-history-table tr").size shouldBe 2
-//        document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
-//      }
-//
-//      "Display a paid MFA Credit" in new TestSetup(
-//        documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
-//          outstandingAmount = 0.00), isMFADebit = true, isAgent = true,
-//        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
-//        val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
-//        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-//        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
-//        val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
-//        val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
-//        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
-//        // heading should be hmrc adjustment
-//        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
-//          messages("chargeSummary.hmrcAdjustment.text")
-//        // remaining to pay should be zero
-//        document.select(".govuk-summary-list").text() shouldBe summaryListText
-//        // there should not be a "make a payment" button
-//        document.select("#payment-link-2019").size() shouldBe 0
-//        // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
-//        document.select("#payment-history-table tr").size shouldBe 4
-//
-//        document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
-//        document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
-//        document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
-//        // allocation link should be to agent payment allocation page
-//        document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
-//      }
+
+    "MFA Credits" when {
+
+      val paymentAllocations = List(
+        paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
+        paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("123456789012"), Some("PAYID01"))
+      )
+
+      val mfaChargeItem = chargeItemModel(transactionType = MfaDebitCharge)
+
+      "Display an unpaid MFA Credit" in new TestSetup(
+        chargeItem = mfaChargeItem.copy(taxYear = 2019),
+        isAgent = true) {
+        val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
+        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+        // heading should be hmrc adjustment
+        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+        // remaining to pay should be the same as payment amount
+        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        // there should be a "make a payment" button
+        document.select("#payment-link-2019").size() shouldBe 0
+        // payment history should show only "HMRC adjustment created"
+        document.select("#payment-history-table tr").size shouldBe 2
+        document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
+      }
+
+      "Display a paid MFA Credit" in new TestSetup(
+        chargeItem = mfaChargeItem.copy(taxYear = 2019, outstandingAmount = 0.0), isAgent = true,
+        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+        val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
+        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+        val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
+        val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
+        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
+        // heading should be hmrc adjustment
+        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+        // remaining to pay should be zero
+        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        // there should not be a "make a payment" button
+        document.select("#payment-link-2019").size() shouldBe 0
+        // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
+        document.select("#payment-history-table tr").size shouldBe 4
+
+        document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
+        document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
+        document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
+        // allocation link should be to agent payment allocation page
+        document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
+      }
+    }
   }
 }
