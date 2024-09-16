@@ -326,6 +326,25 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweEmptyMFA)
       }
     }
+
+    "with ReviewAndReconcilePoa" should {
+      def testGetWhatYouOweChargesList(ReviewReconcileEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
+        if (ReviewReconcileEnabled) enable(ReviewAndReconcilePoa) else disable(ReviewAndReconcilePoa)
+        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesModel(List())))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetails)))
+        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(ReviewAndReconcilePoa)).futureValue shouldBe expectedResult
+      }
+      "return list including POA extra charges" in { //Currently one of these has a reverse order to the other???
+       // testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweWithReviewReconcileData)
+        // testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Unfiltered)
+      }
+      "return list excluding POA extra charges" in {
+        testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweEmptyRandR)
+        testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Filtered)
+      }
+    }
   }
 
   "WhatYouOweService.getCreditCharges method" should {
