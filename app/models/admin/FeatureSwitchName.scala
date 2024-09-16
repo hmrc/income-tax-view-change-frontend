@@ -95,7 +95,6 @@ object FeatureSwitchName {
       ForecastCalculation, CutOverCredits, CreditsRefundsRepay, WhatYouOweCreditAmount, MFACreditsAndDebits,
       PaymentHistoryRefunds, CalendarQuarterTypes, IncomeSourcesNewJourney, IncomeSources, OptOut, AdjustPaymentsOnAccount, ReviewAndReconcilePoa)
 
-
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
 }
 

@@ -58,18 +58,21 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
-    reviewAndReconcileIsEnabled &&
-      financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-      }
+  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
+    }
   }
 
-  def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
-    reviewAndReconcileIsEnabled &&
-      financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-      }
+  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
+    }
+  }
+
+  def isReviewAndReconcileDebit(documentId: String): Boolean = {
+    isReviewAndReconcilePoaOneDebit(documentId) ||
+      isReviewAndReconcilePoaTwoDebit(documentId)
   }
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
