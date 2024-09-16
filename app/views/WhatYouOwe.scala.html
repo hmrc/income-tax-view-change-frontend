@@ -290,15 +290,15 @@
             @documentDetailWithDueDate.documentDetail.documentDueDate.getOrElse(throw MissingFieldException("document due date of Payment")).toLongDateShort
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
-            @if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid) {
+            @if(documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid && !documentDetailWithDueDate.isOverdue) {
                 <div class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest")</div>
-            }else {
-                @if(isOverduePayment){
-                    <div>
-                        <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
-                    </div>
-                }
             }
+            @if(isOverduePayment){
+                <div>
+                    <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
+                </div>
+            }
+
             @getPaymentTypeEntry(documentDetailWithDate = documentDetailWithDueDate, isOverduePayment = isOverduePayment,
                 rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit, index = index)
 
