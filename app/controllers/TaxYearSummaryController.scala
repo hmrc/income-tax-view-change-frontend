@@ -28,6 +28,7 @@ import implicits.ImplicitDateFormatter
 import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, ReviewAndReconcilePoa}
 import models.core.Nino
 import models.financialDetails.MfaDebitUtils.filterMFADebits
+import models.financialDetails.ReviewAndReconcileDebitUtils.filterReviewAndReconcileDebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -167,7 +168,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
               )
             )
         }
-          .filter(documentDetailWithDueDate     => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
+          .filterNot(documentDetailWithDueDate  => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
           .filterNot(documentDetailWithDueDate  => filterReviewAndReconcileDebits(isEnabled(ReviewAndReconcilePoa), documentDetailWithDueDate, financialDetails))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
@@ -194,13 +195,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         Logger("application").error(s"Could not retrieve financial details for year: $taxYear")
         Future.successful(agentItvcErrorHandler.showInternalServerError())
     }
-  }
-
-  private def filterReviewAndReconcileDebits(reviewAndReconcileDebitsIsEnabled: Boolean,
-                                             documentDetailsWithDueDate: DocumentDetailWithDueDate,
-                                             financialDetails: FinancialDetailsModel) = {
-    !reviewAndReconcileDebitsIsEnabled &&
-      financialDetails.isReviewAndReconcileDebit(documentDetailsWithDueDate.documentDetail.transactionId)
   }
 
   private def withObligationsModel(taxYear: Int, isAgent: Boolean)(f: ObligationsModel => Future[Result])

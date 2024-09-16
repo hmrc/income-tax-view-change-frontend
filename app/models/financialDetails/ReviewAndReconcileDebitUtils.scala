@@ -26,4 +26,10 @@ object ReviewAndReconcileDebitUtils {
 
   def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoMainTransaction)
+
+  def filterReviewAndReconcileDebits(reviewAndReconcileDebitsIsEnabled: Boolean,
+                                     documentDetailsWithDueDate: DocumentDetailWithDueDate,
+                                     financialDetails: FinancialDetailsModel): Boolean =
+    !reviewAndReconcileDebitsIsEnabled &&
+      financialDetails.isReviewAndReconcileDebit(documentDetailsWithDueDate.documentDetail.transactionId)
 }
