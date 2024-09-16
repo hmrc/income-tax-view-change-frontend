@@ -462,17 +462,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2Table.select("td").last().text() shouldBe "£75.00"
 
         }
-        "have review and reconcile extra payments in the same table" in new TestSetup(charges = whatYouOweWithReviewReconcileData) {
+        "have review and reconcile extra payments with Accrues Interest tags in the same table" in new TestSetup(charges = whatYouOweNotDueReviewReconcileData) {
           val poaExtra1Table: Element = pageDocument.getElementById("due-0")
-          poaExtra1Table.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-          poaExtra1Table.select("td").get(1).text() shouldBe "OVERDUE " + poaExtra1Text + " 1 Payment under review"
+          poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
+          poaExtra1Table.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra1Text + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poaExtra1Table.select("td").last().text() shouldBe "£50.00"
 
-          val poa2ExtraTable: Element =pageDocument.getElementById("due-1")
-          poa2ExtraTable.select("td").first().text() shouldBe fixedDate.plusDays(30).toLongDateShort
-          poa2ExtraTable.select("td").get(1).text() shouldBe "OVERDUE " + poaExtra2Text + " 2 Payment under review"
+          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          poa2ExtraTable.select("td").first().text() shouldBe fixedDate.plusYears(100).plusDays(30).toLongDateShort
+          poa2ExtraTable.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra2Text + " 2"
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2ExtraTable.select("td").last().text() shouldBe "£75.00"

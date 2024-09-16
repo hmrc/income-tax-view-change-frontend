@@ -1136,6 +1136,15 @@ object FinancialDetailsTestConstants {
     taxYear = fixedDate.getYear.toString,
     latePaymentInterestAmount = List(None, None)
   )
+  val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
+    mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
+    mainTransaction = List(Some("4911"), Some("4913")),
+    dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None)
+  )
 
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
@@ -1300,6 +1309,11 @@ object FinancialDetailsTestConstants {
   val whatYouOweWithReviewReconcileData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsReviewAndReconcile.getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled = true),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+  val whatYouOweNotDueReviewReconcileData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsReviewAndReconcileNotYetDue.getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled = true),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
