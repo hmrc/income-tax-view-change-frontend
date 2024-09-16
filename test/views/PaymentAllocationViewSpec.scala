@@ -128,7 +128,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup() {
-        document.getElementById("paymentAllocation.intro").text shouldBe messages("paymentAllocation.intro")
+        document.getElementById("paymentAllocation-intro").text shouldBe messages("paymentAllocation.intro")
       }
 
       "have payment allocation condition 1" in new PaymentAllocationSetup() {
@@ -141,6 +141,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "have payment allocation condition 3" in new PaymentAllocationSetup() {
         document.getElementById("numbered-element-2").text shouldBe messages("paymentAllocation.condition-3")
+      }
+
+      "have payment allocation outro" in new PaymentAllocationSetup() {
+        document.getElementById("paymentAllocation-outro").text shouldBe messages("paymentAllocation.outro")
       }
 
     }
@@ -244,7 +248,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementById("paymentAllocation.intro").text shouldBe messages("paymentAllocation.intro")
+        document.getElementById("paymentAllocation-intro").text shouldBe messages("paymentAllocation.intro")
       }
 
       "have payment allocation condition 1" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -259,6 +263,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         document.getElementById("numbered-element-2").text shouldBe messages("paymentAllocation.condition-3")
       }
 
+      "have payment allocation outro" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("paymentAllocation-outro").text shouldBe messages("paymentAllocation.outro")
+      }
 
     }
 
