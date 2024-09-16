@@ -1654,7 +1654,7 @@ business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw
 business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
 business-added.quarterly-opt-out-text-2                     =
 
-business-added.quarterly-opt-out-hybrid-text-1              = //todo 8287 confirm 'your reporting frequency'
+business-added.quarterly-opt-out-hybrid-text-1              =
 business-added.quarterly-opt-out-hybrid-link                =
 business-added.quarterly-opt-out-hybrid-text-2              =
 
