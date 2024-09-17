@@ -173,14 +173,13 @@
     isAgent = model.isAgent,
     btaNavPartial = user.btaNavPartial,
 ) {
-    @panel
 
+    @panel
     @if(model.isCurrentYear) {
         @revisedDeadlines
     } else {
         @yourNextUpdatesDue
     }
-
     @submitUpdatesInSoftware
     @futureReporitng
 }
