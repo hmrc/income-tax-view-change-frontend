@@ -164,6 +164,7 @@ taxYears.taxYears                                              = 6 April {0} to 
 taxYears.ongoing                                               = ONGOING
 taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
+taxYears.accruesInterest                                       = ACCRUES INTEREST
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
@@ -209,6 +210,8 @@ tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjust
 tax-year-summary.payments.overdue                                  = Overdue
 tax-year-summary.payments.no-payments                              = No payments currently due.
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
+tax-year-summary.payments.first-poa-extra-amount                   = First payment on account: extra amount from your tax return
+tax-year-summary.payments.second-poa-extra-amount                  = Second payment on account: extra amount from your tax return
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -839,6 +842,8 @@ whatYouOwe.tableHead.tax-year                                      = Tax year
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = First payment on account
 whatYouOwe.paymentOnAccount2.text							       = Second payment on account
+whatYouOwe.reviewAndReconcileOne.text                              = First payment on account: extra amount from your tax return
+whatYouOwe.reviewAndReconcileTwo.text                              = Second payment on account: extra amount from your tax return
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
@@ -866,6 +871,8 @@ whatYouOwe.cancelled-paye-sa.line1.agent                           = Your client
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = OVERDUE
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
+whatYouOwe.over-due.reviewAndReconcileOne.line1                    = Interest for first payment on account: extra amount
+whatYouOwe.over-due.reviewAndReconcileTwo.line1                    = Interest for second payment on account: extra amount
 whatYouOwe.over-due.interest.line2                                 = {0} to {1} at {2}%
 whatYouOwe.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
 whatYouOwe.over-due.interest-rate-1                                = Any overdue payment interest is at the {0}
@@ -1651,6 +1658,7 @@ incomeSources.add.foreign-property-check-details.change                     = Ch
 
 # business added page - h1 intentionally empty
 business-added.text                                     = What you must do
+business-added.deadlines                                = Your revised deadlines
 business-added.to                                       =  to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
@@ -1663,16 +1671,50 @@ business-added.uk-property.base                         = has been added to your
 business-added.sole-trader.head                         =
 business-added.sole-trader.base                         = has been added to your account
 
-business-added.quarterly-heading                        = Send quarterly updates
-business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-business-added.final-declaration-heading                = Submit final declarations and pay your tax
-business-added.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
-business-added.table.heading-1                          = Tax year
-business-added.table.heading-2                          = Deadline
-business-added.income-sources-button                    = Your income sources
-business-added.previous-tax-years-heading               = Previous tax years
-business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-added.quarterly-heading                              = Send quarterly updates
+business-added.quarterly-p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-added.final-declaration-heading                      = Submit final declarations and pay your tax
+business-added.final-declaration-text                         = You must submit your final declarations and pay the tax you owe by the deadline.
+business-added.table.heading-1                                = Tax year
+business-added.table.heading-2                                = Deadline
+business-added.income-sources-button                          = Your income sources
+business-added.previous-tax-years-heading                     = Previous tax years
+business-added.previous-tax-years-t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+business-added.view-all-businesses                                                      = View all your businesses
+business-added.obligation.inset.single-annual-overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
+business-added.obligation.inset.single-quarterly-overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-quarterly-overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-single-quarterly-overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
+business-added.obligation.inset.single-historic-overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
+business-added.obligation.inset.multiple-historic-overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
+business-added.obligation.view-overdue-upcoming-updates.text                            = View your overdue and upcoming updates
+business-added.obligation.view-upcoming-updates.text                                    = View your upcoming updates
+
+business-added.next-quarterly-obligation-text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business-added.final-dec-text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+
+business-added.quarterly-opt-out-text-1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business-added.quarterly-opt-out-link                       = your reporting frequency
+business-added.quarterly-opt-out-text-2                     = page.
+
+business-added.quarterly-opt-out-hybrid-text-1              = Depending on your circumstances, you may be able to
+business-added.quarterly-opt-out-hybrid-link                = view and change your reporting frequency
+business-added.quarterly-opt-out-hybrid-text-2              = for all your businesses.
+
+business-added.default-annual-reporting-frequency-text      = You are set to report annually for your new business. Find out more about
+business-added.default-annual-reporting-frequency-link      = your reporting frequency.
+
+business-added.submit-software-text                         = Submit updates in software
+business-added.submit-software-quarterly-text               = For any tax year you are reporting quarterly, you will need
+business-added.submit-software-quarterly-link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-tax-return                            = Submit your tax return
+business-added.submit-tax-return-text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business-added.submit-tax-return-link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
+
+business-added.submit-hybrid-annual-text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 ## You cannot go back - Your business has been added page ##
 
@@ -1817,7 +1859,6 @@ incomeSources.manage.quarterly-period.calendar.content.p1             =   This b
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
 incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
-incomeSources.manage.quarterly-period.content.graceperiod.info        =   The business is currently within a grace period. From April {0} when the grace period ends, you will be required to report quarterly.
 
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
@@ -1836,6 +1877,7 @@ incomeSources.manage.business-manage-details.cash-accounting          =   Cash b
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
+incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method

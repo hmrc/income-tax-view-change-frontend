@@ -19,6 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.AmendedReturnReversalReason
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -54,7 +55,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
-  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, "amend"), List())
+  def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,

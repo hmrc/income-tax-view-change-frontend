@@ -137,7 +137,8 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
     isEnabled(CodingOut),
-    isEnabled(MFACreditsAndDebits)
+    isEnabled(MFACreditsAndDebits),
+    isEnabled(ReviewAndReconcilePoa)
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)
