@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.optIn.{OptInCompletedCurrentYearView, OptInCompletedNextYearView}
+import views.html.optIn.{OptInCompletedCurrentYearView, OptInCompletedNextYearView, OptInCompletedView}
 
 class OptInCompletedControllerSpec extends TestSupport
   with MockAuthenticationPredicate with MockOptOutService with MockOptInService {
@@ -35,6 +35,7 @@ class OptInCompletedControllerSpec extends TestSupport
   val controller = new OptInCompletedController(
     currentYearView = app.injector.instanceOf[OptInCompletedCurrentYearView],
     nextYearView = app.injector.instanceOf[OptInCompletedNextYearView],
+    view = app.injector.instanceOf[OptInCompletedView],
     mockOptInService,
     authorisedFunctions = mockAuthService,
     auth = testAuthenticator,
