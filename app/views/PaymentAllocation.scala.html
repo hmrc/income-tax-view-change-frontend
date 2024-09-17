@@ -91,7 +91,7 @@
 
 @p(id=Some("paymentAllocation-outro")) {@messages("paymentAllocation.outro")}
 
-@if( !(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) ) {
+@if( paymentAllocations.showPaymentAllocationsTable(CutOverCreditsEnabled) ) {
 
     <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
