@@ -31,16 +31,15 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class OptOutChooseTaxYearControllerISpec extends ComponentSpecBase {
 
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  val nextTaxYear = currentTaxYear.nextYear
-  val previousTaxYear = currentTaxYear.previousYear
+  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val previousTaxYear = currentTaxYear.previousYear
 
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val helper = new OptOutSessionRepositoryHelper(repository)
+  private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val helper = new OptOutSessionRepositoryHelper(repository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   def testShowHappyCase(isAgent: Boolean): Unit = {

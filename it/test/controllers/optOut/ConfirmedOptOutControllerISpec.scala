@@ -26,17 +26,17 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
-  val isAgent: Boolean = false
-  val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
+  private val isAgent: Boolean = false
+  private val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
 
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val helper = new OptOutSessionRepositoryHelper(repository)
+  private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val helper = new OptOutSessionRepositoryHelper(repository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   s"calling GET $confirmedOptOutPageUrl" should {

@@ -27,21 +27,16 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class ConfirmedOptOutControllerISpec extends ComponentSpecBase {
-  val isAgent: Boolean = true
-  val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val helper = new OptOutSessionRepositoryHelper(repository)
+  private val isAgent: Boolean = true
+  private val confirmedOptOutPageUrl = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url
+  private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  private val helper = new OptOutSessionRepositoryHelper(repository)
 
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  val previousYear = currentTaxYear.addYears(-1)
-
-  val expectedTitle = s"Confirm and opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year"
-  val summary = "If you opt out, you can submit your tax return through your HMRC online account or software."
-  val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repository.clearSession(testSessionId).futureValue shouldBe(true)
+    repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
   s"calling GET $confirmedOptOutPageUrl" should {
