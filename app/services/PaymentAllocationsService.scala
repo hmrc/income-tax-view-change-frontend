@@ -34,7 +34,7 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
                                           financialDetailsService: FinancialDetailsService,
                                           val appConfig: FrontendAppConfig)
                                          (implicit ec: ExecutionContext) {
-  def getPaymentAllocation(nino: Nino, documentNumber: String)
+  def getPaymentAllocation(nino: Nino, documentNumber: String, cutOverCreditsIsEnabled: Boolean)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
     val functionName = ""
@@ -42,13 +42,13 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
       case docDetailsWithFDModel: FinancialDetailsWithDocumentDetailsModel
         if docDetailsWithFDModel.documentDetails.head.paymentLot.isEmpty &&
           docDetailsWithFDModel.documentDetails.head.paymentLotItem.isEmpty =>
-        Future.successful(Right(PaymentAllocationViewModel(docDetailsWithFDModel, Seq.empty)))
+        Future.successful(Right(PaymentAllocationViewModel(docDetailsWithFDModel, cutOverCreditsIsEnabled, Seq.empty)))
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
         financialDetailsConnector.getPaymentAllocations(nino,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.get) flatMap {
           case paymentAllocations: PaymentAllocations =>
-            handlePaymentAllocations(paymentAllocations, documentDetailsWithFinancialDetailsModel)
+            handlePaymentAllocations(paymentAllocations, cutOverCreditsIsEnabled, documentDetailsWithFinancialDetailsModel)
           case _ =>
             Logger("application").error(s"$functionName Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError()))
@@ -63,20 +63,21 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
   }
 
   private def handlePaymentAllocations(paymentAllocations: PaymentAllocations,
+                                       cutOverCreditsIsEnabled: Boolean,
                                        documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel)
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_]):
   Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
     if (paymentAllocations.allocations.exists(_.mainType.get.contains("Late Payment Interest"))) {
       createPaymentAllocationForLpi(paymentAllocations, documentDetailsWithFinancialDetailsModel) map { lpiPaymentAllocationDetails =>
         lpiPaymentAllocationDetails.map(lpiPaymentAllocationDetails =>
-          Right(PaymentAllocationViewModel(paymentAllocationChargeModel = documentDetailsWithFinancialDetailsModel,
+          Right(PaymentAllocationViewModel(paymentAllocationChargeModel = documentDetailsWithFinancialDetailsModel, cutOverCreditsIsEnabled,
             latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true))).getOrElse(Left(PaymentAllocationError()))
       }
     } else {
       val paymentAllocationWithClearingDate = paymentAllocations.allocations map { allocation =>
         AllocationDetailWithClearingDate(Some(allocation), paymentAllocations.transactionDate)
       }
-      Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
+      Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, cutOverCreditsIsEnabled,
         paymentAllocationWithClearingDate)))
     }
   }

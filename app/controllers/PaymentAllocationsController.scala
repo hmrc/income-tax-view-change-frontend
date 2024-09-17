@@ -81,7 +81,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
-    paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
+    paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber, isEnabled(CutOverCredits)) map {
       case Right(paymentAllocations: PaymentAllocationViewModel) =>
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
@@ -94,7 +94,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
           val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
           Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
-            CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
+            btaNavPartial = user.btaNavPartial,
             isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
             creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
             outstandingAmount = outstandingAmount)(implicitly, messages))

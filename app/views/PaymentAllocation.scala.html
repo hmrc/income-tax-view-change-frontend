@@ -39,13 +39,13 @@
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+    isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true,
     dueDate: Option[LocalDate], outstandingAmount: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @pageTitle = @{
-    messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
+    messages(if (paymentAllocations.cutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
         "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
 }
 
@@ -58,13 +58,13 @@
     gatewayPage = gatewayPage
 ) {
 
-    @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(paymentAllocations.cutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
         @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
     } else {
         @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
     }
 
-    @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(saUtr.isDefined && paymentAllocations.cutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
         @p(id=Some("sa-note-migrated")){
             @messages("paymentAllocation.sa.info")
             @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
@@ -91,24 +91,23 @@
 
 @p(id=Some("paymentAllocation-outro")) {@messages("paymentAllocation.outro")}
 
-@if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-    } else {
-        <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+@if(paymentAllocations.showPaymentAllocationText) {
+    <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
-        <table class="govuk-table" id="payment-allocation-table">
-            <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
-                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
-                </tr>
-            </thead>
-            @if(paymentAllocations.isLpiPayment) {
-                @paymentAllocationsForLpi(paymentAllocations, isAgent)
-            } else {
-                @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
-            }
-            @paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsRepayEnabled, isAgent)
-        </table> }
-}
+    <table class="govuk-table" id="payment-allocation-table">
+        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
+        </tr>
+        </thead>
+        @if(paymentAllocations.isLpiPayment) {
+            @paymentAllocationsForLpi(paymentAllocations, isAgent)
+        } else {
+            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+        }
+        @paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsRepayEnabled, isAgent)
+    </table>
+}}
