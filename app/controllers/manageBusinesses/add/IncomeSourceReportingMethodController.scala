@@ -145,6 +145,16 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     sessionService.setMongoData(uiJourneySessionData)
   }
 
+  private def updateReportingMethod(sessionData: UIJourneySessionData, reportingMethodTaxYear1: Option[String], reportingMethodTaxYear2: Option[String])
+                                   (implicit hc: HeaderCarrier): Future[Boolean] = {
+    val updatedAddIncomeSourceSessionData =
+      sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+      .copy(reportingMethodTaxYear1 = reportingMethodTaxYear1, reportingMethodTaxYear2 = reportingMethodTaxYear2)
+    val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+    sessionService.setMongoData(uiJourneySessionData)
+  }
+
 
   private def getLatencyDetails(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {
     user.incomeSources.getLatencyDetails(incomeSourceType, incomeSourceId)
@@ -187,7 +197,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
           invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),
-          valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent))
+          valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent, sessionData))
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
@@ -217,30 +227,39 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     }
   }
 
-  private def handleValidForm(form: IncomeSourceReportingMethodForm, incomeSourceType: IncomeSourceType, id: IncomeSourceId, isAgent: Boolean)
-                             (implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleValidForm(form: IncomeSourceReportingMethodForm, incomeSourceType: IncomeSourceType, id: IncomeSourceId,
+                              isAgent: Boolean, sessionData: UIJourneySessionData)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val latencyDetails = getLatencyDetails(incomeSourceType, id.value)
     val isAnnual: String => Boolean = (reportingMethod: String) => reportingMethod.equals("A")
 
-    val latencyIndicators =
-      (for {
-        selectedReportingMethodTaxYear1 <- form.newTaxYear1ReportingMethod
-        latencyDetails <- latencyDetails
-        if selectedReportingMethodTaxYear1 != latencyDetails.latencyIndicator1
-      } yield {
-        Some(TaxYearSpecific(latencyDetails.taxYear1, isAnnual(selectedReportingMethodTaxYear1)))
-      }) ++ (for {
-        selectedReportingMethodTaxYear2 <- form.newTaxYear2ReportingMethod
-        latencyDetails <- latencyDetails
-        if selectedReportingMethodTaxYear2 != latencyDetails.latencyIndicator2
-      } yield {
-        Some(TaxYearSpecific(latencyDetails.taxYear2, isAnnual(selectedReportingMethodTaxYear2)))
-      })
+    updateReportingMethod(sessionData, form.newTaxYear1ReportingMethod, form.newTaxYear2ReportingMethod).flatMap {
+      case true => {
+        val latencyIndicators =
+          (for {
+            selectedReportingMethodTaxYear1 <- form.newTaxYear1ReportingMethod
+            latencyDetails <- latencyDetails
+            if selectedReportingMethodTaxYear1 != latencyDetails.latencyIndicator1
+          } yield {
+            Some(TaxYearSpecific(latencyDetails.taxYear1, isAnnual(selectedReportingMethodTaxYear1)))
+          }) ++ (for {
+            selectedReportingMethodTaxYear2 <- form.newTaxYear2ReportingMethod
+            latencyDetails <- latencyDetails
+            if selectedReportingMethodTaxYear2 != latencyDetails.latencyIndicator2
+          } yield {
+            Some(TaxYearSpecific(latencyDetails.taxYear2, isAnnual(selectedReportingMethodTaxYear2)))
+          })
 
-    val filteredIndicators = latencyIndicators.flatten.toSeq
+        val filteredIndicators = latencyIndicators.flatten.toSeq
 
-    updateReportingMethod(isAgent, id, incomeSourceType, filteredIndicators)
+        updateReportingMethod(isAgent, id, incomeSourceType, filteredIndicators)
+      }
+      case false =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error saving reporting method data < newReportingMethodTaxYear1: ${form.newTaxYear1ReportingMethod}, newReportingMethodTaxYear2: ${form.newTaxYear2ReportingMethod} >")
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
+    }
   }
 
   private def updateReportingMethod(isAgent: Boolean, id: IncomeSourceId, incomeSourceType: IncomeSourceType, newReportingMethods: Seq[TaxYearSpecific])

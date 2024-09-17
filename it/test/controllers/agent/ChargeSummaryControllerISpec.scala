@@ -18,6 +18,7 @@ package controllers.agent
 
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
+import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
@@ -43,6 +44,17 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    WireMock.reset()
+    AuditStub.stubAuditing()
+    cache.removeAll()
+  }
+
+  override def afterAll(): Unit = {
+    stopWiremock()
+  }
+
   val paymentAllocation: List[PaymentHistoryAllocations] = List(
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2020-08-16", -10000.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2023-04-05", -9000.0)

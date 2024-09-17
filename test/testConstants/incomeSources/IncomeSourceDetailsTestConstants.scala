@@ -175,6 +175,8 @@ object IncomeSourceDetailsTestConstants {
             address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
             countryCode = Some("A Country"),
             incomeSourcesAccountingMethod = Some("cash"),
+            reportingMethodTaxYear1 = None,
+            reportingMethodTaxYear2 = None,
             journeyIsComplete = None
           ))
         )
