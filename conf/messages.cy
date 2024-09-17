@@ -1135,8 +1135,7 @@ paymentAllocation.heading                                       = Taliad roeddec
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
-paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
-paymentAllocation.tableSection.heading                          = Dyraniadau taliad
+paymentAllocation.tableSection.heading                          = Dyraniadau
 paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
@@ -1160,6 +1159,12 @@ paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
+paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
+paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy’n cronni llog.
+paymentAllocation.condition-2                                   = Taliadau sy’n dod yn ddyledus.
+paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
+paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
+
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
