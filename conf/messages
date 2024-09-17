@@ -1113,8 +1113,7 @@ paymentAllocation.sa.info                                       = This is money 
 paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
-paymentAllocation.info                                          = Payments are first allocated to penalties and earlier tax years, then current and future tax years.
-paymentAllocation.tableSection.heading                          = Payment allocations
+paymentAllocation.tableSection.heading                          = Allocations
 paymentAllocation.tableHead.allocation                          = Where your money went
 paymentAllocation.tableHead.allocated-date                      = Date
 paymentAllocation.tableHead.amount                              = Amount
@@ -1123,6 +1122,12 @@ paymentAllocation.creditOnAccount                               = Credit on acco
 paymentAllocation.moneyOnAccount                                = Money in your account
 paymentAllocation.moneyOnAccount.agent                          = Money in your client’s account
 paymentAllocation.na                                            = N/A
+paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
+paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
+paymentAllocation.condition-2                                   = Charges that become due.
+paymentAllocation.condition-3                                   = Charges due within 30 days.
+paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
+
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2
