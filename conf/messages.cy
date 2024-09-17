@@ -2186,7 +2186,7 @@ optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’
 optin.checkAnswers.ny = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
-optin.checkAnswers.submissionsMade = TBD
+optin.checkAnswers.submissionsMade = Bydd unrhyw incwm a threuliau a gyflwynwyd eisoes ar gyfer y flwyddyn dreth hon yn cael eu dileu. Bydd angen i chi gynnwys yr wybodaeth hon yn eich diweddariadau chwarterol.
 
 # opt in error page
 optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
