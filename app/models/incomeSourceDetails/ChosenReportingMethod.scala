@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package models.incomeSourceDetails
 
-import enums.ReversalReason
+sealed trait ChosenReportingMethod
 
-import java.time.LocalDate
+object ChosenReportingMethod {
+  case object Annual extends ChosenReportingMethod
 
-case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
-                                  adjustments: List[AdjustmentModel])
+  case object Quarterly extends ChosenReportingMethod
 
-case class AdjustmentModel(amount: BigDecimal,
-                      adjustmentDate: Option[LocalDate],
-                           reasonCode: ReversalReason)
+  case object Hybrid extends ChosenReportingMethod
+
+  case object DefaultAnnual extends ChosenReportingMethod
+
+  case object Unknown extends ChosenReportingMethod
+}

@@ -25,12 +25,12 @@ import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs, ReviewAndReconcilePoa}
 import models.financialDetails.DocumentDetailWithDueDate
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{SingleObligationModel, ObligationsErrorModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
@@ -50,6 +50,7 @@ import views.html.TaxYearSummary
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import scala.util.Try
 
 class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
@@ -285,6 +286,71 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+    "user has Review and Reconcile debit charges" should {
+      "render the Review and Reconcile debit charges in the charges table" in {
+        enable(ReviewAndReconcilePoa)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+      }
+      "render the Review and Reconcile debit charges in the charges table with no ACCRUES INTEREST tag if the charge is paid" in {
+        enable(ReviewAndReconcilePoa)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse =
+          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
+          )))
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+      }
+      "display no Review and Reconcile debit charges in the charges table when ReviewAndReconcilePoa FS is disabled" in {
+        disable(ReviewAndReconcilePoa)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1")).isDefined shouldBe false
       }
     }
 
@@ -894,6 +960,75 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         status(result) shouldBe OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+      }
+    }
+    "user has Review and Reconcile debit charges" should {
+      "render the Review and Reconcile debit charges in the charges table" in {
+        enable(ReviewAndReconcilePoa)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
+        )
+
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "ACCRUES INTEREST"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+      }
+      "render the Review and Reconcile debit charges in the charges table with no ACCRUES INTEREST tag if the charge is paid" in {
+        enable(ReviewAndReconcilePoa)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(response =
+          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
+          )))
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
+        )
+
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag")).isDefined shouldBe false
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
+        Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+      }
+
+      "display no Review and Reconcile debit charges in the charges table when ReviewAndReconcilePoa FS is disabled" in {
+        disable(ReviewAndReconcilePoa)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsWithReviewAndReconcileDebits)
+        mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
+          ObligationsModel(Nil)
+        )
+
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
+
+        status(result) shouldBe OK
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1")).isDefined shouldBe false
+        Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1")).isDefined shouldBe false
       }
     }
   }

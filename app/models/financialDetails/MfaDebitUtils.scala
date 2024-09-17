@@ -36,6 +36,6 @@ object MfaDebitUtils {
   }
 
   def filterMFADebits(MFADebitsEnabled: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
-    if (!MFADebitsEnabled && documentDetailWithDueDate.isMFADebit) false else true
+    !MFADebitsEnabled && documentDetailWithDueDate.isMFADebit
   }
 }
