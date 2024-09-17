@@ -18,21 +18,17 @@ package controllers.optOut
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
+import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus._
-import models.optout.OptOutSessionData
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import play.mvc.Http.Status.{BAD_REQUEST, SEE_OTHER}
-import repositories.ITSAStatusRepositorySupport.statusToString
-import repositories.{OptOutContextData, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
 class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
@@ -51,6 +47,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
   val emptyBodyString = ""
 
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val helper = new OptOutSessionRepositoryHelper(repository)
   val optOutExpectedTitle = s"Check your answers"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -67,7 +64,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Annual,
@@ -90,7 +87,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
@@ -118,7 +115,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -143,7 +140,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -169,7 +166,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -192,7 +189,7 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
       "show Opt Out error page" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
@@ -212,25 +209,6 @@ class ConfirmOptOutControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
-
-  private def stubOptOutInitialState(currentTaxYear: TaxYear,
-                                     previousYearCrystallised: Boolean,
-                                     previousYearStatus: ITSAStatus.Value,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
-      UIJourneySessionData(testSessionId,
-        OptOutJourney.Name,
-        optOutSessionData =
-          Some(OptOutSessionData(
-            Some(OptOutContextData(
-              currentYear = currentTaxYear.toString,
-              previousYearCrystallised,
-              statusToString(previousYearStatus),
-              statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), None))))
-      .futureValue shouldBe true
   }
 
 }

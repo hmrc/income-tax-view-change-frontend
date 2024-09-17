@@ -17,18 +17,14 @@
 package controllers.optOut
 
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
+import helpers.{ComponentSpecBase, OptOutSessionRepositoryHelper}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
-import models.optout.OptOutSessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import repositories.ITSAStatusRepositorySupport.statusToString
-import repositories.{OptOutContextData, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import utils.OptOutJourney
 
 class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val isAgent: Boolean = false
@@ -49,6 +45,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val helper = new OptOutSessionRepositoryHelper(repository)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -61,7 +58,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -88,7 +85,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -114,7 +111,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -137,7 +134,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
@@ -153,25 +150,6 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
-
-  private def stubOptOutInitialState(currentTaxYear: TaxYear,
-                                     previousYearCrystallised: Boolean,
-                                     previousYearStatus: ITSAStatus.Value,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
-      UIJourneySessionData(testSessionId,
-        OptOutJourney.Name,
-        optOutSessionData =
-          Some(OptOutSessionData(
-            Some(OptOutContextData(
-              currentYear = currentTaxYear.toString,
-              previousYearCrystallised,
-              statusToString(previousYearStatus),
-              statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), None))))
-      .futureValue shouldBe true
   }
 
 }
