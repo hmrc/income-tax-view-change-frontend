@@ -22,14 +22,14 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optIn.OptInCompletedNextYearView
+import views.html.optIn.OptInCompletedView
 
 class OptInCompletedNextYearViewSpec extends TestSupport {
 
-  val view: OptInCompletedNextYearView = app.injector.instanceOf[OptInCompletedNextYearView]
+  val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
   class Setup(isAgent: Boolean = true, taxYear: TaxYear) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear)
+    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = false)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 

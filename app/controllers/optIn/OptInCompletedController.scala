@@ -26,14 +26,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optIn.{OptInCompletedCurrentYearView, OptInCompletedNextYearView, OptInCompletedView}
+import views.html.optIn.OptInCompletedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInCompletedController @Inject()(val currentYearView: OptInCompletedCurrentYearView,
-                                         val nextYearView: OptInCompletedNextYearView,
-                                         val view: OptInCompletedView,
+class OptInCompletedController @Inject()(val view: OptInCompletedView,
                                          val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
                                          val auth: AuthenticatorPredicate)
@@ -63,13 +61,8 @@ class OptInCompletedController @Inject()(val currentYearView: OptInCompletedCurr
           intent <- optInService.fetchSavedChosenTaxYear()
         } yield {
           intent.map { optInTaxYear =>
-
             val model = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = optInTaxYear, isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear))
-//            if (proposition.isCurrentTaxYear(optInTaxYear)) {
-//              Ok(currentYearView(model))
-//            } else Ok(nextYearView(model))
             Ok(view(model))
-
           }.getOrElse(errorHandler(isAgent).showInternalServerError())
         }
 

@@ -22,15 +22,15 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optIn.OptInCompletedCurrentYearView
+import views.html.optIn.OptInCompletedView
 
 
 class OptInCompletedCurrentYearViewSpec extends TestSupport {
 
-  val view: OptInCompletedCurrentYearView = app.injector.instanceOf[OptInCompletedCurrentYearView]
+  val view: OptInCompletedView = app.injector.instanceOf[OptInCompletedView]
 
   class Setup(isAgent: Boolean = true, taxYear: TaxYear) {
-    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear)
+    val model: OptInCompletedViewModel = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = taxYear, isCurrentYear = true)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(model = model)))
   }
 
@@ -48,6 +48,11 @@ class OptInCompletedCurrentYearViewSpec extends TestSupport {
       "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
     pageDocument.getElementById("warning-inset").text() shouldBe expectedText
 
+    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
+      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
+      "(opens in new tab)."
+
   }
 
   val anotherForYearEnd = 2022
@@ -63,6 +68,11 @@ class OptInCompletedCurrentYearViewSpec extends TestSupport {
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
     pageDocument.getElementById("warning-inset").text() shouldBe expectedText
+
+    pageDocument.getElementById("optin-completed-view-p5").text() shouldBe "You have just chosen to voluntarily report quarterly from the 2021 to 2022 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument.getElementById("optin-completed-view-p6").text() shouldBe "You can check the threshold for qualifying " +
+      "income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax " +
+      "(opens in new tab)."
 
   }
 
