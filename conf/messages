@@ -2289,6 +2289,7 @@ optin.completedOptIn.futureReporting.p1         = HMRC lowers the income thresho
 optin.completedOptIn.futureReporting.p2         = you report an increase in your qualifying income in a tax return
 optin.completedOptIn.futureReporting.scenario   = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
 optin.completedOptIn.futureReporting.desc2      = If this happens, we will write to you to let you know.
+
 optin.completedOptIn.incomeThreshold.desc.a     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
