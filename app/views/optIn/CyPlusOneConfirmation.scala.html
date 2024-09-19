@@ -42,7 +42,7 @@
 
 
 @cancelUrl = @{
- controllers.routes.NextUpdatesController.show()
+ controllers.routes.ReportingFrequencyPageController.show(isAgent)
 }
 
 @mainTemplate(
@@ -66,7 +66,7 @@
    <div class="govuk-button-group">
     @govukButton(Button(
      content = Text(messages("optin.cyPlusOneConfirmation.confirm")),
-     attributes = Map("id" -> "continue-button")
+     attributes = Map("id" -> "confirm-button")
     ))
     <a class="govuk-link" id="cancel-button" href=@cancelUrl>
      @messages("optin.cyPlusOneConfirmation.cancel")

@@ -26,17 +26,42 @@ class CyPlusOneConfirmationViewSpec extends TestSupport {
 
   val cyPlusOneConfirmationView: CyPlusOneConfirmation = app.injector.instanceOf[CyPlusOneConfirmation]
 
-  class Setup(isAgent: Boolean = true) {
+  class Setup(isAgent: Boolean) {
     val pageDocument: Document = Jsoup.parse(contentAsString(cyPlusOneConfirmationView(isAgent)))
+    val cancelButtonHref: String = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
-  object plusOneConfirmationMessages {
+  object cyPlusOneConfirmationMessages {
     val heading: String = messages("optin.cyPlusOneConfirmation.heading")
     val title: String = messages("htmlTitle", heading)
     val text: String = messages("optin.cyPlusOneConfirmation.text")
     val continueButton: String = messages("optin.cyPlusOneConfirmation.confirm")
     val cancelButton: String = messages("optin.cyPlusOneConfirmation.cancel")
-    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val agentCancelButtonHref: String = controllers.routes.NextUpdatesController.showAgent.url
+  }
+
+  "Opt-out confirm page" should {
+
+    "have the correct title" in new Setup(false) {
+      pageDocument.title() shouldBe cyPlusOneConfirmationMessages.title
+    }
+
+    "have the correct heading" in new Setup(false) {
+      pageDocument.select("h1").text() shouldBe cyPlusOneConfirmationMessages.heading
+    }
+
+    "have the correct summary heading and page contents" in new Setup(false) {
+      pageDocument.getElementById("confirmation-text").text() shouldBe cyPlusOneConfirmationMessages.text
+      pageDocument.getElementById("confirm-button").text() shouldBe cyPlusOneConfirmationMessages.continueButton
+      pageDocument.getElementById("cancel-button").text() shouldBe cyPlusOneConfirmationMessages.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelButtonHref
+    }
+
+    "have the correct summary heading and page contents for Agents" in new Setup(true) {
+      pageDocument.getElementById("confirmation-text").text() shouldBe cyPlusOneConfirmationMessages.text
+      pageDocument.getElementById("confirm-button").text() shouldBe cyPlusOneConfirmationMessages.continueButton
+      pageDocument.getElementById("cancel-button").text() shouldBe cyPlusOneConfirmationMessages.cancelButton
+      pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelButtonHref
+    }
+
   }
 }
