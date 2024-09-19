@@ -92,6 +92,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Int = 0,
+                  paymentsAccruingInterestCount: Int = 0,
+                  reviewAndReconcileEnabled: Boolean = false,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
@@ -112,7 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled)
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 

@@ -111,14 +111,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
 
 
-  class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0,
+  class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled)
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 

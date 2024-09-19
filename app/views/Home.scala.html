@@ -183,7 +183,7 @@ viewModel: HomePageViewModel,
                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
                    <div id="overdue-warning" class="grid-row">
                        <div class="column-full">
-                       @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
+                       @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
                        </div>
                    </div>
                }
