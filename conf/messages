@@ -2260,3 +2260,9 @@ optin.optInError.nextUpdates-link                  = next updates
 optin.optInError.nextUpdates-bullet-2              = and try again
 optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
+
+# opt in confirmation cy+1
+optin.cyPlusOneConfirmation.heading                = Confirm and opt in from 2024 to 2025 tax year
+optin.cyPlusOneConfirmation.text                   = If you opt in for the next tax year, from 6 April 2026 you will need to submit your quarterly updates through compatible software.
+optin.cyPlusOneConfirmation.confirm                = Confirm and save
+optin.cyPlusOneConfirmation.cancel                 = Cancel

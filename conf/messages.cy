@@ -2201,3 +2201,9 @@ optin.optInError.nextUpdates-link                  = diweddariadau nesaf
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
+
+# opt in confirmation cy+1
+optin.cyPlusOneConfirmation.heading                =
+optin.cyPlusOneConfirmation.text                   =
+optin.cyPlusOneConfirmation.confirm                =
+optin.cyPlusOneConfirmation.cancel                 =

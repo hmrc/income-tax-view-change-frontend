@@ -1,0 +1,77 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukButton, GovukInsetText, GovukTable}
+@import views.html.components.{h1, h2, hr, link, p}
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukButton: GovukButton,
+        errorSummary: ErrorSummary,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
+)
+@(isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@confirmOptInPostUrl = @{
+ controllers.optIn.routes.CyPlusOneConfirmationController.submit(isAgent)
+}
+
+
+@cancelUrl = @{
+ controllers.routes.NextUpdatesController.show()
+}
+
+@mainTemplate(
+ pageTitle = messages("optin.cyPlusOneConfirmation.heading"),
+ backUrl = Some("#"),
+ btaNavPartial = user.btaNavPartial,
+ useFallbackBackLink = true
+) {
+
+  @h1(id = Some("heading"), msg = messages("optin.cyPlusOneConfirmation.heading"), classes = "govuk-heading-l")
+
+  <div class="govuk-!-margin-bottom-7 ">
+   @p(id=Some("confirmation-text")) {
+     @messages("optin.cyPlusOneConfirmation.text")
+   }
+  </div>
+
+  @formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-cyPlusOne-opt-in-form") {
+
+
+   <div class="govuk-button-group">
+    @govukButton(Button(
+     content = Text(messages("optin.cyPlusOneConfirmation.confirm")),
+     attributes = Map("id" -> "continue-button")
+    ))
+    <a class="govuk-link" id="cancel-button" href=@cancelUrl>
+     @messages("optin.cyPlusOneConfirmation.cancel")
+    </a>
+   </div>
+  }
+
+}
