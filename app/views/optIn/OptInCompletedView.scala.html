@@ -49,43 +49,22 @@
     </div>
 }
 
-@revisedDeadlines = {
-    <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h3 class="govuk-heading-m" >@messages("optin.completedOptIn.cy.revisedDeadlines.title")</h3>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.a", model.startYear, model.endYear)
-                <span id="quarterly-update-due" class="govuk-!-font-weight-bold">
-                    @messages("optin.completedOptIn.cy.revisedDeadlines.p1.b", model.endYear)
-                </span>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p1.c", model.startYear, model.endYear)
-            </li>
-            <li>
-                @messages("optin.completedOptIn.cy.revisedDeadlines.p2.a", model.startYear, model.endYear)
-                <span id="current-year-due" class="govuk-!-font-weight-bold">@messages("optin.completedOptIn.cy.revisedDeadlines.p2.b", model.nextYear)</span>
-            </li>
-        </ul>
-
-        @upcomingUpdates
-    </div>
-}
-
 @yourNextUpdatesDue = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="optin-completed-view-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.ny.nextUpdates")</h2>
+        <h2 id="optin-completed-view-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.nextUpdates")</h2>
         <p id="optin-completed-view-p1" class="govuk-body" >
-            @messages("optin.completedOptIn.ny.nextUpdate.desc1.a")
+            @messages("optin.completedOptIn.nextUpdate.desc1.a")
             <a href="@upcomingUpdatesUrl" class="govuk-link govuk-body">
-            @messages("optin.completedOptIn.ny.nextUpdate.desc1.b")
+            @messages("optin.completedOptIn.nextUpdate.desc1.b")
             </a>
-            @messages("optin.completedOptIn.ny.nextUpdate.desc1.c")
+            @messages("optin.completedOptIn.nextUpdate.desc1.c")
         </p>
         <p id="optin-completed-view-p2" class="govuk-body" >
-            @messages("optin.completedOptIn.ny.nextUpdate.desc2.a")
+            @messages("optin.completedOptIn.nextUpdate.desc2.a")
             <a href="@reportingFrequencyUrl" class="govuk-link govuk-body">
-            @messages("optin.completedOptIn.ny.nextUpdate.desc2.b")
+            @messages("optin.completedOptIn.nextUpdate.desc2.b")
             </a>
-            @messages("optin.completedOptIn.ny.nextUpdate.desc2.c")
+            @messages("optin.completedOptIn.nextUpdate.desc2.c")
         </p>
     </div>
 }
@@ -104,23 +83,6 @@
 
 @incomeThresholdUrl = {
     @messages("optin.completedOptIn.incomeThreshold.desc.b.url")
-}
-
-@upcomingUpdates = {
-    <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <p id="optin-completed-view-p1" class="govuk-body" >
-            <a id="upcoming-updates-link" href="@upcomingUpdatesUrl" class="govuk-link govuk-body">
-                @messages("optin.completedOptIn.cy.upcomingUpdates")
-            </a>
-        </p>
-        <p id="optin-completed-view-p2" class="govuk-body" >
-            @messages("optin.completedOptIn.cy.reportingFrequency.a")
-            <a href="@reportingFrequencyUrl" class="govuk-link govuk-body">
-                @messages("optin.completedOptIn.cy.reportingFrequency.b")
-            </a>
-            @messages("optin.completedOptIn.cy.reportingFrequency.c")
-        </p>
-    </div>
 }
 
 @submitUpdatesInSoftware = {
@@ -175,11 +137,7 @@
 ) {
 
     @panel
-    @if(model.isCurrentYear) {
-        @revisedDeadlines
-    } else {
-        @yourNextUpdatesDue
-    }
+    @yourNextUpdatesDue
     @submitUpdatesInSoftware
     @futureReporitng
 }
