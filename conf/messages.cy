@@ -2180,7 +2180,7 @@ optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlae
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
-optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol.
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol
 
 # opt in check your answers
 optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
@@ -2201,3 +2201,37 @@ optin.optInError.nextUpdates-link                  = diweddariadau nesaf
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
+
+
+# opt-in completed
+optin.completedOptIn.heading                    = Optio i mewn wedi’i gwblhau
+
+optin.completedOptIn.cy.heading.desc            = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.ny.heading.desc            = TBD
+
+optin.completedOptIn.nextUpdates                = Eich diweddariadau nesaf sy’n ddyledus
+optin.completedOptIn.nextUpdate.desc1.a         = Gwiriwch y dudalen ynghylch
+optin.completedOptIn.nextUpdate.desc1.b         = diweddariadau a dyddiadau cau
+optin.completedOptIn.nextUpdate.desc1.c         = er mwyn gweld dyddiadau cau’r flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn sydd ohoni.
+optin.completedOptIn.nextUpdate.desc2.a         = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+optin.completedOptIn.nextUpdate.desc2.b         = amlder eich adroddiadau.
+optin.completedOptIn.nextUpdate.desc2.c         =
+
+optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+
+optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+
+optin.completedOptIn.futureReporting            = Adrodd yn y dyfodol
+optin.completedOptIn.cy.futureReporting.desc1   = Rydych newydd ddewis adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.ny.futureReporting.desc1   = Rydych wedi optio i mewn i adrodd yn chwarterol o’r flwyddyn dreth nesaf ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.futureReporting.p1         = mae CThEF yn gostwng y trothwy incwm ar gyfer Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optin.completedOptIn.futureReporting.p2         = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optin.completedOptIn.futureReporting.scenario   = Er enghraifft, pe bai eich incwm o hunangyflogaeth neu eiddo, neu o’r ddau, yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
+optin.completedOptIn.futureReporting.desc2      = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+
+optin.completedOptIn.incomeThreshold.desc.a     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optin.completedOptIn.incomeThreshold.desc.b     = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
