@@ -157,20 +157,11 @@ private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstand
     val financialDetailsModels = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
-    val financialDetailsWithInterestAccrued: List[FinancialDetail] = financialDetailsModels.flatMap(_.financialDetails.filter(x => x.hasAccruedInterest))
-    //check with shravan whether 1553 financialDetails:accruedInterest or documentDetail:accruingInterestAmount should be used
 
-    println("START" + financialDetailsWithInterestAccrued.map(_.transactionId))
+    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.documentDetails)
+      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MAX).isAfter(dateService.getCurrentDate))
 
-    val overdueChargesWithInterestAccrued: List[DocumentDetail] = financialDetailsWithInterestAccrued.flatMap(finDetail =>
-    financialDetailsModels.flatMap(f => f.documentDetails).filter(docDetail => finDetail.transactionId.contains(docDetail.transactionId)))
-
-    println(overdueChargesWithInterestAccrued)
-
-    //overdueChargesWithInterestAccrued.length
-
-    financialDetailsModels.flatMap(x => x.financialDetails.map(_.mainTransaction)).count(_.contains("4911")) +
-      financialDetailsModels.flatMap(x => x.financialDetails.map(_.mainTransaction)).count(_.contains("4913"))
+    docDetailsNotDueWithInterest.length
   }
 
 private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
