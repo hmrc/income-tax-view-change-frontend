@@ -23,7 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.admin._
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
 import models.obligations.NextUpdatesTileViewModel
@@ -88,6 +88,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      paymentsAccruingInterestCount = calculatePaymentsAccruingInterestCount(unpaidCharges)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -101,7 +102,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, paymentsAccruingInterestCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,
@@ -151,6 +152,26 @@ private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstand
   val overdueChargesCount = outstandingChargesModel.length
   overduePaymentsCountFromDate + overdueChargesCount
 }
+
+  private def calculatePaymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel]): Int = {
+    val financialDetailsModels = unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm
+    }
+    val financialDetailsWithInterestAccrued: List[FinancialDetail] = financialDetailsModels.flatMap(_.financialDetails.filter(x => x.hasAccruedInterest))
+    //check with shravan whether 1553 financialDetails:accruedInterest or documentDetail:accruingInterestAmount should be used
+
+    println("START" + financialDetailsWithInterestAccrued.map(_.transactionId))
+
+    val overdueChargesWithInterestAccrued: List[DocumentDetail] = financialDetailsWithInterestAccrued.flatMap(finDetail =>
+    financialDetailsModels.flatMap(f => f.documentDetails).filter(docDetail => finDetail.transactionId.contains(docDetail.transactionId)))
+
+    println(overdueChargesWithInterestAccrued)
+
+    //overdueChargesWithInterestAccrued.length
+
+    financialDetailsModels.flatMap(x => x.financialDetails.map(_.mainTransaction)).count(_.contains("4911")) +
+      financialDetailsModels.flatMap(x => x.financialDetails.map(_.mainTransaction)).count(_.contains("4913"))
+  }
 
 private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
   (paymentsDue ::: outstandingChargesDueDate)
