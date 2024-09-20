@@ -16,7 +16,6 @@
 
 package mocks.services
 
-import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
@@ -32,7 +31,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter with FeatureSwitching {
+trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
 
   val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 

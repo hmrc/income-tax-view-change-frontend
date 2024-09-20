@@ -23,11 +23,12 @@ import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
-import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
+import models.admin.{AdjustPaymentsOnAccount, CodingOut, ForecastCalculation, MFACreditsAndDebits, NavBarFs, ReviewAndReconcilePoa}
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import org.jsoup.Jsoup
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -1161,6 +1162,40 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       }
       "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS DISABLED" in {
         testMFADebits(false)
+      }
+    }
+
+    "Review and Reconcile debit charges should" should {
+      "render in the charges table" when {
+        "the user has Review and Reconcile debit charges and ReviewAndReconcilePoa FS is enabled" in {
+          enable(ReviewAndReconcilePoa)
+          Given("A successful getIncomeSourceDetails call is made")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned from calc list")
+          CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
+
+          And("I wiremock stub financial details for TY22/23 with POAs")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
+            testValidFinancialDetailsModelReviewAndReconcileDebitsJson(2000, 2000, testYear2023.toString, testDate.toString))
+
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          val document = Jsoup.parse(res.body)
+
+          document.getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
+          document.getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            elementTextByID("paymentTypeLink-0")("First payment on account: extra amount from your tax return"),
+            elementTextByID("paymentTypeLink-1")("Second payment on account: extra amount from your tax return"),
+            isElementVisibleById("accrues-interest-tag")(expectedValue = true))
+        }
       }
     }
 

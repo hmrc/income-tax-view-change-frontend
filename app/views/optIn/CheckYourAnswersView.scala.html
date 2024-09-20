@@ -39,7 +39,9 @@
 }
 
 @previouslySubmittedUpdatesWarningBlock = @{
-    govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
+    if(!model.intentIsNextYear) {
+        govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optin.checkAnswers.submissionsMade"))))
+    } else ""
 }
 
 @getPostAction = @{

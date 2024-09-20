@@ -28,6 +28,13 @@ case class LatePaymentInterestPaymentAllocationDetails(documentDetail: DocumentD
 case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
                                       originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
                                       latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
-                                      isLpiPayment: Boolean = false)
+                                      isLpiPayment: Boolean = false) {
+
+  def showPaymentAllocationsTable(cutOverCreditsEnabled: Boolean): Boolean =
+    !(cutOverCreditsEnabled &&
+      paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
+      paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
+
+}
 
 case class PaymentAllocationError(status: Option[Int] = None)

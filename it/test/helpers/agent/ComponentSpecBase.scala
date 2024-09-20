@@ -26,6 +26,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, TestDateService, WiremockHelper}
+import models.admin.FeatureSwitchName
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -84,6 +85,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-calculation.port" -> mockPort,
     "microservice.services.citizen-details.host" -> mockHost,
     "microservice.services.citizen-details.port" -> mockPort,
+    "microservice.services.income-tax-session-data.host" -> mockHost,
+    "microservice.services.income-tax-session-data.port" -> mockPort,
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
     "auditing.enabled" -> "true",
@@ -91,6 +94,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.contact-frontend.port" -> mockPort,
     "feature-switches.read-from-mongo" -> "false",
     "feature-switch.enable-time-machine" -> "false",
+    "feature-switch.enable-session-data-storage" -> "true",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )
@@ -120,11 +124,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     WireMock.reset()
     AuditStub.stubAuditing()
     cache.removeAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
+    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
