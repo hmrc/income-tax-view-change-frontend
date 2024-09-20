@@ -88,7 +88,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      paymentsAccruingInterestCount = calculatePaymentsAccruingInterestCount(unpaidCharges)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -102,7 +101,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, paymentsAccruingInterestCount, isEnabled(ReviewAndReconcilePoa)).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, isEnabled(ReviewAndReconcilePoa), unpaidCharges, dateService.getCurrentDate).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,
@@ -152,17 +151,6 @@ private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstand
   val overdueChargesCount = outstandingChargesModel.length
   overduePaymentsCountFromDate + overdueChargesCount
 }
-
-  private def calculatePaymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel]): Int = {
-    val financialDetailsModels = unpaidCharges collect {
-      case fdm: FinancialDetailsModel => fdm
-    }
-
-    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.documentDetails)
-      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(dateService.getCurrentDate))
-
-    docDetailsNotDueWithInterest.length
-  }
 
 private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
   (paymentsDue ::: outstandingChargesDueDate)

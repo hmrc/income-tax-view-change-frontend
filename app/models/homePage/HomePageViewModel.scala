@@ -16,6 +16,7 @@
 
 package models.homePage
 
+import models.financialDetails.{DocumentDetail, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.obligations.NextUpdatesTileViewModel
 
@@ -41,6 +42,22 @@ case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], over
     }
   }
 
+}
+
+object NextPaymentsTileViewModel {
+  def apply(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int, reviewAndReconcileEnabled: Boolean,
+            unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): NextPaymentsTileViewModel =
+    NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, calculatePaymentsAccruingInterestCount(unpaidCharges, currentDate), reviewAndReconcileEnabled)
+
+  private def calculatePaymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
+    val financialDetailsModels = unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm
+    }
+    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.documentDetails)
+      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
+
+    docDetailsNotDueWithInterest.length
+  }
 }
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
