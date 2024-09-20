@@ -279,7 +279,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         document.select("#accrues-interest-warning").text shouldBe s"! Warning ${messages("home.interest-accruing")}"
       }
 
-      "does not display daily interest accruing warning and tag when there are no payments accruing interest" in new Setup {
+      "does not display daily interest accruing warning and tag when the payments accruing interest are overdue" in new Setup {
         mockGetDueDates(Right(futureDueDates))
         mockSingleBusinessIncomeSource()
         enable(ReviewAndReconcilePoa)
