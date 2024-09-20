@@ -88,6 +88,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
@@ -101,7 +102,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd), isEnabled(ITSASubmissionIntegration))
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, isEnabled(ReviewAndReconcilePoa), unpaidCharges, dateService.getCurrentDate).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,

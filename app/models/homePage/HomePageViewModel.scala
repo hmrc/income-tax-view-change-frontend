@@ -45,11 +45,8 @@ case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], over
 }
 
 object NextPaymentsTileViewModel {
-  def apply(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int, reviewAndReconcileEnabled: Boolean,
-            unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): NextPaymentsTileViewModel =
-    NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, calculatePaymentsAccruingInterestCount(unpaidCharges, currentDate), reviewAndReconcileEnabled)
 
-  private def calculatePaymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
+  def paymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
     val financialDetailsModels = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
