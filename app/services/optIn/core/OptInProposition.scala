@@ -52,14 +52,16 @@ case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: Ne
   val availableTaxYearsForOptIn: Seq[TaxYear] = availableOptInYears.map(_.taxYear)
 
   val isOneYearOptIn: Boolean = availableOptInYears.size == OneItem
-  val isMultiYearOptIn: Boolean = availableOptInYears.size > OneItem
+  val isTwoYearOptIn: Boolean = availableOptInYears.size > OneItem
   val isNoOptInAvailable: Boolean = availableOptInYears.isEmpty
 
   def optInPropositionType: Option[OptInPropositionTypes] = {
-    (isOneYearOptIn, isMultiYearOptIn) match {
+    (isOneYearOptIn, isTwoYearOptIn) match {
       case (true, false) => Some(OneYearOptInProposition(this))
       case (false, true) => Some(MultiYearOptInProposition(this))
       case _ => None
     }
   }
+
+  def isCurrentTaxYear(target: TaxYear): Boolean = currentTaxYear.taxYear == target
 }
