@@ -279,6 +279,38 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         document.select("#accrues-interest-warning").text shouldBe s"! Warning ${messages("home.interest-accruing")}"
       }
 
+      "does not display daily interest accruing warning and tag when there are no payments accruing interest" in new Setup {
+        mockGetDueDates(Right(futureDueDates))
+        mockSingleBusinessIncomeSource()
+        enable(ReviewAndReconcilePoa)
+
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(nextPaymentDate2.toString), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
+                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(nextPaymentDate2.toString), interestOutstandingAmount = Some(400))),
+              financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA POA 2 Reconciliation Debit"),
+                transactionId = Some("testId3"),
+                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))
+          )))
+        setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+        document.select("#accrues-interest-tag").text shouldBe ""
+        document.select("#accrues-interest-warning").text shouldBe ""
+      }
+
       "Not display the next payment due date" when {
         "there is a problem getting financial details" in new Setup {
           mockGetDueDates(Right(futureDueDates))
