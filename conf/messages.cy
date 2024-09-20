@@ -2207,7 +2207,7 @@ optin.optInError.home-bullet-2                     = hafan
 optin.completedOptIn.heading                    = Optio i mewn wedi’i gwblhau
 
 optin.completedOptIn.cy.heading.desc            = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
-optin.completedOptIn.ny.heading.desc            = TBD
+optin.completedOptIn.ny.heading.desc            = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
 
 optin.completedOptIn.nextUpdates                = Eich diweddariadau nesaf sy’n ddyledus
 optin.completedOptIn.nextUpdate.desc1.a         = Gwiriwch y dudalen ynghylch
