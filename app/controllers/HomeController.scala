@@ -159,7 +159,7 @@ private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstand
     }
 
     val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.documentDetails)
-      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MAX).isAfter(dateService.getCurrentDate))
+      .filter(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(dateService.getCurrentDate))
 
     docDetailsNotDueWithInterest.length
   }

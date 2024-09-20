@@ -242,8 +242,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
-      "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = 0) {
+      "don't display any warning messages when no payment is overdue and no payments are accruing interest" in new Setup(overDuePaymentsCount = 0) {
         getTextOfElementById("overdue-warning") shouldBe None
+        getTextOfElementById("accrues-interest-warning") shouldBe None
       }
 
       "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = 1) {
@@ -258,8 +259,17 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageForDunningLocks)
       }
 
+      "display daily interest warning when payments are accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+        val dailyInterestMessage = "! Warning You have charges with added daily interest. These charges will be accruing interest until they are paid in full."
+        getTextOfElementById("accrues-interest-warning") shouldBe Some(dailyInterestMessage)
+      }
+
       "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = 1) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+      }
+
+      "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+        getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"DAILY INTEREST CHARGES")
       }
 
       "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = 3) {
