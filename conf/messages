@@ -114,6 +114,7 @@ home.agent.your-returns.updatesLink                             = Update and sub
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Next payments due
+home.payments.daily-interest-charges                            = DAILY INTEREST CHARGES
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Next updates due
@@ -149,6 +150,7 @@ home.agent.overdue.message.dunningLock.true                     = Your client ha
 home.agent.overdue.message.dunningLock.false                    = Your client has overdue payments. They may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
+home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
