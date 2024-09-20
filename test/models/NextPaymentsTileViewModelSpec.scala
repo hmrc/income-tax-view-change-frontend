@@ -32,7 +32,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
   val pastDate: LocalDate = LocalDate.of(2000,1,1)
   val currentDate: LocalDate = LocalDate.of(2024, 9, 20)
 
-  val finDetModsValid: List[FinancialDetailsModel] = List(
+  val chargesListValid: List[FinancialDetailsModel] = List(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -48,7 +48,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
         items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
   )
 
-  val finDetModsOverdue: List[FinancialDetailsModel] = List(
+  val chargesListOverdue: List[FinancialDetailsModel] = List(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -64,7 +64,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
         items = Some(Seq(SubItem(dueDate = Some(pastDate)))))))
   )
 
-  val finDetModsPaid: List[FinancialDetailsModel] = List(
+  val chargesListPaid: List[FinancialDetailsModel] = List(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 0, LocalDate.of(2018, 3, 29),
@@ -80,7 +80,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
         items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
   )
 
-  val finDetModsNoInterest: List[FinancialDetailsModel] = List(
+  val chargesListInterest: List[FinancialDetailsModel] = List(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
@@ -113,21 +113,21 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
   "The paymentsAccruingInterestCount method" when {
     "given payments that are not yet due, have interest, and aren't paid" should {
       "return the number of such payments" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(finDetModsValid, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListValid, currentDate)
         res shouldBe 2
       }
     }
     "given payments that don't meet the above criteria" should {
       "return zero when payments overdue" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(finDetModsOverdue, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListOverdue, currentDate)
         res shouldBe 0
       }
       "return zero when payments have no interest" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(finDetModsNoInterest, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListInterest, currentDate)
         res shouldBe 0
       }
       "return zero when payments are paid" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(finDetModsPaid, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListPaid, currentDate)
         res shouldBe 0
       }
     }
