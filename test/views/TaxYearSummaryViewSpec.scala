@@ -20,14 +20,14 @@ import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
-import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, chargeItemModel, fullDocumentDetailModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
 import views.html.TaxYearSummary
@@ -142,75 +142,73 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       ))
     )))
 
-  val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
-      dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")),
-      dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")),
-      dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true))
 
-  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2"), latePaymentInterestAmount = Some(80.0)),
-      dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)),
-      dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true),
-    fullDocumentDetailWithDueDateModel)
+  val testDunningLockChargesList: List[ChargeItem] = List(
+    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+    chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
+    chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true))
 
-  val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    dueDate = Some(LocalDate.of(2021, 7, 31))),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"), documentText = Some(taxYearSummaryClass2Nic))))
+  val testChargesList: List[ChargeItem] = List(
+    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
+    chargeItemModel(transactionType=PaymentOnAccountTwo, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
+    chargeItemModel(transactionType=BalancingCharge,     dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)))
 
-  val payeChargeList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)), codingOutEnabled = true))
+  val testChargesWithoutLpiList: List[ChargeItem] = testChargesList.map(_.copy(latePaymentInterestAmount = None))
 
-  val testBalancingPaymentChargeWithZeroValue: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some("document Text"), originalAmount = BigDecimal(0)), codingOutEnabled = true))
+  val class2NicsChargesList: List[ChargeItem] = List(
+    chargeItemModel(transactionType=PaymentOnAccountOne, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
+    )
 
 
-  val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some(taxYearSummaryClass2Nic)), codingOutEnabled = true),
-    fullDocumentDetailWithDueDateModel.copy(
-      documentDetail = fullDocumentDetailModel.copy(
-        documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)))
+  val payeChargeList: List[ChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), subTransactionType = Some(Accepted), latePaymentInterestAmount = None)
   )
 
-  val rejectedByNpsPartWay: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some(taxYearSummaryClass2Nic)), codingOutEnabled = true),
-    fullDocumentDetailWithDueDateModel.copy(
-      documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true)
+  val testBalancingPaymentChargeWithZeroValue: List[ChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, originalAmount = 0.0, latePaymentInterestAmount = None))
+
+
+
+  val immediatelyRejectedByNps: List[ChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
+      chargeItemModel(transactionType=BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None)
   )
 
-  val codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some(taxYearSummaryClass2Nic)), codingOutEnabled = true),
-    fullDocumentDetailWithDueDateModel.copy(
-      documentDetail = fullDocumentDetailModel.copy(
-        documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0))),
-    fullDocumentDetailWithDueDateModel.copy(
-      documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true)
+
+
+  val rejectedByNpsPartWay: List[ChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
   )
 
-  val documentDetailWithDueDateMissingDueDate: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    dueDate = None
-  ))
 
-  val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
-  val testWithOneMissingDueDateChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(dueDate = None),
-    fullDocumentDetailWithDueDateModel
+  val codingOutPartiallyCollected: List[ChargeItem] = List(
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType=BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType=BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
   )
 
-  val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = 1000.00))
+  val mfaCharges: List[ChargeItem] = List(
+    chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
+    chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
+    chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None)
+  )
+
+  val documentDetailWithDueDateMissingDueDate: List[ChargeItem] = List(
+    chargeItemModel(dueDate = None)
+  )
+
+  val emptyChargeList: List[ChargeItem] = List.empty
+
+  val testWithOneMissingDueDateChargesList: List[ChargeItem] = List(
+    chargeItemModel(),
+    chargeItemModel(dueDate = None)
+  )
+
+  val testWithMissingOriginalAmountChargesList: List[ChargeItem] = List(
+    chargeItemModel(originalAmount = 1000.0),
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -219,62 +217,64 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023,2024)))
 
-  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def estimateView(chargeItems: List[ChargeItem] = testChargesList, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), chargeItems, obligations, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def class2NicsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def estimateViewWithNoCalcData(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent)
+  def unattendedCalcView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackUrl", isAgent)
 
-  def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def multipleDunningLockView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def crystallisedView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def payeView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def rejectedByNpsPartWayView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def rejectedByNpsPartWayView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def forecastCalcView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def forecastCalcView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), testChargesList, testObligationsModel, codingOutEnabled = codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def noForecastDataView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def noForecastDataView(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def forecastWithNoCalcData(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def forecastWithNoCalcData(codingOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(None, testChargesList, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled = reviewAndReconcileEnabled, showForecastData = true, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def mfaDebitsView(codingOutEnabled: Boolean, isAgent: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), MFADebitsDocumentDetailsWithDueDates, testObligationsModel, codingOutEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+  def mfaDebitsView(codingOutEnabled: Boolean, reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(true))), mfaCharges, testObligationsModel, codingOutEnabled, reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
 
-  def poaView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, ctaViewModel = testCTAModel), "testBackURL", isAgent)
+  def calculationMultipleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+
+  def calculationSingleErrorView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = emptyCTAModel), "testBackURL", isAgent)
+
+  def poaView(reviewAndReconcileEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), testChargesList, testObligationsModel, codingOutEnabled = false, reviewAndReconcileEnabled = reviewAndReconcileEnabled, ctaViewModel = testCTAModel), "testBackURL", isAgent)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -593,18 +593,20 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#paymentAmountHeading").text shouldBe amount
       }
 
-      "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
+      "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe paymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the Due date in the Payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 Jun 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jul 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Aug 2019"
       }
 
 
-      "display the Amount in the payments tab" in new Setup(estimateView()) {
+      "display the Amount in the payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList)) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£1,400.00"
       }
 
@@ -615,56 +617,58 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
-        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) div:nth-child(3)")
+        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(3)")
         paymentType.text shouldBe paymentUnderReview
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
+        println( layoutContent.select("#payments-table"))
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
+//        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jun 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 Jun 2019"
       }
 
 
       "display the Amount in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe "£100.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£100.00"
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount2
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jul 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jul 2019"
       }
 
 
       "display the Amount in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe "£80.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe "£80.00"
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) a")
         paymentTypeLink.text shouldBe lpiRemainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Aug 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Aug 2019"
       }
 
 
       "display the Amount in the payments tab for late payment interest p" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe "£100.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe "£100.00"
       }
 
       "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Balancing payment" in new Setup(multipleDunningLockView()) {
@@ -866,14 +870,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       }
 
-      "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(isAgent = true)) {
+      "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe paymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView(isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId, true).url

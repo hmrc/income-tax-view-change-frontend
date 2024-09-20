@@ -19,7 +19,7 @@ package audit.models
 import audit.Utilities.{getChargeType, userAuditDetails}
 import auth.MtdItUser
 import implicits.ImplicitDateParser
-import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails.ChargeItem
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.obligations.ObligationWithIncomeType
@@ -95,11 +95,11 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
       errorMessages
   }
 
-  private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail),
+  private def paymentsJson(docDateDetail: ChargeItem): JsObject = {
+    Json.obj("paymentType" -> getChargeType(docDateDetail, false),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
-      ("amount", Option(docDateDetail.documentDetail.originalAmount)) ++
+      "status" -> docDateDetail.getChargePaidStatus) ++
+      ("amount", Option(docDateDetail.originalAmount)) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
@@ -109,16 +109,16 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("taxDue", taxYearSummaryViewModel.calculationSummary.map(_.forecastIncomeTaxAndNics)) ++
     ("totalAllowancesAndDeductions", taxYearSummaryViewModel.calculationSummary.map(_.forecastAllowancesAndDeductions))
 
-  private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
+  private def paymentsJsonLPI(docDateDetail: ChargeItem): JsObject = {
+    Json.obj("paymentType" -> getChargeType(docDateDetail, latePaymentCharge = true),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.documentDetail.getInterestPaidStatus) ++
-      ("amount", docDateDetail.documentDetail.latePaymentInterestAmount) ++
+      "status" -> docDateDetail.getInterestPaidStatus) ++
+      ("amount", docDateDetail.latePaymentInterestAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
   private val paymentsDetails: Seq[JsObject] = taxYearSummaryViewModel.charges.map(paymentsJson) ++
-    taxYearSummaryViewModel.charges.filter(_.documentDetail.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
+    taxYearSummaryViewModel.charges.filter(_.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
 
   private def getObligationsType(obligationType: String) = {
     obligationType match {

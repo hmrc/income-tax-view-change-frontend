@@ -19,16 +19,17 @@ package audit.models
 import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.financialDetails.{ChargeItem, DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
+import testConstants.FinancialDetailsTestConstants.chargeItemModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -75,10 +76,33 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
-  def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
-    List(DocumentDetailWithDueDate(DocumentDetail(2020, "1040000123", Some("ITSA- POA 1"), Some("documentText"), 1400.0, 1400.0, LocalDate.parse("2018-03-29"),
-      Some(80), Some(100), None, Some(LocalDate.parse("2018-03-29")), Some(LocalDate.parse("2018-06-15")),
-      Some(100), Some(100), None, None), Some(LocalDate.parse("2019-05-15")), true, hasDunningLock))
+  def payments(hasDunningLock: Boolean): List[ChargeItem] = {
+    List(
+
+      chargeItemModel(dunningLock = hasDunningLock)
+
+//      DocumentDetailWithDueDate(
+//        documentDetail = DocumentDetail(
+//          taxYear = 2020,
+//          transactionId = "1040000123",
+//          documentDescription = Some("ITSA- POA 1"),
+//          documentText = Some("documentText"),
+//          outstandingAmount = 1400.0,
+//          originalAmount = 1400.0,
+//          documentDate = LocalDate.parse("2018-03-29"),
+//          interestOutstandingAmount = Some(80),
+//          interestRate = Some(100),
+//          latePaymentInterestId = None,
+//          interestFromDate = Some(LocalDate.parse("2018-03-29")),
+//          interestEndDate = Some(LocalDate.parse("2018-06-15")),
+//          latePaymentInterestAmount = Some(100),
+//          lpiWithDunningLock = Some(100),
+//          paymentLotItem = None,
+//          paymentLot = None),
+//        dueDate = Some(LocalDate.parse("2019-05-15")),
+//        isLatePaymentInterest = true,
+//        dunningLock = hasDunningLock)
+    )
   }
 
 
@@ -274,7 +298,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock),
-        obligations = updates, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, codingOutEnabled = true, reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
         ),
       messages
     )
@@ -303,7 +327,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock),
-        obligations = updates, showForecastData = true, codingOutEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, showForecastData = true, codingOutEnabled = true,
+        reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
       )
     )
 

@@ -368,8 +368,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            financialDetailsSuccess.documentDetails.map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsSuccess.financialDetails, true, true)),
+            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -441,9 +441,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+            financialDetailsDunningLockSuccess.documentDetails.
+              map(dd => ChargeItem.fromDocumentPair(dd, financialDetailsDunningLockSuccess.financialDetails, true, true)),
             allObligations,
-            codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
         }
@@ -705,8 +706,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, messagesAPI,
           TaxYearSummaryViewModel(
             Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-            auditDD,
-            allObligations, codingOutEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+            auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails, true, true)),
+            allObligations, codingOutEnabled = true, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
 
         allObligations.obligations.foreach {
           obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)

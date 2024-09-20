@@ -45,17 +45,18 @@ case class ChargeItem (
   interestFromDate: Option[LocalDate],
   interestEndDate: Option[LocalDate],
   lpiWithDunningLock: Option[BigDecimal],
-  isOverdue: Boolean) extends TransactionItem {
+  isOverdue: Boolean,
+  dunningLock: Boolean) extends TransactionItem {
 
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
-  def getDueDate: Option[LocalDate] = {
+  def getDueDateForNonZeroCharge: Option[LocalDate] = {
     dueDate.filterNot(_ => originalAmount == 0.0)
   }
 
-  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
+  def getDueDateForNonZeroBalancingCharge(codedOutEnabled: Boolean = false): Option[LocalDate] = {
     if(transactionType == BalancingCharge && (!codedOutEnabled || subTransactionType.isEmpty) && originalAmount == 0.0) {
       None
     } else {
@@ -68,6 +69,17 @@ case class ChargeItem (
     case _ => false
   }
 
+  def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
+  }
+
+  def isCodingOut: Boolean = {
+    val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
+    subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
+  }
+
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
@@ -76,6 +88,22 @@ case class ChargeItem (
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
     else outstandingAmount
+  }
+
+  val isPartPaid: Boolean = outstandingAmount != originalAmount
+
+  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+
+  def getInterestPaidStatus: String = {
+    if (interestIsPaid) "paid"
+    else if (interestIsPartPaid) "part-paid"
+    else "unpaid"
+  }
+
+  def getChargePaidStatus: String = {
+    if (isPaid) "paid"
+    else if (isPartPaid) "part-paid"
+    else "unpaid"
   }
 
   def checkIsPaid(isInterestCharge: Boolean): Boolean = {
@@ -87,28 +115,31 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-  def getChargeTypeKey(codedOutEnabled: Boolean = false): String = (transactionType, subTransactionType) match {
-    case (PaymentOnAccountOne, _) => "paymentOnAccount1.text"
-    case (PaymentOnAccountTwo, _) => "paymentOnAccount2.text"
-    case (MfaDebitCharge,      _) => "hmrcAdjustment.text"
-    case (BalancingCharge, Some(Nics2)) if codedOutEnabled => "class2Nic.text"
-    case (BalancingCharge, Some(Accepted)) if codedOutEnabled => "codingOut.text"
-    case (BalancingCharge, Some(Cancelled)) if codedOutEnabled => "cancelledPayeSelfAssessment.text"
-    case (BalancingCharge, _) => "balancingCharge.text"
-    case error =>
-      Logger("application").error(s"Missing or non-matching charge type: $error found")
-      "unknownCharge"
+  def getChargeTypeKey(codedOutEnabled: Boolean = false, reviewAndReconcileEnabled: Boolean = false): String =
+    (transactionType, subTransactionType) match {
+      case (PaymentOnAccountOne, _)                                 => "paymentOnAccount1.text"
+      case (PaymentOnAccountTwo, _)                                 => "paymentOnAccount2.text"
+      case (MfaDebitCharge,      _)                                 => "hmrcAdjustment.text"
+      case (BalancingCharge, Some(Nics2))     if codedOutEnabled    => "class2Nic.text"
+      case (BalancingCharge, Some(Accepted))  if codedOutEnabled    => "codingOut.text"
+      case (BalancingCharge, Some(Cancelled)) if codedOutEnabled    => "cancelledPayeSelfAssessment.text"
+      case (BalancingCharge, _)                                     => "balancingCharge.text"
+      case (PaymentOnAccountOneReviewAndReconcile, _) if reviewAndReconcileEnabled => "first-poa-extra-amount"
+      case (PaymentOnAccountTwoReviewAndReconcile, _) if reviewAndReconcileEnabled => "second-poa-extra-amount"
+      case error =>
+        Logger("application").error(s"Missing or non-matching charge type: $error found")
+        "unknownCharge"
   }
 }
 
 object ChargeItem {
 
-  def fromDocumentPair(documentDetail: DocumentDetail, financialDetailOpt: Option[FinancialDetail], codingOut: Boolean)
+  def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail], codingOut: Boolean, reviewAndReconcile: Boolean)
                       (implicit dateService: DateServiceInterface): ChargeItem = {
 
     val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 
-    val financialDetail = financialDetailOpt match {
+    val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
       case _ => throw CouldNotCreateChargeItem(s"Financial detail is not defined for charge ${documentDetail.transactionId}")
     }
@@ -118,10 +149,13 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItem(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction) match {
+    val chargeType = ChargeType.fromCode(mainTransaction, reviewAndReconcile) match {
       case Some(ct) => ct
       case _ => throw CouldNotCreateChargeItem(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }
+
+    val dunningLockExists =
+      financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
 
     ChargeItem(
       transactionId = documentDetail.transactionId,
@@ -138,22 +172,27 @@ object ChargeItem {
       interestFromDate = documentDetail.interestFromDate,
       interestEndDate = documentDetail.interestEndDate,
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
-      isOverdue = isOverdue
+      isOverdue = isOverdue,
+      dunningLock = dunningLockExists
     )
   }
 
-  def fromFinancialDetailModel(transactionId: String, financialDetailsModel: FinancialDetailsModel, codingOut: Boolean)
+  def fromFinancialDetailModel(transactionId: String, financialDetailsModel: FinancialDetailsModel, codingOut: Boolean,
+                               reviewAndReconcile: Boolean)
                               (implicit dateService: DateServiceInterface): Option[ChargeItem] = {
-
 
     for {
       dd <- financialDetailsModel.documentDetails.find(_.transactionId == transactionId)
       fd <- financialDetailsModel.financialDetails.find(_.transactionId.contains(transactionId))
       mainTransaction <- fd.mainTransaction
-      chargeType <- ChargeType.fromCode(mainTransaction)
+      chargeType <- ChargeType.fromCode(mainTransaction, reviewAndReconcile)
     } yield {
 
       val isOverdue: Boolean = dd.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
+
+      val dunningLockExists =
+        financialDetailsModel.financialDetails
+          .exists(financialDetail => financialDetail.transactionId.contains(dd.transactionId) && financialDetail.dunningLockExists)
 
       ChargeItem(
         transactionId = transactionId,
@@ -170,7 +209,8 @@ object ChargeItem {
         interestFromDate = dd.interestFromDate,
         interestEndDate = dd.interestEndDate,
         lpiWithDunningLock = dd.lpiWithDunningLock,
-        isOverdue = isOverdue
+        isOverdue = isOverdue,
+        dunningLock = dunningLockExists
       )
     }
   }

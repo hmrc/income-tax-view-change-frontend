@@ -16,7 +16,7 @@
 
 package audit
 
-import _root_.models.financialDetails.DocumentDetail
+import _root_.models.financialDetails._
 import auth.MtdItUserBase
 import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import play.api.libs.json.{JsObject, Json}
@@ -43,6 +43,16 @@ object Utilities {
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
   }
+
+  def getChargeType(docDetail: ChargeItem, latePaymentCharge: Boolean): Option[String] =
+    (docDetail.transactionType, docDetail.subTransactionType) match {
+      case (_, Some(Nics2))       => Some("Class 2 National Insurance")
+      case(_, Some(Cancelled))    => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
+      case (PaymentOnAccountOne,  _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
+      case (PaymentOnAccountTwo,  _) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
+      case (BalancingCharge, None ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+      case (_, _) => Some(docDetail.transactionType.key)
+    }
 
   def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] =
     (docDetail.getDocType, docDetail.documentText) match {

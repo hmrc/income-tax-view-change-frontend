@@ -25,7 +25,7 @@ import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -131,8 +131,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
 
     val chargeItem = ChargeItem.fromDocumentPair(
       documentDetailWithDueDate.documentDetail,
-      financialDetailsForCharge.headOption,
-      isEnabledFromConfig(CodingOut))
+      financialDetailsForCharge,
+      isEnabledFromConfig(CodingOut),
+      isEnabledFromConfig(ReviewAndReconcilePoa))
 
     val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
       case Some(value) => value.chargeReference
@@ -146,7 +147,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
     val paymentAllocations: List[PaymentHistoryAllocations] =
       if (paymentAllocationEnabled) {
         financialDetailsForCharge
-          .filter(_.messageKeyByTypes.isDefined)
+            .filter(_.messageKeyByTypes.isDefined)
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 

@@ -457,7 +457,8 @@ object FinancialDetailsTestConstants {
                       interestFromDate:  Option[LocalDate] = Some(LocalDate.of(2018, 3, 29)),
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
-                      isOverdue:Boolean = true): ChargeItem = ChargeItem(
+                      isOverdue:Boolean = true,
+                      dunningLock:Boolean = false): ChargeItem = ChargeItem(
     transactionId = transactionId,
     taxYear = taxYear,
     transactionType = transactionType,
@@ -471,7 +472,8 @@ object FinancialDetailsTestConstants {
     interestFromDate = interestFromDate,
     interestEndDate = interestEndDate,
     lpiWithDunningLock = lpiWithDunningLock,
-    isOverdue = isOverdue
+    isOverdue = isOverdue,
+    dunningLock = dunningLock
   )
 
   def documentDetailModel(taxYear: Int = 2018,
@@ -603,7 +605,7 @@ object FinancialDetailsTestConstants {
                            ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
-      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None,
+      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, documentDueDate = dueDateValue, paymentLot = None,
         paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock, latePaymentInterestAmount = latePaymentInterestAmount)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue)
       )
@@ -1569,7 +1571,7 @@ object FinancialDetailsTestConstants {
     financialDetails = List(
       FinancialDetail(taxYear = "2018", mainType = Some("ITSA PAYE Charge"), mainTransaction = Some("4000"), transactionId = Some("MFADEBIT01"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail(taxYear = "2018", mainType = Some("ITSA Calc Error Correction"), mainTransaction = Some("4022"), transactionId = Some("MFADEBIT02"),
+      FinancialDetail(taxYear = "2018", mainType = Some("ITSA Calc Error Correction"), mainTransaction = Some("4001"), transactionId = Some("MFADEBIT02"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail(taxYear = "2018", mainType = Some("ITSA Manual Penalty Pre CY-4"), mainTransaction = Some("4002"), transactionId = Some("MFADEBIT03"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
