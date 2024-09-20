@@ -1666,9 +1666,9 @@ business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw
 business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
 business-added.quarterly-opt-out-text-2                     =
 
-business-added.quarterly-opt-out-hybrid-text-1              =
-business-added.quarterly-opt-out-hybrid-link                =
-business-added.quarterly-opt-out-hybrid-text-2              =
+business-added.quarterly-opt-out-hybrid-text-1              = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+business-added.quarterly-opt-out-hybrid-link                = bwrw golwg dros a newid amlder eich adroddiadau
+business-added.quarterly-opt-out-hybrid-text-2              = ar gyfer pob un o’ch busnesau
 
 business-added.default-annual-reporting-frequency-text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
 business-added.default-annual-reporting-frequency-link      = amlder eich adroddiadau.
@@ -2219,7 +2219,7 @@ optin.completedOptIn.nextUpdate.desc2.c         =
 
 optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
