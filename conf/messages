@@ -127,7 +127,6 @@ home.paymentHistoryRefund.heading                               = Payment histor
 home.paymentHistoryRefund.view                                  = Payment and refund history
 home.paymentCreditHistory.view                                  = Payment and credit history
 home.paymentCreditRefundHistory.view                            = Payment, credit and refund history
-home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
