@@ -48,7 +48,10 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
                 s"Json validation error parsing calculation response, error $invalid")
               LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
-            valid => valid
+            valid => {
+              Logger("application").error(s"AAAAAAAAAAAAAAAAAAAAA Response: $valid\n")
+              valid
+            }
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
