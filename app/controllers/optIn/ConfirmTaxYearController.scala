@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
-import models.incomeSourceDetails.TaxYear
 import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -60,8 +59,6 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        //todo need to remove the saveIntent once the reporting frequency page sets the optIn intent to the session
-        optInService.saveIntent(TaxYear.makeTaxYearWithEndYear(2025))
         optInService.getConfirmTaxYearViewModel(isAgent) map {
           case Some(model) => Ok(view(ConfirmTaxYearViewModel(
             model.availableOptInTaxYear,
