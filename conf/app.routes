@@ -62,6 +62,12 @@ GET         /agents/opt-in/completed                                      contro
 GET         /opt-in/error                                                 controllers.optIn.OptInErrorController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/error                                          controllers.optIn.OptInErrorController.show(isAgent: Boolean = true)
 
+GET         /opt-in/confirm-tax-year                                      controllers.optIn.ConfirmTaxYearController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/confirm-tax-year                               controllers.optIn.ConfirmTaxYearController.show(isAgent: Boolean = true)
+POST        /opt-in/confirm-tax-year                                      controllers.optIn.ConfirmTaxYearController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/confirm-tax-year                               controllers.optIn.ConfirmTaxYearController.submit(isAgent: Boolean = true)
+
+
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)

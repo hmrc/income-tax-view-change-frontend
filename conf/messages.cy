@@ -2152,3 +2152,11 @@ optin.optInError.nextUpdates-link                  = diweddariadau nesaf
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
+
+# opt in confirm tax year
+
+optIn.confirmTaxYear.heading                        = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1}
+optIn.confirmTaxYear.desc                           = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+optIn.confirmTaxYear.text                           = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Felly, gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+optIn.confirmTaxYear.confirmSaveBtn                 = Cadarnhau a chadw
+optIn.confirmTaxYear.cancel                         = Canslo

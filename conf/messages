@@ -2213,3 +2213,11 @@ optin.optInError.nextUpdates-link                  = next updates
 optin.optInError.nextUpdates-bullet-2              = and try again
 optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
+
+# opt in confirm tax year
+
+optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
+optIn.confirmTaxYear.desc                           = Opting in will mean you need to submit your quarterly updates through compatible software.
+optIn.confirmTaxYear.text                           = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+optIn.confirmTaxYear.confirmSaveBtn                 = Confirm and save
+optIn.confirmTaxYear.cancel                         = Cancel
