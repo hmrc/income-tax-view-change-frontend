@@ -1667,9 +1667,9 @@ business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw
 business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
 business-added.quarterly-opt-out-text-2                     =
 
-business-added.quarterly-opt-out-hybrid-text-1              =
-business-added.quarterly-opt-out-hybrid-link                =
-business-added.quarterly-opt-out-hybrid-text-2              =
+business-added.quarterly-opt-out-hybrid-text-1              = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+business-added.quarterly-opt-out-hybrid-link                = bwrw golwg dros a newid amlder eich adroddiadau
+business-added.quarterly-opt-out-hybrid-text-2              = ar gyfer pob un o’ch busnesau
 
 business-added.default-annual-reporting-frequency-text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
 business-added.default-annual-reporting-frequency-link      = amlder eich adroddiadau.
