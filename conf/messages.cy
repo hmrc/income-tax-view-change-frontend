@@ -104,6 +104,7 @@ home.agent.your-returns.updatesLink                             = Diweddaru a ch
 home.unique.taxpayer.reference                                  = Cyfeirnod Unigryw y Trethdalwr (UTR): {0}
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Taliadau nesaf yn ddyledus
+home.payments.daily-interest-charges                            = TALIADAU LLOG DYDDIOL
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
 home.overdue.date.payment.count                                 = {0} YN HWYR TALIADAU
@@ -150,6 +151,7 @@ taxYears.table.taxYear.heading                                 = Blwyddyn dreth
 taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
+taxYears.accruesInterest                                       = LLOG YN CAEL EI GRONNI
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
@@ -194,6 +196,8 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TW
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
+tax-year-summary.payments.first-poa-extra-amount               = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+tax-year-summary.payments.second-poa-extra-amount              = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -815,6 +819,8 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year                                   = Blwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
 whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
+whatYouOwe.reviewAndReconcileOne.text                           = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+whatYouOwe.reviewAndReconcileTwo.text                           = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
@@ -851,6 +857,8 @@ whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cy
 whatYouOwe.totalBalance                                         = Cyfanswm y taliadau
 whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
 whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
+whatYouOwe.over-due.reviewAndReconcileOne.line1                 = Llog ar gyfer taliad cyntaf ar gyfrif: swm ychwanegol
+whatYouOwe.over-due.reviewAndReconcileTwo.line1                 = Llog ar gyfer ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
@@ -864,7 +872,7 @@ whatYouOwe.dunningLock.link                                     = bod apêl ar y
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu’r symiau sy’n ddyledus ar y dyddiad dyledus nesaf.
-whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
+whatYouOwe.tax-year-summary.taxYear                             = {0} i {1}
 whatYouOwe.moneyOnAccount                                       = Arian yn eich cyfrif
 whatYouOwe.moneyOnAccount-1                                     = Mae cyfanswm o
 whatYouOwe.moneyOnAccount-2                                     = yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
@@ -1128,8 +1136,7 @@ paymentAllocation.heading                                       = Taliad roeddec
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
-paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
-paymentAllocation.tableSection.heading                          = Dyraniadau taliad
+paymentAllocation.tableSection.heading                          = Dyraniadau
 paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
@@ -1153,6 +1160,12 @@ paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
+paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
+paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy’n cronni llog.
+paymentAllocation.condition-2                                   = Taliadau sy’n dod yn ddyledus.
+paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
+paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
+
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
@@ -1614,6 +1627,7 @@ incomeSources.add.foreign-property-check-details.change                     = Ne
 
 # business added page
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
+business-added.deadlines                                = Eich dyddiadau cau sydd wedi’u haddasu
 business-added.to                                       = i
 
 business-added.foreign-property.head                    = Mae
@@ -1634,6 +1648,42 @@ business-added.table.heading-2                          = Dyddiad cau
 business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
+business-added.view-all-businesses                                                      = Bwrw golwg dros eich holl fusnesau
+business-added.obligation.inset.single-annual-overdue.text                              = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.single-quarterly-overdue.text                           = Mae gennych <b>1 diweddariad sy’n hwyr</b> ar gyfer 3 mis ym mlwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+business-added.obligation.inset.multiple-quarterly-overdue.text                         = Mae gennych <b>{0} ddiweddariad sy’n hwyr</b> ar gyfer {1} mis ym mlwyddyn dreth {2} i {3}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+business-added.obligation.inset.multiple-tax-years-single-quarterly-overdue.text        = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text      = Mae gennych <b>{0} o ddiweddariadau sy’n hwyr</b>. Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth flynyddol a thalu’r dreth sydd arnoch.
+business-added.obligation.inset.single-historic-overdue.text                            = Mae gennych <b>1 diweddariad sy’n hwyr</b>. Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {0} i {1}.
+business-added.obligation.inset.multiple-historic-overdue.text                          = Mae gennych <b>{0} ddiweddariad sy’n hwyr</b>. Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl incwm a threuliau sydd eu hangen ar gyfer blynyddoedd treth cyn {1} i {2}.
+business-added.obligation.view-overdue-upcoming-updates.text                            = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
+business-added.obligation.view-upcoming-updates.text                                    = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+
+business-added.next-quarterly-obligation-text               = Mae’n rhaid i chi gyflwyno’ch diweddariad chwarterol nesaf, ar gyfer blwyddyn dreth {0} i {1}, erbyn <b>{2}</b> ar gyfer cyfnod chwarterol {3} i {4}
+business-added.final-dec-text                               = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
+
+business-added.quarterly-opt-out-text-1                     = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol a phenderfynu adrodd yn flynyddol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’ch tudalen ynghylch
+business-added.quarterly-opt-out-link                       = amlder eich adroddiadau.
+business-added.quarterly-opt-out-text-2                     =
+
+business-added.quarterly-opt-out-hybrid-text-1              =
+business-added.quarterly-opt-out-hybrid-link                =
+business-added.quarterly-opt-out-hybrid-text-2              =
+
+business-added.default-annual-reporting-frequency-text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
+business-added.default-annual-reporting-frequency-link      = amlder eich adroddiadau.
+
+business-added.submit-software-text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+business-added.submit-software-quarterly-text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+business-added.submit-software-quarterly-link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+
+business-added.submit-tax-return                            = Cyflwyno’ch Ffurflen Dreth
+business-added.submit-tax-return-text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio
+business-added.submit-tax-return-link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+
+business-added.submit-hybrid-annual-text                    = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+
 
 ## You cannot go back - Your business has been added page ##
 
@@ -1760,7 +1810,6 @@ incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
 incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
-incomeSources.manage.quarterly-period.content.graceperiod.info        =   Mae’r busnes o fewn cyfnod gras ar hyn o bryd. O Ebrill {0} ymlaen, pan mae’r cyfnod, bydd angen i chi cyflwyno adroddiadau’n chwarterol.
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
@@ -1778,6 +1827,7 @@ incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrif
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
+incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
@@ -2131,7 +2181,7 @@ optin.chooseOptInTaxYear.whichTaxYear                = O ba flwyddyn dreth ymlae
 optin.chooseOptInTaxYear.taxYearOnwards              = {0} i {1} ymlaen
 optin.chooseOptInTaxYear.continue                    = Yn eich blaen
 optin.confirmOptIn.cancel                            = Canslo
-optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol.
+optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddyn dreth yr hoffech ddechrau cyflwyno yn chwarterol
 
 # opt in check your answers
 optin.checkAnswers.taxYears = flwyddyn dreth {0} i {1} ymlaen
@@ -2142,7 +2192,7 @@ optin.checkAnswers.cy = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’
 optin.checkAnswers.ny = Os byddwch yn optio i mewn o’r flwyddyn dreth nesaf ymlaen, sef o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 optin.checkAnswers.confirm = Cadarnhau a chadw
 optin.checkAnswers.cancel = Canslo
-optin.checkAnswers.submissionsMade = TBD
+optin.checkAnswers.submissionsMade = Bydd unrhyw incwm a threuliau a gyflwynwyd eisoes ar gyfer y flwyddyn dreth hon yn cael eu dileu. Bydd angen i chi gynnwys yr wybodaeth hon yn eich diweddariadau chwarterol.
 
 # opt in error page
 optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
@@ -2152,6 +2202,41 @@ optin.optInError.nextUpdates-link                  = diweddariadau nesaf
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
+
+
+# opt-in completed
+optin.completedOptIn.heading                    = Optio i mewn wedi’i gwblhau
+
+optin.completedOptIn.cy.heading.desc            = Rydych bellach yn cyflwyno adroddiadau’n chwarterol o flwyddyn dreth {0} i {1} ymlaen
+optin.completedOptIn.ny.heading.desc            = Gwnaethoch optio i mewn i adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen
+
+optin.completedOptIn.nextUpdates                = Eich diweddariadau nesaf sy’n ddyledus
+optin.completedOptIn.nextUpdate.desc1.a         = Gwiriwch y dudalen ynghylch
+optin.completedOptIn.nextUpdate.desc1.b         = diweddariadau a dyddiadau cau
+optin.completedOptIn.nextUpdate.desc1.c         = er mwyn gweld dyddiadau cau’r flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn sydd ohoni.
+optin.completedOptIn.nextUpdate.desc2.a         = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+optin.completedOptIn.nextUpdate.desc2.b         = amlder eich adroddiadau.
+optin.completedOptIn.nextUpdate.desc2.c         =
+
+optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+
+optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+
+optin.completedOptIn.futureReporting            = Adrodd yn y dyfodol
+optin.completedOptIn.cy.futureReporting.desc1   = Rydych newydd ddewis adrodd yn chwarterol o flwyddyn dreth {0} i {1} ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.ny.futureReporting.desc1   = Rydych wedi optio i mewn i adrodd yn chwarterol o’r flwyddyn dreth nesaf ymlaen yn wirfoddol. Fodd bynnag, yn y dyfodol gallai fod yn orfodol i chi adrodd yn chwarterol os bydd y canlynol yn wir:
+optin.completedOptIn.futureReporting.p1         = mae CThEF yn gostwng y trothwy incwm ar gyfer Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optin.completedOptIn.futureReporting.p2         = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optin.completedOptIn.futureReporting.scenario   = Er enghraifft, pe bai eich incwm o hunangyflogaeth neu eiddo, neu o’r ddau, yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
+optin.completedOptIn.futureReporting.desc2      = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+
+optin.completedOptIn.incomeThreshold.desc.a     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optin.completedOptIn.incomeThreshold.desc.b     = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
+
 
 # opt in confirm tax year
 

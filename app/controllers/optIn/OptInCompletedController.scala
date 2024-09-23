@@ -17,20 +17,22 @@
 package controllers.optIn
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
+import views.html.optIn.OptInCompletedView
 
-import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInCompletedController @Inject()(val optInService: OptInService,
+class OptInCompletedController @Inject()(val view: OptInCompletedView,
+                                         val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
                                          val auth: AuthenticatorPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
@@ -53,7 +55,17 @@ class OptInCompletedController @Inject()(val optInService: OptInService,
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        Future.successful(Ok(s"OptIn Completed Page. Time:${LocalDateTime.now()}"))
+
+        for {
+          proposition <- optInService.fetchOptInProposition()
+          intent <- optInService.fetchSavedChosenTaxYear()
+        } yield {
+          intent.map { optInTaxYear =>
+            val model = OptInCompletedViewModel(isAgent = isAgent, optInTaxYear = optInTaxYear, isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear))
+            Ok(view(model))
+          }.getOrElse(errorHandler(isAgent).showInternalServerError())
+        }
+
       }
   }
 }

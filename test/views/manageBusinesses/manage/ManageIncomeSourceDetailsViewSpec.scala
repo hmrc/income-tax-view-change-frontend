@@ -48,7 +48,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val reportingMethod1: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
   val reportingMethod2: String = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
   val change: String = messages("incomeSources.manage.business-manage-details.change")
-  val graceperiodinfo: String = messages("incomeSources.manage.quarterly-period.content.graceperiod.info", "2024")
   val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually: String = messages("incomeSources.manage.business-manage-details.annually")
   val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
@@ -72,6 +71,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val opensInNewTabText: String = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting = "Cash basis accounting"
   val reportingFrequencyText: String = messages("incomeSources.manage.business-manage-details.reportingFrequency")
+  val newBusinessInsetText: String = messages("incomeSources.manage.business-manage-details.insetText", "2024")
 
   def reportingFrequencyLink(isAgent: Boolean): String = {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
@@ -146,7 +146,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
+      firstYear = Some(false),
       secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
@@ -246,8 +246,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
-      secondYear = Some(true)
+      firstYear = Some(false),
+      secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = None,
@@ -326,8 +326,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     address = None,
     isTraditionalAccountingMethod = false,
     latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = None,
-      secondYear = Some(true)
+      firstYear = Some(false),
+      secondYear = Some(false)
     ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = None,
@@ -550,7 +550,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   }
 
 
-
   "ManageSelfEmployment - Individual" should {
     "render the heading" in new SelfEmploymentSetup(false) {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
@@ -560,6 +559,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new SelfEmploymentSetup(false) {
+
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
@@ -572,8 +573,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
@@ -595,7 +594,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
-    "render the whole page with unknowns and no change links" in new SelfEmploymentUnknownsSetup(false) {
+    "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
@@ -619,19 +620,19 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(7).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(7).isDefined shouldBe false
     }
 
-    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false){
-      document.getElementById("change-link-1") shouldBe null
+    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false) {
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
   }
   "ManageSelfEmployment - Agent" should {
@@ -644,6 +645,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
     "render the whole page" in new SelfEmploymentSetup(true) {
 
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
@@ -655,8 +658,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
@@ -689,6 +690,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
     "render the whole page" in new ukSetup(false) {
 
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
@@ -697,8 +700,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -715,7 +716,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
+    "render the whole page with unknowns and no change links or inset text" in new ukSetupUnknowns(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -734,20 +736,19 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ukCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
     "render the change links where status is Quarterly" in new ukCrystallisedSetup(false) {
-
-      document.getElementById("change-link-1") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new ukSetupUnknowns(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
 
   }
@@ -761,6 +762,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
     "render the whole page" in new ukSetup(true) {
 
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
+
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
@@ -769,8 +772,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -788,6 +789,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
@@ -806,6 +808,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new foreignSetup(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -815,8 +818,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -833,7 +834,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
+    "render the whole page with unknowns and no change links or inset text" in new foreignSetupUnknowns(false) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -851,19 +853,19 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
     }
 
-    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false){
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new foreignCrystallisedSetup(false) {
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
       document.getElementsByClass("govuk-summary-list__key").eq(4).isDefined shouldBe false
     }
 
     "render the change links where status is Quarterly" in new foreignCrystallisedSetup(false) {
-      document.getElementById("change-link-1") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
       document.getElementById("change-link-2").text() shouldBe change
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new foreignSetupUnknowns(false) {
-      document.getElementById("change-link-1") shouldBe null
-      document.getElementById("change-link-2") shouldBe null
+      Option(document.getElementById("change-link-1")) shouldBe None
+      Option(document.getElementById("change-link-2")) shouldBe None
     }
   }
   "Manage Foreign Property - Agent" should {
@@ -875,6 +877,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new foreignSetup(true) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe newBusinessInsetText
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
@@ -884,8 +887,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
-
-      document.getElementById("graceperiodinfo").text() shouldBe graceperiodinfo
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
@@ -902,7 +903,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
-    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
+    "render the whole page with unknowns and no change links or inset text" in new foreignSetupUnknowns(true) {
+      document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
