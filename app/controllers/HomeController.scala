@@ -122,54 +122,54 @@ class HomeController @Inject()(val homeView: views.html.Home,
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
           handleErrorGettingDueDates(isAgent)
+      }
     }
-}
 
-private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
-  (unpaidCharges collect {
-    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-  })
-    .flatten
-    .sortWith(_ isBefore _)
-    .sortBy(_.toEpochDay())
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+    (unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+    })
+      .flatten
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
 
-private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
-                                      (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-  whatYouOweService.getWhatYouOweChargesList(
-    unpaidCharges,
-    isEnabled(CodingOut),
-    isEnabled(MFACreditsAndDebits),
-    isEnabled(ReviewAndReconcilePoa)
-  ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
-      outstandingCharges.filter(_.isBalancingChargeDebit)
-        .filter(_.relevantDueDate.isDefined)
-    case _ => Nil
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isEnabled(CodingOut),
+      isEnabled(MFACreditsAndDebits),
+      isEnabled(ReviewAndReconcilePoa)
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+        outstandingCharges.filter(_.isBalancingChargeDebit)
+          .filter(_.relevantDueDate.isDefined)
+      case _ => Nil
+    }
+
+  private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
+    val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
+    val overdueChargesCount = outstandingChargesModel.length
+    overduePaymentsCountFromDate + overdueChargesCount
   }
 
-private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
-  val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
-  val overdueChargesCount = outstandingChargesModel.length
-  overduePaymentsCountFromDate + overdueChargesCount
-}
+  private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
+    (paymentsDue ::: outstandingChargesDueDate)
+      .sortWith(_ isBefore _)
+      .headOption
 
-private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
-  (paymentsDue ::: outstandingChargesDueDate)
-    .sortWith(_ isBefore _)
-    .headOption
+  private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
+    financialDetails
+      .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
+      .getOrElse(false)
 
-private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
-  financialDetails
-    .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
-    .getOrElse(false)
+  private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
+    outstandingCharges
+      .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
+      .flatten
 
-private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
-  outstandingCharges
-    .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
-    .flatten
-
-private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-  val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-  errorHandler.showInternalServerError()
-}
+  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    errorHandler.showInternalServerError()
+  }
 }
