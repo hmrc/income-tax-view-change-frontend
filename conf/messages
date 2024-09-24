@@ -2263,7 +2263,7 @@ optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
-optin.completedOptIn.heading                    = Opt In completed
+optin.completedOptIn.heading                    = Opt in completed
 
 optin.completedOptIn.cy.heading.desc            = You are now reporting quarterly from {0} to {1} tax year onwards
 optin.completedOptIn.ny.heading.desc            = You opted in to quarterly reporting from {0} to {1} tax year onwards
