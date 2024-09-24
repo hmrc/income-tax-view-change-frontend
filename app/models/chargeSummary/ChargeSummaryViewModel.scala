@@ -42,7 +42,8 @@ case class ChargeSummaryViewModel(
                                    gatewayPage: Option[GatewayPage] = None,
                                    isMFADebit: Boolean,
                                    documentType: DocumentType,
-                                   adjustmentHistory: AdjustmentHistoryModel
+                                   adjustmentHistory: AdjustmentHistoryModel,
+                                   poaExtraChargeLink: Option[String] = None
                                  ) {
 
   val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
@@ -92,5 +93,4 @@ case class ChargeSummaryViewModel(
 
 
 }
-
 

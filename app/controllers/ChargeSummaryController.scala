@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
+import enums.{BalancingCharge, OtherCharge, Poa1Charge, Poa1Reconciliation, Poa2Charge, Poa2Reconciliation, TRMAmmendCharge, TRMNewCharge}
 import forms.utils.SessionKeys.gatewayPage
 import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory._
@@ -170,7 +171,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             isAgent = isAgent,
             isMFADebit = isMFADebit,
             documentType = documentDetailWithDueDate.documentDetail.getDocType,
-            adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
+            adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+            poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent)
           )
           mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
             case Right(_) =>
@@ -182,6 +184,23 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
 
+  }
+
+  private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean): Option[String] = {
+    val desiredMainTransaction: String = documentDetailWithDueDate.documentDetail.getDocType match {
+      case Poa1Charge => "4911"
+      case Poa2Charge => "4913"
+      case _ => "no valid case"
+    }
+    val extraChargeId = chargeDetailsForTaxYear.financialDetails.find(x => x.taxYear == documentDetailWithDueDate.documentDetail.taxYear.toString
+      && x.mainTransaction.contains(desiredMainTransaction)).getOrElse(FinancialDetail("9999", items = None)).transactionId
+
+    extraChargeId match {
+      case Some(validId) =>
+        if (isAgent) Some(controllers.routes.ChargeSummaryController.showAgent(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+        else Some(controllers.routes.ChargeSummaryController.show(documentDetailWithDueDate.documentDetail.taxYear, validId).url)
+      case None => None
+    }
   }
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate)(implicit user: MtdItUser[_]): Either[ErrorCode, Boolean] = {

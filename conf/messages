@@ -971,6 +971,10 @@ chargeSummary.paymentBreakdown.interestLocks.charging              = We are char
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
+chargeSummary.extraCharge.text1                                    = Your tax return shows that your adjusted payment on account was too low, so HMRC has added an
+chargeSummary.extraCharge.linkText                                 = extra amount
+chargeSummary.extraCharge.text2                                    = to pay.
+
 chargeSummary.interestLocks.text                                   = to check if you have any interest on this payment.
 chargeSummary.interestLocks.text-agent                             = to check if they have any interest on this payment.
 chargeSummary.interestLocks.linkText                               = View what you owe
