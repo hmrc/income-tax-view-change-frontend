@@ -99,7 +99,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val multipleOverdueUpdates = s"${messages("home.updates.overdue.updates", "3")}"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
-  val multipleOverduePayments = s"${messages("home.updates.overdue.payments", "3")}"
+  val multipleOverdueCharges = s"${messages("home.updates.overdue.charges", "3")}"
   val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
   val currentDate = dateService.getCurrentDate
@@ -273,7 +273,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
 
       "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = 3) {
-        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
+        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueCharges)
       }
       "has a link to view payments" in new Setup {
         val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))

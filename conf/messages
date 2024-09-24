@@ -113,7 +113,7 @@ home.agent.visualHidden.clientsName                             = Client’s nam
 home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
-home.payments.heading                                           = Next payments due
+home.payments.heading                                           = Next charges due
 home.payments.daily-interest-charges                            = DAILY INTEREST CHARGES
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
@@ -127,8 +127,8 @@ home.paymentHistoryRefund.heading                               = Payment histor
 home.paymentHistoryRefund.view                                  = Payment and refund history
 home.paymentCreditHistory.view                                  = Payment and credit history
 home.paymentCreditRefundHistory.view                            = Payment, credit and refund history
-home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
+home.overdue.date.payment.count                                 = {0} OVERDUE CHARGES
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
 home.tax-years.view                                             = View all tax years
@@ -152,7 +152,7 @@ home.overdue.message.dunningLock.true                           = You have overd
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
 home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
-home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
+home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
 ## List UTRs ##
