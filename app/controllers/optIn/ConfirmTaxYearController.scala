@@ -19,28 +19,31 @@ package controllers.optIn
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
-import models.incomeSourceDetails.TaxYear
+import controllers.optIn.routes.OptInErrorController
+import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.DateService
 import services.optIn.OptInService
 import utils.AuthenticatorPredicate
-import views.html.optIn.BeforeYouStart
+import views.html.optIn.ConfirmTaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
-                                         val optInService: OptInService)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         val ec: ExecutionContext,
-                                         val auth: AuthenticatorPredicate,
+class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
+                                         val optInService: OptInService,
                                          val authorisedFunctions: FrontendAuthorisedFunctions,
+                                         val auth: AuthenticatorPredicate)
+                                        (implicit val dateService: DateService,
+                                         val appConfig: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext,
                                          val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                         override val mcc: MessagesControllerComponents
-                                        )
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -53,21 +56,31 @@ class BeforeYouStartController @Inject()(val beforeYouStart: BeforeYouStart,
     }
   }
 
-  private def startButtonUrl(isAgent: Boolean, availableYears: Seq[TaxYear])(implicit user: MtdItUser[_]) = {
-    availableYears match {
-      case Seq(singleYear) =>
-        optInService.saveIntent(TaxYear.makeTaxYearWithEndYear(singleYear.endYear))
-        controllers.optIn.routes.ConfirmTaxYearController.show(isAgent)
-      case _ => controllers.optIn.routes.ChooseYearController.show(isAgent)
-    }
-  }
-
   def show(isAgent: Boolean = false): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        optInService.availableOptInTaxYear().flatMap { availableYears =>
-          Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url)))
+        optInService.getConfirmTaxYearViewModel(isAgent) map {
+          case Some(model) => Ok(view(ConfirmTaxYearViewModel(
+            model.availableOptInTaxYear,
+            model.cancelURL,
+            model.isAgent)))
+          case None => errorHandler(isAgent).showInternalServerError()
         }
+
       }
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      optInService.makeOptInCall() map {
+        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
+        case _ => Redirect(OptInErrorController.show(isAgent))
+      }
+  }
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optIn.routes.OptInCompletedController.show(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
   }
 }
