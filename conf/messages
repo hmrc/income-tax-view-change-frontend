@@ -151,7 +151,7 @@ home.overdue.message.dunningLock.true                           = You have overd
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
 home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
-home.updates.overdue.payments                                   = {0} OVERDUE CHARGES
+home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
 ## List UTRs ##
