@@ -185,7 +185,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     val result = for {
       intentTaxYear <- OptionT(fetchSavedChosenTaxYear())
       cancelURL = routes.ReportingFrequencyPageController.show(isAgent).url
-    } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, isAgent)
+      intentIsNextYear = isNextTaxYear(dateService.getCurrentTaxYear, intentTaxYear)
+    } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, intentIsNextYear, isAgent)
 
     result.value
   }

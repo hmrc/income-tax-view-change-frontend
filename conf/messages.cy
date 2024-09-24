@@ -2245,3 +2245,6 @@ optIn.confirmTaxYear.desc                           = Os byddwch yn optio i mewn
 optIn.confirmTaxYear.text                           = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Felly, gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
 optIn.confirmTaxYear.confirmSaveBtn                 = Cadarnhau a chadw
 optIn.confirmTaxYear.cancel                         = Canslo
+
+optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0} to {1} tax year onwards
+optIn.confirmNextTaxYear.text                       = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1} ymlaen
