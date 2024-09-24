@@ -24,7 +24,7 @@ import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
@@ -247,6 +247,15 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
           JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         }
+      }
+
+      "displays link to poa extra charge" in new Setup(financialDetailsModel()) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
       }
 
       "display any payments you make" in new Setup(

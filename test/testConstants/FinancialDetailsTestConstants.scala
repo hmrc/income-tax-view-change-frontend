@@ -588,6 +588,15 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def financialDetailsModelWithPoaExtraCHarge() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
+        paymentLotItem = None, latePaymentInterestAmount = None)),
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction", mainTransaction = "4001")
+      )
+    )
+
   def chargesWithAllocatedPaymentModel(taxYear: Int = 2018,
                                        outstandingAmount: BigDecimal = 1400.0,
                                        lpiWithDunningLock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
