@@ -108,6 +108,7 @@ home.payments.daily-interest-charges                            = TALIADAU LLOG 
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
 home.overdue.date.update.count                                  = {0} YN HWYR DIWEDDARIADAU
+home.overdue.date.payment.count                                 = {0} TALIAD AM FOD YN HWYR
 home.overdue.date                                               = YN HWYR
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
