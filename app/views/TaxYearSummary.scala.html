@@ -161,15 +161,10 @@
 
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    // Logic has not yet been defined for the redirect url for Review and Reconcile
-    if(documentDetailWithDueDate.isReviewAndReconcileDebit) {
-        "/"
+    if(isAgent){
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
     } else {
-        if(isAgent){
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
-        } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
-        }
+        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
     }
 }
 
