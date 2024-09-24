@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa1Reconciliation, Poa2Charge, Poa2Reconciliation, TRMAmmendCharge, TRMNewCharge}
+import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -209,8 +209,6 @@ case class DocumentDetail(taxYear: Int,
     documentDescription match {
       case Some("ITSA- POA 1") => Poa1Charge
       case Some("ITSA - POA 2") => Poa2Charge
-      case Some("SA POA 1 Reconciliation Debit") => Poa1Reconciliation
-      case Some("SA POA 2 Reconciliation Debit") => Poa2Reconciliation
       case Some("ITSA BCD") => BalancingCharge
       case Some("TRM New Charge") => TRMNewCharge
       case Some("TRM Amend Charge") => TRMAmmendCharge
