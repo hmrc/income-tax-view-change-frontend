@@ -349,6 +349,23 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
       }
 
+      "displays link to poa extra charge" in new Setup(financialDetailsModelWithPoaExtraCharge(), isAgent = true) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
+      }
+      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel(), isAgent = true) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe ""
+      }
+
       "display any payments you make with contents for agent" in new Setup(
         financialDetailsModel(), isAgent = true) {
         disable(ChargeHistory)
