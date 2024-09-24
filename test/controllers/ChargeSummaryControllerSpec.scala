@@ -249,7 +249,15 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         }
       }
 
-      "displays link to poa extra charge" in new Setup(financialDetailsModel()) {
+      "displays link to poa extra charge" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
+        enable(ReviewAndReconcilePoa)
+
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testTaxYear, "123456").url
+      }
+      "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
         enable(ReviewAndReconcilePoa)
 
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
