@@ -57,7 +57,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false,
-                  adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
+                  adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
+                  poaExtraChargeLink: Option[String] = None) {
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
       documentDetailWithDueDate = DocumentDetailWithDueDate(documentDetail, dueDate),
@@ -74,7 +75,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       isAgent = isAgent,
       isMFADebit  = isMFADebit,
       adjustmentHistory = adjustmentHistory,
-      documentType =  documentDetail.getDocType)
+      documentType =  documentDetail.getDocType,
+      poaExtraChargeLink = poaExtraChargeLink)
     val view: Html = chargeSummary(viewModel)
     val document: Document = Jsoup.parse(view.toString())
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -223,6 +225,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
     val interestLinkFullTextAgent: String = messages("chargeSummary.interestLocks.text-agent")
     val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
+    val poaExtraChargeText1: String = messages("chargeSummary.extraCharge.text1")
+    val poaExtraChargeTextLink: String = messages("chargeSummary.extraCharge.linkText")
+    val poaExtraChargeText2: String = messages("chargeSummary.extraCharge.text2")
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
@@ -437,6 +442,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
+      }
+
+      "have a link to extra charge is it is a poa with an extra charge" in new TestSetup(documentDetailModel(), poaExtraChargeLink = Some("testLink")) {
+        document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
+        document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
+        document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
+      }
+      "not have this extra poa charge content if there is no such charge" in new TestSetup(documentDetailModel()) {
+        document.doesNotHave(Selectors.id("poa-extra-charge-content"))
       }
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
