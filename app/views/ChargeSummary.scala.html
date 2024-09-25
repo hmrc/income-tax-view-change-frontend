@@ -122,19 +122,26 @@
     </div>
 }
 
-@reviewAndReconcilePoaDebitExplanation(linkText: String) = {
-    @* TODO: Hyperlink to be implemented *@
+@reviewAndReconcilePoaOneDebitExplanation = {
     @p(id = Some("rar-poa1-explanation")) {
         @messages("chargeSummary.reviewAndReconcilePoa.p1")
-        @link(link = "", messageKey = linkText, outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @link(link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @messages("chargeSummary.reviewAndReconcilePoa.p2")
+    }
+}
+
+@reviewAndReconcilePoaTwoDebitExplanation = {
+    @p(id = Some("rar-poa2-explanation")) {
+        @messages("chargeSummary.reviewAndReconcilePoa.p1")
+        @link(link = viewModel.poaTwoChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
         @messages("chargeSummary.reviewAndReconcilePoa.p2")
     }
 }
 
 @getExplanationContent = @{viewModel.documentType match {
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
-        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaDebitExplanation("chargeSummary.reviewAndReconcilePoa1.linkText")
-        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaDebitExplanation("chargeSummary.reviewAndReconcilePoa2.linkText")
+        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaOneDebitExplanation
+        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaTwoDebitExplanation
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge

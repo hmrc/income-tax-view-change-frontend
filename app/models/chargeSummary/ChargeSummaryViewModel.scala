@@ -44,7 +44,9 @@ case class ChargeSummaryViewModel(
                                    isReviewAndReconcilePoaOneDebit: Boolean,
                                    isReviewAndReconcilePoaTwoDebit: Boolean,
                                    documentType: DocumentType,
-                                   adjustmentHistory: AdjustmentHistoryModel
+                                   adjustmentHistory: AdjustmentHistoryModel,
+                                   poaOneChargeUrl: String,
+                                   poaTwoChargeUrl: String
                                  ) {
 
   val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail

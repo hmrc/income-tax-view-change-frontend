@@ -161,10 +161,14 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  val isPOA: Boolean = {
-    val poaDescriptions = Seq("ITSA- POA 1", "ITSA - POA 2")
-    documentDescription.exists(poaDescriptions.contains)
-  }
+  val poaOneDescription = "ITSA- POA 1"
+  val poaTwoDescription = "ITSA - POA 2"
+
+  val isPoaOne: Boolean = documentDescription.contains(poaOneDescription)
+
+  val isPoaTwo: Boolean = documentDescription.contains(poaTwoDescription)
+
+  val isPOA: Boolean = isPoaOne || isPoaTwo
 
   def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
 
