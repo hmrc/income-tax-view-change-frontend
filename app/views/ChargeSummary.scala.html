@@ -339,8 +339,10 @@
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
-                            if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text") else
-                                messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
+                            if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+                            else if (viewModel.isReviewAndReconcilePoaOneDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
+                            else if (viewModel.isReviewAndReconcilePoaTwoDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
+                            else messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
