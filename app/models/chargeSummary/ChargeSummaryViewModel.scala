@@ -21,6 +21,7 @@ import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.twirl.api.Html
+import services.claimToAdjustPoa.ClaimToAdjustHelper
 import views.html.partials.chargeSummary.{ChargeSummaryHasDunningLocksOrLpiWithDunningLock, ChargeSummaryPaymentAllocation}
 
 import java.time.LocalDate
@@ -47,7 +48,7 @@ case class ChargeSummaryViewModel(
                                    adjustmentHistory: AdjustmentHistoryModel,
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String
-                                 ) {
+                                 ) extends ClaimToAdjustHelper {
 
   val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
   val dueDate = documentDetailWithDueDate.dueDate
@@ -90,7 +91,7 @@ case class ChargeSummaryViewModel(
 
   val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment
-  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
+  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isReviewAndReconcileDebit && !isPoA(documentDetail)
   val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean = (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
   val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)

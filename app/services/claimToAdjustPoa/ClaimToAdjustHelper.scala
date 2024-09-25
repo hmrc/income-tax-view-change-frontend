@@ -40,13 +40,11 @@ trait ClaimToAdjustHelper {
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
-  protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
-
   val isPoAOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
 
   val isPoATwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
 
-  val isPoA: DocumentDetail => Boolean = documentDetail => poaDocumentDescriptions.contains(documentDetail.documentDescription)
+  val isPoA: DocumentDetail => Boolean = documentDetail => isPoAOne(documentDetail) || isPoATwo(documentDetail)
 
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)

@@ -162,6 +162,30 @@
     }
 }
 
+@paymentProcessingInfo = {
+    @p(id = Some("payment-days-note")){
+        @if(viewModel.isAgent) {
+            @messages("chargeSummary.payment-days-note-agent")
+        } else {
+            @messages("chargeSummary.payment-days-note")
+        }
+    }
+
+<ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
+    @if(viewModel.isAgent) {
+    <li>@messages("chargeSummary.payments-bullet1-1")
+        @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2-agent", target = Some("_blank"), rel=Some("noreferrer noopener"))
+    </li>
+    <li>@messages("chargeSummary.payments-bullet2-agent")</li>
+    } else {
+    <li>@messages("chargeSummary.payments-bullet1-1")
+        @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", target = Some("_blank"), rel=Some("noreferrer noopener"))
+    </li>
+    <li>@messages("chargeSummary.payments-bullet2")</li>
+    }
+</ul>
+}
+
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
@@ -312,6 +336,20 @@
                 @messages("chargeSummary.whatYouOwe.textTwo")
             }
         }
+    }
+
+    @if(viewModel.noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
+        <div id="payment-link-@{viewModel.taxYearTo}">
+            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.documentDetail.remainingToPay.toPence, viewModel.origin)">
+                @messages("paymentDue.payNow")
+                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)</span>
+            </a>
+        </div>
+        @paymentProcessingInfo
+    }
+
+    @if(viewModel.isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
+        @paymentProcessingInfo
     }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
