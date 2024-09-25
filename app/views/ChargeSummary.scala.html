@@ -339,7 +339,7 @@
         }
     }
 
-    @if(viewModel.noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment && !viewModel.isReviewAndReconcileDebit){
+    @if(viewModel.noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment){
         <div id="payment-link-@{viewModel.taxYearTo}">
             <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(viewModel.documentDetail.remainingToPay.toPence, viewModel.origin)">
                 @messages("paymentDue.payNow")
