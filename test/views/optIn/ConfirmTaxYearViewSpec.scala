@@ -84,7 +84,7 @@ class ConfirmTaxYearViewSpec extends TestSupport {
   def runNextYearTest(availableOptInTaxYear: TaxYear, isAgent: Boolean): Unit = {
 
     "have the correct title for next tax year" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = true) {
-      if (isAgent) pageDocument.title() shouldBe optInConfirmNextTaxYear.titleAgent else pageDocument.title() shouldBe optInConfirmNextTaxYear .title
+      if (isAgent) pageDocument.title() shouldBe optInConfirmNextTaxYear.titleAgent else pageDocument.title() shouldBe optInConfirmNextTaxYear.title
     }
 
     "have the correct heading for next tax year" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = true) {
