@@ -239,14 +239,8 @@
     }
 
     <h1 class="govuk-heading-xl">
-        @{
-            val taxYearStartDate = toTaxYearStartDate(viewModel.taxYearFrom).toLongDate
-            val taxYearEndDate = toTaxYearEndDate(viewModel.taxYearTo).toLongDate
-            <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
-        }
-        @{
-            messages(viewModel.pageTitle)
-        }
+        <span class="govuk-caption-xl"> @messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString) </span>
+        @{ messages(viewModel.pageTitle) }
     </h1>
 
 @if(viewModel.isReviewAndReconcileDebit) {
