@@ -36,6 +36,7 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 
 import java.time.LocalDate
+import scala.util.Try
 
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
@@ -435,6 +436,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,400.00")
       }
 
+      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
+      }
+
       "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
@@ -443,6 +448,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
+      }
+
+      "have payment link for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true) {
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -593,6 +602,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
       }
 
+      "have a payment link when an outstanding amount is to be paid" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD"))) {
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
+      }
+
+      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None, documentDescription = Some("ITSA BCD")), isAgent = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
+      }
+
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
@@ -613,6 +630,20 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#what-you-owe-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+      }
+
+      "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(documentDescription = Some("ITSA BCD")), paymentBreakdown = paymentBreakdown) {
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
+      }
+
+      "does not have any payment processing info or link when the charge is a POA" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), paymentBreakdown = paymentBreakdown) {
+        Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
+        Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
+      }
+
+      "does not have any payment processing info or link when the charge is Review And Reconcile" in new TestSetup(documentDetailModel(documentDescription = Some("some-description")), paymentBreakdown = paymentBreakdown, isReviewAndReconcilePoaOneDebit = true) {
+        Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
+        Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
@@ -832,7 +863,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           document.select("#coding-out-notice").text() shouldBe ""
           document.select("#coding-out-message").text() shouldBe ""
           document.select("#coding-out-notice-link").attr("href") shouldBe ""
-          document.select("a.govuk-button").size() shouldBe 0
+          document.select("a.govuk-button").size() shouldBe 1
           document.select(".govuk-table tbody tr").size() shouldBe 1
         }
       }
@@ -854,7 +885,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           // remaining to pay should be the same as payment amount
           document.select(".govuk-summary-list").text() shouldBe summaryListText
           // there should be a "make a payment" button
-          document.select("#payment-link-2019").size() shouldBe 0
+          document.select("#payment-link-2019").size() shouldBe 1
           // payment history should show only "HMRC adjustment created"
           document.select("#payment-history-table tr").size shouldBe 2
           document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -938,6 +969,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "should not have a payment link when an outstanding amount is to be paid" in new TestSetup(documentDetailModel(), isAgent = true) {
         document.select("div#payment-link-2018").text() shouldBe ""
+      }
+
+      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
