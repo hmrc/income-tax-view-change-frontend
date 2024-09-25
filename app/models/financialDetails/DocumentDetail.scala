@@ -186,6 +186,8 @@ case class DocumentDetail(taxYear: Int,
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
     case Some("ITSA BCD") => "balancingCharge.text"
+    case Some("documentDescription1") => "reviewAndReconcilePoa1.text"  // TODO: "documentDescription1" MUST BE CHANGED TO THE CORRECT EXPECTED DocumentDescription
+    case Some("documentDescription2") => "reviewAndReconcilePoa2.text"  // TODO: "documentDescription2" MUST BE CHANGED TO THE CORRECT EXPECTED DocumentDescription
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
