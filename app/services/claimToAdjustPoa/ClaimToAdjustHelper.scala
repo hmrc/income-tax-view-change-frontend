@@ -35,18 +35,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ClaimToAdjustHelper {
 
-  private val POA1: String = "ITSA- POA 1"
-  private val POA2: String = "ITSA - POA 2"
+  private final val POA1: String = "ITSA- POA 1"
+  private final val POA2: String = "ITSA - POA 2"
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
   protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
-  private val isPoAOne: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA1)
+  val isPoAOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
 
-  private val isPoATwo: DocumentDetail => Boolean = documentDetail =>
-    documentDetail.documentDescription.contains(POA2)
+  val isPoATwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
+
+  val isPoA: DocumentDetail => Boolean = documentDetail => isPoAOne(documentDetail) || isPoATwo(documentDetail)
 
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)

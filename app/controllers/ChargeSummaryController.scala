@@ -32,6 +32,7 @@ import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.claimToAdjustPoa.ClaimToAdjustHelper
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -61,7 +62,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks with ClaimToAdjustHelper {
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
@@ -168,10 +169,10 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             isLatePaymentCharge, isMFADebit, taxYear)
 
           (for {
-            poaOneTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(_.isPoaOne).map(_.taxYear).headOption
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(_.isPoaOne).map(_.transactionId).headOption
-            poaTwoTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(_.isPoaTwo).map(_.taxYear).headOption
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(_.isPoaTwo).map(_.transactionId).headOption
+            poaOneTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.taxYear).headOption
+            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.transactionId).headOption
+            poaTwoTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.taxYear).headOption
+            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.transactionId).headOption
           } yield (
             controllers.routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
             controllers.routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url

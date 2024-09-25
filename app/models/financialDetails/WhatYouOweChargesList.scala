@@ -17,12 +17,13 @@
 package models.financialDetails
 
 import models.outstandingCharges.OutstandingChargesModel
+import services.claimToAdjustPoa.ClaimToAdjustHelper
 
 import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
+                                 codedOutDocumentDetail: Option[DocumentDetail] = None) extends ClaimToAdjustHelper {
 
   lazy val overdueChargeList: List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
 
@@ -37,7 +38,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
   def hasUnpaidPOAs: Boolean = chargesList.exists(docDetail =>
-    docDetail.documentDetail.isPOA && docDetail.documentDetail.outstandingAmount > 0.0)
+    isPoA(docDetail.documentDetail) && docDetail.documentDetail.outstandingAmount > 0.0)
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
