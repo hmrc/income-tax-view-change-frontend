@@ -96,17 +96,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case Some(fdm: FinancialDetailsModel) if (!isEnabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
-          doShowChargeSummary(
-            taxYear,
-            id,
-            isLatePaymentCharge,
-            fdmForTaxYear,
-            paymentsFromAllYears,
-            isAgent,
-            origin,
+          doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id),
             fdmForTaxYear.isReviewAndReconcilePoaOneDebit(id, isEnabled(ReviewAndReconcilePoa)),
             fdmForTaxYear.isReviewAndReconcilePoaTwoDebit(id, isEnabled(ReviewAndReconcilePoa)),
-            isMFADebit(fdmForTaxYear, id)
           )
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
@@ -134,9 +126,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                   chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
+                                  isMFADebit: Boolean,
                                   isReviewAndReconcilePoaOneDebit: Boolean,
-                                  isReviewAndReconcilePoaTwoDebit: Boolean,
-                                  isMFADebit: Boolean)
+                                  isReviewAndReconcilePoaTwoDebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
