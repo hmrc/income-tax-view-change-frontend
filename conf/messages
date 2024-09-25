@@ -804,7 +804,7 @@ nextUpdates.optOutMultiYear-2                                        = opt out o
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
 paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
-paymentDue.tax-year                                                = Tax year {0} to {1}
+paymentDue.tax-year                                                = {0} to {1} tax year
 paymentDue.due                                                     = Due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Make a payment

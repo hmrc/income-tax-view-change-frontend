@@ -354,9 +354,9 @@
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
         @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
-            <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
+            <h3 class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
-            <h2 class="govuk-heading-l">@chargeHistoryHeading</h2>
+            <h2 class="govuk-heading-m">@chargeHistoryHeading</h2>
         }
 
         <table class="govuk-table" id="payment-history-table">
