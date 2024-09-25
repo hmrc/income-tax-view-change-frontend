@@ -40,6 +40,8 @@ trait ClaimToAdjustHelper {
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
+  protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
+
   val isPoAOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
 
   val isPoATwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
