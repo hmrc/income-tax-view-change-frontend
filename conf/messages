@@ -917,6 +917,8 @@ whatYouOwe.adjust-poa.paid-5                                       =
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
+chargeSummary.paymentOnAccount1.extraAmount.text				   = First payment on account: extra amount from your tax return
+chargeSummary.paymentOnAccount2.extraAmount.text				   = Second payment on account: extra amount from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code

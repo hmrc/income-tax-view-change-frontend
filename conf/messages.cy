@@ -899,6 +899,8 @@ whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
+chargeSummary.paymentOnAccount1.extraAmount.text				= Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+chargeSummary.paymentOnAccount2.extraAmount.text				= Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
