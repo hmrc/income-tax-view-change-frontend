@@ -38,9 +38,9 @@ class OptInCompletedViewSpec extends TestSupport {
   }
 
   s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(false, taxYear22_23) {
-    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
+    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
+    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
@@ -56,9 +56,9 @@ class OptInCompletedViewSpec extends TestSupport {
   val anotherForYearEnd = 2022
   val taxYear21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
   s"has the correct content for year $taxYear21_22 which is the current year" in new SetupForCurrentYear(false, taxYear21_22) {
-    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
+    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
+    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
     val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
       "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
@@ -77,9 +77,9 @@ class OptInCompletedViewSpec extends TestSupport {
   }
 
   s"has the correct content for year $taxYear22_23 which is the next year" in new SetupNextYear(false, taxYear22_23) {
-    pageDocument.title() shouldBe "Opt In completed - Manage your Income Tax updates - GOV.UK"
+    pageDocument.title() shouldBe "Opt in completed - Manage your Income Tax updates - GOV.UK"
 
-    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt In completed"
+    pageDocument.getElementsByClass("govuk-panel__title").text() shouldBe "Opt in completed"
     pageDocument.getElementsByClass("govuk-panel__body").text() shouldBe "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
 
     pageDocument.getElementById("optin-completed-view-p1").text() shouldBe "Check the updates and deadlines page for " +

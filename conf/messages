@@ -113,7 +113,7 @@ home.agent.visualHidden.clientsName                             = Client’s nam
 home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
-home.payments.heading                                           = Next payments due
+home.payments.heading                                           = Next charges due
 home.payments.daily-interest-charges                            = DAILY INTEREST CHARGES
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
@@ -127,8 +127,8 @@ home.paymentHistoryRefund.heading                               = Payment histor
 home.paymentHistoryRefund.view                                  = Payment and refund history
 home.paymentCreditHistory.view                                  = Payment and credit history
 home.paymentCreditRefundHistory.view                            = Payment, credit and refund history
-home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
+home.overdue.date.payment.count                                 = {0} OVERDUE CHARGES
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
 home.tax-years.view                                             = View all tax years
@@ -152,7 +152,7 @@ home.overdue.message.dunningLock.true                           = You have overd
 home.overdue.message.dunningLock.false                          = You have overdue charges. You may be charged interest on these until they are paid in full.
 home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
-home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
+home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
 
 ## List UTRs ##
@@ -1660,7 +1660,6 @@ incomeSources.add.foreign-property-check-details.change                     = Ch
 
 # business added page - h1 intentionally empty
 business-added.text                                     = What you must do
-business-added.deadlines                                = Your revised deadlines
 business-added.to                                       =  to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
@@ -2264,7 +2263,7 @@ optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
-optin.completedOptIn.heading                    = Opt In completed
+optin.completedOptIn.heading                    = Opt in completed
 
 optin.completedOptIn.cy.heading.desc            = You are now reporting quarterly from {0} to {1} tax year onwards
 optin.completedOptIn.ny.heading.desc            = You opted in to quarterly reporting from {0} to {1} tax year onwards
@@ -2295,3 +2294,11 @@ optin.completedOptIn.futureReporting.desc2      = If this happens, we will write
 optin.completedOptIn.incomeThreshold.desc.a     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 optin.completedOptIn.incomeThreshold.desc.b.url = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+
+# opt in confirm tax year
+
+optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
+optIn.confirmTaxYear.desc                           = Opting in will mean you need to submit your quarterly updates through compatible software.
+optIn.confirmTaxYear.text                           = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+optIn.confirmTaxYear.confirmSaveBtn                 = Confirm and save
+optIn.confirmTaxYear.cancel                         = Cancel
