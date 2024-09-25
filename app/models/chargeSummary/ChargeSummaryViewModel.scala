@@ -53,7 +53,7 @@ case class ChargeSummaryViewModel(
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
 
-  val isReviewAndReconcilePoa: Boolean =
+  val isReviewAndReconcileDebit: Boolean =
     isReviewAndReconcilePoaOneDebit || isReviewAndReconcilePoaTwoDebit
 
   val currentTaxYearEnd = {
