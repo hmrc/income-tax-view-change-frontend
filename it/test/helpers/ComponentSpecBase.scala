@@ -1040,6 +1040,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBeforeYouStart(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get("/opt-in/start", additionalCookies)
     }
+
+    def getConfirmTaxYear(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get("/opt-in/confirm-tax-year", additionalCookies)
+    }
+
+    def submitConfirmTaxYear(body: Map[String, Seq[String]] = Map.empty) = {
+      post("/opt-in/confirm-tax-year")(body)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

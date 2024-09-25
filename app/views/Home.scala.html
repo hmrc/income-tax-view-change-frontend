@@ -233,7 +233,7 @@ viewModel: HomePageViewModel,
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount)}</span>
+    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.charges", viewModel.nextPaymentsTileViewModel.overDuePaymentsCount)}</span>
 }
 
 @getOrElseNextPaymentDueDate = @{
