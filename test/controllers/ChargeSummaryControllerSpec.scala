@@ -146,6 +146,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
+        enable(ReviewAndReconcilePoa)
 
         val endYear: Int = 2018
         val startYear: Int = endYear - 1
@@ -166,6 +167,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
+        enable(ReviewAndReconcilePoa)
 
         val endYear: Int = 2018
         val startYear: Int = endYear - 1
@@ -423,6 +425,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id associated to a Review and Reconcile Debit Charge for POA1" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, isAgent = true) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
+        enable(ReviewAndReconcilePoa)
 
         val endYear: Int = 2018
         val startYear: Int = endYear - 1
@@ -443,6 +446,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id associated to a Review and Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, isAgent = true) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
+        enable(ReviewAndReconcilePoa)
 
         val endYear: Int = 2018
         val startYear: Int = endYear - 1
