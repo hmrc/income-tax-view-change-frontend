@@ -187,7 +187,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   }
 
   private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel, documentDetailWithDueDate: DocumentDetailWithDueDate, isAgent: Boolean): Option[String] = {
-    val desiredMainTransaction: String = documentDetailWithDueDate.documentDetail.getDocType match { //TODO: Replace with new mainTransaction method
+    val desiredMainTransaction: String = documentDetailWithDueDate.documentDetail.getDocType match {
       case Poa1Charge => "4911"
       case Poa2Charge => "4913"
       case _ => "no valid case"

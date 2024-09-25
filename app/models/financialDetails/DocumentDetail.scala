@@ -205,7 +205,6 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  //TODO: Add deprecated tag
   def getDocType: DocumentType = {
     documentDescription match {
       case Some("ITSA- POA 1") => Poa1Charge
