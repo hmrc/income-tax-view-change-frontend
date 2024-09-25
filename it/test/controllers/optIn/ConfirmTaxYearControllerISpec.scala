@@ -38,7 +38,7 @@ import utils.OptInJourney
 import scala.concurrent.Future
 
 object ConfirmTaxYearControllerISpec {
-  val headingText = "Confirm and opt in for 2024 to 2025 tax year"
+  val headingText = "Confirm and opt in for 2022 to 2023 tax year"
   val desc = "Opting in will mean you need to submit your quarterly updates through compatible software."
   val text: String = "If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. " +
     "So make sure you keep hold of this information because you will need to include it in your quarterly updates."
@@ -48,8 +48,8 @@ object ConfirmTaxYearControllerISpec {
 }
 
 object ConfirmNextTaxYearMessages {
-  val headingText = "Confirm and opt in from 2025 to 2026 tax year onwards"
-  val desc = "If you opt in for the next tax year, from 6 April 2026 you will need to submit your quarterly updates through compatible software."
+  val headingText = "Confirm and opt in from 2023 to 2024 tax year onwards"
+  val desc = "If you opt in for the next tax year, from 6 April 2025 you will need to submit your quarterly updates through compatible software."
   val emptyBodyString = ""
   val confirmButton = "Confirm and save"
   val cancelButton = "Cancel"
@@ -57,10 +57,10 @@ object ConfirmNextTaxYearMessages {
 
 class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
 
-  val forCurrentYearEnd: Int = 2025
+  val forCurrentYearEnd: Int = dateService.getCurrentTaxYear.endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forCurrentYearEnd)
 
-  val forNextYearEnd: Int = 2026
+  val forNextYearEnd: Int = forCurrentYearEnd + 1
   val nextTaxYear: TaxYear = TaxYear.forYearEnd(forNextYearEnd)
 
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -105,7 +105,7 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val intent = nextTaxYear
-        setupOptInSessionData(nextTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent).futureValue shouldBe true
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent).futureValue shouldBe true
 
         val result = IncomeTaxViewChangeFrontendManageBusinesses.getConfirmTaxYear()
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -151,7 +151,7 @@ class ConfirmTaxYearControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, nextTaxYear)
+        setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent = nextTaxYear)
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
           Status.NO_CONTENT, emptyBodyString
