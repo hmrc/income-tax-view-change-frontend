@@ -163,8 +163,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
                 isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId),
-                isReviewAndReconcilePoaOneDebit = financialDetails.isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),
-                isReviewAndReconcilePoaTwoDebit = financialDetails.isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId)
+                isReviewAndReconcilePoaOneDebit = financialDetails.isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, isEnabled(ReviewAndReconcilePoa)),
+                isReviewAndReconcilePoaTwoDebit = financialDetails.isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, isEnabled(ReviewAndReconcilePoa))
               )
             )
         }

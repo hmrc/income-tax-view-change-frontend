@@ -41,6 +41,8 @@ case class ChargeSummaryViewModel(
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
                                    isMFADebit: Boolean,
+                                   isReviewAndReconcilePoaOneDebit: Boolean,
+                                   isReviewAndReconcilePoaTwoDebit: Boolean,
                                    documentType: DocumentType,
                                    adjustmentHistory: AdjustmentHistoryModel
                                  ) {
@@ -74,10 +76,12 @@ case class ChargeSummaryViewModel(
   val taxYearToCodingOut = s"${documentDetail.taxYear.toInt + 2}"
 
   val pageTitle: String = {
-    val key = (latePaymentInterestCharge, isMFADebit) match {
-      case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-      case (_, true) => s"chargeSummary.hmrcAdjustment.text"
-      case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val key = (latePaymentInterestCharge, isMFADebit, isReviewAndReconcilePoaOneDebit, isReviewAndReconcilePoaTwoDebit) match {
+      case (true, false, false, false) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+      case (false, true, false, false) => s"chargeSummary.hmrcAdjustment.text"
+      case (false, false, true, false) => s"chargeSummary.paymentOnAccount1.extraAmount.text"
+      case (false, false, false, true) => s"chargeSummary.paymentOnAccount2.extraAmount.text"
+      case (_, _, _, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
     }
     key
   }

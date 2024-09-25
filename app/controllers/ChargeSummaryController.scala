@@ -25,7 +25,7 @@ import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -95,7 +95,18 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case Some(fdm: FinancialDetailsModel) if (!isEnabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
-          doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
+          doShowChargeSummary(
+            taxYear,
+            id,
+            isLatePaymentCharge,
+            fdmForTaxYear,
+            paymentsFromAllYears,
+            isAgent,
+            origin,
+            fdmForTaxYear.isReviewAndReconcilePoaOneDebit(id, isEnabled(ReviewAndReconcilePoa)),
+            fdmForTaxYear.isReviewAndReconcilePoaTwoDebit(id, isEnabled(ReviewAndReconcilePoa)),
+            isMFADebit(fdmForTaxYear, id)
+          )
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case Some(error: FinancialDetailsErrorModel) =>
@@ -122,6 +133,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                   chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
+                                  isReviewAndReconcilePoaOneDebit: Boolean,
+                                  isReviewAndReconcilePoaTwoDebit: Boolean,
                                   isMFADebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
@@ -169,6 +182,8 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             btaNavPartial = user.btaNavPartial,
             isAgent = isAgent,
             isMFADebit = isMFADebit,
+            isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit,
+            isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit,
             documentType = documentDetailWithDueDate.documentDetail.getDocType,
             adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
           )
