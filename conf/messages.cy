@@ -2220,7 +2220,7 @@ optin.completedOptIn.nextUpdate.desc2.c         =
 
 optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
