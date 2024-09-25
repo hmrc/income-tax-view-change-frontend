@@ -57,6 +57,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false,
+                  isReviewAndReconcilePoaOneDebit: Boolean = false,
+                  isReviewAndReconcilePoaTwoDebit: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory) {
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
@@ -73,6 +75,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       codingOutEnabled = codingOutEnabled,
       isAgent = isAgent,
       isMFADebit  = isMFADebit,
+      isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit,
+      isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit,
+      poaOneChargeUrl = "",
+      poaTwoChargeUrl = "",
       adjustmentHistory = adjustmentHistory,
       documentType =  documentDetail.getDocType)
     val view: Html = chargeSummary(viewModel)
@@ -933,6 +939,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         codingOutEnabled = false,
         isAgent = false,
         isMFADebit  = false,
+        isReviewAndReconcilePoaOneDebit = false,
+        isReviewAndReconcilePoaTwoDebit = false,
+        poaOneChargeUrl = "",
+        poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory,
         documentType = OtherCharge)
       val thrownException = intercept[MissingFieldException] {
