@@ -49,7 +49,7 @@ object ConfirmTaxYearControllerISpec {
 
 object ConfirmNextTaxYearMessages {
   val headingText = "Confirm and opt in from 2023 to 2024 tax year onwards"
-  val desc = "If you opt in for the next tax year, from 6 April 2025 you will need to submit your quarterly updates through compatible software."
+  val desc = "If you opt in for the next tax year, from 6 April 2023 you will need to submit your quarterly updates through compatible software."
   val emptyBodyString = ""
   val confirmButton = "Confirm and save"
   val cancelButton = "Cancel"

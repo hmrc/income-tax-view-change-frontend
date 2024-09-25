@@ -2247,4 +2247,4 @@ optIn.confirmTaxYear.confirmSaveBtn                 = Cadarnhau a chadw
 optIn.confirmTaxYear.cancel                         = Canslo
 
 optIn.confirmNextTaxYear.heading                    = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1} ymlaen
-optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, o 6 Ebrill 2025 ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
+optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, o {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.

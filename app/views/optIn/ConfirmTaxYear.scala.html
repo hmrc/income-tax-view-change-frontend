@@ -30,6 +30,7 @@
  * limitations under the License.
  *@
 
+@import _root_.implicits.ImplicitDateFormatterImpl
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
@@ -37,6 +38,7 @@
 
 @this(
         mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
         h1: h1,
         h2: h2,
         p: p,
@@ -49,6 +51,8 @@
 )
 
 @(model: ConfirmTaxYearViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.{toTaxYearStartDate,longDate}
 
 @getPostAction = @{
     controllers.optIn.routes.ConfirmTaxYearController.submit(model.isAgent)
@@ -81,7 +85,10 @@
             }
 
             @if(model.isNextTaxYear) {
-                @p(id = Some("confirm-tax-year-desc")){@messages("optIn.confirmNextTaxYear.desc")}
+                @{
+                    val taxYearStartDate = toTaxYearStartDate(model.availableOptInTaxYear.startYear).toLongDate
+                    <p class="govuk-body" id="confirm-tax-year-desc">{messages("optIn.confirmNextTaxYear.desc", taxYearStartDate)}</p>
+                }
             }
 
 

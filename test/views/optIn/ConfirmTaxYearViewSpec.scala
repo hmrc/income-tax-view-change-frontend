@@ -56,7 +56,7 @@ class ConfirmTaxYearViewSpec extends TestSupport {
     val heading: String = messages("optIn.confirmNextTaxYear.heading", "2025", "2026")
     val title: String = messages("htmlTitle", heading)
     val titleAgent: String = messages("htmlTitle.agent", heading)
-    val desc: String = messages("optIn.confirmNextTaxYear.desc")
+    val desc: String = messages("optIn.confirmNextTaxYear.desc", "6 April " + forCurrentYearEnd)
     val confirmButton: String = messages("optIn.confirmTaxYear.confirmSaveBtn")
     val cancelButton: String = messages("optIn.confirmTaxYear.cancel")
   }
