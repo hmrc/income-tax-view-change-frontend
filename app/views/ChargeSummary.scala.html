@@ -27,9 +27,7 @@
 @import enums.TRMAmmendCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
-
-
-
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
     mainTemplate: unifiedLayout,
@@ -37,6 +35,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
     link: link,
+    govukWarningText : GovukWarningText,
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
@@ -123,8 +122,19 @@
     </div>
 }
 
+@reviewAndReconcilePoaDebitExplanation(linkText: String) = {
+    @* TODO: Hyperlink to be implemented *@
+    @p(id = Some("rar-poa1-explanation")) {
+        @messages("chargeSummary.reviewAndReconcilePoa1.p1")
+        @link(link = "", messageKey = linkText, outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @messages("chargeSummary.reviewAndReconcilePoa1.p2")
+    }
+}
+
 @getExplanationContent = @{viewModel.documentType match {
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
+        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaDebitExplanation("chargeSummary.reviewAndReconcilePoa1.linkText")
+        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaDebitExplanation("chargeSummary.reviewAndReconcilePoa2.linkText")
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
