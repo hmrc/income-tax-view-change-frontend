@@ -124,7 +124,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
     val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
     val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
-    val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
+    val chargeSummaryCodingOutHeading2017To2018: String = s"2017 to 2018 tax year ${messages("chargeSummary.codingOut.text")}"
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
@@ -148,10 +148,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val lpiBcdTextP3 = messages("chargeSummary.lpi.balancingCharge.p3") + " " + messages("chargeSummary.lpi.balancingCharge.p3LinkText")
 
 
-    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${getFirstOrSecond(number)} payment on account"
-    def poa1Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year First payment on account"
+    def poaHeading(year: Int, number: Int) = s"${year - 1} to $year tax year ${getFirstOrSecond(number)} payment on account"
+    def poa1Heading(year: Int, number: Int) = s"${year - 1} to $year tax year First payment on account"
 
-    def poa2Heading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Second payment on account"
+    def poa2Heading(year: Int, number: Int) = s"${year - 1} to $year tax year Second payment on account"
 
     def getFirstOrSecond(number: Int): String = {
       require(number > 0, "Number must be greater than zero")
@@ -162,17 +162,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
     }
 
-    def poa1InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on first payment on account"
+    def poa1InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on first payment on account"
 
-    def poa2InterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on second payment on account"
+    def poa2InterestHeading(year: Int, number: Int) = s"${year - 1} to $year tax year Late payment interest on second payment on account"
 
-    def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
+    def balancingChargeHeading(year: Int) = s"${year - 1} to $year tax year $balancingCharge"
 
-    def balancingChargeInterestHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.lpi.balancingCharge.text")}"
+    def balancingChargeInterestHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.lpi.balancingCharge.text")}"
 
-    def class2NicHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $paymentBreakdownNic2"
+    def class2NicHeading(year: Int) = s"${year - 1} to $year tax year $paymentBreakdownNic2"
 
-    def cancelledSaPayeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.cancelledPayeSelfAssessment.text")}"
+    def cancelledSaPayeHeading(year: Int) = s"${year - 1} to $year tax year ${messages("chargeSummary.cancelledPayeSelfAssessment.text")}"
 
     val dueDate: String = messages("chargeSummary.dueDate")
     val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
@@ -184,7 +184,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
     val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
-    val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
+    val codingOutHeader: String = "2017 to 2018 tax year PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
     val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
 
@@ -435,10 +435,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         verifySummaryListRowNumeric(3, remainingToPay, "£1,400.00")
       }
 
-      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
-      }
-
       "what you page link with text for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
@@ -447,10 +443,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = Nil) {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
-      }
-
-      "have payment link for cancelled PAYE self assessment" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "display a payment history" in new TestSetup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -601,14 +593,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
       }
 
-      "have a payment link when an outstanding amount is to be paid" in new TestSetup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
-      }
-
-      "have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
-      }
-
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
@@ -629,10 +613,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#what-you-owe-link").text() shouldBe interestLinkText
         document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
-      }
-
-      "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = 0)) {
@@ -845,14 +825,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           document.select(".govuk-table tbody tr").size() shouldBe 1
         }
         "Coding Out is Disabled" in new TestSetup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
-          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 $balancingCharge"
+          document.select("h1").text() shouldBe s"2018 to 2019 tax year $balancingCharge"
           verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
           verifySummaryListRowNumeric(2, fullPaymentAmount, "£1,400.00")
           verifySummaryListRowNumeric(3, remainingToPay, "£1,400.00")
           document.select("#coding-out-notice").text() shouldBe ""
           document.select("#coding-out-message").text() shouldBe ""
           document.select("#coding-out-notice-link").attr("href") shouldBe ""
-          document.select("a.govuk-button").size() shouldBe 1
+          document.select("a.govuk-button").size() shouldBe 0
           document.select(".govuk-table tbody tr").size() shouldBe 1
         }
       }
@@ -869,12 +849,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
           val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
           // heading should be hmrc adjustment
-          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          document.select("h1").text() shouldBe "2018 to 2019 tax year " +
             messages("chargeSummary.hmrcAdjustment.text")
           // remaining to pay should be the same as payment amount
           document.select(".govuk-summary-list").text() shouldBe summaryListText
           // there should be a "make a payment" button
-          document.select("#payment-link-2019").size() shouldBe 1
+          document.select("#payment-link-2019").size() shouldBe 0
           // payment history should show only "HMRC adjustment created"
           document.select("#payment-history-table tr").size shouldBe 2
           document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -892,7 +872,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
           val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
           // heading should be hmrc adjustment
-          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
             messages("chargeSummary.hmrcAdjustment.text")
           // remaining to pay should be zero
           document.select(".govuk-summary-list").text() shouldBe summaryListText
@@ -960,10 +940,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "should have a payment processing information section" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
-      }
-
       "have a interest lock payment link when the interest is accruing" in new TestSetup(documentDetailModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
@@ -1016,7 +992,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be the same as payment amount
         document.select(".govuk-summary-list").text() shouldBe summaryListText
@@ -1038,7 +1014,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
         val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
         // heading should be hmrc adjustment
-        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+        document.select("h1").text() shouldBe s"2018 to 2019 tax year " +
           messages("chargeSummary.hmrcAdjustment.text")
         // remaining to pay should be zero
         document.select(".govuk-summary-list").text() shouldBe summaryListText
