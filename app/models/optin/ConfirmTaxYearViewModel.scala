@@ -22,5 +22,3 @@ case class ConfirmTaxYearViewModel(availableOptInTaxYear: TaxYear,
                                    cancelURL: String,
                                    isNextTaxYear: Boolean,
                                    isAgent: Boolean)
-
-
