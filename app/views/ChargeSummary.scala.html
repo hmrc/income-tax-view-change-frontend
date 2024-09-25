@@ -125,7 +125,7 @@
 @reviewAndReconcilePoaOneDebitExplanation = {
     @p(id = Some("rar-poa1-explanation")) {
         @messages("chargeSummary.reviewAndReconcilePoa.p1")
-        @link(link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
         @messages("chargeSummary.reviewAndReconcilePoa.p2")
     }
 }
@@ -133,7 +133,7 @@
 @reviewAndReconcilePoaTwoDebitExplanation = {
     @p(id = Some("rar-poa2-explanation")) {
         @messages("chargeSummary.reviewAndReconcilePoa.p1")
-        @link(link = viewModel.poaTwoChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
         @messages("chargeSummary.reviewAndReconcilePoa.p2")
     }
 }
@@ -354,9 +354,9 @@
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
         @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
-            <h3 class="govuk-heading-m">@chargeHistoryHeading</h3>
+            <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
-            <h2 class="govuk-heading-m">@chargeHistoryHeading</h2>
+            <h2 id="charge-history-h2" class="govuk-heading-m">@chargeHistoryHeading</h2>
         }
 
         <table class="govuk-table" id="payment-history-table">
