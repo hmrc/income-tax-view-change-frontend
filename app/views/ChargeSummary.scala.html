@@ -249,6 +249,10 @@
         }
     </h1>
 
+@if(viewModel.isReviewAndReconcilePoa) {
+    @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+}
+
 @getExplanationContent
 
     @if(viewModel.codingOutEnabled && viewModel.documentDetail.isPayeSelfAssessment){

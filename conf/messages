@@ -1031,6 +1031,7 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
 chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
 
+chargeSummary.reviewAndReconcilePoa.warning                            = This charge will be accruing interest until it is paid.
 chargeSummary.reviewAndReconcilePoa1.p1                                = HMRC has created this charge because your tax return shows that your adjusted
 chargeSummary.reviewAndReconcilePoa1.linkText                          = first payment on account
 chargeSummary.reviewAndReconcilePoa2.linkText                          = second payment on account
