@@ -169,9 +169,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
             isLatePaymentCharge, isMFADebit, taxYear)
 
           (for {
-            poaOneTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.taxYear).headOption
+            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.taxYear).headOption
             poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.transactionId).headOption
-            poaTwoTaxYearTo <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.taxYear).headOption
+            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.taxYear).headOption
             poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.transactionId).headOption
           } yield (
             controllers.routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
@@ -199,7 +199,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
                 documentType = documentDetailWithDueDate.documentDetail.getDocType,
                 adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
                 poaOneChargeUrl = poaOneChargeUrl,
-                poaTwoChargeUrl = poaTwoChargeUrl,
+                poaTwoChargeUrl = poaTwoChargeUrl
               )
               mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
                 case Right(_) =>
