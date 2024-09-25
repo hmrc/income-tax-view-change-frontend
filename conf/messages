@@ -1031,12 +1031,12 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
 chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
 
-chargeSummary.reviewAndReconcilePoa.warning                            = This charge will be accruing interest until it is paid.
-chargeSummary.reviewAndReconcilePoa1.p1                                = HMRC has created this charge because your tax return shows that your adjusted
-chargeSummary.reviewAndReconcilePoa1.linkText                          = first payment on account
-chargeSummary.reviewAndReconcilePoa2.linkText                          = second payment on account
-chargeSummary.reviewAndReconcilePoa.comma                              =
-chargeSummary.reviewAndReconcilePoa1.p2                                = was too low.
+chargeSummary.reviewAndReconcilePoa.warning                           = This charge will be accruing interest until it is paid.
+chargeSummary.reviewAndReconcilePoa.p1                                = HMRC has created this charge because your tax return shows that your adjusted
+chargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
+chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
+chargeSummary.reviewAndReconcilePoa.comma                             =
+chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account

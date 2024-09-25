@@ -947,12 +947,12 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plws 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
-chargeSummary.reviewAndReconcilePoa.warning                            = Bydd y tâl hwn yn cronni llog hyd nes y bydd yn cael ei dalu.
-chargeSummary.reviewAndReconcilePoa1.p1                                = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich Ffurflen Dreth yn dangos bod eich
-chargeSummary.reviewAndReconcilePoa1.linkText                          = taliad cyntaf ar gyfrif
-chargeSummary.reviewAndReconcilePoa2.linkText                          = ail daliad ar gyfrif
-chargeSummary.reviewAndReconcilePoa.comma                              = ,
-chargeSummary.reviewAndReconcilePoa1.p2                                = a gafodd ei addasu, yn rhy isel.
+chargeSummary.reviewAndReconcilePoa.warning                           = Bydd y tâl hwn yn cronni llog hyd nes y bydd yn cael ei dalu.
+chargeSummary.reviewAndReconcilePoa.p1                                = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich Ffurflen Dreth yn dangos bod eich
+chargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
+chargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
+chargeSummary.reviewAndReconcilePoa.comma                             = ,
+chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
