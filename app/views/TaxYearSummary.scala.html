@@ -220,7 +220,7 @@
                             (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
-                        @if(viewModel.isAccruingInterest(documentDetailWithDueDate)) {
+                        @if(documentDetailWithDueDate.isAccruingInterest) {
                             <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
                         }
                         <div id="paymentTypeText-@{index}">

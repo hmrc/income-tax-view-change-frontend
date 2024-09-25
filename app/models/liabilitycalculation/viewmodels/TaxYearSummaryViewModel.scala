@@ -37,10 +37,6 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
   })
 
-  def isAccruingInterest(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
-    documentDetailWithDueDate.isReviewAndReconcileDebit && !documentDetailWithDueDate.documentDetail.isPaid && !documentDetailWithDueDate.isOverdue
-  }
-
 }
 
 case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
