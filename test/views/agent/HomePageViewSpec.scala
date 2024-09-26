@@ -202,7 +202,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new TestSetup(overDuePaymentsCount = 1) {
-        val overdueMessageWithoutDunningLock = "! Warning Your client has overdue payments. They may be charged interest on these until they are paid in full."
+        val overdueMessageWithoutDunningLock = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
