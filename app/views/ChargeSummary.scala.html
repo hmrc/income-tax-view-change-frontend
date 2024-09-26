@@ -24,12 +24,10 @@
 @import enums.Poa2Charge
 @import enums.BalancingCharge
 @import enums.TRMNewCharge
-@import enums.TRMAmmendCharge
+@import enums.TRMAmendCharge
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
-
-
-
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
     mainTemplate: unifiedLayout,
@@ -37,6 +35,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
     link: link,
+    govukWarningText : GovukWarningText,
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
@@ -123,8 +122,26 @@
     </div>
 }
 
+@reviewAndReconcilePoaOneDebitExplanation = {
+    @p(id = Some("rar-poa1-explanation")) {
+        @messages("chargeSummary.reviewAndReconcilePoa.p1")
+        @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @messages("chargeSummary.reviewAndReconcilePoa.p2")
+    }
+}
+
+@reviewAndReconcilePoaTwoDebitExplanation = {
+    @p(id = Some("rar-poa2-explanation")) {
+        @messages("chargeSummary.reviewAndReconcilePoa.p1")
+        @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+        @messages("chargeSummary.reviewAndReconcilePoa.p2")
+    }
+}
+
 @getExplanationContent = @{viewModel.documentType match {
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
+        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaOneDebitExplanation
+        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaTwoDebitExplanation
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
@@ -145,7 +162,6 @@
     }
 }
 
-
 @paymentProcessingInfo = {
     @p(id = Some("payment-days-note")){
         @if(viewModel.isAgent) {
@@ -155,19 +171,19 @@
         }
     }
 
-    <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
-        @if(viewModel.isAgent) {
-            <li>@messages("chargeSummary.payments-bullet1-1")
-                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2-agent", target = Some("_blank"), rel=Some("noreferrer noopener"))
-            </li>
-            <li>@messages("chargeSummary.payments-bullet2-agent")</li>
-        } else {
-            <li>@messages("chargeSummary.payments-bullet1-1")
-                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", target = Some("_blank"), rel=Some("noreferrer noopener"))
-            </li>
-            <li>@messages("chargeSummary.payments-bullet2")</li>
-        }
-    </ul>
+<ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
+    @if(viewModel.isAgent) {
+    <li>@messages("chargeSummary.payments-bullet1-1")
+        @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2-agent", target = Some("_blank"), rel=Some("noreferrer noopener"))
+    </li>
+    <li>@messages("chargeSummary.payments-bullet2-agent")</li>
+    } else {
+    <li>@messages("chargeSummary.payments-bullet1-1")
+        @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", target = Some("_blank"), rel=Some("noreferrer noopener"))
+    </li>
+    <li>@messages("chargeSummary.payments-bullet2")</li>
+    }
+</ul>
 }
 
 @codingOutMessage = {
@@ -229,15 +245,13 @@
     }
 
     <h1 class="govuk-heading-xl">
-        @{
-            val taxYearStartDate = toTaxYearStartDate(viewModel.taxYearFrom).toLongDate
-            val taxYearEndDate = toTaxYearEndDate(viewModel.taxYearTo).toLongDate
-            <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
-        }
-        @{
-            messages(viewModel.pageTitle)
-        }
+        <span class="govuk-caption-xl"> @messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString) </span>
+        @{ messages(viewModel.pageTitle) }
     </h1>
+
+@if(viewModel.isReviewAndReconcileDebit) {
+    @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+}
 
 @getExplanationContent
 
@@ -340,9 +354,9 @@
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero){
         @if(viewModel.hasPaymentBreakdown && viewModel.documentDetail.isNotCodingOutDocumentDetail) {
-            <h3 class="govuk-heading-l">@chargeHistoryHeading</h3>
+            <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
-            <h2 class="govuk-heading-l">@chargeHistoryHeading</h2>
+            <h2 id="charge-history-h2" class="govuk-heading-m">@chargeHistoryHeading</h2>
         }
 
         <table class="govuk-table" id="payment-history-table">
@@ -363,8 +377,10 @@
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
-                            if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text") else
-                                messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
+                            if (viewModel.isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+                            else if (viewModel.isReviewAndReconcilePoaOneDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
+                            else if (viewModel.isReviewAndReconcilePoaTwoDebit) messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
+                            else messages(s"chargeSummary.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey(viewModel.codingOutEnabled)}")
                         }
                         </td>
                         <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
