@@ -178,7 +178,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         enable(ChargeHistory)
         disable(PaymentAllocation)
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -189,7 +189,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
@@ -362,7 +362,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         financialDetailsModel(lpiWithDunningLock = None), isAgent = true) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -384,7 +384,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with dunning locks and a late payment interest flag, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), isAgent = true) {
 
-        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestConfirmedClient("AB123456C"))
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123", isInterestCharge = true)(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0

@@ -738,7 +738,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
@@ -771,7 +771,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -800,7 +800,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-              fixedDate.getYear, "1040000124", latePaymentCharge = true).url
+              fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
