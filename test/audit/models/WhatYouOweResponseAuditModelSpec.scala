@@ -18,12 +18,12 @@ package audit.models
 
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
-import models.financialDetails.{BalanceDetails, PaymentOnAccountOne, PaymentOnAccountTwo, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, fixedDate, id1040000124, oneDunningLock}
+import testConstants.FinancialDetailsTestConstants.dueDateOverdue
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -45,33 +45,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
 
   val outStandingCharges: String = fixedDate.minusDays(30).toString
 
-  val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
-    chargesList =  testFinancialDetailsChargeItems(
-      dueDate = dueDateOverdue,
-      dunningLock = oneDunningLock,
-      outstandingInterest = List(Some(42.50), Some(24.05)),
-      interestRate = List(Some(2.6), Some(6.2)),
-      latePaymentInterestAmount = List(Some(34.56), Some(34.56)),
-      outstandingAmount = List(50, 75)
-    ) ++ Seq(chargeItemModel(
-      transactionId = id1040000124,
-      transactionType = PaymentOnAccountTwo,
-      dueDate = Some(fixedDate.plusDays(1)),
-      outstandingAmount = 100,
-      taxYear = fixedDate.getYear
-    )) ++ Seq(chargeItemModel(
-      transactionId = id1040000124,
-      transactionType = PaymentOnAccountOne,
-      dueDate = Some(fixedDate.plusDays(45)),
-      outstandingAmount = 125,
-      taxYear = fixedDate.getYear
-    )),
-    codedOutDocumentDetail = Some(codedOutChargeItemsA)
-  )
+
   def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
-                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
+                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesListX,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
@@ -137,24 +114,24 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "dueDate" -> dueDateIsSoon,
             "outstandingAmount" -> 100,
             "accruingInterest" -> 100,
-            "interestRate" -> "100%",
+            "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> true
+            "overDue" -> false
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
             "outstandingAmount" -> 125,
             "accruingInterest" -> 100,
-            "interestRate" -> "100%",
+            "interestRate" -> "100.0%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> true
+            "overDue" -> false
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
@@ -223,7 +200,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
         (auditJson.detail \ "balanceDetails" \ "creditAmount").toString shouldBe "JsDefined(-1000)"
         (auditJson.detail \ "charges")(0) shouldBe Json.obj(
           "chargeUnderReview" -> true,
-          "outstandingAmount" -> 50,
+          "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2023-12-05",
           "endTaxYear" -> fixedDate.getYear,

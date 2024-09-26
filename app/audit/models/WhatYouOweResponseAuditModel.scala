@@ -73,7 +73,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   private def documentDetails(docDateDetail: ChargeItem): JsObject = {
     Json.obj(
       "chargeUnderReview" -> docDateDetail.dunningLock,
-      "outstandingAmount" -> docDateDetail.remainingToPay
+      "outstandingAmount" -> docDateDetail.remainingToPayByChargeOrLpi
     ) ++
       ("chargeType", getChargeType(docDateDetail, docDateDetail.isLatePaymentInterest)) ++
       ("dueDate", docDateDetail.dueDate) ++

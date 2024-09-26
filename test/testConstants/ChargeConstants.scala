@@ -673,6 +673,100 @@ trait ChargeConstants {
       )
     )
 
+//
+//  val whatYouOwePartialChargesListOld: WhatYouOweChargesList = WhatYouOweChargesList(
+//    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
+//    chargesList =
+//      testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+//        mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+//        mainTransaction = List(Some("4920"), Some("4930")),
+//        dueDate = dueDateOverdue,
+//        dunningLock = oneDunningLock,
+//        outstandingAmount = List(50, 75),
+//        taxYear = fixedDate.getYear.toString,
+//        interestOutstandingAmount = List(Some(42.50), Some(24.05)),
+//        interestRate = List(Some(2.6), Some(6.2)),
+//        latePaymentInterestAmount = List(Some(34.56), None)
+//      ).getAllDocumentDetailsWithDueDates() ++
+//        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
+//          mainType = Some("SA Payment on Account 2"),
+//          mainTransaction = Some("4930"),
+//          dueDate = Some(fixedDate.plusDays(1)),
+//          outstandingAmount = 100,
+//          taxYear = fixedDate.getYear.toString).getAllDocumentDetailsWithDueDates() ++
+//        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
+//          mainType = Some("SA Payment on Account 1"),
+//          mainTransaction = Some("4920"),
+//          dueDate = Some(fixedDate.plusDays(45)),
+//          outstandingAmount = 125,
+//          taxYear = fixedDate.getYear.toString).getAllDocumentDetailsWithDueDates(),
+//    outstandingChargesModel = Some(outstandingChargesOverdueData),
+//    codedOutDocumentDetail = Some(codedOutDocumentDetailsA)
+//  )
+//
+  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+                                            mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+                                            mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
+                                            dueDate: List[Option[LocalDate]],
+                                            dunningLock: List[Option[String]],
+                                            outstandingAmount: List[BigDecimal] = List(50, 75),
+                                            taxYear: String = fixedDate.getYear.toString,
+                                            interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
+                                            interestRate: List[Option[BigDecimal]] = List(Some(100), Some(100)),
+                                            latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      documentDetails = List(
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+      ),
+      financialDetails = List(
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate(1), dunningLock = dunningLock(1)))))
+      )
+    )
+
+  val whatYouOwePartialChargesListX: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
+    chargesList =  testFinancialDetailsChargeItems(
+      dueDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2023, 12, 14))),
+      documentDate = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
+      interestFromDate = List(Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-05-25"))),
+      interestEndDate = List(Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25"))),
+      dunningLock = oneDunningLock,
+      outstandingInterest = List(Some(42.50), Some(24.05)),
+      interestRate = List(Some(2.6), Some(6.2)),
+      latePaymentInterestAmount = List(Some(34.56), None),
+      outstandingAmount = List(50, 75),
+      taxYear = fixedDate.getYear.toString
+    ) ++ Seq(chargeItemModel(
+      transactionId = id1040000124,
+      transactionType = PaymentOnAccountTwo,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = Some(LocalDate.of(2023, 12, 16)),
+      interestOutstandingAmount = Some(100.0),
+      interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+      interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+      outstandingAmount = 100,
+      interestRate = Some(100.0),
+      latePaymentInterestAmount = None,
+      taxYear = fixedDate.getYear
+    )) ++ Seq(chargeItemModel(
+      transactionId = id1040000124,
+      transactionType = PaymentOnAccountOne,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = Some(fixedDate.plusDays(45)),
+      interestOutstandingAmount = Some(100.0),
+      outstandingAmount = 125,
+      interestRate = Some(100.0),
+      latePaymentInterestAmount = None,
+      interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+      interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+      taxYear = fixedDate.getYear
+    )),
+    outstandingChargesModel = Some(outstandingChargesOverdueData),
+    codedOutDocumentDetail = Some(codedOutChargeItemsA)
+  )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
