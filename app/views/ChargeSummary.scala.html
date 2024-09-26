@@ -173,12 +173,12 @@
 
 @getExplanationContent = @{viewModel.documentType match {
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
-        case _ if viewModel.isReviewAndReconcilePoaOneDebit => reviewAndReconcilePoaOneDebitExplanation
-        case _ if viewModel.isReviewAndReconcilePoaTwoDebit => reviewAndReconcilePoaTwoDebitExplanation
+        case _ if viewModel.isReviewAndReconcilePoaOneDebit && !viewModel.otherInterestCharge => reviewAndReconcilePoaOneDebitExplanation
+        case _ if viewModel.isReviewAndReconcilePoaTwoDebit && !viewModel.otherInterestCharge => reviewAndReconcilePoaTwoDebitExplanation
+        case _ if viewModel.isReviewAndReconcilePoaOneDebit && viewModel.otherInterestCharge => getPoa1ExtraChargeExplanationContent
+        case _ if viewModel.isReviewAndReconcilePoaTwoDebit && viewModel.otherInterestCharge => getPoa2ExtraChargeExplanationContent
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
-        case Poa1Reconciliation if viewModel.otherInterestCharge => getPoa1ExtraChargeExplanationContent
-        case Poa2Reconciliation if viewModel.otherInterestCharge => getPoa2ExtraChargeExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
         case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
@@ -284,7 +284,7 @@
         @{ messages(viewModel.pageTitle) }
     </h1>
 
-@if(viewModel.isReviewAndReconcileDebit) {
+@if(viewModel.isReviewAndReconcileDebit && !viewModel.isInterestCharge) {
     @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
 }
 

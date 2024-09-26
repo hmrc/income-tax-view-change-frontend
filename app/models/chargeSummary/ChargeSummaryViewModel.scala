@@ -79,12 +79,14 @@ case class ChargeSummaryViewModel(
   val taxYearToCodingOut = s"${documentDetail.taxYear.toInt + 2}"
 
   val pageTitle: String = {
-    val key = (latePaymentInterestCharge, isMFADebit, isReviewAndReconcilePoaOneDebit, isReviewAndReconcilePoaTwoDebit) match {
-      case (true, false, false, false) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-      case (false, true, false, false) => s"chargeSummary.hmrcAdjustment.text"
-      case (false, false, true, false) => s"chargeSummary.paymentOnAccount1.extraAmount.text"
-      case (false, false, false, true) => s"chargeSummary.paymentOnAccount2.extraAmount.text"
-      case (_, _, _, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val key = (latePaymentInterestCharge, otherInterestCharge, isMFADebit, isReviewAndReconcilePoaOneDebit, isReviewAndReconcilePoaTwoDebit) match {
+      case (true, false, false, false, false) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+      case (false, false, true, false, false) => s"chargeSummary.hmrcAdjustment.text"
+      case (false, false, false, true, false) => s"chargeSummary.paymentOnAccount1.extraAmount.text"
+      case (false, false, false, false, true) => s"chargeSummary.paymentOnAccount2.extraAmount.text"
+      case (false, true, false, true, false) => s"chargeSummary.poa1ExtraChargeInterest.text"
+      case (false, true, false, false, true) => s"chargeSummary.poa2ExtraChargeInterest.text"
+      case (_, _, _, _, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
     }
     key
   }

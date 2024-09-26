@@ -921,8 +921,8 @@ chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
 chargeSummary.paymentOnAccount1.extraAmount.text				   = First payment on account: extra amount from your tax return
 chargeSummary.paymentOnAccount2.extraAmount.text				   = Second payment on account: extra amount from your tax return
-chargeSummary.poa1ExtraCharge.text                                 = Interest for first payment on account: extra amount
-chargeSummary.poa2ExtraCharge.text                                 = Interest for second payment on account: extra amount
+chargeSummary.poa1ExtraChargeInterest.text                         = Interest for first payment on account: extra amount
+chargeSummary.poa2ExtraChargeInterest.text                         = Interest for second payment on account: extra amount
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
@@ -1055,6 +1055,7 @@ chargeSummary.reviewAndReconcilePoa1.linkText                         = first pa
 chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
 chargeSummary.reviewAndReconcilePoa.comma                             =
 chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
+
 chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
 chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
 
