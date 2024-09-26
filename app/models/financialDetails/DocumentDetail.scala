@@ -153,12 +153,12 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some(CODING_OUT_ACCEPTED.name)) => true
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_ACCEPTED.name)) => true
     case _ => false
   }
 
   def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some(CODING_OUT_CANCELLED.name)) => true
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_CANCELLED.name)) => true
     case _ => false
   }
 
@@ -179,10 +179,10 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
-    case Some(POA1) => "paymentOnAccount1.text"
-    case Some(POA2) => "paymentOnAccount2.text"
-    case Some("ITSA BCD") => "balancingCharge.text"
-    case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+    case Some(Poa1Charge.key) => "paymentOnAccount1.text"
+    case Some(Poa2Charge.key) => "paymentOnAccount2.text"
+    case Some(BalancingCharge.key) => "balancingCharge.text"
+    case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
       case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
@@ -203,11 +203,11 @@ case class DocumentDetail(taxYear: Int,
 
   def getDocType: DocumentType = {
     documentDescription match {
-      case Some(POA1) => Poa1Charge
-      case Some(POA2) => Poa2Charge
-      case Some("ITSA BCD") => BalancingCharge
-      case Some("TRM New Charge") => TRMNewCharge
-      case Some("TRM Amend Charge") => TRMAmendCharge
+      case Some(Poa1Charge.key) => Poa1Charge
+      case Some(Poa2Charge.key) => Poa2Charge
+      case Some(BalancingCharge.key) => BalancingCharge
+      case Some(TRMNewCharge.key) => TRMNewCharge
+      case Some(TRMAmendCharge.key) => TRMAmendCharge
       case _ => OtherCharge
     }
   }

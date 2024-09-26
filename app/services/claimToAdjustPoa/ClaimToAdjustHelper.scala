@@ -241,8 +241,8 @@ trait ClaimToAdjustHelper {
 
 object ClaimToAdjustHelper {
 
-  final val POA1: String = Poa1Charge.key
-  final val POA2: String = Poa2Charge.key
+  private final val POA1: String = Poa1Charge.key
+  private final val POA2: String = Poa2Charge.key
 
   protected val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 

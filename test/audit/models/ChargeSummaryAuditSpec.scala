@@ -19,6 +19,7 @@ package audit.models
 import auth.MtdItUser
 import enums.ChargeType._
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
+import enums.{Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -159,11 +160,11 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
       "Cancelled PAYE Self Assessment (through your PAYE tax code)"
     case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") =>
       "Balancing payment collected through PAYE tax code"
-    case (Some("ITSA- POA 1"), _) =>
+    case (Some(Poa1Charge.key), _) =>
       if (latePayment) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case (Some("ITSA - POA 2"), _) =>
+    case (Some(Poa2Charge.key), _) =>
       if (latePayment) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
+    case (Some(TRMNewCharge.key), _) | (Some(TRMAmendCharge.key), _) =>
       if (latePayment) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application")
