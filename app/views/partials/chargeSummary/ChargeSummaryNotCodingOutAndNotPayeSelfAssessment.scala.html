@@ -28,6 +28,7 @@
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     documentDetail: DocumentDetail,
     latePaymentInterestCharge: Boolean,
+    otherInterestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
@@ -75,7 +76,8 @@
         <span>
         @{
             if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-            else documentDetail.originalAmount.toCurrency
+            else if (otherInterestCharge) documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Interest Amount")).toCurrency
+                else documentDetail.originalAmount.toCurrency
         }
         </span>
     </dd>

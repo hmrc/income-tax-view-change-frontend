@@ -103,8 +103,8 @@ GET         /what-you-owe                                                 contro
 GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent
 
 #Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false, origin: Option[String] ?= None)
-GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
+GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
+GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
 
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show

@@ -35,6 +35,7 @@ case class ChargeSummaryViewModel(
                                    chargeHistoryEnabled: Boolean,
                                    paymentAllocationEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
+                                   otherInterestCharge: Boolean,
                                    codingOutEnabled: Boolean,
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,

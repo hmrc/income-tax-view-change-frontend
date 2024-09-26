@@ -159,6 +159,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           docDetailsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
             .filter(_.originalAmountIsNotNegative)
+            .filter(!_.isPaid)
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
