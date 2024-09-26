@@ -955,6 +955,18 @@ chargeSummary.lpi.paymentsOnAccount.p3                             = See guidanc
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
 
+chargeSummary.poa1ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+chargeSummary.poa1ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa1ExtraAmountInterest.p3                            = Interest is charged from the date your first payment on account was due and calculated at the
+chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
+chargeSummary.poa2ExtraAmountInterest.p1                            = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+chargeSummary.poa2ExtraAmountInterest.p2                            = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+chargeSummary.poa2ExtraAmountInterest.p3                            = Interest is charged from the date your second payment on account was due and calculated at the
+chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = Bank of England base rate (opens in new tab)
+chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = plus 2.5%.
+
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
 chargeSummary.definition.balancingcharge.bullet2                   = owe more than what you paid during the year (for example, through payments on account or PAYE)

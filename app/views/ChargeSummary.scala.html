@@ -110,10 +110,34 @@
     </div>
 }
 
+@getPoa1ExtraChargeExplanationContent = {
+    <div>
+        @p(id = Some("poa1-extra-charge-p1")){@messages("chargeSummary.poa1ExtraAmountInterest.p1")}
+        @p(id = Some("poa1-extra-charge-p2")){@messages("chargeSummary.poa1ExtraAmountInterest.p2")}
+        @p(id = Some("poa1-extra-charge-p3")){
+            @messages("chargeSummary.poa1ExtraAmountInterest.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText")</a>
+            @messages("chargeSummary.poa1ExtraAmountInterest.p3AfterLink")
+        }
+    </div>
+}
+
+@getPoa2ExtraChargeExplanationContent = {
+    <div>
+        @p(id = Some("poa2-extra-charge-p1")){@messages("chargeSummary.poa2ExtraAmountInterest.p1")}
+        @p(id = Some("poa2-extra-charge-p2")){@messages("chargeSummary.poa2ExtraAmountInterest.p2")}
+        @p(id = Some("poa2-extra-charge-p3")){
+            @messages("chargeSummary.poa2ExtraAmountInterest.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
+            @messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
+        }
+    </div>
+}
+
 @getInterestRatesLink = {
     @p(id = Some("interest-link")) {
         @messages("chargeSummary.lpi.poaExtraCharge.link")
-        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a><br><br>
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a>
         }
 }
 
@@ -136,7 +160,8 @@
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
-        case Poa1Reconciliation | Poa2Reconciliation if viewModel.otherInterestCharge => "TBC"
+        case Poa1Reconciliation if viewModel.otherInterestCharge => getPoa1ExtraChargeExplanationContent
+        case Poa2Reconciliation if viewModel.otherInterestCharge => getPoa2ExtraChargeExplanationContent
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
         case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page

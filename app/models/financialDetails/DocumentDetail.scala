@@ -194,8 +194,8 @@ case class DocumentDetail(taxYear: Int,
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-    case Some("POA1 Extra Charge") => "poa1ExtraCharge.text"
-    case Some("POA2 Extra Charge") => "poa2ExtraCharge.text"
+    case Some("POA 1 Reconciliation Debit") => "poa1ExtraCharge.text"
+    case Some("POA 2 Reconciliation Debit") => "poa2ExtraCharge.text"
     case Some("ITSA BCD") => "balancingCharge.text"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
@@ -220,8 +220,8 @@ case class DocumentDetail(taxYear: Int,
     documentDescription match {
       case Some("ITSA- POA 1") => Poa1Charge
       case Some("ITSA - POA 2") => Poa2Charge
-      case Some("POA1 Extra Charge") => Poa1Reconciliation
-      case Some("POA2 Extra Charge") => Poa2Reconciliation
+      case Some("POA 1 Reconciliation Debit") => Poa1Reconciliation
+      case Some("POA 2 Reconciliation Debit") => Poa2Reconciliation
       case Some("ITSA BCD") => BalancingCharge
       case Some("TRM New Charge") => TRMNewCharge
       case Some("TRM Amend Charge") => TRMAmmendCharge
