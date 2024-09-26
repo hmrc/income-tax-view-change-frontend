@@ -25,13 +25,15 @@ import controllers.ChargeSummaryController.ErrorCode
 import controllers.agent.predicates.ClientConfirmedController
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
+import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation, ReviewAndReconcilePoa}
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoAOne, isPoATwo}
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -95,7 +97,10 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
         case Some(fdm: FinancialDetailsModel) if (!isEnabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
           Future.successful(Ok(customNotFoundErrorView()))
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetails.exists(_.transactionId == id) =>
-          doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
+          doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id),
+            fdmForTaxYear.isReviewAndReconcilePoaOneDebit(id, isEnabled(ReviewAndReconcilePoa)),
+            fdmForTaxYear.isReviewAndReconcilePoaTwoDebit(id, isEnabled(ReviewAndReconcilePoa))
+          )
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case Some(error: FinancialDetailsErrorModel) =>
@@ -122,7 +127,9 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
   private def doShowChargeSummary(taxYear: Int, id: String, isInterestCharge: Boolean,
                                   chargeDetailsforTaxYear: FinancialDetailsModel, paymentsForAllYears: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
-                                  isMFADebit: Boolean)
+                                  isMFADebit: Boolean,
+                                  isReviewAndReconcilePoaOneDebit: Boolean,
+                                  isReviewAndReconcilePoaTwoDebit: Boolean)
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
@@ -159,30 +166,50 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit, taxYear)
 
-          val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
-            currentDate = dateService.getCurrentDate,
-            documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-            gatewayPage = sessionGatewayPage,
-            paymentBreakdown = paymentBreakdown,
-            paymentAllocations = paymentAllocations,
-            payments = paymentsForAllYears,
-            chargeHistoryEnabled = isEnabled(ChargeHistory),
-            paymentAllocationEnabled = paymentAllocationEnabled,
-            latePaymentInterestCharge = isLatePaymentCharge,
-            otherInterestCharge = isOtherInterestCharge,
-            codingOutEnabled = isEnabled(CodingOut),
-            btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent,
-            isMFADebit = isMFADebit,
-            documentType = documentDetailWithDueDate.documentDetail.getDocType,
-            adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail)
-          )
-          mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
-            case Right(_) =>
-              Ok(chargeSummaryView(viewModel))
-            case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
-          }
+          val (poaOneChargeUrl, poaTwoChargeUrl) =
+            (for {
+              poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.taxYear).headOption
+              poaOneTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoAOne).map(_.transactionId).headOption
+              poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.taxYear).headOption
+              poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetails.filter(isPoATwo).map(_.transactionId).headOption
+            } yield
+              if (isAgent)
+                (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
+                 routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
+              else
+                (routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
+                 routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
+            ).getOrElse(("", ""))
+
+            val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+              currentDate = dateService.getCurrentDate,
+              documentDetailWithDueDate = documentDetailWithDueDate,
+              backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+              gatewayPage = sessionGatewayPage,
+              paymentBreakdown = paymentBreakdown,
+              paymentAllocations = paymentAllocations,
+              payments = paymentsForAllYears,
+              chargeHistoryEnabled = isEnabled(ChargeHistory),
+              paymentAllocationEnabled = paymentAllocationEnabled,
+              latePaymentInterestCharge = isLatePaymentCharge,
+              otherInterestCharge = isOtherInterestCharge,
+              codingOutEnabled = isEnabled(CodingOut),
+              btaNavPartial = user.btaNavPartial,
+              isAgent = isAgent,
+              isMFADebit = isMFADebit,
+              isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit,
+              isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit,
+              documentType = documentDetailWithDueDate.documentDetail.getDocType,
+              adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+              poaOneChargeUrl = poaOneChargeUrl,
+              poaTwoChargeUrl = poaTwoChargeUrl
+            )
+            mandatoryViewDataPresent(isLatePaymentCharge, viewModel.documentDetailWithDueDate) match {
+              case Right(_) =>
+                Ok(chargeSummaryView(viewModel))
+              case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+            }
+
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)

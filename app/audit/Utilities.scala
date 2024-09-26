@@ -18,7 +18,7 @@ package audit
 
 import _root_.models.financialDetails.DocumentDetail
 import auth.MtdItUserBase
-import enums.{Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
+import enums.{Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -50,7 +50,7 @@ object Utilities {
     case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
     case (Poa1Charge, _) => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
     case (Poa2Charge,_) => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-    case (TRMNewCharge | TRMAmmendCharge,_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+    case (TRMNewCharge | TRMAmendCharge,_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
     case (_, _) => docDetail.documentDescription
   }
 

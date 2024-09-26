@@ -804,7 +804,7 @@ nextUpdates.optOutMultiYear-2                                        = opt out o
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
 paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
-paymentDue.tax-year                                                = Tax year {0} to {1}
+paymentDue.tax-year                                                = {0} to {1} tax year
 paymentDue.due                                                     = Due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Make a payment
@@ -919,6 +919,8 @@ whatYouOwe.adjust-poa.paid-5                                       =
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
+chargeSummary.paymentOnAccount1.extraAmount.text				   = First payment on account: extra amount from your tax return
+chargeSummary.paymentOnAccount2.extraAmount.text				   = Second payment on account: extra amount from your tax return
 chargeSummary.poa1ExtraCharge.text                                 = Interest for first payment on account: extra amount
 chargeSummary.poa2ExtraCharge.text                                 = Interest for second payment on account: extra amount
 chargeSummary.balancingCharge.text  							   = Balancing payment
@@ -1004,7 +1006,7 @@ chargeSummary.payment-days-note-agent                              = Any payment
 chargeSummary.payments-bullet1-2-agent                             = payment method they use
 chargeSummary.payments-bullet2-agent                               = must reach us by the due date - they’ll be charged interest and may have to pay a penalty if the payment is late
 
-chargeSummary.chargeHistory.heading								        = Payment history
+chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history
@@ -1017,6 +1019,8 @@ chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing pa
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Self Assessment payment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
+chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -1045,6 +1049,12 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
 chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
 
+chargeSummary.reviewAndReconcilePoa.warning                           = This charge will be accruing interest until it is paid.
+chargeSummary.reviewAndReconcilePoa.p1                                = HMRC has created this charge because your tax return shows that your adjusted
+chargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
+chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
+chargeSummary.reviewAndReconcilePoa.comma                             =
+chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
 chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
 chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
 

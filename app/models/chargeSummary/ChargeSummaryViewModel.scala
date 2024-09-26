@@ -21,7 +21,6 @@ import enums.GatewayPage._
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.twirl.api.Html
-import views.html.partials.chargeSummary.{ChargeSummaryHasDunningLocksOrLpiWithDunningLock, ChargeSummaryPaymentAllocation}
 
 import java.time.LocalDate
 
@@ -42,8 +41,12 @@ case class ChargeSummaryViewModel(
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
                                    isMFADebit: Boolean,
+                                   isReviewAndReconcilePoaOneDebit: Boolean,
+                                   isReviewAndReconcilePoaTwoDebit: Boolean,
                                    documentType: DocumentType,
-                                   adjustmentHistory: AdjustmentHistoryModel
+                                   adjustmentHistory: AdjustmentHistoryModel,
+                                   poaOneChargeUrl: String,
+                                   poaTwoChargeUrl: String
                                  ) {
 
   val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
@@ -53,7 +56,7 @@ case class ChargeSummaryViewModel(
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
   val isInterestCharge = latePaymentInterestCharge || otherInterestCharge
 
-
+  val isReviewAndReconcileDebit: Boolean = isReviewAndReconcilePoaOneDebit || isReviewAndReconcilePoaTwoDebit
 
   val currentTaxYearEnd = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
@@ -76,17 +79,19 @@ case class ChargeSummaryViewModel(
   val taxYearToCodingOut = s"${documentDetail.taxYear.toInt + 2}"
 
   val pageTitle: String = {
-    val key = (latePaymentInterestCharge, isMFADebit) match {
-      case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-      case (_, true) => s"chargeSummary.hmrcAdjustment.text"
-      case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val key = (latePaymentInterestCharge, isMFADebit, isReviewAndReconcilePoaOneDebit, isReviewAndReconcilePoaTwoDebit) match {
+      case (true, false, false, false) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+      case (false, true, false, false) => s"chargeSummary.hmrcAdjustment.text"
+      case (false, false, true, false) => s"chargeSummary.paymentOnAccount1.extraAmount.text"
+      case (false, false, false, true) => s"chargeSummary.paymentOnAccount2.extraAmount.text"
+      case (_, _, _, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
     }
     key
   }
 
   val isBalancingChargeZero = documentDetail.isBalancingChargeZero(codingOutEnabled)
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean = codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment
-  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
+  val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isReviewAndReconcileDebit
   val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean = (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !otherInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
