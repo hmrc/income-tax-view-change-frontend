@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
+import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -207,7 +207,7 @@ case class DocumentDetail(taxYear: Int,
       case Some(POA2) => Poa2Charge
       case Some("ITSA BCD") => BalancingCharge
       case Some("TRM New Charge") => TRMNewCharge
-      case Some("TRM Amend Charge") => TRMAmmendCharge
+      case Some("TRM Amend Charge") => TRMAmendCharge
       case _ => OtherCharge
     }
   }
