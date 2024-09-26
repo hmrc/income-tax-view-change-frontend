@@ -18,12 +18,13 @@ package models.financialDetails
 
 import models.outstandingCharges.OutstandingChargesModel
 import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoA
 
 import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[DocumentDetail] = None) extends ClaimToAdjustHelper {
+                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
 
   lazy val overdueChargeList: List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
 

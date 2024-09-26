@@ -22,6 +22,7 @@ import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
 import services.DateServiceInterface
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2}
 
 import java.time.LocalDate
 
@@ -178,8 +179,8 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
-    case Some("ITSA- POA 1") => "paymentOnAccount1.text"
-    case Some("ITSA - POA 2") => "paymentOnAccount2.text"
+    case Some(POA1) => "paymentOnAccount1.text"
+    case Some(POA2) => "paymentOnAccount2.text"
     case Some("ITSA BCD") => "balancingCharge.text"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
@@ -202,8 +203,8 @@ case class DocumentDetail(taxYear: Int,
 
   def getDocType: DocumentType = {
     documentDescription match {
-      case Some("ITSA- POA 1") => Poa1Charge
-      case Some("ITSA - POA 2") => Poa2Charge
+      case Some(POA1) => Poa1Charge
+      case Some(POA2) => Poa2Charge
       case Some("ITSA BCD") => BalancingCharge
       case Some("TRM New Charge") => TRMNewCharge
       case Some("TRM Amend Charge") => TRMAmmendCharge

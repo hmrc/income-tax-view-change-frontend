@@ -22,6 +22,7 @@ import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.twirl.api.Html
 import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoA
 import views.html.partials.chargeSummary.{ChargeSummaryHasDunningLocksOrLpiWithDunningLock, ChargeSummaryPaymentAllocation}
 
 import java.time.LocalDate
@@ -48,7 +49,7 @@ case class ChargeSummaryViewModel(
                                    adjustmentHistory: AdjustmentHistoryModel,
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String
-                                 ) extends ClaimToAdjustHelper {
+                                 ) {
 
   val documentDetail: DocumentDetail = documentDetailWithDueDate.documentDetail
   val dueDate = documentDetailWithDueDate.dueDate

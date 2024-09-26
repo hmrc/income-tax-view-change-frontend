@@ -33,6 +33,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoAOne, isPoATwo}
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
