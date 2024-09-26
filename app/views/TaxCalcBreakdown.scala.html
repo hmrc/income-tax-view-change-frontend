@@ -35,8 +35,10 @@
     <tr class="govuk-table__row">
         <td class="govuk-table__cell">
         @messages(
-            if(scottishRegime && (band.name == "ART" || band.name == "AVRT" && taxYear >= 2024)) {
+            if(scottishRegime && band.name == "ART") {
                 s"taxCal_breakdown.table.${band.name}_scottish"
+            } else if(scottishRegime && band.name == "AVRT" && taxYear >= 2024) {
+                s"taxCal_breakdown.table.${band.name}"
             } else {
                 s"taxCal_breakdown.table.${band.name}"
             },
