@@ -66,7 +66,7 @@ case class DocumentDetail(taxYear: Int,
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
   def originalAmountIsNotNegative: Boolean = originalAmount match {
     case amount if amount < 0 => false
@@ -83,6 +83,13 @@ case class DocumentDetail(taxYear: Int,
     case Some(_) => true
     case _ => false
   }
+
+  def isOtherInterest: Boolean = interestOutstandingAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
+  }
+
 
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
@@ -114,8 +121,8 @@ case class DocumentDetail(taxYear: Int,
     else outstandingAmount
   }
 
-  def remainingToPayByChargeOrLpi: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
+  def remainingToPayByChargeOrInterest: BigDecimal = {
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay
     else remainingToPay
   }
 
@@ -124,8 +131,10 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
+  def isInterest = isLatePaymentInterest || isOtherInterest
+
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest) interestRemainingToPay > 0
+    if (isLatePaymentInterest || isOtherInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
