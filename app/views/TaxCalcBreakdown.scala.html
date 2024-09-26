@@ -31,13 +31,13 @@
 )
 @(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false) = {
+@taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false, startAVRTYear: Int = 2024 ) = {
     <tr class="govuk-table__row">
         <td class="govuk-table__cell">
         @messages(
             if(scottishRegime && band.name == "ART") {
                 s"taxCal_breakdown.table.${band.name}_scottish"
-            } else if(scottishRegime && band.name == "AVRT" && taxYear >= 2024) {
+            } else if(scottishRegime && band.name == "AVRT" && taxYear >= startAVRTYear) {
                 s"taxCal_breakdown.table.${band.name}"
             } else {
                 s"taxCal_breakdown.table.${band.name}"

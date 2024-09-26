@@ -63,7 +63,6 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
           isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)

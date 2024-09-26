@@ -462,6 +462,7 @@ taxCal_breakdown.table.SRT                                          = Cyfradd cy
 taxCal_breakdown.table.BRT                                          = Cyfradd sylfaenol ({0} ar {1}%)
 taxCal_breakdown.table.IRT                                          = Cyfradd ganolradd ({0} ar {1}%)
 taxCal_breakdown.table.HRT                                          = Cyfradd uwch ({0} ar {1}%)
+taxCal_breakdown.table.AVRT                                         = Cyfradd uwch bellach ({0} ar {1}%)
 taxCal_breakdown.table.ART                                          = Cyfradd ychwanegol ({0} ar {1}%)
 taxCal_breakdown.table.ART_scottish                                 = Cyfradd uchaf ({0} ar {1}%)
 taxCal_breakdown.table.ZRTBR                                        = Haen cyfradd sylfaenol ar y gyfradd sero ({0} ar {1}%)

@@ -197,8 +197,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           rate = 45.0,
           bandLimit = 125140,
           apportionedBandLimit = 106569,
-          income = 106569,
-          taxAmount = 43693.29
+          income = 100000,
+          taxAmount = 45000.00
       ),
       TaxBands(
         name = "ART_scottish",
@@ -222,7 +222,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Pay, pensions and profit table" which {
-        println(s"!!!!!!!!!!!!!: $view")
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
           expectedCaption = sectionHeadingPPP,
@@ -340,7 +339,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2024, backUrl)
 
       "have a 2024 Pay, pensions and profit table" which {
-        println(view.body)
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
           expectedCaption = sectionHeadingPPP,
