@@ -766,8 +766,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
           val document = Jsoup.parse(res.body)
 
-          document.getElementById("paymentTypeLink-0").attr("href") shouldBe "/"
-          document.getElementById("paymentTypeLink-1").attr("href") shouldBe "/"
+          document.getElementById("paymentTypeLink-0").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000123").url
+          document.getElementById("paymentTypeLink-1").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear2023, "1040000124").url
 
           res should have(
             httpStatus(OK),

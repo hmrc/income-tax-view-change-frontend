@@ -17,11 +17,12 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmmendCharge, TRMNewCharge}
+import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa2Charge, TRMAmendCharge, TRMNewCharge}
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
 import services.DateServiceInterface
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2}
 
 import java.time.LocalDate
 
@@ -152,18 +153,13 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some(CODING_OUT_ACCEPTED.name)) => true
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_ACCEPTED.name)) => true
     case _ => false
   }
 
   def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some(CODING_OUT_CANCELLED.name)) => true
+    case (Some(TRMNewCharge.key) | Some(TRMAmendCharge.key), Some(CODING_OUT_CANCELLED.name)) => true
     case _ => false
-  }
-
-  val isPOA: Boolean = {
-    val poaDescriptions = Seq("ITSA- POA 1", "ITSA - POA 2")
-    documentDescription.exists(poaDescriptions.contains)
   }
 
   def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
@@ -183,10 +179,10 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
-    case Some("ITSA- POA 1") => "paymentOnAccount1.text"
-    case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-    case Some("ITSA BCD") => "balancingCharge.text"
-    case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+    case Some(Poa1Charge.key) => "paymentOnAccount1.text"
+    case Some(Poa2Charge.key) => "paymentOnAccount2.text"
+    case Some(BalancingCharge.key) => "balancingCharge.text"
+    case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
       case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
@@ -207,11 +203,11 @@ case class DocumentDetail(taxYear: Int,
 
   def getDocType: DocumentType = {
     documentDescription match {
-      case Some("ITSA- POA 1") => Poa1Charge
-      case Some("ITSA - POA 2") => Poa2Charge
-      case Some("ITSA BCD") => BalancingCharge
-      case Some("TRM New Charge") => TRMNewCharge
-      case Some("TRM Amend Charge") => TRMAmmendCharge
+      case Some(Poa1Charge.key) => Poa1Charge
+      case Some(Poa2Charge.key) => Poa2Charge
+      case Some(BalancingCharge.key) => BalancingCharge
+      case Some(TRMNewCharge.key) => TRMNewCharge
+      case Some(TRMAmendCharge.key) => TRMAmendCharge
       case _ => OtherCharge
     }
   }

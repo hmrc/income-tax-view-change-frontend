@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.outstandingCharges.OutstandingChargesModel
+import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoA
 
 import java.time.LocalDate
 
@@ -37,7 +38,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
   def hasUnpaidPOAs: Boolean = chargesList.exists(docDetail =>
-    docDetail.documentDetail.isPOA && docDetail.documentDetail.outstandingAmount > 0.0)
+    isPoA(docDetail.documentDetail) && docDetail.documentDetail.outstandingAmount > 0.0)
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
