@@ -252,5 +252,5 @@ object ClaimToAdjustHelper {
 
   val isPoA: DocumentDetail => Boolean = documentDetail => isPoAOne(documentDetail) || isPoATwo(documentDetail)
 
-  val isPoADocumentDescription: String => Boolean = documentDescription => poaDocumentDescriptions.contains(documentDescription)
+  val isPoADocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)
 }
