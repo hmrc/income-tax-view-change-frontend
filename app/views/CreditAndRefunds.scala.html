@@ -48,7 +48,7 @@ govukInsetText : GovukInsetText
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent.url
+        controllers.routes.WhatYouOweController.showAgent().url
     } else {
         controllers.routes.WhatYouOweController.show().url
     }

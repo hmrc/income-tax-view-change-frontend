@@ -25,23 +25,24 @@ import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpPar
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
-                                       http: HttpClient,
+                                       httpClient: HttpClientV2,
                                        val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val baseUrl: String = appConfig.addressLookupService
 
   def addressLookupInitializeUrl: String = {
-    s"${baseUrl}/api/v2/init"
+    s"$baseUrl/api/v2/init"
   }
 
   def getAddressDetailsUrl(id: String): String = {
-    s"${baseUrl}/api/v2/confirmed?id=$id"
+    s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
   def continueUrl(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): String = (isAgent, isEnabled(IncomeSourcesNewJourney)) match {
@@ -51,8 +52,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     case _ => controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = isChange).url
   }
 
-  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
-  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
+  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
+  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -70,11 +71,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout.url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive.url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut.url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
@@ -161,21 +162,31 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
 
-  def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
-    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {
-      addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
-    } else {
-      addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
-    }
+  def initialiseAddressLookup(
+                               isAgent: Boolean,
+                               isChange: Boolean
+                             )(
+                               implicit hc: HeaderCarrier, user: MtdItUser[_]
+                             ): Future[PostAddressLookupResponse] = {
 
-    http.POST[JsValue, PostAddressLookupResponse](
-      url = addressLookupInitializeUrl,
-      body = payload
-    )
+    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
+
+    val payload =
+      if (isAgent) {
+        addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+      } else {
+        addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+      }
+
+    httpClient
+      .post(url"$addressLookupInitializeUrl")
+      .withBody(payload)
+      .execute[PostAddressLookupResponse]
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
+    httpClient
+      .get(url"${getAddressDetailsUrl(id)}")
+      .execute[GetAddressLookupDetailsResponse]
   }
 }

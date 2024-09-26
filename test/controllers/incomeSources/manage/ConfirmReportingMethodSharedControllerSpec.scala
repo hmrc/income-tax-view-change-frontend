@@ -81,7 +81,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runShowTest(isAgent = true, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -184,7 +184,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runSubmitTest(isAgent = true, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
 
       "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Individual" in {

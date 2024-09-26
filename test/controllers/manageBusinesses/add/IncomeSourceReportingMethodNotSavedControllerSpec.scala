@@ -149,7 +149,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
           }
         }
 
@@ -160,7 +160,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClientTimeout())
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
           }
         }
 
@@ -176,7 +176,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent.url) else Some(routes.HomeController.show().url))
+            redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent().url) else Some(routes.HomeController.show().url))
           }
         }
       }

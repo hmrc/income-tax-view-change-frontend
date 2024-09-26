@@ -70,7 +70,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
       case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
     }
 
-    val expectedRedirect: String = controllers.routes.HomeController.showAgent.url
+    val expectedRedirect: String = controllers.routes.HomeController.showAgent().url
 
     result should have(
       httpStatus(SEE_OTHER),

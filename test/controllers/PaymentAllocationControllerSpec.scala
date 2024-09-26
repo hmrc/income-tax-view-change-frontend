@@ -166,7 +166,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -177,7 +177,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
@@ -236,7 +236,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
@@ -252,7 +252,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
-          controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
@@ -283,7 +283,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
           mockPaymentAllocationView(
             paymentAllocationViewModelNoPayment,
-            controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None,
+            controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None,
             CutOverCreditsEnabled = false, isAgent = true
           )(HtmlFormat.empty)
 

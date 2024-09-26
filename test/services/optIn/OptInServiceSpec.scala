@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package services.optIn
 
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.itsaStatus.StatusDetail
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers

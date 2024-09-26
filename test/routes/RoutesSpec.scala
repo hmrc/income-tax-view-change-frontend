@@ -32,7 +32,7 @@ class RoutesSpec extends TestSupport {
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
     s"be equal to $contextRoute/session-timeout" in {
-      controllers.timeout.routes.SessionTimeoutController.timeout.url shouldBe s"$contextRoute/session-timeout"
+      controllers.timeout.routes.SessionTimeoutController.timeout().url shouldBe s"$contextRoute/session-timeout"
     }
   }
 
@@ -60,7 +60,7 @@ class RoutesSpec extends TestSupport {
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
     s"be equal to $contextRoute/not-enrolled" in {
-      controllers.errors.routes.NotEnrolledController.show.url shouldBe s"$contextRoute/cannot-access-service"
+      controllers.errors.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/cannot-access-service"
     }
   }
 

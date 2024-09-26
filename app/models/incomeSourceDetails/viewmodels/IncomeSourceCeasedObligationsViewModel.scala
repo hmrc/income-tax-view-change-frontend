@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ object IncomeSourceCeasedObligationsViewModel {
     val allObligations = flattenQuarterlyObligations ++ obligationsViewModel.finalDeclarationDates
     val numberOfOverdueObligationCount = allObligations.count(_.inboundCorrespondenceDue isBefore dateService.getCurrentDate)
     val viewAllBusinessLink = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
-    val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+    val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent() else controllers.routes.NextUpdatesController.show()
 
     val viewFinalDeclarationDates = if (obligationsViewModel.quarterlyObligationsDates.flatten.isEmpty)
       obligationsViewModel.finalDeclarationDates.take(2)

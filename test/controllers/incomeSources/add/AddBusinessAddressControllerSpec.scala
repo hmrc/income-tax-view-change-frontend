@@ -103,7 +103,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
               val result = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
               else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+              redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
             }
           }
         }
@@ -115,7 +115,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
             else TestAddBusinessAddressController.submit(None, isChange)(fakeRequestWithTimeoutSession)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
           }
         }
 
@@ -146,7 +146,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
               val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
               else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
-              val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(homeUrl)
             }
           }

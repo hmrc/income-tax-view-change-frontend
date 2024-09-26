@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,14 +75,14 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val result = TestAddPropertyController.show(isAgent = isAgent)(getRequest(isAgent))
 
           status(result) shouldBe SEE_OTHER
-          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
         "User is not authorised" in {
           if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
           val result = TestAddPropertyController.show(isAgent)(getRequest(isAgent))
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
       "display the add property page" when {
@@ -114,7 +114,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val result = TestAddPropertyController.submit(isAgent = isAgent)(postRequest(isAgent))
 
           status(result) shouldBe SEE_OTHER
-          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+          val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,9 +42,9 @@ class OptOutErrorViewSpec extends TestSupport {
     val optOutHomeTotal: String = optOutHomeBullet1 ++ " " ++ optOutHomeBullet2
 
     val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show().url
-    val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent.url
+    val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent().url
     val homePageLink: String = controllers.routes.HomeController.show().url
-    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
+    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent().url
 
   }
 

@@ -32,8 +32,9 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 import scala.util.Success
 
-class AddressLookupServiceSpec extends TestSupport
-  with FeatureSwitching {
+class AddressLookupServiceSpec
+  extends TestSupport
+    with FeatureSwitching {
 
   case class AddressError(status: String) extends RuntimeException
 
@@ -148,7 +149,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Left(UnexpectedGetStatusFailure(418))))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress( Some(mkIncomeSourceId("")))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(mkIncomeSourceId("")))
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")

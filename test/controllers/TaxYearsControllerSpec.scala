@@ -108,7 +108,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
     "the user has timed out" should {
@@ -118,7 +118,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -148,7 +148,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockNoIncomeSources()
 
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent.url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent().url)(HtmlFormat.empty)
 
         val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient())
 
@@ -160,7 +160,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
 
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent.url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent().url)(HtmlFormat.empty)
 
         val result: Future[Result] = TestTaxYearsController.showAgentTaxYears()(fakeRequestConfirmedClient())
 

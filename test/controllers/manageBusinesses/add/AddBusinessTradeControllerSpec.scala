@@ -93,7 +93,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
                 val result = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+                redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
               }
             }
           }
@@ -123,7 +123,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 if (isAgent) fakeRequestWithClientDetails else fakeRequestWithTimeoutSession)
 
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+              redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
             }
           }
           "redirect to the add business address page" when {
@@ -270,7 +270,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
           status(result) shouldBe SEE_OTHER
-          val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+          val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
           redirectLocation(result) shouldBe Some(homeUrl)
         }
         s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {

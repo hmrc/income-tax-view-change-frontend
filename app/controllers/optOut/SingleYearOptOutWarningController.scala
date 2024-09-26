@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthenticatorPredicate,
 
   private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-  private val nextUpdatesUrl = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
+  private val nextUpdatesUrl = (isAgent: Boolean) => if (isAgent) controllers.routes.NextUpdatesController.showAgent() else controllers.routes.NextUpdatesController.show()
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user => withRecover(isAgent)(handleRequest(isAgent))

@@ -37,10 +37,10 @@ trait FallBackBackLinks {
   def getAgentPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int]): String =
     ((gatewayPageOpt, taxYearOpt) match {
       case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
-      case (Some(TaxYearSummaryPage), None)          => HomeController.showAgent
-      case (Some(WhatYouOwePage),     _)             => WhatYouOweController.showAgent
-      case (Some(PaymentHistoryPage), _)             => PaymentHistoryController.showAgent
-      case _                                         => HomeController.showAgent
+      case (Some(TaxYearSummaryPage), None)          => HomeController.showAgent()
+      case (Some(WhatYouOwePage),     _)             => WhatYouOweController.showAgent()
+      case (Some(PaymentHistoryPage), _)             => PaymentHistoryController.showAgent()
+      case _                                         => HomeController.showAgent()
     }).path
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
@@ -50,9 +50,9 @@ trait FallBackBackLinks {
   private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int) =
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage)   => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
-      case Some(WhatYouOwePage)       => WhatYouOweController.showAgent
-      case Some(PaymentHistoryPage)   => PaymentHistoryController.showAgent
-      case _                          => HomeController.showAgent
+      case Some(WhatYouOwePage)       => WhatYouOweController.showAgent()
+      case Some(PaymentHistoryPage)   => PaymentHistoryController.showAgent()
+      case _                          => HomeController.showAgent()
     }).path
 
   private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]) =

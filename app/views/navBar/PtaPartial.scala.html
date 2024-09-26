@@ -33,7 +33,7 @@
         href = appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show().url,
         active = true
     ),
-    signOut = SignOut(href = controllers.routes.SignOutController.signOut.url),
+    signOut = SignOut(href = controllers.routes.SignOutController.signOut().url),
     language = if(messages.lang.code == "cy") Cy else En,
     businessTaxAccount = Some(BusinessTaxAccount())
 ).withUrlsFromConfig())

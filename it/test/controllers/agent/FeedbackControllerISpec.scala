@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ class FeedbackControllerISpec extends ComponentSpecBase {
         val res: WSResponse = IncomeTaxViewChangeFrontend.post("/feedback", clientDetailsWithConfirmation)(formData)
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
+          redirectURI(controllers.feedback.routes.FeedbackController.thankYouAgent().url)
         )
 
       }

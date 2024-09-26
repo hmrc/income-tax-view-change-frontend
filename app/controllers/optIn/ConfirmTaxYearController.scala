@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package controllers.optIn
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.optIn.routes.OptInErrorController
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import models.optin.ConfirmTaxYearViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport

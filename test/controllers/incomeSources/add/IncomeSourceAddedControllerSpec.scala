@@ -150,7 +150,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           setupMockAuthorisationException()
           val result = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
     }
@@ -194,7 +194,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
               else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
-              val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(redirectUrl)
             }
             "redirect to the session timeout page" when {
@@ -203,7 +203,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                 val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
                 else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+                redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
               }
             }
             "redirect a user back to the custom error page" when {
@@ -213,7 +213,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                   val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
                   else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+                  redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
                 }
               }
             }

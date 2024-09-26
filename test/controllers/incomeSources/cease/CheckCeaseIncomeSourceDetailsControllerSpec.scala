@@ -174,7 +174,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           mockPropertyIncomeSource()
           val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
         }
       }
       "called with an unauthenticated user" when {

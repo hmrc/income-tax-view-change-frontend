@@ -64,7 +64,7 @@
     val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
         else Some(messages("header.serviceName"))
 
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else controllers.routes.HomeController.show().url
 
     hmrcHeader(HmrcHeaderArgs(
@@ -72,7 +72,7 @@
         serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),
-        signOutHref = Some(controllers.routes.SignOutController.signOut.url),
+        signOutHref = Some(controllers.routes.SignOutController.signOut().url),
         userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl))
     ))
 }
@@ -88,8 +88,8 @@
         language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
-        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive.url),
-        signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive().url),
+        signOutUrl = Some(controllers.routes.SignOutController.signOut().url),
         keepAliveButtonText = Some(messages("button.continue"))
         ))
     }

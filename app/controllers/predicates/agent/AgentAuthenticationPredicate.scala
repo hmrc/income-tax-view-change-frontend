@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 object AgentAuthenticationPredicate extends Results {
 
-  lazy val timeoutRoute: Result = Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
+  lazy val timeoutRoute: Result = Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show)
 

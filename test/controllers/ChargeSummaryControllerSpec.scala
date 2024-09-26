@@ -126,7 +126,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show(testTaxYear, "fakeId")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
       }
     }
 
@@ -137,7 +137,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
       }
     }
 
@@ -204,7 +204,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         }
 
         "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
@@ -212,14 +212,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         }
         "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa()) {
           disable(CodingOut)
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         }
       }
 

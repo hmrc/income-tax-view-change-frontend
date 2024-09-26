@@ -33,7 +33,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
   val expectedQuarterlyUpdates = 4
 
   class Setup(isAgent: Boolean = true, infoMessage: Boolean = false, quarterlyUpdates: Int = 0) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document =
       Jsoup.parse(contentAsString(
         confirmOptOutView(
@@ -57,7 +57,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
     val confirmedOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.submit(true).url
     val cancelButton: String = messages("optout.confirmOptOut.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent().url
   }
 
   "Opt-out confirm page" should {

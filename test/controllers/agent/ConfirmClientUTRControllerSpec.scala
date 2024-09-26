@@ -57,7 +57,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -68,7 +68,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
@@ -125,7 +125,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -136,7 +136,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
@@ -173,7 +173,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       verifyExtendedAudit(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtrId, credId = Some(testCredId)))
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
     }
   }

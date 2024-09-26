@@ -223,7 +223,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.showAgent.url)
+          redirectURI(controllers.routes.HomeController.showAgent().url)
         )
       }
     }
@@ -306,7 +306,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.showAgent.url)
+          redirectURI(controllers.routes.HomeController.showAgent().url)
         )
       }
     }

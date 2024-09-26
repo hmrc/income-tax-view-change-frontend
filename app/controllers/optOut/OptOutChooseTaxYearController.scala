@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
         intent <- repository.fetchSavedIntent()
       } yield {
         val taxYearsList = optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList
-        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
         val form = intent match {
           case Some(savedIntent) =>
             ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
@@ -70,7 +70,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
       for {
         optOutProposition <- optOutService.recallOptOutProposition()
         quarterlyUpdatesCountModel <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
-        cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+        cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
         formResult <- ConfirmOptOutMultiTaxYearChoiceForm(optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList).bindFromRequest().fold(
           formWithError => Future.successful(BadRequest(optOutChooseTaxYear(formWithError, optOutProposition.availableTaxYearsForOptOut, quarterlyUpdatesCountModel, isAgent, cancelURL))),
           form => saveTaxYearChoice(form).map {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package services.optout.optoutproposition
 
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess, optOutUpdateReason}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import play.mvc.Http.Status.NO_CONTENT

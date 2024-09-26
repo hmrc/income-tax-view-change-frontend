@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package controllers.optIn
 
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.optIn.CheckYourAnswersControllerISpec._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, ITSAStatusUpdateConnectorStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.api.libs.json.Json

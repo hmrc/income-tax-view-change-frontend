@@ -33,7 +33,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(IncomeSources)) {
       user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent))
+        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
         case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
       }
     } else {

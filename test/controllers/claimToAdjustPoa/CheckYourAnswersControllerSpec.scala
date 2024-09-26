@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         status(result) shouldBe SEE_OTHER
         status(resultAgent) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
     }
     s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
@@ -249,7 +249,7 @@ class CheckYourAnswersControllerSpec extends MockAuthenticationPredicate with Te
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(resultAgent) shouldBe SEE_OTHER
-        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
     }
     "redirect to success page" when {

@@ -55,7 +55,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -66,7 +66,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
@@ -103,7 +103,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -114,7 +114,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 

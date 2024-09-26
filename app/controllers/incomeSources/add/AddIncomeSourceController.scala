@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -50,7 +50,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   with FeatureSwitching with IncomeSourcesUtils {
 
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
+  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
 
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -68,7 +68,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
         isAgent = true,
         homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent.url
+        backUrl = controllers.routes.HomeController.showAgent().url
       )
 
   }

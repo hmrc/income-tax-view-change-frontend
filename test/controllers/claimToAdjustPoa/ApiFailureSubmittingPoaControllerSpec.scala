@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthenticationPredicate 
         val result = TestApiFailureSubmittingPoaController.show(isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()

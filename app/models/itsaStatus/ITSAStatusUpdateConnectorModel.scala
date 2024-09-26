@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package connectors.itsastatus
+package models.itsaStatus
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, OFormat}
 import play.mvc.Http.Status.NO_CONTENT
+
+case class ITSAStatusUpdateRequest(taxYear: String, updateReason: String)
+
+object ITSAStatusUpdateRequest {
+  implicit val format: OFormat[ITSAStatusUpdateRequest] = Json.format[ITSAStatusUpdateRequest]
+}
 
 object ITSAStatusUpdateConnectorModel {
 
   val optOutUpdateReason: String = "10"
   val optInUpdateReason: String = "11"
 
-  case class ITSAStatusUpdateRequest(taxYear: String, updateReason: String)
   sealed trait ITSAStatusUpdateResponse
 
   case class ITSAStatusUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends ITSAStatusUpdateResponse
+
   case class ErrorItem(code: String, reason: String)
+
   case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem]) extends ITSAStatusUpdateResponse
 
   object ITSAStatusUpdateResponseFailure {
@@ -41,6 +48,5 @@ object ITSAStatusUpdateConnectorModel {
   implicit val formatSuccess: Format[ITSAStatusUpdateResponseSuccess] = Json.format[ITSAStatusUpdateResponseSuccess]
   implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]
   implicit val formatFailure: Format[ITSAStatusUpdateResponseFailure] = Json.format[ITSAStatusUpdateResponseFailure]
-  implicit val format: Format[ITSAStatusUpdateRequest] = Json.format[ITSAStatusUpdateRequest]
-
+  implicit val format: OFormat[ITSAStatusUpdateRequest] = Json.format[ITSAStatusUpdateRequest]
 }

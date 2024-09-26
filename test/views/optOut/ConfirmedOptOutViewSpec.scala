@@ -108,7 +108,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       val updatesDueBlock: Element = pageDocument.getElementById("updates-due")
       updatesDueBlock.getElementById("updates-due-heading").text() shouldBe confirmOptOutMessages.nextUpdatesDueHeading
       updatesDueBlock.getElementById("updates-due-content").text() shouldBe confirmOptOutMessages.nextUpdatesDueContent
-      updatesDueBlock.getElementById("next-update-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
+      updatesDueBlock.getElementById("next-update-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
     }
 
     "have the correct reporting updates content" when {

@@ -25,38 +25,43 @@ import testOnly.views.html.MessageCheckView
 import scala.language.reflectiveCalls
 
 class MessageCheckViewSpec extends TestSupport {
+
   val messageCheckView: MessageCheckView = app.injector.instanceOf[MessageCheckView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("cy")
 
-  def languageSetupTest(language: String) = new {
-    val messageKeys: List[String] = messagesApi.messages.collect {
-      case (key, values) if key == language => values.keys
-    }.flatten(_.toList).toList
+  class LanguageSetupTest(language: String) {
 
-    val messagesMap = messagesApi.messages.collect {
-      case (key, values) if key == language => values
+    val messageKeys: List[String] =
+      messagesApi.messages.collect {
+        case (messageKey, values) if messageKey == language => values.keys
+      }.flatten(_.toList).toList
+
+    val messagesMap: Map[String, String] = messagesApi.messages.collect {
+      case (messageKey, values) if messageKey == language => values
     }.flatten(_.toMap).toMap
 
     val view: Html = messageCheckView(messageKeys)
+
     val document: Document = Jsoup.parse(view.body)
   }
 
   "Render Message in correct format" when {
+
     "message key is given" should {
-      "return correct English format" in {
-        val languageTest = languageSetupTest("default")
-        languageTest.document.select(".messageRow").forEach { element =>
+
+      "return correct English format" in new LanguageSetupTest("default") {
+
+        document.select(".messageRow").forEach { element =>
           val messageKey = element.select(".messageKey").text()
           val messageValue = element.select(".messageValue").text()
-          Some(messageValue) shouldBe languageTest.messagesMap.get(messageKey)
+          Some(messageValue) shouldBe messagesMap.get(messageKey)
         }
       }
 
-      "return correct Welsh format" in {
-        val f = languageSetupTest("cy")
-        f.messageKeys.foreach { keys =>
-          Some(msgs(keys)) shouldBe f.messagesMap.get(keys)
+      "return correct Welsh format" in new LanguageSetupTest("cy") {
+        messageKeys.foreach { messageKey =>
+          Some(msgs(messageKey)) shouldBe messagesMap.get(messageKey)
         }
       }
     }

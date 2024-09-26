@@ -118,7 +118,7 @@ class AddBusinessNameControllerSpec extends TestSupport
               case (true, true) => TestAddBusinessNameController.show(isAgent = true, isChange = true)(fakeRequestConfirmedClient())
             }
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
           }
         }
         "redirect to the session timeout page" when {
@@ -133,7 +133,7 @@ class AddBusinessNameControllerSpec extends TestSupport
             }
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
           }
         }
 
@@ -152,7 +152,7 @@ class AddBusinessNameControllerSpec extends TestSupport
               case (true, true) => TestAddBusinessNameController.show(isAgent = true, isChange = true)(fakeRequestConfirmedClient())
             }
             status(result) shouldBe SEE_OTHER
-            val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
             redirectLocation(result) shouldBe Some(homeUrl)
           }
         }

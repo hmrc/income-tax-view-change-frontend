@@ -73,7 +73,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
       else itvcErrorHandler.showInternalServerError()
     } else {
       if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
     }
   }
 

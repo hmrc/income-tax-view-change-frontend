@@ -107,7 +107,7 @@ class OptOutTestDataController @Inject()(
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,

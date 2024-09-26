@@ -83,7 +83,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient()) else controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe {
-            if (isAgent) Some(controllers.routes.HomeController.showAgent.url) else Some(controllers.routes.HomeController.show().url)
+            if (isAgent) Some(controllers.routes.HomeController.showAgent().url) else Some(controllers.routes.HomeController.show().url)
           }
         }
       }

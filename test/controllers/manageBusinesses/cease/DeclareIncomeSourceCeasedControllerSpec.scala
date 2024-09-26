@@ -182,7 +182,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = showCall(isAgent, incomeSourceType)
         status(result) shouldBe Status.SEE_OTHER
 
-        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)
       }
 
@@ -215,7 +215,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
         status(result) shouldBe Status.SEE_OTHER
 
         val expectedRedirectUrl: String = if (isAgent) controllers.agent.routes.ClientRelationshipFailureController.show.url else
-          controllers.errors.routes.NotEnrolledController.show.url
+          controllers.errors.routes.NotEnrolledController.show().url
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)
       }
 
@@ -336,7 +336,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends TestSupport with MockAuthe
         mockBothPropertyBothBusiness()
 
         lazy val result: Future[Result] = submitCall(isAgent, incomeSourceType)
-        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(expectedRedirectUrl)

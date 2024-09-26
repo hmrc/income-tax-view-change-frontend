@@ -130,7 +130,7 @@ class AmendablePOAControllerSpec
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(resultAgent) shouldBe SEE_OTHER
-        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(resultAgent) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
     }
 

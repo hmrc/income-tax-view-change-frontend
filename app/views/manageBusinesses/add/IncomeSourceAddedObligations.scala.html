@@ -90,7 +90,7 @@
 
 @getNextUpdatesUrl = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent.url
+        controllers.routes.NextUpdatesController.showAgent().url
     } else {
         controllers.routes.NextUpdatesController.show().url
     }
@@ -99,7 +99,7 @@
 @getReportingFrequencyUrl = @{
     // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
     if(isAgent) {
-      controllers.routes.NextUpdatesController.showAgent.url
+      controllers.routes.NextUpdatesController.showAgent().url
     } else {
       controllers.routes.NextUpdatesController.show().url
     }

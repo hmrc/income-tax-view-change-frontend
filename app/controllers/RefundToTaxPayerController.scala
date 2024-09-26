@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.RepaymentHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
@@ -100,7 +100,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   def showAgent(repaymentRequestNumber: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
+        backUrl = controllers.routes.PaymentHistoryController.showAgent().url,
         isAgent = true,
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber

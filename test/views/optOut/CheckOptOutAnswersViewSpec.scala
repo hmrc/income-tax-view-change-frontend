@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
   val intentEndTaxYear: String = checkAnswersViewModel.endYear
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent, cancelURL)))
   }
 
@@ -51,7 +51,7 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
     val confirmButton: String = messages("optout.checkAnswers.confirm")
     val cancelButton: String = messages("optout.checkAnswers.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent().url
 
     val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = false).url
     val changeOptOutAgent: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = true).url

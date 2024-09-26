@@ -30,7 +30,7 @@ trait TaxCalcFallBackBackLink {
       if (isCrystallised)
         controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
       else
-        controllers.routes.InYearTaxCalculationController.showAgent.url
+        controllers.routes.InYearTaxCalculationController.showAgent().url
     }
     else
       controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url

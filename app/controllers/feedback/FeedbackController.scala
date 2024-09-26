@@ -57,7 +57,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
 
   def show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
-      val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
+      val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit())
       request.headers.get(REFERER) match {
         case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
         case _ => Future.successful(Ok(feedback))
@@ -72,7 +72,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit user =>
-        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submitAgent, isAgent = true)
+        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit(), isAgent = true)
         request.headers.get(REFERER) match {
           case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
           case _ => Future.successful(Ok(feedback))
@@ -83,11 +83,11 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-          postAction = routes.FeedbackController.submit))),
+          postAction = routes.FeedbackController.submit()))),
         formData =>
           feedbackConnector.submit(formData).flatMap {
             case Right(_) =>
-              Future.successful(Redirect(routes.FeedbackController.thankYou))
+              Future.successful(Redirect(routes.FeedbackController.thankYou()))
             case Left(status) =>
               Logger("application").error(s"Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: ${status}")
@@ -104,11 +104,11 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       implicit agent =>
         FeedbackForm.form.bindFromRequest().fold(
           hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-            postAction = routes.FeedbackController.submitAgent))),
+            postAction = routes.FeedbackController.submit()))),
           formData =>
             feedbackConnector.submit(formData).flatMap {
               case Right(_) =>
-                Future.successful(Redirect(routes.FeedbackController.thankYouAgent))
+                Future.successful(Redirect(routes.FeedbackController.thankYouAgent()))
               case Left(status) =>
                 Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
                 throw new Error(s"Failed to on post request: ${status}")

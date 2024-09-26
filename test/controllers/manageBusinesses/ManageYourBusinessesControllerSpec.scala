@@ -75,7 +75,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthenticationPredicate
         val result = runTest(isAgent = true, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       }
     }
     s"return ${Status.OK}" when {

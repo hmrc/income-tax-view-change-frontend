@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class SingleYearOptOutWarningControllerISpec extends ComponentSpecBase {
   private val validNoForm = ConfirmOptOutSingleTaxYearForm(Some(false), "")
   private val inValidForm = ConfirmOptOutSingleTaxYearForm(None, "")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.showAgent.url
+  private val nextUpdatesPageUrl = controllers.routes.NextUpdatesController.showAgent().url
 
   private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousYear = currentTaxYear.addYears(-1)

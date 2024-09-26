@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{status, _}
+import play.api.test.Helpers._
 import services.{CreditService, DateService, RepaymentService}
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYearTo}

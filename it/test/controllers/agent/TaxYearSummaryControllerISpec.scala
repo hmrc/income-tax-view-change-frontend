@@ -249,16 +249,16 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )(FakeRequest())
 
   s"[IT-AGENT-TEST-1] GET ${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}" should {
-    s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

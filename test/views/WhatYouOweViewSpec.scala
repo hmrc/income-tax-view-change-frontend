@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.FinancialDetailsTestConstants.{fixedDate, testFinancialDetailsModel, _}
+import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe

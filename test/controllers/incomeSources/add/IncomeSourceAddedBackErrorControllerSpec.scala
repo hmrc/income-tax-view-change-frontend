@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
           else TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some({
-            if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
           })
         }
       }
@@ -153,7 +153,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
           setupMockAuthorisationException()
           val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
     }

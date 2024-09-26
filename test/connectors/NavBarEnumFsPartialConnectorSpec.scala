@@ -18,27 +18,19 @@ package connectors
 
 import config.FrontendAppConfig
 import models.btaNavBar.{NavContent, NavLinks}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.when
-import org.scalatest.BeforeAndAfterEach
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import org.scalatest.concurrent.ScalaFutures
-import org.mockito.Mockito.mock
-import testUtils.{TestSupport, UnitSpec}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpReads
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NavBarEnumFsPartialConnectorSpec extends UnitSpec with BeforeAndAfterEach with ScalaFutures {
+class NavBarEnumFsPartialConnectorSpec extends BaseConnectorSpec {
 
-  val mockHttpGet: HttpClient = mock(classOf[HttpClient])
-  val frontendAppConfig = mock(classOf[FrontendAppConfig])
-
-  object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
+  object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpClientV2, appConfig)
 
   val successResponseNavLinks = NavContent(
-    NavLinks("Home", "Hafan", frontendAppConfig.homePageUrl),
+    NavLinks("Home", "Hafan", appConfig.homePageUrl),
     NavLinks("Manage account", "Rheoli'r cyfrif", "http://localhost:9020/business-account/manage-account"),
     NavLinks("Messages", "Negeseuon", "http://localhost:9020/business-account/messages", Some(5)),
     NavLinks("Help and contact", "Cymorth a chysylltu", "http://localhost:9733/business-account/help"),
@@ -46,16 +38,20 @@ class NavBarEnumFsPartialConnectorSpec extends UnitSpec with BeforeAndAfterEach 
   )
 
   "The BtaNavBarPartialConnector.getNavLinks() method" when {
-    lazy val btaNavLinkUrl: String = TestBtaNavBarPartialConnector.btaNavLinksUrl
-    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     def result: Future[Option[NavContent]] = TestBtaNavBarPartialConnector.getNavLinks()
 
     "a valid NavLink Content is received" should {
       "retrieve the correct Model" in {
 
-        when(mockHttpGet.GET[Option[NavContent]](eqTo(btaNavLinkUrl), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(Some(successResponseNavLinks)))
+        val response = Some(successResponseNavLinks)
+
+        when(mockHttpClientV2.get(any())(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[Option[NavContent]]], any()))
+          .thenReturn(Future.successful(response))
+
 
         whenReady(result) { response =>
           response mustBe Some(successResponseNavLinks)
@@ -65,7 +61,11 @@ class NavBarEnumFsPartialConnectorSpec extends UnitSpec with BeforeAndAfterEach 
 
     "a BadRequest(400) exception occurs" should {
       "fail and return empty content" in {
-        when(mockHttpGet.GET[Option[NavContent]](eqTo(btaNavLinkUrl), any(), any())(any(), any(), any()))
+
+        when(mockHttpClientV2.get(any())(any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[Option[NavContent]]], any()))
           .thenReturn(Future.failed(new Exception))
 
         whenReady(result) { response =>

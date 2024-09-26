@@ -49,7 +49,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
       sources = user.incomeSources,
       isAgent = isAgent,
       backUrl = {
-        if (isAgent) controllers.routes.HomeController.showAgent
+        if (isAgent) controllers.routes.HomeController.showAgent()
         else controllers.routes.HomeController.show()
       }.url
     )

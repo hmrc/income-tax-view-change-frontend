@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
+import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}

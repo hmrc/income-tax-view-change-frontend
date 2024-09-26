@@ -198,7 +198,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
             else controllers.routes.HomeController.show().url
 
             status(result) shouldBe SEE_OTHER

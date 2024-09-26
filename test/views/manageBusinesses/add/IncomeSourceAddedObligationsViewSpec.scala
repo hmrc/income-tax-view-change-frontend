@@ -339,7 +339,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val addIncomeSourceShowAgentURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val nextUpdatesUrl: String = controllers.routes.NextUpdatesController.show().url
-  val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent.url
+  val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent().url
 
   val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = false).url
   val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent = true).url

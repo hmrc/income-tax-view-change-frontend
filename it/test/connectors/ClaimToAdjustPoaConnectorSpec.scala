@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,16 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
     MainIncomeLower
   )
 
-  val successRequestBody = """ {
+  val successRequestBody =
+    """ {
               "nino": "AA0000A",
               "taxYear": "2024",
               "amount": 1000.02,
               "poaAdjustmentReason": "001"
               }"""
 
-  val failureResponseBody = """
+  val failureResponseBody =
+    """
           {
              "message": "INVALID_REQUEST"
           }
@@ -59,10 +61,11 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       "use correlationID when provided in header" in {
 
-        val responseBody = s"""
-          {
-             "processingDate": "$processingDate"
-          }
+        val responseBody =
+          s"""
+            {
+               "processingDate": "$processingDate"
+            }
           """
 
         WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED, responseBody)
@@ -84,7 +87,8 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       "generate correlationID when none provided" in {
 
-        val responseBody = s"""
+        val responseBody =
+          s"""
           {
              "processingDate": "$processingDate"
           }
@@ -109,7 +113,8 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       "return a successful response" in {
 
-        WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED, s"""
+        WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED,
+          s"""
           {
              "processingDate": "$processingDate"
           }
@@ -140,7 +145,8 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "failure response cannot be parsed" in {
 
-          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", BAD_REQUEST, s"""
+          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", BAD_REQUEST,
+            s"""
           {
              "invalid": "response"
           }
@@ -154,7 +160,8 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "an error response is received" in {
 
-          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", BAD_REQUEST, s"""
+          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", BAD_REQUEST,
+            s"""
           {
              "message": "INVALID_REQUEST"
           }

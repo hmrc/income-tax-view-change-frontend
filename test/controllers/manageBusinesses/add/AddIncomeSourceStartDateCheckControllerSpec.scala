@@ -217,7 +217,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         })
 
       status(result) shouldBe SEE_OTHER
-      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
@@ -377,7 +377,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           ))
 
       status(result) shouldBe SEE_OTHER
-      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
 

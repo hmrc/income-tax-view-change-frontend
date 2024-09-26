@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val submitChangeBusinessTradeUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent = true, isChange = true).url
 
   val addBusinessAddressUrl = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
-  val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
+  val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent().url
   val checkDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
   val pageTitleMsgKey: String = messagesAPI("add-trade.heading")

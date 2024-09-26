@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import controllers.agent.predicates.ClientConfirmedController
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -48,7 +48,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withRecover(isAgent) {
-        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+        val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())

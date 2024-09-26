@@ -325,7 +325,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
             disable(IncomeSources)
 
-            val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+            val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
             else controllers.routes.HomeController.show().url
 
             checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
@@ -405,7 +405,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
             disable(IncomeSources)
 
-            val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
             checkSubmitRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }

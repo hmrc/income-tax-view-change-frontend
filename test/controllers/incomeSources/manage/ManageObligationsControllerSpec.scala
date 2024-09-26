@@ -183,19 +183,19 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAuthorisationException()
           val result = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
         "redirect them to sign in UK property" in {
           setupMockAuthorisationException()
           val result = TestManageObligationsController.showUKProperty(changeToQ, taxYear)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
         "redirect them to sign in Foreign property" in {
           setupMockAuthorisationException()
           val result = TestManageObligationsController.showForeignProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
       "the agent is not authenticated" should {
@@ -203,19 +203,19 @@ class ManageObligationsControllerSpec extends TestSupport
           setupMockAgentAuthorisationException()
           val result = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
         "redirect them to sign in UK property" in {
           setupMockAgentAuthorisationException()
           val result = TestManageObligationsController.showAgentUKProperty(changeToA, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
         "redirect them to sign in Foreign property" in {
           setupMockAgentAuthorisationException()
           val result = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
 
@@ -226,7 +226,7 @@ class ManageObligationsControllerSpec extends TestSupport
           val result = TestManageObligationsController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
         }
       }
 
@@ -247,7 +247,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
           val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
         }
         "redirect to home page UK property" in {
           disableAllSwitches()
@@ -265,7 +265,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
           val result: Future[Result] = TestManageObligationsController.showAgentUKProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
         }
         "redirect to home page foreign property" in {
           disableAllSwitches()
@@ -283,7 +283,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
           val result: Future[Result] = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
         }
       }
     }

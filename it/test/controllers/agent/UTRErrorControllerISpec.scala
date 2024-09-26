@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,16 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   s"GET ${controllers.agent.routes.UTRErrorController.show.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }
@@ -73,16 +73,16 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   s"POST ${controllers.agent.routes.UTRErrorController.submit.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

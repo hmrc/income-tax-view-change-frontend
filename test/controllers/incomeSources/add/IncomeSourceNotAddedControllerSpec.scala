@@ -118,7 +118,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
             val result: Future[Result] = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
-            val redirectUrl =if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            val redirectUrl =if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
@@ -129,7 +129,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
             val result = if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceNotAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
           }
         }
         "redirect to the session timeout page" when {
@@ -138,7 +138,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
             val result =  if (isAgent) TestIncomeSourceNotAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithTimeoutSession)
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
           }
         }
       }

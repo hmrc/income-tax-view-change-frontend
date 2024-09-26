@@ -26,6 +26,7 @@ import play.api.libs.json.JsValue
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.partials.HtmlPartial
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package controllers.optOut
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.{MockOptOutService, MockSessionService}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

@@ -70,7 +70,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
           credId = user.credId
         ))
       Future.successful(
-        Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
+        Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(
           SessionKeys.confirmedClient -> "true"
         )
       )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class SingleYearOptOutWarningControllerSpec extends TestSupport
     val requestGET = if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithNinoAndOrigin("PTA")
     val requestPOST = if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithNinoAndOrigin("PTA")
     val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-    val nextUpdatesPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val nextUpdatesPage = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val taxYear = TaxYear.forYearEnd(2024)
     val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
     val noEligibleTaxYearResponse = Future.successful(None)

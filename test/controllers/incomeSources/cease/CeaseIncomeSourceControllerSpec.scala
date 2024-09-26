@@ -68,7 +68,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         if (isAgent) {
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           val result = controller.showAgent()(fakeRequestConfirmedClient())
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
         } else {
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           val result = controller.show()(fakeRequestWithActiveSession)

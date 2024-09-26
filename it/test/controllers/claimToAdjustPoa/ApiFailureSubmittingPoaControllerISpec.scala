@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ComponentSpecBase {
   def amendablePOAUrl: String = controllers.claimToAdjustPoa.routes.AmendablePOAController.show(isAgent).url
 
   def homeUrl: String = if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
+    controllers.routes.HomeController.showAgent().url
   } else {
     controllers.routes.HomeController.show().url
   }

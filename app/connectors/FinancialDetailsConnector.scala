@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsConnector @Inject()(val http: HttpClient,
-                                          val httpv2: HttpClientV2,
+                                          val httpClient: HttpClientV2,
                                           val appConfig: FrontendAppConfig
                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
@@ -97,7 +97,6 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
         Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
         PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
-
   }
 
   def getCreditsAndRefund(taxYear: TaxYear, nino: String)
@@ -114,7 +113,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     val correlationId = CorrelationId.fromHeaderCarrier(hc)
       .getOrElse(CorrelationId())
 
-    httpv2
+    httpClient
       .get(url"$url")
       .setHeader(correlationId.asHeader())
       .execute[ResponseModel[CreditsModel]]

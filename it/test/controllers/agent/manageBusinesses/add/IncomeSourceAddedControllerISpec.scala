@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase {
   val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
 
   val incomeSourceAddedUkPropertyShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-  val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent.url
+  val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent().url
   val pageTitle: String = messagesAPI("htmlTitle.agent", {
     s"${messagesAPI("business-added.uk-property.h1")} " +
       s"${messagesAPI("business-added.uk-property.base")}".trim()

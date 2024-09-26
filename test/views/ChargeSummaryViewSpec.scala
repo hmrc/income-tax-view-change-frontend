@@ -41,7 +41,7 @@ import scala.util.Try
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
-  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
+  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent().url
 
   import Messages._
 
