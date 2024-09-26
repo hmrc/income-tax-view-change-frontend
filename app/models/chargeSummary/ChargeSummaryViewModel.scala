@@ -51,6 +51,7 @@ case class ChargeSummaryViewModel(
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
+  val isInterestCharge = latePaymentInterestCharge || otherInterestCharge
 
 
 
@@ -88,7 +89,7 @@ case class ChargeSummaryViewModel(
   val noIsAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = !isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
   val isAgentAndRemainingToPayWithNoCodingOutEnabledAndIsPayeSelfAssessment: Boolean = isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZero: Boolean = (chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero
-  val noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !otherInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)
 
 
 

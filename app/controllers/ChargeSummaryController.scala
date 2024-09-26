@@ -148,7 +148,7 @@ class ChargeSummaryController @Inject()(val auth: AuthenticatorPredicate,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
       } else Nil
 
-    chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
+    chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory), isEnabled(CodingOut)).map {
       case Right(chargeHistory) =>
         if (!isEnabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||

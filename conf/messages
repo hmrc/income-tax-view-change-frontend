@@ -919,6 +919,8 @@ whatYouOwe.adjust-poa.paid-5                                       =
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
+chargeSummary.poa1ExtraCharge.text                                 = Interest for first payment on account: extra amount
+chargeSummary.poa2ExtraCharge.text                                 = Interest for second payment on account: extra amount
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
@@ -1020,6 +1022,8 @@ chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
+chargeSummary.lpi.chargeHistory.created.poa1ExtraCharge.text       = HMRC created this charge
+chargeSummary.lpi.chargeHistory.created.poa2ExtraCharge.text       = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest on balancing payment created
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
@@ -1029,6 +1033,8 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
 chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
 
+chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account

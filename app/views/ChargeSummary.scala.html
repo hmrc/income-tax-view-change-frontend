@@ -25,6 +25,8 @@
 @import enums.BalancingCharge
 @import enums.TRMNewCharge
 @import enums.TRMAmmendCharge
+@import enums.Poa1Reconciliation
+@import enums.Poa2Reconciliation
 @import java.time.LocalDate
 @import models.chargeSummary.ChargeSummaryViewModel
 
@@ -45,10 +47,10 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
+
 @(viewModel: ChargeSummaryViewModel)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
-
 
 @paymentOnAccountExplanation = {
     <div id="charge-explanation">
@@ -108,6 +110,13 @@
     </div>
 }
 
+@getInterestRatesLink = {
+    @p(id = Some("interest-link")) {
+        @messages("chargeSummary.lpi.poaExtraCharge.link")
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a><br><br>
+        }
+}
+
 @getBalancingPaymentsExplanationContent = {
     <div>
         @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
@@ -127,6 +136,7 @@
         case _ if viewModel.isMFADebit  => hmrcAdjustmentExplanation
         case Poa1Charge | Poa2Charge if !viewModel.latePaymentInterestCharge => paymentOnAccountExplanation
         case Poa1Charge | Poa2Charge if viewModel.latePaymentInterestCharge => getLpiPoaExplanationContent
+        case Poa1Reconciliation | Poa2Reconciliation if viewModel.otherInterestCharge => "TBC"
         case TRMNewCharge if !viewModel.latePaymentInterestCharge => balancingChargeExplanation //TRMNewCharge used instead of Balancing charge
         case BalancingCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent
         case TRMNewCharge if viewModel.latePaymentInterestCharge => getBalancingPaymentsExplanationContent //LPI Balancing charge uses TRMCharge on one page and Balancing Charge on another page
@@ -206,13 +216,12 @@
 }
 
 @chargeHistoryHeading = @{
-    val text = viewModel.documentType match {
+    viewModel.documentType match {
         case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case Poa1Charge => messages("chargeSummary.chargeHistory.Poa1heading")
         case Poa2Charge => messages("chargeSummary.chargeHistory.Poa2heading")
         case _ => messages("chargeSummary.chargeHistory.heading")
     }
-    viewModel.documentDetail.transactionId + text
 }
 
 @getCreationDate(date: Option[LocalDate]) = @{
@@ -299,6 +308,10 @@
         )
     }
 
+    @if(viewModel.otherInterestCharge) @{
+        getInterestRatesLink
+    }
+
     @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
             @if(viewModel.isAgent) {
@@ -359,7 +372,7 @@
 
             <tbody class = "govuk-table__body">
             @if(viewModel.chargeHistoryEnabled){
-                @if(viewModel.noLatePaymentInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
+                @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
@@ -375,11 +388,11 @@
                     </tr>
                 }
 
-                @if(viewModel.latePaymentInterestCharge) {
+                @if(viewModel.isInterestCharge) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{viewModel.documentDetail.interestEndDate.get.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{viewModel.documentDetail.interestRemainingToPay.toCurrency}</td>
                     </tr>
                 }
 
@@ -400,7 +413,7 @@
                 }
             }
 
-            @if(viewModel.paymentAllocationEnabled && !viewModel.latePaymentInterestCharge) {
+            @if(viewModel.paymentAllocationEnabled && !viewModel.isInterestCharge) {
                 @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.documentDetailWithDueDate, viewModel.isAgent, viewModel.isMFADebit, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
             }
             </tbody>

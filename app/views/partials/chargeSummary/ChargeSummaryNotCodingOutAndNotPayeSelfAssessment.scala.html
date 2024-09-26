@@ -55,7 +55,7 @@
     </dd>
 </div>
 
-@if(latePaymentInterestCharge) {
+@if(latePaymentInterestCharge || otherInterestCharge) {
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
@@ -88,7 +88,7 @@
     @{
         if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+        } else if (latePaymentInterestCharge || otherInterestCharge) documentDetail.interestRemainingToPay.toCurrency
         else documentDetail.remainingToPay.toCurrency
     }
     </dd>
