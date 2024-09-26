@@ -311,16 +311,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1"
       }
 
-      "not display the payment processing info if the charge is a POA" in new Setup(financialDetailsModel(documentDescription = Some("ITSA- POA 1"))) {
-        disable(ChargeHistory)
-        disable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, id1040000123)(fakeRequestWithNinoAndOrigin("PTA"))
-
-        status(result) shouldBe Status.OK
-        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeadingForPOA1
-        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").isEmpty shouldBe true
-      }
-
       "not display the payment processing info if the charge is Review & Reconcile" in new Setup(financialDetailsReviewAndReconcile) {
         disable(ChargeHistory)
         disable(PaymentAllocation)

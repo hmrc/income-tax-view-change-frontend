@@ -636,11 +636,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
-      "does not have any payment processing info or link when the charge is a POA" in new TestSetup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), paymentBreakdown = paymentBreakdown) {
-        Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
-        Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
-      }
-
       "does not have any payment processing info or link when the charge is Review And Reconcile" in new TestSetup(documentDetailModel(documentDescription = Some("some-description")), paymentBreakdown = paymentBreakdown, isReviewAndReconcilePoaOneDebit = true) {
         Try(document.getElementById("payment-days-note").text()).toOption.isDefined shouldBe false
         Try(document.getElementById("payment-link-2018").text()).toOption.isDefined shouldBe false
