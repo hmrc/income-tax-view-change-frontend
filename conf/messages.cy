@@ -127,10 +127,11 @@ home.paymentCreditRefundHistory.view                            = Hanes taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.agent.overdue.message.dunningLock.false                    = Mae gan eich cleient daliadau sy’n hwyr. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.overdue.message.dunningLock.false                          = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.updates.overdue.charges                                   = {0} TALIAD AM FOD YN HWYR
+home.overdue.message.dunningLock.false                          = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.updates.overdue.charges                                    = {0} TALIAD AM FOD YN HWYR
+home.interest-accruing                                          = Mae gennych daliadau gyda llog ychwanegol. Bydd y taliadau hyn yn cronni llog nes eu bod yn cael eu talu’n llawn.
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 home.credAndRefund.view                                         = Hawlio ad-daliad
@@ -2230,7 +2231,7 @@ optin.completedOptIn.nextUpdate.desc2.c         =
 
 optin.completedOptIn.submitUpdates              = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 optin.completedOptIn.submitUpdates.desc1.a      = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu �’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+optin.completedOptIn.submitUpdates.desc1.b      = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 optin.completedOptIn.submitUpdates.desc1.b.url  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 optin.completedOptIn.ny.submitUpdates.desc2     = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.

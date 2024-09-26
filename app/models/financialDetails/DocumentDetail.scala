@@ -225,6 +225,10 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
   val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate)
 
   def isReviewAndReconcileDebit: Boolean = isReviewAndReconcilePoaOneDebit || isReviewAndReconcilePoaTwoDebit
+
+  def isAccruingInterest: Boolean = {
+    isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
+  }
 }
 
 object DocumentDetail {

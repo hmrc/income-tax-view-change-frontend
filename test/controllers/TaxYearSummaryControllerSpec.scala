@@ -315,9 +315,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(financialDetailsModelResponse =
-          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
-            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
-            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
+          financialDetailsWithReviewAndReconcileDebitsOverdue.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebitsOverdue.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebitsOverdue.documentDetails(1).copy(outstandingAmount = 0)
           )))
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -338,7 +338,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessfulNew(testMtditid)
-        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebitsOverdue)
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
@@ -991,9 +991,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockBothIncomeSources()
         mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(response =
-          financialDetailsWithReviewAndReconcileDebits.copy(documentDetails = List(
-            financialDetailsWithReviewAndReconcileDebits.documentDetails.head.copy(outstandingAmount = 0),
-            financialDetailsWithReviewAndReconcileDebits.documentDetails(1).copy(outstandingAmount = 0)
+          financialDetailsWithReviewAndReconcileDebitsOverdue.copy(documentDetails = List(
+            financialDetailsWithReviewAndReconcileDebitsOverdue.documentDetails.head.copy(outstandingAmount = 0),
+            financialDetailsWithReviewAndReconcileDebitsOverdue.documentDetails(1).copy(outstandingAmount = 0)
           )))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
@@ -1016,7 +1016,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsWithReviewAndReconcileDebits)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsWithReviewAndReconcileDebitsOverdue)
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
         )

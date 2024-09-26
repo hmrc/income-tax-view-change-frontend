@@ -147,9 +147,9 @@ home.incomeSources.ceaseIncomeSource.view                       = Cease an incom
 home.incomeSources.newJourney.view                              = Add, manage or cease a business or income source
 
 home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
-home.agent.overdue.message.dunningLock.false                    = Your client has overdue payments. They may be charged interest on these until they are paid in full.
+home.agent.overdue.message.dunningLock.false                    = You have overdue charges. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
-home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
+home.overdue.message.dunningLock.false                          = You have overdue charges. You may be charged interest on these until they are paid in full.
 home.interest-accruing                                          = You have charges with added daily interest. These charges will be accruing interest until they are paid in full.
 
 home.updates.overdue.charges                                    = {0} OVERDUE CHARGES
@@ -2273,7 +2273,7 @@ optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
 
 # opt-in completed
-optin.completedOptIn.heading                    = Opt In completed
+optin.completedOptIn.heading                    = Opt in completed
 
 optin.completedOptIn.cy.heading.desc            = You are now reporting quarterly from {0} to {1} tax year onwards
 optin.completedOptIn.ny.heading.desc            = You opted in to quarterly reporting from {0} to {1} tax year onwards
